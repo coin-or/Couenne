@@ -1,0 +1,8 @@
+Couenne, a solver for non-convex MINLP problems
+
+To install this package, please look at the INSTALL file.
+
+This package needs other COIN-OR projects (www.coin-or.org).
+Instructions for downloading them are also in the INSTALL file.  Once
+these are installed, the AUTHORS, LICENSE and README files in each of
+the subdirectories give more information about these projects.

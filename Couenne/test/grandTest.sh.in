@@ -1,0 +1,39 @@
+#!/bin/sh
+
+srcdir="@srcdir@"
+
+echo Testing Couenne:
+echo
+
+success=1
+
+for i in $srcdir/../test/config_files/* 
+
+  do 
+
+    method=`basename $i` 
+
+    echo " " Testing $method
+
+    for j in $srcdir/../test/data/*.nl 
+
+    do 
+	cat $srcdir/../test/couenne.opt.base $i > couenne.opt 
+
+	result=`../src/main/couenne $j | grep Stats | awk '{printf ("%20e\n", $21);}'` 
+	name=`basename $j .nl`
+	val=`cat $srcdir/../test/data/$name.obj`
+    
+	rm couenne.opt 
+
+	[ $result == $val ] && printf "    Test for %-20s on %-20s OK\n" $method $name
+	[ $result == $val ] || (printf "    Test for %-20s on %-20s FAILED: %s != %s\n" \
+	                         $method $name $result $val && success=0)
+    done
+ 
+    echo
+
+done 
+
+[ $success -eq 0 ] && echo "At least one test failed. Check tolerances."
+[ $success -eq 1 ] && echo "Test succeeded."
