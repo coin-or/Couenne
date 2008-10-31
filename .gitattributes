@@ -258,7 +258,7 @@ Couenne/test/grandTest.sh.in -text
 /configure -text
 /configure.ac -text
 /depcomp -text
-/getExternals.sh -text
+doxydoc/doxygen.conf.in -text
 /install-sh -text
 /ltmain.sh -text
 /missing -text
