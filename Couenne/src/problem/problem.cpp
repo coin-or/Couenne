@@ -42,7 +42,7 @@ void CouenneProblem::initAuxs () const {
 
     int index;
 
-    if ((variables_ [i] -> Type  () == AUX) &&                // this is an auxiliary
+    if ((variables_ [i] -> Type () == AUX) &&                // this is an auxiliary
 	((index = variables_ [i] -> Index ()) >= nOrigVars_)) // and not an original, originally...
       //int index = variables_ [i] -> Index ();
       Lb (index) = - (Ub (index) = COUENNE_INFINITY);
@@ -76,7 +76,8 @@ void CouenneProblem::initAuxs () const {
 
     if (variables_ [ord] -> Type () == AUX) {
 
-      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "w_%04d [%10g,%10g] ", ord, Lb (ord), Ub (ord));
+      Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
+			  "w_%04d [%10g,%10g] ", ord, Lb (ord), Ub (ord));
 
       CouNumber l, u;
       variables_ [ord] -> Image () -> getBounds (l, u);
@@ -87,7 +88,8 @@ void CouenneProblem::initAuxs () const {
       //if ((lb_ [ord] = (*(aux -> Lb ())) ()) <= -COUENNE_INFINITY) lb_ [ord] = -DBL_MAX;
       //if ((ub_ [ord] = (*(aux -> Ub ())) ()) >=  COUENNE_INFINITY) ub_ [ord] =  DBL_MAX;
 
-      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, " --> [%10g,%10g]\n", Lb (ord), Ub (ord));
+      Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
+			  " --> [%10g,%10g]\n", Lb (ord), Ub (ord));
 
       bool integer = variables_ [ord] -> isInteger ();
 

@@ -17,7 +17,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
-/// Get lower and upper bound of an expression (if any)
+/// Get expressions of lower and upper bound of an expression (if any)
 void exprGroup::getBounds (expression *&lb, expression *&ub) {
 
   expression *lbnl, *ubnl;

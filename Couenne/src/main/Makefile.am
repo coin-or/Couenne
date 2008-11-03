@@ -19,12 +19,15 @@ if COIN_HAS_COUENNE
 endif
 
 COINLIBS += \
-        $(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
-	$(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
-        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
 	$(CBCOBJDIR)/src/libCbc.la \
 	$(CGLOBJDIR)/src/libCgl.la \
-	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la
+	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
+        $(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
+	$(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
+	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
+        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
+        $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
+        $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 
 #if COIN_HAS_CPX
 #     COINLIBS += $(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
@@ -41,8 +44,9 @@ COINLIBS += \
 #endif
 
 
-IPOPTLIBS = \
-        $(IPOPTOBJDIR)/src/Interfaces/libipopt.la
+#IPOPTLIBS = \
+#        $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
+#        $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 
 LIBS += `cat $(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt`
 LIBS += `cat $(COINUTILSOBJDIR)/coinutils_addlibs.txt`
@@ -121,7 +125,6 @@ couenne_SOURCES = BonCouenne.cpp \
 	BonCouenneInfo.cpp BonCouenneInfo.hpp
 
 couenne_LDADD = \
-	$(IPOPTLIBS) \
 	$(LIBCBCCOPY) \
 	$(COINLIBS) \
 	$(ASLLIB) \

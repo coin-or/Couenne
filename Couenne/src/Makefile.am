@@ -136,14 +136,6 @@ libCouenne_la_SOURCES = \
 	util/drawCuts.cpp \
 	util/rootQ.cpp
 
-COINLIBS = \
-	$(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
-	$(OSIOBJDIR)/src/libOsi.la \
-	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
-	$(CGLOBJDIR)/src/libCgl.la \
-	$(CLPOBJDIR)/src/libClp.la \
-	$(COINUTILSOBJDIR)/src/libCoinUtils.la
-
 # This is for libtool (on Windows)
 libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 

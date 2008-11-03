@@ -75,20 +75,22 @@ am_couenne_OBJECTS = BonCouenne.$(OBJEXT) BonCouenneSetup.$(OBJEXT) \
 	BonCouenneInterface.$(OBJEXT) BonNlpHeuristic.$(OBJEXT) \
 	BonInitHeuristic.$(OBJEXT) BonCouenneInfo.$(OBJEXT)
 couenne_OBJECTS = $(am_couenne_OBJECTS)
-am__DEPENDENCIES_1 = $(IPOPTOBJDIR)/src/Interfaces/libipopt.la
-@COIN_HAS_COUENNE_TRUE@am__DEPENDENCIES_2 =  \
+@COIN_HAS_COUENNE_TRUE@am__DEPENDENCIES_1 =  \
 @COIN_HAS_COUENNE_TRUE@	$(COUENNEOBJDIR)/src/libCouenne.la
-am__DEPENDENCIES_3 = $(am__DEPENDENCIES_2) \
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(CBCOBJDIR)/src/libCbc.la \
+	$(CGLOBJDIR)/src/libCgl.la \
+	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
 	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
 	$(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
+	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
 	$(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
-	$(CBCOBJDIR)/src/libCbc.la $(CGLOBJDIR)/src/libCgl.la \
-	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
+	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
+	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la \
 	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
 	$(COINUTILSOBJDIR)/src/libCoinUtils.la
-am__DEPENDENCIES_4 =
-couenne_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_3) \
-	$(am__DEPENDENCIES_4) $(am__DEPENDENCIES_4)
+am__DEPENDENCIES_3 =
+couenne_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_3) \
+	$(am__DEPENDENCIES_3)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__depfiles_maybe = depfiles
@@ -206,6 +208,15 @@ IPOPTSRCDIR = @IPOPTSRCDIR@
 LDFLAGS = @LDFLAGS@
 LIBEXT = @LIBEXT@
 LIBOBJS = @LIBOBJS@
+
+#if COIN_HAS_CPX
+#COINLIBS += \
+#        $(CPXLIB)
+#endif
+
+#IPOPTLIBS = \
+#        $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
+#        $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 LIBS = @LIBS@ `cat \
 	$(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt` `cat \
 	$(COINUTILSOBJDIR)/coinutils_addlibs.txt`
@@ -301,21 +312,17 @@ AUTOMAKE_OPTIONS = foreign
 #if COIN_HAS_CPX
 #     COINLIBS += $(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
 #endif
-COINLIBS = $(am__append_1) $(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
-	$(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
-	$(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
-	$(CBCOBJDIR)/src/libCbc.la $(CGLOBJDIR)/src/libCgl.la \
+COINLIBS = $(am__append_1) $(CBCOBJDIR)/src/libCbc.la \
+	$(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
+	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
+	$(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
+	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
+	$(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
+	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
+	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la \
 	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
 	$(COINUTILSOBJDIR)/src/libCoinUtils.la
-
-#if COIN_HAS_CPX
-#COINLIBS += \
-#        $(CPXLIB)
-#endif
-IPOPTLIBS = \
-        $(IPOPTOBJDIR)/src/Interfaces/libipopt.la
-
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
@@ -366,7 +373,6 @@ couenne_SOURCES = BonCouenne.cpp \
 	BonCouenneInfo.cpp BonCouenneInfo.hpp
 
 couenne_LDADD = \
-	$(IPOPTLIBS) \
 	$(LIBCBCCOPY) \
 	$(COINLIBS) \
 	$(ASLLIB) \
