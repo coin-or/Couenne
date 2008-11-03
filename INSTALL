@@ -1,45 +1,30 @@
-Installing Couenne
-
-There are three steps to installing Couenne:
- - uncompressing couenne.tgz;
- - obtaining the externals and third party packages;
- - compiling [and testing].
-
-Couenne currently works on Linux machines.
-
+###############################################################
+#                                                             #
+#                        Couenne                              #
+#                                                             #
+#  (Convex Over and Under ENvelopes for Nonlinear Estimation) #
+#                                                             #
+###############################################################
 
 
-1. Unzipping Couenne. #########################################
+### Downloading Couenne ######################################
 
-Place the couenne.tgz in a directory of your choice. Then run
+Couenne is found in the COIN-OR repository. It can be downloaded with
+Subversion (http://subversion.tigris.org). Run the following command
+(if you are reading this file, you probably have Couenne already and don't
+need to):
 
-$ tar xzf couenne.tgz
-
-There should be a directory named Couenne/ now.
+$ svn co https://projects.coin-or.org/svn/Couenne/trunk Couenne
 
 
+### Obtaining Third Party code ###############################
 
-2. Obtaining all externals. ###################################
-
-If you already have all COIN-OR packages necessary to build Couenne,
-i.e., Cbc, Clp, Ipopt, Bonmin, Cgl, and all Third Party packages
-Lapack, Blas, ASL, and HSL, you may move to section 3. The configuring
-script should be able to find those packages.
-
-Couenne uses other COIN-OR packages: Cbc, Clp, Ipopt, Bonmin, Cgl,
-CoinUtils, and BuildTools. These are not included in the .tgz,
-therefore you need to download them using Subversion. Simply run the
-script file getExternals.sh located in the Couenne/ directory:
-
-$ cd Couenne
-$ ./getExternals.sh
-
-THIRD PARTY PACKAGES: Couenne also requires that third party packages
-be downloaded and installed by the user (unless they are already on
-his/her machine) that cannot be found on the COIN-OR repository. These
-are ASL, Blas, Lapack, and HSL. For the first three, simply move to
-the corresponding directory and run the get.XXXX script file. For
-instance, ASL can be downloaded as follows:
+Couenne also requires that some third party packages, i.e. software
+that is not found on the COIN-OR repository, be downloaded and
+installed by the user (unless they are already on his/her
+machine). These are ASL, Blas, Lapack, and HSL. For the first three,
+simply move to the corresponding directory and run the get.XXXX script
+file. For instance, ASL can be downloaded as follows:
 
 $ cd ThirdParty/ASL
 $ ./get.ASL
@@ -50,8 +35,7 @@ instructions in ThirdParty/HSL/INSTALL.HSL to obtain two files that
 are necessary to Ipopt.
 
 
-
-3. Compiling. #################################################
+### Building Couenne #########################################
 
 To build Couenne, you may just run the following two commands:
 
@@ -59,18 +43,18 @@ $ ./configure
 $ make
 
 However, it is usually desirable to have several builds in separate
-sub-directories.  To do so, create a subdirectory and run
-configure and make from there:
+sub-directories.  To do so, create a subdirectory and run configure
+and make from there:
 
 $ mkdir build1
 $ cd build1
-$ ../configure
+$ ../configure -C
 $ make
 
-The libraries and executables are by default installed in the
-directory where you run the configure/make scripts. However, by
-properly setting the configure option --prefix, you can install
-Couenne in a different directory:
+The libraries and executables will by default be installed in
+subdirectories of the directory where you have run the configure/make
+scripts. However, by properly setting the configure option --prefix,
+you can install Couenne in a different directory:
 
 $ ../configure --prefix=/usr/local
 
@@ -79,11 +63,11 @@ This installs executables in /usr/local/bin and libraries in
 
 
 
-4. Testing. ###################################################
+### Testing. ###################################################
 
 There are a few built-in tests to check that Couenne is installed
 properly and that it solves certain MINLPs correctly.  Before running
-make install, you may run
+"make install", you may run
 
 $ make unitTest
 
@@ -95,12 +79,12 @@ line:
 $ make unitTest
 
   Testing couenne.opt.vt
-    Test for couenne.opt.vt       on alkyl                OK
-    Test for couenne.opt.vt       on batchdes             OK
+    Test for couenne.opt.vt       on inst1                OK
+    Test for couenne.opt.vt       on inst2                OK
     ...
-    Test for couenne.opt.strong_int_br on nvs01                OK
-    Test for couenne.opt.strong_int_br on pb0                  OK
-    Test for couenne.opt.strong_int_br on st_e01               OK
+    Test for couenne.opt.strong_int_br on inst5                OK
+    Test for couenne.opt.strong_int_br on inst6                OK
+    Test for couenne.opt.strong_int_br on inst7                OK
 
 Test succeeded.
 $
@@ -109,8 +93,7 @@ If all these tests return OK, congratulations! You have set up Couenne
 correctly.  It is safe now to install Couenne.
 
 
-
-5. Installing and using Couenne. ##############################
+### Installing and using Couenne. ##############################
 
 Simply run
 
@@ -145,7 +128,7 @@ the "g" after the "write" keyword).
 
 
 
-6. Documentation ##############################################
+### Documentation ##############################################
 
 Doxygen documentation can be generated by running
 

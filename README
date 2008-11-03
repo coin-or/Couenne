@@ -1,4 +1,4 @@
-Couenne, a solver for non-convex MINLP problems
+Couenne is a branch&bound algorithm for non-convex MINLP problems.
 
 To install this package, please look at the INSTALL file.
 
