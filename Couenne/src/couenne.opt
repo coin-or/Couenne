@@ -1,104 +1,142 @@
-display_stats
-display statistics at the end of the run
+#
+# Couenne options
+#
+# Couenne is an open-source solver for nonconvex Mixed-Integer 
+# Nonlinear Programming (MINLP) problems. See more at 
+# 
+# https://projects.coin-or.org/Couenne
+#
+# The following is a list of option to tweak the performance of Couenne.
+# Each option has a brief description and is set to a default value that we believe
+# works well in most cases. in square brackets are given the possible values
 
-branching_print_level
-Output level for braching code in Couenne
 
-boundtightening_print_level
-Output level for bound tightening code in Couenne
+#
+# Verbosity/output level options
+#
 
-convexifying_print_level
-Output level for convexifying code in Couenne
+# display statistics at the end of the run [yes/no]
+display_stats no
 
-problem_print_level
-Output level for problem manipulation code in Couenne
+# The following are verbosity levels for the main components of Couenne. 
+# Values: 0 for quiet, 11 for excessive output [0..11]
 
-nlpheur_print_level
-Output level for NLP heuristic in Couenne
+branching_print_level       0 # Output level for braching code in Couenne.
+boundtightening_print_level 0 # Output level for bound tightening code in Couenne
+convexifying_print_level    0 # Output level for convexifying code in Couenne
+problem_print_level         4 # Output level for problem manipulation code in Couenne (4 prints out original problem)
+nlpheur_print_level         0 # Output level for NLP heuristic in Couenne
+#disjcuts_print_level       0 # Output level for disjunctive cuts in Couenne - disabled for now
 
-disjcuts_print_level
-Output level for disjunctive cuts in Couenne
 
+#
+# Option for branching rules
+#
+
+# Multipliers of pseudocosts for estimating and update estimation of bound
 pseudocost_mult
-Multipliers of pseudocosts for estimating and update estimation of bound
 
+# Use distance between LP points to update multipliers of pseudocosts "  
 pseudocost_mult_lp
-Use distance between LP points to update multipliers of pseudocosts "  
 
+# Use Special Ordered Sets (SOS) as indicated in the MINLP model
 enable_sos
-Use Special Ordered Sets (SOS) as indicated in the MINLP model
 
+# Apply bound tightening before branching
 branch_fbbt
-Apply bound tightening before branching
 
+# Apply convexification cuts before branching (for now only within strong branching)
 branch_conv_cuts
-Apply convexification cuts before branching (for now only within strong branching)
 
+# Chooses branching point selection strategy
 branch_pt_select
-Chooses branching point selection strategy
 
+# Defines convex combination of mid point and current LP point: "
 branch_midpoint_alpha
-Defines convex combination of mid point and current LP point: "
 
+# Defines safe interval percentage for using LP point as a branching point
 branch_lp_clamp
-Defines safe interval percentage for using LP point as a branching point
 
+# Priority of continuous variable branching
 cont_var_priority
-Priority of continuous variable branching
 
+# Apply Reduced Cost Branching (instead of the Violation Transfer) -- MUST have vt_obj enabled
 red_cost_branching
-Apply Reduced Cost Branching (instead of the Violation Transfer) -- MUST have vt_obj enabled
 
-convexification_cuts
-Specify the frequency (in terms of nodes) at which couenne ecp cuts are generated.
+# type of branching object for variable selection
+branching_object
 
-check_lp
-Check all LPs through an independent call to OsiClpSolverInterface::initialSolve()
 
-local_optimization_heuristic
-Do we search for local solutions of NLP's
+#
+# Options for bound tightening
+#
 
-log_num_local_optimization_per_level
-Specify the logarithm of the number of local optimizations to perform" 
-
-convexification_type
-Deterimnes in which point the linear over/under-estimator are generated
-
-convexification_points
-Specify the number of points at which to convexify when convexification type"
-
-violated_cuts_only
-Yes if only violated convexification cuts should be added
-
-art_cutoff
-Artificial cutoff
-
-opt_window
-Window around known optimum
-
-feas_tolerance
-Tolerance for constraints/auxiliary variables
-
+# Feasibility-based (cheap) bound tightening
 feasibility_bt
-Feasibility-based (cheap) bound tightening
 
-use_quadratic
-Use quadratic expressions and related exprQuad class
-
+# Optimality-based (expensive) bound tightening
 optimality_bt
-Optimality-based (expensive) bound tightening
 
 log_num_obbt_per_level
-Specify the frequency (in terms of nodes) for optimality-based bound tightening.
+# Specify the frequency (in terms of nodes) for optimality-based bound tightening.
 
 aggressive_fbbt
-Aggressive feasibility-based bound tightening (to use with NLP points)
+# Aggressive feasibility-based bound tightening (to use with NLP points)
 
 log_num_abt_per_level
-Specify the frequency (in terms of nodes) for aggressive bound tightening.
+# Specify the frequency (in terms of nodes) for aggressive bound tightening.
 
+
+#
+# Options for reformulation and linearization
+#
+
+# Specify the frequency (in terms of nodes) at which couenne ecp cuts are generated.
+convexification_cuts
+
+# Determines in which point the linear over/under-estimator are generated
+convexification_type
+
+convexification_points
+# Specify the number of points at which to convexify when convexification type"
+
+violated_cuts_only
+# Yes if only violated convexification cuts should be added
+
+
+
+#
+# Options for debugging
+#
+# Some of these options usually slow down Couenne, and are hence only suggested for debugging purposes.
+#
+
+# Check all LPs through an independent call to OsiClpSolverInterface::initialSolve()
+check_lp
+
+# Artificial cutoff
+art_cutoff
+
+# Window around known optimum
+opt_window
+
+# Artificial lower bound
 art_lower
-Artificial lower bound
 
-branching_object
-type of branching object for variable selection
+
+#
+# Other options
+#
+
+# Do we search for local solutions of NLP's?
+local_optimization_heuristic
+
+# Specify the logarithm of the number of local optimizations to perform
+log_num_local_optimization_per_level
+
+# Tolerance for constraints/auxiliary variables
+feas_tolerance
+
+# Use quadratic expressions and related exprQuad class
+use_quadratic
+

@@ -126,10 +126,11 @@ ampl: quit;
 This will create a stub file xyz.nl that can be fed to Couenne (notice
 the "g" after the "write" keyword).
 
-Couenne can be fine tuned by setting parameters in the option file couenne.opt, 
+Couenne can be fine-tuned by setting parameters in the option file couenne.opt, 
 which is read from the same directory where Couenne is launched. A typical 
 couenne.opt is provided in Couenne/src/, with some explanation on how to use 
-its parameters.
+its parameters. You may copy it to your directory and change some of the parameters,
+however those set by default are usually best on most of the instances we have tried.
 
 
 ### Documentation ##############################################
