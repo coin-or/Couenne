@@ -80,6 +80,10 @@ int main (int argc, char *argv[])
       cg = dynamic_cast <CouenneCutGenerator *> 
 	(bb.model (). cutGenerators () [0] -> generator ());
 
+    ////////////////////////////////
+    int nr=-1, nt=-1;
+    double st=-1;
+
     if (cg) cg -> getStats (nr, nt, st);
     else printf ("Warning, could not get pointer to CouenneCutGenerator\n");
 
@@ -101,10 +105,6 @@ int main (int argc, char *argv[])
     } else // good old statistics
 
     if (bonmin.displayStats ()) { // print statistics
-
-      ////////////////////////////////
-      int nr=-1, nt=-1;
-      double st=-1;
 
       // CAUTION: assuming first cut generator is our CouenneCutGenerator
 
