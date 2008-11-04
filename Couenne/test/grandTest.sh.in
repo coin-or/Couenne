@@ -5,29 +5,30 @@ srcdir="@srcdir@"
 echo Testing Couenne:
 echo
 
-success=1
-
 for i in $srcdir/../test/config_files/* 
 
   do 
 
     method=`basename $i` 
 
-    echo " " Testing $method
-
-    cat $srcdir/../test/couenne.opt.base $i  > couenne.opt 
-    echo -n "couenne_check "                >> couenne.opt
-    cat $srcdir/../test/data/$name.obj      >> couenne.opt
+    echo Testing $method:
 
     for j in $srcdir/../test/data/*.nl 
-    do 
-        ../src/main/couenne $j 
+
+    do
+
+	cp $j .
+        name=`basename $j .nl`
+
+        cat $srcdir/../test/couenne.opt.base $i  > couenne.opt 
+        echo -n "couenne_check "                >> couenne.opt
+        cat $srcdir/../test/data/$name.obj      >> couenne.opt
+
+        ../src/main/couenne $name | grep "Global Optimum Test"
+
+	rm -f $name
+        rm -f couenne.opt 
+
     done
- 
-    rm couenne.opt 
     echo
-
 done 
-
-[ $success -eq 0 ] && echo "At least one test failed. Check tolerances."
-[ $success -eq 1 ] && echo "Test succeeded."

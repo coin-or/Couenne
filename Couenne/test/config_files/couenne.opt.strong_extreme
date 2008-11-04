@@ -24,5 +24,4 @@ number_before_trust 0
 allowable_gap 1e-8
 allowable_fraction_gap 1e-8
 
-time_limit 7200
 display_stats yes

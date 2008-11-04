@@ -21,5 +21,4 @@ log_num_local_optimization_per_level 6
 allowable_gap 1e-8
 allowable_fraction_gap 1e-8
 
-time_limit 7200
 display_stats yes

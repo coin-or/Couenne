@@ -36,6 +36,9 @@
 
 using namespace Bonmin;
 
+// the maximum difference between a printed optimum and a CouNumber
+#define PRINTED_PRECISION 1e-5
+
 int main (int argc, char *argv[])
 {
   using namespace Ipopt;
@@ -97,10 +100,13 @@ int main (int argc, char *argv[])
 
       double opt = bb.model (). getBestPossibleObjValue ();
 
-      printf ("Test on %-40s: %s\n", cp ? cp -> problemName ().c_str () : "unknown", 
+      printf ("Global Optimum Test on %-40s %s\n", 
+	      cp ? cp -> problemName ().c_str () : "unknown", 
 	      (fabs (opt - global_opt) / 
-	       (1. + CoinMax (fabs (opt), fabs (global_opt))) < COUENNE_EPS) ? 
-	      (char *) "OK", (char *) "FAILED");
+	       (1. + CoinMax (fabs (opt), fabs (global_opt))) < PRINTED_PRECISION) ? 
+	      (char *) "OK" : (char *) "FAILED");
+	      //opt, global_opt,
+	      //fabs (opt - global_opt));
 
     } else // good old statistics
 
