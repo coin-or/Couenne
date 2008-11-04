@@ -15,22 +15,16 @@ for i in $srcdir/../test/config_files/*
 
     echo " " Testing $method
 
+    cat $srcdir/../test/couenne.opt.base $i  > couenne.opt 
+    echo -n "couenne_check "                >> couenne.opt
+    cat $srcdir/../test/data/$name.obj      >> couenne.opt
+
     for j in $srcdir/../test/data/*.nl 
-
     do 
-	cat $srcdir/../test/couenne.opt.base $i > couenne.opt 
-
-	result=`../src/main/couenne $j | grep Stats | awk '{printf ("%20e\n", $21);}'` 
-	name=`basename $j .nl`
-	val=`cat $srcdir/../test/data/$name.obj`
-    
-	rm couenne.opt 
-
-	[ $result == $val ] && printf "    Test for %-20s on %-20s OK\n" $method $name
-	[ $result == $val ] || (printf "    Test for %-20s on %-20s FAILED: %s != %s\n" \
-	                         $method $name $result $val && success=0)
+        ../src/main/couenne $j 
     done
  
+    rm couenne.opt 
     echo
 
 done 

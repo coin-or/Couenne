@@ -440,6 +440,12 @@ namespace Bonmin{
     CouenneCutGenerator::registerOptions (roptions);
     CouenneDisjCuts::registerOptions (roptions);
 
+    roptions -> AddNumberOption
+      ("couenne_check",
+       "known value of a global optimum",
+       COIN_DBL_MAX,
+       "Default value is +infinity.");
+
     roptions -> AddStringOption2 (
       "display_stats",
       "display statistics at the end of the run",

@@ -73,24 +73,32 @@ int main (int argc, char *argv[])
 
     std::cout.precision (10);
 
-    /*std::string message, status;
+    //////////////////////////////
+    CouenneCutGenerator *cg = NULL;
 
-    if(bb.mipStatus()==Bab::FeasibleOptimal) {
-      status = "\t\"Finished\"";
-      message = "\nbonmin: Optimal";
-    }
-    else if(bb.mipStatus()==Bab::ProvenInfeasible) {
-      status = "\t\"Finished\"";
-      message = "\nbonmin: Infeasible problem";
-    }
-    else if(bb.mipStatus()==Bab::Feasible) {
-      status = "\t\"Not finished\"";
-      message = "\n Optimization not finished.";
-    }
-    else if(bb.mipStatus()==Bab::NoSolutionKnown) {
-      status = "\t\"Not finished\"";
-      message = "\n Optimization not finished.";
-      }*/
+    if (bb.model (). cutGenerators ())
+      cg = dynamic_cast <CouenneCutGenerator *> 
+	(bb.model (). cutGenerators () [0] -> generator ());
+
+    if (cg) cg -> getStats (nr, nt, st);
+    else printf ("Warning, could not get pointer to CouenneCutGenerator\n");
+
+    CouenneProblem *cp = cg ? cg -> Problem () : NULL;
+
+    // retrieve test value to check
+    double global_opt;
+    bonmin.options () -> GetNumericValue ("couenne_check", global_opt, "couenne.");
+
+    if (global_opt < COUENNE_INFINITY) { // some value found in couenne.opt
+
+      double opt = bb.model (). getBestPossibleObjValue ();
+
+      printf ("Test on %-40s: %s\n", cp ? cp -> problemName ().c_str () : "unknown", 
+	      (fabs (opt - global_opt) / 
+	       (1. + CoinMax (fabs (opt), fabs (global_opt))) < COUENNE_EPS) ? 
+	      (char *) "OK", (char *) "FAILED");
+
+    } else // good old statistics
 
     if (bonmin.displayStats ()) { // print statistics
 
@@ -99,17 +107,6 @@ int main (int argc, char *argv[])
       double st=-1;
 
       // CAUTION: assuming first cut generator is our CouenneCutGenerator
-
-      CouenneCutGenerator *cg = NULL;
-
-      if (bb.model (). cutGenerators ())
-	cg = dynamic_cast <CouenneCutGenerator *> 
-	  (bb.model (). cutGenerators () [0] -> generator ());
-
-      if (cg) cg -> getStats (nr, nt, st);
-      else printf ("Warning, could not get pointer to CouenneCutGenerator\n");
-
-      CouenneProblem *cp = cg ? cg -> Problem () : NULL;
 
       if (cg && !cp) printf ("Warning, could not get pointer to problem\n");
       else
@@ -132,47 +129,6 @@ int main (int argc, char *argv[])
 		bb.numNodes ());
 		//bb.iterationCount ());
 		//status.c_str (), message.c_str ());
-
-      /*
-      /////////////////////////////////
-
-      double timeLimit = 0, obj = bb.model (). getObjValue ();
-      bonmin.options() -> GetNumericValue ("time_limit", timeLimit, "bonmin.");
-
-      if (CoinCpuTime () - time_start > timeLimit) {
-
-	// time limit reached, print upper and (in brackets) lower
-
-	double obj = bb.model (). getObjValue ();
-
-	if (fabs (obj) < 9e12) 
-	  printf    ("%18.9f &", bb.bestObj ());
-	else printf (" %8s     &", "inf_prim");
-
-	if (fabs (bb.bestBound()) < 9e12) 
-	  printf    (" (%18.9f) &", bb.bestBound ());
-	else printf (" %8s       &", "inf_dual");
-      }
-      else {
-	// time limit not reached, print upper and time
-
-	if (fabs (obj) < 9e12) 
-	  printf    (" %18.9f &", bb.bestObj ());
-	else printf (" %8s     &", "inf_prim");
-	  
-	if (fabs (bb.bestBound()) < 9e12) 
-	  printf    (" %12.3f   &", CoinCpuTime () - time_start);
-	else printf (" %8s       &", "inf_dual");
-      }
-
-
-      printf ("%7d & %7d \\\\\n",
-	      bb.numNodes(),
-	      bb.iterationCount());
-	      //	      nlp_and_solver->totalNlpSolveTime(),
-	      //	      nlp_and_solver->nCallOptimizeTNLP(),
-      //	      status.c_str());
-      */
     }
 
 //    nlp_and_solver -> writeAmplSolFile (message, bb.bestSolution (), NULL);
