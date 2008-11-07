@@ -37,11 +37,7 @@ are necessary to Ipopt.
 
 ### Building Couenne #########################################
 
-To build Couenne, you may just run the following two commands:
-
-$ ./configure
-$ make
-
+To build Couenne, you may just run the commands "configure" and "make".
 However, it is usually desirable to have several builds in separate
 sub-directories.  To do so, create a subdirectory and run configure
 and make from there:
@@ -59,13 +55,14 @@ you can install Couenne in a different directory:
 $ ../configure --prefix=/usr/local
 
 This installs executables in /usr/local/bin and libraries in
-/usr/local/lib.  You may have to run the last command as a super user.
+/usr/local/lib.  You may have to run the "make install" command 
+as a super user.
 
 
 
 ### Testing. ###################################################
 
-There are a few built-in tests to check that Couenne is installed
+There are a few built-in tests to check whether Couenne is installed
 properly and that it solves certain MINLPs correctly.  Before running
 "make install", you may run
 
@@ -78,15 +75,17 @@ line:
 
 $ make unitTest
 
-  Testing couenne.opt.vt
-    Test for couenne.opt.vt       on inst1                OK
-    Test for couenne.opt.vt       on inst2                OK
-    ...
-    Test for couenne.opt.strong_int_br on inst5                OK
-    Test for couenne.opt.strong_int_br on inst6                OK
-    Test for couenne.opt.strong_int_br on inst7                OK
+Testing couenne.opt.vt
+Global Optimum Test on circle.nl                                OK
+Global Optimum Test on cube.nl                                  OK
 
-Test succeeded.
+...
+
+Global Optimum Test on qquad.nl                                 OK
+Global Optimum Test on sin.nl                                   OK
+Global Optimum Test on small2.nl                                OK
+Global Optimum Test on toy.nl                                   OK
+
 $
 
 If all these tests return OK, congratulations! You have set up Couenne
