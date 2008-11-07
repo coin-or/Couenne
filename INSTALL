@@ -11,10 +11,13 @@
 
 Couenne is found in the COIN-OR repository. It can be downloaded with
 Subversion (http://subversion.tigris.org). Run the following command
-(if you are reading this file, you probably have Couenne already and don't
-need to):
+(if you are reading this file, you probably have Couenne already and
+don't need to):
 
 $ svn co https://projects.coin-or.org/svn/Couenne/trunk Couenne
+
+This creates a directory Couenne/ and downloads most of the necessary
+source files that are needed for building Couenne.
 
 
 ### Obtaining Third Party code ###############################
@@ -23,7 +26,7 @@ Couenne also requires that some third party packages, i.e. software
 that is not found on the COIN-OR repository, be downloaded and
 installed by the user (unless they are already on his/her
 machine). These are ASL, Blas, Lapack, and HSL. For the first three,
-simply move to the corresponding directory and run the get.XXXX script
+simply move to the corresponding directory and run the get.XYZ script
 file. For instance, ASL can be downloaded as follows:
 
 $ cd ThirdParty/ASL
@@ -42,8 +45,8 @@ However, it is usually desirable to have several builds in separate
 sub-directories.  To do so, create a subdirectory and run configure
 and make from there:
 
-$ mkdir build1
-$ cd build1
+$ mkdir build
+$ cd build
 $ ../configure -C
 $ make
 
@@ -60,7 +63,7 @@ as a super user.
 
 
 
-### Testing. ###################################################
+### Testing ####################################################
 
 There are a few built-in tests to check whether Couenne is installed
 properly and that it solves certain MINLPs correctly.  Before running
@@ -92,7 +95,7 @@ If all these tests return OK, congratulations! You have set up Couenne
 correctly.  It is now safe to install Couenne.
 
 
-### Installing and using Couenne. ##############################
+### Installing and using Couenne ###############################
 
 Simply run
 
