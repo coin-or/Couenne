@@ -5,6 +5,8 @@ srcdir="@srcdir@"
 echo Testing Couenne:
 echo
 
+failed=0
+
 for i in $srcdir/../test/config_files/* 
 
   do 
@@ -24,11 +26,23 @@ for i in $srcdir/../test/config_files/*
         echo -n "couenne_check "                >> couenne.opt
         cat $srcdir/../test/data/$name.obj      >> couenne.opt
 
-        ../src/main/couenne $name | grep "Global Optimum Test"
-
-	rm -f $name
+        ../src/main/couenne $name >tmpfile 2>&1
+        grep "Global Optimum Test .* OK" tmpfile
+        if test $? != 0; then
+          failed=1
+          echo "Global Optimum Test on $name    FAILED!"
+          echo
+          echo " ---- 8< ---- Start of test program output ---- 8< ----"
+          cat tmpfile
+          echo " ---- 8< ----  End of test program output  ---- 8< ----"
+          echo
+        fi
+        rm -f tmpfile
+        rm -f $name
         rm -f couenne.opt 
 
     done
     echo
 done 
+
+exit $failed
