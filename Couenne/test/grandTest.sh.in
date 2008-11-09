@@ -33,7 +33,7 @@ for i in $srcdir/../test/config_files/*
           echo "Global Optimum Test on $name    FAILED!"
           echo
           echo " ---- 8< ---- Start of test program output ---- 8< ----"
-          cat tmpfile
+          cat tmpfile 1>&2
           echo " ---- 8< ----  End of test program output  ---- 8< ----"
           echo
         fi
