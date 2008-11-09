@@ -25,9 +25,10 @@ source files that are needed for building Couenne.
 Couenne also requires that some third party packages, i.e. software
 that is not found on the COIN-OR repository, be downloaded and
 installed by the user (unless they are already on his/her
-machine). These are ASL, Blas, Lapack, and HSL. For the first three,
-simply move to the corresponding directory and run the get.XYZ script
-file. For instance, ASL can be downloaded as follows:
+machine). These are ASL, Blas, Lapack, and one of the two packages 
+HSL or MUMPS. For the first three, simply move to the corresponding 
+directory and run the get.XYZ script file. For instance, ASL can be 
+downloaded as follows:
 
 $ cd ThirdParty/ASL
 $ ./get.ASL
