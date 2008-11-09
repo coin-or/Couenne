@@ -76,19 +76,23 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
   if (reference_ -> Type () == AUX)
     fx = (*(reference_ -> Image ())) ();
 
-  if (dependence.size () == 0) { // this is a top level auxiliary,
-				 // nowhere an independent
+  if (dependence.size () == 0) { 
 
-    // that means, for VT, that letting w vary and keeping everything
-    // else constant we return the difference between current value
-    // and value of function at this point
+    // this is a top level auxiliary, nowhere an independent, OR all
+    // auxiliaries depending on it have a linear expression
+
+    // that means, for VT, that by letting w vary and keeping
+    // everything else constant
+
+    // we return the difference between current value and value of
+    // function at this point
 
     // these variables may also be disabled in BonCouenneSetup.cpp
 
-    assert (reference_ -> Type () == AUX); // otherwise, this is an isolated variable
-
-    // check if this w=f(x) is used nowhere and is feasible
-    retval = upEstimate_ = downEstimate_ = maxInf = checkInfeasibility (info);
+    retval = (reference_ -> Type () == AUX) ? // if this is an isolated variable
+      // check if this w=f(x) is used nowhere and is feasible
+      (upEstimate_ = downEstimate_ = maxInf = checkInfeasibility (info)) : 
+      0.;
 
   } else {
 

@@ -26,7 +26,7 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
 
   // header //////////////////////////////////////////////////////////////
 
-  f << "* MINLP Written by Couenne (https://projects.coin-or.org/Bonmin/wiki/BonCouenne)" << std::endl
+  f << "* MINLP Written by Couenne (https://projects.coin-or.org/Couenne)" << std::endl
     << "* problem name: " << problemName_ << std::endl
     << "* " << nVars () << " variables, " << nCons () << " constraints" << std::endl << std::endl;
 
