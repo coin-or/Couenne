@@ -22,9 +22,8 @@ for i in $srcdir/../test/config_files/*
 	cp $j .
         name=`basename $j .nl`
 
-        cat $srcdir/../test/couenne.opt.base $i  > couenne.opt 
-        echo -n "couenne_check "                >> couenne.opt
-        cat $srcdir/../test/data/$name.obj      >> couenne.opt
+        cat $srcdir/../test/couenne.opt.base $i                     > couenne.opt 
+        echo "couenne_check " `cat $srcdir/../test/data/$name.obj` >> couenne.opt
 
         ../src/main/couenne $name >tmpfile 2>&1
         grep "Global Optimum Test .* OK" tmpfile
