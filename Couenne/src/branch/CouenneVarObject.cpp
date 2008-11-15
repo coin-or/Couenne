@@ -148,7 +148,7 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
       printf ("  --> "); 
       if (brVar) brVar -> print (); 
       printf (" at %g, improv %g <%g>, indices = %d,%d\n", 
-	      *brPts, improv, maxdist, index, brVar -> Index ());
+	      *brPts, improv, maxdist, index, brVar ? brVar -> Index () : -1);
     }
 
     if (brVar &&

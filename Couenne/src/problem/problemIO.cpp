@@ -87,13 +87,14 @@ bool CouenneProblem::readOptimum (std::string *fname) {
 
     fname = &problemName_;
 
-    int 
-      base = fname -> rfind ('/'),
-      size = fname -> find  ('.', base) - base;
+    int base = fname -> rfind ('/'), size;
+    if (base < 0) base = 0; else base++;
 
-    char *filename = new char [size+4];
-    CoinFillN (filename, size+4, (char) 0);
-    fname -> copy (filename, size, base+1);
+    size = fname -> find  ('.', base) - base;
+
+    char *filename = new char [size+5];
+    CoinFillN (filename, size+5, (char) 0);
+    fname -> copy (filename, 1+size, base);
     strcat (filename, "txt");
     f = fopen (filename, "r");
     delete [] filename;

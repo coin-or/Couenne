@@ -89,7 +89,7 @@ class CouenneProblem {
   int nIntVars_;
 
   /// Best solution known to be loaded from file -- for testing purposes
-  CouNumber *optimum_;
+  mutable CouNumber *optimum_;
 
   /// Best known objective function
   CouNumber bestObj_;

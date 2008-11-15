@@ -29,6 +29,9 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
   if (numberInRank_.size () == 0) // there is no original integer to fix
     return 0;
 
+  CouNumber *store_optimum = optimum_; // temporary place for debug optimal solution
+  optimum_ = NULL;
+
   int
     ncols    = nVars (), 
     retval   = 0;
@@ -307,7 +310,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
   if (jnlst_->ProduceOutput(Ipopt::J_MOREVECTOR, J_PROBLEM)) {
     if (retval >= 0) {
-      printf ("- retval %d ----------------------------------------------------------------\n", 
+      printf ("- Done: retval %d ----------------------------------------------------------------\n", 
 	      retval);
       for (int i=0; i<nOrigVars_; i++)
 	if (variables_ [i] -> Multiplicity () > 0)
@@ -325,6 +328,8 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
   domain_.pop ();
 
   jnlst_ -> Printf (J_MOREVECTOR, J_PROBLEM, "Done with GetIntegerCandidate\n");
+
+  optimum_ = store_optimum; // restore 
 
   return retval;
 }

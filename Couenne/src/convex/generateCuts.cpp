@@ -75,6 +75,16 @@ void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p,
 void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 					OsiCuts &cs, 
 					const CglTreeInfo info) const {
+
+  jnlst_ -> Printf(J_VECTOR, J_CONVEXIFYING,"== GENERATE CUTS:============\n");
+  for (int i = 0; i < problem_ -> nVars (); i++)
+    if (problem_ -> Var (i) -> Multiplicity () > 0)
+      jnlst_->Printf(J_VECTOR, J_CONVEXIFYING,"%4d %+20.8g [%+20.8g,%+20.8g]\n", i,
+		     si.getColSolution () [i],
+		     si.getColLower () [i], 
+		     si.getColUpper () [i]);
+  jnlst_->Printf(J_VECTOR, J_CONVEXIFYING,  "=============================\n");
+
   const int infeasible = 1;
 
   int nInitCuts = cs.sizeRowCuts ();
@@ -279,6 +289,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // Reduced Cost BT -- to be done first to use rcost correctly
     if (!firstcall_  &&                         // have a linearization already
 	problem_ -> redCostBT (&si, chg_bds) && // some variables were tightened with reduced cost
+	problem_ -> doFBBT () &&
 	!(problem_ -> btCore (chg_bds)))        // in this case, do another round of FBBT
       throw infeasible;
 

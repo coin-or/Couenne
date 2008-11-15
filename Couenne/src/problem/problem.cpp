@@ -38,14 +38,15 @@ void CouenneProblem::initAuxs () const {
 
   int nvars = nVars ();
 
-  for (int i = 0; i < nvars; i++) {
+  for (int i=0; i < nvars; i++) {
 
-    int index;
+    int indvar = variables_ [i] -> Index ();
 
-    if ((variables_ [i] -> Type () == AUX) &&                // this is an auxiliary
-	((index = variables_ [i] -> Index ()) >= nOrigVars_)) // and not an original, originally...
+    if ((variables_ [i] -> Type () == AUX) &&                   // this is an auxiliary
+	(indvar >= nOrigVars_) || // and not an original, originally
+	(variables_ [i] -> Multiplicity () == 0))               // or a useless one
       //int index = variables_ [i] -> Index ();
-      Lb (index) = - (Ub (index) = COUENNE_INFINITY);
+      Lb (indvar) = - (Ub (indvar) = COIN_DBL_MAX);
   }
 
   // first initialize with values from constraints
@@ -74,6 +75,14 @@ void CouenneProblem::initAuxs () const {
 
     int ord = numbering_ [j];
 
+    // ignore these variables!
+    if (variables_ [ord] -> Multiplicity () == 0) {
+      Lb (ord) = - (Ub (ord) = COIN_DBL_MAX);
+      X (ord) = 0.;
+      continue;
+    }
+
+    // and handle only those with nonzero multiplicity
     if (variables_ [ord] -> Type () == AUX) {
 
       Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
@@ -120,19 +129,22 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
     int index = numbering_ [j];
     exprVar *var = variables_ [index];
 
-    CouNumber l, u;
+    if (var -> Multiplicity () > 0) {
 
-    if (var -> Type () == AUX)
-      var -> Image () -> getBounds (l,u);
-    else {
-      l = Lb (index);
-      u = Ub (index);
-    }
+      CouNumber l, u;
 
-    if (var -> Type () == AUX)
-      //x [index] = //not necessary, addresses of x and X are equal
-      X (index) = 
-	CoinMax (l, CoinMin (u, (*(var -> Image ())) ()));
+      if (var -> Type () == AUX)
+	var -> Image () -> getBounds (l,u);
+      else {
+	l = Lb (index);
+	u = Ub (index);
+      }
+
+      if (var -> Type () == AUX)
+	//x [index] = //not necessary, addresses of x and X are equal
+	X (index) = 
+	  CoinMax (l, CoinMin (u, (*(var -> Image ())) ()));
+    } else X (index) = 0.;
   }
 
   domain_.pop ();

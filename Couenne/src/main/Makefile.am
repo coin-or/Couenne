@@ -90,8 +90,7 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding` \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglTwomir` \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglKnapsackCover` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglPreProcess` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` 
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglPreProcess`
 
 #if COIN_HAS_CPX
 #  AM_CPPFLAGS += \
@@ -117,12 +116,7 @@ if COIN_HAS_COUENNE
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`
 endif
 
-couenne_SOURCES = BonCouenne.cpp \
-	BonCouenneSetup.cpp BonCouenneSetup.hpp \
-	BonCouenneInterface.cpp BonCouenneInterface.hpp \
-	BonNlpHeuristic.cpp BonNlpHeuristic.hpp \
-	BonInitHeuristic.cpp BonInitHeuristic.hpp \
-	BonCouenneInfo.cpp BonCouenneInfo.hpp
+couenne_SOURCES = BonCouenne.cpp
 
 couenne_LDADD = \
 	$(LIBCBCCOPY) \

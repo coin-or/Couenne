@@ -18,6 +18,12 @@ lib_LTLIBRARIES = libCouenne.la
 
 # List all source files for this library, including headers
 libCouenne_la_SOURCES = \
+	main/BonCouenneSetup.cpp \
+	main/BonCouenneInterface.cpp \
+	main/BonNlpHeuristic.cpp \
+	main/BonInitHeuristic.cpp \
+	main/BonCouenneInfo.cpp \
+	main/BonCouenneInfo.hpp \
 	branch/CouenneThreeWayBranchObj.cpp \
 	branch/CouenneBranchingObject.cpp \
 	branch/CouenneObject.cpp \
@@ -154,6 +160,8 @@ endif
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
 AM_CPPFLAGS = -I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators/bounds` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
@@ -174,12 +182,27 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
 	-I`$(CYGPATH_W) $(CGLOBJDIR)/inc` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding2` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglLandP` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglRedSplit` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglGomory` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglProbing` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglOddHole` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglClique` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglFlowCover` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglTwomir` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglKnapsackCover` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglPreProcess` \
 	-I`$(CYGPATH_W) $(CLPSRCDIR)/src` \
 	-I`$(CYGPATH_W) $(CLPOBJDIR)/inc` \
 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/OaGenerators` \
 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/Branching` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/OaGenerators` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/Ampl` \
 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ipopt` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ampl` \
 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/CbcBonmin` \
 	-I`$(CYGPATH_W) $(objdir)/inc` \
 	-I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src` \
@@ -202,6 +225,10 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
 # and that therefore should be installed in 'install'
 include_HEADERS = \
 	../inc/config_couenne.h \
+	main/BonCouenneSetup.hpp \
+	main/BonCouenneInterface.hpp \
+	main/BonNlpHeuristic.hpp \
+	main/BonInitHeuristic.hpp \
 	branch/CouenneObject.hpp \
 	branch/CouenneVarObject.hpp \
 	branch/CouenneVTObject.hpp \

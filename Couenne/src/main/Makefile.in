@@ -71,9 +71,7 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_couenne_OBJECTS = BonCouenne.$(OBJEXT) BonCouenneSetup.$(OBJEXT) \
-	BonCouenneInterface.$(OBJEXT) BonNlpHeuristic.$(OBJEXT) \
-	BonInitHeuristic.$(OBJEXT) BonCouenneInfo.$(OBJEXT)
+am_couenne_OBJECTS = BonCouenne.$(OBJEXT)
 couenne_OBJECTS = $(am_couenne_OBJECTS)
 @COIN_HAS_COUENNE_TRUE@am__DEPENDENCIES_1 =  \
 @COIN_HAS_COUENNE_TRUE@	$(COUENNEOBJDIR)/src/libCouenne.la
@@ -102,14 +100,6 @@ LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(couenne_SOURCES)
 DIST_SOURCES = $(couenne_SOURCES)
 ETAGS = etags
@@ -363,15 +353,9 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglMixedIntegerRounding` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglTwomir` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglKnapsackCover` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglPreProcess` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src` $(ASL_CPPFLAGS) $(am__append_2)
-couenne_SOURCES = BonCouenne.cpp \
-	BonCouenneSetup.cpp BonCouenneSetup.hpp \
-	BonCouenneInterface.cpp BonCouenneInterface.hpp \
-	BonNlpHeuristic.cpp BonNlpHeuristic.hpp \
-	BonInitHeuristic.cpp BonInitHeuristic.hpp \
-	BonCouenneInfo.cpp BonCouenneInfo.hpp
-
+	$(CGLSRCDIR)/src/CglPreProcess` $(ASL_CPPFLAGS) \
+	$(am__append_2)
+couenne_SOURCES = BonCouenne.cpp
 couenne_LDADD = \
 	$(LIBCBCCOPY) \
 	$(COINLIBS) \
@@ -455,11 +439,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenne.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInfo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInterface.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonNlpHeuristic.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
