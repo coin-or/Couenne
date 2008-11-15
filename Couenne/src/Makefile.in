@@ -77,7 +77,7 @@ libCouenne_la_LIBADD =
 am__libCouenne_la_SOURCES_DIST = main/BonCouenneSetup.cpp \
 	main/BonCouenneInterface.cpp main/BonNlpHeuristic.cpp \
 	main/BonInitHeuristic.cpp main/BonCouenneInfo.cpp \
-	main/BonCouenneInfo.hpp branch/CouenneThreeWayBranchObj.cpp \
+	branch/CouenneThreeWayBranchObj.cpp \
 	branch/CouenneBranchingObject.cpp branch/CouenneObject.cpp \
 	branch/CouenneVarObject.cpp branch/CouenneChooseVariable.cpp \
 	branch/CouenneChooseStrong.cpp branch/doStrongBranching.cpp \
@@ -216,14 +216,6 @@ LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libCouenne_la_SOURCES)
 DIST_SOURCES = $(am__libCouenne_la_SOURCES_DIST)
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
@@ -426,7 +418,7 @@ lib_LTLIBRARIES = libCouenne.la
 libCouenne_la_SOURCES = main/BonCouenneSetup.cpp \
 	main/BonCouenneInterface.cpp main/BonNlpHeuristic.cpp \
 	main/BonInitHeuristic.cpp main/BonCouenneInfo.cpp \
-	main/BonCouenneInfo.hpp branch/CouenneThreeWayBranchObj.cpp \
+	branch/CouenneThreeWayBranchObj.cpp \
 	branch/CouenneBranchingObject.cpp branch/CouenneObject.cpp \
 	branch/CouenneVarObject.cpp branch/CouenneChooseVariable.cpp \
 	branch/CouenneChooseStrong.cpp branch/doStrongBranching.cpp \
@@ -581,6 +573,7 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
 # and that therefore should be installed in 'install'
 include_HEADERS = \
 	../inc/config_couenne.h \
+	main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp \
 	main/BonCouenneInterface.hpp \
 	main/BonNlpHeuristic.hpp \

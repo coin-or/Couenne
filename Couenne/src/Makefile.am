@@ -23,7 +23,6 @@ libCouenne_la_SOURCES = \
 	main/BonNlpHeuristic.cpp \
 	main/BonInitHeuristic.cpp \
 	main/BonCouenneInfo.cpp \
-	main/BonCouenneInfo.hpp \
 	branch/CouenneThreeWayBranchObj.cpp \
 	branch/CouenneBranchingObject.cpp \
 	branch/CouenneObject.cpp \
@@ -225,6 +224,7 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
 # and that therefore should be installed in 'install'
 include_HEADERS = \
 	../inc/config_couenne.h \
+	main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp \
 	main/BonCouenneInterface.hpp \
 	main/BonNlpHeuristic.hpp \
