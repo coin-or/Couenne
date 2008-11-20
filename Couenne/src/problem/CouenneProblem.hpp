@@ -210,7 +210,7 @@ class CouenneProblem {
   {return variables_;}
 
   /// Return pointer to set for comparisons
-  inline std::set <exprAux *, compExpr> *AuxSet () 
+  inline std::set <exprAux *, compExpr> *& AuxSet () 
   {return auxSet_;}
 
   /// Return pointer to dependence graph
