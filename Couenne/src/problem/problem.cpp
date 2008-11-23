@@ -301,6 +301,7 @@ void CouenneProblem::realign () {
     (*i) -> Body () -> realign (this);
 }
 
+
 /// Add list of options to be read from file
 void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
 

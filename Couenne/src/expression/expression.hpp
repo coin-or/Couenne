@@ -74,8 +74,7 @@ class expression {
   {return NULL;}
 
   /// set arglist (used in deleting nodes without deleting children)
-  virtual inline void ArgList (expression **al)
-  {}
+  virtual inline void ArgList (expression **al) {}
 
   /// return argument (when applicable, i.e., with univariate functions)
   virtual inline expression *Argument () const
@@ -187,7 +186,7 @@ class expression {
   {return COU_EXPRESSION;}
 
   /// either CONVEX, CONCAVE, AFFINE, or NONCONVEX
-  virtual enum convexity convexity () 
+  virtual enum convexity convexity () const
   {return NONCONVEX;}
 
   /// compare expressions
@@ -256,12 +255,19 @@ class expression {
   /// concave ("bad") side
   virtual bool isCuttable (CouenneProblem *problem, int index) const
   {return true;}
+
+  /// return true if this is a copy of something (i.e. an exprCopy)
+  virtual bool isaCopy () const
+  {return false;}
+
+  /// return copy of this expression (only makes sense in exprCopy)
+  virtual expression *Copy () const
+  {return NULL;}
 };
 
 
 /// updates maximum violation. Used with all impliedBound. Returns true
 /// if a bound has been modified, false otherwise
-
 inline bool updateBound (int sign, CouNumber *dst, CouNumber src) {
 
   // meaning: 
@@ -281,13 +287,23 @@ inline bool updateBound (int sign, CouNumber *dst, CouNumber src) {
   return false;
 }
 
+
 /// independent comparison
-inline int compareExpr (const void *e0, const void *e1) {
-  return ((*(expression **) e0) -> compare (**(expression **)e1));
-}
+inline int compareExpr (const void *e0, const void *e1)
+{return ((*(expression **) e0) -> compare (**(expression **)e1));}
+
 
 /// is this number integer?
 inline bool isInteger (CouNumber x)
 {return (fabs (COUENNE_round (x) - x) < COUENNE_EPS_INT);}
+
+
+/// get original expression (can't make it an expression method as I
+/// need a non-const, what "this" would return)
+inline expression *getOriginal (expression *e) {
+
+  if (e -> isaCopy ()) return getOriginal (e -> Copy ());
+  else return e;
+}
 
 #endif

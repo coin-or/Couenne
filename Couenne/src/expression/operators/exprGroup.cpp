@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: implementation of some methods for exprGroup
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-08.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -11,6 +11,7 @@
 #include "exprVar.hpp"
 #include "exprGroup.hpp"
 #include "depGraph.hpp"
+#include "CouenneProblem.hpp"
 
 class Domain;
 
@@ -30,6 +31,7 @@ exprGroup::exprGroup  (const exprGroup &src, Domain *d):
   c0_       (src.c0_) {
 
   for (lincoeff::iterator i = src.lcoeff_.begin (); i != src.lcoeff_.end (); ++i)
+
     lcoeff_ . push_back (std::pair <exprVar *, CouNumber> 
 			 //(dynamic_cast <exprVar *> (i -> first -> clone (d)), i -> second));
 			 (new exprVar (i -> first -> Index (), d), i -> second));
@@ -288,4 +290,23 @@ CouNumber exprGroup::gradientNorm (const double *x) {
     retval += el -> second * el -> second;
 
   return sqrt (retval);
+}
+
+
+/// Redirect variables to proper variable vector
+void exprGroup::realign (const CouenneProblem *p) {
+
+  for (lincoeff::iterator el = lcoeff_.begin (); el != lcoeff_.end (); ++el) {
+
+    exprVar *var = el -> first;
+
+    if (((var -> Type () == VAR) ||  
+	 (var -> Type () == AUX)) &&
+	(var -> Original () != p -> Var (var -> Index ()))) {
+
+      expression *trash = var;
+      el -> first = p -> Var (var -> Index ());
+      delete trash;
+    }
+  }
 }

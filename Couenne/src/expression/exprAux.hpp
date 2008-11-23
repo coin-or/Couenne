@@ -13,18 +13,16 @@
 
 #include <iostream>
 
-#include "expression.hpp"
 #include "exprVar.hpp"
 
 class CouenneCutGenerator;
 
 /** Auxiliary variable
  *
- *  It is associated with an expression which may depend on original
- *  and/or other auxiliary variables. It is used for AMPL's defined
- *  variables (aka common expressions) and to reformulate nonlinear
- *  constraints/objectives.
- *
+ *  It is associated with an expression which depends, in general, on
+ *  original and/or other auxiliary variables. It is used for AMPL's
+ *  defined variables (aka common expressions) and to reformulate
+ *  nonlinear constraints/objectives.
  */
 
 class exprAux: public exprVar {

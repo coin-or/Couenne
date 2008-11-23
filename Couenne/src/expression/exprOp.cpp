@@ -111,9 +111,9 @@ int exprOp::rank () {
 
   int maxrank = -1;
 
-  for (register expression **al = arglist_ + nargs_; 
+  for (expression **al = arglist_ + nargs_; 
        al-- > arglist_;) {
-    register int r = (*al) -> rank ();
+    int r = (*al) -> rank ();
     if (r > maxrank) maxrank = r;
   }
 

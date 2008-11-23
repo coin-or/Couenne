@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: define the classes used by class CouenneProblem
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-08. 
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -38,13 +38,13 @@ class CouenneConstraint {
 
  protected:
 
-  expression *body_; ///< body of constraint
-  expression *lb_;   ///< lower bound
-  expression *ub_;   ///< upper bound
+  expression *body_; ///< Body of constraint
+  expression *lb_;   ///< Lower bound (expression)
+  expression *ub_;   ///< Upper bound (expression)
 
  public:
 
-  /// constructor
+  /// Constructor
   CouenneConstraint  (expression *body = NULL, 
   	              expression *lb   = NULL, 
 		      expression *ub   = NULL):
@@ -61,29 +61,29 @@ class CouenneConstraint {
     else if (!ub_) ub_ = new exprConst   (COUENNE_INFINITY);
   }
 
-  /// destructor
+  /// Destructor
   ~CouenneConstraint () {
     delete body_; 
     delete lb_; 
     delete ub_;
   }
 
-  /// copy constructor
+  /// Copy constructor
   CouenneConstraint  (const CouenneConstraint &c, Domain *d = NULL):
     body_  (c.Body () -> clone (d)),
     lb_    (c.Lb   () -> clone (d)),
     ub_    (c.Ub   () -> clone (d)) {}
 
-  /// cloning method
+  /// Cloning method
   inline CouenneConstraint *clone (Domain *d = NULL) const
   {return new CouenneConstraint (*this, d);}
 
-  // get constraint's elements
-  inline expression *Lb   () const {return lb_;}   ///< expression of lower bound
-  inline expression *Ub   () const {return ub_;}   ///< expression of upper bound
-  inline expression *Body () const {return body_;} ///< expression of body of constraint
+  // Get constraint's elements
+  inline expression *Lb   () const {return lb_;}   ///< Expression of lower bound
+  inline expression *Ub   () const {return ub_;}   ///< Expression of upper bound
+  inline expression *Body () const {return body_;} ///< Expression of body of constraint
 
-  /// set body of constraint
+  /// Set body of constraint
   inline expression *Body (expression *newBody) 
   {body_ = newBody; return body_;}
 
@@ -99,7 +99,9 @@ class CouenneConstraint {
 /**
  * Objective function
  *
- * It consists of an expression and an optimization direction.
+ * It consists of an expression only. We only assume minimization
+ * problems (proper sign changes are applied upon reading)
+ *
  */
 
 class CouenneObjective {

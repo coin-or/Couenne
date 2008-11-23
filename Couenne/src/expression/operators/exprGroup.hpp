@@ -101,6 +101,9 @@ public:
 
   /// replace variable x with new (aux) w
   virtual void replace (exprVar *x, exprVar *w);
+
+  /// redirect variables to proper variable vector
+  virtual void realign (const CouenneProblem *p);
 };
 
 

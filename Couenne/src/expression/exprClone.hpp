@@ -25,27 +25,33 @@ class exprClone: public exprCopy {
 
   /// Constructor
   exprClone  (expression *copy): 
-    exprCopy (copy) {}
+    exprCopy (getOriginal (copy)) {}
 
   /// copy constructor
   exprClone (const exprClone &e, Domain *d = NULL):
-    exprCopy (e, d) {}
+  //{copy_ = e.copy_;}// d = e.domain_;}
+  exprCopy (e, d) {}
 
   /// cloning method
   expression *clone (Domain *d = NULL) const
   {return new exprClone (*this, d);}
+  /*{
+    if (copy_ != Original ()) return copy_ -> clone (d);
+    else                      return new exprClone (*this, d);
+    }*/
+  //{return copy_ -> Original () -> clone (d);}
 
   /// Destructor
   virtual ~exprClone () {
     //if (copy_ != Original ())
     //delete copy_;
-    copy_ = NULL;
+    copy_ = NULL; // unlink pointer so that ~exprCopy does nothing
   }
 
   /// I/O
   //void print (std::ostream &out = std::cout, 
   //bool descend      = false) const
-    //{copy_ -> Original () -> print (out, descend);}
+  //{copy_ -> Original () -> print (out, descend);}
   //{out << "{"; copy_ -> print (out, descend); out << "}"; } // Must go
 
   /// value
@@ -57,7 +63,7 @@ class exprClone: public exprCopy {
   {return ((*copy_) ());}
 
   /// redirect variables to proper variable vector
-  void realign (const CouenneProblem *p);
+  //void realign (const CouenneProblem *p);
 };
 
 #endif

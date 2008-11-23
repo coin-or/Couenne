@@ -50,12 +50,14 @@ class exprStore: public exprCopy {
   virtual inline expression *clone (Domain *d = NULL) const
   {return new exprStore (*this, d);}
 
-  /// null function for evaluating the expression
+  /// function for evaluating the expression -- returns value of
+  /// exprCopy pointed to, which returns a value stored from a
+  /// previous evaluation
   virtual inline CouNumber operator () () 
   {return (copy_ -> Value ());}
 
   /// empty function to redirect variables to proper variable vector
-  virtual void realign (const CouenneProblem *p);
+  //virtual void realign (const CouenneProblem *p);
 };
 
 #endif

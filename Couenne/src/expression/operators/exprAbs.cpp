@@ -140,3 +140,12 @@ bool exprAbs::isCuttable (CouenneProblem *problem, int index) const {
 
   return ((y <= x) || (y <= -x));
 }
+
+
+/// either CONVEX, CONCAVE, AFFINE, or NONCONVEX
+//enum convexity exprAbs::convexity () const {
+
+//  CouNumber lb, ub;
+//  getBounds (lb, ub);
+//  return (((lb >= 0.) || (ub <= 0.)) ? AFFINE : CONVEX);
+//}

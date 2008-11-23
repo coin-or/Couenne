@@ -28,43 +28,43 @@ class exprVar: public expression {
 
  protected:
 
-  int varIndex_;   ///< the index of the variable's current value
-  Domain *domain_; ///< pointer to a descriptor of the current point/bounds
+  int varIndex_;   ///< The index of the variable.
+  Domain *domain_; ///< Pointer to a descriptor of the current point/bounds.
 
  public:
 
-  /// node type
+  /// Node type.
   virtual inline enum nodeType Type () const
   {return VAR;}
 
-  /// Constructor
+  /// Constructor.
   exprVar (int varIndex, Domain *d = NULL):
     varIndex_ (varIndex),
     domain_   (d) {}
 
-  // destructor
-  //virtual ~exprVar () {}
+  /// destructor
+  virtual ~exprVar () {}
 
-  /// copy constructor
+  /// Copy constructor
   exprVar (const exprVar &e, Domain *d = NULL):
     varIndex_ (e.varIndex_),
     domain_   (d) {}
 
-  /// cloning method
-  virtual exprVar *clone (Domain *d = NULL) const
+  /// Cloning method
+  virtual inline exprVar *clone (Domain *d = NULL) const
   {return new exprVar (*this, d);}
 
-  /// get variable index in problem
+  /// Get variable index in problem
   inline int Index () const
   {return varIndex_;}
 
   // Bounds
-  virtual expression *Lb (); ///< get lower bound expression
-  virtual expression *Ub (); ///< get upper bound expression
+  virtual expression *Lb (); ///< Get lower bound expression
+  virtual expression *Ub (); ///< Get upper bound expression
 
   // Bounds
-  virtual inline CouNumber &lb () {return domain_ -> lb (varIndex_);} ///< lower bound
-  virtual inline CouNumber &ub () {return domain_ -> ub (varIndex_);} ///< upper bound
+  virtual inline CouNumber &lb () {return domain_ -> lb (varIndex_);} ///< Get/set lower bound value
+  virtual inline CouNumber &ub () {return domain_ -> ub (varIndex_);} ///< Get/set upper bound value
 
   /// print
   virtual void print (std::ostream &out = std::cout,
@@ -117,8 +117,14 @@ class exprVar: public expression {
     return ((fabs (lb - domain_ -> ub (varIndex_)) < COUENNE_EPS) && (::isInteger (lb)));
   }
 
-  /// Get lower and upper bound of an expression (if any)
+  /// Get expressions of lower and upper bound of an expression (if any)
   virtual void getBounds (expression *&, expression *&);
+
+  /// Get values of lower and upper bound of an expression (if any)
+  //virtual inline void getBounds (CouNumber &lb, CouNumber &ub) {
+  //lb = domain_ -> lb (varIndex_);
+  //ub = domain_ -> ub (varIndex_);
+  //}
 
   /// generate cuts for expression associated with this auxiliary
   virtual void generateCuts (const OsiSolverInterface &, 
@@ -169,6 +175,10 @@ class exprVar: public expression {
 
   /// Set this variable as integer (empty for compatibility with exprAux)
   virtual inline void setInteger (bool value) {}
+
+  /// either CONVEX, CONCAVE, AFFINE, or NONCONVEX
+  virtual enum convexity convexity () const
+  {return AFFINE;}
 };
 
 #endif

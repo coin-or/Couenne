@@ -9,7 +9,7 @@
 AUTOMAKE_OPTIONS = foreign
 
 ########################################################################
-#                               libCbc                                 #
+#                               libCouenne                             #
 ########################################################################
 
 # Name of the library compiled in this directory.  We want it to be installed
@@ -151,6 +151,13 @@ libCouenne_la_SOURCES += readnl/readnl.cpp \
 			 readnl/invmap.cpp \
 			 readnl/readASLfg.cpp
 endif
+
+
+#libCouenne_la_LIBADD =
+
+# adding AMPL interface for use with other executables
+#libCouenne_la_LIBADD += $(IPOPTOBJDIR)/.../libamplinterface.la
+
 
 ########################################################################
 #                            Additional flags                          #

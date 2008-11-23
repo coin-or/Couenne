@@ -52,11 +52,11 @@ CouenneProblem::CouenneProblem (const struct ASL *asl,
   logObbtLev_(0),
   logAbtLev_ (0),
   jnlst_(jnlst),
-  opt_window_ (1e50),
+  opt_window_ (COIN_DBL_MAX),
   useQuadratic_ (false),
   feas_tolerance_ (feas_tolerance_default),
   integerRank_ (NULL),
-  maxCpuTime_  (1.e20) {
+  maxCpuTime_  (COIN_DBL_MAX) {
 
   if (!asl) return;
 
@@ -206,41 +206,32 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);
 
-  //variables_ [0] = new exprVar (0, &domain_);
-
   for (int i=0; i < p.nVars (); i++) {
     int ind = p.numbering_ [i];
-    //if (ind==0) delete variables_ [0];
     variables_ [ind] = p.Var (ind) -> clone (&domain_);
-
-    //if (!(variables_ [ind])) printf ("var %d NULL\n", ind);
   }
 
-  if (p.numbering_) {
-    int i;
-    numbering_ = new int [i = nVars ()];
-    while (i--)
-      numbering_ [i] = p.numbering_ [i];
-  }
+  if (p.numbering_)
+    numbering_ = CoinCopyOfArray (p.numbering_, nVars ());
 
+  // clone objectives and constraints (there's a leak around here)
   for (int i=0; i < p.nObjs (); i++) objectives_  . push_back (p.Obj (i) -> clone (&domain_));
   for (int i=0; i < p.nCons (); i++) constraints_ . push_back (p.Con (i) -> clone (&domain_));
 
-  if (p.optimum_) {
-    optimum_ = (CouNumber *) malloc (nVars () * sizeof (CouNumber));
-
-    for (int i = nVars (); i--;)
-      optimum_ [i] = p.optimum_ [i];
-  }
-
+  if (p.optimum_) 
+    optimum_ = CoinCopyOfArray (p.optimum_, nVars ());
+    
   // clear all spurious variables pointers not referring to the variables_ vector
   realign ();
 
+  // copy integer rank (used in getIntegerCandidate)
   if (p.integerRank_) {
-
     integerRank_ = new int [nVars ()];
     CoinCopyN (p.integerRank_, nVars (), integerRank_);
   }
+
+  //printf ("========================= COPIED PROBLEM %x:\n", this);
+  //print ();
 }
 
 
@@ -336,7 +327,6 @@ expression *CouenneProblem::addVariable (bool isDiscrete, Domain *d) {
 
 /// add auxiliary variable and associate it with pointer to expression
 /// given as argument
-
 exprAux *CouenneProblem::addAuxiliary (expression *symbolic) {
 
   // check if image is already in the expression database auxSet_

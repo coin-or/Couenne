@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods of the class of auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-08. 
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -69,8 +69,11 @@ exprAux::exprAux (const exprAux &e, Domain *d):
 
   //  lb_ = new exprMax (new exprLowerBound (varIndex_), lb_);
   //  ub_ = new exprMin (new exprUpperBound (varIndex_), ub_);
+
   lb_ = new exprLowerBound (varIndex_, domain_);
   ub_ = new exprUpperBound (varIndex_, domain_);
+
+  //crossBounds ();
 }
 
 

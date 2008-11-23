@@ -92,6 +92,9 @@ class exprCos: public exprUnary {
   /// concave ("bad") side
   virtual bool isCuttable (CouenneProblem *problem, int index) const
   {return false;}
+
+  /// either CONVEX, CONCAVE, AFFINE, or NONCONVEX
+  //virtual enum convexity convexity () const;
 };
 
 

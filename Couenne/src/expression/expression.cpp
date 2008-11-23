@@ -112,7 +112,20 @@ int expression::compare (expression &e1) {
 /// Copy constructor
 exprCopy::exprCopy (const exprCopy &e, Domain *d) {
 
+  //expression *copy = getOriginal (e.copy_);
+
+  //if ((copy -> Type () == VAR) ||
+  //    (copy -> Type () == AUX))  
+
+    // if this is a variable, don't copy, just refer to the same
+    // object (otherwise many useless copies are created)
+
+    //  copy_ = copy;// -> clone (d);
+  //else copy_ = copy -> clone (d);
+
   copy_ = e.copy_ -> clone (d);
+  //else copy_ = e.copy_ -> clone (d);
+
   value_ = e.value_;
 }
 
@@ -179,12 +192,17 @@ int expression::dependsOn (int *ind, int n, enum dig_type type) {
 }
 
 
-/// empty function to redirect variables to proper variable vector
-void exprStore::realign (const CouenneProblem *p) {
+/// redirect variables to proper variable vector
+void exprCopy::realign (const CouenneProblem *p) {
 
   if (((copy_ -> Type () == VAR) ||  
        (copy_ -> Type () == AUX)) &&
       (copy_ -> Original () != p -> Var (copy_ -> Index ()))) {
+
+    /*printf ("exprCopy::realign replaces %x with %x (", 
+	    copy_ -> Original (), p -> Var (copy_ -> Index ())); 
+    copy_ -> Original () -> print (); printf (" - ");
+    p -> Var (copy_ -> Index ()) -> print (); printf ("\n");*/
 
     expression *trash = copy_;
 
@@ -194,22 +212,23 @@ void exprStore::realign (const CouenneProblem *p) {
 }
 
 
-/// empty function to redirect variables to proper variable vector
-void exprClone::realign (const CouenneProblem *p) {
+// /// redirect variables to proper variable vector
+// void exprClone::realign (const CouenneProblem *p) {
 
-  if (((copy_ -> Type () == VAR) ||  
-       (copy_ -> Type () == AUX)) &&
-      (copy_ -> Original () != p -> Var (copy_ -> Index ()))) {
+//   if (((copy_ -> Type () == VAR) ||  
+//        (copy_ -> Type () == AUX)) &&
+//       (copy_ -> Original () != p -> Var (copy_ -> Index ()))) {
 
-    expression *trash = copy_;
+//     expression *trash = copy_;
 
-    copy_ = p -> Var (copy_ -> Index ());
-    delete trash;
-  }
-}
+//     copy_ = p -> Var (copy_ -> Index ());
+//     printf ("deleting "); trash -> print (); printf ("\n");
+//     delete trash;
+//   } else {printf ("not deleted "); print (); printf ("\n");}
+// }
 
 
-/// closest feasible points in function in both directions
+/// Closest feasible points in function in both directions
 void expression::closestFeasible (expression *varind, expression *vardep,
 				  CouNumber& left, CouNumber& right) const
 {

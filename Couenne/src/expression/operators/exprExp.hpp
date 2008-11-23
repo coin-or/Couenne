@@ -80,6 +80,10 @@ class exprExp: public exprUnary {
   /// can this expression be further linearized or are we on its
   /// concave ("bad") side
   virtual bool isCuttable (CouenneProblem *problem, int index) const;
+
+  /// either CONVEX, CONCAVE, AFFINE, or NONCONVEX
+  //virtual enum convexity convexity () 
+  //{return CONVEX;}
 };
 
 #endif
