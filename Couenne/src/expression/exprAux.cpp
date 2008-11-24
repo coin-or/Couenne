@@ -86,7 +86,7 @@ exprAux::~exprAux () {
 
 
 /// Get lower and upper bound of an expression (if any)
-void exprAux::getBounds (expression *&lb, expression *&ub) {
+//void exprAux::getBounds (expression *&lb, expression *&ub) {
 
   // this replaces the previous 
   //
@@ -97,9 +97,9 @@ void exprAux::getBounds (expression *&lb, expression *&ub) {
 
   //  lb = lb_ -> clone ();//new exprLowerBound (varIndex_);
   //  ub = ub_ -> clone ();//new exprUpperBound (varIndex_);
-  lb = new exprLowerBound (varIndex_, domain_);
-  ub = new exprUpperBound (varIndex_, domain_);
-}
+//  lb = new exprLowerBound (varIndex_, domain_);
+//  ub = new exprUpperBound (varIndex_, domain_);
+//}
 
 
 /// set bounds depending on both branching rules and propagated
@@ -192,8 +192,9 @@ void exprAux::generateCuts (const OsiSolverInterface &si,
 
   //#ifdef DEBUG
 
-  if (cg -> Jnlst () -> ProduceOutput (Ipopt::J_MATRIX, J_CONVEXIFYING)) {
-    if (warned_large_coeff)
+  if (cg -> Jnlst () -> ProduceOutput (Ipopt::J_DETAILED, J_CONVEXIFYING)) {
+    if (cg -> Jnlst () -> ProduceOutput (Ipopt::J_STRONGWARNING, J_CONVEXIFYING) && 
+	(warned_large_coeff)) {
       for (int jj=nrc; jj < cs.sizeRowCuts (); jj++) {
 
 	OsiRowCut        *cut = cs.rowCutPtr (jj);
@@ -220,10 +221,10 @@ void exprAux::generateCuts (const OsiSolverInterface &si,
 	  }
 	}
       }
+    }
 
     //  if (!(cg -> isFirst ())) 
-    if (1 ||
-	(nrc < cs.sizeRowCuts ()) || 
+    if ((nrc < cs.sizeRowCuts ()) || 
 	(ncc < cs.sizeColCuts ()))
       {
 	printf ("---------------- ConvCut:  "); 

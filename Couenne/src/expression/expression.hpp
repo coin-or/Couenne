@@ -104,12 +104,12 @@ class expression {
   /// the original expr??? instead of an exprClone -- improve computing
   /// efficiency. Only overloaded for exprClones/exprCopy, of course.
   virtual inline const expression *Original () const 
-    {return this;}
+  {return this;}
 
   /// print expression to iostream
   virtual void print (std::ostream &s  = std::cout,   /// output stream
 		      bool             = false) const /// descend into auxiliaries' image?
-    {s << '?';}
+  {s << '?';}
 
   /// null function for evaluating the expression
   virtual CouNumber operator () () = 0;

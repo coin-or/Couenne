@@ -254,9 +254,14 @@ CouenneProblem::~CouenneProblem () {
     delete (*i);
 
   // delete variables
-  for (std::vector <exprVar *>::iterator i = variables_ . begin ();
-       i != variables_ . end (); ++i)
-    delete (*i);
+  //for (std::vector <exprVar *>::iterator i = variables_ . begin ();
+  //i != variables_ . end (); ++i)
+  //delete (*i);
+
+  for (int i=nVars (); i--;) { // delete in inverse order
+    int ind = numbering_ [i];
+    delete variables_ [ind];
+  }
 
   // delete extra structures
   if (graph_)     delete    graph_;

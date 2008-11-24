@@ -120,6 +120,9 @@ class exprVar: public expression {
   /// Get expressions of lower and upper bound of an expression (if any)
   virtual void getBounds (expression *&, expression *&);
 
+  /// Get value of lower and upper bound of an expression (if any)
+  virtual void getBounds (CouNumber &lb, CouNumber &ub);
+
   /// Get values of lower and upper bound of an expression (if any)
   //virtual inline void getBounds (CouNumber &lb, CouNumber &ub) {
   //lb = domain_ -> lb (varIndex_);

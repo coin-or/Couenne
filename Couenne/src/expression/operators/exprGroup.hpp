@@ -41,6 +41,9 @@ public:
   /// Copy constructor
   exprGroup (const exprGroup &src, Domain *d = NULL);
 
+  /// Destructor -- needed to clear bounds 
+  ~exprGroup ();
+
   /// Cloning method
   virtual expression *clone (Domain *d = NULL) const
   {return new exprGroup (*this, d);}
@@ -76,6 +79,9 @@ public:
 
   /// Get lower and upper bound of an expression (if any)
   virtual void getBounds (expression *&, expression *&);
+
+  /// Get lower and upper bound of an expression (if any)
+  virtual void getBounds (CouNumber &, CouNumber &);
 
   /// special version for linear constraints
   virtual void generateCuts (expression *, const OsiSolverInterface &, 

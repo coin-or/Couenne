@@ -66,12 +66,12 @@ class exprCopy: public expression {
 
   /// return true if this is a copy of something, i.e. if it is an
   /// exprCopy or derivates
-  bool isaCopy () const
+  inline bool isaCopy () const
   {return true;}
 
   /// return copy of this expression (only makes sense in exprCopy)
-  expression *Copy () const
-  {return copy_;}
+  inline expression *Copy () const
+  {return (copy_ -> isaCopy ()) ? copy_ -> Copy () : copy_;}
 
   /// return pointer to corresponding expression (for auxiliary variables only)
   inline expression *Image () const
@@ -145,6 +145,11 @@ class exprCopy: public expression {
   /// Get lower and upper bound of an expression (if any)
   inline void getBounds (expression *&lower, expression *&upper) 
   {copy_ -> getBounds (lower, upper);}
+
+  /// Get value of lower and upper bound of an expression (if any)
+  inline void getBounds (CouNumber &lower, CouNumber &upper) 
+  {copy_ -> getBounds (lower, upper);}
+ 
 
   /// Create standard formulation of this expression
   inline exprAux *standardize (CouenneProblem *p, bool addAux = true)

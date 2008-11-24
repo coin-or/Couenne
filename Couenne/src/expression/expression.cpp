@@ -123,7 +123,7 @@ exprCopy::exprCopy (const exprCopy &e, Domain *d) {
     //  copy_ = copy;// -> clone (d);
   //else copy_ = copy -> clone (d);
 
-  copy_ = e.copy_ -> clone (d);
+  copy_ = e.copy_ -> Original () -> clone (d); // !!! REMOVE " -> Original ()"
   //else copy_ = e.copy_ -> clone (d);
 
   value_ = e.value_;
@@ -146,8 +146,11 @@ void exprCopy::replace (exprVar *orig, exprVar *aux) {
   if ((copyType == VAR) || 
       (copyType == AUX)) {
 
-    if (copy_ -> Index () == orig -> Index ())
+    if (copy_ -> Index () == orig -> Index ()) {
+      if (copy_ -> isaCopy ())  // !!! REMOVE
+	delete copy_;           // !!! REMOVE
       copy_ = aux;
+    }
 
   } else copy_ -> replace (orig, aux);
 

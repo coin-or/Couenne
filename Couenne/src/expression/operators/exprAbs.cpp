@@ -40,6 +40,28 @@ void exprAbs::getBounds (expression *&lb, expression *&ub) {
 }
 
 
+/// find value of lower and upper bound of a given expression
+
+void exprAbs::getBounds (CouNumber &lb, CouNumber &ub) {
+
+  // get bounds of the argument
+  CouNumber lba, uba;
+
+  argument_ -> getBounds (lba, uba);
+
+  if (lba > 0) {
+    lb = lba;
+    ub = uba;
+  } else if (uba < 0) {
+    lb = -uba;
+    ub = -lba;
+  } else {
+    lb = 0;
+    ub = CoinMax (-lb, ub);
+  }
+}
+
+
 /// differentiation
 
 expression *exprAbs::differentiate (int index) {

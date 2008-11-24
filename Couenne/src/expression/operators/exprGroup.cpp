@@ -38,6 +38,17 @@ exprGroup::exprGroup  (const exprGroup &src, Domain *d):
 }
 
 
+/// Destructor -- check if there are exprBounds and delete them 
+exprGroup::~exprGroup () {
+
+  for (lincoeff::iterator i = lcoeff_.begin (); i != lcoeff_.end (); ++i) {
+    enum expr_type code = i -> first -> code ();
+    if ((code == COU_EXPRLBOUND) || (code == COU_EXPRUBOUND))
+      delete i -> first;
+  }
+}
+
+
 /// I/O
 void exprGroup::print (std::ostream &out, bool descend) const {
 
