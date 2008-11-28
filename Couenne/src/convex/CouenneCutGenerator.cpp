@@ -51,7 +51,8 @@ CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
   base -> options () -> GetStringValue ("check_lp", s, "couenne."); 
   check_lp_ = (s == "yes");
 
-  problem_ = new CouenneProblem (asl, base, jnlst_);
+  if (asl) // deal with problems not originating from AMPL
+    problem_ = new CouenneProblem (asl, base, jnlst_);
 }
 
 
@@ -124,7 +125,7 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
   roptions -> AddLowerBoundedIntegerOption
     ("convexification_cuts",
      "Specify the frequency (in terms of nodes) at which couenne ecp cuts are generated.",
-     0,1,
+     -99,1,
      "A frequency of 0 amounts to never solve the NLP relaxation.");
 
   roptions -> AddStringOption2

@@ -106,6 +106,10 @@ class CouenneCutGenerator: public CglCutGenerator {
   inline CouenneProblem *Problem () const
     {return problem_;}
 
+  /// return pointer to symbolic problem
+  inline void setProblem (CouenneProblem *p)
+    {problem_ = p;}
+
   /// total number of variables (original + auxiliary)
   const int getnvars () const;
 
@@ -220,5 +224,9 @@ class CouenneCutGenerator: public CglCutGenerator {
   bool check_lp ()
   {return check_lp_;}
 };
+
+
+/// translate sparse to dense vector (should be replaced)
+void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchanged);
 
 #endif
