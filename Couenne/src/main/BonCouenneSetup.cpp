@@ -16,6 +16,7 @@
 #include "CbcCompareActual.hpp"
 
 #include "CouenneObject.hpp"
+//#include "CouenneComplObject.hpp"
 #include "CouenneVarObject.hpp"
 #include "CouenneVTObject.hpp"
 #include "CouenneChooseVariable.hpp"
@@ -77,7 +78,7 @@ namespace Bonmin{
     //delete CouennePtr_;
   }
 
-  bool CouenneSetup::InitializeCouenne (char **& argv) {
+  bool CouenneSetup::InitializeCouenne (char **& argv, CouenneInterface * ci) {
     /* Get the basic options. */
     readOptionsFile();
  
@@ -89,12 +90,20 @@ namespace Bonmin{
     gatherParametersValues(options_);
 
     continuousSolver_ = new CouenneSolverInterface;
-    CouenneInterface * ci = new CouenneInterface;
-    nonlinearSolver_ = ci;
-    /* Read the model in various places. */
-    ci->readAmplNlFile(argv,roptions(),options(),journalist());
-    aslfg_ = new SmartAsl;
-    aslfg_->asl = readASLfg (argv);
+
+    // Kipp: this should avoid the ASL if you create the CouenneInterface beforehand
+    if (!ci) {
+
+      ci = new CouenneInterface;
+      nonlinearSolver_ = ci;
+
+      if (argv) {
+	/* Read the model in various places. */
+	ci->readAmplNlFile(argv,roptions(),options(),journalist());
+	aslfg_ = new SmartAsl;
+	aslfg_->asl = readASLfg (argv);
+      }
+    } 
 
     /** Set the output level for the journalist for all Couenne
      categories.  We probably want to make that a bit more flexible
@@ -118,6 +127,9 @@ namespace Bonmin{
 
     options()->GetIntegerValue("disjcuts_print_level", i, "bonmin.");
     journalist()->GetJournal("console")-> SetPrintLevel(J_DISJCUTS, (EJournalLevel) i);
+
+    //options()->GetIntegerValue("reformulate_print_level", i, "bonmin.");
+    //journalist()->GetJournal("console")-> SetPrintLevel(J_REFORMULATE, (EJournalLevel) i);
 
     /* Initialize Couenne cut generator.*/
     //int ivalue, num_points;
@@ -177,24 +189,34 @@ namespace Bonmin{
     // Add Couenne SOS ///////////////////////////////////////////////////////////////
 
     std::string s;
-    int nSOS = 0;
 
-    // allocate sufficient space for both nonlinear variables and SOS's
-    OsiObject ** objects;
+    int 
+      nSOS  = 0,
+      nVars = couenneProb -> nVars ();
+
+    OsiObject ** objects = NULL;
 
     options () -> GetStringValue ("enable_sos", s, "couenne.");
     if (s == "yes") {
 
-      objects = new OsiObject* [couenneProb -> nVars ()];
+      // allocate sufficient space for both nonlinear variables and SOS's
+      objects = new OsiObject* [couenneProb -> nCons () + nVars];
 
       nSOS = couenneProb -> findSOS (nonlinearSolver (), objects);
       //printf ("==================== found %d SOS\n", nSOS);
       //nonlinearSolver () -> addObjects (nSOS, objects);
-      continuousSolver () -> addObjects (nSOS, objects);
+      //continuousSolver () -> addObjects (nSOS, objects);
 
-      for (int i=0; i<nSOS; i++)
+      //printf ("found %d SOS!\n", nSOS);
+
+      /*for (int i=0; i<nSOS; i++)
 	delete objects [i];
-      delete [] objects;
+	delete [] objects;*/
+
+      if (!nSOS) {
+	delete [] objects;
+	objects = NULL;
+      } 
     }
 
     //model -> assignSolver (continuousSolver_, true);
@@ -209,8 +231,8 @@ namespace Bonmin{
 
     enum CouenneObject::branch_obj objType = CouenneObject::VAR_OBJ;
 
-    if      (s == "vt_obj")   objType = CouenneObject::VT_OBJ;
-    else if (s == "var_obj")  objType = CouenneObject::VAR_OBJ;
+    if      (s ==   "vt_obj") objType = CouenneObject::VT_OBJ;
+    else if (s ==  "var_obj") objType = CouenneObject::VAR_OBJ;
     else if (s == "expr_obj") objType = CouenneObject::EXPR_OBJ;
     else {
       printf ("CouenneSetup: Unknown branching object type\n");
@@ -218,10 +240,10 @@ namespace Bonmin{
     }
 
     int 
-      nobj  = 0, // if no SOS then objects is empty
-      nVars = couenneProb -> nVars ();
+      nobj = nSOS; // if no SOS then objects is empty
 
-    objects = new OsiObject* [couenneProb -> nVars ()];
+    if (!objects)
+      objects = new OsiObject* [nVars];
 
     int contObjPriority = 2000; // default object priority -- it is 1000 for integers and 10 for SOS
 
@@ -244,7 +266,17 @@ namespace Bonmin{
 	    (var -> Type  () == AUX) && 
 	    (var -> Image () -> Linearity () > LINEAR)) {
 
-	  objects [nobj] = new CouenneObject (couenneProb, var, this, journalist ());
+	  /*if ((var -> Image () -> code () == COU_EXPRMUL) &&
+	      (var -> Image () -> ArgList () [0] -> Index () >= 0) &&
+	      (var -> Image () -> ArgList () [1] -> Index () >= 0) &&
+	      (fabs (var -> lb ()) < COUENNE_EPS) &&
+	      (fabs (var -> ub ()) < COUENNE_EPS))
+
+	    // it's a complementarity constraint object!
+	    objects    [nobj] = new CouenneComplObject (couenneProb, var, this, journalist ());
+	    else */
+	    objects [nobj] = new CouenneObject      (couenneProb, var, this, journalist ());
+
 	  objects [nobj++] -> setPriority (contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
 	}
@@ -454,35 +486,32 @@ namespace Bonmin{
       "no", "");
 
     roptions->AddBoundedIntegerOption(
-      "branching_print_level",
-      "Output level for braching code in Couenne",
-      -2, J_LAST_LEVEL-1, J_NONE,
-      "");
+      "branching_print_level", "Output level for braching code in Couenne",
+      -2, J_LAST_LEVEL-1, J_NONE, "");
+
     roptions->AddBoundedIntegerOption(
-      "boundtightening_print_level",
-      "Output level for bound tightening code in Couenne",
-      -2, J_LAST_LEVEL-1, J_NONE,
-      "");
+      "boundtightening_print_level", "Output level for bound tightening code in Couenne",
+      -2, J_LAST_LEVEL-1, J_NONE, "");
+
     roptions->AddBoundedIntegerOption(
-      "convexifying_print_level",
-      "Output level for convexifying code in Couenne",
-      -2, J_LAST_LEVEL-1, J_NONE,
-      "");
+      "convexifying_print_level", "Output level for convexifying code in Couenne",
+      -2, J_LAST_LEVEL-1, J_NONE, "");
+
     roptions->AddBoundedIntegerOption(
-      "problem_print_level",
-      "Output level for problem manipulation code in Couenne",
-      -2, J_LAST_LEVEL-1, J_WARNING,
-      "");
+      "problem_print_level", "Output level for problem manipulation code in Couenne",
+      -2, J_LAST_LEVEL-1, J_WARNING, "");
+
     roptions->AddBoundedIntegerOption(
-      "nlpheur_print_level",
-      "Output level for NLP heuristic in Couenne",
-      -2, J_LAST_LEVEL-1, J_WARNING,
-      "");
+      "nlpheur_print_level", "Output level for NLP heuristic in Couenne",
+      -2, J_LAST_LEVEL-1, J_WARNING, "");
+
     roptions->AddBoundedIntegerOption(
-    "disjcuts_print_level",
-    "Output level for disjunctive cuts in Couenne",
-    -2, J_LAST_LEVEL-1, J_WARNING,
-    "");
+    "disjcuts_print_level", "Output level for disjunctive cuts in Couenne",
+    -2, J_LAST_LEVEL-1, J_WARNING, "");
+
+    roptions->AddBoundedIntegerOption(
+    "reformulate_print_level", "Output level for reformulating problems in Couenne",
+    -2, J_LAST_LEVEL-1, J_WARNING, "");
 
 
     // copied from BonminSetup::registerMilpCutGenerators(), in

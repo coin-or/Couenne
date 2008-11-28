@@ -54,7 +54,7 @@ int main (int argc, char *argv[])
     bb.setUsingCouenne (true);
 
     CouenneSetup bonmin;
-    if (!bonmin.InitializeCouenne (argv))
+    if (!bonmin.InitializeCouenne (argv, NULL))
       throw infeasible;
 
 #if 0

@@ -17,6 +17,8 @@ class CouenneCutGenerator;
 
 
 namespace Bonmin{
+
+  class CouenneInterface;
   
   class SmartAsl : public Ipopt::ReferencedObject{
 public:
@@ -52,7 +54,7 @@ public:
     virtual ~CouenneSetup();
 
     /** Initialize from command line arguments. */
-    bool InitializeCouenne(char **& argv);
+    bool InitializeCouenne(char **& argv, CouenneInterface * ci);
 
     /** register the options */
     virtual void registerOptions();
