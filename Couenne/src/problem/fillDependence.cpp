@@ -30,11 +30,16 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base) {
   for (std::vector <exprVar *>::iterator i = variables_.begin (); 
        i != variables_.end (); ++i) {
 
-    if (((*i) -> Type () == AUX)                           // consider aux's only
+    if (((*i) -> Type () == AUX)                           // consider auxs only
 	&& ((*i) -> Image () -> Linearity () > LINEAR)) {  // and nonlinear
 
+      CouenneObject *infeasObj = (*i) -> properObject (this, base, jnlst_);
+
+      if (!infeasObj) // found something that will never be infeasibl
+	continue;
+
       // add object for this variable
-      objects_.push_back (CouenneObject (this, *i, base, jnlst_));
+      objects_.push_back (infeasObj);
 
       std::set <int> deplist;
 
@@ -52,6 +57,7 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base) {
 	  obj.insert (ind);
       }
 
-    } else objects_.push_back (nullObject); // null object for original and linear auxiliaries
+    } else objects_.push_back (new CouenneObject (nullObject)); 
+    // null object for original and linear auxiliaries
   }
 }

@@ -178,50 +178,60 @@ void exprPow::getBounds (CouNumber &lb, CouNumber &ub) {
   arglist_ [0] -> getBounds (lba, uba);
   int intk;
 
-  bool isInt = fabs (k - (double) (intk = COUENNE_round (k))) < COUENNE_EPS;
+  bool 
+    isInt    =           fabs (k    - (double) (intk = COUENNE_round (k)))    < COUENNE_EPS,
+    isInvInt = !isInt && fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS;
+
+  if (!isInt && (!isInvInt || !(intk % 2))) {
+
+    // if exponent is fractional or 1/even, the base better be nonnegative
+
+    if (lba < 0.) lba = 0.;
+    if (uba < 0.) uba = 0.;
+  }
 
   if (isInt && !(intk % 2) && (k > 0)) { // x^{2h}
 
     if (uba < 0) {
-      lb = pow (-uba, k);
-      ub = pow (-lba, k);
+      lb = safe_pow (-uba, k);
+      ub = safe_pow (-lba, k);
     } else if (lba > 0) {
-      lb = pow (lba, k);
-      ub = pow (uba, k);
+      lb = safe_pow (lba, k);
+      ub = safe_pow (uba, k);
     } else {
       lb = 0;
-      ub = pow (CoinMax (-lba, uba), k);
+      ub = safe_pow (CoinMax (-lba, uba), k);
     }
 
-  } else if (k > 0) { // monotone increasing: x^{2h+1} with h integer, x^h with h real
+  } else if (k > 0) { // monotone increasing: x^{2h+1} with h integer, or x^h with h real
 
-    lb = pow (lba, k);
-    ub = pow (uba, k);
+    lb = safe_pow (lba, k);
+    ub = safe_pow (uba, k);
 
   } else if (isInt && !(intk % 2)) { // x^{-2h} or x^{-1/2h} with h integer
 
     if (uba < 0) {
-      lb = pow (-lba, k);
-      ub = pow (-uba, k);
+      lb = safe_pow (-lba, k);
+      ub = safe_pow (-uba, k);
     } else if (lba > 0) {
-      lb = pow (uba, k);
-      ub = pow (lba, k);
+      lb = safe_pow (uba, k);
+      ub = safe_pow (lba, k);
     } else {
-      lb = pow (CoinMax (-lba, uba), k);
+      lb = safe_pow (CoinMax (-lba, uba), k);
       ub = COUENNE_INFINITY;
     }
 
   } else { // x^k, k<0
 
     if (uba < 0) {
-      lb = pow (uba, k);
-      ub = pow (lba, k);
+      lb = safe_pow (uba, k);
+      ub = safe_pow (lba, k);
     } else if (lba > 0) {
-      lb = pow (uba, k);
-      ub = pow (lba, k);
+      lb = safe_pow (uba, k);
+      ub = safe_pow (lba, k);
     } else {
-      lb = -COUENNE_INFINITY; // !!! may not be reached
-      ub =  COUENNE_INFINITY;
+      lb = -COIN_DBL_MAX; // !!! may not be reached
+      ub =  COIN_DBL_MAX;
     }
   }
 }

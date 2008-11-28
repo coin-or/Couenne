@@ -268,7 +268,9 @@ class expression {
 
 /// updates maximum violation. Used with all impliedBound. Returns true
 /// if a bound has been modified, false otherwise
-inline bool updateBound (int sign, CouNumber *dst, CouNumber src) {
+inline bool updateBound (register int sign, 
+			 register CouNumber *dst, 
+			 register CouNumber src) {
 
   // meaning: 
   //
@@ -278,10 +280,12 @@ inline bool updateBound (int sign, CouNumber *dst, CouNumber src) {
   // that is, sign > 0 means we are tightening an UPPER bound
   //          sign < 0                            LOWER
 
-  if (((sign > 0) ? (*dst - src) : (src - *dst)) > COUENNE_EPS) {
+  register double delta = (sign > 0) ? (*dst - src) : (src - *dst);
+
+  if (delta > 0.) {
     //printf ("%.12g --> %.12g\n", *dst, src);
     *dst = src; // tighten
-    return true;
+    return (delta > COUENNE_EPS); // avoid returning true when improvement is negligible
   }
 
   return false;

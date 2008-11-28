@@ -12,6 +12,12 @@
 #include "CouenneProblem.hpp"
 #include "exprGroup.hpp"
 
+#include "CbcModel.hpp"
+#include "CbcBranchActual.hpp"
+#include "CbcCutGenerator.hpp"
+#include "CbcCompareActual.hpp"
+#include "CouenneSOSObject.hpp"
+
 /// find SOS objects
 int CouenneProblem::findSOS (OsiSolverInterface *solver,
 			     OsiObject **objects) {
@@ -63,15 +69,18 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
 
       bool
 	intSOS = (*v) -> isInteger (),
-	isSOS  = true;
+	isSOS  = true,
+	onlyOrigVars = true; // if SOS constraints only contains
+			     // original variables, it has been
+			     // spotted by Cbc already
 
       exprGroup::lincoeff &lcoe = group -> lcoeff ();
 
       for (exprGroup::lincoeff::iterator l = lcoe. begin (); 
-	   l != lcoe. end (); ++l) 
+	   l != lcoe. end (); ++l) {
 
-	if ((fabs (l -> second - (defVar ? 1. : -1.)) > COUENNE_EPS) ||
-	    (fabs (Lb (l -> first -> Index ()))       > COUENNE_EPS)) {
+	if ((fabs (l -> second - (defVar ? 1. : -1.)) > COUENNE_EPS) || // wrong coefficient?
+	    (fabs (Lb (l -> first -> Index ()))       > COUENNE_EPS)) { // positive lower bound?
 
 	  isSOS = false;
 	  break;
@@ -79,12 +88,16 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
 	  if (!(l -> first -> isInteger ()))
 	    intSOS = false;
 
-      if (!isSOS || !intSOS) 
+	if (l -> first -> Index () > nOrigVars_) // 
+	  onlyOrigVars = false;
+      }
+
+      if (!isSOS || !intSOS)// || onlyOrigVars) 
 	continue;
 
-      /*printf ("----- found SOS: ");
+      printf ("----- found SOS: ");
       (*v) -> print (); printf (" := ");
-      (*v) -> Image () -> print (); printf ("\n");*/
+      (*v) -> Image () -> print (); printf ("\n");
 
       // it is a SOS -- if intSOS==true, it's also integer
 
@@ -99,7 +112,9 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
       for (int i=indStart, j=0; i<nelem; i++)
 	indices [i] = lcoe [j++]. first -> Index ();
 
-      OsiSOS *newsos = new OsiSOS (solver, nelem, indices, NULL, 1);
+      CouenneSOSObject *newsos = new CouenneSOSObject (solver, nelem, indices, NULL, 1,
+						       jnlst_, true, true);
+
       objects [nSOS] = newsos;
       // as in BonBabSetupBase.cpp:675
       newsos -> setPriority (10);

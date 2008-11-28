@@ -13,10 +13,15 @@
 #include <iostream>
 #include <set>
 
+#include "CouenneJournalist.hpp"
 #include "CouenneTypes.hpp"
 #include "expression.hpp"
 #include "exprConst.hpp"
 #include "domain.hpp"
+
+namespace Bonmin {
+  class BabSetupBase;
+}
 
 
 /// variable-type operator
@@ -182,6 +187,13 @@ class exprVar: public expression {
   /// either CONVEX, CONCAVE, AFFINE, or NONCONVEX
   virtual enum convexity convexity () const
   {return AFFINE;}
+
+  /// return proper object to handle expression associated with this
+  /// variable (NULL if this is not an auxiliary)
+  virtual CouenneObject *properObject (CouenneProblem *p, 
+				       Bonmin::BabSetupBase *base, 
+				       JnlstPtr jnlst_)
+  {return NULL;}
 };
 
 #endif

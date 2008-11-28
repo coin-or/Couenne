@@ -42,7 +42,7 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
 
   // debug output ////////////////////////////////////////////////////////////////
 
-  if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
+  if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
     printf ("VT infeas on ");
     reference_ -> print ();
     if (reference_ -> Image ()) { // if no list, print image
@@ -76,23 +76,19 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
   if (reference_ -> Type () == AUX)
     fx = (*(reference_ -> Image ())) ();
 
-  if (dependence.size () == 0) { 
+  if (dependence.size () == 0) { // this is a top level auxiliary,
+				 // nowhere an independent
 
-    // this is a top level auxiliary, nowhere an independent, OR all
-    // auxiliaries depending on it have a linear expression
-
-    // that means, for VT, that by letting w vary and keeping
-    // everything else constant
-
-    // we return the difference between current value and value of
-    // function at this point
+    // that means, for VT, that letting w vary and keeping everything
+    // else constant we return the difference between current value
+    // and value of function at this point
 
     // these variables may also be disabled in BonCouenneSetup.cpp
 
-    retval = (reference_ -> Type () == AUX) ? // if this is an isolated variable
-      // check if this w=f(x) is used nowhere and is feasible
-      (upEstimate_ = downEstimate_ = maxInf = checkInfeasibility (info)) : 
-      0.;
+    assert (reference_ -> Type () == AUX); // otherwise, this is an isolated variable
+
+    // check if this w=f(x) is used nowhere and is feasible
+    retval = upEstimate_ = downEstimate_ = maxInf = checkInfeasibility (info);
 
   } else {
 
@@ -102,13 +98,13 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
     for (std::set <int>::const_iterator i = dependence.begin ();
 	 i != dependence.end (); ++i) {
 
-      const CouenneObject &obj = problem_ -> Objects () [*i];
-      assert (obj.Reference ());
+      const CouenneObject *obj = problem_ -> Objects () [*i];
+      assert (obj -> Reference ());
 
       CouNumber 
 	left   = xcurr,
 	right  = xcurr,
-	infeas = obj.checkInfeasibility (info);
+	infeas = obj -> checkInfeasibility (info);
 
       if (infeas > maxInf)
 	maxInf = infeas;
@@ -120,8 +116,8 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
 	// feasibility (see page 582, Tawarmalani and Sahinidis,
 	// MathProg A: 99, pp. 563-591)
 	//if (obj. Reference () -> Image ()) // not needed! obj only has nonlinear objects
-	obj. Reference () -> Image () -> closestFeasible 
-	  (reference_, obj. Reference (), left, right);
+	obj -> Reference () -> Image () -> closestFeasible 
+	  (reference_, obj -> Reference (), left, right);
 
 	if (left  < lFeas) lFeas = left;
 	if (right > rFeas) rFeas = right;
@@ -130,13 +126,14 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
       if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) { // debug output
 	jnlst_ -> Printf (J_MATRIX, J_BRANCHING, "[%g,%g] --> %g - %g = %g (diff = %g - %g = %g): ", 
 			  left, right, rFeas, lFeas, rFeas - lFeas,
-			  (obj. Reference () -> Image ()) ? 
-			  (*(obj. Reference () -> Image ())) () : 0.,  
-			  (*(obj. Reference ())) (),
-			  (obj. Reference () -> Image ()) ? 
-			  (*(obj. Reference () -> Image ())) () - (*(obj. Reference ())) () : 0.);
-	obj.Reference () -> print (); 
-	if (obj. Reference () -> Image ()) {printf (" := "); obj.Reference () -> Image () -> print ();}
+			  (obj -> Reference () -> Image ()) ? 
+			  (*(obj -> Reference () -> Image ())) () : 0.,  
+			  (*(obj -> Reference ())) (),
+			  (obj -> Reference () -> Image ()) ? 
+			  (*(obj -> Reference () -> Image ())) () - (*(obj -> Reference ())) () : 0.);
+	obj ->Reference () -> print (); 
+	if (obj -> Reference () -> Image ()) 
+	  {printf (" := "); obj -> Reference() -> Image() -> print();}
 	printf ("\n");
       }
     }

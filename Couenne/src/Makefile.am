@@ -34,6 +34,9 @@ libCouenne_la_SOURCES = \
 	branch/infeasibility.cpp \
 	branch/infeasibilityVT.cpp \
 	branch/feasibleRegion.cpp \
+	branch/CouenneComplObject.cpp \
+	branch/CouenneComplBranchingObject.cpp \
+	branch/CouenneSOSObject.cpp \
 	branch/operators/branchExprAbs.cpp \
 	branch/operators/branchExprExp.cpp \
 	branch/operators/branchExprDiv.cpp \
@@ -45,6 +48,15 @@ libCouenne_la_SOURCES = \
 	branch/operators/branchExprSinCos.cpp \
 	branch/operators/minMaxDelta.cpp \
 	branch/operators/computeMulBrDist.cpp \
+        disjunctive/CouenneDisjCuts.cpp \
+        disjunctive/generateDisjCuts.cpp \
+        disjunctive/disjCut.cpp \
+        disjunctive/getDisjunctions.cpp \
+        disjunctive/separateWithDisjunction.cpp \
+        disjunctive/singleDisjunctions.cpp \
+        disjunctive/dummyVecMatr.cpp \
+        disjunctive/OsiLinear2MatrVec.cpp \
+        disjunctive/OsiCuts2MatrVec.cpp \
 	expression/domain.cpp \
 	expression/operators/exprAbs.cpp \
 	expression/operators/exprDiv.cpp \
@@ -243,6 +255,9 @@ include_HEADERS = \
 	branch/CouenneBranchingObject.hpp \
 	branch/CouenneChooseVariable.hpp \
 	branch/CouenneChooseStrong.hpp \
+	branch/CouenneComplObject.hpp \
+	branch/CouenneComplBranchingObject.hpp \
+	branch/CouenneSOSObject.hpp \
 	branch/projections.hpp \
 	standardize/lqelems.hpp \
 	expression/domain.hpp \

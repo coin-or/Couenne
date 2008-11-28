@@ -51,7 +51,7 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
   //////////////////////////////////////////////
 
   if (//(retval > CoinMin (COUENNE_EPS, feas_tolerance_)) &&
-      (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING))) {
+      (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING))) {
     printf ("infeasVar x%d %-10g [", reference_ -> Index (), retval);
     reference_             -> print (); 
     if ((dependence.size () == 0) && (reference_ -> Image ())) { // if no list, print image
@@ -67,12 +67,14 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
   // TODO: We probably only have to do that if pseudo costs option has
   // been chosen
 
-  CouNumber brkPt = computeBranchingPoint (info, way);
+  const CouenneObject *obj_ignored = NULL; // only care about it in CouenneVarObject.cpp
+
+  CouNumber brkPt = computeBranchingPoint (info, way, obj_ignored);
 
   if (pseudoMultType_ != PROJECTDIST)
     setEstimates (info, &retval, &brkPt);
 
-  if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
+  if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
     printf("index = %d up = %e down = %e bounds [%e,%e] brpt = %e\n", 
 	   index, upEstimate_, downEstimate_, 
 	   info -> lower_ [index],
@@ -104,12 +106,17 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
   if (dependence.size () == 0) { // this is a top level auxiliary,
 				 // nowhere an independent
 
-    const CouenneObject &obj = problem_ -> Objects () [reference_ -> Index ()];
+    const CouenneObject *obj = problem_ -> Objects () [reference_ -> Index ()];
 
-    double retval = (obj. Reference ()) ? weiSum * obj.checkInfeasibility (info) : 0.;
-    return (reference_ -> isInteger ()) ? 
+    double retval = (obj -> Reference ()) ? 
+      (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) *
+      weiSum * obj ->checkInfeasibility (info) : 0.;
+
+    return retval;
+
+    /*return (reference_ -> isInteger ()) ? 
       CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
-      retval;
+      retval;*/
 
   } else {
 
@@ -123,8 +130,8 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
 
       // *i is the index of an auxiliary that depends on reference_
 
-      const CouenneObject &obj = problem_ -> Objects () [*i];
-      CouNumber infeas = (obj. Reference ()) ? obj.checkInfeasibility (info) : 0.;
+      const CouenneObject *obj = problem_ -> Objects () [*i];
+      CouNumber infeas = (obj -> Reference ()) ? obj -> checkInfeasibility (info) : 0.;
 
       if (infeas > infmax) infmax = infeas;
       if (infeas < infmin) infmin = infeas;
@@ -132,14 +139,19 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
     }
 
     double retval = 
+      // neglect it if variable has small bound interval (chech
+      // x84=x83/x5 in csched1.nl)
+      (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) *
       // to consider maximum, minimum, and sum/avg of the infeasibilities
       (weiSum * infsum + 
        weiAvg * (infsum / CoinMax (1., (CouNumber) dependence.size ())) + 
        weiMin * infmin + 
        weiMax * infmax);
 
-    return (reference_ -> isInteger ()) ? 
+    return retval;
+
+    /*return (reference_ -> isInteger ()) ? 
       CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
-      retval;
+      retval;*/
   }
 }

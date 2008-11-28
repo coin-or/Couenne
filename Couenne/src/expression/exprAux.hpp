@@ -178,6 +178,13 @@ class exprAux: public exprVar {
     if (lb_) lb_ -> linkDomain (d);
     if (ub_) ub_ -> linkDomain (d);
   }
+
+
+  /// return proper object to handle expression associated with this
+  /// variable (NULL if this is not an auxiliary)
+  CouenneObject *properObject (CouenneProblem *p, 
+			       Bonmin::BabSetupBase *base, 
+			       JnlstPtr jnlst);
 };
 
 

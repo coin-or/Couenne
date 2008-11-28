@@ -1,7 +1,6 @@
 /*
- * Name:    CouenneBranchingObject.cpp
- * Authors: Pierre Bonami, IBM Corp.
- *          Pietro Belotti, Carnegie Mellon University
+ * Name:    CouenneComplBranchingObject.cpp
+ * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Branching object for auxiliary variables
  *
  * (C) Carnegie-Mellon University, 2006-08.
@@ -15,7 +14,7 @@
 #include "CouenneSolverInterface.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneObject.hpp"
-#include "CouenneBranchingObject.hpp"
+#include "CouenneComplBranchingObject.hpp"
 
 // translate changed bound sparse array into a dense one
 void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchanged);
@@ -27,56 +26,21 @@ void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchange
  * operator () of that exprAux.
 */
 
-CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
-						const OsiObject * originalObject,
-						JnlstPtr jnlst, 
-						expression *var, 
-						int way, 
-						CouNumber brpoint, 
-						bool doFBBT, bool doConvCuts):
+CouenneComplBranchingObject::CouenneComplBranchingObject (OsiSolverInterface *solver,
+							  const OsiObject * originalObject,
+							  JnlstPtr jnlst, 
+							  expression *var, 
+							  expression *var2, 
+							  int way, 
+							  CouNumber brpoint, 
+							  bool doFBBT, bool doConvCuts):
 
-  OsiTwoWayBranchingObject (solver, originalObject, way, brpoint),
-  variable_     (var),
-  jnlst_        (jnlst),
-  doFBBT_       (doFBBT),
-  doConvCuts_   (doConvCuts),
-  downEstimate_ (0.),
-  upEstimate_   (0.),
-  simulate_     (false) {
-
-  // This two-way branching rule is only applied when both lower and
-  // upper bound are finite. Otherwise, a CouenneThreeWayBranchObj is
-  // used (see CouenneThreeWayBranchObj.hpp).
-  //
-  // The rule is as follows:
-  //
-  // - if x is well inside the interval (both bounds are infinite or
-  // there is a difference of at least COU_NEAR_BOUND), set
-  // value_ to x;
-  //
-  // - otherwise, try to get far from bounds by setting value_ to a
-  // convex combination of current and midpoint
-  //
-  // TODO: consider branching value that maximizes distance from
-  // current point (how?)
-
-  value_ = (*variable_) ();
-
-  if (fabs (brpoint) < COUENNE_INFINITY) 
-    value_ = brpoint;
-
-  CouNumber lb, ub;
-  var -> getBounds (lb, ub);
-
-  // do not branch too close to bounds
-  if ((lb > -COUENNE_INFINITY) && (ub < COUENNE_INFINITY)) {
-    if      ((value_ - lb) / (ub-lb) < closeToBounds) value_ = lb + (ub-lb) * closeToBounds;
-    else if ((ub - value_) / (ub-lb) < closeToBounds) value_ = ub + (lb-ub) * closeToBounds;
-  }
+  CouenneBranchingObject (solver, originalObject, jnlst, var, way, brpoint, doFBBT, doConvCuts),
+  variable2_    (var2) {
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
-		    "Branch: x%-3d will branch on %g (cur. %g) [%g,%g]; firstBranch_ = %d\n", 
-		    variable_ -> Index (), value_, (*variable_) (), lb, ub, firstBranch_);
+		    "Complem. Branch: x%-3d = 0 or x%-3d = 0\n", 
+		    way ? variable_ -> Index () : variable2_ -> Index ());
 }
 
 
@@ -87,42 +51,18 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
  *         Returns change in guessed objective on next branch
  */
 
-double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
+double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
 
-  // way = 0 if "<=" node, 
-  //       1 if ">=" node
+  // way = 0 if "x1=0" node, 
+  //       1 if "x2=0" node
 
   int 
     way   = (!branchIndex_) ? firstBranch_ : !firstBranch_,
-    index = variable_ -> Index ();
+    index = way ? variable2_ -> Index () : variable_ -> Index ();
 
-  bool 
-    integer    = variable_ -> isInteger (),
-    infeasible = false;
-
-  CouNumber
-    l      = solver -> getColLower () [index],
-    u      = solver -> getColUpper () [index],
-    brpt   = value_;
-
-  if (way) {
-    if      (value_ < l)             
-      jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "Nonsense up-br: [ %.8f ,(%.8f)] -> %.8f\n",l,u,value_);
-    else if (value_ < l+COUENNE_EPS) 
-      jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "## WEAK  up-br: [ %.8f ,(%.8f)] -> %.8f\n",l,u,value_);
-  } else {
-    if      (value_ > u)             
-      jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "Nonsense dn-br: [(%.8f), %.8f ] -> %.8f\n",l,u,value_);
-    else if (value_ > u+COUENNE_EPS) 
-      jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "## WEAK  dn-br: [(%.8f), %.8f ] -> %.8f\n",l,u,value_);
-  }
-
-  if ((brpt < l) || (brpt > u))
-    brpt = 0.5 * (l+u);
-
-  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "Branching: x%-3d %c= %g\n", 
-		    //printf ("Branching: x%-3d %c= %g\n", 
-		    index, way ? '>' : '<', integer ? (way ? ceil (brpt) : floor (brpt)) : brpt);
+  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "Branching: x%-3d = 0\n", 
+		    //printf ("complementarity Branching: x%-3d = 0\n", 
+		    way ? variable2_ -> Index () : variable_ -> Index ());
 
   /*
   double time = CoinCpuTime ();
@@ -136,8 +76,12 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 		    solver -> getColUpper () [index]);
   */
 
-  if (!way) solver -> setColUpper (index, integer ? floor (brpt) : brpt); // down branch
-  else      solver -> setColLower (index, integer ? ceil  (brpt) : brpt); // up   branch
+  ////////////////////////////////////////////////////////////////////
+
+  solver -> setColLower (index, 0.);
+  solver -> setColUpper (index, 0.);
+
+  ////////////////////////////////////////////////////////////////////
 
   CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
   CouenneProblem *p = couenneSolver -> CutGen () -> Problem ();
@@ -156,8 +100,10 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 
   t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
 
-  if (!way) chg_bds [index].setUpper (t_chg_bounds::CHANGED);
-  else      chg_bds [index].setLower (t_chg_bounds::CHANGED);
+  chg_bds [index].setUpper (t_chg_bounds::CHANGED);
+  chg_bds [index].setLower (t_chg_bounds::CHANGED);
+
+  bool infeasible = false;
 
   if (     doFBBT_ &&           // this branching object should do FBBT, and
       p -> doFBBT ()) {         // problem allowed to do FBBT

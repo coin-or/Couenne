@@ -16,14 +16,14 @@
 #include "CbcCompareActual.hpp"
 
 #include "CouenneObject.hpp"
-//#include "CouenneComplObject.hpp"
+#include "CouenneComplObject.hpp"
 #include "CouenneVarObject.hpp"
 #include "CouenneVTObject.hpp"
 #include "CouenneChooseVariable.hpp"
 #include "CouenneChooseStrong.hpp"
 #include "CouenneSolverInterface.hpp"
 #include "CouenneCutGenerator.hpp"
-//#include "CouenneDisjCuts.hpp"
+#include "CouenneDisjCuts.hpp"
 #include "BonCouenneInfo.hpp"
 #include "BonCbcNode.hpp"
 
@@ -140,6 +140,8 @@ namespace Bonmin{
     else              couenneCg -> setProblem (couenneProb);
 
     assert (couenneProb);
+
+    couenneProb -> reformulate ();
 
     Bonmin::BabInfo * extraStuff = new Bonmin::CouenneInfo(0);
 
@@ -421,7 +423,7 @@ namespace Bonmin{
 
     // Add disjunctive cuts ///////////////////////////////////////////////////////
 
-    /*options () -> GetIntegerValue ("minlp_disj_cuts", freq, "couenne.");
+    options () -> GetIntegerValue ("minlp_disj_cuts", freq, "couenne.");
 
     if (freq != 0) {
 
@@ -438,7 +440,7 @@ namespace Bonmin{
       cg.cgl = couenneDisj;
       cg.id = "Couenne disjunctive cuts";
       cutGenerators (). push_back(cg);
-      }*/
+    }
 
     int ival;
     if (!options_->GetEnumValue("node_comparison",ival,"bonmin.")) {

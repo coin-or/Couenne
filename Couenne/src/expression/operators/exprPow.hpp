@@ -116,33 +116,39 @@ class exprPow: public exprOp {
 inline CouNumber safe_pow (CouNumber base, 
 			   CouNumber exponent) {
 
-  if (base < 0.) {
+  long double 
+    lbase     = base,
+    lexponent = exponent,
+    retval    = 0.;
+
+  if (lbase < 0.) {
 
     register int rndexp;
 
-    if (((fabs (exponent - (rndexp = COUENNE_round (exponent))) < COUENNE_EPS) ||
-	 ((fabs (exponent) > COUENNE_EPS) && 
-	  (fabs (1. / exponent - (rndexp = COUENNE_round (1. / exponent))) < COUENNE_EPS)))) {
+    if (((fabs (lexponent - (rndexp = COUENNE_round (lexponent))) < COUENNE_EPS) ||
+	 ((fabs (lexponent) > COUENNE_EPS) && 
+	  (fabs (1. / lexponent - (rndexp = COUENNE_round (1. / lexponent))) < COUENNE_EPS)))) {
       if (rndexp % 2)
-	return (- pow (- base, exponent)); // x^k, x negative, k odd
-      else return pow (-base, exponent);   // x^k, x negative, k even
+	retval = (- powl (- lbase, lexponent)); // x^k, x negative, k odd
+      else retval = powl (-lbase, lexponent);   // x^k, x negative, k even
     }
-    else return 0.; // this is incorrect but avoids nan's
+    else retval =  0.; // this is incorrect but avoids nan's
+  }
+  else if (fabs (lbase) >= COUENNE_INFINITY) {
+
+    if (lbase <= -COUENNE_INFINITY) {
+
+      register int intk = COUENNE_round (lexponent);
+
+      if ((fabs (lexponent - intk) < COUENNE_EPS) && (intk % 2))
+	retval = (lexponent < 0.) ? 0. : -COUENNE_INFINITY;
+    }
+    else retval = (lexponent < 0.) ? 0. : COUENNE_INFINITY;
   }
 
-  if (fabs (base) >= COUENNE_INFINITY) {
+  retval = (powl (lbase, lexponent));
 
-    if (base <= -COUENNE_INFINITY) {
-
-      register int intk = COUENNE_round (exponent);
-
-      if ((fabs (exponent - intk) < COUENNE_EPS) && (intk % 2))
-	return (exponent < 0.) ? 0. : -COUENNE_INFINITY;
-    }
-    else return (exponent < 0.) ? 0. : COUENNE_INFINITY;
-  }
-
-  return (pow (base, exponent));
+  return (CouNumber) (retval);
 }
 
 

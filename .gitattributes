@@ -9,7 +9,6 @@ Couenne/acinclude.m4 -text
 Couenne/aclocal.m4 -text
 Couenne/configure -text
 Couenne/configure.ac -text
-Couenne/couenne.opt.base -text
 Couenne/couenne_addlibs.txt.in -text
 Couenne/inc/config_couenne.h.in -text
 Couenne/src/CouenneConfig.h -text
@@ -35,8 +34,14 @@ Couenne/src/branch/CouenneChooseStrong.cpp -text
 Couenne/src/branch/CouenneChooseStrong.hpp -text
 Couenne/src/branch/CouenneChooseVariable.cpp -text
 Couenne/src/branch/CouenneChooseVariable.hpp -text
+Couenne/src/branch/CouenneComplBranchingObject.cpp -text
+Couenne/src/branch/CouenneComplBranchingObject.hpp -text
+Couenne/src/branch/CouenneComplObject.cpp -text
+Couenne/src/branch/CouenneComplObject.hpp -text
 Couenne/src/branch/CouenneObject.cpp -text
 Couenne/src/branch/CouenneObject.hpp -text
+Couenne/src/branch/CouenneSOSObject.cpp -text
+Couenne/src/branch/CouenneSOSObject.hpp -text
 Couenne/src/branch/CouenneThreeWayBranchObj.cpp -text
 Couenne/src/branch/CouenneThreeWayBranchObj.hpp -text
 Couenne/src/branch/CouenneVTObject.hpp -text

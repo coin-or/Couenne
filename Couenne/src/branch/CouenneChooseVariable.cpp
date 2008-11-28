@@ -53,13 +53,29 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
      info -> lower_, 
      info -> upper_);
 
+  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "----------------- setup list\n");
+
   if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
+
     printf ("----------------- setup list\n");
-    for (int i=0; i<problem_ -> domain () -> current () -> Dimension (); i++)
-      printf ("%4d %20.4g [%20.4g %20.4g]\n", i,
-	      info -> solution_ [i],
-	      info -> lower_ [i],
-	      info -> upper_ [i]);
+
+    for (int i=0; i<problem_ -> domain () -> current () -> Dimension (); i++) 
+
+      if (problem_ -> Var (i) -> Multiplicity () > 0) {
+	printf ("%4d %20.4g [%20.4g %20.4g]", i,
+		info -> solution_ [i],
+		info -> lower_ [i],
+		info -> upper_ [i]);
+
+	if (problem_ -> Var (i) -> Type () == AUX) {
+	  printf (" expr. %20.4g [%+e] ", 
+		  (*(problem_ -> Var (i) -> Image ())) (), 
+		  (*(problem_ -> Var (i) -> Image ())) () - info -> solution_ [i]);
+	  problem_ -> Var (i) -> Image () -> print ();
+	}
+
+	printf ("\n");
+      }
   }
 
   // Make it stable, in OsiChooseVariable::setupList() numberObjects must be 0.
@@ -68,7 +84,8 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
 
   problem_ -> domain () -> pop ();
 
-  jnlst_ -> Printf (J_DETAILED, J_BRANCHING, "----------------- setup list done\n");
+  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "----------------- setup list done, %d objects\n", 
+		    retval);
 
   return retval;
 }

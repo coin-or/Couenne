@@ -56,20 +56,49 @@ CouenneProblem::CouenneProblem (const struct ASL *asl,
   useQuadratic_ (false),
   feas_tolerance_ (feas_tolerance_default),
   integerRank_ (NULL),
-  maxCpuTime_  (COIN_DBL_MAX) {
-
-  if (!asl) return;
+  maxCpuTime_  (COIN_DBL_MAX),
+  options_     (base)
+{
 
   double now = CoinCpuTime ();
 
-  // read problem from AMPL structure
-  readnl (asl);
+  if (asl) {
 
-  if ((now = (CoinCpuTime () - now)) > 10.)
-    jnlst_ -> Printf (Ipopt::J_WARNING, J_PROBLEM,
-		      "Couenne: reading time %.3fs\n", now);
+    // read problem from AMPL structure
+    readnl (asl);
 
-  now = CoinCpuTime ();
+    if ((now = (CoinCpuTime () - now)) > 10.)
+      jnlst_ -> Printf (Ipopt::J_WARNING, J_PROBLEM,
+			"Couenne: reading time %.3fs\n", now);
+  }
+
+  if (base) {
+    std::string s;
+    base -> options() -> GetStringValue ("use_quadratic", s, "couenne."); 
+    useQuadratic_ = (s == "yes");
+  }
+
+  if (base) {
+
+    std::string s;
+
+    base -> options() -> GetStringValue ("feasibility_bt",  s, "couenne."); doFBBT_ = (s == "yes");
+    base -> options() -> GetStringValue ("optimality_bt",   s, "couenne."); doOBBT_ = (s == "yes");
+    base -> options() -> GetStringValue ("aggressive_fbbt", s, "couenne."); doABT_  = (s == "yes");
+
+    base -> options() -> GetIntegerValue ("log_num_obbt_per_level", logObbtLev_, "couenne.");
+    base -> options() -> GetIntegerValue ("log_num_abt_per_level",  logAbtLev_,  "couenne.");
+
+    base -> options() -> GetNumericValue ("feas_tolerance",  feas_tolerance_, "couenne.");
+    base -> options() -> GetNumericValue ("opt_window",      opt_window_,     "couenne.");
+  }
+}
+
+
+/// preprocess problem in order to extract linear relaxations etc.
+void CouenneProblem::reformulate () {
+
+  double now = CoinCpuTime ();
 
   // link initial variables to problem's domain
   for (std::vector <exprVar *>::iterator i = variables_.begin ();
@@ -89,20 +118,18 @@ CouenneProblem::CouenneProblem (const struct ASL *asl,
 		  "Problem size before reformulation: %d variables (%d integer), %d constraints.\n",
 		  nOrigVars_, nOrigIntVars_, nOrigCons_);
 
-  if (base) {
-    std::string s;
-    base -> options() -> GetStringValue ("use_quadratic", s, "couenne."); 
-    useQuadratic_ = (s == "yes");
-  }
-
   // reformulation
   standardize ();
 
   // clear all spurious variables pointers not referring to the variables_ vector
   realign ();
 
+  // give a value to all auxiliary variables. Do it now to be able to
+  // recognize complementarity constraints in fillDependence()
+  initAuxs ();
+
   // fill dependence_ structure
-  fillDependence (base);
+  fillDependence (options_);
 
   // quadratic handling
   fillQuadIndices ();
@@ -129,25 +156,17 @@ CouenneProblem::CouenneProblem (const struct ASL *asl,
 		  "Problem size after  reformulation: %d variables (%d integer), %d constraints.\n",
 		  nActualVars, nIntVars_, nCons());
 
-  if (base) {
+  // check if optimal solution is available (for debug purposes)
+  readOptimum ();
 
-    std::string s;
-
-    base -> options() -> GetStringValue ("feasibility_bt",  s, "couenne."); doFBBT_ = (s == "yes");
-    base -> options() -> GetStringValue ("optimality_bt",   s, "couenne."); doOBBT_ = (s == "yes");
-    base -> options() -> GetStringValue ("aggressive_fbbt", s, "couenne."); doABT_  = (s == "yes");
-
-    base -> options() -> GetIntegerValue ("log_num_obbt_per_level", logObbtLev_, "couenne.");
-    base -> options() -> GetIntegerValue ("log_num_abt_per_level",  logAbtLev_,  "couenne.");
+  if (options_) {
 
     CouNumber 
       art_cutoff =  COIN_DBL_MAX,
       art_lower  = -COIN_DBL_MAX;
 
-    base -> options() -> GetNumericValue ("feas_tolerance",  feas_tolerance_, "couenne.");
-    base -> options() -> GetNumericValue ("opt_window",      opt_window_,     "couenne.");
-    base -> options() -> GetNumericValue ("art_cutoff",      art_cutoff,      "couenne.");
-    base -> options() -> GetNumericValue ("art_lower",       art_lower,       "couenne.");
+    options_ -> options() -> GetNumericValue ("art_cutoff",      art_cutoff,     "couenne.");
+    options_ -> options() -> GetNumericValue ("art_lower",       art_lower,      "couenne.");
 
     if (art_cutoff <  1.e50) setCutOff (art_cutoff);
     if (art_lower  > -1.e50) {
@@ -156,9 +175,6 @@ CouenneProblem::CouenneProblem (const struct ASL *asl,
 	domain_.lb (indobj) = art_lower;
     }
   }
-
-  // check if optimal solution is available (for debug purposes)
-  readOptimum ();
 
   if (jnlst_->ProduceOutput(Ipopt::J_DETAILED, J_PROBLEM)) {
     // We should route that also through the journalist
@@ -201,7 +217,8 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   objects_      (p.objects_),
   integerRank_  (NULL),
   numberInRank_ (p.numberInRank_),
-  maxCpuTime_   (p.maxCpuTime_) {
+  maxCpuTime_   (p.maxCpuTime_),
+  options_      (p.options_) {
 
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);
@@ -229,9 +246,6 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
     integerRank_ = new int [nVars ()];
     CoinCopyN (p.integerRank_, nVars (), integerRank_);
   }
-
-  //printf ("========================= COPIED PROBLEM %x:\n", this);
-  //print ();
 }
 
 

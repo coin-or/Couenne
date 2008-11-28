@@ -127,17 +127,17 @@ void exprMul::getBounds (CouNumber &lb, CouNumber &ub) {
   arglist_ [1] -> getBounds (lb2, ub2);
 
   if (ub1 < 0) { // use lb1, dominant
-    if      (ub2 < 0) {lb = ub1*ub2; ub = lb1*lb2;}
-    else if (lb2 > 0) {lb = lb1*ub2; ub = ub1*lb2;}
-    else              {lb = lb1*ub2; ub = lb1*lb2;}
+    if      (ub2 < 0) {lb = safeProd(ub1,ub2); ub = safeProd(lb1,lb2);}
+    else if (lb2 > 0) {lb = safeProd(lb1,ub2); ub = safeProd(ub1,lb2);}
+    else              {lb = safeProd(lb1,ub2); ub = safeProd(lb1,lb2);}
   } else if (lb1 > 0) { // use ub1, dominant
-    if      (ub2 < 0) {lb = ub1*lb2; ub = lb1*ub2;}
-    else if (lb2 > 0) {lb = lb1*lb2; ub = ub1*ub2;}
-    else              {lb = ub1*lb2; ub = ub1*ub2;}
+    if      (ub2 < 0) {lb = safeProd(ub1,lb2); ub = safeProd(lb1,ub2);}
+    else if (lb2 > 0) {lb = safeProd(lb1,lb2); ub = safeProd(ub1,ub2);}
+    else              {lb = safeProd(ub1,lb2); ub = safeProd(ub1,ub2);}
   } else { // there is a zero to consider
-    if      (ub2 < 0) {lb = ub1*lb2; ub = lb1*lb2;}
-    else if (lb2 > 0) {lb = lb1*ub2; ub = ub1*ub2;}
-    else              {lb = CoinMin (lb1*ub2, lb2*ub1); 
-                       ub = CoinMax (lb1*lb2, ub1*ub2);}
+    if      (ub2 < 0) {lb = safeProd(ub1,lb2); ub = safeProd(lb1,lb2);}
+    else if (lb2 > 0) {lb = safeProd(lb1,ub2); ub = safeProd(ub1,ub2);}
+    else              {lb = CoinMin (safeProd(lb1,ub2), safeProd(lb2,ub1));
+                       ub = CoinMax (safeProd(lb1,lb2), safeProd(ub1,ub2));}
   }
 }

@@ -156,7 +156,7 @@ class CouenneProblem {
   /// vector of pointer to CouenneObjects. Used by CouenneVarObjects
   /// when finding all objects related to (having as argument) a
   /// single variable
-  std::vector <CouenneObject> objects_;
+  std::vector <CouenneObject *> objects_;
 
   /// each element is true if variable is integer and, if auxiliary,
   /// depends on no integer
@@ -167,6 +167,9 @@ class CouenneProblem {
 
   /// maximum cpu time
   double maxCpuTime_;
+
+  /// options
+  Bonmin::BabSetupBase *options_;
 
  public:
 
@@ -232,8 +235,8 @@ class CouenneProblem {
   inline CouNumber  *Ub    () const {return domain_.ub ();} ///< Return vector of upper bounds
 
   // get optimal solution and objective value
-  CouNumber  *bestSol () const {return optimum_;} ///< Best known solution (read from file)
-  CouNumber   bestObj () const {return bestObj_;} ///< Objective of best known solution
+  CouNumber  *&bestSol () const {return optimum_;} ///< Best known solution (read from file)
+  CouNumber    bestObj () const {return bestObj_;} ///< Objective of best known solution
 
   /// Get vector of commuted variables
   bool *&Commuted () 
@@ -258,6 +261,9 @@ class CouenneProblem {
   /// Add auxiliary variable and associate it with expression given as
   /// argument (used in standardization)
   exprAux *addAuxiliary (expression *);
+
+  /// preprocess problem in order to extract linear relaxations etc.
+  void reformulate ();
 
   /// Break problem's nonlinear constraints in simple expressions to be
   /// convexified later
@@ -428,7 +434,7 @@ class CouenneProblem {
   {return dependence_;}
 
   /// return object vector
-  const std::vector <CouenneObject> &Objects () const
+  const std::vector <CouenneObject *> &Objects () const
   {return objects_;}
 
   /// find SOS constraints in problem
