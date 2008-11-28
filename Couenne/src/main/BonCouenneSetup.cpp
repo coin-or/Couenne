@@ -23,7 +23,7 @@
 #include "CouenneChooseStrong.hpp"
 #include "CouenneSolverInterface.hpp"
 #include "CouenneCutGenerator.hpp"
-#include "CouenneDisjCuts.hpp"
+//#include "CouenneDisjCuts.hpp"
 #include "BonCouenneInfo.hpp"
 #include "BonCbcNode.hpp"
 
@@ -78,7 +78,7 @@ namespace Bonmin{
     //delete CouennePtr_;
   }
 
-  bool CouenneSetup::InitializeCouenne (char **& argv, CouenneInterface * ci) {
+  bool CouenneSetup::InitializeCouenne (char **& argv, CouenneProblem *couenneProb) {
     /* Get the basic options. */
     readOptionsFile();
  
@@ -91,18 +91,15 @@ namespace Bonmin{
 
     continuousSolver_ = new CouenneSolverInterface;
 
+    CouenneInterface *ci = new CouenneInterface;
+    nonlinearSolver_ = ci;
+
     // Kipp: this should avoid the ASL if you create the CouenneInterface beforehand
-    if (!ci) {
-
-      ci = new CouenneInterface;
-      nonlinearSolver_ = ci;
-
-      if (argv) {
-	/* Read the model in various places. */
-	ci->readAmplNlFile(argv,roptions(),options(),journalist());
-	aslfg_ = new SmartAsl;
-	aslfg_->asl = readASLfg (argv);
-      }
+    if (!couenneProb && argv) {
+      /* Read the model in various places. */
+      ci->readAmplNlFile(argv,roptions(),options(),journalist());
+      aslfg_ = new SmartAsl;
+      aslfg_->asl = readASLfg (argv);
     } 
 
     /** Set the output level for the journalist for all Couenne
@@ -128,8 +125,8 @@ namespace Bonmin{
     options()->GetIntegerValue("disjcuts_print_level", i, "bonmin.");
     journalist()->GetJournal("console")-> SetPrintLevel(J_DISJCUTS, (EJournalLevel) i);
 
-    //options()->GetIntegerValue("reformulate_print_level", i, "bonmin.");
-    //journalist()->GetJournal("console")-> SetPrintLevel(J_REFORMULATE, (EJournalLevel) i);
+    options()->GetIntegerValue("reformulate_print_level", i, "bonmin.");
+    journalist()->GetJournal("console")-> SetPrintLevel(J_REFORMULATE, (EJournalLevel) i);
 
     /* Initialize Couenne cut generator.*/
     //int ivalue, num_points;
@@ -137,9 +134,12 @@ namespace Bonmin{
     //options()->GetIntegerValue("convexification_points",num_points,"bonmin.");
     
     CouenneCutGenerator * couenneCg = 
-      new CouenneCutGenerator (ci, this, aslfg_->asl, journalist());
+      new CouenneCutGenerator (ci, this, couenneProb ? NULL : aslfg_->asl, journalist ());
 
-    CouenneProblem * couenneProb = couenneCg -> Problem();
+    if (!couenneProb) couenneProb = couenneCg -> Problem();
+    else              couenneCg -> setProblem (couenneProb);
+
+    assert (couenneProb);
 
     Bonmin::BabInfo * extraStuff = new Bonmin::CouenneInfo(0);
 
@@ -274,8 +274,8 @@ namespace Bonmin{
 
 	    // it's a complementarity constraint object!
 	    objects    [nobj] = new CouenneComplObject (couenneProb, var, this, journalist ());
-	    else */
-	    objects [nobj] = new CouenneObject      (couenneProb, var, this, journalist ());
+	    else*/
+	  objects [nobj] = new CouenneObject      (couenneProb, var, this, journalist ());
 
 	  objects [nobj++] -> setPriority (contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
@@ -421,8 +421,7 @@ namespace Bonmin{
 
     // Add disjunctive cuts ///////////////////////////////////////////////////////
 
-    //options () -> GetIntegerValue ("minlp_disj_cuts", freq, "couenne.");
-    freq = 0;
+    /*options () -> GetIntegerValue ("minlp_disj_cuts", freq, "couenne.");
 
     if (freq != 0) {
 
@@ -439,7 +438,7 @@ namespace Bonmin{
       cg.cgl = couenneDisj;
       cg.id = "Couenne disjunctive cuts";
       cutGenerators (). push_back(cg);
-    }
+      }*/
 
     int ival;
     if (!options_->GetEnumValue("node_comparison",ival,"bonmin.")) {

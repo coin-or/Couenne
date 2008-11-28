@@ -14,12 +14,10 @@
 struct ASL;
 
 class CouenneCutGenerator;
-
+class CouenneProblem;
 
 namespace Bonmin{
 
-  class CouenneInterface;
-  
   class SmartAsl : public Ipopt::ReferencedObject{
 public:
     ASL * asl;
@@ -54,7 +52,7 @@ public:
     virtual ~CouenneSetup();
 
     /** Initialize from command line arguments. */
-    bool InitializeCouenne(char **& argv, CouenneInterface * ci);
+    bool InitializeCouenne(char **& argv, CouenneProblem *couenneProb);
 
     /** register the options */
     virtual void registerOptions();
