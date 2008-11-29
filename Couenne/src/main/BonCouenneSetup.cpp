@@ -94,7 +94,6 @@ namespace Bonmin{
     CouenneInterface *ci = new CouenneInterface;
     nonlinearSolver_ = ci;
 
-    // Kipp: this should avoid the ASL if you create the CouenneInterface beforehand
     if (!couenneProb && argv) {
       /* Read the model in various places. */
       ci->readAmplNlFile(argv,roptions(),options(),journalist());
@@ -134,10 +133,13 @@ namespace Bonmin{
     //options()->GetIntegerValue("convexification_points",num_points,"bonmin.");
     
     CouenneCutGenerator * couenneCg = 
-      new CouenneCutGenerator (ci, this, couenneProb ? NULL : aslfg_->asl, journalist ());
+      new CouenneCutGenerator (ci, this, couenneProb ? NULL : aslfg_->asl);
 
     if (!couenneProb) couenneProb = couenneCg -> Problem();
-    else              couenneCg -> setProblem (couenneProb);
+    else {
+      couenneCg   -> setProblem (couenneProb);
+      couenneProb -> setBase    (this);
+    }
 
     assert (couenneProb);
 

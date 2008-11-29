@@ -75,25 +75,6 @@ int CouenneProblem::readnl (const ASL *asl) {
 
   nOrigVars_ = n_var;
 
-  // create expression set for binary search
-  auxSet_ = new std::set <exprAux *, compExpr>;
-
-  // create room for problem's variables and bounds
-  CouNumber 
-    *x  = (CouNumber *) malloc ((n_var + ndefined_) * sizeof (CouNumber)),
-    *lb = (CouNumber *) malloc ((n_var + ndefined_) * sizeof (CouNumber)),
-    *ub = (CouNumber *) malloc ((n_var + ndefined_) * sizeof (CouNumber));
-
-  for (int i = n_var + ndefined_; i--;) {
-    x  [i] =  0.;
-    lb [i] = -COUENNE_INFINITY;
-    ub [i] =  COUENNE_INFINITY;
-  }
-
-  domain_.push (n_var + ndefined_, x, lb, ub);
-
-  free (x); free (lb); free (ub);
-
   // common expressions (or defined variables) ///////////////////////////////////////
 
 #ifdef DEBUG
@@ -450,6 +431,22 @@ int CouenneProblem::readnl (const ASL *asl) {
 
   delete [] indexL;
   delete [] coeff;
+
+  // create room for problem's variables and bounds
+  CouNumber 
+    *x  = (CouNumber *) malloc ((n_var + ndefined_) * sizeof (CouNumber)),
+    *lb = (CouNumber *) malloc ((n_var + ndefined_) * sizeof (CouNumber)),
+    *ub = (CouNumber *) malloc ((n_var + ndefined_) * sizeof (CouNumber));
+
+  for (int i = n_var + ndefined_; i--;) {
+    x  [i] =  0.;
+    lb [i] = -COUENNE_INFINITY;
+    ub [i] =  COUENNE_INFINITY;
+  }
+
+  domain_.push (n_var + ndefined_, x, lb, ub);
+
+  free (x); free (lb); free (ub);
 
   // lower and upper bounds ///////////////////////////////////////////////////////////////
 

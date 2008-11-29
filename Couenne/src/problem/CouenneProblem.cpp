@@ -51,13 +51,13 @@ CouenneProblem::CouenneProblem (const struct ASL *asl,
   doABT_     (true),
   logObbtLev_(0),
   logAbtLev_ (0),
-  jnlst_(jnlst),
+  jnlst_     (jnlst),
   opt_window_ (COIN_DBL_MAX),
   useQuadratic_ (false),
   feas_tolerance_ (feas_tolerance_default),
   integerRank_ (NULL),
   maxCpuTime_  (COIN_DBL_MAX),
-  options_     (base)
+  bonBase_     (base)
 {
 
   double now = CoinCpuTime ();
@@ -71,6 +71,9 @@ CouenneProblem::CouenneProblem (const struct ASL *asl,
       jnlst_ -> Printf (Ipopt::J_WARNING, J_PROBLEM,
 			"Couenne: reading time %.3fs\n", now);
   }
+
+  // create expression set for binary search
+  auxSet_ = new std::set <exprAux *, compExpr>;
 
   if (base) {
     std::string s;
@@ -100,12 +103,31 @@ void CouenneProblem::reformulate () {
 
   double now = CoinCpuTime ();
 
+  if (domain_.current () == NULL) {
+
+    // create room for problem's variables and bounds, if no domain exists
+    CouNumber 
+      *x  = (CouNumber *) malloc ((nVars()) * sizeof (CouNumber)),
+      *lb = (CouNumber *) malloc ((nVars()) * sizeof (CouNumber)),
+      *ub = (CouNumber *) malloc ((nVars()) * sizeof (CouNumber));
+
+    for (int i = nVars(); i--;) {
+      x  [i] =  0.;
+      lb [i] = -COUENNE_INFINITY;
+      ub [i] =  COUENNE_INFINITY;
+    }
+
+    domain_.push (nVars (), x, lb, ub);
+  }
+
+  print ();
+
   // link initial variables to problem's domain
   for (std::vector <exprVar *>::iterator i = variables_.begin ();
        i != variables_.end (); ++i)
     (*i) -> linkDomain (&domain_);
 
-  if (jnlst_->ProduceOutput(Ipopt::J_SUMMARY, J_PROBLEM))
+  if (jnlst_ -> ProduceOutput(Ipopt::J_SUMMARY, J_PROBLEM))
     print (std::cout);
 
   // save -- for statistic purposes -- number of original
@@ -129,14 +151,14 @@ void CouenneProblem::reformulate () {
   initAuxs ();
 
   // fill dependence_ structure
-  fillDependence (options_);
+  fillDependence (bonBase_);
 
   // quadratic handling
   fillQuadIndices ();
 
   if ((now = (CoinCpuTime () - now)) > 10.)
     jnlst_->Printf(Ipopt::J_WARNING, J_PROBLEM,
-		   "Couenne: reformulation time %.3fs\n", now);
+    "Couenne: reformulation time %.3fs\n", now);
 
   // give a value to all auxiliary variables
   initAuxs ();
@@ -159,14 +181,14 @@ void CouenneProblem::reformulate () {
   // check if optimal solution is available (for debug purposes)
   readOptimum ();
 
-  if (options_) {
+  if (bonBase_) {
 
     CouNumber 
       art_cutoff =  COIN_DBL_MAX,
       art_lower  = -COIN_DBL_MAX;
 
-    options_ -> options() -> GetNumericValue ("art_cutoff",      art_cutoff,     "couenne.");
-    options_ -> options() -> GetNumericValue ("art_lower",       art_lower,      "couenne.");
+    bonBase_ -> options() -> GetNumericValue ("art_cutoff", art_cutoff, "couenne.");
+    bonBase_ -> options() -> GetNumericValue ("art_lower",  art_lower,  "couenne.");
 
     if (art_cutoff <  1.e50) setCutOff (art_cutoff);
     if (art_lower  > -1.e50) {
@@ -218,7 +240,7 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   integerRank_  (NULL),
   numberInRank_ (p.numberInRank_),
   maxCpuTime_   (p.maxCpuTime_),
-  options_      (p.options_) {
+  bonBase_      (p.bonBase_) {
 
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);

@@ -39,6 +39,13 @@ using namespace Bonmin;
 // the maximum difference between a printed optimum and a CouNumber
 #define PRINTED_PRECISION 1e-5
 
+#include "exprVar.hpp"
+#include "exprConst.hpp"
+#include "exprSum.hpp"
+#include "exprClone.hpp"
+#include "CouenneProblemElem.hpp"
+#include "CouenneProblem.hpp"
+
 int main (int argc, char *argv[])
 {
   using namespace Ipopt;
@@ -53,8 +60,29 @@ int main (int argc, char *argv[])
     Bab bb;
     bb.setUsingCouenne (true);
 
+    CouenneProblem *p = NULL;
+
+#if 1
+    p = new CouenneProblem;
+
+    p -> addVariable (false, p -> domain ());
+    p -> addVariable (false, p -> domain ());
+    p -> addVariable (false, p -> domain ());
+    p -> addVariable (false, p -> domain ());
+
+    p -> addObjective    (new exprSum (new exprClone (p->Var (1)), new exprClone (p->Var (2))), "min");
+    p -> addLEConstraint (new exprSum (new exprClone (p->Var (0)), new exprClone (p->Var (2))), 
+			  new exprConst (1));
+    p -> addEQConstraint (new exprSum (new exprClone (p->Var (1)), new exprClone (p->Var (2))), 
+			  new exprConst (1));
+    p -> addEQConstraint (new exprSum (new exprClone (p->Var (1)), new exprClone (p->Var (3))), 
+			  new exprConst (1));
+    p -> addEQConstraint (new exprSum (new exprClone (p->Var (2)), new exprClone (p->Var (3))), 
+			  new exprConst (1));
+#endif
+
     CouenneSetup bonmin;
-    if (!bonmin.InitializeCouenne (argv, NULL))
+    if (!bonmin.InitializeCouenne (argv, p))
       throw infeasible;
 
 #if 0

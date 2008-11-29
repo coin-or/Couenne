@@ -169,7 +169,7 @@ class CouenneProblem {
   double maxCpuTime_;
 
   /// options
-  Bonmin::BabSetupBase *options_;
+  Bonmin::BabSetupBase *bonBase_;
 
  public:
 
@@ -447,6 +447,12 @@ class CouenneProblem {
   /// return maximum CPU time
   inline double getMaxCpuTime () const
   {return maxCpuTime_;}
+
+  /// save CouenneBase
+  inline void setBase (Bonmin::BabSetupBase *base) {
+    bonBase_ = base;
+    jnlst_   = base -> journalist ();
+  }
 
 protected:
 

@@ -19,8 +19,7 @@
 /// constructor
 CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
 					  Bonmin::BabSetupBase *base,
-					  const struct ASL *asl, 
-					  JnlstPtr jnlst):
+					  const struct ASL *asl):
 
   CglCutGenerator (),
   
@@ -33,7 +32,7 @@ CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
   nlp_            (nlp),
   BabPtr_         (NULL),
   infeasNode_     (false),
-  jnlst_          (jnlst),
+  jnlst_          (base -> journalist ()),
   rootTime_       (-1.) {
 
   base -> options () -> GetIntegerValue ("convexification_points", nSamples_, "couenne.");
