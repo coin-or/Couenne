@@ -18,6 +18,8 @@ class CouenneProblem;
 
 namespace Bonmin{
 
+  class CouenneInterface;
+
   class SmartAsl : public Ipopt::ReferencedObject{
 public:
     ASL * asl;
@@ -52,7 +54,9 @@ public:
     virtual ~CouenneSetup();
 
     /** Initialize from command line arguments. */
-    bool InitializeCouenne(char **& argv, CouenneProblem *couenneProb);
+    bool InitializeCouenne(char **& argv, 
+			   CouenneProblem *couenneProb = NULL, 
+			   CouenneInterface *ci = NULL);
 
     /** register the options */
     virtual void registerOptions();

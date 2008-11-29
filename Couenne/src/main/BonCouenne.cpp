@@ -61,8 +61,10 @@ int main (int argc, char *argv[])
     bb.setUsingCouenne (true);
 
     CouenneProblem *p = NULL;
+    CouenneInterface *ci = NULL;
 
 #if 0
+    ci = new CouenneInterface;
     p = new CouenneProblem;
 
     p -> addVariable (false, p -> domain ());
@@ -82,7 +84,7 @@ int main (int argc, char *argv[])
 #endif
 
     CouenneSetup bonmin;
-    if (!bonmin.InitializeCouenne (argv, p))
+    if (!bonmin.InitializeCouenne (argv, p, ci))
       throw infeasible;
 
 #if 0

@@ -78,7 +78,9 @@ namespace Bonmin{
     //delete CouennePtr_;
   }
 
-  bool CouenneSetup::InitializeCouenne (char **& argv, CouenneProblem *couenneProb) {
+  bool CouenneSetup::InitializeCouenne (char **& argv, 
+					CouenneProblem *couenneProb,
+					Bonmin::CouenneInterface *ci) {
     /* Get the basic options. */
     readOptionsFile();
  
@@ -91,15 +93,19 @@ namespace Bonmin{
 
     continuousSolver_ = new CouenneSolverInterface;
 
-    CouenneInterface *ci = new CouenneInterface;
-    nonlinearSolver_ = ci;
+    if (!ci) {
 
-    if (!couenneProb && argv) {
-      /* Read the model in various places. */
-      ci->readAmplNlFile(argv,roptions(),options(),journalist());
-      aslfg_ = new SmartAsl;
-      aslfg_->asl = readASLfg (argv);
-    } 
+      ci = new CouenneInterface;
+
+      if (!couenneProb && argv) {
+	/* Read the model in various places. */
+	ci->readAmplNlFile(argv,roptions(),options(),journalist());
+	aslfg_ = new SmartAsl;
+	aslfg_->asl = readASLfg (argv);
+      } 
+    }
+
+    nonlinearSolver_ = ci;
 
     /** Set the output level for the journalist for all Couenne
      categories.  We probably want to make that a bit more flexible
