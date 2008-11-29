@@ -62,7 +62,7 @@ int main (int argc, char *argv[])
 
     CouenneProblem *p = NULL;
 
-#if 1
+#if 0
     p = new CouenneProblem;
 
     p -> addVariable (false, p -> domain ());
