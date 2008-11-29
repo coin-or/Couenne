@@ -85,7 +85,10 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
 
     // these variables may also be disabled in BonCouenneSetup.cpp
 
-    assert (reference_ -> Type () == AUX); // otherwise, this is an isolated variable
+    retval = (reference_ -> Type () == AUX) ? // if this is an isolated variable
+      // check if this w=f(x) is used nowhere and is feasible
+      (upEstimate_ = downEstimate_ = maxInf = checkInfeasibility (info)) :
+      0.;
 
     // check if this w=f(x) is used nowhere and is feasible
     retval = upEstimate_ = downEstimate_ = maxInf = checkInfeasibility (info);
