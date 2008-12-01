@@ -9,7 +9,7 @@
 AUTOMAKE_OPTIONS = foreign
 
 ########################################################################
-#                               libCbc                                 #
+#                               libCouenne                             #
 ########################################################################
 
 # Name of the library compiled in this directory.  We want it to be installed

@@ -12,12 +12,12 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[0.1],[belotti@lehigh.edu])
+AC_INIT([Couenne],[0.1],[couenne@list.coin-or.org])
 
 AC_COPYRIGHT([
 Copyright 2006 Carnegie Mellon University, International Business Machines and others.
 All Rights Reserved.
-This file is part of the open source package Coin which is distributed
+This file is part of the Open Source package Coin, which is distributed
 under the Common Public License.])
 
 # List one file in the package so that the configure script can test
@@ -59,11 +59,11 @@ AC_COIN_INIT_AUTO_TOOLS
 AC_COIN_HAS_PROJECT(ThirdParty)
 AC_COIN_HAS_PROJECT(CoinUtils)
 AC_COIN_HAS_PROJECT(Clp)
-AC_COIN_HAS_PROJECT(Bonmin)
 AC_COIN_HAS_PROJECT(Ipopt)
 AC_COIN_HAS_PROJECT(Cbc)
 AC_COIN_HAS_PROJECT(Osi)
 AC_COIN_HAS_PROJECT(Cgl)
+AC_COIN_HAS_PROJECT(Bonmin)
 AC_COIN_HAS_PROJECT(Couenne)
 
 #############################################################################
