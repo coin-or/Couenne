@@ -95,6 +95,14 @@ class CouenneDisjCuts: public CglCutGenerator {
 		   JnlstPtr journalist = NULL,
 		   const Ipopt::SmartPtr<Ipopt::OptionsList> options = NULL) {}
 
+  /// constructor for backward compatibility
+  CouenneDisjCuts (Bonmin::CouenneInterface*minlp = NULL, 
+		   Bonmin::CouenneSetup* base = NULL, 
+		   CouenneProblem *p = NULL, 
+		   OsiChooseVariable* bcv = NULL, 
+		   bool is_strong = false, 
+		   Ipopt::SmartPtr<Ipopt::Journalist> = NULL) {}
+
   /// copy constructor
   CouenneDisjCuts (const CouenneDisjCuts &){}
 
