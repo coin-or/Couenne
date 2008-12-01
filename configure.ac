@@ -11,7 +11,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[0.0],[belotti@lehigh.edu])
+AC_INIT([Couenne],[0.1],[belotti@lehigh.edu])
 
 AC_COPYRIGHT([
 Copyright 2008 Pietro Belotti
