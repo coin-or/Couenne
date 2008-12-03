@@ -122,8 +122,8 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     int xi = arglist_ [0] -> Index ();
     assert (xi >= 0);
     // careful with what "integer" means when a bound is 1e-8 (see minlp/deb[789].nl)
-    if (resL && (fabs (l [xi] > COUENNE_EPS))) l [xi] = ceil  (l [xi] - COUENNE_EPS);
-    if (resU && (fabs (u [xi] > COUENNE_EPS))) u [xi] = floor (u [xi] + COUENNE_EPS);
+    if (resL && (fabs (l [xi]) > COUENNE_EPS)) l [xi] = ceil  (l [xi] - COUENNE_EPS);
+    if (resU && (fabs (u [xi]) > COUENNE_EPS)) u [xi] = floor (u [xi] + COUENNE_EPS);
   }
 
   return (resL || resU);
