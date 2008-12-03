@@ -19,6 +19,7 @@
 #include <stdlib.h>
 
 #include "CoinTime.hpp"
+#include "CoinError.hpp"
 #include "BonminConfig.h"
 #include "BonCouenneInterface.hpp"
 #include "BonIpoptSolver.hpp"
@@ -54,7 +55,7 @@ using namespace Bonmin;
 
 ///////////////////////////////////////////////////
 int main (int argc, char *argv[]) {
-
+  WindowsErrorPopupBlocker();
   using namespace Ipopt;
 
   Bonmin::Bab bb;
