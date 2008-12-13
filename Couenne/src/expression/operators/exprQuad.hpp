@@ -129,6 +129,9 @@ public:
   /// Get lower and upper bound of an expression (if any)
   virtual void getBounds (expression *&, expression *&);
 
+  /// Get lower and upper bound of an expression (if any)
+  virtual void getBounds (CouNumber &, CouNumber &);
+
   /// Generate cuts for the quadratic expression, which are supporting
   /// hyperplanes of the concave upper envelope and the convex lower
   /// envelope.

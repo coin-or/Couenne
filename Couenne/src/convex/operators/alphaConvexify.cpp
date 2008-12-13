@@ -81,6 +81,10 @@ bool exprQuad::alphaConvexify (const CouenneProblem *p,
       delete [] indexmap;
       delete [] indices;
 
+#ifdef DEBUG
+      printf ("unbounded, bailing out\n");
+#endif
+
       return false;
     }
 

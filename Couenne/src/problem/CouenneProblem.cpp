@@ -120,8 +120,6 @@ void CouenneProblem::reformulate () {
     domain_.push (nVars (), x, lb, ub);
   }
 
-  print ();
-
   // link initial variables to problem's domain
   for (std::vector <exprVar *>::iterator i = variables_.begin ();
        i != variables_.end (); ++i)

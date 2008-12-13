@@ -440,25 +440,26 @@ bool exprQuad::isInteger () {
 void exprQuad::replace (exprVar *x, exprVar *w) {
 
   exprGroup::replace (x, w);
-  int index = x -> Index ();
+  int xind = x -> Index ();
+  int wind = w -> Index ();
 
   for (sparseQ::iterator row = matrix_.begin (); row != matrix_.end (); ++row) {
 
     exprVar * &vr = row -> first;
-    if ((vr -> Index () == index)) {
+    if ((vr -> Index () == xind)) {
 
-      fprintf (stderr, "Didn't fix exprQuad::replace() yet");
-      exit (-1);
+      //fprintf (stderr, "Didn't fix exprQuad::replace() yet");
+      //exit (-1);
       vr = w;
     }
 
     for (sparseQcol::iterator col = row -> second.begin (); col != row -> second.end (); ++col) {
 
       exprVar * &vc = col -> first;
-      if ((vc -> Index () == index)) {
+      if ((vc -> Index () == wind)) {
 
-	fprintf (stderr, "Didn't fix exprQuad::replace() yet");
-	exit (-1);
+	//fprintf (stderr, "Didn't fix exprQuad::replace() yet");
+	//exit (-1);
 	vc = w;
       }
     }
@@ -478,6 +479,16 @@ void exprQuad::closestFeasible (expression *varind,
 /// return l-2 norm of gradient at given point
 CouNumber exprQuad::gradientNorm (const double *x) {
 
-  assert (false);
-  return 0.;
+  CouNumber grad = 0.;
+
+  for (sparseQ::iterator row = matrix_.begin (); row != matrix_.end (); ++row) {
+
+    CouNumber gradEl = 0.;
+    for (sparseQcol::iterator col = row -> second.begin (); col != row -> second.end (); ++col)
+      gradEl += col -> second * x [col -> first -> Index ()];
+
+    grad += gradEl * gradEl;
+  }
+
+  return sqrt (grad);
 }

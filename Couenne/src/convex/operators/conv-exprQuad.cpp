@@ -5,7 +5,7 @@
  *          Pietro Belotti
  * Purpose: implementation of convexification methods for exprQuad
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-08.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -25,8 +25,15 @@ void exprQuad::getBounds (expression *&lb, expression *&ub) {
 
   /*printf ("generated quad bounds:\n  ");
   lb -> print (); printf (" [%g]\n  ", (*lb) ());
-  ub -> print (); printf (" [%g]\n", (*ub) ());*/
+  ub -> print (); printf (" [%g]\n",   (*ub) ());*/
 }
+
+
+/// Get lower and upper bound of an expression (if any)
+void exprQuad::getBounds (CouNumber &lb, CouNumber &ub) {
+  expression::getBounds (lb, ub);
+}
+
 
 
 // generate equality between *this and *w

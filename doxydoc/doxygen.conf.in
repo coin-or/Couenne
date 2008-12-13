@@ -117,9 +117,9 @@ WARN_FORMAT            = "$file:$line: $text"
 
 WARN_LOGFILE           = 
 
-INPUT                  = @abs_source_dir@/Couenne/src
+INPUT                  = @abs_source_dir@/Couenne/src @abs_source_dir@/Couenne/doc
 
-FILE_PATTERNS          = *.hpp *.h
+FILE_PATTERNS          = *.hpp *.h *.dox
 
 RECURSIVE              = YES
 

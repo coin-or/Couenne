@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: utility methods to convexify multiplications
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-08.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -40,6 +40,32 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
      arglist_ [0] = NULL;
      return aux;
      } */
+
+  // check if it is a product of binary variables
+  bool isBinProd = true;
+  for (int i=nargs_; i--;) {
+
+    expression *arg = arglist_ [i];
+    if (arg -> isInteger ()) {
+
+      CouNumber lb, ub;
+      arg -> getBounds (lb, ub);
+      if ((fabs (lb)      > 0.) ||
+	  (fabs (ub - 1.) > 0.)) { // if not all conditions hold, 
+	isBinProd = false;
+	break;
+      }
+    } else {
+      isBinProd = false;
+      break;
+    }
+  }
+
+  if (isBinProd) {
+
+    //printf ("found a BinProd!\n");
+
+  }
 
   //expression *aux = arglist_ [0]; // why not this one?
   expression *aux = new exprClone (arglist_ [0]);

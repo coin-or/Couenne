@@ -89,10 +89,16 @@ void CouenneProblem::initAuxs () const {
 			  "w_%04d [%10g,%10g] ", ord, Lb (ord), Ub (ord));
 
       CouNumber l, u;
+
       variables_ [ord] -> Image () -> getBounds (l, u);
 
+      /*printf ("printing bounds: [%g %g]\n", Lb (ord), Ub (ord));
+      variables_ [ord] -> Lb () -> print (); printf ("\n");
+      variables_ [ord] -> Ub () -> print (); printf ("\n");*/
+
       Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
-			  " [ --> w_%04d [%10g,%10g] ]", ord, l, u);
+			  " [ --> w_%04d [%10g,%10g] ] vs [%10g %10g]", 
+			  ord, l, u, Lb (ord), Ub (ord));
 
       // set bounds 
       if ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY) Lb (ord) = -COIN_DBL_MAX;
