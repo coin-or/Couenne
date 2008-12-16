@@ -129,8 +129,8 @@ inline CouNumber safe_pow (CouNumber base,
 	 ((fabs (lexponent) > COUENNE_EPS) && 
 	  (fabs (1. / lexponent - (rndexp = COUENNE_round (1. / lexponent))) < COUENNE_EPS)))) {
       if (rndexp % 2)
-	retval = (- powl (- lbase, lexponent)); // x^k, x negative, k odd
-      else retval = powl (-lbase, lexponent);   // x^k, x negative, k even
+	retval = (- pow (- lbase, lexponent)); // x^k, x negative, k odd
+      else retval = pow (-lbase, lexponent);   // x^k, x negative, k even
     }
     else retval =  0.; // this is incorrect but avoids nan's
   }
@@ -146,7 +146,7 @@ inline CouNumber safe_pow (CouNumber base,
     else retval = (lexponent < 0.) ? 0. : COUENNE_INFINITY;
   }
 
-  retval = (powl (lbase, lexponent));
+  retval = (pow (lbase, lexponent));
 
   return (CouNumber) (retval);
 }
