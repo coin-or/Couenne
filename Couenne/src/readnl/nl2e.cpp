@@ -63,7 +63,12 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
   // see ASL/solvers/rops.c, IfNL
   }
 
-  case OP_tanh: notimpl ("tanh");
+  case OP_tanh: return new exprDiv 
+      (new exprSub (new exprExp (nl2e (e -> L.e, asl)),
+		    new exprExp (new exprOpp (nl2e (e->L.e, asl)))),
+       new exprSum (new exprExp (nl2e (e -> L.e, asl)),
+		    new exprExp (new exprOpp (nl2e (e->L.e, asl)))));
+
   case OP_tan: {
     expression *arg;
     arg = nl2e (e -> L.e, asl);

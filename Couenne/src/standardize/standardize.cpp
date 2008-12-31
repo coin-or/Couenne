@@ -23,7 +23,7 @@
 
 /// standardize (nonlinear) common expressions, objectives, and constraints
 
-void CouenneProblem::standardize () {
+bool CouenneProblem::standardize () {
 
 #ifdef DEBUG
   printf ("START: current point: %d vars -------------------\n", 
@@ -31,6 +31,8 @@ void CouenneProblem::standardize () {
   for (int i=0; i<domain_.current () -> Dimension (); i++)
     printf ("%3d %20g [%20g %20g]\n", i, domain_.x (i), domain_.lb (i), domain_.ub (i));
 #endif
+
+  bool retval = true;
 
   // create dependence graph to assign an order to the evaluation (and
   // bound propagation, and -- in reverse direction -- implied bounds)
@@ -155,8 +157,16 @@ void CouenneProblem::standardize () {
       //delete ((*i) -> Body ());
       (*i) -> Body (new exprClone (aux));
       //      con2.push_back (*i);
+
     }
-    else iters2erase.push_back (i);
+    else {
+      CouNumber lb, ub;
+      (*i) -> Body () -> getBounds (lb, ub);
+      if ((((*((*i) -> Lb   ())) ()) > ub) ||
+	  (((*((*i) -> Ub   ())) ()) < lb))
+	retval = false;
+      iters2erase.push_back (i);
+    }
 
     //(*i) -> Body () -> realign (this);
 
@@ -347,4 +357,6 @@ void CouenneProblem::standardize () {
 
   delete [] commuted_;  commuted_ = NULL;
   delete    graph_;     graph_    = NULL;
+
+  return retval;
 }

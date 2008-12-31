@@ -265,9 +265,10 @@ class CouenneProblem {
   /// preprocess problem in order to extract linear relaxations etc.
   void reformulate ();
 
-  /// Break problem's nonlinear constraints in simple expressions to be
-  /// convexified later
-  void standardize ();
+  /// Break problem's nonlinear constraints in simple expressions to
+  /// be convexified later. Return true if problem looks feasible,
+  /// false if proven infeasible.
+  bool standardize ();
 
   /// Display current representation of problem: objective, linear and
   /// nonlinear constraints, and auxiliary variables.

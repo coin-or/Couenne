@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of subtractions
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-08.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -18,6 +18,16 @@ expression *exprSub::simplify () {
 
   exprOp:: simplify ();
 
+  // check for (f(x) - f(x))
+  if (arglist_ [0] -> compare (*(arglist_ [1])) == 0) {
+
+    delete arglist_ [0]; arglist_ [0] = NULL;
+    delete arglist_ [1]; arglist_ [1] = NULL;
+
+    return new exprConst (0.);
+  }
+
+  // check for other special cases
   if ((*arglist_) -> Type () == CONST) { // expr = c1 - f2 
 
     CouNumber c0 = (*arglist_) -> Value ();

@@ -139,7 +139,14 @@ void CouenneProblem::reformulate () {
 		  nOrigVars_, nOrigIntVars_, nOrigCons_);
 
   // reformulation
-  standardize ();
+  if (!standardize ()) { // problem is infeasible if standardize returns false
+
+    jnlst_->Printf(Ipopt::J_WARNING, J_PROBLEM,
+		   "Couenne: problem infeasible after reformulation\n");
+    // fake infeasible bounds for Couenne to bail out
+    for (int i = nVars (); i--;)
+      Ub (i) = - (Lb (i) = 1.);
+  }
 
   // clear all spurious variables pointers not referring to the variables_ vector
   realign ();

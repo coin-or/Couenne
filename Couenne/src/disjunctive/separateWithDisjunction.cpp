@@ -72,7 +72,7 @@ int CouenneDisjCuts::separateWithDisjunction (OsiCuts *cuts,
       }
   }
 
-  int *changed = new int [ncols],
+  int *changed = NULL, // will be created within sparse2dense
     nchanged = 0;
 
   sparse2dense (ncols, chg, changed, nchanged);

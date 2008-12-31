@@ -47,8 +47,6 @@ public:
 			     const OsiSOS *originalObject,
 			     int way, 
 			     double separator,
-			     //CouenneProblem *problem,
-			     //exprVar *ref,
 			     JnlstPtr jnlst,
 			     bool doFBBT,
 			     bool doConvCuts):
