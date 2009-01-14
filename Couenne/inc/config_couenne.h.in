@@ -27,6 +27,9 @@
 /* Define to 1 if the Couenne package is used */
 #undef COIN_HAS_COUENNE
 
+/* Define to 1 if the Cplex package is available */
+#undef COIN_HAS_CPX
+
 /* Define to 1 if the Ipopt package is used */
 #undef COIN_HAS_IPOPT
 

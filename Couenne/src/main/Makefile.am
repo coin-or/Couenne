@@ -29,20 +29,14 @@ COINLIBS += \
         $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
         $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 
-#if COIN_HAS_CPX
-#     COINLIBS += $(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
-#endif
+if COIN_HAS_CPX
+     COINLIBS += $(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
+endif
 
 COINLIBS += \
      $(OSIOBJDIR)/src/libOsi.la \
      $(CLPOBJDIR)/src/libClp.la \
      $(COINUTILSOBJDIR)/src/libCoinUtils.la
-
-#if COIN_HAS_CPX
-#COINLIBS += \
-#        $(CPXLIB)
-#endif
-
 
 #IPOPTLIBS = \
 #        $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
@@ -92,11 +86,11 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglKnapsackCover` \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglPreProcess`
 
-#if COIN_HAS_CPX
-#  AM_CPPFLAGS += \
-#	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
-#	-I`$(CYGPATH_W) $(CPXINCDIR)`
-#endif
+if COIN_HAS_CPX
+  AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
+	-I`$(CYGPATH_W) $(CPXINCDIR)`
+endif
 
 AM_CPPFLAGS += $(ASL_CPPFLAGS)
 

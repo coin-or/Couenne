@@ -73,6 +73,11 @@ AC_COIN_HAS_PROJECT(Couenne)
 # Ampl Solver library
 AC_COIN_HAS_ASL
 
+# CPLEX library
+AC_LANG_PUSH(C)
+AC_COIN_HAS_USER_LIBRARY([Cplex],[CPX],[cplex.h],[CPXgetstat])
+AC_LANG_POP(C)
+
 ##############################################################################
 #                   VPATH links for example input files                      #
 ##############################################################################
