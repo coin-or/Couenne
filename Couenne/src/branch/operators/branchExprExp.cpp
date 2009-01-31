@@ -117,8 +117,9 @@ CouNumber exprExp::selectBranch (const CouenneObject *obj,
     *brpts = obj -> midInterval (log (y0), l, u);
 
     way = TWO_LEFT;
-    return CoinMin (brDist [0] = log (y0) - x0, 
-		    brDist [1] = projectSeg (x0, y0, l, exp (l), *brpts, exp (*brpts), -1));
+    return CoinMin (brDist [0] = projectSeg (x0, y0, l, exp (l), *brpts, exp (*brpts), -1),
+		    brDist [1] = log (y0) - x0);
+		    
   }
 
   // 4) both are finite
