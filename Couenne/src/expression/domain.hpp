@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: class for point and bounding box
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -61,6 +61,9 @@ public:
 
   /// resize domain point (for extending into higher space)
   void resize (int newdim);
+
+  /// return current size
+  int size () const {return dimension_;}
 
   /// return dimension_
   inline int Dimension () {return dimension_;}

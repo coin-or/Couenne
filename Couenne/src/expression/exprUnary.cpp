@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods of the unary expression class
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-2009.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -80,7 +80,9 @@ bool exprUnary::isInteger () {
   CouNumber al, au;
   argument_ -> getBounds (al, au);
 
-  if (fabs (al - au) < COUENNE_EPS) { // argument is constant
+  if ((al > -COUENNE_INFINITY) &&     // Funny: if al=-(au=-1.7e308) returns true...
+      (au <  COUENNE_INFINITY) &&
+      fabs (al - au) < COUENNE_EPS) { // argument is constant
 
     register CouNumber fval = (F ()) (al); 
 

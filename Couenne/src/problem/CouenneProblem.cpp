@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods of the class CouenneProblem
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -378,9 +378,15 @@ exprAux *CouenneProblem::addAuxiliary (expression *symbolic) {
   // check if image is already in the expression database auxSet_
   std::set <exprAux *, compExpr>::iterator i;
 
+  int var_ind = variables_ . size ();
+  domain_. current () -> resize (var_ind + 1);
+
+  symbolic -> getBounds (domain_. lb (var_ind), 
+			 domain_. ub (var_ind));
+
   // create new aux associated with that expression
   exprAux *w = new exprAux (symbolic,
-			    variables_ . size (), 
+			    var_ind,
 			    1 + symbolic -> rank (), 
 			    exprAux::Unset, 
 			    &domain_);

@@ -3,13 +3,15 @@
  * Author:  Pietro Belotti
  * Purpose: implementation of methods of classes for point and bounding box
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CoinHelperFunctions.hpp"
 #include "domain.hpp"
 #include "CouennePrecisions.hpp"
+
+#define EXTRA_STORAGE 1024
 
 /// constructor
 DomainPoint::DomainPoint (int dim, 
@@ -88,20 +90,32 @@ void DomainPoint::resize (int newdim) {
 
   assert (copied_); // cannot resize domain point as it was not copied
 
-  if (newdim==0) {
+  if (newdim==0) { // clear
 
     free (x_);  x_  = NULL;
     free (lb_); lb_ = NULL;
     free (ub_); ub_ = NULL;
 
-  } else if (newdim != dimension_) {
+    dimension_ = newdim;
+
+  } else if (newdim < dimension_) { // resize exactly
 
     x_  = (CouNumber *) realloc (x_,  newdim * sizeof (CouNumber)); 
     lb_ = (CouNumber *) realloc (lb_, newdim * sizeof (CouNumber)); 
     ub_ = (CouNumber *) realloc (ub_, newdim * sizeof (CouNumber)); 
-  }
 
-  dimension_ = newdim;
+    dimension_ = newdim;
+
+  } else if (newdim > dimension_) { // expand and leave some extra space
+
+    newdim += EXTRA_STORAGE;
+
+    x_  = (CouNumber *) realloc (x_,  newdim * sizeof (CouNumber)); 
+    lb_ = (CouNumber *) realloc (lb_, newdim * sizeof (CouNumber)); 
+    ub_ = (CouNumber *) realloc (ub_, newdim * sizeof (CouNumber)); 
+
+    dimension_ = newdim;
+  }
 }
 
 

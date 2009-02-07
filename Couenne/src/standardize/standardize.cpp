@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: standardize all expressions in a problem
  *
- * (C) Carnegie-Mellon University, 2006-07.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -185,7 +185,7 @@ bool CouenneProblem::standardize () {
   for (unsigned int i = iters2erase.size (); i--;)
     constraints_. erase (iters2erase [i]);
 
-#ifdef DEBUG
+#ifdef DEBUG 
   // Use with caution. Bounds on auxs are not defined yet, so valgrind complains
   printf ("done with standardization: (careful, bounds below can be nonsense)\n");
   print (); 
