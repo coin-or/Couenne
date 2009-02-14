@@ -63,9 +63,13 @@ CouenneProblem::CouenneProblem (const struct ASL *asl,
   double now = CoinCpuTime ();
 
   if (asl) {
-
+#if COIN_HAS_ASL
     // read problem from AMPL structure
     readnl (asl);
+#else
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM, "Couenne was compiled without ASL library. Cannot process ASL structure.\n");
+    throw -1;
+#endif
 
     if ((now = (CoinCpuTime () - now)) > 10.)
       jnlst_ -> Printf (Ipopt::J_WARNING, J_PROBLEM,

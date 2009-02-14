@@ -41,13 +41,16 @@
 #include "CglRedSplit.hpp"
 
 // Ampl includes
+#ifdef COIN_HAS_ASL
 #include "asl.h"
 #include "getstub.h"
+#endif
 
 
 namespace Bonmin{
   
   SmartAsl::~SmartAsl(){
+#ifdef COIN_HAS_ASL
     //Code from Ipopt::AmplTNLP to free asl
     if(asl != NULL){
         if (X0) {
@@ -71,6 +74,7 @@ namespace Bonmin{
         asl = NULL;
     }
     ASL_free(&asl);
+#endif
   }
   
   CouenneSetup::~CouenneSetup(){
@@ -98,10 +102,15 @@ namespace Bonmin{
       ci = new CouenneInterface;
 
       if (!couenneProb && argv) {
+#ifdef COIN_HAS_ASL
 	/* Read the model in various places. */
 	ci->readAmplNlFile(argv,roptions(),options(),journalist());
 	aslfg_ = new SmartAsl;
 	aslfg_->asl = readASLfg (argv);
+#else
+	    std::cerr << "Couenne was compiled without AMPL Solver Library. Cannot initialize from AMPL NL File." << std::endl;
+	    return false;
+#endif
       } 
     }
 
