@@ -64,6 +64,15 @@ void CouenneProblem::print (std::ostream &out) {
       out << std::endl;
     }
 
+  if (commonexprs_.size ()) {
+    out << "common expressions:" << std::endl;
+    for (std::vector <expression *>::iterator i = commonexprs_.begin ();
+	 i != commonexprs_.end (); ++i) {
+      (*i) -> print (out);
+      out << std::endl;
+    }
+  }
+
   if (optimum_) {
     out << "best known solution: (" << *optimum_;
     for (int i=1; i < nVars (); i++)

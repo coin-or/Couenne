@@ -150,9 +150,12 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
 
     if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
       printf ("  --> "); 
-      if (brVar) brVar -> print (); 
-      printf (" at %g, improv %g <%g>, indices = %d,%d\n", 
-	      *brPts, improv, maxdist, index, brVar -> Index ());
+      if (brVar) {
+	brVar -> print (); 
+	if (brPts) 
+	  printf (" at %g, improv %g <%g>, indices = %d,%d\n", 
+		  *brPts, improv, maxdist, index, brVar -> Index ());
+      }
     }
 
     if (brVar &&
