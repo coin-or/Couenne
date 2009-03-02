@@ -74,7 +74,7 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
   // a constant
   if ((nq==0) && (nl==0)) 
 
-    ret = addAuxiliary (new exprConst (c0)); // a constant auxiliary? FIX!
+    ret = new exprClone (addAuxiliary (new exprConst (c0))); // a constant auxiliary? FIX!
 
   else if ((nq==0) && (fabs (c0) < COUENNE_EPS) && (nl==1)) { // a linear monomial, cx
 
