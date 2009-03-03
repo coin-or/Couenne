@@ -8,6 +8,7 @@
  */
 
 #include "exprOpp.hpp"
+#include "exprConst.hpp"
 
 
 // find bounds of -x given bounds on x
@@ -70,6 +71,13 @@ expression *exprOpp::simplify () {
   // check if this is a -(-f(x))
   if (argument_ -> code () == COU_EXPROPP) {
     expression *ret = argument_ -> Argument () -> clone ();
+    delete argument_;
+    return ret;
+  }
+
+  // check if this is a -(const)
+  if (argument_ -> Type () == CONST) {
+    expression *ret = new exprConst (- argument_ -> Value ());
     delete argument_;
     return ret;
   }

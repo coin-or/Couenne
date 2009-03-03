@@ -6399,7 +6399,7 @@ AC_MSG_RESULT([$SED])
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 #
-## $Id: coin.m4 1234 2009-02-09 12:31:12Z andreasw $
+## $Id: coin.m4 1237 2009-02-23 15:51:43Z andreasw $
 #
 # Author: Andreas Wachter    IBM      2006-04-14
 
@@ -9379,7 +9379,7 @@ if test x"$use_lapack" != x; then
         AC_MSG_ERROR([option \"BUILD\" specified for LAPACK, but $coin_lapackobjdir directory is not configured])
       fi
     fi
-  else
+  elif test "$use_lapack" != no; then
     AC_MSG_CHECKING([whether user supplied LAPACKLIB=\"$use_lapack\" works])
     LIBS="$use_lapack $LIBS"
     ADDLIBS="$use_lapack $ADDLIBS"
@@ -9464,7 +9464,7 @@ fi
 AM_CONDITIONAL([COIN_HAS_LAPACK],[test x"$use_lapack" != x])
 AM_CONDITIONAL([COIN_BUILD_LAPACK],[test "$use_lapack" = BUILD])
 
-if test x"$use_lapack" = x; then
+if test x"$use_lapack" = x || test "$use_lapack" = no; then
   coin_has_lapack=no
 else
   coin_has_lapack=yes

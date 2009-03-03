@@ -104,13 +104,14 @@ bool CouenneProblem::standardize () {
        i != objectives_.end (); ++i) {
 
 #ifdef DEBUG
-    printf ("Objective "); (*i) -> print ();
+    printf ("Objective [code: %d]", (*i) -> Body () -> code ()); (*i) -> print ();
 #endif
 
     exprAux *aux = (*i) -> standardize (this);
 
 #ifdef DEBUG
-    printf ("      --> "); (*i) -> print ();
+    printf ("      --> "); (*i) -> print (); 
+    if (aux) {printf (" -- aux is "); aux -> print (); printf ("\n");}
 #endif
 
     if (aux) {

@@ -492,3 +492,10 @@ CouNumber exprQuad::gradientNorm (const double *x) {
 
   return sqrt (grad);
 }
+
+/// Simplify expression
+expression *exprQuad::simplify () {
+  exprOp::simplify (); 
+  return NULL;
+}
+

@@ -71,8 +71,7 @@ public:
   virtual expression *differentiate (int index); 
 
   /// simplification
-  virtual expression *simplify ()
-    {exprOp::simplify (); return NULL;}
+  virtual expression *simplify ();
 
   /// get a measure of "how linear" the expression is:
   virtual int Linearity ();

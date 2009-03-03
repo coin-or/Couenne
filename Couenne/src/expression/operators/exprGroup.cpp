@@ -321,3 +321,14 @@ void exprGroup::realign (const CouenneProblem *p) {
     }
   }
 }
+
+
+/// simplification
+expression *exprGroup::simplify () {
+  exprOp::simplify (); 
+  //if (lcoeff_. size () <= 0) // this is just a constant
+  //return new exprConst (c0_);
+  //else
+  return NULL;
+}
+
