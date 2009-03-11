@@ -138,9 +138,9 @@ class exprAux: public exprVar {
   virtual inline bool isDefinedInteger () {
 
     return ((integer_ == Integer) || 
-	    (integer_ == Unset) && 
+	    ((integer_ == Unset) && 
 	    ((integer_ = (image_ -> isInteger ()) ? 
-	      Integer : Continuous) == Integer));
+	      Integer : Continuous) == Integer)));
   }
 
   /// is this expression integer?
