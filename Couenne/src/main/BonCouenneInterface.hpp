@@ -10,14 +10,17 @@
 
 #ifndef CouenneInterface_H
 #define CouenneInterface_H
-#include "BonAmplInterface.hpp"
+
 #include "CouenneCutGenerator.hpp"
 
+#ifdef COIN_HAS_ASL
+#include "BonAmplInterface.hpp"
 
 struct ASL;
-
 struct ASL *readASLfg (char **);
-
+#else
+#define AmplInterface OsiTMINLPInterface
+#endif
 
 namespace Bonmin {
 class CouenneInterface : public AmplInterface
@@ -35,12 +38,12 @@ class CouenneInterface : public AmplInterface
   /** Destructor. */
   virtual ~CouenneInterface();
 
-    
+#ifdef COIN_HAS_ASL    
   /** read ampl file using inputed options, journalist....*/
   virtual void readAmplNlFile(char **& argv, Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions,
                               Ipopt::SmartPtr<Ipopt::OptionsList> options,
                               Ipopt::SmartPtr<Ipopt::Journalist> journalist);
-  
+#endif
   /** \name Overloaded methods to build outer approximations */
   //@{
   /** \brief Extract a linear relaxation of the MINLP.

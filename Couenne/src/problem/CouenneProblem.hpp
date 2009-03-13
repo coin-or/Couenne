@@ -267,11 +267,13 @@ class CouenneProblem {
   /// nonlinear constraints, and auxiliary variables.
   void print (std::ostream & = std::cout);
 
+#ifdef COIN_HAS_ASL
   /// Read problem from .nl file using the Ampl Solver Library (ASL)
   int readnl (const struct ASL *);
 
   /// Generate a Couenne expression from an ASL expression
   expression *nl2e (struct expr *, const ASL *asl);
+#endif
 
   // bound tightening parameters
   bool doFBBT () const {return doFBBT_;} ///< shall we do Feasibility Based Bound Tightening?

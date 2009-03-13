@@ -36,13 +36,14 @@ CouenneInterface * CouenneInterface::clone(bool CopyData){
 CouenneInterface::~CouenneInterface(){
 }
 
-
+#ifdef COIN_HAS_ASL    
 void 
 CouenneInterface::readAmplNlFile(char **& argv, Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions,
                                  Ipopt::SmartPtr<Ipopt::OptionsList> options,
                                  Ipopt::SmartPtr<Ipopt::Journalist> journalist){
   AmplInterface::readAmplNlFile(argv, roptions, options, journalist);
 }
+#endif
 
 /** \name Overloaded methods to build outer approximations */
   //@{
