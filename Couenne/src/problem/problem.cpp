@@ -133,6 +133,7 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
   // auxiliary variables have an incomplete image, i.e. they have been
   // decomposed previously, since they are updated with increasing
   // index.
+
   for (int j=0, i=nVars (); i--; j++) {
 
     int index = numbering_ [j];
@@ -150,9 +151,9 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
       }
 
       if (var -> Type () == AUX)
-	//x [index] = //not necessary, addresses of x and X are equal
-	X (index) = 
-	  CoinMax (l, CoinMin (u, (*(var -> Image ())) ()));
+	X (index) =  // addresses of x[] and X() are equal
+	  CoinMax (l, CoinMin (u, (*(var -> Image ())) ())); 
+
     } else X (index) = 0.;
   }
 

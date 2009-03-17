@@ -73,8 +73,6 @@ int CouenneProblem::readnl (const ASL *asl) {
   // add space for common expressions
   for (int i = ndefined_; i--;)                                  addVariable(false, &domain_);
 
-  nOrigVars_ = n_var;
-
   // common expressions (or defined variables) ///////////////////////////////////////
 
 #ifdef DEBUG
