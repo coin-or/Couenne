@@ -150,10 +150,11 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 	u = Ub (index);
       }
 
-      if (var -> Type () == AUX)
+      if (var -> Type () == AUX) {
 	X (index) =  // addresses of x[] and X() are equal
 	  CoinMax (l, CoinMin (u, (*(var -> Image ())) ())); 
 
+      }
     } else X (index) = 0.;
   }
 

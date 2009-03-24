@@ -67,7 +67,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
     // these bounds would be implied by McCormick's convexification,
     // however we write them explicitly for internal use within bound
-    // tightening, as otherwise they would only be known by Clp only.
+    // tightening, as otherwise they would be known to Clp only.
 
     int xi = arglist_ [0] -> Index (),
         yi = arglist_ [1] -> Index ();

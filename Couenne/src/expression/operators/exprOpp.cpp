@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the opposite -f(x) of a function
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 

@@ -20,9 +20,7 @@
 
 #include "CoinTime.hpp"
 #include "CoinError.hpp"
-#include "BonminConfig.h"
 #include "BonCouenneInterface.hpp"
-#include "BonIpoptSolver.hpp"
 
 #include "BonCouenneSetup.hpp"
 
@@ -85,8 +83,8 @@ int main (int argc, char *argv[])
 			  new exprConst (1));
 #endif
 
-    CouenneSetup bonmin;
-    if (!bonmin.InitializeCouenne (argv, p, ci))
+    CouenneSetup couenne;
+    if (!couenne.InitializeCouenne (argv, p, ci))
       throw infeasible;
 
 #if 0
@@ -96,13 +94,13 @@ int main (int argc, char *argv[])
 
     /// update time limit (read/preprocessing might have taken some)
     double timeLimit = 0;
-    bonmin.options () -> GetNumericValue ("time_limit", timeLimit, "bonmin.");
-    bonmin.setDoubleParameter (BabSetupBase::MaxTime, 
+    couenne.options () -> GetNumericValue ("time_limit", timeLimit, "couenne.");
+    couenne.setDoubleParameter (BabSetupBase::MaxTime, 
 			       timeLimit - (time_start = (CoinCpuTime () - time_start)));
 
     //////////////////////////////////
 
-    bb (bonmin); // do branch and bound
+    bb (couenne); // do branch and bound
 
     //////////////////////////////////
 
@@ -126,7 +124,7 @@ int main (int argc, char *argv[])
 
     // retrieve test value to check
     double global_opt;
-    bonmin.options () -> GetNumericValue ("couenne_check", global_opt, "couenne.");
+    couenne.options () -> GetNumericValue ("couenne_check", global_opt, "couenne.");
 
     if (global_opt < COUENNE_INFINITY) { // some value found in couenne.opt
 
@@ -136,13 +134,13 @@ int main (int argc, char *argv[])
 	      cp ? cp -> problemName ().c_str () : "unknown", 
 	      (fabs (opt - global_opt) / 
 	       (1. + CoinMax (fabs (opt), fabs (global_opt))) < PRINTED_PRECISION) ? 
-	      (char *) "OK" : (char *) "FAILED");
+	      (const char *) "OK" : (const char *) "FAILED");
 	      //opt, global_opt,
 	      //fabs (opt - global_opt));
 
     } else // good old statistics
 
-    if (bonmin.displayStats ()) { // print statistics
+    if (couenne.displayStats ()) { // print statistics
 
       // CAUTION: assuming first cut generator is our CouenneCutGenerator
 

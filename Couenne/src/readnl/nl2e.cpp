@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: converts a nl expression into a Couenne expression
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -137,7 +137,7 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
   }
 
   default: 
-    printf ("ERROR: unknown operator (address %x), aborting.\n", (long int) e -> op); 
+    printf ("ERROR: unknown operator (address %p), aborting.\n", e -> op); 
     exit (-1);
     //return new exprConst (0);
   }
