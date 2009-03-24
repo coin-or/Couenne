@@ -15,7 +15,6 @@
 #include "nlp.h"
 #include "r_opn.hd"
 
-
 /* couples an ASL function pointer with the relative operator constant */
 
 typedef struct {
@@ -32,8 +31,8 @@ static int pair_compare (const void *p1, const void *p2) {
 
   /* FIX! weak cast for 64 bit machines */
 
-  register long int f1 = (long int) (((AslCouPair *) p1) -> fp); 
-  register long int f2 = (long int) (((AslCouPair *) p2) -> fp); 
+  register int f1 = Intcast (((AslCouPair *) p1) -> fp); 
+  register int f2 = Intcast (((AslCouPair *) p2) -> fp); 
 
   if      (f1 < f2) return -1;
   else if (f1 > f2) return  1;
@@ -55,9 +54,9 @@ int getOperator (efunc *f) {
 
   /* FIX cast fo 64 bit machines */
 
-  if (((long int) f <  N_OPS) && 
-      ((long int) f > -N_OPS))
-    return (long int) f;
+  if ((Intcast f <  N_OPS) && 
+      (Intcast f > -N_OPS))
+    return Intcast f;
 
   key.fp = f;
 

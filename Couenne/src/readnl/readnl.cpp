@@ -30,7 +30,7 @@
 
 // check if an expression is a null pointer or equals zero
 inline bool is_expr_zero (expr* e)
-  {return ((e==NULL) || (((((long int) e->op) == OPNUM) && 
+{return ((e==NULL) || ((((Intcast (e->op)) == OPNUM) && 
 			  (fabs (((expr_n *)e) -> v)  < COUENNE_EPS) 
 			  //  && (fabs (e -> dL) < COUENNE_EPS)
 			  // *** CHECK THIS! dL is the derivative
