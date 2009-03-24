@@ -21,12 +21,6 @@
 #include "getstub.h"
 #include "opcode.hd"
 
-#if defined(_MSC_VER)
-typedef void * fcn_ptr;
-#else
-typedef long int fcn_ptr;
-#endif
-
 #define OBJ_DE    ((const ASL_fg *) asl) -> I.obj_de_
 #define VAR_E     ((const ASL_fg *) asl) -> I.var_e_
 #define CON_DE    ((const ASL_fg *) asl) -> I.con_de_
@@ -36,7 +30,7 @@ typedef long int fcn_ptr;
 
 // check if an expression is a null pointer or equals zero
 inline bool is_expr_zero (expr* e)
-  {return ((e==NULL) || (((((fcn_ptr) e->op) == OPNUM) && 
+{return ((e==NULL) || ((((Intcast (e->op)) == OPNUM) && 
 			  (fabs (((expr_n *)e) -> v)  < COUENNE_EPS) 
 			  //  && (fabs (e -> dL) < COUENNE_EPS)
 			  // *** CHECK THIS! dL is the derivative

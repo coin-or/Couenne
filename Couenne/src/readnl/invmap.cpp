@@ -15,12 +15,7 @@
 #include "nlp.h"
 #include "r_opn.hd"
 
-#if defined(_MSC_VER)
-typedef void * fcn_ptr;
-#else
-typedef long int fcn_ptr;
-#endif
-
+//#define Intcast (int)(long)
 
 /* couples an ASL function pointer with the relative operator constant */
 
@@ -38,8 +33,8 @@ static int pair_compare (const void *p1, const void *p2) {
 
   /* FIX! weak cast for 64 bit machines */
 
-  register fcn_ptr f1 = (fcn_ptr) (((AslCouPair *) p1) -> fp); 
-  register fcn_ptr f2 = (fcn_ptr) (((AslCouPair *) p2) -> fp); 
+  register int f1 = Intcast (((AslCouPair *) p1) -> fp); 
+  register int f2 = Intcast (((AslCouPair *) p2) -> fp); 
 
   if      (f1 < f2) return -1;
   else if (f1 > f2) return  1;
@@ -61,9 +56,9 @@ int getOperator (efunc *f) {
 
   /* FIX cast fo 64 bit machines */
 
-  if (((fcn_ptr) f <  N_OPS) && 
-      ((fcn_ptr) f > -N_OPS))
-    return (fcn_ptr) f;
+  if ((Intcast f <  N_OPS) && 
+      (Intcast f > -N_OPS))
+    return Intcast f;
 
   key.fp = f;
 
