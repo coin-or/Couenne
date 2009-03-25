@@ -1,10 +1,10 @@
 /*
- * Name: invmap.cpp
- * Author: Pietro Belotti
+ * Name:    invmap.cpp
+ * Author:  Pietro Belotti
  * Purpose: create a bijection between ASL's efunc and integer to
  *          inversely map e->op fields into constant operators
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -14,8 +14,6 @@
 #include "opcode.hd"
 #include "nlp.h"
 #include "r_opn.hd"
-
-//#define Intcast (int)(long)
 
 /* couples an ASL function pointer with the relative operator constant */
 

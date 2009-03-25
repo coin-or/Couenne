@@ -137,7 +137,7 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
   }
 
   default: 
-    printf ("ERROR: unknown operator (address %p), aborting.\n", Intcast (e -> op)); 
+    printf ("ERROR: unknown operator (address %p), aborting.\n", Intcast (e -> op));
     exit (-1);
     //return new exprConst (0);
   }

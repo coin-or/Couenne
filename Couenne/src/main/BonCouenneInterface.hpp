@@ -1,4 +1,4 @@
-// (C) Copyright International Business Machines Corporation (IBM) 2006, 2007
+// (C) Copyright International Business Machines Corporation (IBM) 2006-09
 // All Rights Reserved.
 // This code is published under the Common Public License.
 //
@@ -37,6 +37,9 @@ class CouenneInterface : public AmplInterface
 
   /** Destructor. */
   virtual ~CouenneInterface();
+
+  //
+  virtual std::string  appName() {return "couenne";}
 
 #ifdef COIN_HAS_ASL    
   /** read ampl file using inputed options, journalist....*/

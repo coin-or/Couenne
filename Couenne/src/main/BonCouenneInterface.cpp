@@ -41,6 +41,8 @@ void
 CouenneInterface::readAmplNlFile(char **& argv, Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions,
                                  Ipopt::SmartPtr<Ipopt::OptionsList> options,
                                  Ipopt::SmartPtr<Ipopt::Journalist> journalist){
+  //  if (!IsValid (app_))
+  //createApplication (roptions, options, journalist, "couenne.");
   AmplInterface::readAmplNlFile(argv, roptions, options, journalist);
 }
 #endif
