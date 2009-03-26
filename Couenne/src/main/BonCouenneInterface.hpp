@@ -38,6 +38,9 @@ class CouenneInterface : public AmplInterface
   /** Destructor. */
   virtual ~CouenneInterface();
 
+  // My name is Couenne [ku:en]
+  virtual std::string  appName() {return "couenne";}
+
 #ifdef COIN_HAS_ASL    
   /** read ampl file using inputed options, journalist....*/
   virtual void readAmplNlFile(char **& argv, Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions,
