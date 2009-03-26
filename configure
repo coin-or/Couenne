@@ -20887,7 +20887,7 @@ if test $coin_skip = yes; then
   echo "$as_me:$LINENO: result: skipping" >&5
 echo "${ECHO_T}skipping" >&6
 else
-  coin_tmp=`echo $srcdir/ThirdParty/HSL/configure.ac`
+  coin_tmp=`echo $srcdir/ThirdParty/HSL/ma27ad.f`
   # There is probably a more elegant way to get the first thing out here...
   for i in $coin_tmp; do
     coin_tmp2=$i

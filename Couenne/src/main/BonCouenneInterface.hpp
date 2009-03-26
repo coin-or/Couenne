@@ -38,7 +38,7 @@ class CouenneInterface : public AmplInterface
   /** Destructor. */
   virtual ~CouenneInterface();
 
-  //
+  // My name is Couenne [ku:en]
   virtual std::string  appName() {return "couenne";}
 
 #ifdef COIN_HAS_ASL    
