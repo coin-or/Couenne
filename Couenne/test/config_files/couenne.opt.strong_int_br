@@ -25,3 +25,4 @@ allowable_gap 1e-8
 allowable_fraction_gap 1e-8
 
 display_stats yes
+test_mode yes

@@ -88,6 +88,12 @@ namespace Bonmin{
     /* Get the basic options. */
     readOptionsFile();
  
+    // in check mode, avoid pop-up error message (there are quite a few messages)
+    std::string test_mode;
+    options_ -> GetStringValue ("test_mode", test_mode, "couenne.");
+    if (test_mode == "yes")
+      WindowsErrorPopupBlocker();
+
     /** Change default value for failure behavior so that code doesn't crash 
 	when Ipopt does not solve a sub-problem.*/
 
@@ -499,6 +505,13 @@ namespace Bonmin{
     roptions -> AddStringOption2 (
       "display_stats",
       "display statistics at the end of the run",
+      "no",
+      "yes", "",
+      "no", "");
+
+    roptions -> AddStringOption2 (
+      "test_mode",
+      "set to true if this is Couenne unit test",
       "no",
       "yes", "",
       "no", "");
