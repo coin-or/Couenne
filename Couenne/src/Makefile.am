@@ -156,20 +156,21 @@ libCouenne_la_SOURCES = \
 # This is for libtool (on Windows)
 libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
+libCouenne_la_LIBADD =
+
 # If we have the Ampl solver library, we need to add additional things
 if COIN_HAS_ASL
 libCouenne_la_SOURCES += readnl/readnl.cpp \
 			 readnl/nl2e.cpp \
 			 readnl/invmap.cpp \
 			 readnl/readASLfg.cpp
-endif
-
-
-#libCouenne_la_LIBADD =
 
 # adding AMPL interface for use with other executables
-#libCouenne_la_LIBADD += $(IPOPTOBJDIR)/.../libamplinterface.la
-
+libCouenne_la_LIBADD += \
+        $(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
+        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
+        $(ASLLIB)
+endif
 
 ########################################################################
 #                            Additional flags                          #

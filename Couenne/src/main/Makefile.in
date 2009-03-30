@@ -86,16 +86,13 @@ am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1) $(CBCOBJDIR)/src/libCbc.la \
 	$(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
 	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
-	$(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
 	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
-	$(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
 	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
 	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la $(am__DEPENDENCIES_2) \
 	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
 	$(COINUTILSOBJDIR)/src/libCoinUtils.la
 am__DEPENDENCIES_4 =
-couenne_DEPENDENCIES = $(am__DEPENDENCIES_3) $(am__DEPENDENCIES_4) \
-	$(am__DEPENDENCIES_4)
+couenne_DEPENDENCIES = $(am__DEPENDENCIES_3) $(am__DEPENDENCIES_4)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__depfiles_maybe = depfiles
@@ -308,9 +305,7 @@ COINLIBS = $(am__append_1) $(CBCOBJDIR)/src/libCbc.la \
 	$(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
 	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
-	$(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
 	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
-	$(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
 	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
 	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la $(am__append_2) \
 	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
@@ -355,7 +350,6 @@ couenne_SOURCES = BonCouenne.cpp
 couenne_LDADD = \
 	$(LIBCBCCOPY) \
 	$(COINLIBS) \
-	$(ASLLIB) \
 	$(ADDLIBS)
 
 

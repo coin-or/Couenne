@@ -23,9 +23,7 @@ COINLIBS += \
 	$(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
         $(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
-	$(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
 	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
-        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
         $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
         $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 
@@ -115,7 +113,6 @@ couenne_SOURCES = BonCouenne.cpp
 couenne_LDADD = \
 	$(LIBCBCCOPY) \
 	$(COINLIBS) \
-	$(ASLLIB) \
 	$(ADDLIBS)
 
 # Finally, the -rpath flag is used by libtool to make sure that the shared
