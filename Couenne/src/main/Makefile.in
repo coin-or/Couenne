@@ -92,7 +92,8 @@ am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1) $(CBCOBJDIR)/src/libCbc.la \
 	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
 	$(COINUTILSOBJDIR)/src/libCoinUtils.la
 am__DEPENDENCIES_4 =
-couenne_DEPENDENCIES = $(am__DEPENDENCIES_3) $(am__DEPENDENCIES_4)
+couenne_DEPENDENCIES = $(am__DEPENDENCIES_3) $(am__DEPENDENCIES_4) \
+	$(am__DEPENDENCIES_4)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__depfiles_maybe = depfiles
@@ -350,7 +351,8 @@ couenne_SOURCES = BonCouenne.cpp
 couenne_LDADD = \
 	$(LIBCBCCOPY) \
 	$(COINLIBS) \
-	$(ADDLIBS)
+	$(ADDLIBS) \
+	$(ASLLIB)
 
 
 # Finally, the -rpath flag is used by libtool to make sure that the shared

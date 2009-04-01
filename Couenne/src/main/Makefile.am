@@ -113,7 +113,8 @@ couenne_SOURCES = BonCouenne.cpp
 couenne_LDADD = \
 	$(LIBCBCCOPY) \
 	$(COINLIBS) \
-	$(ADDLIBS)
+	$(ADDLIBS) \
+	$(ASLLIB)
 
 # Finally, the -rpath flag is used by libtool to make sure that the shared
 # library is found (in the lib install directory) when we are using dynamic

@@ -168,8 +168,7 @@ libCouenne_la_SOURCES += readnl/readnl.cpp \
 # adding AMPL interface for use with other executables
 libCouenne_la_LIBADD += \
         $(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
-        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
-        $(ASLLIB)
+        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
 endif
 
 ########################################################################

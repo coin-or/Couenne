@@ -54,8 +54,7 @@ host_triplet = @host@
 # adding AMPL interface for use with other executables
 @COIN_HAS_ASL_TRUE@am__append_2 = \
 @COIN_HAS_ASL_TRUE@        $(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
-@COIN_HAS_ASL_TRUE@        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
-@COIN_HAS_ASL_TRUE@        $(ASLLIB)
+@COIN_HAS_ASL_TRUE@        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
 
 
 # If we have the Ampl solver library, we need to add additional things
@@ -80,11 +79,9 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includecoindir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-am__DEPENDENCIES_1 =
-@COIN_HAS_ASL_TRUE@am__DEPENDENCIES_2 = $(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
-@COIN_HAS_ASL_TRUE@	$(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la \
-@COIN_HAS_ASL_TRUE@	$(am__DEPENDENCIES_1)
-libCouenne_la_DEPENDENCIES = $(am__DEPENDENCIES_2)
+@COIN_HAS_ASL_TRUE@am__DEPENDENCIES_1 = $(BONMINOBJDIR)/src/CbcBonmin/libbonminampl.la \
+@COIN_HAS_ASL_TRUE@	$(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
+libCouenne_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__libCouenne_la_SOURCES_DIST = main/BonCouenneSetup.cpp \
 	main/BonCouenneInterface.cpp main/BonNlpHeuristic.cpp \
 	main/BonInitHeuristic.cpp main/BonCouenneInfo.cpp \
