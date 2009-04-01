@@ -318,7 +318,15 @@ includecoin_HEADERS = \
 # You only need to adapt the following line
 ConfigHeader = CouenneConfig.h
 
-install-exec-local:
+if COIN_HAS_ASL
+install-asl:
+	$(install_sh_DATA) ../../ThirdParty/ASL/amplsolv* $(DESTDIR)$(libdir)
+else
+install-asl:
+
+endif
+
+install-exec-local: install-asl
 	echo "#ifndef HAVE_CONFIG_H" >bla
 	echo "#define HAVE_CONFIG_H" >>bla
 	echo "#endif" >> bla

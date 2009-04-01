@@ -2083,7 +2083,11 @@ uninstall-am: uninstall-includecoinHEADERS uninstall-info-am \
 	uninstall-libLTLIBRARIES uninstall-local
 
 
-install-exec-local:
+@COIN_HAS_ASL_TRUE@install-asl:
+@COIN_HAS_ASL_TRUE@	$(install_sh_DATA) ../../ThirdParty/ASL/amplsolv* $(DESTDIR)$(libdir)
+@COIN_HAS_ASL_FALSE@install-asl:
+
+install-exec-local: install-asl
 	echo "#ifndef HAVE_CONFIG_H" >bla
 	echo "#define HAVE_CONFIG_H" >>bla
 	echo "#endif" >> bla
