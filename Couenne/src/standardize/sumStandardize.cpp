@@ -78,10 +78,10 @@ exprAux *exprSum::standardize (CouenneProblem *p, bool addAux) {
   ////////////////////////////////////////////////////////////////////////////////
 
 #ifdef DEBUG
-  printf ("decompTerm returns: [");
+  printf ("decompTerm: lin [");
   for (std::map <int, CouNumber>::iterator i = lmap.Map().begin (); i != lmap.Map().end (); ++i)
     printf ("<%d,%g>", i -> first, i -> second);
-  printf ("] -- [");
+  printf ("] -- quad [");
   for (std::map <std::pair <int, int>, CouNumber>::iterator i = qmap.Map ().begin (); 
        i != qmap.Map ().end (); ++i)
     printf ("<%d,%d,%g>", i -> first.first, i -> first.second, i -> second);

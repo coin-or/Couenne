@@ -352,9 +352,15 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 		 (fabs (auxcoe - 1) < COUENNE_EPS))
 	  //*mullist = new exprSum (newarglist, nargs);
 	  *mullist = (*newarglist) -> Argument ();//, nargs);
-	else  // multiple nonlinear terms, multiply them by -1/auxcoe
-	  *mullist = new exprMul (new exprConst (-1. / auxcoe), 
-				  new exprSum (newarglist, nargs));
+	else { // multiple nonlinear terms, multiply them by -1/auxcoe
+
+	  if (nargs <= 1)
+	    *mullist = new exprMul (new exprConst (-1. / auxcoe), 
+				    *newarglist); // !!! one more leak?
+	  else 
+	    *mullist = new exprMul (new exprConst (-1. / auxcoe), 
+				    new exprSum (newarglist, nargs));
+	}
 
 	std::vector <std::pair <exprVar *, CouNumber> > lcoeff;
 	indcoe2vector (linind2, lincoe2, lcoeff);

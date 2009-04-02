@@ -125,5 +125,8 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
   //  ret -> Image () -> print (); printf ("\n");
 #endif
 
+  //if (ret -> Type () == AUX)
+  //return ret;
+
   return (addAux ? addAuxiliary (ret) : new exprAux (ret, &domain_));
 }
