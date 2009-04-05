@@ -42,16 +42,18 @@ LIBS += `cat $(COINUTILSOBJDIR)/coinutils_addlibs.txt`
 #if COIN_HAS_COUENNE
 #  COINLIBS += $(COUENNEOBJDIR)/src/libCouenne.la
 
-couenne_LDADD = \
-	../util/libCouenneUtil.la \
-	../branch/libCouenneBranch.la \
-	../expression/libCouenneExpression.la \
-	../convex/libCouenneConvex.la \
-	../standardize/libCouenneStandardize.la \
-	../disjunctive/libCouenneDisjunctive.la \
-	../bound_tightening/libCouenneBoundTightening.la \
-	../readnl/libCouenneReadnl.la \
-	../problem/libCouenneProblem.la
+couenne_LDADD = ../libCouenne.la
+
+#couenne_LDADD = \
+#	../util/libCouenneUtil.la \
+#	../readnl/libCouenneReadnl.la \
+#	../expression/libCouenneExpression.la \
+#	../branch/libCouenneBranch.la \
+#	../convex/libCouenneConvex.la \
+#	../standardize/libCouenneStandardize.la \
+#	../disjunctive/libCouenneDisjunctive.la \
+#	../bound_tightening/libCouenneBoundTightening.la \
+#	../problem/libCouenneProblem.la
 
 couenne_SOURCES = \
 	BonCouenne.cpp \
@@ -61,13 +63,13 @@ couenne_SOURCES = \
 	BonCouenneInfo.cpp \
 	BonInitHeuristic.cpp
 
-couenne_LDADD += \
-	../util/libCouenneUtil.la \
-	../branch/libCouenneBranch.la \
-	../expression/libCouenneExpression.la \
-	../convex/libCouenneConvex.la \
-	../problem/libCouenneProblem.la \
-	../libCouenne.la
+#couenne_LDADD += \
+#	../util/libCouenneUtil.la \
+#	../branch/libCouenneBranch.la \
+#	../expression/libCouenneExpression.la \
+#	../convex/libCouenneConvex.la \
+#	../problem/libCouenneProblem.la \
+#	../libCouenne.la
 
 couenne_LDADD += \
 	$(LIBCBCCOPY) \

@@ -19,12 +19,12 @@ lib_LTLIBRARIES = libCouenne.la
 libCouenne_la_SOURCES = 
 
 libCouenne_la_LIBADD = \
-	./util/libCouenneUtil.la \
-	./branch/libCouenneBranch.la \
-	./expression/libCouenneExpression.la \
-	./convex/libCouenneConvex.la \
 	./problem/libCouenneProblem.la \
 	./readnl/libCouenneReadnl.la \
+	./expression/libCouenneExpression.la \
+	./branch/libCouenneBranch.la \
+	./convex/libCouenneConvex.la \
+	./util/libCouenneUtil.la \
 	./standardize/libCouenneStandardize.la \
 	./bound_tightening/libCouenneBoundTightening.la \
 	./disjunctive/libCouenneDisjunctive.la \

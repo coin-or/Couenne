@@ -77,19 +77,8 @@ am__DEPENDENCIES_2 = $(CBCOBJDIR)/src/libCbc.la \
 	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
 	$(COINUTILSOBJDIR)/src/libCoinUtils.la
 am__DEPENDENCIES_3 =
-couenne_DEPENDENCIES = ../util/libCouenneUtil.la \
-	../branch/libCouenneBranch.la \
-	../expression/libCouenneExpression.la \
-	../convex/libCouenneConvex.la \
-	../standardize/libCouenneStandardize.la \
-	../disjunctive/libCouenneDisjunctive.la \
-	../bound_tightening/libCouenneBoundTightening.la \
-	../readnl/libCouenneReadnl.la ../problem/libCouenneProblem.la \
-	../util/libCouenneUtil.la ../branch/libCouenneBranch.la \
-	../expression/libCouenneExpression.la \
-	../convex/libCouenneConvex.la ../problem/libCouenneProblem.la \
-	../libCouenne.la $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_3) \
-	$(am__DEPENDENCIES_3)
+couenne_DEPENDENCIES = ../libCouenne.la $(am__DEPENDENCIES_2) \
+	$(am__DEPENDENCIES_3) $(am__DEPENDENCIES_3)
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -308,19 +297,27 @@ IPOPTLIBS = \
 
 #if COIN_HAS_COUENNE
 #  COINLIBS += $(COUENNEOBJDIR)/src/libCouenne.la
-couenne_LDADD = ../util/libCouenneUtil.la \
-	../branch/libCouenneBranch.la \
-	../expression/libCouenneExpression.la \
-	../convex/libCouenneConvex.la \
-	../standardize/libCouenneStandardize.la \
-	../disjunctive/libCouenneDisjunctive.la \
-	../bound_tightening/libCouenneBoundTightening.la \
-	../readnl/libCouenneReadnl.la ../problem/libCouenneProblem.la \
-	../util/libCouenneUtil.la ../branch/libCouenneBranch.la \
-	../expression/libCouenneExpression.la \
-	../convex/libCouenneConvex.la ../problem/libCouenneProblem.la \
-	../libCouenne.la $(LIBCBCCOPY) $(COINLIBS) $(ADDLIBS) \
+
+#couenne_LDADD += \
+#	../util/libCouenneUtil.la \
+#	../branch/libCouenneBranch.la \
+#	../expression/libCouenneExpression.la \
+#	../convex/libCouenneConvex.la \
+#	../problem/libCouenneProblem.la \
+#	../libCouenne.la
+couenne_LDADD = ../libCouenne.la $(LIBCBCCOPY) $(COINLIBS) $(ADDLIBS) \
 	$(ASLLIB)
+
+#couenne_LDADD = \
+#	../util/libCouenneUtil.la \
+#	../readnl/libCouenneReadnl.la \
+#	../expression/libCouenneExpression.la \
+#	../branch/libCouenneBranch.la \
+#	../convex/libCouenneConvex.la \
+#	../standardize/libCouenneStandardize.la \
+#	../disjunctive/libCouenneDisjunctive.la \
+#	../bound_tightening/libCouenneBoundTightening.la \
+#	../problem/libCouenneProblem.la
 couenne_SOURCES = \
 	BonCouenne.cpp \
 	BonCouenneSetup.cpp \
