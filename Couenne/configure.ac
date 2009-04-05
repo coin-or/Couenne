@@ -12,7 +12,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[0.0],[belotti@lehigh.edu])
+AC_INIT([Couenne],[0.2],[belotti@lehigh.edu])
 
 AC_COPYRIGHT([
 Copyright 2006 Carnegie Mellon University, International Business Machines and others.
@@ -95,9 +95,18 @@ AC_LANG_POP(C)
 # Here list all the files that configure should create (except for the
 # configuration header file)
 AC_CONFIG_FILES([Makefile
-                 src/main/Makefile
-                 src/Makefile
                  test/Makefile
+                 src/main/Makefile
+                 src/bound_tightening/Makefile
+                 src/branch/Makefile
+                 src/convex/Makefile
+                 src/disjunctive/Makefile
+                 src/expression/Makefile
+                 src/problem/Makefile
+                 src/standardize/Makefile
+                 src/readnl/Makefile
+                 src/util/Makefile
+                 src/Makefile
 		 test/grandTest.sh
 		 couenne_addlibs.txt])
 

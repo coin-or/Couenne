@@ -11,12 +11,12 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[0.0],[belotti@lehigh.edu])
+AC_INIT([Couenne],[0.2],[belotti@lehigh.edu])
 
 AC_COPYRIGHT([
 Copyright 2008 Pietro Belotti
 All Rights Reserved.
-This file is part of the open source package Coin which is distributed
+This file is part of the open source package Coin-OR which is distributed
 under the Common Public License.])
 
 AC_REVISION(0.0)

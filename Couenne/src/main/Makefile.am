@@ -4,21 +4,17 @@
 
 ## $Id: Makefile.am 105 2006-11-03 19:31:19Z pbonami $
 
-# Author: Pierre Bonami, International Business Machines 12/04/2006
+# Author: Pietro Belotti, on a template by Pierre Bonami
 
 AUTOMAKE_OPTIONS = foreign
+
+# what is built at this level
 
 if COIN_HAS_ASL
   bin_PROGRAMS = couenne
 endif
 
-COINLIBS = 
-
-if COIN_HAS_COUENNE
-  COINLIBS += $(COUENNEOBJDIR)/src/libCouenne.la
-endif
-
-COINLIBS += \
+COINLIBS = \
 	$(CBCOBJDIR)/src/libCbc.la \
 	$(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
@@ -36,12 +32,74 @@ COINLIBS += \
      $(CLPOBJDIR)/src/libClp.la \
      $(COINUTILSOBJDIR)/src/libCoinUtils.la
 
-#IPOPTLIBS = \
-#        $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
-#        $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
+IPOPTLIBS = \
+        $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
+        $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 
 LIBS += `cat $(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt`
 LIBS += `cat $(COINUTILSOBJDIR)/coinutils_addlibs.txt`
+
+#if COIN_HAS_COUENNE
+#  COINLIBS += $(COUENNEOBJDIR)/src/libCouenne.la
+
+couenne_LDADD = \
+	../util/libCouenneUtil.la \
+	../branch/libCouenneBranch.la \
+	../expression/libCouenneExpression.la \
+	../convex/libCouenneConvex.la \
+	../standardize/libCouenneStandardize.la \
+	../disjunctive/libCouenneDisjunctive.la \
+	../bound_tightening/libCouenneBoundTightening.la \
+	../readnl/libCouenneReadnl.la \
+	../problem/libCouenneProblem.la
+
+couenne_SOURCES = \
+	BonCouenne.cpp \
+	BonCouenneSetup.cpp \
+	BonCouenneInterface.cpp \
+	BonNlpHeuristic.cpp \
+	BonCouenneInfo.cpp \
+	BonInitHeuristic.cpp
+
+couenne_LDADD += \
+	../util/libCouenneUtil.la \
+	../branch/libCouenneBranch.la \
+	../expression/libCouenneExpression.la \
+	../convex/libCouenneConvex.la \
+	../problem/libCouenneProblem.la \
+	../libCouenne.la
+
+couenne_LDADD += \
+	$(LIBCBCCOPY) \
+	$(COINLIBS) \
+	$(ADDLIBS) \
+	$(ASLLIB)
+
+
+# Finally, the -rpath flag is used by libtool to make sure that the shared
+# library is found (in the lib install directory) when we are using dynamic
+# libraries.
+couenne_LDFLAGS = -rpath $(libdir)
+
+#	../util/libCouenneUtil.la \
+#	../branch/libCouenneBranch.la \
+#	../convex/libCouenneConvex.la \
+#	../expression/libCouenneExpression.la \
+#	../problem/libCouenneProblem.la 
+
+#if COIN_HAS_ASL
+#COINLIBS +=
+#couenne_LDADD += \
+#	../readnl/libCouenneReadnl.la
+#endif
+
+#COINLIBS += 
+#couenne_LDADD += \
+#	../standardize/libCouenneStandardize.la \
+#	../bound_tightening/libCouenneBoundTightening.la \
+#	../disjunctive/libCouenneDisjunctive.la 
+#endif
+
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
@@ -96,27 +154,15 @@ AM_CPPFLAGS += $(ASL_CPPFLAGS)
 #  AM_CPPFLAGS += -I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Filter` 
 #endif
 
-if COIN_HAS_COUENNE
-  AM_CPPFLAGS += \
+AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/util` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`
-endif
 
-couenne_SOURCES = BonCouenne.cpp
-
-couenne_LDADD = \
-	$(LIBCBCCOPY) \
-	$(COINLIBS) \
-	$(ADDLIBS) \
-	$(ASLLIB)
-
-# Finally, the -rpath flag is used by libtool to make sure that the shared
-# library is found (in the lib install directory) when we are using dynamic
-# libraries.
-couenne_LDFLAGS = -rpath $(libdir)
+# This line is necessary to allow VPATH compilation with MS compilers
+# on Cygwin
+DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc

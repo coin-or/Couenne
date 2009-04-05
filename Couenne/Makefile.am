@@ -12,8 +12,18 @@ AUTOMAKE_OPTIONS = foreign
 #                          Subdirectories                              #
 ########################################################################
 
-SUBDIRS = src \
-          src/main
+SUBDIRS = \
+	  src/util \
+	  src/expression \
+	  src/readnl \
+	  src/standardize \
+	  src/problem \
+	  src/bound_tightening \
+	  src/convex \
+	  src/branch \
+	  src/disjunctive \
+	  src \
+	  src/main 
 
 # We don't want to compile the test subdirectory, unless the test target is
 # specified.  But we need to list it as subdirectory to make sure that it is

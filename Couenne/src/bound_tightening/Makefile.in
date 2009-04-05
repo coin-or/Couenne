@@ -18,7 +18,7 @@
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 
-# Author: Pietro Belotti, on a template by Pierre Bonami
+# Author: Pietro Belotti, from a template by Pierre Bonami
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -42,13 +42,15 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@COIN_HAS_ASL_TRUE@bin_PROGRAMS = couenne$(EXEEXT)
-@COIN_HAS_CPX_TRUE@am__append_1 = $(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
-@COIN_HAS_CPX_TRUE@am__append_2 = \
-@COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
-@COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(CPXINCDIR)`
+@COIN_HAS_COUENNE_TRUE@am__append_1 = \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` 
 
-subdir = src/main
+subdir = src/bound_tightening
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
@@ -58,38 +60,25 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
 CONFIG_CLEAN_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
-binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-PROGRAMS = $(bin_PROGRAMS)
-am_couenne_OBJECTS = BonCouenne.$(OBJEXT) BonCouenneSetup.$(OBJEXT) \
-	BonCouenneInterface.$(OBJEXT) BonNlpHeuristic.$(OBJEXT) \
-	BonCouenneInfo.$(OBJEXT) BonInitHeuristic.$(OBJEXT)
-couenne_OBJECTS = $(am_couenne_OBJECTS)
-@COIN_HAS_CPX_TRUE@am__DEPENDENCIES_1 =  \
-@COIN_HAS_CPX_TRUE@	$(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
-am__DEPENDENCIES_2 = $(CBCOBJDIR)/src/libCbc.la \
-	$(CGLOBJDIR)/src/libCgl.la \
-	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
-	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
-	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
-	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
-	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la $(am__DEPENDENCIES_1) \
-	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
-	$(COINUTILSOBJDIR)/src/libCoinUtils.la
-am__DEPENDENCIES_3 =
-couenne_DEPENDENCIES = ../util/libCouenneUtil.la \
-	../branch/libCouenneBranch.la \
-	../expression/libCouenneExpression.la \
-	../convex/libCouenneConvex.la \
-	../standardize/libCouenneStandardize.la \
-	../disjunctive/libCouenneDisjunctive.la \
-	../bound_tightening/libCouenneBoundTightening.la \
-	../readnl/libCouenneReadnl.la ../problem/libCouenneProblem.la \
-	../util/libCouenneUtil.la ../branch/libCouenneBranch.la \
-	../expression/libCouenneExpression.la \
-	../convex/libCouenneConvex.la ../problem/libCouenneProblem.la \
-	../libCouenne.la $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_3) \
-	$(am__DEPENDENCIES_3)
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+am__installdirs = "$(DESTDIR)$(libdir)"
+libLTLIBRARIES_INSTALL = $(INSTALL)
+LTLIBRARIES = $(lib_LTLIBRARIES)
+libCouenneBoundTightening_la_LIBADD =
+am_libCouenneBoundTightening_la_OBJECTS = boundTightening.lo \
+	aggressiveBT.lo fake_tightening.lo obbt.lo obbt_iter.lo \
+	tightenBounds.lo impliedBounds.lo impliedBounds-mul.lo \
+	impliedBounds-sum.lo impliedBounds-exprSum.lo \
+	impliedBounds-exprDiv.lo impliedBounds-exprMul.lo \
+	impliedBounds-exprQuad.lo impliedBounds-exprPow.lo
+libCouenneBoundTightening_la_OBJECTS =  \
+	$(am_libCouenneBoundTightening_la_OBJECTS)
+DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -100,8 +89,8 @@ LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(couenne_SOURCES)
-DIST_SOURCES = $(couenne_SOURCES)
+SOURCES = $(libCouenneBoundTightening_la_SOURCES)
+DIST_SOURCES = $(libCouenneBoundTightening_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -202,9 +191,7 @@ IPOPTSRCDIR = @IPOPTSRCDIR@
 LDFLAGS = @LDFLAGS@
 LIBEXT = @LIBEXT@
 LIBOBJS = @LIBOBJS@
-LIBS = @LIBS@ `cat \
-	$(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt` `cat \
-	$(COINUTILSOBJDIR)/coinutils_addlibs.txt`
+LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBTOOLM4 = @LIBTOOLM4@
 LN_S = @LN_S@
@@ -293,116 +280,48 @@ sol_cc_compiler = @sol_cc_compiler@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
-COINLIBS = $(CBCOBJDIR)/src/libCbc.la $(CGLOBJDIR)/src/libCgl.la \
-	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
-	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
-	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
-	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
-	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la $(am__append_1) \
-	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
-	$(COINUTILSOBJDIR)/src/libCoinUtils.la
-IPOPTLIBS = \
-        $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
-        $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
+lib_LTLIBRARIES = libCouenneBoundTightening.la
 
+# List all source files for this library, including headers
+libCouenneBoundTightening_la_SOURCES = \
+	boundTightening.cpp \
+	aggressiveBT.cpp \
+	fake_tightening.cpp \
+	obbt.cpp \
+	obbt_iter.cpp \
+	tightenBounds.cpp \
+	impliedBounds.cpp \
+	operators/impliedBounds-mul.cpp \
+	operators/impliedBounds-sum.cpp \
+	operators/impliedBounds-exprSum.cpp \
+	operators/impliedBounds-exprDiv.cpp \
+	operators/impliedBounds-exprMul.cpp \
+	operators/impliedBounds-exprQuad.cpp \
+	operators/impliedBounds-exprPow.cpp
 
-#if COIN_HAS_COUENNE
-#  COINLIBS += $(COUENNEOBJDIR)/src/libCouenne.la
-couenne_LDADD = ../util/libCouenneUtil.la \
-	../branch/libCouenneBranch.la \
-	../expression/libCouenneExpression.la \
-	../convex/libCouenneConvex.la \
-	../standardize/libCouenneStandardize.la \
-	../disjunctive/libCouenneDisjunctive.la \
-	../bound_tightening/libCouenneBoundTightening.la \
-	../readnl/libCouenneReadnl.la ../problem/libCouenneProblem.la \
-	../util/libCouenneUtil.la ../branch/libCouenneBranch.la \
-	../expression/libCouenneExpression.la \
-	../convex/libCouenneConvex.la ../problem/libCouenneProblem.la \
-	../libCouenne.la $(LIBCBCCOPY) $(COINLIBS) $(ADDLIBS) \
-	$(ASLLIB)
-couenne_SOURCES = \
-	BonCouenne.cpp \
-	BonCouenneSetup.cpp \
-	BonCouenneInterface.cpp \
-	BonNlpHeuristic.cpp \
-	BonCouenneInfo.cpp \
-	BonInitHeuristic.cpp
+libCouenneBoundTightening_la_DEPENDENCIES = $(libCouenneBoundTightening_la_LIBADD)
 
-
-# Finally, the -rpath flag is used by libtool to make sure that the shared
-# library is found (in the lib install directory) when we are using dynamic
-# libraries.
-couenne_LDFLAGS = -rpath $(libdir)
-
-#	../util/libCouenneUtil.la \
-#	../branch/libCouenneBranch.la \
-#	../convex/libCouenneConvex.la \
-#	../expression/libCouenneExpression.la \
-#	../problem/libCouenneProblem.la 
-
-#if COIN_HAS_ASL
-#COINLIBS +=
-#couenne_LDADD += \
-#	../readnl/libCouenneReadnl.la
-#endif
-
-#COINLIBS += 
-#couenne_LDADD += \
-#	../standardize/libCouenneStandardize.la \
-#	../bound_tightening/libCouenneBoundTightening.la \
-#	../disjunctive/libCouenneDisjunctive.la 
-#endif
+# This is for libtool (on Windows)
+libCouenneBoundTightening_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-
-#if COIN_HAS_FILTERSQP
-#  AM_CPPFLAGS += -I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Filter` 
-#endif
-AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Algorithms` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Algorithms/Branching` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Algorithms/OaGenerators` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Algorithms/Ampl` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Interfaces` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Interfaces/Ipopt` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Interfaces/Ampl` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/CbcBonmin` -I`$(CYGPATH_W) \
-	$(IPOPTOBJDIR)/inc` -I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Interfaces` -I`$(CYGPATH_W) \
+AM_CPPFLAGS = -I`$(CYGPATH_W) $(CGLSRCDIR)/src` -I`$(CYGPATH_W) \
+	$(COINUTILSSRCDIR)/src` -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/OaGenerators` \
+	-I`$(CYGPATH_W) $(COINUTILSOBJDIR)/inc` -I`$(CYGPATH_W) \
+	$(OSISRCDIR)/src/OsiClp` -I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
+	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` -I`$(CYGPATH_W) \
+	$(IPOPTSRCDIR)/src/Interfaces` -I`$(CYGPATH_W) \
 	$(IPOPTSRCDIR)/src/LinAlg` -I`$(CYGPATH_W) \
 	$(IPOPTSRCDIR)/src/Apps/AmplSolver` -I`$(CYGPATH_W) \
+	$(BONMINSRCDIR)/src/CbcBonmin` -I`$(CYGPATH_W) \
 	$(OSISRCDIR)/src` -I`$(CYGPATH_W) $(CBCSRCDIR)/src` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms` \
 	-I`$(CYGPATH_W) $(CBCOBJDIR)/inc` -I`$(CYGPATH_W) \
-	$(CBCSRCDIR)/examples` -I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(COINUTILSOBJDIR)/inc` -I`$(CYGPATH_W) \
 	$(CLPOBJDIR)/inc` -I`$(CYGPATH_W) $(CLPSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` -I`$(CYGPATH_W) \
-	$(OSISRCDIR)/src/OsiCbc` -I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding2` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglLandP` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglRedSplit` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglGomory` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglProbing` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglOddHole` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglClique` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglFlowCover` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglMixedIntegerRounding` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglTwomir` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglKnapsackCover` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglPreProcess` $(am__append_2) \
-	$(ASL_CPPFLAGS) -I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/problem` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/branch`
-
-# This line is necessary to allow VPATH compilation with MS compilers
-# on Cygwin
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
+	$(am__append_1)
 all: all-am
 
 .SUFFIXES:
@@ -416,9 +335,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/main/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/bound_tightening/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  src/main/Makefile
+	  $(AUTOMAKE) --foreign  src/bound_tightening/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -436,37 +355,35 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-binPROGRAMS: $(bin_PROGRAMS)
+install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(mkdir_p) "$(DESTDIR)$(bindir)"
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  if test -f $$p \
-	     || test -f $$p1 \
-	  ; then \
-	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(bindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(bindir)/$$f" || exit 1; \
+	test -z "$(libdir)" || $(mkdir_p) "$(DESTDIR)$(libdir)"
+	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    f=$(am__strip_dir) \
+	    echo " $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) '$$p' '$(DESTDIR)$(libdir)/$$f'"; \
+	    $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) "$$p" "$(DESTDIR)$(libdir)/$$f"; \
 	  else :; fi; \
 	done
 
-uninstall-binPROGRAMS:
+uninstall-libLTLIBRARIES:
 	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+	@set -x; list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  p=$(am__strip_dir) \
+	  echo " $(LIBTOOL) --mode=uninstall rm -f '$(DESTDIR)$(libdir)/$$p'"; \
+	  $(LIBTOOL) --mode=uninstall rm -f "$(DESTDIR)$(libdir)/$$p"; \
 	done
 
-clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  echo " rm -f $$p $$f"; \
-	  rm -f $$p $$f ; \
+clean-libLTLIBRARIES:
+	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
+	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
 	done
-couenne$(EXEEXT): $(couenne_OBJECTS) $(couenne_DEPENDENCIES) 
-	@rm -f couenne$(EXEEXT)
-	$(CXXLINK) $(couenne_LDFLAGS) $(couenne_OBJECTS) $(couenne_LDADD) $(LIBS)
+libCouenneBoundTightening.la: $(libCouenneBoundTightening_la_OBJECTS) $(libCouenneBoundTightening_la_DEPENDENCIES) 
+	$(CXXLINK) -rpath $(libdir) $(libCouenneBoundTightening_la_LDFLAGS) $(libCouenneBoundTightening_la_OBJECTS) $(libCouenneBoundTightening_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -474,12 +391,20 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenne.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInfo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInterface.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonNlpHeuristic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aggressiveBT.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/boundTightening.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fake_tightening.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/impliedBounds-exprDiv.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/impliedBounds-exprMul.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/impliedBounds-exprPow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/impliedBounds-exprQuad.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/impliedBounds-exprSum.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/impliedBounds-mul.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/impliedBounds-sum.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/impliedBounds.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/obbt.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/obbt_iter.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tightenBounds.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -501,6 +426,55 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+impliedBounds-mul.lo: operators/impliedBounds-mul.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT impliedBounds-mul.lo -MD -MP -MF "$(DEPDIR)/impliedBounds-mul.Tpo" -c -o impliedBounds-mul.lo `test -f 'operators/impliedBounds-mul.cpp' || echo '$(srcdir)/'`operators/impliedBounds-mul.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/impliedBounds-mul.Tpo" "$(DEPDIR)/impliedBounds-mul.Plo"; else rm -f "$(DEPDIR)/impliedBounds-mul.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/impliedBounds-mul.cpp' object='impliedBounds-mul.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o impliedBounds-mul.lo `test -f 'operators/impliedBounds-mul.cpp' || echo '$(srcdir)/'`operators/impliedBounds-mul.cpp
+
+impliedBounds-sum.lo: operators/impliedBounds-sum.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT impliedBounds-sum.lo -MD -MP -MF "$(DEPDIR)/impliedBounds-sum.Tpo" -c -o impliedBounds-sum.lo `test -f 'operators/impliedBounds-sum.cpp' || echo '$(srcdir)/'`operators/impliedBounds-sum.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/impliedBounds-sum.Tpo" "$(DEPDIR)/impliedBounds-sum.Plo"; else rm -f "$(DEPDIR)/impliedBounds-sum.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/impliedBounds-sum.cpp' object='impliedBounds-sum.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o impliedBounds-sum.lo `test -f 'operators/impliedBounds-sum.cpp' || echo '$(srcdir)/'`operators/impliedBounds-sum.cpp
+
+impliedBounds-exprSum.lo: operators/impliedBounds-exprSum.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT impliedBounds-exprSum.lo -MD -MP -MF "$(DEPDIR)/impliedBounds-exprSum.Tpo" -c -o impliedBounds-exprSum.lo `test -f 'operators/impliedBounds-exprSum.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprSum.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/impliedBounds-exprSum.Tpo" "$(DEPDIR)/impliedBounds-exprSum.Plo"; else rm -f "$(DEPDIR)/impliedBounds-exprSum.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/impliedBounds-exprSum.cpp' object='impliedBounds-exprSum.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o impliedBounds-exprSum.lo `test -f 'operators/impliedBounds-exprSum.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprSum.cpp
+
+impliedBounds-exprDiv.lo: operators/impliedBounds-exprDiv.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT impliedBounds-exprDiv.lo -MD -MP -MF "$(DEPDIR)/impliedBounds-exprDiv.Tpo" -c -o impliedBounds-exprDiv.lo `test -f 'operators/impliedBounds-exprDiv.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprDiv.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/impliedBounds-exprDiv.Tpo" "$(DEPDIR)/impliedBounds-exprDiv.Plo"; else rm -f "$(DEPDIR)/impliedBounds-exprDiv.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/impliedBounds-exprDiv.cpp' object='impliedBounds-exprDiv.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o impliedBounds-exprDiv.lo `test -f 'operators/impliedBounds-exprDiv.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprDiv.cpp
+
+impliedBounds-exprMul.lo: operators/impliedBounds-exprMul.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT impliedBounds-exprMul.lo -MD -MP -MF "$(DEPDIR)/impliedBounds-exprMul.Tpo" -c -o impliedBounds-exprMul.lo `test -f 'operators/impliedBounds-exprMul.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprMul.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/impliedBounds-exprMul.Tpo" "$(DEPDIR)/impliedBounds-exprMul.Plo"; else rm -f "$(DEPDIR)/impliedBounds-exprMul.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/impliedBounds-exprMul.cpp' object='impliedBounds-exprMul.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o impliedBounds-exprMul.lo `test -f 'operators/impliedBounds-exprMul.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprMul.cpp
+
+impliedBounds-exprQuad.lo: operators/impliedBounds-exprQuad.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT impliedBounds-exprQuad.lo -MD -MP -MF "$(DEPDIR)/impliedBounds-exprQuad.Tpo" -c -o impliedBounds-exprQuad.lo `test -f 'operators/impliedBounds-exprQuad.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprQuad.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/impliedBounds-exprQuad.Tpo" "$(DEPDIR)/impliedBounds-exprQuad.Plo"; else rm -f "$(DEPDIR)/impliedBounds-exprQuad.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/impliedBounds-exprQuad.cpp' object='impliedBounds-exprQuad.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o impliedBounds-exprQuad.lo `test -f 'operators/impliedBounds-exprQuad.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprQuad.cpp
+
+impliedBounds-exprPow.lo: operators/impliedBounds-exprPow.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT impliedBounds-exprPow.lo -MD -MP -MF "$(DEPDIR)/impliedBounds-exprPow.Tpo" -c -o impliedBounds-exprPow.lo `test -f 'operators/impliedBounds-exprPow.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprPow.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/impliedBounds-exprPow.Tpo" "$(DEPDIR)/impliedBounds-exprPow.Plo"; else rm -f "$(DEPDIR)/impliedBounds-exprPow.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/impliedBounds-exprPow.cpp' object='impliedBounds-exprPow.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o impliedBounds-exprPow.lo `test -f 'operators/impliedBounds-exprPow.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprPow.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -589,9 +563,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(libdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -620,7 +594,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -640,7 +615,7 @@ info-am:
 
 install-data-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am: install-libLTLIBRARIES
 
 install-info: install-info-am
 
@@ -666,19 +641,20 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-info-am
+uninstall-am: uninstall-info-am uninstall-libLTLIBRARIES
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool ctags distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-info-am
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
+	clean-libLTLIBRARIES clean-libtool ctags distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-exec \
+	install-exec-am install-info install-info-am \
+	install-libLTLIBRARIES install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-info-am \
+	uninstall-libLTLIBRARIES
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

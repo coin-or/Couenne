@@ -18,8 +18,7 @@
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 
-# Author:  Andreas Waechter           IBM    2006-04-13
-
+# Author: Pietro Belotti, from a template by Pierre Bonami
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -27,7 +26,7 @@ VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-top_builddir = ..
+top_builddir = ../..
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = @INSTALL@
 install_sh_DATA = $(install_sh) -c -m 644
@@ -43,12 +42,16 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@COIN_HAS_COUENNE_TRUE@am__append_1 = \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem/depGraph` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` 
 
-# If we have the Ampl solver library, we need to add additional things
-@COIN_HAS_ASL_TRUE@am__append_1 = $(ASL_CPPFLAGS)
-subdir = src
-DIST_COMMON = $(includecoin_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+subdir = src/standardize
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
@@ -63,23 +66,29 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includecoindir)"
+am__installdirs = "$(DESTDIR)$(libdir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-am_libCouenne_la_OBJECTS =
-libCouenne_la_OBJECTS = $(am_libCouenne_la_OBJECTS)
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
+libCouenneStandardize_la_LIBADD =
+am_libCouenneStandardize_la_OBJECTS = decomposeTerm.lo \
+	linStandardize.lo sumStandardize.lo analyzeSparsity.lo \
+	constrStandardize.lo elementBreak.lo splitAux.lo \
+	auxiliarize.lo standardize.lo flattenMul.lo
+libCouenneStandardize_la_OBJECTS =  \
+	$(am_libCouenneStandardize_la_OBJECTS)
+DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
+depcomp = $(SHELL) $(top_srcdir)/../depcomp
+am__depfiles_maybe = depfiles
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libCouenne_la_SOURCES)
-DIST_SOURCES = $(libCouenne_la_SOURCES)
-includecoinHEADERS_INSTALL = $(INSTALL_HEADER)
-HEADERS = $(includecoin_HEADERS)
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+SOURCES = $(libCouenneStandardize_la_SOURCES)
+DIST_SOURCES = $(libCouenneStandardize_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -269,131 +278,42 @@ sol_cc_compiler = @sol_cc_compiler@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
+lib_LTLIBRARIES = libCouenneStandardize.la
 
-########################################################################
-#                               libCouenne                             #
-########################################################################
+# List all source files for this library, including headers
+libCouenneStandardize_la_SOURCES = \
+	decomposeTerm.cpp \
+	linStandardize.cpp \
+	sumStandardize.cpp \
+	analyzeSparsity.cpp \
+	constrStandardize.cpp \
+	elementBreak.cpp \
+	splitAux.cpp \
+	auxiliarize.cpp \
+	standardize.cpp \
+	flattenMul.cpp
 
-# Name of the library compiled in this directory.  We want it to be installed
-# in the 'lib' directory
-lib_LTLIBRARIES = libCouenne.la
-libCouenne_la_SOURCES = 
-libCouenne_la_LIBADD = \
-	./util/libCouenneUtil.la \
-	./branch/libCouenneBranch.la \
-	./expression/libCouenneExpression.la \
-	./convex/libCouenneConvex.la \
-	./problem/libCouenneProblem.la \
-	./readnl/libCouenneReadnl.la \
-	./standardize/libCouenneStandardize.la \
-	./bound_tightening/libCouenneBoundTightening.la \
-	./disjunctive/libCouenneDisjunctive.la \
-	../../Bonmin/src/Interfaces/Ampl/BonAmplInterface.lo \
-	../../Bonmin/src/Interfaces/Ampl/BonAmplTMINLP.lo \
-	../../Bonmin/src/Interfaces/Ampl/sos_kludge.lo \
-	../../Bonmin/src/Algorithms/Ampl/BonAmplSetup.lo \
-        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
-
-libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
 
 # This is for libtool (on Windows)
-libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
-
-########################################################################
-#                            Additional flags                          #
-########################################################################
+libCouenneStandardize_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
-# "cygpath" stuff is necessary to compile with native compilers on Windows.
-AM_CPPFLAGS = $(am__append_1)
-
-# This line is necessary to allow VPATH compilation with MS compilers
-# on Cygwin
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
-
-########################################################################
-#                Headers that need to be installed                     #
-########################################################################
-
-# Here list all the header files that are required by a user of the library,
-# and that therefore should be installed in 'install/coin'
-includecoindir = $(includedir)/coin
-includecoin_HEADERS = \
-	../inc/config_couenne.h \
-	util/rootQ.hpp \
-	util/funtriplets.hpp \
-	main/BonCouenneInfo.hpp \
-	main/BonCouenneSetup.hpp \
-	main/BonCouenneInterface.hpp \
-	main/BonNlpHeuristic.hpp \
-	main/BonInitHeuristic.hpp \
-	branch/CouenneObject.hpp \
-	branch/CouenneVarObject.hpp \
-	branch/CouenneVTObject.hpp \
-	branch/CouenneThreeWayBranchObj.hpp \
-	branch/CouenneBranchingObject.hpp \
-	branch/CouenneChooseVariable.hpp \
-	branch/CouenneChooseStrong.hpp \
-	branch/CouenneComplObject.hpp \
-	branch/CouenneComplBranchingObject.hpp \
-	branch/CouenneSOSObject.hpp \
-	branch/projections.hpp \
-	standardize/lqelems.hpp \
-	expression/domain.hpp \
-	expression/operators/exprAbs.hpp \
-	expression/operators/exprExp.hpp \
-	expression/operators/exprInv.hpp \
-	expression/operators/exprMul.hpp \
-	expression/operators/exprOpp.hpp \
-	expression/operators/exprLog.hpp \
-	expression/operators/exprDiv.hpp \
-	expression/operators/exprMin.hpp \
-	expression/operators/exprSum.hpp \
-	expression/operators/exprMax.hpp \
-	expression/operators/exprPow.hpp \
-	expression/operators/exprSin.hpp \
-	expression/operators/exprCos.hpp \
-	expression/operators/exprSub.hpp \
-	expression/operators/exprGroup.hpp \
-	expression/operators/exprQuad.hpp \
-	expression/operators/exprIf.hpp \
-	expression/operators/exprNorm.hpp \
-	expression/operators/exprPWLinear.hpp \
-	expression/operators/bounds/exprBMul.hpp \
-	expression/operators/bounds/exprBDiv.hpp \
-	expression/operators/bounds/exprBSin.hpp \
-	expression/operators/bounds/exprBCos.hpp \
-	expression/exprConst.hpp \
-	expression/exprIVar.hpp \
-	expression/exprVar.hpp \
-	expression/exprAux.hpp \
-	expression/exprUnary.hpp \
-	expression/expression.hpp \
-	expression/exprClone.hpp \
-	expression/exprBound.hpp \
-	expression/exprCopy.hpp \
-	expression/exprStore.hpp \
-	expression/exprOp.hpp \
-	expression/CouennePrecisions.hpp \
-	problem/depGraph/depGraph.hpp \
-	problem/CouenneProblemElem.hpp \
-	problem/CouenneProblem.hpp \
-	problem/CouenneSolverInterface.hpp \
-	problem/CouenneJournalist.hpp \
-	expression/CouenneTypes.hpp \
-	disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp
-
-
-#############################################################################
-# Create the Config.h file that always defines HAVE_CONFIG_H and install it #
-#############################################################################
-
-# You only need to adapt the following line
-ConfigHeader = CouenneConfig.h
+# "cygpath" stuff is necessary to compile with native compilers on Windows
+AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINSRCDIR)/src/CbcBonmin` \
+	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` -I`$(CYGPATH_W) \
+	$(OSISRCDIR)/src` -I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
+	-I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src` -I`$(CYGPATH_W) \
+	$(COINUTILSOBJDIR)/inc` -I`$(CYGPATH_W) \
+	$(BONMINSRCDIR)/src/Interfaces` -I`$(CYGPATH_W) \
+	$(BONMINSRCDIR)/src/Algorithms` -I`$(CYGPATH_W) \
+	$(CBCSRCDIR)/src` -I`$(CYGPATH_W) \
+	$(IPOPTSRCDIR)/src/Interfaces` -I`$(CYGPATH_W) \
+	$(CGLSRCDIR)/src` -I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/LinAlg` \
+	$(am__append_1)
 all: all-am
 
 .SUFFIXES:
+.SUFFIXES: .cpp .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -403,9 +323,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/standardize/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  src/Makefile
+	  $(AUTOMAKE) --foreign  src/standardize/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -450,14 +370,46 @@ clean-libLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libCouenne.la: $(libCouenne_la_OBJECTS) $(libCouenne_la_DEPENDENCIES) 
-	$(LINK) -rpath $(libdir) $(libCouenne_la_LDFLAGS) $(libCouenne_la_OBJECTS) $(libCouenne_la_LIBADD) $(LIBS)
+libCouenneStandardize.la: $(libCouenneStandardize_la_OBJECTS) $(libCouenneStandardize_la_DEPENDENCIES) 
+	$(CXXLINK) -rpath $(libdir) $(libCouenneStandardize_la_LDFLAGS) $(libCouenneStandardize_la_OBJECTS) $(libCouenneStandardize_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
+
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/analyzeSparsity.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/auxiliarize.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/constrStandardize.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/decomposeTerm.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementBreak.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flattenMul.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/linStandardize.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/splitAux.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/standardize.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sumStandardize.Plo@am__quote@
+
+.cpp.o:
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ `$(CYGPATH_W) '$<'`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cpp.lo:
+@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -468,23 +420,6 @@ clean-libtool:
 distclean-libtool:
 	-rm -f libtool
 uninstall-info-am:
-install-includecoinHEADERS: $(includecoin_HEADERS)
-	@$(NORMAL_INSTALL)
-	test -z "$(includecoindir)" || $(mkdir_p) "$(DESTDIR)$(includecoindir)"
-	@list='$(includecoin_HEADERS)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(includecoinHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(includecoindir)/$$f'"; \
-	  $(includecoinHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(includecoindir)/$$f"; \
-	done
-
-uninstall-includecoinHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(includecoin_HEADERS)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(includecoindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(includecoindir)/$$f"; \
-	done
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -535,7 +470,6 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/../inc $(distdir)/branch $(distdir)/convex $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/standardize $(distdir)/util
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -564,9 +498,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includecoindir)"; do \
+	for dir in "$(DESTDIR)$(libdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -599,6 +533,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-libtool distclean-tags
@@ -613,9 +548,9 @@ info: info-am
 
 info-am:
 
-install-data-am: install-includecoinHEADERS
+install-data-am:
 
-install-exec-am: install-exec-local install-libLTLIBRARIES
+install-exec-am: install-libLTLIBRARIES
 
 install-info: install-info-am
 
@@ -624,6 +559,7 @@ install-man:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -640,38 +576,21 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-includecoinHEADERS uninstall-info-am \
-	uninstall-libLTLIBRARIES uninstall-local
+uninstall-am: uninstall-info-am uninstall-libLTLIBRARIES
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
 	clean-libLTLIBRARIES clean-libtool ctags distclean \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-exec \
-	install-exec-am install-exec-local install-includecoinHEADERS \
-	install-info install-info-am install-libLTLIBRARIES \
-	install-man install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-includecoinHEADERS uninstall-info-am \
-	uninstall-libLTLIBRARIES uninstall-local
+	install-exec-am install-info install-info-am \
+	install-libLTLIBRARIES install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-info-am \
+	uninstall-libLTLIBRARIES
 
-
-@COIN_HAS_ASL_TRUE@install-asl:
-@COIN_HAS_ASL_TRUE@	$(install_sh_DATA) ../../ThirdParty/ASL/amplsolv* $(DESTDIR)$(libdir)
-@COIN_HAS_ASL_FALSE@install-asl:
-
-install-exec-local: install-asl
-	echo "#ifndef HAVE_CONFIG_H" >bla
-	echo "#define HAVE_CONFIG_H" >>bla
-	echo "#endif" >> bla
-	cat $(srcdir)/$(ConfigHeader) >> bla
-	$(install_sh_DATA) bla $(DESTDIR)$(includecoindir)/$(ConfigHeader)
-	rm -f bla
-
-uninstall-local:
-	rm -f $(DESTDIR)$(includecoindir)/$(ConfigHeader)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -16,163 +16,28 @@ AUTOMAKE_OPTIONS = foreign
 # in the 'lib' directory
 lib_LTLIBRARIES = libCouenne.la
 
-# List all source files for this library, including headers
-libCouenne_la_SOURCES = \
-	main/BonCouenneSetup.cpp \
-	main/BonCouenneInterface.cpp \
-	main/BonNlpHeuristic.cpp \
-	main/BonInitHeuristic.cpp \
-	main/BonCouenneInfo.cpp \
-	branch/CouenneThreeWayBranchObj.cpp \
-	branch/CouenneBranchingObject.cpp \
-	branch/CouenneObject.cpp \
-	branch/CouenneVarObject.cpp \
-	branch/CouenneChooseVariable.cpp \
-	branch/CouenneChooseStrong.cpp \
-	branch/doStrongBranching.cpp \
-	branch/projections.cpp \
-	branch/infeasibility.cpp \
-	branch/infeasibilityVT.cpp \
-	branch/feasibleRegion.cpp \
-	branch/CouenneComplObject.cpp \
-	branch/CouenneComplBranchingObject.cpp \
-	branch/CouenneSOSObject.cpp \
-	branch/operators/branchExprAbs.cpp \
-	branch/operators/branchExprExp.cpp \
-	branch/operators/branchExprDiv.cpp \
-	branch/operators/branchExprInv.cpp \
-	branch/operators/branchExprLog.cpp \
-	branch/operators/branchExprMul.cpp \
-	branch/operators/branchExprPow.cpp \
-	branch/operators/branchExprQuad.cpp \
-	branch/operators/branchExprSinCos.cpp \
-	branch/operators/minMaxDelta.cpp \
-	branch/operators/computeMulBrDist.cpp \
-        disjunctive/CouenneDisjCuts.cpp \
-        disjunctive/generateDisjCuts.cpp \
-        disjunctive/disjCut.cpp \
-        disjunctive/getDisjunctions.cpp \
-        disjunctive/separateWithDisjunction.cpp \
-        disjunctive/singleDisjunctions.cpp \
-        disjunctive/dummyVecMatr.cpp \
-        disjunctive/OsiLinear2MatrVec.cpp \
-        disjunctive/OsiCuts2MatrVec.cpp \
-	expression/domain.cpp \
-	expression/operators/exprAbs.cpp \
-	expression/operators/exprDiv.cpp \
-	expression/operators/exprExp.cpp \
-	expression/operators/exprInv.cpp \
-	expression/operators/exprLog.cpp \
-	expression/operators/exprMul.cpp \
-	expression/operators/exprOpp.cpp \
-	expression/operators/exprPow.cpp \
-	expression/operators/exprSin.cpp \
-	expression/operators/exprCos.cpp \
-	expression/operators/exprSub.cpp \
-	expression/operators/exprSum.cpp \
-	expression/operators/exprMinMax.cpp \
-	expression/operators/exprGroup.cpp \
-	expression/operators/exprQuad.cpp \
-	expression/operators/bounds/exprBQuad.cpp \
-	expression/operators/compQuadFinBounds.cpp \
-	expression/exprOp.cpp \
-	expression/exprUnary.cpp \
-	expression/exprVar.cpp \
-	expression/exprAux.cpp \
-	expression/expression.cpp \
-	expression/simplify/simplifiers.cpp \
-	expression/simplify/simplify.cpp \
-	convex/addEnvelope.cpp \
-	convex/createCuts.cpp \
-	convex/operators/conv-exprAbs.cpp \
-	convex/operators/conv-exprDiv.cpp \
-	convex/operators/conv-exprMul.cpp \
-	convex/operators/conv-exprMul-genCuts.cpp \
-	convex/operators/unifiedProdCuts.cpp \
-	convex/operators/conv-exprOpp.cpp \
-	convex/operators/conv-exprPow.cpp \
-	convex/operators/conv-exprPow-getBounds.cpp \
-	convex/operators/conv-exprPow-envelope.cpp \
-	convex/operators/powNewton.cpp \
-	convex/operators/conv-exprSub.cpp \
-	convex/operators/conv-exprSum.cpp \
-	convex/operators/conv-exprInv.cpp \
-	convex/operators/conv-exprSinCos.cpp \
-	convex/operators/conv-exprExp.cpp \
-	convex/operators/conv-exprLog.cpp \
-	convex/operators/conv-exprGroup.cpp \
-	convex/operators/conv-exprQuad.cpp \
-	convex/operators/trigNewton.cpp \
-	convex/CouenneCutGenerator.cpp \
-	convex/generateCuts.cpp \
-	convex/genColCuts.cpp \
-	convex/genRowCuts.cpp \
-	convex/operators/alphaConvexify.cpp \
-	convex/operators/quadCuts.cpp \
-	convex/updateBranchInfo.cpp \
-	standardize/decomposeTerm.cpp \
-	standardize/linStandardize.cpp \
-	standardize/sumStandardize.cpp \
-	standardize/analyzeSparsity.cpp \
-	standardize/constrStandardize.cpp \
-	standardize/elementBreak.cpp \
-	standardize/splitAux.cpp \
-	standardize/auxiliarize.cpp \
-	standardize/standardize.cpp \
-	standardize/flattenMul.cpp \
-	problem/problem.cpp \
-	problem/CouenneProblem.cpp \
-	problem/problemIO.cpp \
-	problem/writeAMPL.cpp \
-	problem/writeGAMS.cpp \
-	problem/constraint.cpp \
-	problem/fillQuadIndices.cpp \
-	problem/fillDependence.cpp \
-	problem/CouenneSolverInterface.cpp \
-	problem/CouenneLPtightenBounds.cpp \
-	problem/checkNLP.cpp \
-	problem/getIntegerCandidate.cpp \
-	problem/testIntFix.cpp \
-	problem/CouenneSOS.cpp \
-	problem/depGraph/depGraph.cpp \
-	problem/depGraph/checkCycles.cpp \
-	bound_tightening/boundTightening.cpp \
-	bound_tightening/aggressiveBT.cpp \
-	bound_tightening/fake_tightening.cpp \
-	bound_tightening/obbt.cpp \
-	bound_tightening/obbt_iter.cpp \
-	bound_tightening/tightenBounds.cpp \
-	bound_tightening/impliedBounds.cpp \
-	bound_tightening/operators/impliedBounds-mul.cpp \
-	bound_tightening/operators/impliedBounds-sum.cpp \
-	bound_tightening/operators/impliedBounds-exprSum.cpp \
-	bound_tightening/operators/impliedBounds-exprDiv.cpp \
-	bound_tightening/operators/impliedBounds-exprMul.cpp \
-	bound_tightening/operators/impliedBounds-exprQuad.cpp \
-	bound_tightening/operators/impliedBounds-exprPow.cpp \
-	util/drawCuts.cpp \
-	util/rootQ.cpp
+libCouenne_la_SOURCES = 
 
-# This is for libtool (on Windows)
-libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
-
-libCouenne_la_LIBADD =
-
-# If we have the Ampl solver library, we need to add additional things
-if COIN_HAS_ASL
-libCouenne_la_SOURCES += readnl/readnl.cpp \
-			 readnl/nl2e.cpp \
-			 readnl/invmap.cpp \
-			 readnl/readASLfg.cpp
-
-# adding AMPL interface for use with other executables
-libCouenne_la_LIBADD += \
+libCouenne_la_LIBADD = \
+	./util/libCouenneUtil.la \
+	./branch/libCouenneBranch.la \
+	./expression/libCouenneExpression.la \
+	./convex/libCouenneConvex.la \
+	./problem/libCouenneProblem.la \
+	./readnl/libCouenneReadnl.la \
+	./standardize/libCouenneStandardize.la \
+	./bound_tightening/libCouenneBoundTightening.la \
+	./disjunctive/libCouenneDisjunctive.la \
 	../../Bonmin/src/Interfaces/Ampl/BonAmplInterface.lo \
 	../../Bonmin/src/Interfaces/Ampl/BonAmplTMINLP.lo \
 	../../Bonmin/src/Interfaces/Ampl/sos_kludge.lo \
 	../../Bonmin/src/Algorithms/Ampl/BonAmplSetup.lo \
         $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
-endif
+
+libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
+
+# This is for libtool (on Windows)
+libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 ########################################################################
 #                            Additional flags                          #
@@ -180,54 +45,7 @@ endif
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
-AM_CPPFLAGS = -I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators/bounds` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/util` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/standardize` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem/depGraph` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` \
-	-I`$(CYGPATH_W) $(OSIOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(CBCSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CBCOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/LinAlg` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Interfaces` \
-	-I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CGLOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding2` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglLandP` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglRedSplit` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglGomory` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglProbing` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglOddHole` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglClique` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglFlowCover` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglTwomir` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglKnapsackCover` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglPreProcess` \
-	-I`$(CYGPATH_W) $(CLPSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CLPOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/Branching` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/OaGenerators` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/Ampl` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ipopt` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ampl` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/CbcBonmin` \
-	-I`$(CYGPATH_W) $(objdir)/inc` \
-	-I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(COINUTILSOBJDIR)/inc`
+AM_CPPFLAGS =
 
 # If we have the Ampl solver library, we need to add additional things
 if COIN_HAS_ASL
@@ -247,6 +65,8 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
 includecoindir = $(includedir)/coin
 includecoin_HEADERS = \
 	../inc/config_couenne.h \
+	util/rootQ.hpp \
+	util/funtriplets.hpp \
 	main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp \
 	main/BonCouenneInterface.hpp \
@@ -306,8 +126,6 @@ includecoin_HEADERS = \
 	problem/CouenneSolverInterface.hpp \
 	problem/CouenneJournalist.hpp \
 	expression/CouenneTypes.hpp \
-	util/rootQ.hpp \
-	util/funtriplets.hpp \
 	disjunctive/CouenneDisjCuts.hpp \
 	convex/CouenneCutGenerator.hpp
 
