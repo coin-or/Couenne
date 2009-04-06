@@ -16,7 +16,12 @@ AUTOMAKE_OPTIONS = foreign
 # in the 'lib' directory
 lib_LTLIBRARIES = libCouenne.la
 
-libCouenne_la_SOURCES = 
+libCouenne_la_SOURCES = \
+	main/BonCouenneSetup.cpp \
+	main/BonCouenneInterface.cpp \
+	main/BonNlpHeuristic.cpp \
+	main/BonCouenneInfo.cpp \
+	main/BonInitHeuristic.cpp
 
 libCouenne_la_LIBADD = \
 	./problem/libCouenneProblem.la \
@@ -45,12 +50,70 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
-AM_CPPFLAGS =
+AM_CPPFLAGS = \
+	-I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/Branching` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/OaGenerators` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/Ampl` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ipopt` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ampl` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/CbcBonmin` \
+	-I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
+	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` \
+	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Interfaces` \
+	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/LinAlg` \
+	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Apps/AmplSolver` \
+	-I`$(CYGPATH_W) $(OSISRCDIR)/src` \
+	-I`$(CYGPATH_W) $(CBCSRCDIR)/src` \
+	-I`$(CYGPATH_W) $(CBCOBJDIR)/inc` \
+	-I`$(CYGPATH_W) $(CBCSRCDIR)/examples` \
+	-I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src` \
+	-I`$(CYGPATH_W) $(COINUTILSOBJDIR)/inc` \
+	-I`$(CYGPATH_W) $(CLPOBJDIR)/inc` \
+	-I`$(CYGPATH_W) $(CLPSRCDIR)/src` \
+	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` \
+	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCbc`\
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding2` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglLandP` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglRedSplit` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglGomory` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglProbing` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglOddHole` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglClique` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglFlowCover` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglTwomir` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglKnapsackCover` \
+	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglPreProcess`
 
 # If we have the Ampl solver library, we need to add additional things
 if COIN_HAS_ASL
 AM_CPPFLAGS += $(ASL_CPPFLAGS)
 endif
+
+if COIN_HAS_CPX
+  AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
+	-I`$(CYGPATH_W) $(CPXINCDIR)`
+endif
+
+AM_CPPFLAGS += $(ASL_CPPFLAGS)
+
+#if COIN_HAS_FILTERSQP
+#  AM_CPPFLAGS += -I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Filter` 
+#endif
+
+AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
