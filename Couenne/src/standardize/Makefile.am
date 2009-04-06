@@ -6,7 +6,7 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-lib_LTLIBRARIES = libCouenneStandardize.la
+noinst_LTLIBRARIES = libCouenneStandardize.la
 
 # List all source files for this library, including headers
 libCouenneStandardize_la_SOURCES = \

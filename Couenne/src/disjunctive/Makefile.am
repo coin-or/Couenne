@@ -6,7 +6,7 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-lib_LTLIBRARIES = libCouenneDisjunctive.la
+noinst_LTLIBRARIES = libCouenneDisjunctive.la
 
 # List all source files for this library, including headers
 libCouenneDisjunctive_la_SOURCES = \

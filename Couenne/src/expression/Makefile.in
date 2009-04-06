@@ -48,9 +48,11 @@ host_triplet = @host@
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators/bounds` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex/operators` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/standardize` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem/depGraph` \
-@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/util`
 
 subdir = src/expression
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -62,22 +64,25 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
 CONFIG_CLEAN_FILES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(libdir)"
-libLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(lib_LTLIBRARIES)
+LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneExpression_la_LIBADD =
 am_libCouenneExpression_la_OBJECTS = domain.lo expression.lo exprOp.lo \
 	exprUnary.lo exprVar.lo exprAux.lo exprAbs.lo exprDiv.lo \
 	exprExp.lo exprInv.lo exprLog.lo exprMul.lo exprOpp.lo \
 	exprPow.lo exprSin.lo exprCos.lo exprSub.lo exprSum.lo \
 	exprMinMax.lo exprGroup.lo exprQuad.lo compQuadFinBounds.lo \
-	exprBQuad.lo simplifiers.lo simplify.lo
+	exprBQuad.lo simplifiers.lo simplify.lo conv-exprAbs.lo \
+	conv-exprDiv.lo conv-exprMul.lo conv-exprMul-genCuts.lo \
+	unifiedProdCuts.lo conv-exprOpp.lo conv-exprPow.lo \
+	conv-exprPow-getBounds.lo conv-exprPow-envelope.lo \
+	powNewton.lo conv-exprSub.lo conv-exprSum.lo conv-exprInv.lo \
+	conv-exprSinCos.lo conv-exprExp.lo conv-exprLog.lo \
+	conv-exprGroup.lo conv-exprQuad.lo trigNewton.lo \
+	alphaConvexify.lo quadCuts.lo branchExprAbs.lo \
+	branchExprExp.lo branchExprDiv.lo branchExprInv.lo \
+	branchExprLog.lo branchExprMul.lo branchExprPow.lo \
+	branchExprQuad.lo branchExprSinCos.lo minMaxDelta.lo \
+	computeMulBrDist.lo
 libCouenneExpression_la_OBJECTS =  \
 	$(am_libCouenneExpression_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -282,7 +287,7 @@ sol_cc_compiler = @sol_cc_compiler@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
-lib_LTLIBRARIES = libCouenneExpression.la
+noinst_LTLIBRARIES = libCouenneExpression.la
 
 # List all source files for this library, including headers
 libCouenneExpression_la_SOURCES = \
@@ -310,7 +315,39 @@ libCouenneExpression_la_SOURCES = \
 	operators/compQuadFinBounds.cpp \
 	operators/bounds/exprBQuad.cpp \
 	simplify/simplifiers.cpp \
-	simplify/simplify.cpp
+	simplify/simplify.cpp \
+	../convex/operators/conv-exprAbs.cpp \
+	../convex/operators/conv-exprDiv.cpp \
+	../convex/operators/conv-exprMul.cpp \
+	../convex/operators/conv-exprMul-genCuts.cpp \
+	../convex/operators/unifiedProdCuts.cpp \
+	../convex/operators/conv-exprOpp.cpp \
+	../convex/operators/conv-exprPow.cpp \
+	../convex/operators/conv-exprPow-getBounds.cpp \
+	../convex/operators/conv-exprPow-envelope.cpp \
+	../convex/operators/powNewton.cpp \
+	../convex/operators/conv-exprSub.cpp \
+	../convex/operators/conv-exprSum.cpp \
+	../convex/operators/conv-exprInv.cpp \
+	../convex/operators/conv-exprSinCos.cpp \
+	../convex/operators/conv-exprExp.cpp \
+	../convex/operators/conv-exprLog.cpp \
+	../convex/operators/conv-exprGroup.cpp \
+	../convex/operators/conv-exprQuad.cpp \
+	../convex/operators/trigNewton.cpp \
+	../convex/operators/alphaConvexify.cpp \
+	../convex/operators/quadCuts.cpp \
+	../branch/operators/branchExprAbs.cpp \
+	../branch/operators/branchExprExp.cpp \
+	../branch/operators/branchExprDiv.cpp \
+	../branch/operators/branchExprInv.cpp \
+	../branch/operators/branchExprLog.cpp \
+	../branch/operators/branchExprMul.cpp \
+	../branch/operators/branchExprPow.cpp \
+	../branch/operators/branchExprQuad.cpp \
+	../branch/operators/branchExprSinCos.cpp \
+	../branch/operators/minMaxDelta.cpp \
+	../branch/operators/computeMulBrDist.cpp
 
 libCouenneExpression_la_DEPENDENCIES = $(libCouenneExpression_la_LIBADD)
 
@@ -364,35 +401,17 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-libLTLIBRARIES: $(lib_LTLIBRARIES)
-	@$(NORMAL_INSTALL)
-	test -z "$(libdir)" || $(mkdir_p) "$(DESTDIR)$(libdir)"
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  if test -f $$p; then \
-	    f=$(am__strip_dir) \
-	    echo " $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) '$$p' '$(DESTDIR)$(libdir)/$$f'"; \
-	    $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) "$$p" "$(DESTDIR)$(libdir)/$$f"; \
-	  else :; fi; \
-	done
 
-uninstall-libLTLIBRARIES:
-	@$(NORMAL_UNINSTALL)
-	@set -x; list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  p=$(am__strip_dir) \
-	  echo " $(LIBTOOL) --mode=uninstall rm -f '$(DESTDIR)$(libdir)/$$p'"; \
-	  $(LIBTOOL) --mode=uninstall rm -f "$(DESTDIR)$(libdir)/$$p"; \
-	done
-
-clean-libLTLIBRARIES:
-	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
 	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
 	  test "$$dir" != "$$p" || dir=.; \
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
 libCouenneExpression.la: $(libCouenneExpression_la_OBJECTS) $(libCouenneExpression_la_DEPENDENCIES) 
-	$(CXXLINK) -rpath $(libdir) $(libCouenneExpression_la_LDFLAGS) $(libCouenneExpression_la_OBJECTS) $(libCouenneExpression_la_LIBADD) $(LIBS)
+	$(CXXLINK)  $(libCouenneExpression_la_LDFLAGS) $(libCouenneExpression_la_OBJECTS) $(libCouenneExpression_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -400,7 +419,34 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alphaConvexify.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprAbs.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprDiv.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprExp.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprInv.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprLog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprMul.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprPow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprQuad.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprSinCos.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/compQuadFinBounds.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/computeMulBrDist.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprAbs.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprDiv.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprExp.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprGroup.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprInv.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprLog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprMul-genCuts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprMul.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprOpp.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprPow-envelope.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprPow-getBounds.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprPow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprQuad.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprSinCos.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprSub.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprSum.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domain.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprAbs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprAux.Plo@am__quote@
@@ -423,8 +469,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprUnary.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprVar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/expression.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/minMaxDelta.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/powNewton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quadCuts.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simplifiers.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simplify.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trigNewton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unifiedProdCuts.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -580,6 +631,230 @@ simplify.lo: simplify/simplify.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o simplify.lo `test -f 'simplify/simplify.cpp' || echo '$(srcdir)/'`simplify/simplify.cpp
 
+conv-exprAbs.lo: ../convex/operators/conv-exprAbs.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprAbs.lo -MD -MP -MF "$(DEPDIR)/conv-exprAbs.Tpo" -c -o conv-exprAbs.lo `test -f '../convex/operators/conv-exprAbs.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprAbs.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprAbs.Tpo" "$(DEPDIR)/conv-exprAbs.Plo"; else rm -f "$(DEPDIR)/conv-exprAbs.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprAbs.cpp' object='conv-exprAbs.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprAbs.lo `test -f '../convex/operators/conv-exprAbs.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprAbs.cpp
+
+conv-exprDiv.lo: ../convex/operators/conv-exprDiv.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprDiv.lo -MD -MP -MF "$(DEPDIR)/conv-exprDiv.Tpo" -c -o conv-exprDiv.lo `test -f '../convex/operators/conv-exprDiv.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprDiv.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprDiv.Tpo" "$(DEPDIR)/conv-exprDiv.Plo"; else rm -f "$(DEPDIR)/conv-exprDiv.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprDiv.cpp' object='conv-exprDiv.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprDiv.lo `test -f '../convex/operators/conv-exprDiv.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprDiv.cpp
+
+conv-exprMul.lo: ../convex/operators/conv-exprMul.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprMul.lo -MD -MP -MF "$(DEPDIR)/conv-exprMul.Tpo" -c -o conv-exprMul.lo `test -f '../convex/operators/conv-exprMul.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprMul.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprMul.Tpo" "$(DEPDIR)/conv-exprMul.Plo"; else rm -f "$(DEPDIR)/conv-exprMul.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprMul.cpp' object='conv-exprMul.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprMul.lo `test -f '../convex/operators/conv-exprMul.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprMul.cpp
+
+conv-exprMul-genCuts.lo: ../convex/operators/conv-exprMul-genCuts.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprMul-genCuts.lo -MD -MP -MF "$(DEPDIR)/conv-exprMul-genCuts.Tpo" -c -o conv-exprMul-genCuts.lo `test -f '../convex/operators/conv-exprMul-genCuts.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprMul-genCuts.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprMul-genCuts.Tpo" "$(DEPDIR)/conv-exprMul-genCuts.Plo"; else rm -f "$(DEPDIR)/conv-exprMul-genCuts.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprMul-genCuts.cpp' object='conv-exprMul-genCuts.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprMul-genCuts.lo `test -f '../convex/operators/conv-exprMul-genCuts.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprMul-genCuts.cpp
+
+unifiedProdCuts.lo: ../convex/operators/unifiedProdCuts.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT unifiedProdCuts.lo -MD -MP -MF "$(DEPDIR)/unifiedProdCuts.Tpo" -c -o unifiedProdCuts.lo `test -f '../convex/operators/unifiedProdCuts.cpp' || echo '$(srcdir)/'`../convex/operators/unifiedProdCuts.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/unifiedProdCuts.Tpo" "$(DEPDIR)/unifiedProdCuts.Plo"; else rm -f "$(DEPDIR)/unifiedProdCuts.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/unifiedProdCuts.cpp' object='unifiedProdCuts.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o unifiedProdCuts.lo `test -f '../convex/operators/unifiedProdCuts.cpp' || echo '$(srcdir)/'`../convex/operators/unifiedProdCuts.cpp
+
+conv-exprOpp.lo: ../convex/operators/conv-exprOpp.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprOpp.lo -MD -MP -MF "$(DEPDIR)/conv-exprOpp.Tpo" -c -o conv-exprOpp.lo `test -f '../convex/operators/conv-exprOpp.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprOpp.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprOpp.Tpo" "$(DEPDIR)/conv-exprOpp.Plo"; else rm -f "$(DEPDIR)/conv-exprOpp.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprOpp.cpp' object='conv-exprOpp.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprOpp.lo `test -f '../convex/operators/conv-exprOpp.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprOpp.cpp
+
+conv-exprPow.lo: ../convex/operators/conv-exprPow.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprPow.lo -MD -MP -MF "$(DEPDIR)/conv-exprPow.Tpo" -c -o conv-exprPow.lo `test -f '../convex/operators/conv-exprPow.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprPow.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprPow.Tpo" "$(DEPDIR)/conv-exprPow.Plo"; else rm -f "$(DEPDIR)/conv-exprPow.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprPow.cpp' object='conv-exprPow.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprPow.lo `test -f '../convex/operators/conv-exprPow.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprPow.cpp
+
+conv-exprPow-getBounds.lo: ../convex/operators/conv-exprPow-getBounds.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprPow-getBounds.lo -MD -MP -MF "$(DEPDIR)/conv-exprPow-getBounds.Tpo" -c -o conv-exprPow-getBounds.lo `test -f '../convex/operators/conv-exprPow-getBounds.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprPow-getBounds.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprPow-getBounds.Tpo" "$(DEPDIR)/conv-exprPow-getBounds.Plo"; else rm -f "$(DEPDIR)/conv-exprPow-getBounds.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprPow-getBounds.cpp' object='conv-exprPow-getBounds.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprPow-getBounds.lo `test -f '../convex/operators/conv-exprPow-getBounds.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprPow-getBounds.cpp
+
+conv-exprPow-envelope.lo: ../convex/operators/conv-exprPow-envelope.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprPow-envelope.lo -MD -MP -MF "$(DEPDIR)/conv-exprPow-envelope.Tpo" -c -o conv-exprPow-envelope.lo `test -f '../convex/operators/conv-exprPow-envelope.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprPow-envelope.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprPow-envelope.Tpo" "$(DEPDIR)/conv-exprPow-envelope.Plo"; else rm -f "$(DEPDIR)/conv-exprPow-envelope.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprPow-envelope.cpp' object='conv-exprPow-envelope.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprPow-envelope.lo `test -f '../convex/operators/conv-exprPow-envelope.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprPow-envelope.cpp
+
+powNewton.lo: ../convex/operators/powNewton.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT powNewton.lo -MD -MP -MF "$(DEPDIR)/powNewton.Tpo" -c -o powNewton.lo `test -f '../convex/operators/powNewton.cpp' || echo '$(srcdir)/'`../convex/operators/powNewton.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/powNewton.Tpo" "$(DEPDIR)/powNewton.Plo"; else rm -f "$(DEPDIR)/powNewton.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/powNewton.cpp' object='powNewton.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o powNewton.lo `test -f '../convex/operators/powNewton.cpp' || echo '$(srcdir)/'`../convex/operators/powNewton.cpp
+
+conv-exprSub.lo: ../convex/operators/conv-exprSub.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprSub.lo -MD -MP -MF "$(DEPDIR)/conv-exprSub.Tpo" -c -o conv-exprSub.lo `test -f '../convex/operators/conv-exprSub.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprSub.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprSub.Tpo" "$(DEPDIR)/conv-exprSub.Plo"; else rm -f "$(DEPDIR)/conv-exprSub.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprSub.cpp' object='conv-exprSub.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprSub.lo `test -f '../convex/operators/conv-exprSub.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprSub.cpp
+
+conv-exprSum.lo: ../convex/operators/conv-exprSum.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprSum.lo -MD -MP -MF "$(DEPDIR)/conv-exprSum.Tpo" -c -o conv-exprSum.lo `test -f '../convex/operators/conv-exprSum.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprSum.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprSum.Tpo" "$(DEPDIR)/conv-exprSum.Plo"; else rm -f "$(DEPDIR)/conv-exprSum.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprSum.cpp' object='conv-exprSum.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprSum.lo `test -f '../convex/operators/conv-exprSum.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprSum.cpp
+
+conv-exprInv.lo: ../convex/operators/conv-exprInv.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprInv.lo -MD -MP -MF "$(DEPDIR)/conv-exprInv.Tpo" -c -o conv-exprInv.lo `test -f '../convex/operators/conv-exprInv.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprInv.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprInv.Tpo" "$(DEPDIR)/conv-exprInv.Plo"; else rm -f "$(DEPDIR)/conv-exprInv.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprInv.cpp' object='conv-exprInv.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprInv.lo `test -f '../convex/operators/conv-exprInv.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprInv.cpp
+
+conv-exprSinCos.lo: ../convex/operators/conv-exprSinCos.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprSinCos.lo -MD -MP -MF "$(DEPDIR)/conv-exprSinCos.Tpo" -c -o conv-exprSinCos.lo `test -f '../convex/operators/conv-exprSinCos.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprSinCos.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprSinCos.Tpo" "$(DEPDIR)/conv-exprSinCos.Plo"; else rm -f "$(DEPDIR)/conv-exprSinCos.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprSinCos.cpp' object='conv-exprSinCos.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprSinCos.lo `test -f '../convex/operators/conv-exprSinCos.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprSinCos.cpp
+
+conv-exprExp.lo: ../convex/operators/conv-exprExp.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprExp.lo -MD -MP -MF "$(DEPDIR)/conv-exprExp.Tpo" -c -o conv-exprExp.lo `test -f '../convex/operators/conv-exprExp.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprExp.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprExp.Tpo" "$(DEPDIR)/conv-exprExp.Plo"; else rm -f "$(DEPDIR)/conv-exprExp.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprExp.cpp' object='conv-exprExp.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprExp.lo `test -f '../convex/operators/conv-exprExp.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprExp.cpp
+
+conv-exprLog.lo: ../convex/operators/conv-exprLog.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprLog.lo -MD -MP -MF "$(DEPDIR)/conv-exprLog.Tpo" -c -o conv-exprLog.lo `test -f '../convex/operators/conv-exprLog.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprLog.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprLog.Tpo" "$(DEPDIR)/conv-exprLog.Plo"; else rm -f "$(DEPDIR)/conv-exprLog.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprLog.cpp' object='conv-exprLog.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprLog.lo `test -f '../convex/operators/conv-exprLog.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprLog.cpp
+
+conv-exprGroup.lo: ../convex/operators/conv-exprGroup.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprGroup.lo -MD -MP -MF "$(DEPDIR)/conv-exprGroup.Tpo" -c -o conv-exprGroup.lo `test -f '../convex/operators/conv-exprGroup.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprGroup.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprGroup.Tpo" "$(DEPDIR)/conv-exprGroup.Plo"; else rm -f "$(DEPDIR)/conv-exprGroup.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprGroup.cpp' object='conv-exprGroup.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprGroup.lo `test -f '../convex/operators/conv-exprGroup.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprGroup.cpp
+
+conv-exprQuad.lo: ../convex/operators/conv-exprQuad.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprQuad.lo -MD -MP -MF "$(DEPDIR)/conv-exprQuad.Tpo" -c -o conv-exprQuad.lo `test -f '../convex/operators/conv-exprQuad.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprQuad.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprQuad.Tpo" "$(DEPDIR)/conv-exprQuad.Plo"; else rm -f "$(DEPDIR)/conv-exprQuad.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprQuad.cpp' object='conv-exprQuad.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprQuad.lo `test -f '../convex/operators/conv-exprQuad.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprQuad.cpp
+
+trigNewton.lo: ../convex/operators/trigNewton.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT trigNewton.lo -MD -MP -MF "$(DEPDIR)/trigNewton.Tpo" -c -o trigNewton.lo `test -f '../convex/operators/trigNewton.cpp' || echo '$(srcdir)/'`../convex/operators/trigNewton.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/trigNewton.Tpo" "$(DEPDIR)/trigNewton.Plo"; else rm -f "$(DEPDIR)/trigNewton.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/trigNewton.cpp' object='trigNewton.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o trigNewton.lo `test -f '../convex/operators/trigNewton.cpp' || echo '$(srcdir)/'`../convex/operators/trigNewton.cpp
+
+alphaConvexify.lo: ../convex/operators/alphaConvexify.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT alphaConvexify.lo -MD -MP -MF "$(DEPDIR)/alphaConvexify.Tpo" -c -o alphaConvexify.lo `test -f '../convex/operators/alphaConvexify.cpp' || echo '$(srcdir)/'`../convex/operators/alphaConvexify.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/alphaConvexify.Tpo" "$(DEPDIR)/alphaConvexify.Plo"; else rm -f "$(DEPDIR)/alphaConvexify.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/alphaConvexify.cpp' object='alphaConvexify.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o alphaConvexify.lo `test -f '../convex/operators/alphaConvexify.cpp' || echo '$(srcdir)/'`../convex/operators/alphaConvexify.cpp
+
+quadCuts.lo: ../convex/operators/quadCuts.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT quadCuts.lo -MD -MP -MF "$(DEPDIR)/quadCuts.Tpo" -c -o quadCuts.lo `test -f '../convex/operators/quadCuts.cpp' || echo '$(srcdir)/'`../convex/operators/quadCuts.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/quadCuts.Tpo" "$(DEPDIR)/quadCuts.Plo"; else rm -f "$(DEPDIR)/quadCuts.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/quadCuts.cpp' object='quadCuts.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o quadCuts.lo `test -f '../convex/operators/quadCuts.cpp' || echo '$(srcdir)/'`../convex/operators/quadCuts.cpp
+
+branchExprAbs.lo: ../branch/operators/branchExprAbs.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprAbs.lo -MD -MP -MF "$(DEPDIR)/branchExprAbs.Tpo" -c -o branchExprAbs.lo `test -f '../branch/operators/branchExprAbs.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprAbs.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprAbs.Tpo" "$(DEPDIR)/branchExprAbs.Plo"; else rm -f "$(DEPDIR)/branchExprAbs.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprAbs.cpp' object='branchExprAbs.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprAbs.lo `test -f '../branch/operators/branchExprAbs.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprAbs.cpp
+
+branchExprExp.lo: ../branch/operators/branchExprExp.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprExp.lo -MD -MP -MF "$(DEPDIR)/branchExprExp.Tpo" -c -o branchExprExp.lo `test -f '../branch/operators/branchExprExp.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprExp.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprExp.Tpo" "$(DEPDIR)/branchExprExp.Plo"; else rm -f "$(DEPDIR)/branchExprExp.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprExp.cpp' object='branchExprExp.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprExp.lo `test -f '../branch/operators/branchExprExp.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprExp.cpp
+
+branchExprDiv.lo: ../branch/operators/branchExprDiv.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprDiv.lo -MD -MP -MF "$(DEPDIR)/branchExprDiv.Tpo" -c -o branchExprDiv.lo `test -f '../branch/operators/branchExprDiv.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprDiv.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprDiv.Tpo" "$(DEPDIR)/branchExprDiv.Plo"; else rm -f "$(DEPDIR)/branchExprDiv.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprDiv.cpp' object='branchExprDiv.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprDiv.lo `test -f '../branch/operators/branchExprDiv.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprDiv.cpp
+
+branchExprInv.lo: ../branch/operators/branchExprInv.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprInv.lo -MD -MP -MF "$(DEPDIR)/branchExprInv.Tpo" -c -o branchExprInv.lo `test -f '../branch/operators/branchExprInv.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprInv.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprInv.Tpo" "$(DEPDIR)/branchExprInv.Plo"; else rm -f "$(DEPDIR)/branchExprInv.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprInv.cpp' object='branchExprInv.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprInv.lo `test -f '../branch/operators/branchExprInv.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprInv.cpp
+
+branchExprLog.lo: ../branch/operators/branchExprLog.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprLog.lo -MD -MP -MF "$(DEPDIR)/branchExprLog.Tpo" -c -o branchExprLog.lo `test -f '../branch/operators/branchExprLog.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprLog.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprLog.Tpo" "$(DEPDIR)/branchExprLog.Plo"; else rm -f "$(DEPDIR)/branchExprLog.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprLog.cpp' object='branchExprLog.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprLog.lo `test -f '../branch/operators/branchExprLog.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprLog.cpp
+
+branchExprMul.lo: ../branch/operators/branchExprMul.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprMul.lo -MD -MP -MF "$(DEPDIR)/branchExprMul.Tpo" -c -o branchExprMul.lo `test -f '../branch/operators/branchExprMul.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprMul.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprMul.Tpo" "$(DEPDIR)/branchExprMul.Plo"; else rm -f "$(DEPDIR)/branchExprMul.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprMul.cpp' object='branchExprMul.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprMul.lo `test -f '../branch/operators/branchExprMul.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprMul.cpp
+
+branchExprPow.lo: ../branch/operators/branchExprPow.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprPow.lo -MD -MP -MF "$(DEPDIR)/branchExprPow.Tpo" -c -o branchExprPow.lo `test -f '../branch/operators/branchExprPow.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprPow.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprPow.Tpo" "$(DEPDIR)/branchExprPow.Plo"; else rm -f "$(DEPDIR)/branchExprPow.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprPow.cpp' object='branchExprPow.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprPow.lo `test -f '../branch/operators/branchExprPow.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprPow.cpp
+
+branchExprQuad.lo: ../branch/operators/branchExprQuad.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprQuad.lo -MD -MP -MF "$(DEPDIR)/branchExprQuad.Tpo" -c -o branchExprQuad.lo `test -f '../branch/operators/branchExprQuad.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprQuad.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprQuad.Tpo" "$(DEPDIR)/branchExprQuad.Plo"; else rm -f "$(DEPDIR)/branchExprQuad.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprQuad.cpp' object='branchExprQuad.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprQuad.lo `test -f '../branch/operators/branchExprQuad.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprQuad.cpp
+
+branchExprSinCos.lo: ../branch/operators/branchExprSinCos.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprSinCos.lo -MD -MP -MF "$(DEPDIR)/branchExprSinCos.Tpo" -c -o branchExprSinCos.lo `test -f '../branch/operators/branchExprSinCos.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprSinCos.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprSinCos.Tpo" "$(DEPDIR)/branchExprSinCos.Plo"; else rm -f "$(DEPDIR)/branchExprSinCos.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprSinCos.cpp' object='branchExprSinCos.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprSinCos.lo `test -f '../branch/operators/branchExprSinCos.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprSinCos.cpp
+
+minMaxDelta.lo: ../branch/operators/minMaxDelta.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT minMaxDelta.lo -MD -MP -MF "$(DEPDIR)/minMaxDelta.Tpo" -c -o minMaxDelta.lo `test -f '../branch/operators/minMaxDelta.cpp' || echo '$(srcdir)/'`../branch/operators/minMaxDelta.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/minMaxDelta.Tpo" "$(DEPDIR)/minMaxDelta.Plo"; else rm -f "$(DEPDIR)/minMaxDelta.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/minMaxDelta.cpp' object='minMaxDelta.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o minMaxDelta.lo `test -f '../branch/operators/minMaxDelta.cpp' || echo '$(srcdir)/'`../branch/operators/minMaxDelta.cpp
+
+computeMulBrDist.lo: ../branch/operators/computeMulBrDist.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT computeMulBrDist.lo -MD -MP -MF "$(DEPDIR)/computeMulBrDist.Tpo" -c -o computeMulBrDist.lo `test -f '../branch/operators/computeMulBrDist.cpp' || echo '$(srcdir)/'`../branch/operators/computeMulBrDist.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/computeMulBrDist.Tpo" "$(DEPDIR)/computeMulBrDist.Plo"; else rm -f "$(DEPDIR)/computeMulBrDist.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/computeMulBrDist.cpp' object='computeMulBrDist.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o computeMulBrDist.lo `test -f '../branch/operators/computeMulBrDist.cpp' || echo '$(srcdir)/'`../branch/operators/computeMulBrDist.cpp
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -669,9 +944,6 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)"; do \
-	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -698,7 +970,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -719,7 +991,7 @@ info-am:
 
 install-data-am:
 
-install-exec-am: install-libLTLIBRARIES
+install-exec-am:
 
 install-info: install-info-am
 
@@ -745,20 +1017,19 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am uninstall-libLTLIBRARIES
+uninstall-am: uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libLTLIBRARIES clean-libtool ctags distclean \
+	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am \
-	install-libLTLIBRARIES install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-info-am \
-	uninstall-libLTLIBRARIES
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-info-am
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

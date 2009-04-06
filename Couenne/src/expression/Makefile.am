@@ -6,7 +6,7 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-lib_LTLIBRARIES = libCouenneExpression.la
+noinst_LTLIBRARIES = libCouenneExpression.la
 
 # List all source files for this library, including headers
 libCouenneExpression_la_SOURCES = \
@@ -34,7 +34,39 @@ libCouenneExpression_la_SOURCES = \
 	operators/compQuadFinBounds.cpp \
 	operators/bounds/exprBQuad.cpp \
 	simplify/simplifiers.cpp \
-	simplify/simplify.cpp
+	simplify/simplify.cpp \
+	../convex/operators/conv-exprAbs.cpp \
+	../convex/operators/conv-exprDiv.cpp \
+	../convex/operators/conv-exprMul.cpp \
+	../convex/operators/conv-exprMul-genCuts.cpp \
+	../convex/operators/unifiedProdCuts.cpp \
+	../convex/operators/conv-exprOpp.cpp \
+	../convex/operators/conv-exprPow.cpp \
+	../convex/operators/conv-exprPow-getBounds.cpp \
+	../convex/operators/conv-exprPow-envelope.cpp \
+	../convex/operators/powNewton.cpp \
+	../convex/operators/conv-exprSub.cpp \
+	../convex/operators/conv-exprSum.cpp \
+	../convex/operators/conv-exprInv.cpp \
+	../convex/operators/conv-exprSinCos.cpp \
+	../convex/operators/conv-exprExp.cpp \
+	../convex/operators/conv-exprLog.cpp \
+	../convex/operators/conv-exprGroup.cpp \
+	../convex/operators/conv-exprQuad.cpp \
+	../convex/operators/trigNewton.cpp \
+	../convex/operators/alphaConvexify.cpp \
+	../convex/operators/quadCuts.cpp \
+	../branch/operators/branchExprAbs.cpp \
+	../branch/operators/branchExprExp.cpp \
+	../branch/operators/branchExprDiv.cpp \
+	../branch/operators/branchExprInv.cpp \
+	../branch/operators/branchExprLog.cpp \
+	../branch/operators/branchExprMul.cpp \
+	../branch/operators/branchExprPow.cpp \
+	../branch/operators/branchExprQuad.cpp \
+	../branch/operators/branchExprSinCos.cpp \
+	../branch/operators/minMaxDelta.cpp \
+	../branch/operators/computeMulBrDist.cpp
 
 libCouenneExpression_la_DEPENDENCIES = $(libCouenneExpression_la_LIBADD)
 
@@ -67,7 +99,9 @@ if COIN_HAS_COUENNE
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators/bounds` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex/operators` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/standardize` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem/depGraph` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/util`
 endif

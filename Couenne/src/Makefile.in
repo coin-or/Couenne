@@ -43,10 +43,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-
-# If we have the Ampl solver library, we need to add additional things
-@COIN_HAS_ASL_TRUE@am__append_1 = $(ASL_CPPFLAGS)
-@COIN_HAS_CPX_TRUE@am__append_2 = \
+@COIN_HAS_CPX_TRUE@am__append_1 = \
 @COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
 @COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(CPXINCDIR)`
 
@@ -70,19 +67,16 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includecoindir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-am_libCouenne_la_OBJECTS = BonCouenneSetup.lo BonCouenneInterface.lo \
-	BonNlpHeuristic.lo BonCouenneInfo.lo BonInitHeuristic.lo
+am_libCouenne_la_OBJECTS =
 libCouenne_la_OBJECTS = $(am_libCouenne_la_OBJECTS)
-depcomp = $(SHELL) $(top_srcdir)/../depcomp
-am__depfiles_maybe = depfiles
-CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CXXFLAGS) $(CXXFLAGS)
-CXXLD = $(CXX)
-CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+	$(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libCouenne_la_SOURCES)
 DIST_SOURCES = $(libCouenne_la_SOURCES)
 includecoinHEADERS_INSTALL = $(INSTALL_HEADER)
@@ -284,29 +278,19 @@ AUTOMAKE_OPTIONS = foreign
 # Name of the library compiled in this directory.  We want it to be installed
 # in the 'lib' directory
 lib_LTLIBRARIES = libCouenne.la
-libCouenne_la_SOURCES = \
-	main/BonCouenneSetup.cpp \
-	main/BonCouenneInterface.cpp \
-	main/BonNlpHeuristic.cpp \
-	main/BonCouenneInfo.cpp \
-	main/BonInitHeuristic.cpp
-
+libCouenne_la_SOURCES = 
 libCouenne_la_LIBADD = \
 	./problem/libCouenneProblem.la \
-	./readnl/libCouenneReadnl.la \
+	./standardize/libCouenneStandardize.la \
 	./expression/libCouenneExpression.la \
 	./branch/libCouenneBranch.la \
 	./convex/libCouenneConvex.la \
-	./util/libCouenneUtil.la \
-	./standardize/libCouenneStandardize.la \
 	./bound_tightening/libCouenneBoundTightening.la \
-	./disjunctive/libCouenneDisjunctive.la \
-	../../Bonmin/src/Interfaces/Ampl/BonAmplInterface.lo \
-	../../Bonmin/src/Interfaces/Ampl/BonAmplTMINLP.lo \
-	../../Bonmin/src/Interfaces/Ampl/sos_kludge.lo \
-	../../Bonmin/src/Algorithms/Ampl/BonAmplSetup.lo \
-        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
+	./util/libCouenneUtil.la \
+	./disjunctive/libCouenneDisjunctive.la
 
+
+#	./readnl/libCouenneReadnl.la 
 libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
 
 # This is for libtool (on Windows)
@@ -354,8 +338,7 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglTwomir` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglKnapsackCover` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglPreProcess` $(am__append_1) \
-	$(am__append_2) $(ASL_CPPFLAGS) -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/convex` -I`$(CYGPATH_W) \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/expression` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/expression/operators` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/disjunctive` -I`$(CYGPATH_W) \
@@ -450,7 +433,6 @@ ConfigHeader = CouenneConfig.h
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cpp .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -508,75 +490,13 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libCouenne.la: $(libCouenne_la_OBJECTS) $(libCouenne_la_DEPENDENCIES) 
-	$(CXXLINK) -rpath $(libdir) $(libCouenne_la_LDFLAGS) $(libCouenne_la_OBJECTS) $(libCouenne_la_LIBADD) $(LIBS)
+	$(LINK) -rpath $(libdir) $(libCouenne_la_LDFLAGS) $(libCouenne_la_OBJECTS) $(libCouenne_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
-
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonNlpHeuristic.Plo@am__quote@
-
-.cpp.o:
-@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
-
-.cpp.obj:
-@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ `$(CYGPATH_W) '$<'`; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.cpp.lo:
-@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
-
-BonCouenneSetup.lo: main/BonCouenneSetup.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BonCouenneSetup.lo -MD -MP -MF "$(DEPDIR)/BonCouenneSetup.Tpo" -c -o BonCouenneSetup.lo `test -f 'main/BonCouenneSetup.cpp' || echo '$(srcdir)/'`main/BonCouenneSetup.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/BonCouenneSetup.Tpo" "$(DEPDIR)/BonCouenneSetup.Plo"; else rm -f "$(DEPDIR)/BonCouenneSetup.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main/BonCouenneSetup.cpp' object='BonCouenneSetup.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BonCouenneSetup.lo `test -f 'main/BonCouenneSetup.cpp' || echo '$(srcdir)/'`main/BonCouenneSetup.cpp
-
-BonCouenneInterface.lo: main/BonCouenneInterface.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BonCouenneInterface.lo -MD -MP -MF "$(DEPDIR)/BonCouenneInterface.Tpo" -c -o BonCouenneInterface.lo `test -f 'main/BonCouenneInterface.cpp' || echo '$(srcdir)/'`main/BonCouenneInterface.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/BonCouenneInterface.Tpo" "$(DEPDIR)/BonCouenneInterface.Plo"; else rm -f "$(DEPDIR)/BonCouenneInterface.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main/BonCouenneInterface.cpp' object='BonCouenneInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BonCouenneInterface.lo `test -f 'main/BonCouenneInterface.cpp' || echo '$(srcdir)/'`main/BonCouenneInterface.cpp
-
-BonNlpHeuristic.lo: main/BonNlpHeuristic.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BonNlpHeuristic.lo -MD -MP -MF "$(DEPDIR)/BonNlpHeuristic.Tpo" -c -o BonNlpHeuristic.lo `test -f 'main/BonNlpHeuristic.cpp' || echo '$(srcdir)/'`main/BonNlpHeuristic.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/BonNlpHeuristic.Tpo" "$(DEPDIR)/BonNlpHeuristic.Plo"; else rm -f "$(DEPDIR)/BonNlpHeuristic.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main/BonNlpHeuristic.cpp' object='BonNlpHeuristic.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BonNlpHeuristic.lo `test -f 'main/BonNlpHeuristic.cpp' || echo '$(srcdir)/'`main/BonNlpHeuristic.cpp
-
-BonCouenneInfo.lo: main/BonCouenneInfo.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BonCouenneInfo.lo -MD -MP -MF "$(DEPDIR)/BonCouenneInfo.Tpo" -c -o BonCouenneInfo.lo `test -f 'main/BonCouenneInfo.cpp' || echo '$(srcdir)/'`main/BonCouenneInfo.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/BonCouenneInfo.Tpo" "$(DEPDIR)/BonCouenneInfo.Plo"; else rm -f "$(DEPDIR)/BonCouenneInfo.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main/BonCouenneInfo.cpp' object='BonCouenneInfo.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BonCouenneInfo.lo `test -f 'main/BonCouenneInfo.cpp' || echo '$(srcdir)/'`main/BonCouenneInfo.cpp
-
-BonInitHeuristic.lo: main/BonInitHeuristic.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BonInitHeuristic.lo -MD -MP -MF "$(DEPDIR)/BonInitHeuristic.Tpo" -c -o BonInitHeuristic.lo `test -f 'main/BonInitHeuristic.cpp' || echo '$(srcdir)/'`main/BonInitHeuristic.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/BonInitHeuristic.Tpo" "$(DEPDIR)/BonInitHeuristic.Plo"; else rm -f "$(DEPDIR)/BonInitHeuristic.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main/BonInitHeuristic.cpp' object='BonInitHeuristic.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BonInitHeuristic.lo `test -f 'main/BonInitHeuristic.cpp' || echo '$(srcdir)/'`main/BonInitHeuristic.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -718,7 +638,6 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-libtool distclean-tags
@@ -744,7 +663,6 @@ install-man:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -779,11 +697,7 @@ uninstall-am: uninstall-includecoinHEADERS uninstall-info-am \
 	uninstall-libLTLIBRARIES uninstall-local
 
 
-@COIN_HAS_ASL_TRUE@install-asl:
-@COIN_HAS_ASL_TRUE@	$(install_sh_DATA) ../../ThirdParty/ASL/amplsolv* $(DESTDIR)$(libdir)
-@COIN_HAS_ASL_FALSE@install-asl:
-
-install-exec-local: install-asl
+install-exec-local:
 	echo "#ifndef HAVE_CONFIG_H" >bla
 	echo "#define HAVE_CONFIG_H" >>bla
 	echo "#endif" >> bla

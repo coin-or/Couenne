@@ -20,6 +20,7 @@
 
 # Author: Pietro Belotti, on a template by Pierre Bonami
 
+
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -58,12 +59,23 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
 CONFIG_CLEAN_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
+libLTLIBRARIES_INSTALL = $(INSTALL)
+LTLIBRARIES = $(lib_LTLIBRARIES)
+libBonCouenne_la_LIBADD =
+am_libBonCouenne_la_OBJECTS = BonCouenneSetup.lo \
+	BonCouenneInterface.lo BonNlpHeuristic.lo BonCouenneInfo.lo \
+	BonInitHeuristic.lo
+libBonCouenne_la_OBJECTS = $(am_libBonCouenne_la_OBJECTS)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_couenne_OBJECTS = BonCouenne.$(OBJEXT) BonCouenneSetup.$(OBJEXT) \
-	BonCouenneInterface.$(OBJEXT) BonNlpHeuristic.$(OBJEXT) \
-	BonCouenneInfo.$(OBJEXT) BonInitHeuristic.$(OBJEXT)
+am_couenne_OBJECTS = BonCouenne.$(OBJEXT)
 couenne_OBJECTS = $(am_couenne_OBJECTS)
 @COIN_HAS_CPX_TRUE@am__DEPENDENCIES_1 =  \
 @COIN_HAS_CPX_TRUE@	$(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
@@ -77,8 +89,6 @@ am__DEPENDENCIES_2 = $(CBCOBJDIR)/src/libCbc.la \
 	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
 	$(COINUTILSOBJDIR)/src/libCoinUtils.la
 am__DEPENDENCIES_3 =
-couenne_DEPENDENCIES = ../libCouenne.la $(am__DEPENDENCIES_2) \
-	$(am__DEPENDENCIES_3) $(am__DEPENDENCIES_3)
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -89,8 +99,8 @@ LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(couenne_SOURCES)
-DIST_SOURCES = $(couenne_SOURCES)
+SOURCES = $(libBonCouenne_la_SOURCES) $(couenne_SOURCES)
+DIST_SOURCES = $(libBonCouenne_la_SOURCES) $(couenne_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -282,6 +292,14 @@ sol_cc_compiler = @sol_cc_compiler@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
+lib_LTLIBRARIES = libBonCouenne.la
+libBonCouenne_la_SOURCES = \
+	BonCouenneSetup.cpp \
+	BonCouenneInterface.cpp \
+	BonNlpHeuristic.cpp \
+	BonCouenneInfo.cpp \
+	BonInitHeuristic.cpp
+
 COINLIBS = $(CBCOBJDIR)/src/libCbc.la $(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
 	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
@@ -294,62 +312,20 @@ IPOPTLIBS = \
         $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
         $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 
-
-#if COIN_HAS_COUENNE
-#  COINLIBS += $(COUENNEOBJDIR)/src/libCouenne.la
-
-#couenne_LDADD += \
-#	../util/libCouenneUtil.la \
-#	../branch/libCouenneBranch.la \
-#	../expression/libCouenneExpression.la \
-#	../convex/libCouenneConvex.la \
-#	../problem/libCouenneProblem.la \
-#	../libCouenne.la
-couenne_LDADD = ../libCouenne.la $(LIBCBCCOPY) $(COINLIBS) $(ADDLIBS) \
+couenne_LDADD = libBonCouenne.la ../readnl/libCouenneReadnl.la \
+	../libCouenne.la $(LIBCBCCOPY) $(COINLIBS) $(ADDLIBS) \
 	$(ASLLIB)
+couenne_DEPENDENCIES = \
+	libBonCouenne.la \
+	../readnl/libCouenneReadnl.la \
+	../libCouenne.la
 
-#couenne_LDADD = \
-#	../util/libCouenneUtil.la \
-#	../readnl/libCouenneReadnl.la \
-#	../expression/libCouenneExpression.la \
-#	../branch/libCouenneBranch.la \
-#	../convex/libCouenneConvex.la \
-#	../standardize/libCouenneStandardize.la \
-#	../disjunctive/libCouenneDisjunctive.la \
-#	../bound_tightening/libCouenneBoundTightening.la \
-#	../problem/libCouenneProblem.la
-couenne_SOURCES = \
-	BonCouenne.cpp \
-	BonCouenneSetup.cpp \
-	BonCouenneInterface.cpp \
-	BonNlpHeuristic.cpp \
-	BonCouenneInfo.cpp \
-	BonInitHeuristic.cpp
-
+couenne_SOURCES = BonCouenne.cpp
 
 # Finally, the -rpath flag is used by libtool to make sure that the shared
 # library is found (in the lib install directory) when we are using dynamic
 # libraries.
 couenne_LDFLAGS = -rpath $(libdir)
-
-#	../util/libCouenneUtil.la \
-#	../branch/libCouenneBranch.la \
-#	../convex/libCouenneConvex.la \
-#	../expression/libCouenneExpression.la \
-#	../problem/libCouenneProblem.la 
-
-#if COIN_HAS_ASL
-#COINLIBS +=
-#couenne_LDADD += \
-#	../readnl/libCouenneReadnl.la
-#endif
-
-#COINLIBS += 
-#couenne_LDADD += \
-#	../standardize/libCouenneStandardize.la \
-#	../bound_tightening/libCouenneBoundTightening.la \
-#	../disjunctive/libCouenneDisjunctive.la 
-#endif
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
@@ -433,6 +409,35 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+install-libLTLIBRARIES: $(lib_LTLIBRARIES)
+	@$(NORMAL_INSTALL)
+	test -z "$(libdir)" || $(mkdir_p) "$(DESTDIR)$(libdir)"
+	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    f=$(am__strip_dir) \
+	    echo " $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) '$$p' '$(DESTDIR)$(libdir)/$$f'"; \
+	    $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) "$$p" "$(DESTDIR)$(libdir)/$$f"; \
+	  else :; fi; \
+	done
+
+uninstall-libLTLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	@set -x; list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  p=$(am__strip_dir) \
+	  echo " $(LIBTOOL) --mode=uninstall rm -f '$(DESTDIR)$(libdir)/$$p'"; \
+	  $(LIBTOOL) --mode=uninstall rm -f "$(DESTDIR)$(libdir)/$$p"; \
+	done
+
+clean-libLTLIBRARIES:
+	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
+	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
+	done
+libBonCouenne.la: $(libBonCouenne_la_OBJECTS) $(libBonCouenne_la_DEPENDENCIES) 
+	$(CXXLINK) -rpath $(libdir) $(libBonCouenne_la_LDFLAGS) $(libBonCouenne_la_OBJECTS) $(libBonCouenne_la_LIBADD) $(LIBS)
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(mkdir_p) "$(DESTDIR)$(bindir)"
@@ -472,11 +477,11 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenne.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInfo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInterface.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonNlpHeuristic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInfo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonNlpHeuristic.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -586,9 +591,11 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(LTLIBRARIES) $(PROGRAMS)
+install-binPROGRAMS: install-libLTLIBRARIES
+
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -617,7 +624,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -637,7 +645,7 @@ info-am:
 
 install-data-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am: install-binPROGRAMS install-libLTLIBRARIES
 
 install-info: install-info-am
 
@@ -663,19 +671,22 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-info-am
+uninstall-am: uninstall-binPROGRAMS uninstall-info-am \
+	uninstall-libLTLIBRARIES
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool ctags distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-info-am
+	clean-generic clean-libLTLIBRARIES clean-libtool ctags \
+	distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-exec install-exec-am \
+	install-info install-info-am install-libLTLIBRARIES \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-info-am \
+	uninstall-libLTLIBRARIES
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

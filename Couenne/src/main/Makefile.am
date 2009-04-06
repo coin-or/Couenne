@@ -14,6 +14,15 @@ if COIN_HAS_ASL
   bin_PROGRAMS = couenne
 endif
 
+lib_LTLIBRARIES = libBonCouenne.la
+
+libBonCouenne_la_SOURCES = \
+	BonCouenneSetup.cpp \
+	BonCouenneInterface.cpp \
+	BonNlpHeuristic.cpp \
+	BonCouenneInfo.cpp \
+	BonInitHeuristic.cpp
+
 COINLIBS = \
 	$(CBCOBJDIR)/src/libCbc.la \
 	$(CGLOBJDIR)/src/libCgl.la \
@@ -39,37 +48,17 @@ IPOPTLIBS = \
 LIBS += `cat $(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt`
 LIBS += `cat $(COINUTILSOBJDIR)/coinutils_addlibs.txt`
 
-#if COIN_HAS_COUENNE
-#  COINLIBS += $(COUENNEOBJDIR)/src/libCouenne.la
+couenne_LDADD        = \
+	libBonCouenne.la \
+	../readnl/libCouenneReadnl.la \
+	../libCouenne.la
 
-couenne_LDADD = ../libCouenne.la
+couenne_DEPENDENCIES = \
+	libBonCouenne.la \
+	../readnl/libCouenneReadnl.la \
+	../libCouenne.la
 
-#couenne_LDADD = \
-#	../util/libCouenneUtil.la \
-#	../readnl/libCouenneReadnl.la \
-#	../expression/libCouenneExpression.la \
-#	../branch/libCouenneBranch.la \
-#	../convex/libCouenneConvex.la \
-#	../standardize/libCouenneStandardize.la \
-#	../disjunctive/libCouenneDisjunctive.la \
-#	../bound_tightening/libCouenneBoundTightening.la \
-#	../problem/libCouenneProblem.la
-
-couenne_SOURCES = \
-	BonCouenne.cpp \
-	BonCouenneSetup.cpp \
-	BonCouenneInterface.cpp \
-	BonNlpHeuristic.cpp \
-	BonCouenneInfo.cpp \
-	BonInitHeuristic.cpp
-
-#couenne_LDADD += \
-#	../util/libCouenneUtil.la \
-#	../branch/libCouenneBranch.la \
-#	../expression/libCouenneExpression.la \
-#	../convex/libCouenneConvex.la \
-#	../problem/libCouenneProblem.la \
-#	../libCouenne.la
+couenne_SOURCES = BonCouenne.cpp
 
 couenne_LDADD += \
 	$(LIBCBCCOPY) \
@@ -82,26 +71,6 @@ couenne_LDADD += \
 # library is found (in the lib install directory) when we are using dynamic
 # libraries.
 couenne_LDFLAGS = -rpath $(libdir)
-
-#	../util/libCouenneUtil.la \
-#	../branch/libCouenneBranch.la \
-#	../convex/libCouenneConvex.la \
-#	../expression/libCouenneExpression.la \
-#	../problem/libCouenneProblem.la 
-
-#if COIN_HAS_ASL
-#COINLIBS +=
-#couenne_LDADD += \
-#	../readnl/libCouenneReadnl.la
-#endif
-
-#COINLIBS += 
-#couenne_LDADD += \
-#	../standardize/libCouenneStandardize.la \
-#	../bound_tightening/libCouenneBoundTightening.la \
-#	../disjunctive/libCouenneDisjunctive.la 
-#endif
-
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows

@@ -6,7 +6,7 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-lib_LTLIBRARIES = libCouenneBoundTightening.la
+noinst_LTLIBRARIES = libCouenneBoundTightening.la
 
 # List all source files for this library, including headers
 libCouenneBoundTightening_la_SOURCES = \

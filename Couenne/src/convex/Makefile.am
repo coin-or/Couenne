@@ -6,38 +6,40 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-lib_LTLIBRARIES = libCouenneConvex.la
+noinst_LTLIBRARIES = libCouenneConvex.la
 
 # List all source files for this library, including headers
 libCouenneConvex_la_SOURCES = \
 	addEnvelope.cpp \
 	createCuts.cpp \
-	operators/conv-exprAbs.cpp \
-	operators/conv-exprDiv.cpp \
-	operators/conv-exprMul.cpp \
-	operators/conv-exprMul-genCuts.cpp \
-	operators/unifiedProdCuts.cpp \
-	operators/conv-exprOpp.cpp \
-	operators/conv-exprPow.cpp \
-	operators/conv-exprPow-getBounds.cpp \
-	operators/conv-exprPow-envelope.cpp \
-	operators/powNewton.cpp \
-	operators/conv-exprSub.cpp \
-	operators/conv-exprSum.cpp \
-	operators/conv-exprInv.cpp \
-	operators/conv-exprSinCos.cpp \
-	operators/conv-exprExp.cpp \
-	operators/conv-exprLog.cpp \
-	operators/conv-exprGroup.cpp \
-	operators/conv-exprQuad.cpp \
-	operators/trigNewton.cpp \
 	CouenneCutGenerator.cpp \
 	generateCuts.cpp \
 	genColCuts.cpp \
 	genRowCuts.cpp \
-	operators/alphaConvexify.cpp \
-	operators/quadCuts.cpp \
 	updateBranchInfo.cpp
+
+
+# 	operators/conv-exprAbs.cpp \
+# 	operators/conv-exprDiv.cpp \
+# 	operators/conv-exprMul.cpp \
+# 	operators/conv-exprMul-genCuts.cpp \
+# 	operators/unifiedProdCuts.cpp \
+# 	operators/conv-exprOpp.cpp \
+# 	operators/conv-exprPow.cpp \
+# 	operators/conv-exprPow-getBounds.cpp \
+# 	operators/conv-exprPow-envelope.cpp \
+# 	operators/powNewton.cpp \
+# 	operators/conv-exprSub.cpp \
+# 	operators/conv-exprSum.cpp \
+# 	operators/conv-exprInv.cpp \
+# 	operators/conv-exprSinCos.cpp \
+# 	operators/conv-exprExp.cpp \
+# 	operators/conv-exprLog.cpp \
+# 	operators/conv-exprGroup.cpp \
+# 	operators/conv-exprQuad.cpp \
+# 	operators/trigNewton.cpp \
+# 	operators/alphaConvexify.cpp \
+# 	operators/quadCuts.cpp 
 
 libCouenneConvex_la_DEPENDENCIES = $(libCouenneConvex_la_LIBADD)
 

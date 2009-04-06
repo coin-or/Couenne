@@ -61,26 +61,14 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
 CONFIG_CLEAN_FILES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(libdir)"
-libLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(lib_LTLIBRARIES)
+LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneBranch_la_LIBADD =
 am_libCouenneBranch_la_OBJECTS = CouenneThreeWayBranchObj.lo \
 	CouenneBranchingObject.lo CouenneObject.lo CouenneVarObject.lo \
 	CouenneChooseVariable.lo CouenneChooseStrong.lo \
 	doStrongBranching.lo projections.lo infeasibility.lo \
 	infeasibilityVT.lo feasibleRegion.lo CouenneComplObject.lo \
-	CouenneComplBranchingObject.lo CouenneSOSObject.lo \
-	branchExprAbs.lo branchExprExp.lo branchExprDiv.lo \
-	branchExprInv.lo branchExprLog.lo branchExprMul.lo \
-	branchExprPow.lo branchExprQuad.lo branchExprSinCos.lo \
-	minMaxDelta.lo computeMulBrDist.lo
+	CouenneComplBranchingObject.lo CouenneSOSObject.lo
 libCouenneBranch_la_OBJECTS = $(am_libCouenneBranch_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
@@ -284,7 +272,7 @@ sol_cc_compiler = @sol_cc_compiler@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
-lib_LTLIBRARIES = libCouenneBranch.la
+noinst_LTLIBRARIES = libCouenneBranch.la
 
 # List all source files for this library, including headers
 libCouenneBranch_la_SOURCES = \
@@ -301,19 +289,19 @@ libCouenneBranch_la_SOURCES = \
 	feasibleRegion.cpp \
 	CouenneComplObject.cpp \
 	CouenneComplBranchingObject.cpp \
-	CouenneSOSObject.cpp \
-	operators/branchExprAbs.cpp \
-	operators/branchExprExp.cpp \
-	operators/branchExprDiv.cpp \
-	operators/branchExprInv.cpp \
-	operators/branchExprLog.cpp \
-	operators/branchExprMul.cpp \
-	operators/branchExprPow.cpp \
-	operators/branchExprQuad.cpp \
-	operators/branchExprSinCos.cpp \
-	operators/minMaxDelta.cpp \
-	operators/computeMulBrDist.cpp
+	CouenneSOSObject.cpp
 
+# 	operators/branchExprAbs.cpp \
+# 	operators/branchExprExp.cpp \
+# 	operators/branchExprDiv.cpp \
+# 	operators/branchExprInv.cpp \
+# 	operators/branchExprLog.cpp \
+# 	operators/branchExprMul.cpp \
+# 	operators/branchExprPow.cpp \
+# 	operators/branchExprQuad.cpp \
+# 	operators/branchExprSinCos.cpp \
+# 	operators/minMaxDelta.cpp \
+# 	operators/computeMulBrDist.cpp
 libCouenneBranch_la_DEPENDENCIES = $(libCouenneBranch_la_LIBADD)
 
 # This is for libtool (on Windows)
@@ -369,35 +357,17 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-libLTLIBRARIES: $(lib_LTLIBRARIES)
-	@$(NORMAL_INSTALL)
-	test -z "$(libdir)" || $(mkdir_p) "$(DESTDIR)$(libdir)"
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  if test -f $$p; then \
-	    f=$(am__strip_dir) \
-	    echo " $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) '$$p' '$(DESTDIR)$(libdir)/$$f'"; \
-	    $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) "$$p" "$(DESTDIR)$(libdir)/$$f"; \
-	  else :; fi; \
-	done
 
-uninstall-libLTLIBRARIES:
-	@$(NORMAL_UNINSTALL)
-	@set -x; list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  p=$(am__strip_dir) \
-	  echo " $(LIBTOOL) --mode=uninstall rm -f '$(DESTDIR)$(libdir)/$$p'"; \
-	  $(LIBTOOL) --mode=uninstall rm -f "$(DESTDIR)$(libdir)/$$p"; \
-	done
-
-clean-libLTLIBRARIES:
-	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
 	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
 	  test "$$dir" != "$$p" || dir=.; \
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
 libCouenneBranch.la: $(libCouenneBranch_la_OBJECTS) $(libCouenneBranch_la_DEPENDENCIES) 
-	$(CXXLINK) -rpath $(libdir) $(libCouenneBranch_la_LDFLAGS) $(libCouenneBranch_la_OBJECTS) $(libCouenneBranch_la_LIBADD) $(LIBS)
+	$(CXXLINK)  $(libCouenneBranch_la_LDFLAGS) $(libCouenneBranch_la_OBJECTS) $(libCouenneBranch_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -414,21 +384,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSOSObject.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneThreeWayBranchObj.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneVarObject.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprAbs.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprDiv.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprExp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprInv.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprLog.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprMul.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprPow.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprQuad.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprSinCos.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/computeMulBrDist.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/doStrongBranching.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/feasibleRegion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/infeasibility.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/infeasibilityVT.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/minMaxDelta.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/projections.Plo@am__quote@
 
 .cpp.o:
@@ -451,83 +410,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
-
-branchExprAbs.lo: operators/branchExprAbs.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprAbs.lo -MD -MP -MF "$(DEPDIR)/branchExprAbs.Tpo" -c -o branchExprAbs.lo `test -f 'operators/branchExprAbs.cpp' || echo '$(srcdir)/'`operators/branchExprAbs.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprAbs.Tpo" "$(DEPDIR)/branchExprAbs.Plo"; else rm -f "$(DEPDIR)/branchExprAbs.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/branchExprAbs.cpp' object='branchExprAbs.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprAbs.lo `test -f 'operators/branchExprAbs.cpp' || echo '$(srcdir)/'`operators/branchExprAbs.cpp
-
-branchExprExp.lo: operators/branchExprExp.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprExp.lo -MD -MP -MF "$(DEPDIR)/branchExprExp.Tpo" -c -o branchExprExp.lo `test -f 'operators/branchExprExp.cpp' || echo '$(srcdir)/'`operators/branchExprExp.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprExp.Tpo" "$(DEPDIR)/branchExprExp.Plo"; else rm -f "$(DEPDIR)/branchExprExp.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/branchExprExp.cpp' object='branchExprExp.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprExp.lo `test -f 'operators/branchExprExp.cpp' || echo '$(srcdir)/'`operators/branchExprExp.cpp
-
-branchExprDiv.lo: operators/branchExprDiv.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprDiv.lo -MD -MP -MF "$(DEPDIR)/branchExprDiv.Tpo" -c -o branchExprDiv.lo `test -f 'operators/branchExprDiv.cpp' || echo '$(srcdir)/'`operators/branchExprDiv.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprDiv.Tpo" "$(DEPDIR)/branchExprDiv.Plo"; else rm -f "$(DEPDIR)/branchExprDiv.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/branchExprDiv.cpp' object='branchExprDiv.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprDiv.lo `test -f 'operators/branchExprDiv.cpp' || echo '$(srcdir)/'`operators/branchExprDiv.cpp
-
-branchExprInv.lo: operators/branchExprInv.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprInv.lo -MD -MP -MF "$(DEPDIR)/branchExprInv.Tpo" -c -o branchExprInv.lo `test -f 'operators/branchExprInv.cpp' || echo '$(srcdir)/'`operators/branchExprInv.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprInv.Tpo" "$(DEPDIR)/branchExprInv.Plo"; else rm -f "$(DEPDIR)/branchExprInv.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/branchExprInv.cpp' object='branchExprInv.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprInv.lo `test -f 'operators/branchExprInv.cpp' || echo '$(srcdir)/'`operators/branchExprInv.cpp
-
-branchExprLog.lo: operators/branchExprLog.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprLog.lo -MD -MP -MF "$(DEPDIR)/branchExprLog.Tpo" -c -o branchExprLog.lo `test -f 'operators/branchExprLog.cpp' || echo '$(srcdir)/'`operators/branchExprLog.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprLog.Tpo" "$(DEPDIR)/branchExprLog.Plo"; else rm -f "$(DEPDIR)/branchExprLog.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/branchExprLog.cpp' object='branchExprLog.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprLog.lo `test -f 'operators/branchExprLog.cpp' || echo '$(srcdir)/'`operators/branchExprLog.cpp
-
-branchExprMul.lo: operators/branchExprMul.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprMul.lo -MD -MP -MF "$(DEPDIR)/branchExprMul.Tpo" -c -o branchExprMul.lo `test -f 'operators/branchExprMul.cpp' || echo '$(srcdir)/'`operators/branchExprMul.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprMul.Tpo" "$(DEPDIR)/branchExprMul.Plo"; else rm -f "$(DEPDIR)/branchExprMul.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/branchExprMul.cpp' object='branchExprMul.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprMul.lo `test -f 'operators/branchExprMul.cpp' || echo '$(srcdir)/'`operators/branchExprMul.cpp
-
-branchExprPow.lo: operators/branchExprPow.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprPow.lo -MD -MP -MF "$(DEPDIR)/branchExprPow.Tpo" -c -o branchExprPow.lo `test -f 'operators/branchExprPow.cpp' || echo '$(srcdir)/'`operators/branchExprPow.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprPow.Tpo" "$(DEPDIR)/branchExprPow.Plo"; else rm -f "$(DEPDIR)/branchExprPow.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/branchExprPow.cpp' object='branchExprPow.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprPow.lo `test -f 'operators/branchExprPow.cpp' || echo '$(srcdir)/'`operators/branchExprPow.cpp
-
-branchExprQuad.lo: operators/branchExprQuad.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprQuad.lo -MD -MP -MF "$(DEPDIR)/branchExprQuad.Tpo" -c -o branchExprQuad.lo `test -f 'operators/branchExprQuad.cpp' || echo '$(srcdir)/'`operators/branchExprQuad.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprQuad.Tpo" "$(DEPDIR)/branchExprQuad.Plo"; else rm -f "$(DEPDIR)/branchExprQuad.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/branchExprQuad.cpp' object='branchExprQuad.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprQuad.lo `test -f 'operators/branchExprQuad.cpp' || echo '$(srcdir)/'`operators/branchExprQuad.cpp
-
-branchExprSinCos.lo: operators/branchExprSinCos.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprSinCos.lo -MD -MP -MF "$(DEPDIR)/branchExprSinCos.Tpo" -c -o branchExprSinCos.lo `test -f 'operators/branchExprSinCos.cpp' || echo '$(srcdir)/'`operators/branchExprSinCos.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprSinCos.Tpo" "$(DEPDIR)/branchExprSinCos.Plo"; else rm -f "$(DEPDIR)/branchExprSinCos.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/branchExprSinCos.cpp' object='branchExprSinCos.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprSinCos.lo `test -f 'operators/branchExprSinCos.cpp' || echo '$(srcdir)/'`operators/branchExprSinCos.cpp
-
-minMaxDelta.lo: operators/minMaxDelta.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT minMaxDelta.lo -MD -MP -MF "$(DEPDIR)/minMaxDelta.Tpo" -c -o minMaxDelta.lo `test -f 'operators/minMaxDelta.cpp' || echo '$(srcdir)/'`operators/minMaxDelta.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/minMaxDelta.Tpo" "$(DEPDIR)/minMaxDelta.Plo"; else rm -f "$(DEPDIR)/minMaxDelta.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/minMaxDelta.cpp' object='minMaxDelta.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o minMaxDelta.lo `test -f 'operators/minMaxDelta.cpp' || echo '$(srcdir)/'`operators/minMaxDelta.cpp
-
-computeMulBrDist.lo: operators/computeMulBrDist.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT computeMulBrDist.lo -MD -MP -MF "$(DEPDIR)/computeMulBrDist.Tpo" -c -o computeMulBrDist.lo `test -f 'operators/computeMulBrDist.cpp' || echo '$(srcdir)/'`operators/computeMulBrDist.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/computeMulBrDist.Tpo" "$(DEPDIR)/computeMulBrDist.Plo"; else rm -f "$(DEPDIR)/computeMulBrDist.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/computeMulBrDist.cpp' object='computeMulBrDist.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o computeMulBrDist.lo `test -f 'operators/computeMulBrDist.cpp' || echo '$(srcdir)/'`operators/computeMulBrDist.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -618,9 +500,6 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)"; do \
-	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -647,7 +526,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -668,7 +547,7 @@ info-am:
 
 install-data-am:
 
-install-exec-am: install-libLTLIBRARIES
+install-exec-am:
 
 install-info: install-info-am
 
@@ -694,20 +573,19 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am uninstall-libLTLIBRARIES
+uninstall-am: uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libLTLIBRARIES clean-libtool ctags distclean \
+	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am \
-	install-libLTLIBRARIES install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-info-am \
-	uninstall-libLTLIBRARIES
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-info-am
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

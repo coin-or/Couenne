@@ -68,7 +68,6 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libCouenneReadnl_la_LIBADD =
 am__libCouenneReadnl_la_SOURCES_DIST = readnl.cpp nl2e.cpp invmap.cpp \
 	readASLfg.cpp
 @COIN_HAS_ASL_TRUE@am_libCouenneReadnl_la_OBJECTS = readnl.lo nl2e.lo \
@@ -284,6 +283,13 @@ lib_LTLIBRARIES = libCouenneReadnl.la
 @COIN_HAS_ASL_TRUE@	nl2e.cpp \
 @COIN_HAS_ASL_TRUE@	invmap.cpp \
 @COIN_HAS_ASL_TRUE@	readASLfg.cpp
+
+@COIN_HAS_ASL_TRUE@libCouenneReadnl_la_LIBADD = \
+@COIN_HAS_ASL_TRUE@	../../../Bonmin/src/Interfaces/Ampl/BonAmplInterface.lo \
+@COIN_HAS_ASL_TRUE@	../../../Bonmin/src/Interfaces/Ampl/BonAmplTMINLP.lo \
+@COIN_HAS_ASL_TRUE@	../../../Bonmin/src/Interfaces/Ampl/sos_kludge.lo \
+@COIN_HAS_ASL_TRUE@	../../../Bonmin/src/Algorithms/Ampl/BonAmplSetup.lo \
+@COIN_HAS_ASL_TRUE@        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
 
 libCouenneReadnl_la_DEPENDENCIES = $(libCouenneReadnl_la_LIBADD)
 
@@ -513,6 +519,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+@COIN_HAS_ASL_FALSE@install-exec-local:
 clean: clean-am
 
 clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
@@ -536,7 +543,7 @@ info-am:
 
 install-data-am:
 
-install-exec-am: install-libLTLIBRARIES
+install-exec-am: install-exec-local install-libLTLIBRARIES
 
 install-info: install-info-am
 
@@ -569,14 +576,17 @@ uninstall-am: uninstall-info-am uninstall-libLTLIBRARIES
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am \
-	install-libLTLIBRARIES install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-info-am \
-	uninstall-libLTLIBRARIES
+	install-exec-am install-exec-local install-info \
+	install-info-am install-libLTLIBRARIES install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-info-am uninstall-libLTLIBRARIES
 
+
+@COIN_HAS_ASL_TRUE@install-exec-local:
+@COIN_HAS_ASL_TRUE@	$(install_sh_DATA) ../../../ThirdParty/ASL/amplsolv* $(DESTDIR)$(libdir)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

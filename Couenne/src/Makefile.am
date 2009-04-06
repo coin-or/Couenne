@@ -16,28 +16,19 @@ AUTOMAKE_OPTIONS = foreign
 # in the 'lib' directory
 lib_LTLIBRARIES = libCouenne.la
 
-libCouenne_la_SOURCES = \
-	main/BonCouenneSetup.cpp \
-	main/BonCouenneInterface.cpp \
-	main/BonNlpHeuristic.cpp \
-	main/BonCouenneInfo.cpp \
-	main/BonInitHeuristic.cpp
+libCouenne_la_SOURCES = 
 
 libCouenne_la_LIBADD = \
 	./problem/libCouenneProblem.la \
-	./readnl/libCouenneReadnl.la \
+	./standardize/libCouenneStandardize.la \
 	./expression/libCouenneExpression.la \
 	./branch/libCouenneBranch.la \
 	./convex/libCouenneConvex.la \
-	./util/libCouenneUtil.la \
-	./standardize/libCouenneStandardize.la \
 	./bound_tightening/libCouenneBoundTightening.la \
-	./disjunctive/libCouenneDisjunctive.la \
-	../../Bonmin/src/Interfaces/Ampl/BonAmplInterface.lo \
-	../../Bonmin/src/Interfaces/Ampl/BonAmplTMINLP.lo \
-	../../Bonmin/src/Interfaces/Ampl/sos_kludge.lo \
-	../../Bonmin/src/Algorithms/Ampl/BonAmplSetup.lo \
-        $(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
+	./util/libCouenneUtil.la \
+	./disjunctive/libCouenneDisjunctive.la
+
+#	./readnl/libCouenneReadnl.la 
 
 libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
 
@@ -89,18 +80,11 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglKnapsackCover` \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglPreProcess`
 
-# If we have the Ampl solver library, we need to add additional things
-if COIN_HAS_ASL
-AM_CPPFLAGS += $(ASL_CPPFLAGS)
-endif
-
 if COIN_HAS_CPX
   AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
 	-I`$(CYGPATH_W) $(CPXINCDIR)`
 endif
-
-AM_CPPFLAGS += $(ASL_CPPFLAGS)
 
 #if COIN_HAS_FILTERSQP
 #  AM_CPPFLAGS += -I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Filter` 
@@ -199,15 +183,7 @@ includecoin_HEADERS = \
 # You only need to adapt the following line
 ConfigHeader = CouenneConfig.h
 
-if COIN_HAS_ASL
-install-asl:
-	$(install_sh_DATA) ../../ThirdParty/ASL/amplsolv* $(DESTDIR)$(libdir)
-else
-install-asl:
-
-endif
-
-install-exec-local: install-asl
+install-exec-local:
 	echo "#ifndef HAVE_CONFIG_H" >bla
 	echo "#define HAVE_CONFIG_H" >>bla
 	echo "#endif" >> bla

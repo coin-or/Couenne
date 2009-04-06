@@ -6,7 +6,7 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-lib_LTLIBRARIES = libCouenneBranch.la
+noinst_LTLIBRARIES = libCouenneBranch.la
 
 # List all source files for this library, including headers
 libCouenneBranch_la_SOURCES = \
@@ -23,18 +23,18 @@ libCouenneBranch_la_SOURCES = \
 	feasibleRegion.cpp \
 	CouenneComplObject.cpp \
 	CouenneComplBranchingObject.cpp \
-	CouenneSOSObject.cpp \
-	operators/branchExprAbs.cpp \
-	operators/branchExprExp.cpp \
-	operators/branchExprDiv.cpp \
-	operators/branchExprInv.cpp \
-	operators/branchExprLog.cpp \
-	operators/branchExprMul.cpp \
-	operators/branchExprPow.cpp \
-	operators/branchExprQuad.cpp \
-	operators/branchExprSinCos.cpp \
-	operators/minMaxDelta.cpp \
-	operators/computeMulBrDist.cpp
+	CouenneSOSObject.cpp
+# 	operators/branchExprAbs.cpp \
+# 	operators/branchExprExp.cpp \
+# 	operators/branchExprDiv.cpp \
+# 	operators/branchExprInv.cpp \
+# 	operators/branchExprLog.cpp \
+# 	operators/branchExprMul.cpp \
+# 	operators/branchExprPow.cpp \
+# 	operators/branchExprQuad.cpp \
+# 	operators/branchExprSinCos.cpp \
+# 	operators/minMaxDelta.cpp \
+# 	operators/computeMulBrDist.cpp
 
 libCouenneBranch_la_DEPENDENCIES = $(libCouenneBranch_la_LIBADD)
 
