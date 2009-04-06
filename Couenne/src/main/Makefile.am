@@ -45,9 +45,6 @@ IPOPTLIBS = \
         $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
         $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 
-LIBS += `cat $(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt`
-LIBS += `cat $(COINUTILSOBJDIR)/coinutils_addlibs.txt`
-
 couenne_LDADD        = \
 	libBonCouenne.la \
 	../readnl/libCouenneReadnl.la \
@@ -64,7 +61,9 @@ couenne_LDADD += \
 	$(LIBCBCCOPY) \
 	$(COINLIBS) \
 	$(ADDLIBS) \
-	$(ASLLIB)
+	$(ASLLIB) \
+	`cat $(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt` \
+	`cat $(COINUTILSOBJDIR)/coinutils_addlibs.txt`
 
 
 # Finally, the -rpath flag is used by libtool to make sure that the shared

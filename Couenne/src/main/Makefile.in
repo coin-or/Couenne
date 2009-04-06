@@ -201,9 +201,7 @@ IPOPTSRCDIR = @IPOPTSRCDIR@
 LDFLAGS = @LDFLAGS@
 LIBEXT = @LIBEXT@
 LIBOBJS = @LIBOBJS@
-LIBS = @LIBS@ `cat \
-	$(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt` `cat \
-	$(COINUTILSOBJDIR)/coinutils_addlibs.txt`
+LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBTOOLM4 = @LIBTOOLM4@
 LN_S = @LN_S@
@@ -314,7 +312,9 @@ IPOPTLIBS = \
 
 couenne_LDADD = libBonCouenne.la ../readnl/libCouenneReadnl.la \
 	../libCouenne.la $(LIBCBCCOPY) $(COINLIBS) $(ADDLIBS) \
-	$(ASLLIB)
+	$(ASLLIB) `cat \
+	$(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt` `cat \
+	$(COINUTILSOBJDIR)/coinutils_addlibs.txt`
 couenne_DEPENDENCIES = \
 	libBonCouenne.la \
 	../readnl/libCouenneReadnl.la \
