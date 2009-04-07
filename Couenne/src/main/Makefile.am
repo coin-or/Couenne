@@ -20,7 +20,6 @@ libBonCouenne_la_SOURCES = \
 	BonCouenneSetup.cpp \
 	BonCouenneInterface.cpp \
 	BonNlpHeuristic.cpp \
-	BonCouenneInfo.cpp \
 	BonInitHeuristic.cpp \
 	CouenneOSInterface.cpp
 

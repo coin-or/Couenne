@@ -67,7 +67,8 @@ am_libCouenneBoundTightening_la_OBJECTS = boundTightening.lo \
 	tightenBounds.lo impliedBounds.lo impliedBounds-mul.lo \
 	impliedBounds-sum.lo impliedBounds-exprSum.lo \
 	impliedBounds-exprDiv.lo impliedBounds-exprMul.lo \
-	impliedBounds-exprQuad.lo impliedBounds-exprPow.lo
+	impliedBounds-exprQuad.lo impliedBounds-exprPow.lo \
+	BonCouenneInfo.lo
 libCouenneBoundTightening_la_OBJECTS =  \
 	$(am_libCouenneBoundTightening_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -289,7 +290,8 @@ libCouenneBoundTightening_la_SOURCES = \
 	operators/impliedBounds-exprDiv.cpp \
 	operators/impliedBounds-exprMul.cpp \
 	operators/impliedBounds-exprQuad.cpp \
-	operators/impliedBounds-exprPow.cpp
+	operators/impliedBounds-exprPow.cpp \
+	../main/BonCouenneInfo.cpp
 
 libCouenneBoundTightening_la_DEPENDENCIES = $(libCouenneBoundTightening_la_LIBADD)
 
@@ -365,6 +367,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aggressiveBT.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/boundTightening.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fake_tightening.Plo@am__quote@
@@ -449,6 +452,13 @@ impliedBounds-exprPow.lo: operators/impliedBounds-exprPow.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/impliedBounds-exprPow.cpp' object='impliedBounds-exprPow.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o impliedBounds-exprPow.lo `test -f 'operators/impliedBounds-exprPow.cpp' || echo '$(srcdir)/'`operators/impliedBounds-exprPow.cpp
+
+BonCouenneInfo.lo: ../main/BonCouenneInfo.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BonCouenneInfo.lo -MD -MP -MF "$(DEPDIR)/BonCouenneInfo.Tpo" -c -o BonCouenneInfo.lo `test -f '../main/BonCouenneInfo.cpp' || echo '$(srcdir)/'`../main/BonCouenneInfo.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/BonCouenneInfo.Tpo" "$(DEPDIR)/BonCouenneInfo.Plo"; else rm -f "$(DEPDIR)/BonCouenneInfo.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../main/BonCouenneInfo.cpp' object='BonCouenneInfo.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BonCouenneInfo.lo `test -f '../main/BonCouenneInfo.cpp' || echo '$(srcdir)/'`../main/BonCouenneInfo.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

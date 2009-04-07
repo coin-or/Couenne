@@ -23,7 +23,8 @@ libCouenneBoundTightening_la_SOURCES = \
 	operators/impliedBounds-exprDiv.cpp \
 	operators/impliedBounds-exprMul.cpp \
 	operators/impliedBounds-exprQuad.cpp \
-	operators/impliedBounds-exprPow.cpp
+	operators/impliedBounds-exprPow.cpp \
+	../main/BonCouenneInfo.cpp
 
 libCouenneBoundTightening_la_DEPENDENCIES = $(libCouenneBoundTightening_la_LIBADD)
 

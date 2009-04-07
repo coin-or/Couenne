@@ -70,8 +70,8 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libBonCouenne_la_LIBADD =
 am_libBonCouenne_la_OBJECTS = BonCouenneSetup.lo \
-	BonCouenneInterface.lo BonNlpHeuristic.lo BonCouenneInfo.lo \
-	BonInitHeuristic.lo CouenneOSInterface.lo
+	BonCouenneInterface.lo BonNlpHeuristic.lo BonInitHeuristic.lo \
+	CouenneOSInterface.lo
 libBonCouenne_la_OBJECTS = $(am_libBonCouenne_la_OBJECTS)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
@@ -295,7 +295,6 @@ libBonCouenne_la_SOURCES = \
 	BonCouenneSetup.cpp \
 	BonCouenneInterface.cpp \
 	BonNlpHeuristic.cpp \
-	BonCouenneInfo.cpp \
 	BonInitHeuristic.cpp \
 	CouenneOSInterface.cpp
 
@@ -481,7 +480,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenne.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Plo@am__quote@
