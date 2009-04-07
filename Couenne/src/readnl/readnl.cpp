@@ -254,6 +254,7 @@ int CouenneProblem::readnl (const ASL *asl) {
     ///////////////////////////////////////////////////
 
     expression *subst = body -> simplify ();
+
     if (subst) {
       delete body; // VALGRIND
       body = subst;

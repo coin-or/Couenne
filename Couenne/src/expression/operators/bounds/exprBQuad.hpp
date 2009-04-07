@@ -29,7 +29,9 @@ class exprLBQuad: public expression {
 
   /// copy constructor
   exprLBQuad (const exprLBQuad &src, Domain *d = NULL): 
-    ref_ (dynamic_cast <exprQuad *> (src.ref_ -> clone (d))) {}
+    ref_ (dynamic_cast <exprQuad *> (src.ref_ -> isaCopy () ? 
+				     src.ref_ -> Copy () -> clone (d) : 
+				     src.ref_ -> clone (d))) {}
 
   /// destructor
   ~exprLBQuad () {}
@@ -65,7 +67,9 @@ class exprUBQuad: public expression {
 
   /// copy constructor
   exprUBQuad (const exprUBQuad &src, Domain *d = NULL): 
-    ref_ (dynamic_cast <exprQuad *> (src.ref_ -> clone (d))) {}
+    ref_ (dynamic_cast <exprQuad *> (src.ref_ -> isaCopy () ? 
+				     src.ref_ -> Copy () -> clone (d) : 
+				     src.ref_ -> clone (d))) {}
 
   /// destructor
   ~exprUBQuad () {}

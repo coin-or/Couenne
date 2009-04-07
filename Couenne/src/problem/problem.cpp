@@ -191,7 +191,9 @@ void CouenneProblem::fillObjCoeff (double *&obj) {
 
   case COU_EXPRGROUP: { // 
 
-    exprGroup *eg    = dynamic_cast <exprGroup *> (body);
+    exprGroup *eg    = dynamic_cast <exprGroup *> (body -> isaCopy () ? 
+						   body -> Copy () :
+						   body);
 
     const exprGroup::lincoeff &lcoe = eg -> lcoeff ();
 

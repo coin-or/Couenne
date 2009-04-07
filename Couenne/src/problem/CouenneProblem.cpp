@@ -323,7 +323,8 @@ CouenneProblem::~CouenneProblem () {
 
 void CouenneProblem::addObjective (expression *newobj, const std::string &sense = "min") {
   objectives_ . push_back
-    (new CouenneObjective ((sense == "min") ? newobj : new exprOpp (new exprClone (newobj))));//, MINIMIZE));
+    (new CouenneObjective ((sense == "min") ? 
+			   newobj : new exprOpp (new exprClone (newobj))));
 }
 
 

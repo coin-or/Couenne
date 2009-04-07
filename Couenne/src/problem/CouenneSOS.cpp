@@ -34,8 +34,11 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
 	((*v) -> Type         () == AUX) &&
 	((*v) -> Image () -> code () == COU_EXPRGROUP)) {
 
-      exprGroup *group = dynamic_cast <exprGroup *> ((*v) -> Image ());
+      expression *img = (*v) -> Image ();
 
+      exprGroup *group = dynamic_cast <exprGroup *> (img -> isaCopy () ? 
+						     img -> Copy () :
+						     img);
       if (!group)
 	continue;
 

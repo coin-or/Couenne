@@ -113,7 +113,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
     if (code != COU_EXPRSUM) {
 
-      exprGroup *egBody = dynamic_cast <exprGroup *> (body);
+      exprGroup *egBody = dynamic_cast <exprGroup *> (body -> isaCopy () ? 
+						      body -> Copy () : 
+						      body);
       exprGroup::lincoeff &lcoe = egBody -> lcoeff ();
 
       // import exprGroup linear structure
@@ -243,7 +245,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
     if (nlin > 0) { // there is an element in the linear sum to be drawn
 
-      exprGroup *egBody = dynamic_cast <exprGroup *> (body);
+      exprGroup *egBody = dynamic_cast <exprGroup *> (body -> isaCopy () ? 
+						      body -> Copy () : 
+						      body);
       exprGroup::lincoeff &lcoe = egBody -> lcoeff ();
 
       int mid = (which >= 0) ? nlin : - which - 1;
@@ -272,7 +276,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
       if (code == COU_EXPRQUAD) { // copy quadratic elements
 
-	exprQuad *eq = dynamic_cast <exprQuad *> (body);
+	exprQuad *eq = dynamic_cast <exprQuad *> (body -> isaCopy () ? 
+						  body -> Copy () : 
+						  body);
 
 	int nqt = eq -> getnQTerms (), j=0;
 

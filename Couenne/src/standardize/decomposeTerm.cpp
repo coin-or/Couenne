@@ -55,7 +55,9 @@ void CouenneProblem::decomposeTerm (expression *term,
 
   case COU_EXPRQUAD: { /// a quadratic form
 
-    exprQuad *t = dynamic_cast <exprQuad *> (term);
+    exprQuad *t = dynamic_cast <exprQuad *> (term -> isaCopy () ? 
+					     term -> Copy () : 
+					     term);
     exprQuad::sparseQ &M = t -> getQ ();
 
     for (exprQuad::sparseQ::iterator row = M.begin (); 
@@ -72,7 +74,9 @@ void CouenneProblem::decomposeTerm (expression *term,
 
   case COU_EXPRGROUP: { /// a linear term
 
-    exprGroup *t = dynamic_cast <exprGroup *> (term);
+    exprGroup *t = dynamic_cast <exprGroup *> (term -> isaCopy () ? 
+					       term -> Copy () : 
+					       term);
     exprGroup::lincoeff &lcoe = t -> lcoeff ();
 
     //  for (lincoeff::iterator el = lcoeff_.begin (); el != lcoeff_.end (); ++el)

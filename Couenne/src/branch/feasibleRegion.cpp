@@ -75,7 +75,9 @@ double CouenneObject::feasibleRegion (OsiSolverInterface *solver,
   if ((expr -> code () == COU_EXPRGROUP) ||
       (expr -> code () == COU_EXPRQUAD)) {
 
-    exprGroup *e = dynamic_cast <exprGroup *> (expr);
+    exprGroup *e = dynamic_cast <exprGroup *> (expr -> isaCopy () ? 
+					       expr -> Copy () : 
+					       expr);
 
     exprGroup::lincoeff &lcoe = e -> lcoeff ();
 
@@ -89,7 +91,9 @@ double CouenneObject::feasibleRegion (OsiSolverInterface *solver,
     // take care of quadratic terms
     if (expr -> code () == COU_EXPRQUAD) {
 
-      exprQuad *e = dynamic_cast <exprQuad *> (expr);
+      exprQuad *e = dynamic_cast <exprQuad *> (expr -> isaCopy () ? 
+					       expr -> Copy () : 
+					       expr);
 
       exprQuad::sparseQ q = e -> getQ ();
 
