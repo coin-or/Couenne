@@ -21,7 +21,8 @@ libBonCouenne_la_SOURCES = \
 	BonCouenneInterface.cpp \
 	BonNlpHeuristic.cpp \
 	BonCouenneInfo.cpp \
-	BonInitHeuristic.cpp
+	BonInitHeuristic.cpp \
+	CouenneOSInterface.cpp
 
 COINLIBS = \
 	$(CBCOBJDIR)/src/libCbc.la \
