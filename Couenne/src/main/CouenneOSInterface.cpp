@@ -1,6 +1,6 @@
 /*
  * Name:    CouenneOS.cpp
- * Authors: Kipp Martin
+ * Authors: 
  *          
  * Purpose: Creates a CouenneProblem object from an OSil instance
  *
