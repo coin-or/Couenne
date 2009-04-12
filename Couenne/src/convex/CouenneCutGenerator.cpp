@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: define a class of convexification procedures 
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -19,7 +19,7 @@
 /// constructor
 CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
 					  Bonmin::BabSetupBase *base,
-					  const struct ASL *asl):
+					  struct ASL *asl):
 
   CglCutGenerator (),
   
@@ -112,7 +112,7 @@ int CouenneCutGenerator::addTangent (OsiCuts &cs, int wi, int xi,
 
 
 /// total number of variables (original + auxiliary) of the problem
-const int CouenneCutGenerator::getnvars () const
+int CouenneCutGenerator::getnvars () const
   {return problem_ -> nVars ();} 
 
 

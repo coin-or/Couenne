@@ -67,22 +67,22 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneExpression_la_LIBADD =
 am_libCouenneExpression_la_OBJECTS = domain.lo expression.lo exprOp.lo \
-	exprUnary.lo exprVar.lo exprAux.lo exprAbs.lo exprDiv.lo \
-	exprExp.lo exprInv.lo exprLog.lo exprMul.lo exprOpp.lo \
-	exprPow.lo exprSin.lo exprCos.lo exprSub.lo exprSum.lo \
-	exprMinMax.lo exprGroup.lo exprQuad.lo compQuadFinBounds.lo \
-	exprBQuad.lo simplifiers.lo simplify.lo conv-exprAbs.lo \
-	conv-exprDiv.lo conv-exprMul.lo conv-exprMul-genCuts.lo \
-	unifiedProdCuts.lo conv-exprOpp.lo conv-exprPow.lo \
-	conv-exprPow-getBounds.lo conv-exprPow-envelope.lo \
-	powNewton.lo conv-exprSub.lo conv-exprSum.lo conv-exprInv.lo \
-	conv-exprSinCos.lo conv-exprExp.lo conv-exprLog.lo \
-	conv-exprGroup.lo conv-exprQuad.lo trigNewton.lo \
-	alphaConvexify.lo quadCuts.lo branchExprAbs.lo \
-	branchExprExp.lo branchExprDiv.lo branchExprInv.lo \
-	branchExprLog.lo branchExprMul.lo branchExprPow.lo \
-	branchExprQuad.lo branchExprSinCos.lo minMaxDelta.lo \
-	computeMulBrDist.lo
+	exprUnary.lo exprVar.lo exprAux.lo CouExpr.lo exprAbs.lo \
+	exprDiv.lo exprExp.lo exprInv.lo exprLog.lo exprMul.lo \
+	exprOpp.lo exprPow.lo exprSin.lo exprCos.lo exprSub.lo \
+	exprSum.lo exprMinMax.lo exprGroup.lo exprQuad.lo \
+	compQuadFinBounds.lo exprBQuad.lo simplifiers.lo simplify.lo \
+	conv-exprAbs.lo conv-exprDiv.lo conv-exprMul.lo \
+	conv-exprMul-genCuts.lo unifiedProdCuts.lo conv-exprOpp.lo \
+	conv-exprPow.lo conv-exprPow-getBounds.lo \
+	conv-exprPow-envelope.lo powNewton.lo conv-exprSub.lo \
+	conv-exprSum.lo conv-exprInv.lo conv-exprSinCos.lo \
+	conv-exprExp.lo conv-exprLog.lo conv-exprGroup.lo \
+	conv-exprQuad.lo trigNewton.lo alphaConvexify.lo quadCuts.lo \
+	branchExprAbs.lo branchExprExp.lo branchExprDiv.lo \
+	branchExprInv.lo branchExprLog.lo branchExprMul.lo \
+	branchExprPow.lo branchExprQuad.lo branchExprSinCos.lo \
+	minMaxDelta.lo computeMulBrDist.lo
 libCouenneExpression_la_OBJECTS =  \
 	$(am_libCouenneExpression_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -297,6 +297,7 @@ libCouenneExpression_la_SOURCES = \
 	exprUnary.cpp \
 	exprVar.cpp \
 	exprAux.cpp \
+	CouExpr.cpp \
 	operators/exprAbs.cpp \
 	operators/exprDiv.cpp \
 	operators/exprExp.cpp \
@@ -419,6 +420,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouExpr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alphaConvexify.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprAbs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprDiv.Plo@am__quote@

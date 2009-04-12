@@ -67,7 +67,9 @@ am_libCouenneProblem_la_OBJECTS = problem.lo CouenneProblem.lo \
 	problemIO.lo writeAMPL.lo writeGAMS.lo constraint.lo \
 	fillQuadIndices.lo fillDependence.lo CouenneSolverInterface.lo \
 	CouenneLPtightenBounds.lo checkNLP.lo getIntegerCandidate.lo \
-	testIntFix.lo CouenneSOS.lo depGraph.lo checkCycles.lo
+	testIntFix.lo CouenneSOS.lo CouenneProblemConstructors.lo \
+	CouenneRestoreUnused.lo reformulate.lo depGraph.lo \
+	checkCycles.lo
 libCouenneProblem_la_OBJECTS = $(am_libCouenneProblem_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
@@ -289,6 +291,9 @@ libCouenneProblem_la_SOURCES = \
 	getIntegerCandidate.cpp \
 	testIntFix.cpp \
 	CouenneSOS.cpp \
+	CouenneProblemConstructors.cpp \
+	CouenneRestoreUnused.cpp \
+	reformulate.cpp \
 	depGraph/depGraph.cpp \
 	depGraph/checkCycles.cpp
 
@@ -366,6 +371,8 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneLPtightenBounds.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneProblem.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneProblemConstructors.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneRestoreUnused.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSOS.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSolverInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkCycles.Plo@am__quote@
@@ -377,6 +384,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getIntegerCandidate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/problem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/problemIO.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reformulate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testIntFix.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writeAMPL.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writeGAMS.Plo@am__quote@

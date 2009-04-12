@@ -413,6 +413,7 @@ includecoin_HEADERS = \
 	expression/exprCopy.hpp \
 	expression/exprStore.hpp \
 	expression/exprOp.hpp \
+	expression/CouExpr.hpp \
 	expression/CouennePrecisions.hpp \
 	problem/depGraph/depGraph.hpp \
 	problem/CouenneProblemElem.hpp \

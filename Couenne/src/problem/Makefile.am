@@ -24,6 +24,9 @@ libCouenneProblem_la_SOURCES = \
 	getIntegerCandidate.cpp \
 	testIntFix.cpp \
 	CouenneSOS.cpp \
+	CouenneProblemConstructors.cpp \
+	CouenneRestoreUnused.cpp \
+	reformulate.cpp \
 	depGraph/depGraph.cpp \
 	depGraph/checkCycles.cpp
 

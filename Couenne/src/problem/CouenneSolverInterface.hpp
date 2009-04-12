@@ -79,10 +79,10 @@ public:
   virtual void unmarkHotStart();
   //@}
 
-  /// tighten bounds on all variables (including continuous)
+  /// Tighten bounds on all variables (including continuous).
   virtual int tightenBounds (int lightweight);
 
-  /// Returns pointer to CLP structure
+  /// Returns pointer to CLP structure.
   ClpSimplex *continuousModel ()
   {return continuousModel_;}
 

@@ -350,8 +350,8 @@ bool CouenneProblem::standardize () {
 	(Var (i) -> Image () -> isInteger ()))
       Var (i) -> setInteger (true);
 
-    if (Var (i) -> Multiplicity () == 0)
-      Lb (i) = Ub (i) = 0.;
+    //if (Var (i) -> Multiplicity () == 0)
+    //Lb (i) = Ub (i) = 0.;
   }
 
   // TODO: re-compute ranks

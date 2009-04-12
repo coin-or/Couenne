@@ -45,9 +45,9 @@ using namespace Bonmin;
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
 
-int main (int argc, char *argv[])
-{
-  WindowsErrorPopupBlocker();
+int main (int argc, char *argv[]) {
+
+  //WindowsErrorPopupBlocker();
   using namespace Ipopt;
 
   char * pbName = NULL;
@@ -96,7 +96,7 @@ int main (int argc, char *argv[])
     double timeLimit = 0;
     couenne.options () -> GetNumericValue ("time_limit", timeLimit, "couenne.");
     couenne.setDoubleParameter (BabSetupBase::MaxTime, 
-			       timeLimit - (time_start = (CoinCpuTime () - time_start)));
+				timeLimit - (time_start = (CoinCpuTime () - time_start)));
 
     //////////////////////////////////
 

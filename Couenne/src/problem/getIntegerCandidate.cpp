@@ -265,7 +265,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       } // for
 
     // save tightened bounds in NLP space. Sanity check
-    for (int i = nOrigVars_; i--;) 
+    for (int i = nOrigVars_; i--;)
       if (Var (i) -> Multiplicity () > 0) {
 
 	if (fixed [i] == FIXED)       // integer point, fixed
@@ -284,6 +284,8 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	  else if (xInt [i] > ub [i]) X (i) = xInt [i] = ub [i];
 	}
       }
+
+    restoreUnusedOriginals (xInt);
 
     // if initial point is feasible, compute corresponding objective
     // and update if upper bound improves

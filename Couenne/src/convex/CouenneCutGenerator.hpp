@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: a convexification cut generator for MINLP problems
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -89,7 +89,7 @@ class CouenneCutGenerator: public CglCutGenerator {
   /// constructor
   CouenneCutGenerator  (Bonmin::OsiTMINLPInterface * = NULL,
 			Bonmin::BabSetupBase *base = NULL,
-			const struct ASL * = NULL);
+			struct ASL * = NULL);
 
   /// copy constructor
   CouenneCutGenerator  (const CouenneCutGenerator &);
@@ -110,7 +110,7 @@ class CouenneCutGenerator: public CglCutGenerator {
     {problem_ = p;}
 
   /// total number of variables (original + auxiliary)
-  const int getnvars () const;
+  int getnvars () const;
 
   /// has generateCuts been called yet?
   inline bool isFirst () const 

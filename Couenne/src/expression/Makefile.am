@@ -16,6 +16,7 @@ libCouenneExpression_la_SOURCES = \
 	exprUnary.cpp \
 	exprVar.cpp \
 	exprAux.cpp \
+	CouExpr.cpp \
 	operators/exprAbs.cpp \
 	operators/exprDiv.cpp \
 	operators/exprExp.cpp \
