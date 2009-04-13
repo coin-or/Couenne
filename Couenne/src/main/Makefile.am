@@ -56,8 +56,9 @@ couenne_DEPENDENCIES = \
 	../libCouenne.la
 
 couenne_SOURCES = \
-	../readnl/readnl.cpp \
 	BonCouenne.cpp
+
+#	../readnl/readnl.cpp 
 
 couenne_LDADD += \
 	$(LIBCBCCOPY) \

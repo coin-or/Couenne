@@ -10,11 +10,12 @@ lib_LTLIBRARIES = libCouenneReadnl.la
 
 # List all source files for this library, including headers
 if COIN_HAS_ASL
-libCouenneReadnl_la_SOURCES = \
-	readnl.cpp \
-	nl2e.cpp \
-	invmap.cpp \
-	readASLfg.cpp
+libCouenneReadnl_la_SOURCES =
+#libCouenneReadnl_la_SOURCES = \
+#	readnl.cpp \
+#	nl2e.cpp \
+#	invmap.cpp \
+#	readASLfg.cpp
 
 libCouenneReadnl_la_LIBADD = \
 	../../../Bonmin/src/Interfaces/Ampl/BonAmplInterface.lo \

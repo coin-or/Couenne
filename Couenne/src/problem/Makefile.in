@@ -51,6 +51,7 @@ host_triplet = @host@
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem/depGraph` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
 
+@COIN_HAS_ASL_TRUE@am__append_2 = $(ASL_CPPFLAGS)
 subdir = src/problem
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -69,7 +70,7 @@ am_libCouenneProblem_la_OBJECTS = problem.lo CouenneProblem.lo \
 	CouenneLPtightenBounds.lo checkNLP.lo getIntegerCandidate.lo \
 	testIntFix.lo CouenneSOS.lo CouenneProblemConstructors.lo \
 	CouenneRestoreUnused.lo reformulate.lo depGraph.lo \
-	checkCycles.lo
+	checkCycles.lo readnl.lo nl2e.lo invmap.lo readASLfg.lo
 libCouenneProblem_la_OBJECTS = $(am_libCouenneProblem_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
@@ -295,7 +296,11 @@ libCouenneProblem_la_SOURCES = \
 	CouenneRestoreUnused.cpp \
 	reformulate.cpp \
 	depGraph/depGraph.cpp \
-	depGraph/checkCycles.cpp
+	depGraph/checkCycles.cpp \
+	../readnl/readnl.cpp \
+	../readnl/nl2e.cpp \
+	../readnl/invmap.cpp \
+	../readnl/readASLfg.cpp
 
 libCouenneProblem_la_DEPENDENCIES = $(libCouenneProblem_la_LIBADD)
 
@@ -317,7 +322,7 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` -I`$(CYGPATH_W) \
 	$(CLPSRCDIR)/src` -I`$(CYGPATH_W) \
 	$(BONMINSRCDIR)/src/Algorithms/OaGenerators` -I`$(CYGPATH_W) \
 	$(CLPOBJDIR)/inc` -I`$(CYGPATH_W) $(CBCOBJDIR)/inc` \
-	$(am__append_1)
+	$(am__append_1) $(am__append_2)
 all: all-am
 
 .SUFFIXES:
@@ -382,8 +387,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fillDependence.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fillQuadIndices.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getIntegerCandidate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/invmap.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nl2e.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/problem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/problemIO.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/readASLfg.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/readnl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reformulate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testIntFix.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writeAMPL.Plo@am__quote@
@@ -423,6 +432,34 @@ checkCycles.lo: depGraph/checkCycles.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='depGraph/checkCycles.cpp' object='checkCycles.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o checkCycles.lo `test -f 'depGraph/checkCycles.cpp' || echo '$(srcdir)/'`depGraph/checkCycles.cpp
+
+readnl.lo: ../readnl/readnl.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT readnl.lo -MD -MP -MF "$(DEPDIR)/readnl.Tpo" -c -o readnl.lo `test -f '../readnl/readnl.cpp' || echo '$(srcdir)/'`../readnl/readnl.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/readnl.Tpo" "$(DEPDIR)/readnl.Plo"; else rm -f "$(DEPDIR)/readnl.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../readnl/readnl.cpp' object='readnl.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o readnl.lo `test -f '../readnl/readnl.cpp' || echo '$(srcdir)/'`../readnl/readnl.cpp
+
+nl2e.lo: ../readnl/nl2e.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT nl2e.lo -MD -MP -MF "$(DEPDIR)/nl2e.Tpo" -c -o nl2e.lo `test -f '../readnl/nl2e.cpp' || echo '$(srcdir)/'`../readnl/nl2e.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/nl2e.Tpo" "$(DEPDIR)/nl2e.Plo"; else rm -f "$(DEPDIR)/nl2e.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../readnl/nl2e.cpp' object='nl2e.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o nl2e.lo `test -f '../readnl/nl2e.cpp' || echo '$(srcdir)/'`../readnl/nl2e.cpp
+
+invmap.lo: ../readnl/invmap.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT invmap.lo -MD -MP -MF "$(DEPDIR)/invmap.Tpo" -c -o invmap.lo `test -f '../readnl/invmap.cpp' || echo '$(srcdir)/'`../readnl/invmap.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/invmap.Tpo" "$(DEPDIR)/invmap.Plo"; else rm -f "$(DEPDIR)/invmap.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../readnl/invmap.cpp' object='invmap.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o invmap.lo `test -f '../readnl/invmap.cpp' || echo '$(srcdir)/'`../readnl/invmap.cpp
+
+readASLfg.lo: ../readnl/readASLfg.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT readASLfg.lo -MD -MP -MF "$(DEPDIR)/readASLfg.Tpo" -c -o readASLfg.lo `test -f '../readnl/readASLfg.cpp' || echo '$(srcdir)/'`../readnl/readASLfg.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/readASLfg.Tpo" "$(DEPDIR)/readASLfg.Plo"; else rm -f "$(DEPDIR)/readASLfg.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../readnl/readASLfg.cpp' object='readASLfg.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o readASLfg.lo `test -f '../readnl/readASLfg.cpp' || echo '$(srcdir)/'`../readnl/readASLfg.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

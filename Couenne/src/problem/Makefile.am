@@ -28,7 +28,11 @@ libCouenneProblem_la_SOURCES = \
 	CouenneRestoreUnused.cpp \
 	reformulate.cpp \
 	depGraph/depGraph.cpp \
-	depGraph/checkCycles.cpp
+	depGraph/checkCycles.cpp \
+	../readnl/readnl.cpp \
+	../readnl/nl2e.cpp \
+	../readnl/invmap.cpp \
+	../readnl/readASLfg.cpp
 
 libCouenneProblem_la_DEPENDENCIES = $(libCouenneProblem_la_LIBADD)
 
@@ -68,3 +72,6 @@ if COIN_HAS_COUENNE
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
 endif
 
+if COIN_HAS_ASL
+AM_CPPFLAGS += $(ASL_CPPFLAGS)
+endif
