@@ -124,6 +124,7 @@ libCouenne_la_SOURCES = \
 	problem/CouenneSOS.cpp \
 	problem/depGraph/depGraph.cpp \
 	problem/depGraph/checkCycles.cpp \
+	problem/CouenneRestoreUnused.cpp \
 	bound_tightening/boundTightening.cpp \
 	bound_tightening/aggressiveBT.cpp \
 	bound_tightening/fake_tightening.cpp \

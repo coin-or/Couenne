@@ -14,8 +14,7 @@ AC_PREREQ(2.59)
 AC_INIT([Couenne],[0.1stable],[couenne@list.coin-or.org])
 
 AC_COPYRIGHT([
-Copyright 2008 Pietro Belotti
-All Rights Reserved.
+Copyright 2008 Pietro Belotti.
 This file is part of the open source package Coin which is distributed
 under the Common Public License.])
 

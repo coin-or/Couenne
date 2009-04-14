@@ -151,6 +151,7 @@ am__libCouenne_la_SOURCES_DIST = main/BonCouenneSetup.cpp \
 	problem/getIntegerCandidate.cpp problem/testIntFix.cpp \
 	problem/CouenneSOS.cpp problem/depGraph/depGraph.cpp \
 	problem/depGraph/checkCycles.cpp \
+	problem/CouenneRestoreUnused.cpp \
 	bound_tightening/boundTightening.cpp \
 	bound_tightening/aggressiveBT.cpp \
 	bound_tightening/fake_tightening.cpp bound_tightening/obbt.cpp \
@@ -199,9 +200,10 @@ am_libCouenne_la_OBJECTS = BonCouenneSetup.lo BonCouenneInterface.lo \
 	constraint.lo fillQuadIndices.lo fillDependence.lo \
 	CouenneSolverInterface.lo CouenneLPtightenBounds.lo \
 	checkNLP.lo getIntegerCandidate.lo testIntFix.lo CouenneSOS.lo \
-	depGraph.lo checkCycles.lo boundTightening.lo aggressiveBT.lo \
-	fake_tightening.lo obbt.lo obbt_iter.lo tightenBounds.lo \
-	impliedBounds.lo impliedBounds-mul.lo impliedBounds-sum.lo \
+	depGraph.lo checkCycles.lo CouenneRestoreUnused.lo \
+	boundTightening.lo aggressiveBT.lo fake_tightening.lo obbt.lo \
+	obbt_iter.lo tightenBounds.lo impliedBounds.lo \
+	impliedBounds-mul.lo impliedBounds-sum.lo \
 	impliedBounds-exprSum.lo impliedBounds-exprDiv.lo \
 	impliedBounds-exprMul.lo impliedBounds-exprQuad.lo \
 	impliedBounds-exprPow.lo drawCuts.lo rootQ.lo $(am__objects_1)
@@ -492,6 +494,7 @@ libCouenne_la_SOURCES = main/BonCouenneSetup.cpp \
 	problem/getIntegerCandidate.cpp problem/testIntFix.cpp \
 	problem/CouenneSOS.cpp problem/depGraph/depGraph.cpp \
 	problem/depGraph/checkCycles.cpp \
+	problem/CouenneRestoreUnused.cpp \
 	bound_tightening/boundTightening.cpp \
 	bound_tightening/aggressiveBT.cpp \
 	bound_tightening/fake_tightening.cpp bound_tightening/obbt.cpp \
@@ -722,6 +725,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneLPtightenBounds.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneObject.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneProblem.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneRestoreUnused.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSOS.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSolverInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneThreeWayBranchObj.Plo@am__quote@
@@ -1599,6 +1603,13 @@ checkCycles.lo: problem/depGraph/checkCycles.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='problem/depGraph/checkCycles.cpp' object='checkCycles.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o checkCycles.lo `test -f 'problem/depGraph/checkCycles.cpp' || echo '$(srcdir)/'`problem/depGraph/checkCycles.cpp
+
+CouenneRestoreUnused.lo: problem/CouenneRestoreUnused.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CouenneRestoreUnused.lo -MD -MP -MF "$(DEPDIR)/CouenneRestoreUnused.Tpo" -c -o CouenneRestoreUnused.lo `test -f 'problem/CouenneRestoreUnused.cpp' || echo '$(srcdir)/'`problem/CouenneRestoreUnused.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/CouenneRestoreUnused.Tpo" "$(DEPDIR)/CouenneRestoreUnused.Plo"; else rm -f "$(DEPDIR)/CouenneRestoreUnused.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='problem/CouenneRestoreUnused.cpp' object='CouenneRestoreUnused.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CouenneRestoreUnused.lo `test -f 'problem/CouenneRestoreUnused.cpp' || echo '$(srcdir)/'`problem/CouenneRestoreUnused.cpp
 
 boundTightening.lo: bound_tightening/boundTightening.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT boundTightening.lo -MD -MP -MF "$(DEPDIR)/boundTightening.Tpo" -c -o boundTightening.lo `test -f 'bound_tightening/boundTightening.cpp' || echo '$(srcdir)/'`bound_tightening/boundTightening.cpp; \

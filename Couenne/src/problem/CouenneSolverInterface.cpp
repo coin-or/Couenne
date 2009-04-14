@@ -4,7 +4,7 @@
  *          Andreas Waechter, IBM Corp.
  * Purpose: Implementation of the OsiSolverInterface::resolve () method 
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -19,8 +19,8 @@ CouenneSolverInterface::CouenneSolverInterface (CouenneCutGenerator *cg /*= NULL
   OsiClpSolverInterface(),
   cutgen_ (cg),
   knowInfeasible_(false),
-  knowOptimal_(false)
-{
+  knowOptimal_(false) {
+
   // prevents from running OsiClpSolverInterface::tightenBounds()
   specialOptions_ = specialOptions_ | 262144; 
 }
@@ -32,8 +32,7 @@ CouenneSolverInterface::CouenneSolverInterface (const CouenneSolverInterface &sr
   OsiClpSolverInterface (src),
   cutgen_ (src.cutgen_),
   knowInfeasible_ (src.knowInfeasible_),
-  knowOptimal_ (src.knowOptimal_)
-{}
+  knowOptimal_ (src.knowOptimal_) {}
 
 /// Destructor
 CouenneSolverInterface::~CouenneSolverInterface () {
@@ -53,27 +52,41 @@ void CouenneSolverInterface::initialSolve () {
 
 	    cutgen_ -> Problem () -> print ();*/
 
-  knowInfeasible_ = false;
-  knowOptimal_ = false;
+  knowInfeasible_ = 
+  knowOptimal_    = false;
 
   OsiClpSolverInterface::initialSolve ();
   //writeLp ("initialLP");
+
+  // some originals may be unused due to their zero multiplicity (that
+  // happens when they are duplicates), restore their value
+  CouNumber *x = new CouNumber [getNumCols ()];
+  CoinCopyN (getColSolution (), getNumCols (), x);
+  cutgen_ -> Problem () -> restoreUnusedOriginals (x);
+  setColSolution (x);
+  delete [] x;
+
+  /*
+    printf ("------------------------------------- INITSOLV\n");
+  for (int i=0; i<cutgen_ -> Problem () -> nOrigVars (); i++) 
+    //if (cutgen_ -> Problem () -> Var (i) -> Multiplicity () <= 0) 
+      {
+      printf ("%4d. %20.5g [%20.5g %20.5g]   ", 
+	      i, getColSolution () [i],
+	      getColLower () [i],
+	      getColUpper () [i]);
+      cutgen_ -> Problem () -> Var (i) -> print ();
+      printf ("\n");
+    }
+  */
 }
 
-bool CouenneSolverInterface::isProvenPrimalInfeasible() const
-{
-  if (knowInfeasible_) {
-    return true;
-  }
-  return OsiClpSolverInterface::isProvenPrimalInfeasible();
+bool CouenneSolverInterface::isProvenPrimalInfeasible() const {
+  return knowInfeasible_ || OsiClpSolverInterface::isProvenPrimalInfeasible();
 }
 
-bool CouenneSolverInterface::isProvenOptimal() const
-{
-  if (knowOptimal_) {
-    return true;
-  }
-  return OsiClpSolverInterface::isProvenOptimal();
+bool CouenneSolverInterface::isProvenOptimal() const {
+  return knowOptimal_ || OsiClpSolverInterface::isProvenOptimal();
 }
 
 
@@ -133,6 +146,16 @@ void CouenneSolverInterface::resolve () {
   // re-solve problem
   OsiClpSolverInterface::resolve ();
 
+  // some originals may be unused due to their zero multiplicity (that
+  // happens when they are duplicates), restore their value
+  CouNumber *x = new CouNumber [getNumCols ()];
+  CoinCopyN (getColSolution (), getNumCols (), x);
+  cutgen_ -> Problem () -> restoreUnusedOriginals (x);
+  setColSolution (x);
+  delete [] x;
+
+  //cutgen_ -> Problem () -> restoreUnusedOriginals (this);
+
   // check LP independently
   if (cutgen_ && (cutgen_ -> check_lp ())) {
 
@@ -186,7 +209,6 @@ void CouenneSolverInterface::resolve () {
     //else printf ("Warning: discrepancy between statuses %s -- %s feasible\n", 
     //filename, isProvenOptimal () ? "current" : "saved");
   }
-
 }
 
 
@@ -297,6 +319,14 @@ void CouenneSolverInterface::solveFromHotStart() {
   */
 
   resolve();
+
+  // some originals may be unused due to their zero multiplicity (that
+  // happens when they are duplicates), restore their value
+  CouNumber *x = new CouNumber [getNumCols ()];
+  CoinCopyN (getColSolution (), getNumCols (), x);
+  cutgen_ -> Problem () -> restoreUnusedOriginals (x);
+  setColSolution (x);
+  delete [] x;
 
   if (isProvenPrimalInfeasible ()) knowInfeasible_ = true;
   if (isProvenOptimal ())          knowOptimal_    = true;

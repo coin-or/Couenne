@@ -118,8 +118,8 @@ CouenneInterface::extractLinearRelaxation
 	  if (nub [i] > p -> Ub (i) + COUENNE_EPS) setColUpper (i, p -> Ub (i));
 	} else { 
 	  // if not enabled, fix them in the NLP solver
-	  setColLower (i, 0.);
-	  setColUpper (i, 0.);
+	  setColLower (i, -COIN_DBL_MAX);
+	  setColUpper (i,  COIN_DBL_MAX);
 	}
     }
 
@@ -259,7 +259,7 @@ CouenneInterface::extractLinearRelaxation
    // add original and auxiliary variables to the new problem
    for (int i=0; i<numcols; i++) 
      if (p -> Var (i) -> Multiplicity () > 0) si.addCol (0, NULL,NULL, lb [i],       ub [i],      0);
-     else                                     si.addCol (0, NULL,NULL, 0.,           0.,          0);
+     else                                     si.addCol (0, NULL,NULL, -COIN_DBL_MAX,COIN_DBL_MAX,0);
    for (int i=numcols; i<numcolsconv; i++)    si.addCol (0, NULL,NULL, -COIN_DBL_MAX,COIN_DBL_MAX,0);
 
    // get initial relaxation
@@ -279,8 +279,8 @@ CouenneInterface::extractLinearRelaxation
        colLower [i] = (ll [i] > - COUENNE_INFINITY) ? ll [i] : -COIN_DBL_MAX;
        colUpper [i] = (uu [i] <   COUENNE_INFINITY) ? uu [i] :  COIN_DBL_MAX;
      } else {
-       colLower [i] = 0.;
-       colUpper [i] = 0.;
+       colLower [i] = -COIN_DBL_MAX;
+       colUpper [i] =  COIN_DBL_MAX;
      }
 
    int numrowsconv = cs.sizeRowCuts ();

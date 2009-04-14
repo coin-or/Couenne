@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: define the class CouenneProblem
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -167,6 +167,19 @@ class CouenneProblem {
 
   /// maximum cpu time
   double maxCpuTime_;
+
+#ifdef COIN_HAS_ASL
+  /// AMPL structure pointer (temporary --- looking forward to embedding into OS...)
+  ASL *asl_;
+#endif
+
+  /// some originals may be unused due to their zero multiplicity
+  /// (that happens when they are duplicates). This array keeps track
+  /// of their indices and is sorted by evaluation order
+  int *unusedOriginalsIndices_;
+
+  /// number of unused originals
+  int nUnusedOriginals_;
 
  public:
 
@@ -443,6 +456,23 @@ class CouenneProblem {
   /// return maximum CPU time
   inline double getMaxCpuTime () const
   {return maxCpuTime_;}
+
+  /// Some originals may be unused due to their zero multiplicity
+  /// (that happens when they are duplicates). This procedure creates
+  /// a structure for quickly checking and restoring their value after
+  /// solving.
+  void createUnusedOriginals ();
+
+  /// Some originals may be unused due to their zero multiplicity (that
+  /// happens when they are duplicates). This procedure restores their
+  /// value after solving
+  void restoreUnusedOriginals (CouNumber * = NULL) const;
+
+  /// return indices of neglected redundant variables
+  int *unusedOriginalsIndices () {return unusedOriginalsIndices_;}
+
+  /// number of unused originals
+  int nUnusedOriginals ()        {return nUnusedOriginals_;}
 
 protected:
 

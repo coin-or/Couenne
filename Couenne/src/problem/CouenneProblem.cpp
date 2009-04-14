@@ -56,7 +56,9 @@ CouenneProblem::CouenneProblem (const struct ASL *asl,
   useQuadratic_ (false),
   feas_tolerance_ (feas_tolerance_default),
   integerRank_ (NULL),
-  maxCpuTime_  (1.e20) {
+  maxCpuTime_  (1.e20),
+  unusedOriginalsIndices_ (NULL),
+  nUnusedOriginals_ (-1) {
 
   if (!asl) return;
 
@@ -170,6 +172,8 @@ CouenneProblem::CouenneProblem (const struct ASL *asl,
     print (std::cout);
   }
 
+  createUnusedOriginals ();
+
   //writeAMPL ("extended-aw.mod", true);
   //writeAMPL ("original.mod", false);
 }
@@ -246,6 +250,12 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
     integerRank_ = new int [nVars ()];
     CoinCopyN (p.integerRank_, nVars (), integerRank_);
   }
+
+  // copy unusedOriginals
+  if (nUnusedOriginals_ > 0) {
+    unusedOriginalsIndices_ = (int *) malloc (nUnusedOriginals_ * sizeof (int));
+    CoinCopyN (p.unusedOriginalsIndices_, nUnusedOriginals_, unusedOriginalsIndices_);
+  }
 }
 
 
@@ -280,6 +290,9 @@ CouenneProblem::~CouenneProblem () {
   if (created_pcutoff_) delete pcutoff_;
 
   if (integerRank_) delete [] integerRank_;
+
+  if (unusedOriginalsIndices_)
+    free (unusedOriginalsIndices_);
 }
 
 

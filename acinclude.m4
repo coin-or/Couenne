@@ -6399,7 +6399,7 @@ AC_MSG_RESULT([$SED])
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 #
-## $Id: coin.m4 1112 2008-08-22 16:39:12Z andreasw $
+## $Id: coin.m4 1239 2009-03-10 20:09:53Z andreasw $
 #
 # Author: Andreas Wachter    IBM      2006-04-14
 
@@ -6923,9 +6923,18 @@ esac
 $as_unset ac_cv_prog_CXX || test "${ac_cv_prog_CXX+set}" != set || { ac_cv_prog_CXX=; export ac_cv_prog_CXX; }
 # AC_MSG_NOTICE([C++ compiler candidates: $comps])
 AC_PROG_CXX([$comps])
-if test -z "$CXX" ; then
-  AC_MSG_ERROR([Failed to find a C++ compiler!])
-fi
+
+#AC_PROG_CXX sets CXX to g++ if it cannot find a working C++ compiler
+#thus, we test here whether $CXX is actually working 
+AC_LANG_PUSH(C++)
+AC_MSG_CHECKING([whether C++ compiler $CXX works]);
+AC_COMPILE_IFELSE(
+  [AC_LANG_PROGRAM(, [int i=0;])],
+  [AC_MSG_RESULT(yes)],
+  [AC_MSG_RESULT(no)
+   AC_MSG_ERROR(failed to find a C++ compiler or C++ compiler $CXX does not work)]
+)
+AC_LANG_POP(C++)
 
 # It seems that we need to cleanup something here for the Windows 
 case "$CXX" in
@@ -9370,7 +9379,7 @@ if test x"$use_lapack" != x; then
         AC_MSG_ERROR([option \"BUILD\" specified for LAPACK, but $coin_lapackobjdir directory is not configured])
       fi
     fi
-  else
+  elif test "$use_lapack" != no; then
     AC_MSG_CHECKING([whether user supplied LAPACKLIB=\"$use_lapack\" works])
     LIBS="$use_lapack $LIBS"
     ADDLIBS="$use_lapack $ADDLIBS"
@@ -9455,7 +9464,7 @@ fi
 AM_CONDITIONAL([COIN_HAS_LAPACK],[test x"$use_lapack" != x])
 AM_CONDITIONAL([COIN_BUILD_LAPACK],[test "$use_lapack" = BUILD])
 
-if test x"$use_lapack" = x; then
+if test x"$use_lapack" = x || test "$use_lapack" = no; then
   coin_has_lapack=no
 else
   coin_has_lapack=yes
@@ -9490,7 +9499,10 @@ MAKEOKFILE=.MakeOk
 
 #check if user provides a MUMPS library (that works)
 AC_LANG_PUSH(C)
+SAVE_ADDLIBS="$ADDLIBS"
+ADDLIBS="$ADDLIBS $FLIBS"
 AC_COIN_HAS_USER_LIBRARY(mumps, MUMPS, dmumps_c.h, dmumps_c)
+ADDLIBS="$SAVE_ADDLIBS"
 AC_LANG_POP(C)
 
 if test "$coin_has_mumps" = "true"; then  # user provided mumps library
