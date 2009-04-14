@@ -210,7 +210,9 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   objects_      (p.objects_),
   integerRank_  (NULL),
   numberInRank_ (p.numberInRank_),
-  maxCpuTime_   (p.maxCpuTime_) {
+  maxCpuTime_   (p.maxCpuTime_),
+  unusedOriginalsIndices_ (NULL),
+  nUnusedOriginals_ (p.nUnusedOriginals_) {
 
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);
