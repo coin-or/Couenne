@@ -350,6 +350,8 @@ expression *CouenneProblem::addVariable (bool isDiscrete, Domain *d) {
   if (isDiscrete) 
     nIntVars_++;
 
+  nOrigVars_++;
+
   return var;
 }
 
