@@ -103,7 +103,7 @@ CouenneInterface::extractLinearRelaxation
 
       if (!(p -> boundTightening (chg_bds, NULL))) {
 	is_feasible = false;
-	printf ("warning, tightened NLP is infeasible\n");
+	*messageHandler() << "warning, tightened NLP is infeasible\n" << CoinMessageEol;
       }
 
       delete [] chg_bds;
