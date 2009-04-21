@@ -57,7 +57,9 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   integerRank_ (NULL),
   maxCpuTime_  (COIN_DBL_MAX),
   bonBase_     (base),
+#ifdef COIN_HAS_ASL
   asl_         (asl),
+#endif
   unusedOriginalsIndices_ (NULL),
   nUnusedOriginals_ (-1) {
 
@@ -136,7 +138,9 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   numberInRank_ (p.numberInRank_),
   maxCpuTime_   (p.maxCpuTime_),
   bonBase_      (p.bonBase_),
+#ifdef COIN_HAS_ASL
   asl_          (p.asl_),
+#endif
   unusedOriginalsIndices_ (NULL),
   nUnusedOriginals_ (p.nUnusedOriginals_) {
 

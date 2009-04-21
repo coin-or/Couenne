@@ -28,11 +28,15 @@ libCouenneProblem_la_SOURCES = \
 	CouenneRestoreUnused.cpp \
 	reformulate.cpp \
 	depGraph/depGraph.cpp \
-	depGraph/checkCycles.cpp \
+	depGraph/checkCycles.cpp
+	
+if COIN_HAS_ASL
+libCouenneProblem_la_SOURCES += \
 	../readnl/readnl.cpp \
 	../readnl/nl2e.cpp \
 	../readnl/invmap.cpp \
 	../readnl/readASLfg.cpp
+endif
 
 libCouenneProblem_la_DEPENDENCIES = $(libCouenneProblem_la_LIBADD)
 

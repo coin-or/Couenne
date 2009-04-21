@@ -42,7 +42,13 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@COIN_HAS_COUENNE_TRUE@am__append_1 = \
+@COIN_HAS_ASL_TRUE@am__append_1 = \
+@COIN_HAS_ASL_TRUE@	../readnl/readnl.cpp \
+@COIN_HAS_ASL_TRUE@	../readnl/nl2e.cpp \
+@COIN_HAS_ASL_TRUE@	../readnl/invmap.cpp \
+@COIN_HAS_ASL_TRUE@	../readnl/readASLfg.cpp
+
+@COIN_HAS_COUENNE_TRUE@am__append_2 = \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
@@ -51,7 +57,7 @@ host_triplet = @host@
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem/depGraph` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
 
-@COIN_HAS_ASL_TRUE@am__append_2 = $(ASL_CPPFLAGS)
+@COIN_HAS_ASL_TRUE@am__append_3 = $(ASL_CPPFLAGS)
 subdir = src/problem
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -64,13 +70,25 @@ CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneProblem_la_LIBADD =
+am__libCouenneProblem_la_SOURCES_DIST = problem.cpp CouenneProblem.cpp \
+	problemIO.cpp writeAMPL.cpp writeGAMS.cpp constraint.cpp \
+	fillQuadIndices.cpp fillDependence.cpp \
+	CouenneSolverInterface.cpp CouenneLPtightenBounds.cpp \
+	checkNLP.cpp getIntegerCandidate.cpp testIntFix.cpp \
+	CouenneSOS.cpp CouenneProblemConstructors.cpp \
+	CouenneRestoreUnused.cpp reformulate.cpp depGraph/depGraph.cpp \
+	depGraph/checkCycles.cpp ../readnl/readnl.cpp \
+	../readnl/nl2e.cpp ../readnl/invmap.cpp \
+	../readnl/readASLfg.cpp
+@COIN_HAS_ASL_TRUE@am__objects_1 = readnl.lo nl2e.lo invmap.lo \
+@COIN_HAS_ASL_TRUE@	readASLfg.lo
 am_libCouenneProblem_la_OBJECTS = problem.lo CouenneProblem.lo \
 	problemIO.lo writeAMPL.lo writeGAMS.lo constraint.lo \
 	fillQuadIndices.lo fillDependence.lo CouenneSolverInterface.lo \
 	CouenneLPtightenBounds.lo checkNLP.lo getIntegerCandidate.lo \
 	testIntFix.lo CouenneSOS.lo CouenneProblemConstructors.lo \
 	CouenneRestoreUnused.lo reformulate.lo depGraph.lo \
-	checkCycles.lo readnl.lo nl2e.lo invmap.lo readASLfg.lo
+	checkCycles.lo $(am__objects_1)
 libCouenneProblem_la_OBJECTS = $(am_libCouenneProblem_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
@@ -84,7 +102,7 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libCouenneProblem_la_SOURCES)
-DIST_SOURCES = $(libCouenneProblem_la_SOURCES)
+DIST_SOURCES = $(am__libCouenneProblem_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -277,31 +295,14 @@ AUTOMAKE_OPTIONS = foreign
 noinst_LTLIBRARIES = libCouenneProblem.la
 
 # List all source files for this library, including headers
-libCouenneProblem_la_SOURCES = \
-	problem.cpp \
-	CouenneProblem.cpp \
-	problemIO.cpp \
-	writeAMPL.cpp \
-	writeGAMS.cpp \
-	constraint.cpp \
-	fillQuadIndices.cpp \
-	fillDependence.cpp \
-	CouenneSolverInterface.cpp \
-	CouenneLPtightenBounds.cpp \
-	checkNLP.cpp \
-	getIntegerCandidate.cpp \
-	testIntFix.cpp \
-	CouenneSOS.cpp \
-	CouenneProblemConstructors.cpp \
-	CouenneRestoreUnused.cpp \
-	reformulate.cpp \
-	depGraph/depGraph.cpp \
-	depGraph/checkCycles.cpp \
-	../readnl/readnl.cpp \
-	../readnl/nl2e.cpp \
-	../readnl/invmap.cpp \
-	../readnl/readASLfg.cpp
-
+libCouenneProblem_la_SOURCES = problem.cpp CouenneProblem.cpp \
+	problemIO.cpp writeAMPL.cpp writeGAMS.cpp constraint.cpp \
+	fillQuadIndices.cpp fillDependence.cpp \
+	CouenneSolverInterface.cpp CouenneLPtightenBounds.cpp \
+	checkNLP.cpp getIntegerCandidate.cpp testIntFix.cpp \
+	CouenneSOS.cpp CouenneProblemConstructors.cpp \
+	CouenneRestoreUnused.cpp reformulate.cpp depGraph/depGraph.cpp \
+	depGraph/checkCycles.cpp $(am__append_1)
 libCouenneProblem_la_DEPENDENCIES = $(libCouenneProblem_la_LIBADD)
 
 # This is for libtool (on Windows)
@@ -322,7 +323,7 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` -I`$(CYGPATH_W) \
 	$(CLPSRCDIR)/src` -I`$(CYGPATH_W) \
 	$(BONMINSRCDIR)/src/Algorithms/OaGenerators` -I`$(CYGPATH_W) \
 	$(CLPOBJDIR)/inc` -I`$(CYGPATH_W) $(CBCOBJDIR)/inc` \
-	$(am__append_1) $(am__append_2)
+	$(am__append_2) $(am__append_3)
 all: all-am
 
 .SUFFIXES:
