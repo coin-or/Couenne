@@ -118,12 +118,12 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	// the infeasible set is a hyperbola with two branches
 
 	// upper right
-	resxU = (*xu * *yl > wu) && (*yl > 0.) && updateBound (+1, xu, wu / *yl) || resxU; // point D
-	resyU = (*xl * *yu > wu) && (*yu > 0.) && updateBound (+1, yu, wu / *xl) || resyU; // point A
+	resxU = ((*xu * *yl > wu) && (*yl > 0.) && updateBound (+1, xu, wu / *yl)) || resxU; // point D
+	resyU = ((*xl * *yu > wu) && (*yu > 0.) && updateBound (+1, yu, wu / *xl)) || resyU; // point A
 
 	// lower left
-	resxL = (*xl * *yu > wu) && (*yu < 0.) && updateBound (-1, xl, wu / *yu) || resxL; // point A
-	resyL = (*xu * *yl > wu) && (*yl < 0.) && updateBound (-1, yl, wu / *xu) || resyL; // point D
+	resxL = ((*xl * *yu > wu) && (*yu < 0.) && updateBound (-1, xl, wu / *yu)) || resxL; // point A
+	resyL = ((*xu * *yl > wu) && (*yl < 0.) && updateBound (-1, yl, wu / *xu)) || resyL; // point D
       }
 
     } else {
@@ -131,15 +131,15 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       // point D in central infeasible area
 
       if (*xu * *yl > wu) {
-	resxU = (*xu * *yu > wu) && updateBound (+1, xu, wu / *yu) || resxU;
-	resyL = (*xl * *yl > wu) && updateBound (-1, yl, wu / *xl) || resyL;
+	resxU = ((*xu * *yu > wu) && updateBound (+1, xu, wu / *yu)) || resxU;
+	resyL = ((*xl * *yl > wu) && updateBound (-1, yl, wu / *xl)) || resyL;
       }
 
       // point A in central infeasible area
 
       if (*xl * *yu > wu) {
-	resxL = (*xl * *yl > wu) && updateBound (-1, xl, wu / *yl) || resxL;
-	resyU = (*xu * *yu > wu) && updateBound (+1, yu, wu / *xu) || resyU;
+	resxL = ((*xl * *yl > wu) && updateBound (-1, xl, wu / *yl)) || resxL;
+	resyU = ((*xu * *yu > wu) && updateBound (+1, yu, wu / *xu)) || resyU;
       }
     }
 

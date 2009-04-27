@@ -244,8 +244,8 @@ namespace Bonmin{
 
 	// if this variable is associated with a nonlinear function
 	if (var -> isInteger () || 
-	    (var -> Type  () == AUX) && 
-	    (var -> Image () -> Linearity () > LINEAR)) {
+	    ((var -> Type  () == AUX) && 
+	     (var -> Image () -> Linearity () > LINEAR))) {
 
 	  objects [nobj] = new CouenneObject (couenneProb, var, this, journalist ());
 	  objects [nobj++] -> setPriority (contObjPriority);

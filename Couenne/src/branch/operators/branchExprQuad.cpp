@@ -57,15 +57,15 @@ CouNumber exprQuad::selectBranch (const CouenneObject *obj,
 
   /////////////////////////////////////////////////////////
 
-  for (;((delta < 0.) && (fi != eigen_. end  ()) || // && (fi -> first < 0.) ||
-	 (delta > 0.) && (ri != eigen_. rend ()));  // && (ri -> first > 0.));
+  for (;((delta < 0.) && (fi != eigen_. end  ())) || // && (fi -> first < 0.) ||
+	 ((delta > 0.) && (ri != eigen_. rend ()));  // && (ri -> first > 0.));
        ++fi, ++ri) {
 
     std::vector <std::pair <exprVar *, CouNumber> > &ev = 
       (delta < 0.) ? fi -> second : ri -> second;
 
-    if ((delta < 0.) && (fi -> first > 0.) ||
-	(delta > 0.) && (ri -> first < 0.)) {
+    if (((delta < 0.) && (fi -> first > 0.)) ||
+	((delta > 0.) && (ri -> first < 0.))) {
 
       if (max_span > 0.) break; // if found a variable already, return
       changed_sign = true;      // otherwise, keep in mind we are on

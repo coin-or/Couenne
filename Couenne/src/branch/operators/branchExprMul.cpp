@@ -84,8 +84,8 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
 
   // Unbounded x and/or y /////////////////////////////////////////////////////////
 
-  if (((var = arglist_ [0]) -> Index() >= 0) && (xl < -COUENNE_INFINITY) && (xu > COUENNE_INFINITY) ||
-      ((var = arglist_ [1]) -> Index() >= 0) && (yl < -COUENNE_INFINITY) && (yu > COUENNE_INFINITY)) {
+  if ((((var = arglist_ [0]) -> Index() >= 0) && (xl < -COUENNE_INFINITY) && (xu > COUENNE_INFINITY)) ||
+      (((var = arglist_ [1]) -> Index() >= 0) && (yl < -COUENNE_INFINITY) && (yu > COUENNE_INFINITY))) {
 
     *brpts = 0.;
     brDist = computeMulBrDist (info, xi, yi, wi, var -> Index (), brpts);

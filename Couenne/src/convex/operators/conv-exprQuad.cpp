@@ -35,8 +35,8 @@ void exprQuad::generateCuts (expression *w, const OsiSolverInterface &si,
 			     t_chg_bounds *chg, 
 			     int wind, CouNumber lb, CouNumber ub) {
 
-  if ((!(cg -> isFirst ())) &&                    // unless a convexification was never created,
-      (fabs ((*this) () - (*w) ()) < COUENNE_EPS) // do we really need a convexification cut?
+  if (((!(cg -> isFirst ())) &&                     // unless a convexification was never created,
+       (fabs ((*this) () - (*w) ()) < COUENNE_EPS)) // do we really need a convexification cut?
       || !alphaConvexify (cg -> Problem (), si))  // ... or a new alpha-convexification?
     return;
 

@@ -122,6 +122,6 @@ bool exprInv::isCuttable (CouenneProblem *problem, int index) const {
     x = problem -> X (xind),
     y = problem -> X (index);
 
-  return ((problem -> Lb (xind) >= 0) && (x > 0) && (y*x <= 1) ||
-	  (problem -> Ub (xind) <= 0) && (x < 0) && (y*x <= 1));
+  return (((problem -> Lb (xind) >= 0) && (x > 0) && (y*x <= 1)) ||
+	  ((problem -> Ub (xind) <= 0) && (x < 0) && (y*x <= 1)));
 }

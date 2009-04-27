@@ -42,8 +42,8 @@ void CouenneProblem::initAuxs () const {
 
     int indvar = variables_ [i] -> Index ();
 
-    if ((variables_ [i] -> Type () == AUX) &&                   // this is an auxiliary
-	(indvar >= nOrigVars_) || // and not an original, originally
+    if (((variables_ [i] -> Type () == AUX) &&                   // this is an auxiliary
+	(indvar >= nOrigVars_)) || // and not an original, originally
 	(variables_ [i] -> Multiplicity () == 0))               // or a useless one
       //int index = variables_ [i] -> Index ();
       Lb (indvar) = - (Ub (indvar) = COIN_DBL_MAX);

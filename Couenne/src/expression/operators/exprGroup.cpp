@@ -92,7 +92,7 @@ expression *exprGroup::differentiate (int index) {
       arglist [nargs++] = arglist_ [i] -> differentiate (index);
 
   if ((nargs == 0) ||
-      (nargs == 1) && (fabs (totlin) > COUENNE_EPS)) {
+      ((nargs == 1) && (fabs (totlin) > COUENNE_EPS))) {
     delete [] arglist;
     return new exprConst (totlin);
   }

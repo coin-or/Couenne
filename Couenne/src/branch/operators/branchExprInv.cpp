@@ -63,8 +63,8 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
     CouNumber xp, xx0 = x0, yy0 = y0, exponent = k;
 
     // invert dependent and independent if
-    if ((x0+y0 < 0.) && (x0 > 0.) ||  // in lower half of fourth orthant, or
-	(x0+y0 > 0.) && (x0 < 0.)) {  // in upper half of second orthant
+    if (((x0+y0 < 0.) && (x0 > 0.)) ||  // in lower half of fourth orthant, or
+	((x0+y0 > 0.) && (x0 < 0.))) {  // in upper half of second orthant
 
       exponent = 1. / k;
       xx0 = y0;
@@ -101,10 +101,10 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
   // case 2: bound interval does not contain zero. Look if inside or
   // outside of belly (refer to branchExprExp.cpp)
 
-  if ((x0 >=  0.) &&                          (y0 <  safe_pow  (x0,k))  ||   // x0>0, or
-      (x0 <= -0.) &&                                                         // x0<0, and
-      ((isInt &&               !(intk % 2) && (y0 <  safe_pow  (x0,k))) ||     // integer, even
-       ((isInt || isInvInt) &&  (intk % 2) && (y0 > -safe_pow (-x0,k))))) {    // (inv)integer, odd
+  if (((x0 >=  0.) &&                          (y0 <  safe_pow  (x0,k)))  ||   // x0>0, or
+      ((x0 <= -0.) &&                                                         // x0<0, and
+       ((isInt &&               !(intk % 2) && (y0 <  safe_pow  (x0,k))) ||     // integer, even
+       ((isInt || isInvInt) &&  (intk % 2) && (y0 > -safe_pow (-x0,k)))))) {    // (inv)integer, odd
 
     // Inside. Branch on closest point on curve, computed with a
     // Newton method
@@ -129,8 +129,8 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
   // diagonal from current to curve, to be sure current will be cut by
   // branching rule
 
-  if ((l <   COUENNE_EPS) && (u >   COUENNE_INFINITY) || 
-      (u > - COUENNE_EPS) && (l < - COUENNE_INFINITY)) {
+  if (((l <   COUENNE_EPS) && (u >   COUENNE_INFINITY)) || 
+      ((u > - COUENNE_EPS) && (l < - COUENNE_INFINITY))) {
 
     /* brpts = (double *) realloc (brpts, 2 * sizeof (double));
     way = THREE_CENTER; // focus on central convexification first

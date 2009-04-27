@@ -172,7 +172,7 @@ void CouenneSolverInterface::resolve () {
     nsi -> initialSolve ();
 
     if ((nsi -> isProvenOptimal () && isProvenOptimal ()) ||
-	!(nsi -> isProvenOptimal ()) && !isProvenOptimal ()) {
+	(!(nsi -> isProvenOptimal ()) && !isProvenOptimal ())) {
 
       if (nsi -> isProvenOptimal () &&
 	  (fabs (nsi -> getObjValue () - getObjValue ()) / 
@@ -189,8 +189,8 @@ void CouenneSolverInterface::resolve () {
 
     csi -> initialSolve ();
 
-    if ((csi -> isProvenOptimal () && isProvenOptimal ()) ||
-	!(csi -> isProvenOptimal ()) && !isProvenOptimal ()) {
+    if (((csi -> isProvenOptimal () && isProvenOptimal ())) ||
+	(!(csi -> isProvenOptimal ()) && !isProvenOptimal ())) {
 
       if (csi -> isProvenOptimal () &&
 	  (fabs (csi -> getObjValue () - getObjValue ()) / 

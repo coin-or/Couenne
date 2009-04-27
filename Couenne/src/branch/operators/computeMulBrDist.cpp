@@ -66,8 +66,8 @@ double *computeMulBrDist (const OsiBranchingInformation *info,
     // easy implementation: for own side, w0 - x0 y0; for other side,
     // horiz/vert distance to curve x0 w0 = wb
 
-    bool side = ((x0*y0 > *brpt) && (*brpt > 0) ||
-		 (x0*y0 < *brpt) && (*brpt < 0));
+    bool side = (((x0*y0 > *brpt) && (*brpt > 0)) ||
+		 ((x0*y0 < *brpt) && (*brpt < 0)));
 
     dist [side ? 1 : 0] = CoinMax 
       (fabs (w0 - x0*y0), CoinMin 

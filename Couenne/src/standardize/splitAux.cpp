@@ -313,7 +313,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     // the inequality.
 
     if ((code == COU_EXPRQUAD) || 
-	(code == COU_EXPRGROUP) && (nlin > 0)) { 
+	((code == COU_EXPRGROUP) && (nlin > 0))) { 
 
       // an exprGroup with at least one linear term left
       //
