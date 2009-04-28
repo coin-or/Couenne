@@ -12,8 +12,8 @@
 
 namespace Bonmin{
   
-  InitHeuristic::InitHeuristic(double objValue, const double* sol,
-			       CouenneProblem& cp):
+  InitHeuristic::InitHeuristic (double objValue, const double* sol,
+			        CouenneProblem& cp):
     CbcHeuristic(),
     objValue_(COIN_DBL_MAX),
     sol_(NULL)
@@ -27,9 +27,9 @@ namespace Bonmin{
 
       objValue_ = objValue;
 
-      sol_ = new double[nVars_];
+      sol_ = new double [nVars_];
 
-      CoinCopyN(sol, cp.nOrigVars(), sol_);
+      CoinCopyN (sol, cp.nOrigVars (), sol_);
       cp.getAuxs(sol_);
     }
   }

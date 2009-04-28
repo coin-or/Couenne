@@ -128,7 +128,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
 	//lincoe [i] = lcoe [i]. second;
 
-	if ((j > maxindex) && 
+	// prefer non-integer. If integer, only take it if none chosen yet
+	if ((!(lcoe [i].first -> isInteger ()) || (which==1)) &&  
+	    (j > maxindex) &&
 	    !(wentAux [j]) && 
 	    (fabs (lcoe [i]. second) > COUENNE_EPS)) {
 

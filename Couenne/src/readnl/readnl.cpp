@@ -128,7 +128,7 @@ int CouenneProblem::readnl (const ASL *asl) {
       std::vector <std::pair <exprVar *, CouNumber> > lcoeff;
       indcoe2vector (indexL, coeff, lcoeff);
 
-      exprGroup *eg = new exprGroup (0, lcoeff, al, 1);
+      expression *eg = exprGroup::genExprGroup (0, lcoeff, al, 1);
       commonexprs_ . push_back (eg);
     } 
     else commonexprs_ . push_back (nle);
@@ -175,7 +175,7 @@ int CouenneProblem::readnl (const ASL *asl) {
       std::vector <std::pair <exprVar *, CouNumber> > lcoeff;
       indcoe2vector (indexL, coeff, lcoeff);
 
-      exprGroup *eg = new exprGroup (0, lcoeff, al, 1);
+      expression *eg = exprGroup::genExprGroup (0, lcoeff, al, 1);
       commonexprs_ . push_back (eg);
     } 
     else commonexprs_ . push_back (nle);
@@ -225,7 +225,7 @@ int CouenneProblem::readnl (const ASL *asl) {
       indcoe2vector (indexL, coeff, lcoeff);
 
       if (nl -> code () == COU_EXPRSUM) {
-	body = new exprGroup (0., lcoeff, nl -> ArgList (), nl -> nArgs ());
+	body = exprGroup::genExprGroup (0., lcoeff, nl -> ArgList (), nl -> nArgs ());
 	// delete node without deleting children (they are now in body)
 	nl -> ArgList (NULL);
 	delete nl;
@@ -237,7 +237,7 @@ int CouenneProblem::readnl (const ASL *asl) {
 	*nll = nl;
 
 	// apparently, objconst (i) is included in the obj expression
-	body = new exprGroup (0., lcoeff, nll, 1);
+	body = exprGroup::genExprGroup (0., lcoeff, nll, 1);
 	//body = new exprGroup (objconst (i), indexL, coeff, nll, 1);
       }
 
@@ -394,13 +394,13 @@ int CouenneProblem::readnl (const ASL *asl) {
       if ((code == COU_EXPRSUM) || 
 	  (code == COU_EXPRGROUP)) {
 
-	body    = new exprGroup (0., lcoeff, (*nll) -> ArgList (), (*nll) -> nArgs ());
+	body    = exprGroup::genExprGroup (0., lcoeff, (*nll) -> ArgList (), (*nll) -> nArgs ());
 	// delete node without deleting children (they are now in body)
 	(*nll) -> ArgList (NULL);
 	delete *nll;
 	delete [] nll;
       }
-      else body = new exprGroup (0., lcoeff, nll, 1);
+      else body = exprGroup::genExprGroup (0., lcoeff, nll, 1);
     }
     else {
       body = *nll;

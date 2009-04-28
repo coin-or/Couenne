@@ -97,15 +97,15 @@ int CouenneProblem::testIntFix (int index,
 
     if (!feasRight) {
 
-      jnlst_ -> Printf (J_MOREDETAILED, J_PROBLEM, 
-			"test on %d -> Infeasible. ", index);
+      jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, 
+			"test on %d -> Infeasible.\n ", index);
       retval = -1; // case 2
 
     } else {
 
       // ceil is feasible, floor is not.
-      jnlst_ -> Printf (J_MOREDETAILED, J_PROBLEM, 
-			"test on %d -> Right feasible, fix to %g. ", index, ceil (xFrac));
+      jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, 
+			"test on %d -> Right feasible, fix to %g.\n", index, ceil (xFrac));
 
       fixed [index] = FIXED;
       Lb (index) = Ub (index) = olb [index] = oub [index] = xInt [index] = ceil (xFrac); 
@@ -126,8 +126,8 @@ int CouenneProblem::testIntFix (int index,
   else if (!feasRight) {
 
     // floor is feasible, ceil is not.
-    jnlst_ -> Printf (J_MOREDETAILED, J_PROBLEM, 
-		      "test on %d -> Left feasible, fix to %g. ", index, floor (xFrac));
+    jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, 
+		      "test on %d -> Left feasible, fix to %g.\n", index, floor (xFrac));
 
     fixed [index] = FIXED;
     Lb (index) = Ub (index) = olb [index] = oub [index] = xInt [index] = floor (xFrac); 
@@ -169,15 +169,15 @@ int CouenneProblem::testIntFix (int index,
 	 (dualL [index] > dualR [index] + COUENNE_EPS) ? ceil  (xFrac) :
 	 ((CoinDrand48 () < 0.5) ? floor (xFrac) : ceil (xFrac)));
       
-      jnlst_ -> Printf (J_MOREVECTOR, J_PROBLEM, 
-			"test on %d -> Both feasible, lost patience, fixed to %g. ", 
+      jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, 
+			"test on %d -> Both feasible, lost patience, fixed to %g.\n", 
 			index, xInt [index]);
 
       //printf ("1 fixed %d [%g,%g,%g]\n", i, Lb (i), Ub (i), xInt [i]);
       retval++;
       //printf ("+++ 2 %d\n", i);
-    } else if (retval >= 0) jnlst_ -> Printf (J_MOREVECTOR, J_PROBLEM, 
-					      "test on %d -> Both feasible, skip this turn. ", index);
+    } else if (retval >= 0) jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, 
+					      "test on %d -> Both feasible, skip this turn.\n", index);
   }
 
   delete [] f_chg;

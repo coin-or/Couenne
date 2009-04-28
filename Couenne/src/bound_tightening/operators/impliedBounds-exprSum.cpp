@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: implied bound enforcing for exprSum and exprGroup
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -112,7 +112,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
     exprGroup::lincoeff &lcoe = eg -> lcoeff ();
 
-    for (exprGroup::lincoeff::iterator el = lcoe.begin ();
+    for (register exprGroup::lincoeff::iterator el = lcoe.begin ();
 	 el != lcoe.end (); ++el) {
 
       CouNumber coe = el -> second;
@@ -238,9 +238,14 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   CouNumber *uc = (CouNumber *) malloc (maxind   * sizeof (CouNumber));
 
   for (register int i = maxind; i--;) {
-    lc [i] = l [i];
-    uc [i] = u [i];
+    *lc++ = *l++;
+    *uc++ = *u++;
+    //lc [i] = l [i];
+    //uc [i] = u [i];
   }
+
+  lc -= maxind; uc -= maxind;
+  l  -= maxind; u  -= maxind;
 
   // Update lowers in I1 and uppers in I2
 

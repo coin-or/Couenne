@@ -237,7 +237,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
     }
 
     if (first) {cglp.initialSolve (); first = false;}
-    else        cglp.resolve ();
+    else        cglp.resolve (); // segfault in ex1244
 
     if (cglp. isProvenOptimal () && (cglp.getObjValue () > COUENNE_EPS)) {
 

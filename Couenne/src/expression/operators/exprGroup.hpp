@@ -32,6 +32,13 @@ protected:
 
 public:
 
+  /// Generalized (static) constructor: check parameters and return a
+  /// constant, a single variable, or a real exprGroup
+  static expression *genExprGroup (CouNumber,
+				   lincoeff &, 
+				   expression ** = NULL, 
+				   int = 0);
+
   /// Constructor
   exprGroup  (CouNumber,
 	      lincoeff &, 

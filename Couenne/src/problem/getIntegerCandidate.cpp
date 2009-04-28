@@ -103,7 +103,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
     int rank = 1;
 
-    if (jnlst_ -> ProduceOutput (Ipopt::J_MOREVECTOR, J_PROBLEM)) {
+    if (jnlst_ -> ProduceOutput (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC)) {
       printf ("=       ===========================================\n");
       printf ("= BEGIN ===========================================\n");
       printf ("=       ===========================================\n");
@@ -149,7 +149,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	// translate current NLP point+bounds into higher-dimensional space
 	initAuxs ();
 
-	if (jnlst_ -> ProduceOutput (Ipopt::J_MOREVECTOR, J_PROBLEM)) {
+	if (jnlst_ -> ProduceOutput (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC)) {
 	  printf ("= RANK LEVEL = %d [%d] ==================================\n", rank, *rNum);
 	  for (int i=0; i<nOrigVars_; i++)
 	    if (Var (i) -> Multiplicity () > 0) // alive variable
@@ -204,7 +204,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	      int result = testIntFix (i, xFrac [i], fixed, xInt,
 				       dualL, dualR, olb, oub, ntrials < maxtrials);
 
-	      jnlst_ -> Printf (J_MOREVECTOR, J_PROBLEM, 
+	      jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, 
 				"testing %d [%g -> %g], res = %d\n", i, xFrac [i], xInt [i], result);
 
 	      if (result > 0) {
@@ -229,7 +229,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
 	    assert (index < nOrigVars_);
 
-	    jnlst_ -> Printf (J_MOREVECTOR, J_PROBLEM, 
+	    jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, 
 			      "none fixed, fix %d from %g [%g,%g] [L=%g, R=%g]", 
 			      index, xFrac [index], Lb (index), Ub (index), 
 			      dualL [index], dualR [index]);
@@ -240,7 +240,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	       ((CoinDrand48 () > xFrac [index] - floor (xFrac [index])) ? 
 		floor (xFrac [index]) : ceil (xFrac [index])));
 
-	    jnlst_ -> Printf (J_MOREVECTOR, J_PROBLEM, " to %g\n", xInt [index]);
+	    jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, " to %g\n", xInt [index]);
 
 	    fixed [index] = FIXED;
 
@@ -249,7 +249,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
 	  ntrials++;
 
-	  if (jnlst_ -> ProduceOutput (Ipopt::J_MOREVECTOR, J_PROBLEM)) {
+	  if (jnlst_ -> ProduceOutput (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC)) {
 	    printf ("--- remaining = %d --------------------------- \n", remaining);
 	    for (int i=0; i<nOrigVars_; i++)
 	      if (variables_ [i] -> Multiplicity () > 0)
@@ -297,8 +297,11 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       const CouNumber *x = X ();
       CouNumber xp = x [objind];
 
-      if (checkNLP (x, xp, true)) // true for recomputing xp
+      if (checkNLP (x, xp, true)) { // true for recomputing xp
 	setCutOff (xp);
+	jnlst_ -> Printf (J_DETAILED, J_NLPHEURISTIC, 
+			  "new cutoff from getIntCand: %g\n", xp);
+      }
     }
   } // try
 
@@ -310,7 +313,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
   ////////////////////////////////////////////////////////////////////////////////
 
-  if (jnlst_->ProduceOutput(Ipopt::J_MOREVECTOR, J_PROBLEM)) {
+  if (jnlst_->ProduceOutput(Ipopt::J_MOREVECTOR, J_NLPHEURISTIC)) {
     if (retval >= 0) {
       printf ("- Done: retval %d ----------------------------------------------------------------\n", 
 	      retval);
@@ -329,7 +332,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
   domain_.pop ();
 
-  jnlst_ -> Printf (J_MOREVECTOR, J_PROBLEM, "Done with GetIntegerCandidate\n");
+  jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, "Done with GetIntegerCandidate\n");
 
   optimum_ = store_optimum; // restore 
 

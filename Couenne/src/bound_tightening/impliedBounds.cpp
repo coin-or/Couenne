@@ -73,6 +73,12 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
       if (variables_ [i] -> Image () -> impliedBound 
 	  (variables_ [i] -> Index (), Lb (), Ub (), chg_bds)) {
 
+	// conservative check for integer variables. 
+	/*if (Var (i) -> isInteger ()) {
+	  Lb (i) = ceil  (Lb (i) - COUENNE_EPS);
+	  Ub (i) = floor (Ub (i) + COUENNE_EPS);
+	  }*/
+
 	if (Jnlst()->ProduceOutput(Ipopt::J_VECTOR, J_BOUNDTIGHTENING)) {
 	  // todo: send all output through journalist
 	  Jnlst()->Printf(Ipopt::J_VECTOR, J_BOUNDTIGHTENING,

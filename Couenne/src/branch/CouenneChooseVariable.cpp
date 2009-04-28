@@ -116,6 +116,7 @@ bool CouenneChooseVariable::feasibleSolution (const OsiBranchingInformation * in
 					      const double * solution,
 					      int numberObjects,
 					      const OsiObject ** objects) {
+
   double obj = solution [problem_ -> Obj (0) -> Body () -> Index ()];
   return problem_ -> checkNLP (solution, obj);
 }

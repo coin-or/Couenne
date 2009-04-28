@@ -10,16 +10,43 @@
 #include "exprConst.hpp"
 #include "exprVar.hpp"
 #include "exprGroup.hpp"
+#include "exprClone.hpp"
+#include "exprMul.hpp"
 #include "depGraph.hpp"
 #include "CouenneProblem.hpp"
 
 class Domain;
 
+/// Generalized (static) constructor: check parameters and return a
+/// constant, a single variable, or a real exprGroup
+expression *exprGroup::genExprGroup (CouNumber c0,
+				     std::vector <std::pair <exprVar *, CouNumber> > &lcoeff, 
+				     expression **al, 
+				     int n) {
+  int nl = lcoeff.size ();
+  expression *ret = NULL;
+
+  // a constant
+  if ((n==0) && (nl==0))
+    ret = new exprConst (c0); // a constant auxiliary? FIX!
+
+  else if ((n==0) && (fabs (c0) < COUENNE_EPS) && (nl==1)) { // a linear monomial, cx
+
+    if (fabs (lcoeff[0]. second - 1) < COUENNE_EPS)
+      ret    = new exprClone (lcoeff[0]. first);
+    else ret = new exprMul (new exprConst (lcoeff[0]. second), new exprClone (lcoeff[0]. first));
+    
+  } else ret = new exprGroup (c0, lcoeff, al, n);
+
+  return ret;
+}
+
+
 /// Constructor
-exprGroup::exprGroup  (CouNumber c0,
-		       std::vector <std::pair <exprVar *, CouNumber> > &lcoeff, 
-		       expression **al, 
-		       int n):
+exprGroup::exprGroup (CouNumber c0,
+		      std::vector <std::pair <exprVar *, CouNumber> > &lcoeff, 
+		      expression **al, 
+		      int n):
   exprSum  (al, n),
   lcoeff_  (lcoeff),
   c0_      (c0) {}

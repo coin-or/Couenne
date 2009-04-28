@@ -317,6 +317,13 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
     // Bound tightening ////////////////////////////////////
 
+    /*printf ("== BT ================\n");
+    for (int i = 0; i < problem_ -> nVars (); i++)
+      if (problem_ -> Var (i) -> Multiplicity () > 0)
+	printf ("%4d %+20.8g [%+20.8g,%+20.8g]\n", i,
+		problem_ -> X  (i), problem_ -> Lb (i), problem_ -> Ub (i));
+		printf("=============================\n");*/
+
     // Reduced Cost BT -- to be done first to use rcost correctly
     if (!firstcall_  &&                         // have a linearization already
 	problem_ -> redCostBT (&si, chg_bds) && // some variables were tightened with reduced cost

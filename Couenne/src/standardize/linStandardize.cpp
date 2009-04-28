@@ -78,7 +78,7 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
 
   else if ((nq==0) && (fabs (c0) < COUENNE_EPS) && (nl==1)) { // a linear monomial, cx
 
-    if (fabs (*lc - 1) < COUENNE_EPS) 
+    if (fabs (*lc - 1) < COUENNE_EPS)
       ret    = new exprClone (Var (*li));
     else ret = new exprMul (new exprConst (*lc), new exprClone (Var (*li)));
 

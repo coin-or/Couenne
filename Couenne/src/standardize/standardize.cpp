@@ -158,14 +158,16 @@ bool CouenneProblem::standardize () {
       //delete ((*i) -> Body ());
       (*i) -> Body (new exprClone (aux));
       //      con2.push_back (*i);
-
     }
     else {
       CouNumber lb, ub;
       (*i) -> Body () -> getBounds (lb, ub);
-      if ((((*((*i) -> Lb   ())) ()) > ub) ||
-	  (((*((*i) -> Ub   ())) ()) < lb))
+      if ((((*((*i) -> Lb ())) ()) > ub) ||
+	  (((*((*i) -> Ub ())) ()) < lb)) {
+	printf ("found infeasible constraint [%g,%g]\n", lb, ub);
+	(*i) -> print ();
 	retval = false;
+      }
       iters2erase.push_back (i);
     }
 

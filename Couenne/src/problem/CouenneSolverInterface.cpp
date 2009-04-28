@@ -60,11 +60,13 @@ void CouenneSolverInterface::initialSolve () {
 
   // some originals may be unused due to their zero multiplicity (that
   // happens when they are duplicates), restore their value
-  CouNumber *x = new CouNumber [getNumCols ()];
-  CoinCopyN (getColSolution (), getNumCols (), x);
-  cutgen_ -> Problem () -> restoreUnusedOriginals (x);
-  setColSolution (x);
-  delete [] x;
+  if (cutgen_ -> Problem () -> nUnusedOriginals () > 0) {
+    CouNumber *x = new CouNumber [getNumCols ()];
+    CoinCopyN (getColSolution (), getNumCols (), x);
+    cutgen_ -> Problem () -> restoreUnusedOriginals (x);
+    setColSolution (x);
+    delete [] x;
+  }
 
   /*
     printf ("------------------------------------- INITSOLV\n");
@@ -146,13 +148,28 @@ void CouenneSolverInterface::resolve () {
   // re-solve problem
   OsiClpSolverInterface::resolve ();
 
+  CouNumber objval = getObjValue (),
+    curCutoff = cutgen_ -> Problem () -> getCutOff ();
+  // check if resolve found new integer solution
+  if ((objval < curCutoff - COUENNE_EPS) &&
+      (cutgen_ -> Problem () -> checkNLP (getColSolution (), objval, true)) &&
+      (objval < curCutoff - COUENNE_EPS)) { // may have changed
+
+    // also save the solution so that cbcModel::setBestSolution saves it too
+
+    //printf ("new cutoff from CSI: %g\n", objval);
+    cutgen_ -> Problem () -> setCutOff (objval);
+  }
+
   // some originals may be unused due to their zero multiplicity (that
   // happens when they are duplicates), restore their value
-  CouNumber *x = new CouNumber [getNumCols ()];
-  CoinCopyN (getColSolution (), getNumCols (), x);
-  cutgen_ -> Problem () -> restoreUnusedOriginals (x);
-  setColSolution (x);
-  delete [] x;
+  if (cutgen_ -> Problem () -> nUnusedOriginals () > 0) {
+    CouNumber *x = new CouNumber [getNumCols ()];
+    CoinCopyN (getColSolution (), getNumCols (), x);
+    cutgen_ -> Problem () -> restoreUnusedOriginals (x);
+    setColSolution (x);
+    delete [] x;
+  }
 
   //cutgen_ -> Problem () -> restoreUnusedOriginals (this);
 
@@ -322,11 +339,13 @@ void CouenneSolverInterface::solveFromHotStart() {
 
   // some originals may be unused due to their zero multiplicity (that
   // happens when they are duplicates), restore their value
-  CouNumber *x = new CouNumber [getNumCols ()];
-  CoinCopyN (getColSolution (), getNumCols (), x);
-  cutgen_ -> Problem () -> restoreUnusedOriginals (x);
-  setColSolution (x);
-  delete [] x;
+  if (cutgen_ -> Problem () -> nUnusedOriginals () > 0) {
+    CouNumber *x = new CouNumber [getNumCols ()];
+    CoinCopyN (getColSolution (), getNumCols (), x);
+    cutgen_ -> Problem () -> restoreUnusedOriginals (x);
+    setColSolution (x);
+    delete [] x;
+  }
 
   if (isProvenPrimalInfeasible ()) knowInfeasible_ = true;
   if (isProvenOptimal ())          knowOptimal_    = true;

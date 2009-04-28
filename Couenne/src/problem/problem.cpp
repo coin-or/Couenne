@@ -71,6 +71,8 @@ void CouenneProblem::initAuxs () const {
   // only one loop is sufficient here, since auxiliary variable are
   // defined in such a way that w_i does NOT depend on w_j if i<j.
 
+  Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, "InitAux -- assigning bounds\n");
+
   for (int j=0, i=nVars (); i--; j++) {
 
     int ord = numbering_ [j];
@@ -362,7 +364,7 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
   roptions -> AddLowerBoundedIntegerOption
     ("log_num_obbt_per_level",
      "Specify the frequency (in terms of nodes) for optimality-based bound tightening.",
-     -1,0,
+     -1,1,
      "\
 If -1, apply at every node (expensive!). \
 If 0, apply at root node only. \
@@ -378,7 +380,7 @@ If k>=0, apply with probability 2^(k - level), level being the current depth of 
   roptions -> AddLowerBoundedIntegerOption
     ("log_num_abt_per_level",
      "Specify the frequency (in terms of nodes) for aggressive bound tightening.",
-     -1,1,
+     -1,2,
      "\
 If -1, apply at every node (expensive!). \
 If 0, apply at root node only. \

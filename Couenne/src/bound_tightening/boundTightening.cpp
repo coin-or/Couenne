@@ -31,6 +31,23 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
   installCutOff ();
 
+  // check if bt cuts the optimal solution -- now and after bound tightening
+  bool contains_optimum = false;
+
+  if (optimum_ != NULL) {
+    contains_optimum = true;
+    for (int i=0; i<nOrigVars_; i++)
+      if ((optimum_ [i] < Lb (i) * (1 - COUENNE_EPS) - COUENNE_EPS) ||
+	  (optimum_ [i] > Ub (i) * (1 + COUENNE_EPS) + COUENNE_EPS)) {
+	/*printf ("won't check BT: %d [%g,%g] (%g) -- %g\n", 
+		i, Lb (i), Ub (i), optimum_ [i],
+		CoinMax (- optimum_ [i] + (Lb (i) * (1 - COUENNE_EPS) - COUENNE_EPS),
+		optimum_ [i] - (Ub (i) * (1 + COUENNE_EPS) + COUENNE_EPS)));*/
+	contains_optimum = false;
+	break;
+      }
+  }
+
   do {
 
     if (CoinCpuTime () > maxCpuTime_)
@@ -58,6 +75,18 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
     // continue if EITHER procedures gave (positive) results, as
     // expression structure is not a tree.
+
+    if (contains_optimum) {
+      for (int i=0; i<nOrigVars_; i++)
+	if ((optimum_ [i] < Lb (i) * (1 - COUENNE_EPS) - COUENNE_EPS) ||
+	    (optimum_ [i] > Ub (i) * (1 + COUENNE_EPS) + COUENNE_EPS)) {
+	  printf ("bound tightening FAIL: %d [%e,%e] (%e) -- %e\n", 
+		  i, Lb (i), Ub (i), optimum_ [i],
+		  CoinMax (- optimum_ [i] + Lb (i),
+			   optimum_ [i] - Ub (i)));
+	  contains_optimum = false;
+	}
+    }
 
   } while (((ntightened > 0) || (nbwtightened > 0)) && 
 	   (ntightened + nbwtightened > THRES_IMPROVED) &&
@@ -176,16 +205,16 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
       if ((i != objind) && 
 	  (Var (i) -> Multiplicity () > 0)) {
 
-	bool isInt = Var (i) -> isInteger ();
-
 	CouNumber
 	  x  = X  [i],
 	  l  = L  [i],
 	  u  = U  [i],
 	  rc = RC [i];
 
-	if (rc < COUENNE_EPS) 
+	if ((rc < COUENNE_EPS) || (l==u)) // no need to check
 	  continue;
+
+	bool isInt = Var (i) -> isInteger ();
 
 	if (x == l) {
 	  if (LB + (u-l)*rc > UB) {
@@ -209,6 +238,11 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
 	  }
 	}
       }
+
+    /*printf ("AFTER reduced cost bt:\n");
+      for (int i=0; i < nVars (); i++) 
+	printf ("%3d [%10e %10e]\n", i, Lb (i), Ub (i));
+	printf ("-----------\n");*/
   }
 
   return nchanges;

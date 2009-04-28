@@ -3,7 +3,7 @@
  * Author:  Pietro Belotti
  * Purpose: check NLP feasibility of incumbent integer solution
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -14,11 +14,32 @@
 bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompute) const {
 
   const int infeasible = 1;
+  const int wrong_obj  = 2;
 
   /*printf ("checking solution: [%g] ", obj);
   for (int i=0; i<nOrigVars_; i++)
-    printf ("%.5f ", solution [i]);
+    printf ("%g ", solution [i]);
     printf ("\n");*/
+
+  // pre-check on original variables
+  for (int i=0; i < nOrigVars_; i++) {
+
+    CouNumber val = solution [i];
+
+    // check (original and auxiliary) variables' integrality
+
+    if ((variables_ [i] -> isInteger ()) &&
+	(variables_ [i] -> Type () == VAR) &&
+	(variables_ [i] -> Multiplicity () > 0) &&
+	(fabs (val - COUENNE_round (val)) > feas_tolerance_)) {
+
+      Jnlst()->Printf(Ipopt::J_ITERSUMMARY, J_PROBLEM,
+		      "checkNLP: integrality %d violated: %.6f [%g,%g]\n", 
+		      i, val, domain_.lb (i), domain_.ub (i));
+
+      return false;
+    }
+  }
 
   CouNumber *sol = new CouNumber [nVars ()];
 
@@ -52,13 +73,18 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 		      "checkNLP: false objective. %g != %g (diff. %g)\n", 
 		      realobj, obj, realobj - obj);
 
-      throw infeasible;
+      if (recompute)
+	obj = realobj;
+      else 
+	throw wrong_obj;
     }
 
-    if (recompute)
-      obj = realobj;
+    //printf ("recomputed: %g\n", obj);
 
     for (int i=0; i < nOrigVars_; i++) {
+
+      if (variables_ [i] -> Multiplicity () <= 0) 
+	continue;
 
       CouNumber val = domain_.x (i);
 
@@ -148,8 +174,18 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
   }
 
   catch (int exception) {
-    if (exception == infeasible) 
+
+    switch (exception) {
+
+    case wrong_obj:
+      retval = true;
+      break;
+
+    case infeasible:
+    default:
       retval = false;
+      break;
+    }
   }
 
   delete [] sol;

@@ -72,6 +72,12 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
       return -1; // declare this node infeasible
     }
 
+    /*if ((Var (i) -> Type () == VAR) &&
+	(Var (i) -> isInteger ())) {
+      Lb (i) = ceil  (Lb (i) - COUENNE_EPS);
+      Ub (i) = floor (Ub (i) + COUENNE_EPS);
+      }*/
+
     if (Var (i) -> Type         () == AUX) {
 	// TODO: also test if any indep variable of this expression
 	// have changed. If not, skip
