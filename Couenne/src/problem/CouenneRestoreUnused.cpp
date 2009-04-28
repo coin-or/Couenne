@@ -53,7 +53,7 @@ void CouenneProblem::restoreUnusedOriginals (CouNumber *x) const {
   if (nUnusedOriginals_ <= 0) return;
 
   if (x)
-    domain_.push (nVars(), x, NULL, NULL);
+    domain_.push (nVars(), x, NULL, NULL, false);
 
   for (int i=0; i<nUnusedOriginals_; i++) {
 
