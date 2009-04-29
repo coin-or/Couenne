@@ -14,6 +14,8 @@
 #include "exprGroup.hpp"
 #include "exprQuad.hpp"
 
+#include <cstdio>
+
 class CouenneProblem;
 class Domain;
 

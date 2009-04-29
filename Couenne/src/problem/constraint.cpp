@@ -10,6 +10,7 @@
 #include "CouenneTypes.hpp"
 #include "CouenneProblemElem.hpp"
 
+#include <cstdio>
 
 // output nonlinear constraint
 

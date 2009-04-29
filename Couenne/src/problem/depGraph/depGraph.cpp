@@ -8,6 +8,7 @@
  */
 
 #include <cstdlib>
+#include <cstdio>
 #include "depGraph.hpp"
 
 //#define DEBUG
