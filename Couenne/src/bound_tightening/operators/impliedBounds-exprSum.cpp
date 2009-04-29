@@ -237,7 +237,10 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   CouNumber *lc = (CouNumber *) malloc (++maxind * sizeof (CouNumber));
   CouNumber *uc = (CouNumber *) malloc (maxind   * sizeof (CouNumber));
 
-  for (register int i = maxind; i--;) {
+  CoinCopyN (l, maxind, lc);
+  CoinCopyN (u, maxind, uc);
+
+  /*for (register int i = maxind; i--;) {
     *lc++ = *l++;
     *uc++ = *u++;
     //lc [i] = l [i];
@@ -245,7 +248,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   }
 
   lc -= maxind; uc -= maxind;
-  l  -= maxind; u  -= maxind;
+  l  -= maxind; u  -= maxind;*/
 
   // Update lowers in I1 and uppers in I2
 

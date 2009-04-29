@@ -16,9 +16,9 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
   const int infeasible = 1;
   const int wrong_obj  = 2;
 
-  /*printf ("checking solution: [%g] ", obj);
+  /*printf ("checking solution: [%.12e] ", obj);
   for (int i=0; i<nOrigVars_; i++)
-    printf ("%g ", solution [i]);
+    printf ("%.12e ", solution [i]);
     printf ("\n");*/
 
   // pre-check on original variables
@@ -54,12 +54,27 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
   /*printf ("checknlp: %d vars -------------------\n", domain_.current () -> Dimension ());
   for (int i=0; i<domain_.current () -> Dimension (); i++)
-    printf ("%4d %20g [%20g %20g]\n", 
+    printf ("%4d %.12e [%.12e %.12e]\n", 
     i, domain_.x (i), domain_.lb (i), domain_.ub (i));*/
 
   expression *objBody = Obj (0) -> Body ();
 
-  CouNumber realobj = (*(objBody -> Image () ? objBody -> Image () : objBody)) ();
+  // BUG: if Ipopt solution violates bounds of original variables and
+  // objective depends on originals, we may have a "computed object"
+  // out of bounds
+
+  //CouNumber realobj = (*(objBody -> Image () ? objBody -> Image () : objBody)) ();
+  CouNumber realobj = obj;
+
+  if (objBody) 
+    realobj = 
+      (objBody -> Index () >= 0) ?
+      sol [objBody -> Index ()] : 
+      (*(objBody -> Image () ? objBody -> Image () : objBody)) ();
+
+  /*printf ("%.12e %.12e %.12e ------------------------------\n", 
+	  realobj, sol [objBody -> Index ()], 
+	  (*(objBody -> Image () ? objBody -> Image () : objBody)) ());*/
 
   bool retval = true;
 
@@ -73,13 +88,14 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 		      "checkNLP: false objective. %g != %g (diff. %g)\n", 
 		      realobj, obj, realobj - obj);
 
-      if (recompute)
-	obj = realobj;
-      else 
+      if (!recompute)
 	throw wrong_obj;
     }
 
-    //printf ("recomputed: %g\n", obj);
+    if (recompute)
+      obj = realobj;
+
+    //printf ("recomputed: %.12e\n", obj);
 
     for (int i=0; i < nOrigVars_; i++) {
 
@@ -117,13 +133,13 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 	printf ("checking aux ");
 	variables_ [i] -> print (); printf (" := ");
 	variables_ [i] -> Image () -> print (); 
-	printf (" --- %g = %g [%g]; {", 
+	printf (" --- %.12e = %.12e [%.12e]; {", 
 		(*(variables_ [i])) (), 
 		(*(variables_ [i] -> Image ())) (),
 		(*(variables_ [i])) () -
 		(*(variables_ [i] -> Image ())) ());
 	for (int j=0; j<nVars (); j++)
-	  printf ("%.6f ", (*(variables_ [j])) ());
+	  printf ("%.12e ", (*(variables_ [j])) ());
 	printf ("}\n");
 	}*/
 
@@ -178,7 +194,7 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
     switch (exception) {
 
     case wrong_obj:
-      retval = true;
+      retval = false;
       break;
 
     case infeasible:

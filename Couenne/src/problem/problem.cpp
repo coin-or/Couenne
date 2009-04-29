@@ -155,7 +155,6 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
       if (var -> Type () == AUX) {
 	X (index) =  // addresses of x[] and X() are equal
 	  CoinMax (l, CoinMin (u, (*(var -> Image ())) ())); 
-
       }
     } else X (index) = 0.;
   }
@@ -267,7 +266,7 @@ void CouenneProblem::setCutOff (CouNumber cutoff) const {
 
     if (Var (indobj) -> isInteger ())
       pcutoff_    -> setCutOff (floor (cutoff + COUENNE_EPS));
-    else pcutoff_ -> setCutOff (cutoff + SafeCutoff * fabs (1. + cutoff));
+    else pcutoff_ -> setCutOff (cutoff + SafeCutoff * (1. + fabs(cutoff)));
   }
 } // tolerance needed to retain feasibility
 

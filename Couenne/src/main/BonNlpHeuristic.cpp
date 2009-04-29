@@ -318,7 +318,8 @@ namespace Bonmin{
 	    if      (t < *lb) t = *lb;
 	    else if (t > *ub) t = *ub;
 	  }
-
+	  
+	  //printf ("new cutoff %g from BonNlpHeuristic\n", obj);
 	  couenne_ -> setCutOff (obj);
 	  foundSolution = true;
 	  objectiveValue = obj;
