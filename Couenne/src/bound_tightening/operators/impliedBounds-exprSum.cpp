@@ -240,16 +240,6 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   CoinCopyN (l, maxind, lc);
   CoinCopyN (u, maxind, uc);
 
-  /*for (register int i = maxind; i--;) {
-    *lc++ = *l++;
-    *uc++ = *u++;
-    //lc [i] = l [i];
-    //uc [i] = u [i];
-  }
-
-  lc -= maxind; uc -= maxind;
-  l  -= maxind; u  -= maxind;*/
-
   // Update lowers in I1 and uppers in I2
 
   if ((infLo1 == -1) && (infUp2 == -1) && (wu < COUENNE_INFINITY / 1e10)) { 
