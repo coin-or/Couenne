@@ -110,6 +110,8 @@ void CouenneProblem::initAuxs () const {
       X (ord) = CoinMax (Lb (ord), CoinMin (Ub (ord), (*(variables_ [ord] -> Image ())) ()));
     }
   }
+
+  restoreUnusedOriginals (); // no argument as the local x vector will be used
 }
 
 
@@ -147,6 +149,8 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 
     } else X (index) = 0.;
   }
+
+  restoreUnusedOriginals ();
 
   domain_.pop ();
 }
