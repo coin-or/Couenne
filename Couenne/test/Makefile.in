@@ -413,9 +413,9 @@ uninstall-am: uninstall-info-am
 #                        testfun for Couenne                           #
 ########################################################################
 
-test: 
-	chmod u+x grandTest.sh
-	./grandTest.sh
+@COIN_HAS_ASL_TRUE@test: 
+@COIN_HAS_ASL_TRUE@	chmod u+x grandTest.sh
+@COIN_HAS_ASL_TRUE@	./grandTest.sh
 
 .PHONY: test
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

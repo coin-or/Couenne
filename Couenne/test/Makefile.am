@@ -12,9 +12,11 @@ AUTOMAKE_OPTIONS = foreign
 #                        testfun for Couenne                           #
 ########################################################################
 
+if COIN_HAS_ASL
 test: 
 	chmod u+x grandTest.sh
 	./grandTest.sh
+endif
 
 .PHONY: test
 
