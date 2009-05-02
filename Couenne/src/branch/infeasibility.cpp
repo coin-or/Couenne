@@ -104,9 +104,17 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
   if (dependence.size () == 0) { // this is a top level auxiliary,
 				 // nowhere an independent
 
+    // check first if this variable is fixed. If so, it's useless to branch on it
+    if (fabs (info -> upper_ [index] - 
+	      info -> lower_ [index]) / 
+	(1. + fabs (info -> solution_ [index])) < COUENNE_EPS)
+      return 0.;
+
+    // otherwise, return a nonzero infeasibility, if necessary. It
+    // might make sense to branch on it
     const CouenneObject &obj = problem_ -> Objects () [reference_ -> Index ()];
 
-    double retval = (obj. Reference ()) ? weiSum * obj.checkInfeasibility (info) : 0.;
+    double retval = (obj. Reference ()) ? weiSum * obj. checkInfeasibility (info) : 0.;
     return (reference_ -> isInteger ()) ? 
       CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
       retval;
