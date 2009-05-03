@@ -9,6 +9,7 @@
  */
 
 #include "CoinHelperFunctions.hpp"
+#include "CoinFinite.hpp"
 
 #include "CouenneProblem.hpp"
 #include "CouenneObject.hpp"
@@ -340,7 +341,7 @@ double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) c
     denom  = CoinMax (1., reference_ -> Image () -> gradientNorm (info -> solution_));
 
   // check if fval is a number (happens with e.g. w13 = w12/w5 and w5=0, see test/harker.nl)
-  if (isnan (fval)) {
+  if (CoinIsnan(fval)) {
     fval = vval + 1.;
     denom = 1.;
   }
