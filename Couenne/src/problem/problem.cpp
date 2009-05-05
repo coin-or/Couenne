@@ -24,7 +24,8 @@
 #include "CouenneProblemElem.hpp"
 #include "lqelems.hpp"
 
-const CouNumber SafeCutoff = COUENNE_EPS;
+// tricky... smaller values cut the optimum in OS unitTest
+const CouNumber SafeCutoff = 1e-4; 
 
 /// initialize auxiliary variables from original variables in the
 /// nonlinear problem
