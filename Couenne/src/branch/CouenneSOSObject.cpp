@@ -31,7 +31,6 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
   // Apply SOS branching first
   double retval = OsiSOSBranchingObject::branch (solver);
 
-
   CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
   CouenneProblem *p = couenneSolver -> CutGen () -> Problem ();
 

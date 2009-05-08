@@ -15,6 +15,10 @@
 #include "CouenneSolverInterface.hpp"
 
 
+// checks bad cuts against known optimum
+bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p);
+
+
 // set and lift bound for auxiliary variable associated with objective
 // function
 void fictitiousBound (OsiCuts &cs,
@@ -91,16 +95,20 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     CouNumber *opt = realOpt;
 
     const CouNumber 
-      *lb = si.getColLower (),
-      *ub = si.getColUpper ();
+      *sol = si.getColSolution (),
+      *lb  = si.getColLower (),
+      *ub  = si.getColUpper ();
 
-    for (int i=problem_ -> nOrigVars (); i--; opt++, lb++, ub++)
-      if ((*opt < *lb - COUENNE_EPS) || (*opt > *ub + COUENNE_EPS)) {
-	//printf ("out of bounds, ignore (%d,%g) [%g,%g]\n", 
-	//problem_ -> nOrigVars () - i - 1, *opt, *lb, *ub);
+    for (int i=problem_ -> nVars (); i--; opt++, lb++, ub++)
+      if ((*opt < *lb - COUENNE_EPS) || 
+	  (*opt > *ub + COUENNE_EPS)) {
+	jnlst_ -> Printf (J_VECTOR, J_CONVEXIFYING, 
+			  "out of bounds, ignore x%d = %g [%g,%g] opt = %g\n", 
+			  problem_ -> nVars () - i - 1, *sol, *lb, *ub, *opt);
+
 	// optimal point is not in current bounding box,
 	// pretend realOpt is NULL until we return from this procedure
-	//realOpt = NULL;
+	realOpt = NULL;
 	break;
       }
   }
@@ -450,9 +458,11 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     if (firstcall_ && (cs.sizeRowCuts () >= 1))
       jnlst_->Printf(J_ITERSUMMARY, J_CONVEXIFYING,
 		     "Couenne: %d initial row cuts\n", cs.sizeRowCuts ());
-  }
 
-  // end of OBBT //////////////////////////////////////////////////////////////////////
+    if (realOpt && // this is a good time to check if we have messed up with the optimal solution
+	isOptimumCut (realOpt, cs, problem_))
+      printf ("\n\n CUT OPTIMUM!\n\n");
+  }
 
   catch (int exception) {
 

@@ -118,7 +118,7 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
 
     double retval = (obj -> Reference ()) ? 
       (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) *
-      weiSum * obj ->checkInfeasibility (info) : 0.;
+      weiSum * obj -> checkInfeasibility (info) : 0.;
 
     return retval;
 

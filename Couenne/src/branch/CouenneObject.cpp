@@ -341,10 +341,13 @@ double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) c
     denom  = CoinMax (1., reference_ -> Image () -> gradientNorm (info -> solution_));
 
   // check if fval is a number (happens with e.g. w13 = w12/w5 and w5=0, see test/harker.nl)
-  if (CoinIsnan(fval)) {
+  if (CoinIsnan (fval)) {
     fval = vval + 1.;
     denom = 1.;
   }
+
+  if (fabs (fval) > COUENNE_INFINITY)
+    fval = COUENNE_INFINITY;
 
   double
     retval = fabs (vval - fval),

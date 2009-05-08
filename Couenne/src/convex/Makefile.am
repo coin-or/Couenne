@@ -16,7 +16,8 @@ libCouenneConvex_la_SOURCES = \
 	generateCuts.cpp \
 	genColCuts.cpp \
 	genRowCuts.cpp \
-	updateBranchInfo.cpp
+	updateBranchInfo.cpp \
+	isOptimumCut.cpp
 
 
 # 	operators/conv-exprAbs.cpp \

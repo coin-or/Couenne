@@ -150,14 +150,18 @@ void CouenneSolverInterface::resolve () {
 
   CouNumber objval = getObjValue (),
     curCutoff = cutgen_ -> Problem () -> getCutOff ();
+
   // check if resolve found new integer solution
-  if ((objval < curCutoff - COUENNE_EPS) &&
+  if (isProvenOptimal () &&
+      (objval < curCutoff - COUENNE_EPS) &&
       (cutgen_ -> Problem () -> checkNLP (getColSolution (), objval, true)) &&
-      (objval < curCutoff - COUENNE_EPS)) { // may have changed
+      (objval < curCutoff - COUENNE_EPS) && // check again as it may have changed
+      (objval > -COUENNE_INFINITY/2)) { // check if it makes sense
 
     // also save the solution so that cbcModel::setBestSolution saves it too
 
-    //printf ("new cutoff from CSI: %g\n", objval);
+    printf ("new cutoff from CSI: %g, inf = %g, diff %g\n", 
+	    objval, COUENNE_INFINITY, objval + COUENNE_INFINITY);
     cutgen_ -> Problem () -> setCutOff (objval);
   }
 
