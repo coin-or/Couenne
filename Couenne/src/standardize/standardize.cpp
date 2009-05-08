@@ -268,12 +268,15 @@ bool CouenneProblem::standardize () {
     }
   }
 
-  // Look for auxiliaries of the form w:=x and replace each occurrence of w with x
-
   // TODO: resolve duplicate index in exprQuad before restoring this
 
-  //if (0)
-  for (std::vector <exprVar *>::iterator i = variables_.begin (); 
+  std::string delete_redund;
+  bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne."); 
+
+  if (delete_redund == "yes")
+
+    // Look for auxiliaries of the form w:=x and replace each occurrence of w with x
+    for (std::vector <exprVar *>::iterator i = variables_.begin (); 
        i != variables_.end (); ++i)
 
     if ((*i) -> Type () == AUX) {
