@@ -168,6 +168,9 @@ class CouenneProblem {
   /// maximum cpu time
   double maxCpuTime_;
 
+  /// options
+  Bonmin::BabSetupBase *bonBase_;
+
 #ifdef COIN_HAS_ASL
   /// AMPL structure pointer (temporary --- looking forward to embedding into OS...)
   ASL *asl_;
