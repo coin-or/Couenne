@@ -160,8 +160,7 @@ void CouenneSolverInterface::resolve () {
 
     // also save the solution so that cbcModel::setBestSolution saves it too
 
-    printf ("new cutoff from CSI: %g, inf = %g, diff %g\n", 
-	    objval, COUENNE_INFINITY, objval + COUENNE_INFINITY);
+    //printf ("new cutoff from CSI: %g\n", objval);
     cutgen_ -> Problem () -> setCutOff (objval);
   }
 
