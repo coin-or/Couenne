@@ -171,10 +171,8 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
     while (!notImproved && 
 	   (nIter++ < MAX_OBBT_ITER) &&
-	   ((nImprov = obbtInner (csi, cs, chg_bds, babInfo)) > 0)) {
-
-      if (CoinCpuTime () > maxCpuTime_)
-	break;
+	   ((nImprov = obbtInner (csi, cs, chg_bds, babInfo)) > 0) &&
+	   (CoinCpuTime () < maxCpuTime_)) {
 
       int nchanged, *changed = NULL;
 

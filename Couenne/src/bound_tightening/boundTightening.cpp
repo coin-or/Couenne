@@ -52,7 +52,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
       first = false;
 
     if ((ntightened < 0) || (nbwtightened < 0)) {
-      Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING, "infeasible BT\n");
+      Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "infeasible BT\n");
       return false;
     }
 
@@ -78,11 +78,11 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
     if (Var (i) -> Multiplicity () > 0) {
 
       // final test 
-      if ((Lb (i) > Ub (i) + COUENNE_EPS) || 
+      if ((Lb (i) > Ub (i) + COUENNE_EPS * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) || 
 	  (Ub (i) < - MAX_BOUND) ||
 	  (Lb (i) >   MAX_BOUND)) {
 
-	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING, "final test: infeasible BT\n");
+	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "final test: infeasible BT\n");
 	return false;
       }
 
