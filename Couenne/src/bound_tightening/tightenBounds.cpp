@@ -51,23 +51,23 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 
     // early test to avoid a loop
 
-    if ((Lb (i) > Ub (i) + COUENNE_EPS) || 
+    if ((Lb (i) > Ub (i) + COUENNE_EPS * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) || 
 	(Ub (i) < - MAX_BOUND) ||
 	(Lb (i) >   MAX_BOUND)) {
 
-      //if (Jnlst()->ProduceOutput(J_ITERSUMMARY, J_BOUNDTIGHTENING)) {
+      if (Jnlst()->ProduceOutput(J_ITERSUMMARY, J_BOUNDTIGHTENING)) {
 
-      Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
-		      "pre-check: w_%d has infeasible bounds [%.10e,%.10e]. ", i, Lb (i), Ub (i));
+	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
+			"pre-check: w_%d has infeasible bounds [%.10e,%.10e]. ", i, Lb (i), Ub (i));
 
-      if (Jnlst()->ProduceOutput(J_DETAILED, J_BOUNDTIGHTENING)) {
-	Var (i) -> Lb () -> print (std::cout);
-	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");
-	Var (i) -> Ub () -> print (std::cout);
+	if (Jnlst()->ProduceOutput(J_DETAILED, J_BOUNDTIGHTENING)) {
+	  Var (i) -> Lb () -> print (std::cout);
+	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");
+	  Var (i) -> Ub () -> print (std::cout);
+	}
+
+	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,"\n");
       }
-
-      Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,"\n");
-	//}
 
       return -1; // declare this node infeasible
     }
@@ -78,7 +78,7 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
       Ub (i) = floor (Ub (i) + COUENNE_EPS);
       }*/
 
-    if (Var (i) -> Type         () == AUX) {
+    if (Var (i) -> Type () == AUX) {
 	// TODO: also test if any indep variable of this expression
 	// have changed. If not, skip
 
@@ -93,7 +93,7 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	uu = floor (uu + COUENNE_EPS);
       }
 
-      if (ll > uu + COUENNE_EPS) {
+      if (ll - uu > COUENNE_EPS * (1 + CoinMin (fabs (ll), fabs (uu)))) {
 
 	//if (Jnlst()->ProduceOutput(J_ITERSUMMARY, J_BOUNDTIGHTENING)) {
 
@@ -149,7 +149,7 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 
 	Lb (i) = ll;
 
-	if (ll > Ub (i) + COUENNE_EPS) {
+	if (ll > Ub (i) + COUENNE_EPS * (1. + CoinMin (fabs (ll), fabs (Ub (i))))) {
 	  Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING,
 			      "just-check: w_%d has infeasible bounds [%g,%g]. ", i, Lb (i), Ub (i));
 	  return -1;

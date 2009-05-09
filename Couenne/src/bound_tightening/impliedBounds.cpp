@@ -36,10 +36,10 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
     if ((variables_ [i] -> Type () == AUX) &&
 	(variables_ [i] -> Multiplicity () > 0)) {
 
-      if (Lb (i) > Ub (i) + COUENNE_EPS) {
-	Jnlst()->Printf(Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
-			"  implied bounds: w_%d has infeasible bounds [%g,%g]\n", 
-			i, Lb (i), Ub (i));
+      if (Lb (i) > Ub (i) + COUENNE_EPS * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) {
+	Jnlst () -> Printf (Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
+			    "  implied bounds: w_%d has infeasible bounds [%g,%g]\n", 
+			    i, Lb (i), Ub (i));
 	return -1;
       }
 
@@ -85,7 +85,7 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 			  "  impli %2d [%15.8g, %15.8g] -> [%15.8g, %15.8g]: ",
 			  i, l0, u0, Lb (i), Ub (i));
 
-	  variables_ [i]             -> print (std::cout);
+	  variables_ [i] -> print (std::cout);
 
 	  if (Jnlst()->ProduceOutput(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING)) {
 	    Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING," := ");

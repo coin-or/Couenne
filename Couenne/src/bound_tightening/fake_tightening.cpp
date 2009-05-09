@@ -136,7 +136,6 @@ fake_tighten (char direction,  // 0: left, 1: right
     bool
       feasible  = btCore (f_chg),             // true if feasible with fake bound
       betterbds = Lb (objind) > getCutOff (); // true if over cutoff
-      
 
 #ifdef DEBUG
     printf(" [%10g,%10g] lb = %g {fea=%d,btr=%d} ",
@@ -241,7 +240,6 @@ fake_tighten (char direction,  // 0: left, 1: right
     printf ("\n");
 #endif
   }
-
 
   Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING, "\n");
   if (tightened) 
