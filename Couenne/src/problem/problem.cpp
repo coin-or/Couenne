@@ -352,6 +352,13 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
      "yes","");
 
   roptions -> AddStringOption2 
+    ("redcost_bt",
+     "Reduced cost bound tightening",
+     "yes",
+     "no","",
+     "yes","");
+
+  roptions -> AddStringOption2 
     ("use_quadratic",
      "Use quadratic expressions and related exprQuad class",
      "no",

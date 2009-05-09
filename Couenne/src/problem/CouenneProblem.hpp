@@ -130,6 +130,7 @@ class CouenneProblem {
   mutable bool created_pcutoff_;
 
   bool doFBBT_;  ///< do Feasibility-based bound tightening
+  bool doRCBT_;  ///< do reduced cost      bound tightening
   bool doOBBT_;  ///< do Optimality-based  bound tightening
   bool doABT_;   ///< do Aggressive        bound tightening
 
@@ -297,6 +298,7 @@ class CouenneProblem {
 
   // bound tightening parameters
   bool doFBBT () const {return doFBBT_;} ///< shall we do Feasibility Based Bound Tightening?
+  bool doRCBT () const {return doRCBT_;} ///< shall we do reduced cost      Bound Tightening?
   bool doOBBT () const {return doOBBT_;} ///< shall we do Optimality  Based Bound Tightening?
   bool doABT  () const {return doABT_;}  ///< shall we do Aggressive        Bound Tightening?
 

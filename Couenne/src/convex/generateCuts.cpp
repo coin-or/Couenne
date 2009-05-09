@@ -334,6 +334,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
     // Reduced Cost BT -- to be done first to use rcost correctly
     if (!firstcall_  &&                         // have a linearization already
+	problem_ -> doRCBT () &&                // authorized to do reduced cost tightening
 	problem_ -> redCostBT (&si, chg_bds) && // some variables were tightened with reduced cost
 	!(problem_ -> btCore (chg_bds)))        // in this case, do another round of FBBT
       throw infeasible;

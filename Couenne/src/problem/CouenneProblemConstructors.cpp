@@ -46,7 +46,8 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   pcutoff_   (new GlobalCutOff (COIN_DBL_MAX)),
   created_pcutoff_ (true),
   doFBBT_    (true),
-  doOBBT_    (false),
+  doRCBT_    (true),
+  doOBBT_    (true),
   doABT_     (true),
   logObbtLev_(0),
   logAbtLev_ (0),
@@ -93,6 +94,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
     std::string s;
 
     base -> options() -> GetStringValue ("feasibility_bt",  s, "couenne."); doFBBT_ = (s == "yes");
+    base -> options() -> GetStringValue ("redcost_bt",      s, "couenne."); doRCBT_ = (s == "yes");
     base -> options() -> GetStringValue ("optimality_bt",   s, "couenne."); doOBBT_ = (s == "yes");
     base -> options() -> GetStringValue ("aggressive_fbbt", s, "couenne."); doABT_  = (s == "yes");
 
@@ -124,6 +126,7 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   pcutoff_      (p.pcutoff_),
   created_pcutoff_ (false),
   doFBBT_       (p. doFBBT_),
+  doRCBT_       (p. doRCBT_),
   doOBBT_       (p. doOBBT_),
   doABT_        (p. doABT_),
   logObbtLev_   (p. logObbtLev_),
