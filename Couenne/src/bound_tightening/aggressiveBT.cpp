@@ -5,10 +5,12 @@
  *          exclude parts of the solution space through fathoming on
  *          bounds/infeasibility
  *
- * (C) Carnegie-Mellon University, 2007-08.
+ * (C) Carnegie-Mellon University, 2007-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "BonTNLPSolver.hpp"
+#include "BonNlpHeuristic.hpp"
 #include "CoinHelperFunctions.hpp"
 #include "BonCouenneInfo.hpp"
 
@@ -114,8 +116,12 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     nlp -> setColUpper    (upper);
     nlp -> setColSolution (Y);
 
-    nlp -> initialSolve ();
-
+    try {
+      nlp -> initialSolve ();
+    }
+    catch (Bonmin::TNLPSolver::UnsolvedError *E) {
+    }
+    
     delete [] Y;
     delete [] lower;
     delete [] upper;
