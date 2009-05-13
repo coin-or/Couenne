@@ -125,8 +125,13 @@ CouenneInterface::extractLinearRelaxation
 	}
     }
 
-    if (is_feasible) 
-      initialSolve ();
+    if (is_feasible) {
+      try {
+	initialSolve ();
+      }
+      catch(TNLPSolver::UnsolvedError *E) {
+      }
+    }
     else {
       OsiAuxInfo * auxInfo = si.getAuxiliaryInfo ();
       BabInfo * babInfo = dynamic_cast <BabInfo *> (auxInfo);
@@ -203,7 +208,13 @@ CouenneInterface::extractLinearRelaxation
 
 	    setColSolution (Y); // use initial solution given 
 
-	    resolve (); // solve with integer variables fixed
+	    try {
+	      resolve (); // solve with integer variables fixed
+	    }
+	    catch(TNLPSolver::UnsolvedError *E) {
+	    }
+
+	    //resolve (); 
 
 	    obj      = getObjValue ();
 	    solution = getColSolution ();

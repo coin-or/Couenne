@@ -279,7 +279,10 @@ namespace Bonmin{
       nlp_ -> setColSolution (Y);
 
       // apply NLP solver /////////////////////////////////
-      nlp_ -> initialSolve ();
+      try {
+	nlp_ -> initialSolve ();
+      }
+      catch (TNLPSolver::UnsolvedError *E) {}
 
       double obj = (nlp_ -> isProvenOptimal()) ? nlp_ -> getObjValue (): COIN_DBL_MAX;
 
