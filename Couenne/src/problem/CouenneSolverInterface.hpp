@@ -86,7 +86,11 @@ public:
   ClpSimplex *continuousModel ()
   {return continuousModel_;}
 
-private:
+  /// set doingResolve_
+  bool &doingResolve () 
+  {return doingResolve_;}
+
+protected:
 
   /// The pointer to the Couenne cut generator. Gives us a lot of
   /// information, for instance the nlp solver pointer, and the chance
@@ -98,6 +102,10 @@ private:
 
   /// Flag indicating that optimality was detected during solveFromHotStart
   bool knowOptimal_;
+
+  /// flag to indicate this is an LP for the BB, not for (e.g.) strong
+  /// branching or OBBT
+  bool doingResolve_;
 };
 
 #endif

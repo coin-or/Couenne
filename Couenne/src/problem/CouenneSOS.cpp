@@ -122,8 +122,10 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
 
       // TODO: if use Cbc, add CbcSOSBranchingObject
 
-      CouenneSOSObject *newsos = new CouenneSOSObject (solver, nelem, indices, NULL, 1,
-						       jnlst_, true, true);
+      /*CouenneSOSObject *newsos = new CouenneSOSObject (solver, nelem, indices, NULL, 1,
+	jnlst_, true, true);*/
+
+      OsiSOS *newsos = new OsiSOS (solver, nelem, indices, NULL, 1);
 
       objects [nSOS] = newsos;
       // as in BonBabSetupBase.cpp:675

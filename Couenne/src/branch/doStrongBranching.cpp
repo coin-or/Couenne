@@ -12,6 +12,7 @@
 #include "CouenneChooseStrong.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneBranchingObject.hpp"
+#include "CouenneSolverInterface.hpp"
 
 /// compute Euclidean distance between two points (most likely LP solutions)
 /// l_2 norm by default, but can change it by fourth parameter
@@ -53,13 +54,15 @@ namespace Bonmin {
        2 - may be returning early - one can be fixed (last one done) (returnCriterion==1) 
        3 - returning because max time
   */
-  int CouenneChooseStrong::doStrongBranching (OsiSolverInterface * solver, 
+  int CouenneChooseStrong::doStrongBranching (CouenneSolverInterface * solver, 
 					      OsiBranchingInformation *info,
 					      int numberToDo, int returnCriterion)
   {
 
     jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		      "\n-\n------- CCS: trying %d objects:\n", numberToDo);
+
+    solver -> doingResolve () = false; // turns off setCutoff and restoreUnused
 
     int numberColumns = solver -> getNumCols ();
 
@@ -365,6 +368,8 @@ namespace Bonmin {
     delete [] saveUpper;
 
     solver -> unmarkHotStart ();     // Delete the snapshot
+
+    solver -> doingResolve () = true;
 
     return returnCode;
   }

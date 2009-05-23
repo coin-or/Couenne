@@ -16,6 +16,7 @@
 
 // Forward declaration
 class CouenneProblem;
+class CouenneSolverInterface;
 
 namespace Bonmin {
 
@@ -53,7 +54,7 @@ namespace Bonmin {
 	 2 - may be returning early - one can be fixed (last one done) (returnCriterion==1) 
 	 3 - returning because max time
     */
-    virtual int doStrongBranching( OsiSolverInterface * solver, 
+    virtual int doStrongBranching( CouenneSolverInterface * solver, 
 				   OsiBranchingInformation *info,
 				   int numberToDo, int returnCriterion);
 

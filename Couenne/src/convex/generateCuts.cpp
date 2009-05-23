@@ -99,9 +99,13 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       *lb  = si.getColLower (),
       *ub  = si.getColUpper ();
 
-    for (int i=problem_ -> nVars (); i--; opt++, lb++, ub++)
-      if ((*opt < *lb - COUENNE_EPS) || 
-	  (*opt > *ub + COUENNE_EPS)) {
+    int objind = problem_ -> Obj (0) -> Body () -> Index ();
+
+    for (int j=0, i=problem_ -> nVars (); i--; j++, opt++, lb++, ub++)
+      if ((j != objind) && 
+	  ((*opt < *lb - COUENNE_EPS * (1 + CoinMin (fabs (*opt), fabs (*lb)))) || 
+	   (*opt > *ub + COUENNE_EPS * (1 + CoinMin (fabs (*opt), fabs (*ub)))))) {
+	
 	jnlst_ -> Printf (J_VECTOR, J_CONVEXIFYING, 
 			  "out of bounds, ignore x%d = %g [%g,%g] opt = %g\n", 
 			  problem_ -> nVars () - i - 1, *sol, *lb, *ub, *opt);

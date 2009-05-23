@@ -175,7 +175,7 @@ namespace Bonmin{
     delete extraStuff;
     
     extraStuff = dynamic_cast <Bonmin::BabInfo *> (continuousSolver_ -> getAuxiliaryInfo ());
-    
+
     /* Setup log level*/
     int lpLogLevel;
     options()->GetIntegerValue("lp_log_level",lpLogLevel,"bonmin.");
@@ -228,6 +228,9 @@ namespace Bonmin{
       objects = new OsiObject* [couenneProb -> nCons () + nVars];
 
       nSOS = couenneProb -> findSOS (nonlinearSolver (), objects);
+
+      nonlinearSolver () -> addObjects (nSOS, objects);
+
       //printf ("==================== found %d SOS\n", nSOS);
       //nonlinearSolver () -> addObjects (nSOS, objects);
       //continuousSolver () -> addObjects (nSOS, objects);

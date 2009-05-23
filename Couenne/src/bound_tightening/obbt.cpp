@@ -163,6 +163,8 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
     CouenneSolverInterface *csi = dynamic_cast <CouenneSolverInterface *> (si.clone (true));
 
     csi -> setupForRepeatedUse ();
+    csi -> doingResolve () = false;
+
     //csi -> setHintParam (OsiDoDualInResolve, false);
 
     int nImprov, nIter = 0;
@@ -195,6 +197,8 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
       if (changed) 
 	free (changed);
     }
+
+    csi -> doingResolve () = true;
 
     delete csi;
 
