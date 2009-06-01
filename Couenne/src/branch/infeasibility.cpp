@@ -3,7 +3,7 @@
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Compute infeasibility of a variable, looking at all expressions it appears in
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -147,7 +147,7 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
     }
 
     double retval = 
-      // neglect it if variable has small bound interval (chech
+      // neglect it if variable has small bound interval (check
       // x84=x83/x5 in csched1.nl)
       (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) *
       // to consider maximum, minimum, and sum/avg of the infeasibilities

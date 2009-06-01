@@ -100,7 +100,7 @@ void CouenneProblem::initAuxs () const {
       variables_ [ord] -> Ub () -> print (); printf ("\n");*/
 
       Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
-			  " [ --> w_%04d [%10g,%10g] ] vs [%10g %10g]", 
+			  " ( --> w_%04d [%10g,%10g] ) vs [%10g %10g]", 
 			  ord, l, u, Lb (ord), Ub (ord));
 
       // set bounds 

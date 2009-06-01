@@ -4,7 +4,7 @@
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Base object for variables (to be used in branching)
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -369,6 +369,13 @@ double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) c
     if (reference_ -> Image ()) {printf (" := "); reference_ -> Image () -> print ();}
     printf ("\n");
   }
+
+  // Need to allow infeasibility for a variable without making the
+  // whole problem infeasible with an infeasibility = 1e+50. Check
+  // BonChooseVariable.cpp:382
+
+  if (retval > 1.e40)
+    retval = 1.e20;
 
   return (reference_ -> isInteger ()) ? 
     CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :

@@ -15,6 +15,8 @@
 
 class CouenneSOSObject;
 
+// TODO: SOS of the form sum x_i \le k with k small. Instead of
+// branching on a single variable do a SOS-like branching
 
 class CouenneSOSBranchingObject: public OsiSOSBranchingObject {
 

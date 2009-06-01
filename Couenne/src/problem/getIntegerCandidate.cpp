@@ -33,8 +33,8 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
   optimum_ = NULL;
 
   int
-    ncols    = nVars (), 
-    retval   = 0;
+    ncols  = nVars (), 
+    retval = 0;
 
   double
     *olb   = new double [ncols],       *oub   = new double [ncols],      // outer bounds
@@ -126,6 +126,24 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       printf ("===================================================\n");
     }
 
+
+    const int 
+      N_VARS_HUGE   = 10000,
+      N_VARS_LARGE  = 1000,
+      N_VARS_MEDIUM = 100,
+      N_VARS_SMALL  = 10,
+      N_VARS_TINY   = 5;
+
+    int 
+      ntrials   = 0, 
+      nvars = nVars (),
+      maxtrials =
+      (nvars >= N_VARS_HUGE)   ? 0 :
+      (nvars >= N_VARS_LARGE)  ? 1 :
+      (nvars >= N_VARS_MEDIUM) ? 2 :
+      (nvars >= N_VARS_SMALL)  ? 4 :
+      (nvars >= N_VARS_TINY)   ? 8 : 16;
+
     for (std::vector <int>::iterator rNum = numberInRank_.begin(); 
 	 ++rNum != numberInRank_.end(); rank++) 
 
@@ -170,10 +188,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
 	//CoinCopyN (xFrac, nOrigVars_, xInt);// TODO: re-copy first nOrigVars_ variables into xInt?
 
-	int 
-	  remaining = *rNum,
-	  ntrials   = 0, 
-	  maxtrials = 3;// rNum / divider;
+	int remaining = *rNum;
 
 	do {
 
