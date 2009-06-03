@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouennePrecisions.hpp
  * Author:  Pietro Belotti

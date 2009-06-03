@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneThreeWayBranchObj.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University

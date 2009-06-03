@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    conv-exprSinCos.cpp
  * Author:  Pietro Belotti

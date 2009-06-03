@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneChooseStrong.cpp
  * Authors: Andreas Waechter, IBM Corp.

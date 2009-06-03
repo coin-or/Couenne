@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    generateCuts.cpp
  * Author:  Pietro Belotti
@@ -418,7 +419,9 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
       // fill originals with nlp values
       CoinCopyN (nlpSol, problem_ -> nOrigVars (), problem_ -> domain () -> x ());
-      problem_ -> initAuxs ();
+      //problem_ -> initAuxs ();
+
+      problem_ -> getAuxs (problem_ -> domain () -> x ());
 
       if (jnlst_ -> ProduceOutput (J_VECTOR, J_CONVEXIFYING)) {
 	jnlst_ -> Printf(J_VECTOR, J_CONVEXIFYING,"== genrowcuts on NLP =============\n");

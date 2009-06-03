@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    branchExprQuad.cpp
  * Author:  Pietro Belotti

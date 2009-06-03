@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    conv-exprSum.cpp
  * Author:  Pietro Belotti

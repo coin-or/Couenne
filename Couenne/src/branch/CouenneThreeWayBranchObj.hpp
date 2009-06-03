@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneThreeWayBranchObj.hpp
  * Authors: Pierre Bonami, IBM Corp.

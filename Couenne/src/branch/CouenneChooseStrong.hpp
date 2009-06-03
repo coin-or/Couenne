@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneChooseStrong.hpp
  * Authors: Andreas Waechter, IBM Corp.

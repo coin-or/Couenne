@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    projections.hpp
  * Authors: Pietro Belotti, Carnegie Mellon University

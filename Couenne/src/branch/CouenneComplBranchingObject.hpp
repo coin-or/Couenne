@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneComplBranchingObject.hpp
  * Authors: Pietro Belotti, Lehigh University

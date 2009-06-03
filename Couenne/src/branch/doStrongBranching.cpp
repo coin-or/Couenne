@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    doStrongBranching.cpp
  * Authors: Andreas Waechter, IBM Corp.

@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    exprCos.cpp
  * Author:  Pietro Belotti

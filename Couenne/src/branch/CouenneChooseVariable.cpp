@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneChooseVariable.cpp
  * Authors: Pierre Bonami, IBM Corp.

@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneCutGenerator.cpp
  * Author:  Pietro Belotti

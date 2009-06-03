@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneVarObject.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University

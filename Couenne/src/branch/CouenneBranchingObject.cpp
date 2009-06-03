@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneBranchingObject.cpp
  * Authors: Pierre Bonami, IBM Corp.

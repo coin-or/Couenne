@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneObject.hpp
  * Authors: Pierre Bonami, IBM Corp.

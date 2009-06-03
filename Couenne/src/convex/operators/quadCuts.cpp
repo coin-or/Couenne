@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    quadCuts.cpp
  * Author:  Pierre Bonami

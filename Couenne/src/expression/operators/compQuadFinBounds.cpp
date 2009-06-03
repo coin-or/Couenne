@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    compQuadFinBounds.cpp
  * Author:  Pietro Belotti

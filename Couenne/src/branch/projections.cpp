@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    projections.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University
