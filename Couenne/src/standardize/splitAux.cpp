@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    splitAux.cpp
  * Author:  Pietro Belotti

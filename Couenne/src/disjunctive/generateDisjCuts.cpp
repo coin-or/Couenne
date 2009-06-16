@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    generateDisjCuts.cpp
  * Author:  Pietro Belotti
  * Purpose: separation method for disjunctive cuts

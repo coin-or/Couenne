@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    invmap.cpp
  * Author:  Pietro Belotti

@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    sumStandardize.cpp
  * Author:  Pietro Belotti

@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    exprCos.hpp
  * Author:  Pietro Belotti

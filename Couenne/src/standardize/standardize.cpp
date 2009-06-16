@@ -1,4 +1,6 @@
 /*
+ * $Id$
+ *
  * Name:    standardize.cpp
  * Author:  Pietro Belotti
  * Purpose: standardize all expressions in a problem

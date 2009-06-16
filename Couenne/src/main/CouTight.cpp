@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouTight.cpp
  * Authors: Leo Liberti, LIX, Ecole Polytechnique.

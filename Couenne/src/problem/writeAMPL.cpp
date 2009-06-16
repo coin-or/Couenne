@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    extended.cpp
  * Author:  Pietro Belotti

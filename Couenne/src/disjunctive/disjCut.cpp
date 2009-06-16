@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    disjCut.cpp
  * Author:  Pietro Belotti
  * Purpose: generate one disjunctive cut based on a single disjunction

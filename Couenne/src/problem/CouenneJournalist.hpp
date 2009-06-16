@@ -2,7 +2,7 @@
 // All Rights Reserved.
 // This code is published under the Common Public License.
 //
-// $Id: CouenneJournalist.hpp 988 2007-06-01 21:57:27Z andreasw $
+// $Id$
 //
 // Author:  Andreas Waechter           IBM    2007-12-04
 

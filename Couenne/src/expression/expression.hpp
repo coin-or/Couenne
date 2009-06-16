@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    expression.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the class expression

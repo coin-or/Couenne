@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    decomposeTerm.cpp
  * Author:  Pietro Belotti

@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    exprSum.hpp
  * Author:  Pietro Belotti
