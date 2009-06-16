@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneComplObject.hpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Branching object for complementarity constraints

@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    expression.cpp
  * Author:  Pietro Belotti
  * Purpose: methods of the expression class

@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprAux.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the auxiliary variable class (used in
@@ -183,7 +183,7 @@ class exprAux: public exprVar {
 
   /// return proper object to handle expression associated with this
   /// variable (NULL if this is not an auxiliary)
-  CouenneObject *properObject (CouenneProblem *p, 
+  CouenneObject &properObject (CouenneProblem *p, 
 			       Bonmin::BabSetupBase *base, 
 			       JnlstPtr jnlst);
 };

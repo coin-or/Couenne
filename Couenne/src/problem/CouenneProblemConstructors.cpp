@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneProblemConstructors.cpp
  * Author:  Pietro Belotti
  * Purpose: Constructors and destructors of the class CouenneProblem
@@ -222,11 +222,4 @@ CouenneProblem::~CouenneProblem () {
 
   if (unusedOriginalsIndices_)
     free (unusedOriginalsIndices_);
-
-  // clear objects_, but only those elements that were copied from the
-  // nullObject in fillDependence.cpp
-  // for (std::vector <CouenneObject *>::iterator i = objects_.begin ();
-  //        i != objects_. end (); ++i)
-//     //if ((*i) && ((*i) -> Reference () == NULL))
-//       delete (*i);
 }
