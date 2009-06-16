@@ -1,4 +1,5 @@
-/*
+/* $Id$
+ *
  * Name:    conv-exprPow.cpp
  * Author:  Pietro Belotti
  * Purpose: methods to convexify an expression x^k, k constant

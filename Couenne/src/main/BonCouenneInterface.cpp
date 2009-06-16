@@ -112,7 +112,7 @@ CouenneInterface::extractLinearRelaxation
 	*nlb = getColLower (),
 	*nub = getColUpper ();
 
-      for (int i=0; i < p -> nOrigVars (); i++) 
+      for (int i=0; i < p -> nOrigVars () - p -> nDefVars (); i++) 
 	if (p -> Var (i) -> Multiplicity () > 0) {
 	  if (nlb [i] < p -> Lb (i) - COUENNE_EPS) setColLower (i, p -> Lb (i));
 	  if (nub [i] > p -> Ub (i) + COUENNE_EPS) setColUpper (i, p -> Ub (i));

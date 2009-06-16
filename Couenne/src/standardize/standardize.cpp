@@ -69,6 +69,10 @@ void CouenneProblem::standardize () {
 
     expression *img = naux -> Image ();
 
+    // trick to obtain same index as common expression: create exprAux
+    // with index initVar and replace occurrences with address of
+    // newly created exprAux through auxiliarize()
+
     exprAux *newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
     //img -> isInteger () ? exprAux::Integer : exprAux::Continuous);
 
@@ -82,7 +86,7 @@ void CouenneProblem::standardize () {
 #ifdef DEBUG
     if (naux) {
       printf ("done: "); fflush (stdout);
-      naux -> print (); printf ("\n");
+      naux -> print ();
       printf (" := "); fflush (stdout);
       naux -> Image () -> print (); printf ("\n..."); fflush (stdout);
     } else if (*i) {
