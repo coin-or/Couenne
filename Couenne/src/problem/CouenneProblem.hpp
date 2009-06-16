@@ -202,6 +202,7 @@ class CouenneProblem {
   int nOrigCons () const {return nOrigCons_;}                   ///< Get number of original constraints
 
   inline int nOrigVars    () const {return nOrigVars_;}                ///< Number of orig. variables
+  inline int nDefVars     () const {return ndefined_;}                 ///< Number of def'd variables
   inline int nOrigIntVars () const {return nOrigIntVars_;}             ///< Number of original integers
   inline int nIntVars     () const {return nIntVars_;}                 ///< Number of integer variables
   inline int nVars        () const {return (int) variables_. size ();} ///< Total number of variables

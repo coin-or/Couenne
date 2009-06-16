@@ -114,7 +114,7 @@ CouenneInterface::extractLinearRelaxation
 	*nlb = getColLower (),
 	*nub = getColUpper ();
 
-      for (int i=0; i < p -> nOrigVars (); i++) 
+      for (int i=0; i < p -> nOrigVars () - p -> nDefVars (); i++) 
 	if (p -> Var (i) -> Multiplicity () > 0) {
 	  /*printf ("---- %4d [%g,%g] [%g,%g]\n", i,
 		  nlb [i], nub [i],
