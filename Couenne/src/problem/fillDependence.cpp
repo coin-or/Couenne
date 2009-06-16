@@ -34,7 +34,7 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base) {
     if (((*i) -> Type () == AUX)                           // consider auxs only
 	&& ((*i) -> Image () -> Linearity () > LINEAR)) {  // and nonlinear
 
-      CouenneObject &infeasObj = (*i) -> properObject (this, base, jnlst_);
+      CouenneObject infeasObj = (*i) -> properObject (this, base, jnlst_);
 
       if (!(infeasObj.Reference ())) // found something that will never be infeasible
 	continue;
