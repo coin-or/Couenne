@@ -136,7 +136,7 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   useQuadratic_ (p.useQuadratic_),  // ditto
   feas_tolerance_ (p.feas_tolerance_),
   dependence_   (p.dependence_),
-  objects_      (p.objects_),
+  objects_      (p.objects_), // NO! have to copy all of them 
   integerRank_  (NULL),
   numberInRank_ (p.numberInRank_),
   maxCpuTime_   (p.maxCpuTime_),
@@ -224,8 +224,8 @@ CouenneProblem::~CouenneProblem () {
 
   // clear objects_, but only those elements that were copied from the
   // nullObject in fillDependence.cpp
-  for (std::vector <CouenneObject *>::iterator i = objects_.begin ();
-       i != objects_. end (); ++i)
-    if ((*i) -> Reference () == NULL)
-      delete (*i);
+  // for (std::vector <CouenneObject *>::iterator i = objects_.begin ();
+  //        i != objects_. end (); ++i)
+//     //if ((*i) && ((*i) -> Reference () == NULL))
+//       delete (*i);
 }

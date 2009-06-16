@@ -35,7 +35,7 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base) {
 
       CouenneObject *infeasObj = (*i) -> properObject (this, base, jnlst_);
 
-      if (!infeasObj) // found something that will never be infeasibl
+      if (!infeasObj) // found something that will never be infeasible
 	continue;
 
       // add object for this variable
