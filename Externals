@@ -1,5 +1,5 @@
 BuildTools     https://projects.coin-or.org/svn/BuildTools/stable/0.5
-CoinUtils      https://projects.coin-or.org/svn/CoinUtils/stable/2.6/CoinUtils
+CoinUtils      https://projects.coin-or.org/svn/CoinUtils/stable/2.5/CoinUtils
 ThirdParty/ASL https://projects.coin-or.org/svn/BuildTools/ThirdParty/ASL/stable/1.0
 ThirdParty/Blas https://projects.coin-or.org/svn/BuildTools/ThirdParty/Blas/stable/1.0
 ThirdParty/HSL https://projects.coin-or.org/svn/BuildTools/ThirdParty/HSL/stable/1.1
