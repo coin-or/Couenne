@@ -253,8 +253,6 @@ Couenne/test/data/small2.nl -text
 Couenne/test/data/small2.obj -text
 Couenne/test/data/toy.nl -text
 Couenne/test/data/toy.obj -text
-Couenne/test/data/tsp4.nl -text
-Couenne/test/data/tsp5.nl -text
 Couenne/test/grandTest.sh.in -text
 /Externals -text
 /INSTALL -text
