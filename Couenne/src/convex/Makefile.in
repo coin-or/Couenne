@@ -65,7 +65,7 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneConvex_la_LIBADD =
 am_libCouenneConvex_la_OBJECTS = addEnvelope.lo createCuts.lo \
 	CouenneCutGenerator.lo generateCuts.lo genColCuts.lo \
-	genRowCuts.lo updateBranchInfo.lo
+	genRowCuts.lo isOptimumCut.lo updateBranchInfo.lo
 libCouenneConvex_la_OBJECTS = $(am_libCouenneConvex_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
@@ -279,6 +279,7 @@ libCouenneConvex_la_SOURCES = \
 	generateCuts.cpp \
 	genColCuts.cpp \
 	genRowCuts.cpp \
+	isOptimumCut.cpp \
 	updateBranchInfo.cpp
 
 
@@ -382,6 +383,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/genColCuts.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/genRowCuts.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generateCuts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/isOptimumCut.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/updateBranchInfo.Plo@am__quote@
 
 .cpp.o:

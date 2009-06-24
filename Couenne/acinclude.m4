@@ -6395,11 +6395,11 @@ done
 SED=$lt_cv_path_SED
 AC_MSG_RESULT([$SED])
 ])
-# Copyright (C) 2006, 2007 International Business Machines.
+# Copyright (C) 2006, 2009 International Business Machines.
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 #
-## $Id: coin.m4 1237 2009-02-23 15:51:43Z andreasw $
+## $Id: coin.m4 1272 2009-04-24 16:33:02Z andreasw $
 #
 # Author: Andreas Wachter    IBM      2006-04-14
 
@@ -9554,6 +9554,85 @@ fi
 AM_CONDITIONAL([COIN_BUILD_MUMPS],[test "$use_mumps" = BUILD])
 
 ]) # AC_COIN_HAS_MUMPS
+
+###########################################################################
+#                            COIN_HAS_METIS                               #
+###########################################################################
+
+# This macro checks for a library containing the METIS library.  It
+# checks if the user has provided an argument for the METIS library,
+# and if not, it checks whether the METIS ThirdParty/Metis directory has
+# been configured.  It adds to ADDLIBS any flags required to link with
+# an externally provided METIS.  It defines the makefile conditional
+# and preprocessor macro COIN_HAS_METIS, if METIS is available, and it
+# defines the makefile conditional COIN_BUILD_METIS, if METIS is
+# compiled within COIN.
+
+AC_DEFUN([AC_COIN_HAS_METIS],
+[
+case "$PACKAGE_NAME" in
+  ThirdParty*)
+    coin_metisobjdir=../Metis
+    ;;
+  *)
+    coin_metisobjdir=../ThirdParty/Metis
+    ;;
+esac
+
+MAKEOKFILE=.MakeOk
+
+#check if user provides a METIS library (that works)
+AC_LANG_PUSH(C)
+AC_ARG_WITH(metis,
+   AS_HELP_STRING([--with-metis], [specify flags to link with METIS library]),
+   [METISLIB="$withval"; coin_has_metis=true], [coin_has_metis=no])
+
+if test $coin_has_metis = true; then
+  coin_save_LIBS="$LIBS"
+  LIBS="$METISLIB $ADDLIBS"
+  AC_MSG_CHECKING([whether symbol metis_nodend is available with ])
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],[[metis_nodend()]])],
+     [AC_MSG_RESULT(yes)],
+     [AC_MSG_RESULT(no)
+      AC_MSG_ERROR([User-supplied METIS library does not work])])
+  LIBS="$coin_save_LIBS"
+fi
+AC_LANG_POP(C)
+
+if test "$coin_has_metis" = "true"; then  # user provided metis library
+  use_metis=yes
+  coin_has_metis=yes
+
+  ADDLIBS="$METISLIB $ADDLIBS"
+
+else # no user provided library, so we try to build our own
+  use_metis=BUILD
+
+  # Check if the METIS' ThirdParty project has been configured
+  if test "$PACKAGE_NAME" != ThirdPartyMetis; then
+    if test -r $coin_metisobjdir/.MakeOk; then
+      use_metis=BUILD
+    else
+      use_metis=
+    fi
+  fi
+
+  if test x"$use_metis" != x; then
+    coin_has_metis=yes
+  else
+    coin_has_metis=no
+  fi
+  AC_MSG_CHECKING([whether METIS is available])
+  AC_MSG_RESULT([$coin_has_metis])
+fi
+
+AM_CONDITIONAL([COIN_HAS_METIS],[test $coin_has_metis = yes])
+if test $coin_has_metis = yes; then
+  AC_DEFINE([COIN_HAS_METIS],[1],[If defined, the METIS library is available.])
+fi
+
+]) # AC_COIN_HAS_METIS
+
 
 ###########################################################################
 #                             COIN_HAS_GLPK                               #
