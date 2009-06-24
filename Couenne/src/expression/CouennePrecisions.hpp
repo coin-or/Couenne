@@ -36,4 +36,7 @@
 
 #define MAX_BOUND 1.e45
 
+/// used to declare LP unbounded
+const double Couenne_large_bound =  9.999e12;
+
 #endif

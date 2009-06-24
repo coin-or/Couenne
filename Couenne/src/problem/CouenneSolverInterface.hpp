@@ -91,6 +91,10 @@ public:
   bool &doingResolve () 
   {return doingResolve_;}
 
+  /// is this problem unbounded?
+  bool isProvenDualInfeasible () const;
+  //{return knowDualInfeasible_;}
+
 protected:
 
   /// The pointer to the Couenne cut generator. Gives us a lot of
@@ -103,6 +107,9 @@ protected:
 
   /// Flag indicating that optimality was detected during solveFromHotStart
   bool knowOptimal_;
+
+  /// Flag indicating this problem's continuous relaxation is unbounded
+  bool knowDualInfeasible_;
 
   /// flag to indicate this is an LP for the BB, not for (e.g.) strong
   /// branching or OBBT

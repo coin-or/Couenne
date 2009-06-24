@@ -21,6 +21,7 @@ CouenneSolverInterface::CouenneSolverInterface (CouenneCutGenerator *cg /*= NULL
   cutgen_ (cg),
   knowInfeasible_(false),
   knowOptimal_(false),
+  knowDualInfeasible_(false),
   doingResolve_ (true) {
 
   // prevents from running OsiClpSolverInterface::tightenBounds()
@@ -35,6 +36,7 @@ CouenneSolverInterface::CouenneSolverInterface (const CouenneSolverInterface &sr
   cutgen_               (src.cutgen_),
   knowInfeasible_       (src.knowInfeasible_),
   knowOptimal_          (src.knowOptimal_),
+  knowDualInfeasible_   (src.knowDualInfeasible_),
   doingResolve_         (src.doingResolve_) {}
 
 /// Destructor
@@ -55,11 +57,15 @@ void CouenneSolverInterface::initialSolve () {
 
 	    cutgen_ -> Problem () -> print ();*/
 
-  knowInfeasible_ = 
-  knowOptimal_    = false;
+  knowInfeasible_     = 
+  knowOptimal_        = 
+  knowDualInfeasible_ = false;
 
   OsiClpSolverInterface::initialSolve ();
   //writeLp ("initialLP");
+
+  if (getObjValue () <= - Couenne_large_bound)
+    knowDualInfeasible_ = true;
 
   // some originals may be unused due to their zero multiplicity (that
   // happens when they are duplicates), restore their value
@@ -94,6 +100,9 @@ bool CouenneSolverInterface::isProvenOptimal() const {
   return knowOptimal_ || OsiClpSolverInterface::isProvenOptimal();
 }
 
+bool CouenneSolverInterface::isProvenDualInfeasible() const {
+  return knowDualInfeasible_ || OsiClpSolverInterface::isProvenDualInfeasible();
+}
 
 /// Defined in Couenne/src/convex/generateCuts.cpp
 void sparse2dense (int, t_chg_bounds *, int *&, int &);
@@ -138,8 +147,9 @@ void CouenneSolverInterface::resolve () {
     writeMps (filename);
   }
 
-  knowInfeasible_ = false;
-  knowOptimal_    = false;
+  knowInfeasible_     = 
+  knowOptimal_        = 
+  knowDualInfeasible_ = false;
 
   const CoinWarmStart *ws = NULL;
 
@@ -150,6 +160,9 @@ void CouenneSolverInterface::resolve () {
 
   // re-solve problem
   OsiClpSolverInterface::resolve ();
+
+  if (getObjValue () <= - Couenne_large_bound)
+    knowDualInfeasible_ = true;
 
   CouNumber objval = getObjValue (),
     curCutoff = cutgen_ -> Problem () -> getCutOff ();
@@ -258,8 +271,9 @@ void CouenneSolverInterface::solveFromHotStart() {
   //OsiClpSolverInterface::solveFromHotStart ();
 
   //#if 0
-  knowInfeasible_ = false;
-  knowOptimal_ = false;
+  knowInfeasible_     = 
+  knowOptimal_        = 
+  knowDualInfeasible_ = false;
 
   /*
   const int ncols = cutgen_ -> Problem () -> nVars ();
@@ -344,6 +358,9 @@ void CouenneSolverInterface::solveFromHotStart() {
 
   resolve();
 
+  if (getObjValue () <= - Couenne_large_bound)
+    knowDualInfeasible_ = true;
+
   // some originals may be unused due to their zero multiplicity (that
   // happens when they are duplicates), restore their value
   if (cutgen_ -> Problem () -> nUnusedOriginals () > 0) {
@@ -354,8 +371,9 @@ void CouenneSolverInterface::solveFromHotStart() {
     delete [] x;
   }
 
-  if (isProvenPrimalInfeasible ()) knowInfeasible_ = true;
-  if (isProvenOptimal ())          knowOptimal_    = true;
+  if (isProvenPrimalInfeasible ()) knowInfeasible_     = true;
+  if (isProvenOptimal          ()) knowOptimal_        = true;
+  if (isProvenDualInfeasible   ()) knowDualInfeasible_ = true;
 
   //printf("obj value = %e\n",getObjValue());
 

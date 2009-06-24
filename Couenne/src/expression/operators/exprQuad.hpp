@@ -257,6 +257,9 @@ public:
   /// replace variable x with new (aux) w
   virtual void replace (exprVar *x, exprVar *w);
 
+  /// replace variable x with new (aux) w
+  virtual void realign (const CouenneProblem *p);
+
   /// implied bound processing
   virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *);
 

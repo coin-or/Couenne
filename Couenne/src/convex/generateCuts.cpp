@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    generateCuts.cpp
  * Author:  Pietro Belotti
  * Purpose: the generateCuts() method of the convexification class CouenneCutGenerator
@@ -15,10 +15,10 @@
 #include "CouenneProblem.hpp"
 #include "CouenneSolverInterface.hpp"
 
+#define Couenne_large_bound2 9.99e30
 
 // checks bad cuts against known optimum
 bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p);
-
 
 // set and lift bound for auxiliary variable associated with objective
 // function
@@ -27,8 +27,7 @@ void fictitiousBound (OsiCuts &cs,
 		      bool action) {     // true before convexifying, false afterwards
 
   // fictitious bound for initial unbounded lp relaxations
-  const CouNumber large_bound =  9.999e12;
-  const CouNumber large_tol = (large_bound / 1e6);
+  const CouNumber large_tol = (Couenne_large_bound2 / 1e6);
 
   // set trivial dual bound to objective function, if there is none
 
@@ -42,12 +41,12 @@ void fictitiousBound (OsiCuts &cs,
 
   if (action)
     //if (sense<0) 
-      {if (p -> Lb (ind_obj) < - large_bound) p -> Lb (ind_obj) = - large_bound;}
-  //else         {if (p -> Ub (ind_obj) >   large_bound) p -> Ub (ind_obj) =   large_bound;}
+      {if (p -> Lb (ind_obj) < - Couenne_large_bound2) p -> Lb (ind_obj) = - Couenne_large_bound2;}
+  //else         {if (p -> Ub (ind_obj) >   large_bound2) p -> Ub (ind_obj) =   large_bound2;}
   else
-    //if (sense>0) {if (fabs (p->Ub(ind_obj)-large_bound)<large_tol) p->Ub(ind_obj)=COUENNE_INFINITY;}
+    //if (sense>0) {if (fabs (p->Ub(ind_obj)-large_bound2)<large_tol) p->Ub(ind_obj)=COUENNE_INFINITY;}
     //else         
-      {if (fabs (p->Lb(ind_obj)+large_bound)<large_tol) p->Lb(ind_obj) =-COUENNE_INFINITY;}
+      {if (fabs (p->Lb(ind_obj)+Couenne_large_bound2)<large_tol) p->Lb(ind_obj) =-COUENNE_INFINITY;}
 }
 
 

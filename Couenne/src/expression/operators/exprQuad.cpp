@@ -468,12 +468,55 @@ void exprQuad::replace (exprVar *x, exprVar *w) {
 }
 
 
+/// Redirect variables to proper variable vector
+void exprQuad::realign (const CouenneProblem *p) {
+
+  for (sparseQ::iterator row = matrix_.begin (); row != matrix_.end (); ++row) {
+
+    exprVar * &vr = row -> first;
+    int indVar;
+
+    // substitute variable representing this row with its newest version
+
+    if (((vr -> Type () == VAR) ||
+	 (vr -> Type () == AUX)) &&
+	(vr -> Original () != p -> Var (indVar = vr -> Index ()))) {
+
+      expression *trash = vr;
+      row -> first = p -> Var (indVar);
+      delete trash;
+    }
+
+    // substitute each variable of this row with its newest version
+
+    for (sparseQcol::iterator col = row -> second.begin (); col != row -> second.end (); ++col) {
+
+      exprVar * &vc = col -> first;
+      int indVar;
+
+      // substitute variable representing this row with its newest version
+
+      if (((vc -> Type () == VAR) ||
+	   (vc -> Type () == AUX)) &&
+	  (vc -> Original () != p -> Var (indVar = vc -> Index ()))) {
+
+	expression *trash = vc;
+	col -> first = p -> Var (indVar);
+	delete trash;
+      }
+    }
+  }
+}
+
+
 /// compute $y^{lv}$ and $y^{uv}$ for Violation Transfer algorithm
 void exprQuad::closestFeasible (expression *varind,
 				expression *vardep, 
 				CouNumber &left,
 				CouNumber &right) const {
-  assert (false);
+
+  fprintf (stderr, "exprQuad::closestFeasible() not available for VT\n");
+  exit (-1);
 }
 
 
