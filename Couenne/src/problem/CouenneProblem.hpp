@@ -1,4 +1,5 @@
-/*
+/* $Id: CouenneProblem.hpp 155 2009-06-16 20:19:39Z pbelotti $
+ *
  * Name:    CouenneProblem.hpp
  * Author:  Pietro Belotti
  * Purpose: define the class CouenneProblem
@@ -130,6 +131,7 @@ class CouenneProblem {
   mutable bool created_pcutoff_;
 
   bool doFBBT_;  ///< do Feasibility-based bound tightening
+  bool doRCBT_;  ///< do reduced cost      bound tightening
   bool doOBBT_;  ///< do Optimality-based  bound tightening
   bool doABT_;   ///< do Aggressive        bound tightening
 
@@ -156,7 +158,7 @@ class CouenneProblem {
   /// vector of pointer to CouenneObjects. Used by CouenneVarObjects
   /// when finding all objects related to (having as argument) a
   /// single variable
-  std::vector <CouenneObject *> objects_;
+  std::vector <CouenneObject> objects_;
 
   /// each element is true if variable is integer and, if auxiliary,
   /// depends on no integer
@@ -201,6 +203,7 @@ class CouenneProblem {
   int nOrigCons () const {return nOrigCons_;}                   ///< Get number of original constraints
 
   inline int nOrigVars    () const {return nOrigVars_;}                ///< Number of orig. variables
+  inline int nDefVars     () const {return ndefined_;}                 ///< Number of def'd variables
   inline int nOrigIntVars () const {return nOrigIntVars_;}             ///< Number of original integers
   inline int nIntVars     () const {return nIntVars_;}                 ///< Number of integer variables
   inline int nVars        () const {return (int) variables_. size ();} ///< Total number of variables
@@ -297,6 +300,7 @@ class CouenneProblem {
 
   // bound tightening parameters
   bool doFBBT () const {return doFBBT_;} ///< shall we do Feasibility Based Bound Tightening?
+  bool doRCBT () const {return doRCBT_;} ///< shall we do reduced cost      Bound Tightening?
   bool doOBBT () const {return doOBBT_;} ///< shall we do Optimality  Based Bound Tightening?
   bool doABT  () const {return doABT_;}  ///< shall we do Aggressive        Bound Tightening?
 
@@ -450,7 +454,7 @@ class CouenneProblem {
   {return dependence_;}
 
   /// return object vector
-  const std::vector <CouenneObject *> &Objects () const
+  const std::vector <CouenneObject> &Objects () const
   {return objects_;}
 
   /// find SOS constraints in problem

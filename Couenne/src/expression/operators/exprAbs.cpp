@@ -1,3 +1,4 @@
+/* $Id: exprAbs.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    exprAbs.cpp
  * Author:  Pietro Belotti

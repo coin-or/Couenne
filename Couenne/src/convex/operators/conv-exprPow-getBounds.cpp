@@ -1,9 +1,10 @@
-/*
+/* $Id: conv-exprPow-getBounds.cpp 139 2009-06-03 03:56:30Z pbelotti $ 
+ *
  * Name:    conv-exprPow-getBounds.cpp
  * Author:  Pietro Belotti
  * Purpose: method to get lower and upper bounds of a power x^y
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -78,7 +79,7 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
       all [4] = ubbase;
 
       if (expon > 0) 
-	all [1] = new exprPow (new exprClone (lbbase), new exprConst (expon));
+	all    [1] = new exprPow (new exprClone (lbbase), new exprConst (expon));
       else all [1] = new exprPow (new exprClone (ubbase), new exprConst (expon));
 
       // all [3] is lower bound when lbbase <= 0 <= ubbase
@@ -120,7 +121,8 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
 
 	ub = new exprMax (new exprPow (new exprClone (lbbase), new exprConst (expon)),
 			  new exprPow (new exprClone (ubbase), new exprConst (expon)));
-      } else {
+
+      } else { // from this point on, expon < 0
 
 	expression **alu = new expression * [6];
 
@@ -128,32 +130,36 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
 	alu [2] = new exprConst (0.);
 	alu [4] = new exprClone (ubbase);
 
-	if ((expon > 0) || ((isInt || isInvInt) && !(rndexp % 2)))
-	  alu    [1] = new exprPow (new exprClone (ubbase), new exprConst (expon));
-	else alu [1] = new exprPow (new exprClone (lbbase), new exprConst (expon));
+	//if ((isInt || isInvInt) && !(rndexp % 2))
+	//alu    [1] = new exprPow (new exprClone (ubbase), new exprConst (expon));
+	//else 
+
+	// if negative exponent and base has nonnegative lower bound,
+	// the upper bound can only be lb^k
+	alu [1] = new exprPow (new exprClone (lbbase), new exprConst (expon));
 
 	// alu [3] is upper bound when lbbase <= 0 <= ubbase
 
-	if (expon < - COUENNE_EPS) 
-	  alu [3] = new exprConst (COUENNE_INFINITY);
-	else if (isInt && !(rndexp % 2))
-	  alu [3] = new exprPow (new exprMax (new exprClone (lbbase), new exprClone (ubbase)),
-				 new exprConst (expon));
-	else alu [3] = new exprPow (new exprClone (ubbase), new exprConst (expon));
+	//if (expon < - COUENNE_EPS) 
+	alu [3] = new exprConst (COUENNE_INFINITY);
+	//else if (isInt && !(rndexp % 2))
+	//alu [3] = new exprPow (new exprMax (new exprClone (lbbase), new exprClone (ubbase)),
+	//new exprConst (expon));
+	//else alu [3] = new exprPow (new exprClone (ubbase), new exprConst (expon));
 
 	// alu [5] is the upper bound value when lbbase <= ubbase <= 0
 
-	if (expon > COUENNE_EPS) {
+	/*if (expon > COUENNE_EPS) {
 
 	  if (isInt && !(rndexp % 2)) 
 	    alu [5] = new exprPow (new exprClone(ubbase), new exprConst(expon));
 	  else alu [5] = new exprConst (0.);
 	}
-	else {
-	  if (isInt || isInvInt) 
-	    alu [5] = new exprPow (new exprClone(ubbase), new exprConst(expon));
-	  else alu [5] = new exprConst (COUENNE_INFINITY);
-	}
+	else {*/
+	if (isInt || isInvInt) 
+	  alu [5] = new exprPow (new exprClone (ubbase), new exprConst (expon));
+	else alu [5] = new exprConst (COUENNE_INFINITY);
+	  //}
 
 	ub = new exprMin (alu, 6);
       }

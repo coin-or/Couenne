@@ -1,9 +1,10 @@
-/*
+/* $Id: infeasibility.cpp 155 2009-06-16 20:19:39Z pbelotti $
+ *
  * Name:    infeasibility.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Compute infeasibility of a variable, looking at all expressions it appears in
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -114,11 +115,11 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
 
     // otherwise, return a nonzero infeasibility, if necessary. It
     // might make sense to branch on it
-    const CouenneObject *obj = problem_ -> Objects () [reference_ -> Index ()];
+    const CouenneObject &obj = problem_ -> Objects () [reference_ -> Index ()];
 
-    double retval = (obj -> Reference ()) ? 
+    double retval = (obj. Reference ()) ? 
       (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) *
-      weiSum * obj ->checkInfeasibility (info) : 0.;
+      weiSum * obj. checkInfeasibility (info) : 0.;
 
     return retval;
 
@@ -138,8 +139,8 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
 
       // *i is the index of an auxiliary that depends on reference_
 
-      const CouenneObject *obj = problem_ -> Objects () [*i];
-      CouNumber infeas = (obj -> Reference ()) ? obj -> checkInfeasibility (info) : 0.;
+      const CouenneObject &obj = problem_ -> Objects () [*i];
+      CouNumber infeas = (obj. Reference ()) ? obj. checkInfeasibility (info) : 0.;
 
       if (infeas > infmax) infmax = infeas;
       if (infeas < infmin) infmin = infeas;
@@ -147,7 +148,7 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
     }
 
     double retval = 
-      // neglect it if variable has small bound interval (chech
+      // neglect it if variable has small bound interval (check
       // x84=x83/x5 in csched1.nl)
       (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) *
       // to consider maximum, minimum, and sum/avg of the infeasibilities

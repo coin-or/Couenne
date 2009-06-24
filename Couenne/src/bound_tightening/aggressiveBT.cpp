@@ -1,3 +1,4 @@
+/* $Id: aggressiveBT.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    aggressiveBT.cpp
  * Author:  Pietro Belotti
@@ -5,10 +6,12 @@
  *          exclude parts of the solution space through fathoming on
  *          bounds/infeasibility
  *
- * (C) Carnegie-Mellon University, 2007-08.
+ * (C) Carnegie-Mellon University, 2007-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "BonTNLPSolver.hpp"
+#include "BonNlpHeuristic.hpp"
 #include "CoinHelperFunctions.hpp"
 #include "BonCouenneInfo.hpp"
 
@@ -114,8 +117,12 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     nlp -> setColUpper    (upper);
     nlp -> setColSolution (Y);
 
-    nlp -> initialSolve ();
-
+    try {
+      nlp -> initialSolve ();
+    }
+    catch (Bonmin::TNLPSolver::UnsolvedError *E) {
+    }
+    
     delete [] Y;
     delete [] lower;
     delete [] upper;
@@ -236,20 +243,20 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     if (!retval) Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
 				 "Couenne infeasible node from aggressive BT\n");
 
-    int       objind = Obj (0) -> Body  () -> Index ();
+    int objind = Obj (0) -> Body  () -> Index ();
 
     Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
 		    "-------------\ndone Aggressive BT. Current bound = %g, cutoff = %g, %d vars\n", 
 		    Lb (objind), getCutOff (), ncols);
 
-    for (int i=0; i<nOrigVars_; i++)
-      Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-		      "   x%02d [%+20g %+20g]  | %+20g\n",
-		      i, Lb (i), Ub (i), X [i]);
+    if (Jnlst()->ProduceOutput(J_DETAILED, J_BOUNDTIGHTENING))
+      for (int i=0; i<nOrigVars_; i++)
+	printf("   x%02d [%+20g %+20g]  | %+20g\n",
+	       i, Lb (i), Ub (i), X [i]);
 
-    for (int i=nOrigVars_; i<ncols; i++)
-      Jnlst()->Printf(J_MOREDETAILED, J_BOUNDTIGHTENING,
-		      "   w%02d [%+20g %+20g]  | %+20g\n", i, Lb (i), Ub (i), X [i]);
+    if (Jnlst()->ProduceOutput(J_MOREDETAILED, J_BOUNDTIGHTENING))
+      for (int i=nOrigVars_; i<ncols; i++)
+	printf ("   w%02d [%+20g %+20g]  | %+20g\n", i, Lb (i), Ub (i), X [i]);
   }
 
   delete [] X;

@@ -1,9 +1,10 @@
+/* $Id: exprGroup.cpp 154 2009-06-16 18:52:53Z pbelotti $ */
 /*
  * Name:    exprGroup.cpp
  * Author:  Pietro Belotti
  * Purpose: implementation of some methods for exprGroup
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -17,6 +18,30 @@
 
 class Domain;
 
+
+// eliminates elements with zero coefficients
+void cleanZeros (std::vector <std::pair <exprVar *, CouNumber> > &lcoeff) {
+
+  std::vector <std::pair <exprVar *, CouNumber> >::iterator i = lcoeff.begin ();
+
+  int 
+    ind  = 0,
+    size = lcoeff.size ();
+  
+  while (size-- > 0) {
+    if ((i -> second ==  0.) || 
+	(i -> second == -0.)) {
+      lcoeff.erase (i);
+      i = lcoeff.begin () + ind;
+    } else {
+      ++i;
+      ++ind;
+    }
+  }
+}
+
+
+
 /// Generalized (static) constructor: check parameters and return a
 /// constant, a single variable, or a real exprGroup
 expression *exprGroup::genExprGroup (CouNumber c0,
@@ -25,6 +50,8 @@ expression *exprGroup::genExprGroup (CouNumber c0,
 				     int n) {
   int nl = lcoeff.size ();
   expression *ret = NULL;
+
+  cleanZeros (lcoeff);
 
   // a constant
   if ((n==0) && (nl==0))
@@ -49,7 +76,10 @@ exprGroup::exprGroup (CouNumber c0,
 		      int n):
   exprSum  (al, n),
   lcoeff_  (lcoeff),
-  c0_      (c0) {}
+  c0_      (c0) {
+
+  cleanZeros (lcoeff_);
+}
 
 
 /// copy constructor

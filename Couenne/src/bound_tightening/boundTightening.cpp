@@ -1,4 +1,5 @@
-/*
+/* $Id: boundTightening.cpp 151 2009-06-16 03:31:06Z pbelotti $
+ *
  * Name:    boundTightening.cpp
  * Author:  Pietro Belotti
  * Purpose: tighten bounds prior to convexification cuts
@@ -36,7 +37,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
   if (optimum_ != NULL) {
     contains_optimum = true;
-    for (int i=0; i<nOrigVars_; i++)
+    for (int i=0; i < nVars (); i++)
       if ((optimum_ [i] < Lb (i) * (1 - COUENNE_EPS) - COUENNE_EPS) ||
 	  (optimum_ [i] > Ub (i) * (1 + COUENNE_EPS) + COUENNE_EPS)) {
 	/*printf ("won't check BT: %d [%g,%g] (%g) -- %g\n", 
@@ -69,7 +70,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
       first = false;
 
     if ((ntightened < 0) || (nbwtightened < 0)) {
-      Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING, "infeasible BT\n");
+      Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "infeasible BT\n");
       return false;
     }
 
@@ -77,9 +78,9 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
     // expression structure is not a tree.
 
     if (contains_optimum) {
-      for (int i=0; i<nOrigVars_; i++)
-	if ((optimum_ [i] < Lb (i) * (1 - COUENNE_EPS) - COUENNE_EPS) ||
-	    (optimum_ [i] > Ub (i) * (1 + COUENNE_EPS) + COUENNE_EPS)) {
+      for (int i=0; i<nVars (); i++)
+	if ((optimum_[i] < Lb(i) - COUENNE_EPS * (1. + CoinMin (fabs(optimum_ [i]), fabs (Lb(i))))) ||
+	    (optimum_[i] > Ub(i) + COUENNE_EPS * (1. + CoinMin (fabs(optimum_ [i]), fabs (Ub(i)))))) {
 	  printf ("bound tightening FAIL: %d [%e,%e] (%e) -- %e\n", 
 		  i, Lb (i), Ub (i), optimum_ [i],
 		  CoinMax (- optimum_ [i] + Lb (i),
@@ -107,11 +108,11 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
     if (Var (i) -> Multiplicity () > 0) {
 
       // final test 
-      if ((Lb (i) > Ub (i) + COUENNE_EPS) || 
+      if ((Lb (i) > Ub (i) + COUENNE_EPS * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) || 
 	  (Ub (i) < - MAX_BOUND) ||
 	  (Lb (i) >   MAX_BOUND)) {
 
-	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING, "final test: infeasible BT\n");
+	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "final test: infeasible BT\n");
 	return false;
       }
 

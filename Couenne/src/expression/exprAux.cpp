@@ -1,4 +1,5 @@
-/*
+/* $Id: exprAux.cpp 156 2009-06-16 20:24:38Z pbelotti $
+ *
  * Name:    exprAux.cpp
  * Author:  Pietro Belotti
  * Purpose: methods of the class of auxiliary variables
@@ -271,9 +272,11 @@ void exprAux::generateCuts (const OsiSolverInterface &si,
 
 /// return proper object to handle expression associated with this
 /// variable (NULL if this is not an auxiliary)
-CouenneObject *exprAux::properObject (CouenneProblem *p, 
-				      Bonmin::BabSetupBase *base, 
-				      JnlstPtr jnlst) {
+CouenneObject exprAux::properObject (CouenneProblem *p, 
+				     Bonmin::BabSetupBase *base, 
+				     JnlstPtr jnlst) {
+
+  CouenneObject *retp = NULL;
 
   /*if (image_ -> code () == COU_EXPRMUL) printf ("OK1\n");
   if (image_ -> ArgList () [0] -> Index () >= 0) printf ("OK2\n"); 
@@ -287,10 +290,17 @@ CouenneObject *exprAux::properObject (CouenneProblem *p,
       (image_ -> ArgList () [0] -> Index () >= 0) &&
       (image_ -> ArgList () [1] -> Index () >= 0) &&
       (fabs (lb ()) < COUENNE_EPS) &&
-      (fabs (ub ()) < COUENNE_EPS))
+      (fabs (ub ()) < COUENNE_EPS)) {
 
     // it's a complementarity constraint object!
 
-    return new CouenneComplObject (p, this, base, jnlst);
-  else return new CouenneObject (p, this, base, jnlst);
+    CouenneComplObject obj (p, this, base, jnlst);
+    return obj;
+  }
+  else {
+    CouenneObject obj (p, this, base, jnlst);
+    return obj;
+  }
+
+  //  return (*retp);
 }

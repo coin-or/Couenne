@@ -1,3 +1,4 @@
+/* $Id: CouenneSOS.cpp 154 2009-06-16 18:52:53Z pbelotti $ */
 /*
  * Name:    CouenneSOS.cpp
  * Author:  Pietro Belotti
@@ -46,6 +47,11 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
       CouNumber cterm = group -> getc0 ();
       bool defVar = true;
 
+      // now check if this is 
+      //
+      // 1) an auxiliary fixed to one  ==> it's a SOS if its image is x1+x2+...+xk
+      // 2) an auxiliary fixed to zero ==> it's a SOS if its image is -x1-x2-...-xk+1
+
       if      (fabs (cterm - 1.) < COUENNE_EPS) defVar = false;
       else if (fabs (cterm)      > COUENNE_EPS) continue; // and defVar is true
 
@@ -66,14 +72,14 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
 
       // there are two possibilities:
       //
-      // 1) w is deined as w = 1 - \sum_{i=0}^n x_i  -- defvar = false
+      // 1) w is defined as w = 1 - \sum_{i=0}^n x_i  -- defvar = false
       //
       // 2) w is defined as \sum_{i=0}^n x_i and w \in [1,1] -- defvar = true
 
       bool
 	intSOS = (*v) -> isInteger (),
 	isSOS  = true,
-	onlyOrigVars = true; // if SOS constraints only contains
+	onlyOrigVars = true; // if SOS constraint only contains
 			     // original variables, it has been
 			     // spotted by Cbc already
 
@@ -115,8 +121,12 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
       for (int i=indStart, j=0; i<nelem; i++)
 	indices [i] = lcoe [j++]. first -> Index ();
 
-      CouenneSOSObject *newsos = new CouenneSOSObject (solver, nelem, indices, NULL, 1,
-						       jnlst_, true, true);
+      // TODO: if use Cbc, add CbcSOSBranchingObject
+
+      /*CouenneSOSObject *newsos = new CouenneSOSObject (solver, nelem, indices, NULL, 1,
+	jnlst_, true, true);*/
+
+      OsiSOS *newsos = new OsiSOS (solver, nelem, indices, NULL, 1);
 
       objects [nSOS] = newsos;
       // as in BonBabSetupBase.cpp:675

@@ -1,3 +1,4 @@
+/* $Id: obbt.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    obbt.cpp
  * Author:  Pietro Belotti
@@ -163,6 +164,8 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
     CouenneSolverInterface *csi = dynamic_cast <CouenneSolverInterface *> (si.clone (true));
 
     csi -> setupForRepeatedUse ();
+    csi -> doingResolve () = false;
+
     //csi -> setHintParam (OsiDoDualInResolve, false);
 
     int nImprov, nIter = 0;
@@ -171,10 +174,8 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
     while (!notImproved && 
 	   (nIter++ < MAX_OBBT_ITER) &&
-	   ((nImprov = obbtInner (csi, cs, chg_bds, babInfo)) > 0)) {
-
-      if (CoinCpuTime () > maxCpuTime_)
-	break;
+	   ((nImprov = obbtInner (csi, cs, chg_bds, babInfo)) > 0) &&
+	   (CoinCpuTime () < maxCpuTime_)) {
 
       int nchanged, *changed = NULL;
 
@@ -197,6 +198,8 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
       if (changed) 
 	free (changed);
     }
+
+    csi -> doingResolve () = true;
 
     delete csi;
 

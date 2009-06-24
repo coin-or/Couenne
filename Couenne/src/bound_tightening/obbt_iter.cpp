@@ -1,3 +1,4 @@
+/* $Id: obbt_iter.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    obbt.cpp
  * Author:  Pietro Belotti

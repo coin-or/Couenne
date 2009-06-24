@@ -1,3 +1,4 @@
+/* $Id: rootQ.cpp 154 2009-06-16 18:52:53Z pbelotti $ */
 /*
  * Name:    rootQ.cpp
  * Author:  Pietro Belotti

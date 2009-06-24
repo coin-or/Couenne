@@ -1,3 +1,4 @@
+/* $Id: problem.cpp 154 2009-06-16 18:52:53Z pbelotti $ */
 /*
  * Name:    problem.cpp
  * Author:  Pietro Belotti
@@ -24,7 +25,8 @@
 #include "CouenneProblemElem.hpp"
 #include "lqelems.hpp"
 
-const CouNumber SafeCutoff = COUENNE_EPS;
+// tricky... smaller values cut the optimum in OS unitTest
+const CouNumber SafeCutoff = 1e-4; 
 
 /// initialize auxiliary variables from original variables in the
 /// nonlinear problem
@@ -99,7 +101,7 @@ void CouenneProblem::initAuxs () const {
       variables_ [ord] -> Ub () -> print (); printf ("\n");*/
 
       Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
-			  " [ --> w_%04d [%10g,%10g] ] vs [%10g %10g]", 
+			  " ( --> w_%04d [%10g,%10g] ) vs [%10g %10g]", 
 			  ord, l, u, Lb (ord), Ub (ord));
 
       // set bounds 
@@ -351,6 +353,13 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
      "yes","");
 
   roptions -> AddStringOption2 
+    ("redcost_bt",
+     "Reduced cost bound tightening",
+     "yes",
+     "no","",
+     "yes","");
+
+  roptions -> AddStringOption2 
     ("use_quadratic",
      "Use quadratic expressions and related exprQuad class",
      "no",
@@ -402,4 +411,11 @@ If k>=0, apply with probability 2^(k - level), level being the current depth of 
      "vt_obj",   "use Violation Transfer from Tawarmalani and Sahinidis",
      "var_obj",  "use one object for each variable",
      "expr_obj", "use one object for each nonlinear expression");
+
+  roptions -> AddStringOption2 
+    ("delete_redundant",
+     "Eliminate redundant variables, which appear in the problem as x_k = x_h",
+     "yes",
+     "no","Keep redundant variables, making the problem a bit larger",
+     "yes","Eliminate redundant (the problem will be equivalent, only smaller)");
 }

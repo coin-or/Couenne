@@ -1,3 +1,4 @@
+/* $Id: CouennePrecisions.hpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    CouennePrecisions.hpp
  * Author:  Pietro Belotti
@@ -34,5 +35,8 @@
 #define COUENNE_round(x) ((int) (floor ((x) + 0.5)))
 
 #define MAX_BOUND 1.e45
+
+/// used to declare LP unbounded
+const double Couenne_large_bound =  9.999e12;
 
 #endif

@@ -1,3 +1,4 @@
+/* $Id: linStandardize.cpp 154 2009-06-16 18:52:53Z pbelotti $ */
 /*
  * Name:    linStandardize.cpp
  * Author:  Pietro Belotti
@@ -74,13 +75,14 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
   // a constant
   if ((nq==0) && (nl==0)) 
 
-    ret = new exprClone (addAuxiliary (new exprConst (c0))); // a constant auxiliary? FIX!
+    ret = new exprConst (c0); // a constant auxiliary? 
 
   else if ((nq==0) && (fabs (c0) < COUENNE_EPS) && (nl==1)) { // a linear monomial, cx
 
-    if (fabs (*lc - 1) < COUENNE_EPS)
-      ret    = new exprClone (Var (*li));
-    else ret = new exprMul (new exprConst (*lc), new exprClone (Var (*li)));
+    if      (fabs (*lc - 1.) < COUENNE_EPS) ret = new exprClone (Var (*li));
+    else if (fabs (*lc + 1.) < COUENNE_EPS) ret = new exprOpp (new exprClone (Var (*li)));
+    else                                    ret = new exprMul (new exprConst (*lc), 
+				 			       new exprClone (Var (*li)));
 
   } else if ((nl==0) && (fabs (c0) < COUENNE_EPS) && (nq==1)) { 
 

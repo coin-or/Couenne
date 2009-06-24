@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Name:    CouenneOS.cpp
  * Authors: 

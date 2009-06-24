@@ -1,3 +1,4 @@
+/* $Id: genColCuts.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    genColCuts.cpp
  * Author:  Pietro Belotti
@@ -26,8 +27,8 @@ void CouenneCutGenerator::genColCuts (const OsiSolverInterface &si,
   int  ncols  = problem_ -> nVars (),
       *indLow = new int [ncols], // indices for OsiColCut
       *indUpp = new int [ncols], //
-       nLow, nUpp = nLow = 0,
-       ind_obj = problem_ -> Obj (0) -> Body () -> Index ();
+       nLow, nUpp = nLow = 0;
+    //ind_obj = problem_ -> Obj (0) -> Body () -> Index ();
 
   // values fo OsiColCut
   CouNumber *bndLow = new CouNumber [ncols],
@@ -55,7 +56,7 @@ void CouenneCutGenerator::genColCuts (const OsiSolverInterface &si,
     // fails with spectra2 with (abt=2,obbt=0) for variable x70
     //assert (problem_ -> Var (index) -> Multiplicity () > 0);
 
-    if ((index == ind_obj) || 
+    if (//(index == ind_obj) || 
 	(problem_ -> Var (index) -> Multiplicity () <= 0))
       continue;
 

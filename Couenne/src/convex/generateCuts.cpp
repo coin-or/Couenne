@@ -1,4 +1,5 @@
-/*
+/* $Id: generateCuts.cpp 141 2009-06-03 04:19:19Z pbelotti $
+ *
  * Name:    generateCuts.cpp
  * Author:  Pietro Belotti
  * Purpose: the generateCuts() method of the convexification class CouenneCutGenerator
@@ -14,6 +15,10 @@
 #include "CouenneProblem.hpp"
 #include "CouenneSolverInterface.hpp"
 
+#define Couenne_large_bound2 9.99e30
+
+// checks bad cuts against known optimum
+bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p);
 
 // set and lift bound for auxiliary variable associated with objective
 // function
@@ -22,8 +27,7 @@ void fictitiousBound (OsiCuts &cs,
 		      bool action) {     // true before convexifying, false afterwards
 
   // fictitious bound for initial unbounded lp relaxations
-  const CouNumber large_bound =  9.999e12;
-  const CouNumber large_tol = (large_bound / 1e6);
+  const CouNumber large_tol = (Couenne_large_bound2 / 1e6);
 
   // set trivial dual bound to objective function, if there is none
 
@@ -37,12 +41,12 @@ void fictitiousBound (OsiCuts &cs,
 
   if (action)
     //if (sense<0) 
-      {if (p -> Lb (ind_obj) < - large_bound) p -> Lb (ind_obj) = - large_bound;}
-  //else         {if (p -> Ub (ind_obj) >   large_bound) p -> Ub (ind_obj) =   large_bound;}
+      {if (p -> Lb (ind_obj) < - Couenne_large_bound2) p -> Lb (ind_obj) = - Couenne_large_bound2;}
+  //else         {if (p -> Ub (ind_obj) >   large_bound2) p -> Ub (ind_obj) =   large_bound2;}
   else
-    //if (sense>0) {if (fabs (p->Ub(ind_obj)-large_bound)<large_tol) p->Ub(ind_obj)=COUENNE_INFINITY;}
+    //if (sense>0) {if (fabs (p->Ub(ind_obj)-large_bound2)<large_tol) p->Ub(ind_obj)=COUENNE_INFINITY;}
     //else         
-      {if (fabs (p->Lb(ind_obj)+large_bound)<large_tol) p->Lb(ind_obj) =-COUENNE_INFINITY;}
+      {if (fabs (p->Lb(ind_obj)+Couenne_large_bound2)<large_tol) p->Lb(ind_obj) =-COUENNE_INFINITY;}
 }
 
 
@@ -91,16 +95,24 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     CouNumber *opt = realOpt;
 
     const CouNumber 
-      *lb = si.getColLower (),
-      *ub = si.getColUpper ();
+      *sol = si.getColSolution (),
+      *lb  = si.getColLower (),
+      *ub  = si.getColUpper ();
 
-    for (int i=problem_ -> nOrigVars (); i--; opt++, lb++, ub++)
-      if ((*opt < *lb - COUENNE_EPS) || (*opt > *ub + COUENNE_EPS)) {
-	//printf ("out of bounds, ignore (%d,%g) [%g,%g]\n", 
-	//problem_ -> nOrigVars () - i - 1, *opt, *lb, *ub);
+    int objind = problem_ -> Obj (0) -> Body () -> Index ();
+
+    for (int j=0, i=problem_ -> nVars (); i--; j++, opt++, lb++, ub++)
+      if ((j != objind) && 
+	  ((*opt < *lb - COUENNE_EPS * (1 + CoinMin (fabs (*opt), fabs (*lb)))) || 
+	   (*opt > *ub + COUENNE_EPS * (1 + CoinMin (fabs (*opt), fabs (*ub)))))) {
+	
+	jnlst_ -> Printf (J_VECTOR, J_CONVEXIFYING, 
+			  "out of bounds, ignore x%d = %g [%g,%g] opt = %g\n", 
+			  problem_ -> nVars () - i - 1, *sol, *lb, *ub, *opt);
+
 	// optimal point is not in current bounding box,
 	// pretend realOpt is NULL until we return from this procedure
-	//realOpt = NULL;
+	realOpt = NULL;
 	break;
       }
   }
@@ -326,6 +338,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
     // Reduced Cost BT -- to be done first to use rcost correctly
     if (!firstcall_  &&                         // have a linearization already
+	problem_ -> doRCBT () &&                // authorized to do reduced cost tightening
 	problem_ -> redCostBT (&si, chg_bds) && // some variables were tightened with reduced cost
 	!(problem_ -> btCore (chg_bds)))        // in this case, do another round of FBBT
       throw infeasible;
@@ -405,7 +418,9 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
       // fill originals with nlp values
       CoinCopyN (nlpSol, problem_ -> nOrigVars (), problem_ -> domain () -> x ());
-      problem_ -> initAuxs ();
+      //problem_ -> initAuxs ();
+
+      problem_ -> getAuxs (problem_ -> domain () -> x ());
 
       if (jnlst_ -> ProduceOutput (J_VECTOR, J_CONVEXIFYING)) {
 	jnlst_ -> Printf(J_VECTOR, J_CONVEXIFYING,"== genrowcuts on NLP =============\n");
@@ -450,9 +465,12 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     if (firstcall_ && (cs.sizeRowCuts () >= 1))
       jnlst_->Printf(J_ITERSUMMARY, J_CONVEXIFYING,
 		     "Couenne: %d initial row cuts\n", cs.sizeRowCuts ());
-  }
 
-  // end of OBBT //////////////////////////////////////////////////////////////////////
+    if (realOpt && // this is a good time to check if we have messed up with the optimal solution
+	isOptimumCut (realOpt, cs, problem_))
+      jnlst_->Printf(J_ITERSUMMARY, J_CONVEXIFYING,
+		     "\n\n CUT OPTIMUM\n\n");
+  }
 
   catch (int exception) {
 

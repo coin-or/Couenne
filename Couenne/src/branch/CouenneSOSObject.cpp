@@ -1,3 +1,4 @@
+/* $Id: CouenneSOSObject.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    CouenneSOSObject.cpp
  * Authors: Pietro Belotti, Lehigh University
@@ -30,7 +31,6 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
 
   // Apply SOS branching first
   double retval = OsiSOSBranchingObject::branch (solver);
-
 
   CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
   CouenneProblem *p = couenneSolver -> CutGen () -> Problem ();

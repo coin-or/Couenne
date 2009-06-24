@@ -1,4 +1,5 @@
-/*
+/* $Id: expression.cpp 155 2009-06-16 20:19:39Z pbelotti $
+ *
  * Name:    expression.cpp
  * Author:  Pietro Belotti
  * Purpose: methods of the expression class

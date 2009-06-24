@@ -1,4 +1,5 @@
-/*
+/* $Id: fillDependence.cpp 157 2009-06-16 20:31:49Z pbelotti $
+ *
  * Name:    fillDependence.cpp
  * Author:  Pietro Belotti
  * Purpose: fill in inverse dependence structure, for CouenneObject
@@ -33,9 +34,9 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base) {
     if (((*i) -> Type () == AUX)                           // consider auxs only
 	&& ((*i) -> Image () -> Linearity () > LINEAR)) {  // and nonlinear
 
-      CouenneObject *infeasObj = (*i) -> properObject (this, base, jnlst_);
+      CouenneObject infeasObj = (*i) -> properObject (this, base, jnlst_);
 
-      if (!infeasObj) // found something that will never be infeasibl
+      if (!(infeasObj.Reference ())) // found something that will never be infeasible
 	continue;
 
       // add object for this variable
@@ -57,7 +58,7 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base) {
 	  obj.insert (ind);
       }
 
-    } else objects_.push_back (new CouenneObject (nullObject)); 
+    } else objects_.push_back (nullObject); 
     // null object for original and linear auxiliaries
   }
 }

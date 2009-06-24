@@ -1,3 +1,4 @@
+/* $Id: fake_tightening.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    fake_tightening.cpp
  * Author:  Pietro Belotti
@@ -12,7 +13,7 @@
 
 //#define DEBUG
 
-#define MAX_ITER  2 // max # fake tightening (inner) iterations 
+#define MAX_ITER  10 // max # fake tightening (inner) iterations 
 #define AGGR_MUL  2 // the larger,  the more conservative. Must be > 0
 #define AGGR_DIV  2 // the smaller, the more conservative. Must be > 1
 
@@ -88,6 +89,10 @@ fake_tighten (char direction,  // 0: left, 1: right
   printf ("  x_%d.  x = %10g, lb = %g, cutoff = %g-----------------\n", index,xcur,curdb,getCutOff());
 #endif
 
+  /*if (index == objind)
+    printf ("  x_%d [%g,%g].  x = %10g, break at %g, cutoff = %g-----------------\n", 
+    index, Lb (index), Ub (index), xcur, fb, getCutOff());*/
+
   for (int iter = 0; iter < MAX_ITER; iter++) {
 
     if (intvar) {
@@ -136,7 +141,6 @@ fake_tighten (char direction,  // 0: left, 1: right
     bool
       feasible  = btCore (f_chg),             // true if feasible with fake bound
       betterbds = Lb (objind) > getCutOff (); // true if over cutoff
-      
 
 #ifdef DEBUG
     printf(" [%10g,%10g] lb = %g {fea=%d,btr=%d} ",
@@ -226,7 +230,22 @@ fake_tighten (char direction,  // 0: left, 1: right
     }
 
     // TODO: compute golden section
-    fb = (inner + outer) / 2;
+    //fb = (inner + outer) / 2;
+
+    //fb = fictBounds (direction, fb, CoinMin (inner, outer), CoinMax (inner, outer));
+
+    CouNumber diff = fabs (inner-outer);
+
+    if (diff == 0.) break;
+
+    if (diff > 1) {
+
+      CouNumber L = log (diff) / log (10.);
+
+      if (direction) fb = inner + exp (log (10.) * L/2);
+      else           fb = inner - exp (log (10.) * L/2);
+
+    } else fb = (inner+outer)/2;
 
     //    if () fb = (          inner + (phi-1) * outer) / phi;
     //    else  fb = ((phi-1) * inner +           outer) / phi;
@@ -235,13 +254,11 @@ fake_tighten (char direction,  // 0: left, 1: right
     //    fb = fictBounds (direction, xcur, 
     //	     direction ? lb [index] : outer,
     //	     direction ? outer      : ub [index]);
-    //    fb = fictBounds (direction, xcur, CoinMin (inner, outer), CoinMax (inner, outer));
 
 #ifdef DEBUG
     printf ("\n");
 #endif
   }
-
 
   Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING, "\n");
   if (tightened) 

@@ -1,3 +1,4 @@
+/* $Id: impliedBounds-exprPow.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    impliedBounds-exprPow.cpp
  * Author:  Pietro Belotti

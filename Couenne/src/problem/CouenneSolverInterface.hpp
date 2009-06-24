@@ -1,3 +1,4 @@
+/* $Id: CouenneSolverInterface.hpp 154 2009-06-16 18:52:53Z pbelotti $ */
 /*
  * Name:    CouenneSolverInterface.hpp
  * Authors: Pietro Belotti, Carnegie Mellon University
@@ -86,7 +87,15 @@ public:
   ClpSimplex *continuousModel ()
   {return continuousModel_;}
 
-private:
+  /// set doingResolve_
+  bool &doingResolve () 
+  {return doingResolve_;}
+
+  /// is this problem unbounded?
+  bool isProvenDualInfeasible () const;
+  //{return knowDualInfeasible_;}
+
+protected:
 
   /// The pointer to the Couenne cut generator. Gives us a lot of
   /// information, for instance the nlp solver pointer, and the chance
@@ -98,6 +107,13 @@ private:
 
   /// Flag indicating that optimality was detected during solveFromHotStart
   bool knowOptimal_;
+
+  /// Flag indicating this problem's continuous relaxation is unbounded
+  bool knowDualInfeasible_;
+
+  /// flag to indicate this is an LP for the BB, not for (e.g.) strong
+  /// branching or OBBT
+  bool doingResolve_;
 };
 
 #endif

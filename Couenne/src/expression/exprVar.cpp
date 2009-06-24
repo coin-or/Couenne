@@ -1,4 +1,5 @@
-/*
+/* $Id: exprVar.cpp 156 2009-06-16 20:24:38Z pbelotti $ 
+ *
  * Name:    exprVar.cpp
  * Author:  Pietro Belotti
  * Purpose: methods of the class for defining variables
@@ -8,6 +9,7 @@
  */
 
 #include "CouenneCutGenerator.hpp"
+#include "CouenneObject.hpp"
 #include "exprAux.hpp"
 #include "exprVar.hpp"
 #include "exprBound.hpp"
@@ -62,3 +64,12 @@ void exprVar::fillDepSet (std::set <DepNode *, compNode> *dep, DepGraph *g)
 
 expression *exprVar::Lb () {return new exprLowerBound (varIndex_, domain_);}///< lower bound
 expression *exprVar::Ub () {return new exprUpperBound (varIndex_, domain_);}///< upper bound
+
+
+// dummy function -- the real one is in exprAux and returns either a
+// CouenneObject or a CouenneComplObject
+CouenneObject exprVar::properObject (CouenneProblem *p, 
+				      Bonmin::BabSetupBase *base, 
+				      JnlstPtr jnlst_) {
+  return CouenneObject ();
+}

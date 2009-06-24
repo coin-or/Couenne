@@ -14,7 +14,7 @@ Subversion (http://subversion.tigris.org). Run the following command
 (if you are reading this file, you probably have Couenne already and
 don't need to):
 
-$ svn co https://projects.coin-or.org/svn/Couenne/trunk Couenne
+$ svn co https://projects.coin-or.org/svn/Couenne/stable/0.2 Couenne
 
 This creates a directory Couenne/ and downloads most of the necessary
 source files that are needed for building Couenne.

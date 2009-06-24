@@ -1,4 +1,5 @@
-/*
+/* $Id: disjCut.cpp 154 2009-06-16 18:52:53Z pbelotti $
+ *
  * Name:    disjCut.cpp
  * Author:  Pietro Belotti
  * Purpose: generate one disjunctive cut based on a single disjunction

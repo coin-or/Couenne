@@ -5,13 +5,15 @@
 # Author:  Pietro Belotti
 # Template by Andreas Waechter
 
+# $Id:$
+
 #############################################################################
 #                       Names and other basic things                        #
 #############################################################################
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[0.2],[belotti@lehigh.edu])
+AC_INIT([Couenne],[0.2stable],[belotti@lehigh.edu])
 
 AC_COPYRIGHT([
 Copyright 2008 Pietro Belotti

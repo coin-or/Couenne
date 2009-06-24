@@ -1,4 +1,5 @@
-/*
+/* $Id: exprVar.hpp 156 2009-06-16 20:24:38Z pbelotti $
+ *
  * Name:    exprVar.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the class exprVar for variables 
@@ -190,10 +191,9 @@ class exprVar: public expression {
 
   /// return proper object to handle expression associated with this
   /// variable (NULL if this is not an auxiliary)
-  virtual CouenneObject *properObject (CouenneProblem *p, 
-				       Bonmin::BabSetupBase *base, 
-				       JnlstPtr jnlst_)
-  {return NULL;}
+  virtual CouenneObject properObject (CouenneProblem *p, 
+				      Bonmin::BabSetupBase *base, 
+				      JnlstPtr jnlst_);
 };
 
 #endif

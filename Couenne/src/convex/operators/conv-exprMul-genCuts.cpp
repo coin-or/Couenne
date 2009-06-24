@@ -1,3 +1,4 @@
+/* $Id: conv-exprMul-genCuts.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    conv-exprMul-genCuts.cpp
  * Author:  Pietro Belotti

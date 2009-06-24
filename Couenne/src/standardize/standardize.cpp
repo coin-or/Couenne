@@ -1,4 +1,6 @@
 /*
+ * $Id: standardize.cpp 154 2009-06-16 18:52:53Z pbelotti $
+ *
  * Name:    standardize.cpp
  * Author:  Pietro Belotti
  * Purpose: standardize all expressions in a problem
@@ -71,6 +73,10 @@ bool CouenneProblem::standardize () {
 
     expression *img = naux -> Image ();
 
+    // trick to obtain same index as common expression: create exprAux
+    // with index initVar and replace occurrences with address of
+    // newly created exprAux through auxiliarize()
+
     exprAux *newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
     //img -> isInteger () ? exprAux::Integer : exprAux::Continuous);
 
@@ -84,7 +90,7 @@ bool CouenneProblem::standardize () {
 #ifdef DEBUG
     if (naux) {
       printf ("done: "); fflush (stdout);
-      naux -> print (); printf ("\n");
+      naux -> print ();
       printf (" := "); fflush (stdout);
       naux -> Image () -> print (); printf ("\n..."); fflush (stdout);
     } else if (*i) {
@@ -268,12 +274,15 @@ bool CouenneProblem::standardize () {
     }
   }
 
-  // Look for auxiliaries of the form w:=x and replace each occurrence of w with x
-
   // TODO: resolve duplicate index in exprQuad before restoring this
 
-  //if (0)
-  for (std::vector <exprVar *>::iterator i = variables_.begin (); 
+  std::string delete_redund;
+  bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne."); 
+
+  if (delete_redund == "yes")
+
+    // Look for auxiliaries of the form w:=x and replace each occurrence of w with x
+    for (std::vector <exprVar *>::iterator i = variables_.begin (); 
        i != variables_.end (); ++i)
 
     if ((*i) -> Type () == AUX) {

@@ -1,3 +1,4 @@
+/* $Id: trigNewton.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    trigNewton.cpp
  * Author:  Pietro Belotti

@@ -1,4 +1,5 @@
-/*
+/* $Id: CouenneComplObject.cpp 155 2009-06-16 20:19:39Z pbelotti $
+ *
  * Name:    CouenneComplObject.cpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Implementation of branching rules for complementarity constraints

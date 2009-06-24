@@ -1,3 +1,4 @@
+/* $Id: separateWithDisjunction.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    separateWithDisjunction.cpp
  * Author:  Pietro Belotti

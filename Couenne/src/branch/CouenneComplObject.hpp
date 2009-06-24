@@ -1,4 +1,5 @@
-/*
+/* $Id: CouenneComplObject.hpp 155 2009-06-16 20:19:39Z pbelotti $
+ *
  * Name:    CouenneComplObject.hpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Branching object for complementarity constraints

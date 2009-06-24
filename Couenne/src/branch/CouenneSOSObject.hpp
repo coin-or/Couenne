@@ -1,3 +1,4 @@
+/* $Id: CouenneSOSObject.hpp 141 2009-06-03 04:19:19Z pbelotti $ */
 /*
  * Name:    CouenneSOSObject.hpp
  * Authors: Pietro Belotti, Lehigh University
@@ -15,6 +16,8 @@
 
 class CouenneSOSObject;
 
+// TODO: SOS of the form sum x_i \le k with k small. Instead of
+// branching on a single variable do a SOS-like branching
 
 class CouenneSOSBranchingObject: public OsiSOSBranchingObject {
 

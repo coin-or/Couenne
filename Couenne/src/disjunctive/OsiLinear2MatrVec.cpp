@@ -1,4 +1,5 @@
-/*
+/* $Id: OsiLinear2MatrVec.cpp 154 2009-06-16 18:52:53Z pbelotti $
+ *
  * Name:    OsiLinear2MatrVec.cpp
  * Author:  Pietro Belotti
  * Purpose: turn OsiSolverInterface objects into coefficient matrix and rhs vector

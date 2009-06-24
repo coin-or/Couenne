@@ -1,3 +1,4 @@
+/* $Id: BonCouenneInterface.cpp 154 2009-06-16 18:52:53Z pbelotti $ */
 // (C) Copyright International Business Machines Corporation (IBM) 2006, 2007
 // All Rights Reserved.
 // This code is published under the Common Public License.
@@ -114,8 +115,11 @@ CouenneInterface::extractLinearRelaxation
 	*nlb = getColLower (),
 	*nub = getColUpper ();
 
-      for (int i=0; i < p -> nOrigVars (); i++) 
+      for (int i=0; i < p -> nOrigVars () - p -> nDefVars (); i++) 
 	if (p -> Var (i) -> Multiplicity () > 0) {
+	  /*printf ("---- %4d [%g,%g] [%g,%g]\n", i,
+		  nlb [i], nub [i],
+		  p -> Lb (i), p -> Ub (i));*/
 	  if (nlb [i] < p -> Lb (i) - COUENNE_EPS) setColLower (i, p -> Lb (i));
 	  if (nub [i] > p -> Ub (i) + COUENNE_EPS) setColUpper (i, p -> Ub (i));
 	} else { 
@@ -123,18 +127,26 @@ CouenneInterface::extractLinearRelaxation
 	  setColLower (i, -COIN_DBL_MAX);
 	  setColUpper (i,  COIN_DBL_MAX);
 	}
+    } // ends FBBT part
+
+    if (is_feasible) {
+      try {
+	initialSolve ();
+      }
+      catch (TNLPSolver::UnsolvedError *E) {
+	// wrong, if NLP has problems this is not necessarily true...
+	//is_feasible = false;
+      }
     }
 
-    if (is_feasible) 
-      initialSolve ();
-    else {
+    if (!is_feasible) {
       OsiAuxInfo * auxInfo = si.getAuxiliaryInfo ();
       BabInfo * babInfo = dynamic_cast <BabInfo *> (auxInfo);
 
       if (babInfo) 
 	babInfo -> setInfeasibleNode ();
     }
-
+    
     if (is_feasible && isProvenOptimal ()) {
 
       CouNumber obj             = getObjValue    ();
@@ -203,7 +215,13 @@ CouenneInterface::extractLinearRelaxation
 
 	    setColSolution (Y); // use initial solution given 
 
-	    resolve (); // solve with integer variables fixed
+	    try {
+	      resolve (); // solve with integer variables fixed
+	    }
+	    catch(TNLPSolver::UnsolvedError *E) {
+	    }
+
+	    //resolve (); 
 
 	    obj      = getObjValue ();
 	    solution = getColSolution ();

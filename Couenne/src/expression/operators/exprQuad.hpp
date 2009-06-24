@@ -1,3 +1,4 @@
+/* $Id: exprQuad.hpp 154 2009-06-16 18:52:53Z pbelotti $ */
 /**
  * Name:    exprQuad.hpp
  * Author:  Pietro Belotti
@@ -255,6 +256,9 @@ public:
 
   /// replace variable x with new (aux) w
   virtual void replace (exprVar *x, exprVar *w);
+
+  /// replace variable x with new (aux) w
+  virtual void realign (const CouenneProblem *p);
 
   /// implied bound processing
   virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *);
