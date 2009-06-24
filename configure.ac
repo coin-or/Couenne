@@ -5,7 +5,7 @@
 # Author:  Pietro Belotti
 # Template by Andreas Waechter
 
-# $Id:$
+## $Id$
 
 #############################################################################
 #                       Names and other basic things                        #
