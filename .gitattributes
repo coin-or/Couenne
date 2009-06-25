@@ -11,6 +11,7 @@ Couenne/configure -text
 Couenne/configure.ac -text
 Couenne/couenne.opt.base -text
 Couenne/couenne_addlibs.txt.in -text
+Couenne/doc/couenne-user-manual.pdf -text
 Couenne/doc/mainpage.dox -text
 Couenne/inc/config_couenne.h.in -text
 Couenne/src/CouenneConfig.h -text
