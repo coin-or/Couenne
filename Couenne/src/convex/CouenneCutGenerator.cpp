@@ -176,7 +176,7 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
      "no","",
      "yes","");
 
-  CouenneProblem                :: registerOptions (roptions);
-  Bonmin::CouenneChooseStrong   :: registerOptions (roptions);
-  CouenneChooseVariable         :: registerOptions (roptions);
+  CouenneProblem        :: registerOptions (roptions);
+  CouenneChooseStrong   :: registerOptions (roptions);
+  CouenneChooseVariable :: registerOptions (roptions);
 }

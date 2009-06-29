@@ -10,6 +10,7 @@
  */
 
 #include "CoinTime.hpp"
+#include "BonChooseVariable.hpp"
 #include "CouenneChooseStrong.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneBranchingObject.hpp"
@@ -41,7 +42,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 }
 
 
-namespace Bonmin {
+//namespace Bonmin {
 
   /**  This is a utility function which does strong branching on
        a list of objects and stores the results in OsiHotInfo.objects.
@@ -55,10 +56,12 @@ namespace Bonmin {
        2 - may be returning early - one can be fixed (last one done) (returnCriterion==1) 
        3 - returning because max time
   */
-  int CouenneChooseStrong::doStrongBranching (CouenneSolverInterface * solver, 
+  int CouenneChooseStrong::doStrongBranching (OsiSolverInterface * OsiSolver, 
 					      OsiBranchingInformation *info,
 					      int numberToDo, int returnCriterion)
   {
+
+    CouenneSolverInterface *solver = dynamic_cast <CouenneSolverInterface *> (OsiSolver);
 
     jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		      "\n-\n------- CCS: trying %d objects:\n", numberToDo);
@@ -98,7 +101,7 @@ namespace Bonmin {
 
     for (;iDo < numberToDo; iDo++) {
 
-      HotInfo * result = results_ () + iDo; // retrieve i-th object to test
+      Bonmin::HotInfo * result = results_ () + iDo; // retrieve i-th object to test
 
       CouenneObject *CouObj = dynamic_cast <CouenneObject *>
 	(solver_ -> objects () [result -> whichObject ()]);
@@ -374,4 +377,4 @@ namespace Bonmin {
 
     return returnCode;
   }
-}
+//}

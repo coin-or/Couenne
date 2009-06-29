@@ -19,14 +19,12 @@
 class CouenneProblem;
 class CouenneSolverInterface;
 
-namespace Bonmin {
-
-  class CouenneChooseStrong : public BonChooseVariable  {
+class CouenneChooseStrong : public Bonmin::BonChooseVariable  {
 
   public:
 
     /// Constructor from solver (so we can set up arrays etc)
-    CouenneChooseStrong (BabSetupBase& b, CouenneProblem* problem, JnlstPtr jnlst);
+  CouenneChooseStrong (Bonmin::BabSetupBase& b, CouenneProblem* problem, JnlstPtr jnlst);
 
     /// Copy constructor
     CouenneChooseStrong (const CouenneChooseStrong &);
@@ -55,7 +53,7 @@ namespace Bonmin {
 	 2 - may be returning early - one can be fixed (last one done) (returnCriterion==1) 
 	 3 - returning because max time
     */
-    virtual int doStrongBranching( CouenneSolverInterface * solver, 
+    virtual int doStrongBranching (OsiSolverInterface * OsiSolver, 
 				   OsiBranchingInformation *info,
 				   int numberToDo, int returnCriterion);
 
@@ -88,9 +86,19 @@ namespace Bonmin {
     /// branches' LPs? If so, this only happens in strong branching
     bool pseudoUpdateLP_;
 
+    /// Normally, a convex combination of the min/max lower bounds'
+    /// estimates is taken to select a branching variable, as in the
+    /// original definition of strong branching. If this option is set
+    /// to true, their product is taken instead: 
+    ///
+    /// (1e-6+min) * max
+    ///
+    /// where the 1e-6 is used to ensure that even those with one
+    /// subproblem with no improvement are compared.
+    bool estimateProduct_;
+
     /// pointer to journalist for detailed information
     JnlstPtr jnlst_;
   };
-}
 
 #endif
