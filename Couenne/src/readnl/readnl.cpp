@@ -10,6 +10,7 @@
 
 #include "CouenneProblem.hpp"
 
+#include "stdint.h"
 #include "CouenneTypes.hpp"
 
 #include "exprSum.hpp"
