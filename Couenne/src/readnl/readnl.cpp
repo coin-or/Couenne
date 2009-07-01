@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    readnl.cpp
  * Author:  Pietro Belotti
  * Purpose: define a reader for .nl files. Adapted from ampl2ev3 by L. Liberti and S. Galli 
@@ -10,7 +10,12 @@
 
 #include "CouenneProblem.hpp"
 
+#if   defined HAVE_CSTDINT
+#include "cstdint"
+#elif defined HAVE_STDINT_H
 #include "stdint.h"
+#endif
+
 #include "CouenneTypes.hpp"
 
 #include "exprSum.hpp"

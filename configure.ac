@@ -31,6 +31,9 @@ AC_CONFIG_SRCDIR(configure.ac)
 # /usr/local.
 AC_PREFIX_DEFAULT([`pwd`])
 
+# for readnl.cpp
+AC_COIN_CHECK_CXX_CHEADER(stdint)
+
 #############################################################################
 #              Create the libtool script for the subdirectories             #
 #############################################################################
