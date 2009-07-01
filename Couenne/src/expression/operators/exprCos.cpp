@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$ 
+ *
  * Name:    exprCos.cpp
  * Author:  Pietro Belotti
  * Purpose: methods for cosines
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -42,11 +42,10 @@ void exprCos::getBounds (expression *&lb, expression *&ub) {
   ub = new exprUBCos (new exprClone (xl), new exprClone (xu));
 }
 
-
 // compute value of bounds of cos x given bounds of x 
 void exprCos::getBounds (CouNumber &lb, CouNumber &ub) {
 
-  CouNumber l, u,  pi2 = 2 * M_PI;
+  CouNumber l, u;
   argument_ -> getBounds (l, u);
 
   if ((u - l > pi2) ||       // 1) interval spans whole cycle
