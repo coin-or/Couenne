@@ -277,7 +277,10 @@ bool CouenneProblem::standardize () {
   // TODO: resolve duplicate index in exprQuad before restoring this
 
   std::string delete_redund;
-  bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne."); 
+  if (bonBase_)
+    bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne."); 
+  else
+    delete_redund = "yes";
 
   if (delete_redund == "yes")
 
