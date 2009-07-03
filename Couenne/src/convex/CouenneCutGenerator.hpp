@@ -216,6 +216,9 @@ class CouenneCutGenerator: public CglCutGenerator {
   inline ConstJnlstPtr Jnlst() const 
   {return ConstPtr (jnlst_);}
 
+  void setJnlst(JnlstPtr jnlst__)
+  { jnlst_ = jnlst__; }
+
   /// Time spent at root node
   double &rootTime ()
   {return rootTime_;}
