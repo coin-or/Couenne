@@ -37,6 +37,7 @@ CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
   rootTime_       (-1.) {
 
   if (base) {
+
     base -> options () -> GetIntegerValue ("convexification_points", nSamples_, "couenne.");
 
     std::string s;
@@ -52,11 +53,16 @@ CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
     base -> options () -> GetStringValue ("check_lp", s, "couenne."); 
     check_lp_ = (s == "yes");
 
+    base -> options () -> GetStringValue ("enable_lp_implied_bounds", s, "couenne.");
+    enable_lp_implied_bounds_ = (s == "yes");
+
   } else {
-    nSamples_ = 4;
-    convtype_ = CURRENT_ONLY;
-    addviolated_ = true;
-    check_lp_ = false;
+
+    nSamples_                 = 4;
+    convtype_                 = CURRENT_ONLY;
+    addviolated_              = true;
+    check_lp_                 = false;
+    enable_lp_implied_bounds_ = false;
   }
 
   if (asl) // deal with problems not originating from AMPL
@@ -88,7 +94,8 @@ CouenneCutGenerator::CouenneCutGenerator (const CouenneCutGenerator &src):
   infeasNode_  (src. infeasNode_),
   jnlst_       (src. jnlst_),
   rootTime_    (src. rootTime_),
-  check_lp_    (src. check_lp_)
+  check_lp_    (src. check_lp_),
+  enable_lp_implied_bounds_ (src.enable_lp_implied_bounds_)
 {}
 
 
@@ -181,6 +188,14 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
     ("violated_cuts_only",
      "Yes if only violated convexification cuts should be added",
      "yes",
+     "no","",
+     "yes","");
+
+  roptions -> AddStringOption2 
+    ("enable_lp_implied_bounds",
+     "Enable OsiSolverInterface::tightenBounds () -- warning: it has caused "
+     "some trouble to Couenne",
+     "no",
      "no","",
      "yes","");
 
