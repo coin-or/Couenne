@@ -54,8 +54,11 @@ public:
   /// Set cut generator pointer after setup, to avoid changes in the
   /// pointer due to cut generator cloning (it happens twice in the
   /// algorithm)
-  void setCutGenPtr (CouenneCutGenerator *cg)
-  {cutgen_ = cg;}
+  void setCutGenPtr (CouenneCutGenerator *cg) {
+    cutgen_ = cg;
+    if (cutgen_ && !(cutgen_ -> enableLpImpliedBounds ()))
+      specialOptions_ = specialOptions_ | 262144; 
+  }
 
   /// Solve initial LP relaxation 
   virtual void initialSolve (); 
@@ -82,6 +85,12 @@ public:
 
   /// Tighten bounds on all variables (including continuous).
   virtual int tightenBounds (int lightweight);
+
+  /// Copy of the Clp version --- not light version
+  virtual int tightenBoundsCLP (int lightweight);
+
+  /// Copy of the Clp version --- light version
+  virtual int tightenBoundsCLP_Light (int lightweight);
 
   /// Returns pointer to CLP structure.
   ClpSimplex *continuousModel ()
