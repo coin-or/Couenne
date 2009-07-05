@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneBranchingObject.cpp
  * Authors: Pierre Bonami, IBM Corp.
  *          Pietro Belotti, Carnegie Mellon University

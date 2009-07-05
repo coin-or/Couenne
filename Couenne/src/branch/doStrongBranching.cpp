@@ -115,7 +115,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       /* Try the first direction.  Each subsequent call to branch()
 	 performs the specified branch and advances the branch object
-	 state to the next branch alternative.) */
+	 state to the next branch alternative. */
 
       int 
 	status0 = -1, 
@@ -165,6 +165,11 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       // can check if we got solution
       // status is 0 finished, 1 infeasible and 2 unfinished and 3 is solution
+
+      /*if (CouObj)
+	jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "dnEst %g upEst %g\n",
+			  CouObj->downEstimate(),
+			  CouObj->upEstimate());*/
 
       // only update information if this branch is feasible
       if (status0 < 0)
@@ -237,6 +242,11 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       // can check if we got solution
       // status is 0 finished, 1 infeasible and 2 unfinished and 3 is solution
+
+      /*if (CouObj)
+	jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "dnEst %g upEst %g\n",
+			  CouObj->downEstimate(),
+			  CouObj->upEstimate());*/
 
       // only update information if this branch is feasible
       if (status1 < 0)
