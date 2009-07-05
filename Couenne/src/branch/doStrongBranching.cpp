@@ -1,11 +1,11 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    doStrongBranching.cpp
  * Authors: Andreas Waechter, IBM Corp.
  *          Pietro Belotti, CMU
  * Purpose: actual strong branching method
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -58,8 +58,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
   */
   int CouenneChooseStrong::doStrongBranching (OsiSolverInterface * OsiSolver, 
 					      OsiBranchingInformation *info,
-					      int numberToDo, int returnCriterion)
-  {
+					      int numberToDo, int returnCriterion) {
 
     CouenneSolverInterface *solver = dynamic_cast <CouenneSolverInterface *> (OsiSolver);
 
@@ -103,8 +102,8 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       Bonmin::HotInfo * result = results_ () + iDo; // retrieve i-th object to test
 
-      CouenneObject *CouObj = dynamic_cast <CouenneObject *>
-	(solver_ -> objects () [result -> whichObject ()]);
+      OsiObject     *Object = solver_ -> objects () [result -> whichObject ()];
+      CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
 
       // For now just 2 way
       OsiBranchingObject * branch = result -> branchingObject ();
@@ -132,11 +131,51 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
 	else { // branch is feasible, solve and compare
 
-	  solver -> solveFromHotStart ();
-	  if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
-	    CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
-	    if (dist > COUENNE_EPS)
-	      CouObj -> setEstimate (dist, 0);
+	  bool infeasible = false;
+
+	  // Bound tightening if not a CouenneObject -- explicit bound tightening
+	  if (!CouObj) {
+
+	    int 
+	      indVar = Object   -> columnNumber (),
+	      nvars  = problem_ -> nVars ();
+
+	    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
+
+	    chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
+
+	    if (problem_ -> doFBBT ()) {         // problem allowed to do FBBT
+
+	      problem_ -> installCutOff ();
+
+	      if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
+		infeasible = true;        // ==> report it
+
+	      else {
+		const double
+		  *lb = solver -> getColLower (),
+		  *ub = solver -> getColUpper ();
+
+		for (int i=0; i<nvars; i++) {
+		  if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
+		  if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
+		}
+	      }
+	    }
+
+	    delete [] chg_bds;
+	  }
+
+	  if (infeasible) result -> setDownStatus (status0 = 1);
+	  else {
+	    solver -> solveFromHotStart ();
+	    //solver -> solveFromHotStart ();
+
+	    if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
+	      CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
+	      if (dist > COUENNE_EPS)
+		CouObj -> setEstimate (dist, 0);
+	    }
 	  }
 	}
 
@@ -158,7 +197,6 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 	    CouNumber dist = distance (lpSol, thisSolver -> getColSolution (), numberColumns);
 	    if (dist > COUENNE_EPS)
 	      CouObj -> setEstimate (dist, 0);
-	    //CouObj -> setEstimate (distance (lpSol, thisSolver->getColSolution (),numberColumns), 0);
 	  }
 	}
       }
@@ -209,12 +247,52 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 	  result -> setUpStatus (status1 = 1);
 
         else {
-	  solver -> solveFromHotStart ();
-	  if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
-	    CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
-	    if (dist > COUENNE_EPS)
-	      CouObj -> setEstimate (dist, 1);
-	    //CouObj -> setEstimate (distance (lpSol, solver -> getColSolution (), numberColumns), 1);
+
+	  bool infeasible = false;
+
+	  // Bound tightening if not a CouenneObject -- explicit bound tightening
+	  if (!CouObj) {
+
+	    int 
+	      indVar = Object   -> columnNumber (),
+	      nvars  = problem_ -> nVars ();
+
+	    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
+
+	    chg_bds [indVar].setLower (t_chg_bounds::CHANGED);
+
+	    if (problem_ -> doFBBT ()) {         // problem allowed to do FBBT
+
+	      problem_ -> installCutOff ();
+
+	      if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
+		infeasible = true;        // ==> report it
+
+	      else {
+		const double
+		  *lb = solver -> getColLower (),
+		  *ub = solver -> getColUpper ();
+
+		for (int i=0; i<nvars; i++) {
+		  if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
+		  if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
+		}
+	      }
+	    }
+
+	    delete [] chg_bds;
+	  }
+
+	  if (infeasible) result -> setUpStatus (status0 = 1);
+	  else {
+
+	    solver -> solveFromHotStart ();
+
+	    if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
+	      CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
+	      if (dist > COUENNE_EPS)
+		CouObj -> setEstimate (dist, 1);
+	    }
 	  }
 	}
       } else {                     // some more complex branch, have to clone solver
@@ -235,7 +313,6 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 	    CouNumber dist = distance (lpSol, thisSolver -> getColSolution (), numberColumns);
 	    if (dist > COUENNE_EPS)
 	      CouObj -> setEstimate (dist, 1);
-	    //CouObj -> setEstimate (distance (lpSol, thisSolver->getColSolution (),numberColumns), 1);
 	  }
 	}
       }
