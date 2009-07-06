@@ -78,13 +78,14 @@ int CouenneDisjCuts::separateWithDisjunction (OsiCuts *cuts,
 
   sparse2dense (ncols, chg, changed, nchanged);
 
-  couenneCG_ -> genRowCuts (si, *cuts,
-			    nchanged, changed, // nchanged and changed are NULL for now
-			    chg);
+  couenneCG_ -> genRowCuts (si, *cuts, nchanged, changed, chg);
 
   p -> domain () -> pop ();
 
   delete [] chg;
+
+  if (changed)
+    free (changed);
 
   return COUENNE_FEASIBLE;
 }
