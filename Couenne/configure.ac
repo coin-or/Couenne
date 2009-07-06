@@ -30,9 +30,6 @@ AC_CONFIG_SRCDIR(src/expression/expression.cpp)
 # /usr/local.
 AC_PREFIX_DEFAULT([`pwd`])
 
-# for readnl.cpp
-AC_COIN_CHECK_CXX_CHEADER(stdint)
-
 #############################################################################
 #                         Standard build tool stuff                         #
 #############################################################################
@@ -54,6 +51,9 @@ AC_COIN_PROG_CC
 
 # Initialize automake and libtool
 AC_COIN_INIT_AUTO_TOOLS
+
+# for readnl.cpp
+AC_COIN_CHECK_CXX_CHEADER(stdint)
 
 #############################################################################
 #                              COIN components                              #
