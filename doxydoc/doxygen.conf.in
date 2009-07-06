@@ -1,9 +1,9 @@
 
 PROJECT_NAME           = Couenne
 
-PROJECT_NUMBER         = 0.1
+PROJECT_NUMBER         = 0.2
 
-OUTPUT_DIRECTORY       = Doc
+OUTPUT_DIRECTORY       = doxydoc
 
 CREATE_SUBDIRS         = NO
 
