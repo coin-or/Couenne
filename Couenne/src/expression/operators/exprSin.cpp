@@ -1,10 +1,10 @@
-/* $Id: exprSin.cpp 154 2009-06-16 18:52:53Z pbelotti $ */
-/*
+/* $Id$
+ *
  * Name:    exprSin.cpp
  * Author:  Pietro Belotti
  * Purpose: definition of the sine of a function
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -41,27 +41,23 @@ void exprSin::getBounds (expression *&lb, expression *&ub) {
   ub = new exprUBSin (new exprClone (xl), new exprClone (xu));
 }
 
-
 // compute value of bounds of cos x given bounds of x 
 void exprSin::getBounds (CouNumber &lb, CouNumber &ub) {
 
   CouNumber l, u;
-
   argument_ -> getBounds (l, u);
-
-  CouNumber pi2 = 2 * M_PI;
 
   if ((u - l > pi2) ||        // 1) interval spans whole cycle
       (floor (l/pi2 - 0.75) < // 2) there is a pi + 2k pi between l and u
        floor (u/pi2 - 0.75))) 
     lb = -1.;
-  else lb = CoinMin (cos (l), cos (u));
+  else lb = CoinMin (sin (l), sin (u));
 
   if ((u - l > pi2) ||        // 1) interval spans whole cycle
       (floor (l/pi2 - 0.25) < // 2) there is a 3/2 pi + 2k pi between l and u
        floor (u/pi2 - 0.25))) 
     ub = 1.;
-  else ub = CoinMax (cos (l), cos (u));
+  else ub = CoinMax (sin (l), sin (u));
 }
 
 /// generalized implied bound procedure for sine/cosine

@@ -15,7 +15,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneSolverInterface.hpp"
 
-#define Couenne_large_bound2 9.99e30
+#define Couenne_large_bound2 9.99e12
 
 // checks bad cuts against known optimum
 bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p);

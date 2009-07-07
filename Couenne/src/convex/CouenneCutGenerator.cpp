@@ -33,23 +33,37 @@ CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
   nlp_            (nlp),
   BabPtr_         (NULL),
   infeasNode_     (false),
-  jnlst_          (base -> journalist ()),
+  jnlst_          (base ? base -> journalist () : NULL),
   rootTime_       (-1.) {
 
-  base -> options () -> GetIntegerValue ("convexification_points", nSamples_, "couenne.");
+  if (base) {
 
-  std::string s;
+    base -> options () -> GetIntegerValue ("convexification_points", nSamples_, "couenne.");
 
-  base -> options () -> GetStringValue ("convexification_type", s, "couenne.");
-  if      (s == "current-point-only") convtype_ = CURRENT_ONLY;
-  else if (s == "uniform-grid")       convtype_ = UNIFORM_GRID;
-  else                                convtype_ = AROUND_CURPOINT;
+    std::string s;
 
-  base -> options () -> GetStringValue ("violated_cuts_only", s, "couenne."); 
-  addviolated_ = (s == "yes");
+    base -> options () -> GetStringValue ("convexification_type", s, "couenne.");
+    if      (s == "current-point-only") convtype_ = CURRENT_ONLY;
+    else if (s == "uniform-grid")       convtype_ = UNIFORM_GRID;
+    else                                convtype_ = AROUND_CURPOINT;
 
-  base -> options () -> GetStringValue ("check_lp", s, "couenne."); 
-  check_lp_ = (s == "yes");
+    base -> options () -> GetStringValue ("violated_cuts_only", s, "couenne."); 
+    addviolated_ = (s == "yes");
+
+    base -> options () -> GetStringValue ("check_lp", s, "couenne."); 
+    check_lp_ = (s == "yes");
+
+    base -> options () -> GetStringValue ("enable_lp_implied_bounds", s, "couenne.");
+    enable_lp_implied_bounds_ = (s == "yes");
+
+  } else {
+
+    nSamples_                 = 4;
+    convtype_                 = CURRENT_ONLY;
+    addviolated_              = true;
+    check_lp_                 = false;
+    enable_lp_implied_bounds_ = false;
+  }
 
   if (asl) // deal with problems not originating from AMPL
     problem_ = new CouenneProblem (asl, base, jnlst_);
@@ -80,7 +94,8 @@ CouenneCutGenerator::CouenneCutGenerator (const CouenneCutGenerator &src):
   infeasNode_  (src. infeasNode_),
   jnlst_       (src. jnlst_),
   rootTime_    (src. rootTime_),
-  check_lp_    (src. check_lp_)
+  check_lp_    (src. check_lp_),
+  enable_lp_implied_bounds_ (src.enable_lp_implied_bounds_)
 {}
 
 
@@ -176,7 +191,15 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
      "no","",
      "yes","");
 
-  CouenneProblem                :: registerOptions (roptions);
-  Bonmin::CouenneChooseStrong   :: registerOptions (roptions);
-  CouenneChooseVariable         :: registerOptions (roptions);
+  roptions -> AddStringOption2 
+    ("enable_lp_implied_bounds",
+     "Enable OsiSolverInterface::tightenBounds () -- warning: it has caused "
+     "some trouble to Couenne",
+     "no",
+     "no","",
+     "yes","");
+
+  CouenneProblem        :: registerOptions (roptions);
+  CouenneChooseStrong   :: registerOptions (roptions);
+  CouenneChooseVariable :: registerOptions (roptions);
 }

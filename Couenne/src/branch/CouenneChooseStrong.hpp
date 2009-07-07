@@ -19,14 +19,14 @@
 class CouenneProblem;
 class CouenneSolverInterface;
 
-namespace Bonmin {
+//namespace Bonmin {
 
-  class CouenneChooseStrong : public BonChooseVariable  {
+class CouenneChooseStrong : public Bonmin::BonChooseVariable  {
 
   public:
 
     /// Constructor from solver (so we can set up arrays etc)
-    CouenneChooseStrong (BabSetupBase& b, CouenneProblem* problem, JnlstPtr jnlst);
+  CouenneChooseStrong (Bonmin::BabSetupBase& b, CouenneProblem* problem, JnlstPtr jnlst);
 
     /// Copy constructor
     CouenneChooseStrong (const CouenneChooseStrong &);
@@ -91,6 +91,6 @@ namespace Bonmin {
     /// pointer to journalist for detailed information
     JnlstPtr jnlst_;
   };
-}
+//}
 
 #endif

@@ -1,5 +1,5 @@
-/* $Id: CouenneSolverInterface.cpp 154 2009-06-16 18:52:53Z pbelotti $ */
-/*
+/* $Id$
+ *
  * Name:    CouenneSolverInterface.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University
  *          Andreas Waechter, IBM Corp.
@@ -25,7 +25,8 @@ CouenneSolverInterface::CouenneSolverInterface (CouenneCutGenerator *cg /*= NULL
   doingResolve_ (true) {
 
   // prevents from running OsiClpSolverInterface::tightenBounds()
-  specialOptions_ = specialOptions_ | 262144; 
+  if (cutgen_ && !(cutgen_ -> enableLpImpliedBounds ()))
+    specialOptions_ = specialOptions_ | 262144; 
 }
 
 /// copy constructor

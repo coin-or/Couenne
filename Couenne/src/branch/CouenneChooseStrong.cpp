@@ -12,10 +12,11 @@
 #include "CouenneProblem.hpp"
 #include "CouenneBranchingObject.hpp"
 
-namespace Bonmin {
+//namespace Bonmin {
 
   /// constructor
-  CouenneChooseStrong::CouenneChooseStrong (BabSetupBase &b, CouenneProblem* p, JnlstPtr jnlst) :
+  CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, 
+					    CouenneProblem* p, JnlstPtr jnlst) :
 
     BonChooseVariable (b, b.continuousSolver()),
     problem_          (p),
@@ -144,4 +145,4 @@ namespace Bonmin {
     double obj = solution [problem_ -> Obj (0) -> Body () -> Index ()];
     return problem_ -> checkNLP (solution, obj);
   }
-}
+//}
