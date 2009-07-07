@@ -1,5 +1,5 @@
-/* $Id: CouenneBranchingObject.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
-/*
+/* $Id$
+ *
  * Name:    CouenneBranchingObject.cpp
  * Authors: Pierre Bonami, IBM Corp.
  *          Pietro Belotti, Carnegie Mellon University

@@ -497,22 +497,28 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   ///////////////////////////////////////////////////////////
   if (info &&
       ((pseudoMultType_ == INTERVAL_LP) ||
-       (pseudoMultType_ == INTERVAL_LP_REV))) {
+       (pseudoMultType_ == INTERVAL_LP_REV)))
 
     point = info -> solution_ [index];
 
-    CouNumber delta = closeToBounds * (info -> upper_ [index] - info -> lower_ [index]);
-
-    if      (point < info -> lower_ [index] + delta)
-      point        = info -> lower_ [index] + delta;
-    else if (point > info -> upper_ [index] - delta)
-      point        = info -> upper_ [index] - delta;
-  }
   else if (brpoint &&
 	   ((pseudoMultType_ == INTERVAL_BR) ||
 	    (pseudoMultType_ == INTERVAL_BR_REV)))
     
     point = *brpoint;
+
+  // now move it away from the bounds
+
+  point = midInterval (point, 
+		       info -> lower_ [index],
+		       info -> upper_ [index]);
+
+  CouNumber delta = closeToBounds * (info -> upper_ [index] - info -> lower_ [index]);
+
+  if      (point < info -> lower_ [index] + delta)
+    point        = info -> lower_ [index] + delta;
+  else if (point > info -> upper_ [index] - delta)
+    point        = info -> upper_ [index] - delta;
 
   ///////////////////////////////////////////////////////////
   switch (pseudoMultType_) {
@@ -538,6 +544,13 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
     printf ("Couenne: invalid estimate setting procedure\n");
     exit (-1);
   }
+
+//   if (downEstimate_ <= 0.0 || upEstimate_ <= 0.0)
+//     printf ("%g [%g,%g] ---> [%g,%g]\n", 
+// 	    point,
+// 	    info -> lower_ [index],
+// 	    info -> upper_ [index],
+// 	    downEstimate_, upEstimate_);
 
   if (reference_ -> isInteger ()) {
     if (downEstimate_ <       point  - floor (point)) downEstimate_ =       point  - floor (point);

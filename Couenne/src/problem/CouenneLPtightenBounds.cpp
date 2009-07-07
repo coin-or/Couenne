@@ -1,10 +1,10 @@
-/* $Id: CouenneLPtightenBounds.cpp 154 2009-06-16 18:52:53Z pbelotti $ */
-/*
- * Name:    CouenneLPtightenBounds.hpp
+/* $Id$
+ *
+ * Name:    CouenneLPtightenBounds.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: tighten LP bounds on all variables (including continuous)
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -16,8 +16,8 @@
 // number of variables tightened.
 int CouenneSolverInterface::tightenBounds (int lightweight) {
 
-  // not yet...
-  return OsiClpSolverInterface::tightenBounds (lightweight);
+  if (!(cutgen_ -> enableLpImpliedBounds ()))
+    return 0;
 
   int 
     ncols = getNumCols (),
@@ -30,7 +30,26 @@ int CouenneSolverInterface::tightenBounds (int lightweight) {
   CoinCopyN (getColLower (), ncols, oldLower);
   CoinCopyN (getColUpper (), ncols, oldUpper);
 
-  nTightened = OsiClpSolverInterface::tightenBounds (lightweight);
+//   printf ("-------- BOUNDS BEFORE ------------\n  ");
+//   int j=0;
+//   for (int i=0; i < ncols; i++) {
+//     printf("x_%03d [%+15.8g %+15.8g] ", i, oldLower [i], oldUpper [i]);
+//     if (!(++j % 6)) printf ("\n  ");
+//   }
+//   if (j % 6) printf ("\n");
+
+  nTightened = tightenBoundsCLP (lightweight);
+
+  if (nTightened < 0)
+    return nTightened;
+
+//   printf ("-------- BOUNDS DURING ------------\n  ");
+//   j=0;
+//   for (int i=0; i < ncols; i++) {
+//     printf("x_%03d [%+15.8g %+15.8g] ", i, getColLower () [i], getColUpper () [i]);
+//     if (!(++j % 6)) printf ("\n  ");
+//   }
+//   if (j % 6) printf ("\n");
 
   if (nTightened > 0) {
 
@@ -72,6 +91,17 @@ int CouenneSolverInterface::tightenBounds (int lightweight) {
 	}
       }
     }
+
+    const double 
+      *newerLower = cutgen_ -> Problem () -> Lb (),
+      *newerUpper = cutgen_ -> Problem () -> Ub ();
+
+//     printf ("-------- BOUNDS AFTER ------------\n  ");
+//     for (int i=0; i < ncols; i++) {
+//       printf("x_%03d [%+15.8g %+15.8g] ", i, newerLower [i], newerUpper [i]);
+//       if (!(++j % 6)) printf ("\n  ");
+//     }
+//     if (j % 6) printf ("\n");
 
     cutgen_ -> Problem () -> domain () -> pop ();
 

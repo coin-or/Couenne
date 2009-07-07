@@ -83,6 +83,7 @@ am__DEPENDENCIES_2 = $(CBCOBJDIR)/src/libCbc.la \
 	$(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
 	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
+	$(BONMINOBJDIR)/src/Algorithms/Branching/libbonbranching.la \
 	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
 	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
 	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la $(am__DEPENDENCIES_1) \
@@ -301,6 +302,7 @@ libBonCouenne_la_SOURCES = \
 COINLIBS = $(CBCOBJDIR)/src/libCbc.la $(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
 	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
+	$(BONMINOBJDIR)/src/Algorithms/Branching/libbonbranching.la \
 	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
 	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
 	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la $(am__append_1) \

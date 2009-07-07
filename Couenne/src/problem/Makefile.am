@@ -20,6 +20,8 @@ libCouenneProblem_la_SOURCES = \
 	fillDependence.cpp \
 	CouenneSolverInterface.cpp \
 	CouenneLPtightenBounds.cpp \
+	CouenneLPtightenBoundsCLP.cpp \
+	CouenneLPtightenBoundsCLP-light.cpp \
 	checkNLP.cpp \
 	getIntegerCandidate.cpp \
 	testIntFix.cpp \
@@ -29,7 +31,7 @@ libCouenneProblem_la_SOURCES = \
 	reformulate.cpp \
 	depGraph/depGraph.cpp \
 	depGraph/checkCycles.cpp
-	
+
 if COIN_HAS_ASL
 libCouenneProblem_la_SOURCES += \
 	../readnl/readnl.cpp \

@@ -175,10 +175,16 @@ void exprGroup::getBounds (CouNumber &lb, CouNumber &ub) {
       else           lb += vub * coeff;
     }
 
-    if (inf_lb) lb = -COUENNE_INFINITY;
-    if (inf_ub) ub =  COUENNE_INFINITY;
+    if (inf_lb)
+      lb = -COUENNE_INFINITY;
 
-    if (inf_lb && inf_ub) break; // no need to keep computing...
+    if (inf_ub) {
+      ub =  COUENNE_INFINITY;
+      if (inf_lb)
+	break;
+    }
+
+    //if (inf_lb && inf_ub) break; // no need to keep computing...
   }
 }
 

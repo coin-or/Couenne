@@ -1,5 +1,5 @@
-/* $Id: CouenneCutGenerator.hpp 141 2009-06-03 04:19:19Z pbelotti $ */
-/*
+/* $Id$
+ *
  * Name:    CouenneCutGenerator.hpp
  * Author:  Pietro Belotti
  * Purpose: a convexification cut generator for MINLP problems
@@ -85,6 +85,10 @@ class CouenneCutGenerator: public CglCutGenerator {
   /// OsiClpSolverInterface::initialSolve()
   bool check_lp_;
 
+  /// Take advantage of OsiClpSolverInterface::tightenBounds (), known
+  /// to have caused some problems some time ago
+  bool enable_lp_implied_bounds_;
+
  public:
 
   /// constructor
@@ -104,30 +108,30 @@ class CouenneCutGenerator: public CglCutGenerator {
 
   /// return pointer to symbolic problem
   inline CouenneProblem *Problem () const
-    {return problem_;}
+  {return problem_;}
 
   /// return pointer to symbolic problem
   inline void setProblem (CouenneProblem *p)
-    {problem_ = p;}
+  {problem_ = p;}
 
   /// total number of variables (original + auxiliary)
   int getnvars () const;
 
   /// has generateCuts been called yet?
   inline bool isFirst () const 
-    {return firstcall_;}
+  {return firstcall_;}
 
   /// should we add the violated cuts only (true), or all of them (false)?
   inline bool addViolated () const
-    {return addviolated_;}
+  {return addviolated_;}
 
   /// get convexification type (see CouenneTypes.h)
   inline enum conv_type ConvType () const
-    {return convtype_;}
+  {return convtype_;}
 
   /// get number of convexification samples
   inline int nSamples () const
-    {return nSamples_;}
+  {return nSamples_;}
 
   /// the main CglCutGenerator
   void generateCuts (const OsiSolverInterface &, 
@@ -216,13 +220,20 @@ class CouenneCutGenerator: public CglCutGenerator {
   inline ConstJnlstPtr Jnlst() const 
   {return ConstPtr (jnlst_);}
 
+  void setJnlst(JnlstPtr jnlst__)
+  { jnlst_ = jnlst__; }
+
   /// Time spent at root node
   double &rootTime ()
   {return rootTime_;}
 
   /// return check_lp flag (used in CouenneSolverInterface)
-  bool check_lp ()
+  bool check_lp () const
   {return check_lp_;}
+
+  /// returns value of enable_lp_implied_bounds_
+  bool enableLpImpliedBounds () const
+  {return enable_lp_implied_bounds_;}
 };
 
 

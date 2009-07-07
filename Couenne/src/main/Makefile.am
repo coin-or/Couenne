@@ -28,6 +28,7 @@ COINLIBS = \
 	$(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
         $(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
+        $(BONMINOBJDIR)/src/Algorithms/Branching/libbonbranching.la \
 	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
         $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
         $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
