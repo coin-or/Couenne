@@ -6399,7 +6399,7 @@ AC_MSG_RESULT([$SED])
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 #
-## $Id: coin.m4 1272 2009-04-24 16:33:02Z andreasw $
+## $Id: coin.m4 1308 2009-07-07 16:45:58Z andreasw $
 #
 # Author: Andreas Wachter    IBM      2006-04-14
 
@@ -8863,7 +8863,7 @@ fi
 AM_CONDITIONAL(m4_toupper(COIN_HAS_$1),
                [test $m4_tolower(coin_has_$1) != notGiven &&
                 test $m4_tolower(coin_has_$1) != skipping])
-AM_CONDITIONAL(m4_toupper(COIN_HAS_$1_INSTALLED),
+AM_CONDITIONAL(m4_toupper(COIN_HAS_$1_PREINSTALLED),
                [test $m4_tolower(coin_has_$1) = installed])
 
 if test $m4_tolower(coin_has_$1) = installed; then
