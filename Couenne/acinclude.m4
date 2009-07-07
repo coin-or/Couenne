@@ -6413,194 +6413,72 @@ AC_PREREQ(2.59)
 #                           COIN_MAIN_SUBDIRS                             #
 ###########################################################################
 
+# This is the macro for AC_COIN_MAIN_SUBDIRS taking care of ONE argument
+AC_DEFUN([AC_COIN_MAIN_SUBDIR],
+[AC_ARG_VAR([COIN_SKIP_PROJECTS],[Set to the subdirectories of projects that should be skipped in the configuration])
+
+addthis=no
+case $1 in
+  */* )
+    # This must be Data/Simple or something else
+    AC_MSG_CHECKING(whether directory $1 should be recursed into)
+    coin_skip=no
+    if test x"$COIN_SKIP_PROJECTS" != x; then
+      for dir in $COIN_SKIP_PROJECTS; do
+        if test $dir = $1; then
+	  coin_skip=yes
+        fi
+      done
+    fi
+    if test $coin_skip = yes; then
+      AC_MSG_RESULT(skipping)
+    elif test -r $srcdir/$1/configure; then
+      coin_subdirs="$coin_subdirs $1"
+      AC_MSG_RESULT(yes)
+      addthis=yes
+    else
+      AC_MSG_RESULT(no)
+    fi
+    ;;
+  * )
+    AC_COIN_HAS_PROJECT($1)
+    AC_MSG_CHECKING(whether directory $1 should be recursed into)
+    if test "$m4_tolower(coin_has_$1)" != skipped &&
+       test "$m4_tolower(coin_has_$1)" != installed; then
+      if test -r $srcdir/$1/configure; then
+        coin_subdirs="$coin_subdirs $1"
+	AC_MSG_RESULT(yes)
+	addthis=yes
+      else
+        AC_MSG_RESULT(no)
+      fi
+    else
+      AC_MSG_RESULT(no)
+    fi
+    ;;
+esac
+if test $addthis = yes; then
+  AC_CONFIG_SUBDIRS($1)
+fi
+])
+
 # This macro sets up the recursion into configure scripts into
 # subdirectories.  Each possible subdirectory should be provided as a
 # new argument to this macro.  The current limit is 10 subdirectories.
 # This automatically also checks for the Data subdirectory.
 
 AC_DEFUN([AC_COIN_MAIN_SUBDIRS],
-[AC_ARG_VAR([COIN_SKIP_PROJECTS],[Set to the subdirectories of projects that should be skipped in the configuration])
+[m4_ifvaln([$1],[AC_COIN_MAIN_SUBDIR($1)])
+m4_ifvaln([$2],[AC_COIN_MAIN_SUBDIR($2)])
+m4_ifvaln([$3],[AC_COIN_MAIN_SUBDIR($3)])
+m4_ifvaln([$4],[AC_COIN_MAIN_SUBDIR($4)])
+m4_ifvaln([$5],[AC_COIN_MAIN_SUBDIR($5)])
+m4_ifvaln([$6],[AC_COIN_MAIN_SUBDIR($6)])
+m4_ifvaln([$7],[AC_COIN_MAIN_SUBDIR($7)])
+m4_ifvaln([$8],[AC_COIN_MAIN_SUBDIR($8)])
+m4_ifvaln([$9],[AC_COIN_MAIN_SUBDIR($9)])
+m4_ifvaln([$10],[AC_COIN_MAIN_SUBDIR($10)])
 
-m4_ifvaln([$1],[AC_MSG_CHECKING(whether directory $1 is available)
-                coin_skip=no
-                if test x"$COIN_SKIP_PROJECTS" != x; then
-                  for dir in $COIN_SKIP_PROJECTS; do
-                    if test $dir = $1; then
-                      coin_skip=yes
-                    fi
-                  done
-                fi
-                if test $coin_skip = yes; then
-                  AC_MSG_RESULT(skipping)
-                elif test -r $srcdir/$1/configure; then
-                  coin_subdirs="$coin_subdirs $1"
-                  AC_MSG_RESULT(yes)
-                  AC_CONFIG_SUBDIRS($1)
-                else
-                  AC_MSG_RESULT(no)
-                fi])
-m4_ifvaln([$2],[AC_MSG_CHECKING(whether directory $2 is available)
-                coin_skip=no
-                if test x"$COIN_SKIP_PROJECTS" != x; then
-                  for dir in $COIN_SKIP_PROJECTS; do
-                    if test $dir = $2; then
-                      coin_skip=yes
-                    fi
-                  done
-                fi
-                if test $coin_skip = yes; then
-                  AC_MSG_RESULT(skipping)
-                elif test -r $srcdir/$2/configure; then
-                  coin_subdirs="$coin_subdirs $2"
-                  AC_MSG_RESULT(yes)
-                  AC_CONFIG_SUBDIRS($2)
-                else
-                  AC_MSG_RESULT(no)
-                fi])
-m4_ifvaln([$3],[AC_MSG_CHECKING(whether directory $3 is available)
-                coin_skip=no
-                if test x"$COIN_SKIP_PROJECTS" != x; then
-                  for dir in $COIN_SKIP_PROJECTS; do
-                    if test $dir = $3; then
-                      coin_skip=yes
-                    fi
-                  done
-                fi
-                if test $coin_skip = yes; then
-                  AC_MSG_RESULT(skipping)
-                elif test -r $srcdir/$3/configure; then
-                  coin_subdirs="$coin_subdirs $3"
-                  AC_MSG_RESULT(yes)
-                  AC_CONFIG_SUBDIRS($3)
-                else
-                  AC_MSG_RESULT(no)
-                fi])
-m4_ifvaln([$4],[AC_MSG_CHECKING(whether directory $4 is available)
-                coin_skip=no
-                if test x"$COIN_SKIP_PROJECTS" != x; then
-                  for dir in $COIN_SKIP_PROJECTS; do
-                    if test $dir = $4; then
-                      coin_skip=yes
-                    fi
-                  done
-                fi
-                if test $coin_skip = yes; then
-                  AC_MSG_RESULT(skipping)
-                elif test -r $srcdir/$4/configure; then
-                  coin_subdirs="$coin_subdirs $4"
-                  AC_MSG_RESULT(yes)
-                  AC_CONFIG_SUBDIRS($4)
-                else
-                  AC_MSG_RESULT(no)
-                fi])
-m4_ifvaln([$5],[AC_MSG_CHECKING(whether directory $5 is available)
-                coin_skip=no
-                if test x"$COIN_SKIP_PROJECTS" != x; then
-                  for dir in $COIN_SKIP_PROJECTS; do
-                    if test $dir = $5; then
-                      coin_skip=yes
-                    fi
-                  done
-                fi
-                if test $coin_skip = yes; then
-                  AC_MSG_RESULT(skipping)
-                elif test -r $srcdir/$5/configure; then
-                  coin_subdirs="$coin_subdirs $5"
-                  AC_MSG_RESULT(yes)
-                  AC_CONFIG_SUBDIRS($5)
-                else
-                  AC_MSG_RESULT(no)
-                fi])
-m4_ifvaln([$6],[AC_MSG_CHECKING(whether directory $6 is available)
-                coin_skip=no
-                if test x"$COIN_SKIP_PROJECTS" != x; then
-                  for dir in $COIN_SKIP_PROJECTS; do
-                    if test $dir = $6; then
-                      coin_skip=yes
-                    fi
-                  done
-                fi
-                if test $coin_skip = yes; then
-                  AC_MSG_RESULT(skipping)
-                elif test -r $srcdir/$6/configure; then
-                  coin_subdirs="$coin_subdirs $6"
-                  AC_MSG_RESULT(yes)
-                  AC_CONFIG_SUBDIRS($6)
-                else
-                  AC_MSG_RESULT(no)
-                fi])
-m4_ifvaln([$7],[AC_MSG_CHECKING(whether directory $7 is available)
-                coin_skip=no
-                if test x"$COIN_SKIP_PROJECTS" != x; then
-                  for dir in $COIN_SKIP_PROJECTS; do
-                    if test $dir = $7; then
-                      coin_skip=yes
-                    fi
-                  done
-                fi
-                if test $coin_skip = yes; then
-                  AC_MSG_RESULT(skipping)
-                elif test -r $srcdir/$7/configure; then
-                  coin_subdirs="$coin_subdirs $7"
-                  AC_MSG_RESULT(yes)
-                  AC_CONFIG_SUBDIRS($7)
-                else
-                  AC_MSG_RESULT(no)
-                fi])
-m4_ifvaln([$8],[AC_MSG_CHECKING(whether directory $8 is available)
-                coin_skip=no
-                if test x"$COIN_SKIP_PROJECTS" != x; then
-                  for dir in $COIN_SKIP_PROJECTS; do
-                    if test $dir = $8; then
-                      coin_skip=yes
-                    fi
-                  done
-                fi
-                if test $coin_skip = yes; then
-                  AC_MSG_RESULT(skipping)
-                elif test -r $srcdir/$8/configure; then
-                  coin_subdirs="$coin_subdirs $8"
-                  AC_MSG_RESULT(yes)
-                  AC_CONFIG_SUBDIRS($8)
-                else
-                  AC_MSG_RESULT(no)
-                fi])
-m4_ifvaln([$9],[AC_MSG_CHECKING(whether directory $9 is available)
-                coin_skip=no
-                if test x"$COIN_SKIP_PROJECTS" != x; then
-                  for dir in $COIN_SKIP_PROJECTS; do
-                    if test $dir = $9; then
-                      coin_skip=yes
-                    fi
-                  done
-                fi
-                if test $coin_skip = yes; then
-                  AC_MSG_RESULT(skipping)
-                elif test -r $srcdir/$9/configure; then
-                  coin_subdirs="$coin_subdirs $9"
-                  AC_MSG_RESULT(yes)
-                  AC_CONFIG_SUBDIRS($9)
-                else
-                  AC_MSG_RESULT(no)
-                fi])
-m4_ifvaln([$10],[AC_MSG_CHECKING(whether directory $10 is available)
-                coin_skip=no
-                if test x"$COIN_SKIP_PROJECTS" != x; then
-                  for dir in $COIN_SKIP_PROJECTS; do
-                    if test $dir = $10; then
-                      coin_skip=yes
-                    fi
-                  done
-                fi
-                if test $coin_skip = yes; then
-                  AC_MSG_RESULT(skipping)
-                elif test -r $srcdir/$10/configure; then
-                  coin_subdirs="$coin_subdirs $10"
-                  AC_MSG_RESULT(yes)
-                  AC_CONFIG_SUBDIRS($10)
-                else
-                  AC_MSG_RESULT(no)
-                fi])
 ]) # AC_COIN_MAIN_SUBDIRS
 
 ###########################################################################
@@ -8869,7 +8747,14 @@ AC_SUBST(EXAMPLE_CLEAN_FILES)
 # object directory of the package, respectively.  It also defines
 # a COIN_HAS_PKG preprocessor macro and makefile conditional.  The
 # argument should be the name (Pkg) of the project (in correct lower
-# and upper case)
+# and upper case).
+#
+# It is also possible to specify a preinstalled version of this Coin
+# package.  In this case, only PKGINSTDIR is set to the prefix of that
+# installation.  If the user is providing such a preinstalled version,
+# this macro checks for a header (second argument) and the existance
+# of a library file (third argument - only the stub without extension
+# is to be given, e.g., "libCoinUtils").
 
 AC_DEFUN([AC_COIN_HAS_PROJECT],
 [AC_MSG_CHECKING([for COIN project $1])
@@ -8877,7 +8762,7 @@ AC_DEFUN([AC_COIN_HAS_PROJECT],
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
-m4_tolower(coin_has_$1)=unavailable
+m4_tolower(coin_has_$1)=notGiven
 if test x"$COIN_SKIP_PROJECTS" != x; then
   for dir in $COIN_SKIP_PROJECTS; do
     if test $dir = $1; then
@@ -8886,35 +8771,125 @@ if test x"$COIN_SKIP_PROJECTS" != x; then
   done
 fi
 
+AC_SUBST(m4_toupper($1SRCDIR))
+AC_SUBST(m4_toupper($1OBJDIR))
+AC_SUBST(m4_toupper($1DOCDIR))
+AC_SUBST(m4_toupper($1INSTDIR))
+m4_toupper($1SRCDIR)=This_Variable_Is_Not_Set
+m4_toupper($1OBJDIR)=This_Variable_Is_Not_Set
+m4_toupper($1DOCDIR)=This_Variable_Is_Not_Set
+m4_toupper($1INSTDIR)=This_Variable_Is_Not_Set
+
 if test $m4_tolower(coin_has_$1) != skipping; then
   if test $PACKAGE_TARNAME = m4_tolower($1); then
     m4_tolower(coin_has_$1)=.
   else
-    if test -d $srcdir/../$1; then
-      m4_tolower(coin_has_$1)=../$1
+    AC_ARG_WITH([m4_tolower($1)-instdir],
+	        AC_HELP_STRING([--with-m4_tolower($1)-instdir],
+                               [prefix of installation directory for precompiled $1 package]),
+                [m4_tolower(coin_has_$1)=installed
+		 if test -d "$withval"; then : ; else
+		   AC_MSG_ERROR([argument for --with-m4_tolower($1)-instdir not a directory])
+		 fi
+                 m4_toupper($1INSTDIR)=`cd $withval; pwd`], [])
+
+    AC_ARG_WITH([m4_tolower($1)-srcdir],
+	        AC_HELP_STRING([--with-m4_tolower($1)-srcdir],
+                               [source directory for $1 package]),
+                [if test "$m4_tolower(coin_has_$1)" = installed; then
+		   AC_MSG_ERROR([--with-$m4_tolower($1)-srcdir cannot be given together with --with-m4_tolower($1)-instdir])
+		 fi
+		 if test -d "$withval"; then : ; else
+		   AC_MSG_ERROR([argument for --with-m4_tolower($1)-srcdir not a directory])
+		 fi
+		 m4_tolower(coin_has_$1)=$withval
+                 m4_toupper($1SRCDIR)=`cd $withval; pwd`], [])
+
+    AC_ARG_WITH([m4_tolower($1)-objdir],
+	        AC_HELP_STRING([--with-m4_tolower($1)-objdir],
+                               [object directory for $1 package (if different from source directory in VPATH compilation)]),
+                [if test "$m4_tolower(coin_has_$1)" = installed; then
+		   AC_MSG_ERROR([--with-m4_tolower($1)-objdir cannot be given together with --with-m4_tolower($1)-instdir])
+		 fi
+		 if test "$m4_tolower(coin_has_$1)" = notGiven; then
+		   AC_MSG_ERROR([--with-m4_tolower($1)-objdir must be accompanied by --with-m4_tolower($1)-srcdir])
+		 fi
+		 if test -d "$withval"; then : ; else
+		   AC_MSG_ERROR([argument for --with-m4_tolower($1)-objdir not a directory])
+		 fi
+                 m4_toupper($1OBJDIR)=`cd $withval; pwd`], [m4_toupper($1OBJDIR)="$m4_toupper($1SRCDIR)"])
+
+    # if we still don't have a location, check for generic flag
+    if test "$m4_tolower(coin_has_$1)" = notGiven; then
+      AC_ARG_WITH([coin-instdir],
+	          AC_HELP_STRING([--with-coin-instdir],
+                                 [prefix of installation directory for precompiled COIN packages]),
+                  [m4_tolower(coin_has_$1)=installed
+		   if test -d "$withval"; then : ; else
+		     AC_MSG_ERROR([argument for --with-coin-instdir not a directory])
+		   fi
+                   m4_toupper($1INSTDIR)=`cd $withval; pwd`], [])
+    fi
+
+    if test "$m4_tolower(coin_has_$1)" = notGiven; then
+      if test -d $srcdir/../$1; then
+        m4_tolower(coin_has_$1)=../$1
+      fi
     fi
   fi
 fi
 
-if test $m4_tolower(coin_has_$1) != unavailable &&
+if test $m4_tolower(coin_has_$1) != notGiven &&
    test $m4_tolower(coin_has_$1) != skipping; then
   # Set the #define if the component is available
   AC_DEFINE(m4_toupper(COIN_HAS_$1),[1],[Define to 1 if the $1 package is used])
 
-  # Set the variables for source and object code location
-  AC_SUBST(m4_toupper($1SRCDIR))
-  m4_toupper($1SRCDIR)=`cd $srcdir/$m4_tolower(coin_has_$1); pwd`
-  AC_SUBST(m4_toupper($1OBJDIR))
-  m4_toupper($1OBJDIR)=`pwd`/$m4_tolower(coin_has_$1)
-  AC_SUBST(m4_toupper($1DOCDIR))
-  m4_toupper($1DOCDIR)=$abs_lib_dir/../share/doc/coin/$1
+  if test $m4_tolower(coin_has_$1) = installed; then
+    m4_toupper($1DOCDIR)=$m4_toupper($1INSTDIR)/share/doc/coin/$1
+  else
+    if test "$m4_toupper($1OBJDIR)" = This_Variable_Is_Not_Set; then
+      # Set the variables for source and object code location
+      m4_toupper($1SRCDIR)=`cd $srcdir/$m4_tolower(coin_has_$1); pwd`
+      m4_toupper($1OBJDIR)=`pwd`/$m4_tolower(coin_has_$1)
+      m4_toupper($1DOCDIR)=$abs_lib_dir/../share/doc/coin/$1
+    else
+      # This is just a guess:
+      m4_toupper($1DOCDIR)=$m4_toupper($1OBJDIR)/../share/doc/coin/$1
+    fi
+  fi
 fi
 
   # Define the Makefile conditional
 AM_CONDITIONAL(m4_toupper(COIN_HAS_$1),
-               [test $m4_tolower(coin_has_$1) != unavailable &&
+               [test $m4_tolower(coin_has_$1) != notGiven &&
                 test $m4_tolower(coin_has_$1) != skipping])
-AC_MSG_RESULT([$m4_tolower(coin_has_$1)])
+AM_CONDITIONAL(m4_toupper(COIN_HAS_$1_INSTALLED),
+               [test $m4_tolower(coin_has_$1) = installed])
+
+if test $m4_tolower(coin_has_$1) = installed; then
+  AC_MSG_RESULT([installed in $m4_toupper($1INSTDIR)])
+  # Check for header
+  m4_ifvaln([$2],[tmp=$m4_toupper($1INSTDIR)/include/coin
+                  AC_MSG_CHECKING(whether header $2 is available in $tmp)
+                  if test -r $tmp/$2; then
+		    AC_MSG_RESULT([yes])
+		  else
+		    AC_MSG_RESULT([no])
+		    AC_MSG_ERROR([Header $2 not available in $1 installation directory])
+		  fi])
+  # Check for library (this is not qo reliable)
+  m4_ifvaln([$3],[tmp=$m4_toupper($1INSTDIR)/lib
+                  AC_MSG_CHECKING(whether library $3.* is available in $tmp)
+		  bla=`ls $tmp/$3.* 2>/dev/null | head -n 1`
+		  if test x"$bla" = x; then
+		    AC_MSG_RESULT([no])
+		    AC_MSG_ERROR([Library $3.* not available in $1 installation directory])
+		  else
+		    AC_MSG_RESULT([found $bla])
+		  fi])
+else
+  AC_MSG_RESULT([$m4_tolower(coin_has_$1)])
+fi
 ]) # AC_COIN_HAS_PROJECT
 
 ###########################################################################
