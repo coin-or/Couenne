@@ -21,8 +21,7 @@ int CouenneSolverInterface::tightenBoundsCLP_Light (int lightweight) {
 
   int
     numberRows    = getNumRows(),
-    numberColumns = getNumCols(),
-    iRow, iColumn;
+    numberColumns = getNumCols();
 
   const double * columnUpper = getColUpper();
   const double * columnLower = getColLower();
@@ -34,9 +33,7 @@ int CouenneSolverInterface::tightenBoundsCLP_Light (int lightweight) {
   const int * row = getMatrixByCol()->getIndices();
   const CoinBigIndex * columnStart = getMatrixByCol()->getVectorStarts();
   const int * columnLength = getMatrixByCol()->getVectorLengths();
-  const double *objective = getObjCoefficients() ;
 
-  double direction = getObjSense();
   double * down = new double [numberRows];
 
   int * first = new int[numberRows];

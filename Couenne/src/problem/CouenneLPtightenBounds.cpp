@@ -92,10 +92,10 @@ int CouenneSolverInterface::tightenBounds (int lightweight) {
       }
     }
 
-    const double 
-      *newerLower = cutgen_ -> Problem () -> Lb (),
-      *newerUpper = cutgen_ -> Problem () -> Ub ();
-
+//    const double 
+//      *newerLower = cutgen_ -> Problem () -> Lb (),
+//      *newerUpper = cutgen_ -> Problem () -> Ub ();
+//
 //     printf ("-------- BOUNDS AFTER ------------\n  ");
 //     for (int i=0; i < ncols; i++) {
 //       printf("x_%03d [%+15.8g %+15.8g] ", i, newerLower [i], newerUpper [i]);
