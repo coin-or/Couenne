@@ -1,11 +1,11 @@
-/* $Id: doStrongBranching.cpp 141 2009-06-03 04:19:19Z pbelotti $ */
-/*
+/* $Id$
+ *
  * Name:    doStrongBranching.cpp
  * Authors: Andreas Waechter, IBM Corp.
  *          Pietro Belotti, CMU
  * Purpose: actual strong branching method
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -41,7 +41,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 }
 
 
-namespace Bonmin {
+//namespace Bonmin {
 
   /**  This is a utility function which does strong branching on
        a list of objects and stores the results in OsiHotInfo.objects.
@@ -57,8 +57,7 @@ namespace Bonmin {
   */
   int CouenneChooseStrong::doStrongBranching (CouenneSolverInterface * solver, 
 					      OsiBranchingInformation *info,
-					      int numberToDo, int returnCriterion)
-  {
+					      int numberToDo, int returnCriterion) {
 
     jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		      "\n-\n------- CCS: trying %d objects:\n", numberToDo);
@@ -98,10 +97,10 @@ namespace Bonmin {
 
     for (;iDo < numberToDo; iDo++) {
 
-      HotInfo * result = results_ () + iDo; // retrieve i-th object to test
+      Bonmin::HotInfo * result = results_ () + iDo; // retrieve i-th object to test
 
-      CouenneObject *CouObj = dynamic_cast <CouenneObject *>
-	(solver_ -> objects () [result -> whichObject ()]);
+      OsiObject     *Object = solver_ -> objects () [result -> whichObject ()];
+      CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
 
       // For now just 2 way
       OsiBranchingObject * branch = result -> branchingObject ();
@@ -112,7 +111,7 @@ namespace Bonmin {
 
       /* Try the first direction.  Each subsequent call to branch()
 	 performs the specified branch and advances the branch object
-	 state to the next branch alternative.) */
+	 state to the next branch alternative. */
 
       int 
 	status0 = -1, 
@@ -129,11 +128,51 @@ namespace Bonmin {
 
 	else { // branch is feasible, solve and compare
 
-	  solver -> solveFromHotStart ();
-	  if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
-	    CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
-	    if (dist > COUENNE_EPS)
-	      CouObj -> setEstimate (dist, 0);
+	  bool infeasible = false;
+
+	  // Bound tightening if not a CouenneObject -- explicit bound tightening
+	  if (!CouObj) {
+
+	    int 
+	      indVar = Object   -> columnNumber (),
+	      nvars  = problem_ -> nVars ();
+
+	    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
+
+	    chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
+
+	    if (problem_ -> doFBBT ()) {         // problem allowed to do FBBT
+
+	      problem_ -> installCutOff ();
+
+	      if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
+		infeasible = true;        // ==> report it
+
+	      else {
+		const double
+		  *lb = solver -> getColLower (),
+		  *ub = solver -> getColUpper ();
+
+		for (int i=0; i<nvars; i++) {
+		  if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
+		  if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
+		}
+	      }
+	    }
+
+	    delete [] chg_bds;
+	  }
+
+	  if (infeasible) result -> setDownStatus (status0 = 1);
+	  else {
+	    solver -> solveFromHotStart ();
+	    //solver -> solveFromHotStart ();
+
+	    if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
+	      CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
+	      if (dist > COUENNE_EPS)
+		CouObj -> setEstimate (dist, 0);
+	    }
 	  }
 	}
 
@@ -155,13 +194,17 @@ namespace Bonmin {
 	    CouNumber dist = distance (lpSol, thisSolver -> getColSolution (), numberColumns);
 	    if (dist > COUENNE_EPS)
 	      CouObj -> setEstimate (dist, 0);
-	    //CouObj -> setEstimate (distance (lpSol, thisSolver->getColSolution (),numberColumns), 0);
 	  }
 	}
       }
 
       // can check if we got solution
       // status is 0 finished, 1 infeasible and 2 unfinished and 3 is solution
+
+      /*if (CouObj)
+	jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "dnEst %g upEst %g\n",
+			  CouObj->downEstimate(),
+			  CouObj->upEstimate());*/
 
       // only update information if this branch is feasible
       if (status0 < 0)
@@ -201,12 +244,52 @@ namespace Bonmin {
 	  result -> setUpStatus (status1 = 1);
 
         else {
-	  solver -> solveFromHotStart ();
-	  if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
-	    CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
-	    if (dist > COUENNE_EPS)
-	      CouObj -> setEstimate (dist, 1);
-	    //CouObj -> setEstimate (distance (lpSol, solver -> getColSolution (), numberColumns), 1);
+
+	  bool infeasible = false;
+
+	  // Bound tightening if not a CouenneObject -- explicit bound tightening
+	  if (!CouObj) {
+
+	    int 
+	      indVar = Object   -> columnNumber (),
+	      nvars  = problem_ -> nVars ();
+
+	    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
+
+	    chg_bds [indVar].setLower (t_chg_bounds::CHANGED);
+
+	    if (problem_ -> doFBBT ()) {         // problem allowed to do FBBT
+
+	      problem_ -> installCutOff ();
+
+	      if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
+		infeasible = true;        // ==> report it
+
+	      else {
+		const double
+		  *lb = solver -> getColLower (),
+		  *ub = solver -> getColUpper ();
+
+		for (int i=0; i<nvars; i++) {
+		  if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
+		  if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
+		}
+	      }
+	    }
+
+	    delete [] chg_bds;
+	  }
+
+	  if (infeasible) result -> setUpStatus (status0 = 1);
+	  else {
+
+	    solver -> solveFromHotStart ();
+
+	    if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
+	      CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
+	      if (dist > COUENNE_EPS)
+		CouObj -> setEstimate (dist, 1);
+	    }
 	  }
 	}
       } else {                     // some more complex branch, have to clone solver
@@ -227,13 +310,17 @@ namespace Bonmin {
 	    CouNumber dist = distance (lpSol, thisSolver -> getColSolution (), numberColumns);
 	    if (dist > COUENNE_EPS)
 	      CouObj -> setEstimate (dist, 1);
-	    //CouObj -> setEstimate (distance (lpSol, thisSolver->getColSolution (),numberColumns), 1);
 	  }
 	}
       }
 
       // can check if we got solution
       // status is 0 finished, 1 infeasible and 2 unfinished and 3 is solution
+
+      /*if (CouObj)
+	jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "dnEst %g upEst %g\n",
+			  CouObj->downEstimate(),
+			  CouObj->upEstimate());*/
 
       // only update information if this branch is feasible
       if (status1 < 0)
@@ -374,4 +461,4 @@ namespace Bonmin {
 
     return returnCode;
   }
-}
+//}

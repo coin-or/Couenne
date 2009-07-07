@@ -276,8 +276,6 @@ CouenneObject exprAux::properObject (CouenneProblem *p,
 				     Bonmin::BabSetupBase *base, 
 				     JnlstPtr jnlst) {
 
-  CouenneObject *retp = NULL;
-
   /*if (image_ -> code () == COU_EXPRMUL) printf ("OK1\n");
   if (image_ -> ArgList () [0] -> Index () >= 0) printf ("OK2\n"); 
   if (image_ -> ArgList () [1] -> Index () >= 0) printf ("OK3\n");
@@ -301,6 +299,4 @@ CouenneObject exprAux::properObject (CouenneProblem *p,
     CouenneObject obj (p, this, base, jnlst);
     return obj;
   }
-
-  //  return (*retp);
 }
