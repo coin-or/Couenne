@@ -6399,7 +6399,7 @@ AC_MSG_RESULT([$SED])
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 #
-## $Id: coin.m4 1308 2009-07-07 16:45:58Z andreasw $
+## $Id: coin.m4 1312 2009-07-07 20:22:30Z andreasw $
 #
 # Author: Andreas Wachter    IBM      2006-04-14
 
@@ -6417,49 +6417,43 @@ AC_PREREQ(2.59)
 AC_DEFUN([AC_COIN_MAIN_SUBDIR],
 [AC_ARG_VAR([COIN_SKIP_PROJECTS],[Set to the subdirectories of projects that should be skipped in the configuration])
 
-addthis=no
-case $1 in
-  */* )
-    # This must be Data/Simple or something else
-    AC_MSG_CHECKING(whether directory $1 should be recursed into)
-    coin_skip=no
-    if test x"$COIN_SKIP_PROJECTS" != x; then
-      for dir in $COIN_SKIP_PROJECTS; do
-        if test $dir = $1; then
-	  coin_skip=yes
-        fi
-      done
-    fi
-    if test $coin_skip = yes; then
-      AC_MSG_RESULT(skipping)
-    elif test -r $srcdir/$1/configure; then
+# This is a hack to find out if there is a "/" in the name, which would
+# break the AC_COIN_HAS_PROJECT macro
+m4_case($1,m4_bpatsubsts($1,[/],[_]),
+[# We have no "/" in the $1 argument
+  AC_COIN_HAS_PROJECT($1)
+  AC_MSG_CHECKING(whether directory $1 should be recursed into)
+  if test "$m4_tolower(coin_has_$1)" != skipped &&
+     test "$m4_tolower(coin_has_$1)" != installed; then
+    if test -r $srcdir/$1/configure; then
       coin_subdirs="$coin_subdirs $1"
       AC_MSG_RESULT(yes)
-      addthis=yes
+      AC_CONFIG_SUBDIRS($1)
     else
       AC_MSG_RESULT(no)
     fi
-    ;;
-  * )
-    AC_COIN_HAS_PROJECT($1)
-    AC_MSG_CHECKING(whether directory $1 should be recursed into)
-    if test "$m4_tolower(coin_has_$1)" != skipped &&
-       test "$m4_tolower(coin_has_$1)" != installed; then
-      if test -r $srcdir/$1/configure; then
-        coin_subdirs="$coin_subdirs $1"
-	AC_MSG_RESULT(yes)
-	addthis=yes
-      else
-        AC_MSG_RESULT(no)
+  else
+    AC_MSG_RESULT(no)
+  fi],
+[# This must be Data/Simple or something else
+  AC_MSG_CHECKING(whether directory $1 should be recursed into)
+  coin_skip=no
+  if test x"$COIN_SKIP_PROJECTS" != x; then
+    for dir in $COIN_SKIP_PROJECTS; do
+      if test $dir = $1; then
+	coin_skip=yes
       fi
-    else
-      AC_MSG_RESULT(no)
-    fi
-    ;;
-esac
-if test $addthis = yes; then
-  AC_CONFIG_SUBDIRS($1)
-fi
+    done
+  fi
+  if test $coin_skip = yes; then
+    AC_MSG_RESULT(skipping)
+  elif test -r $srcdir/$1/configure; then
+    coin_subdirs="$coin_subdirs $1"
+    AC_MSG_RESULT(yes)
+    AC_CONFIG_SUBDIRS($1)
+  else
+    AC_MSG_RESULT(no)
+  fi])
 ])
 
 # This macro sets up the recursion into configure scripts into
@@ -8758,7 +8752,6 @@ AC_SUBST(EXAMPLE_CLEAN_FILES)
 
 AC_DEFUN([AC_COIN_HAS_PROJECT],
 [AC_MSG_CHECKING([for COIN project $1])
-
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
@@ -8879,7 +8872,7 @@ if test $m4_tolower(coin_has_$1) = installed; then
 		  fi])
   # Check for library (this is not qo reliable)
   m4_ifvaln([$3],[tmp=$m4_toupper($1INSTDIR)/lib
-                  AC_MSG_CHECKING(whether library $3.* is available in $tmp)
+                  AC_MSG_CHECKING([whether library $3.* is available in $tmp])
 		  bla=`ls $tmp/$3.* 2>/dev/null | head -n 1`
 		  if test x"$bla" = x; then
 		    AC_MSG_RESULT([no])

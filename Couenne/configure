@@ -21852,7 +21852,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 echo "$as_me:$LINENO: checking for COIN project ThirdParty" >&5
 echo $ECHO_N "checking for COIN project ThirdParty... $ECHO_C" >&6
-
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
@@ -22018,7 +22017,6 @@ fi
 
 echo "$as_me:$LINENO: checking for COIN project CoinUtils" >&5
 echo $ECHO_N "checking for COIN project CoinUtils... $ECHO_C" >&6
-
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
@@ -22184,7 +22182,6 @@ fi
 
 echo "$as_me:$LINENO: checking for COIN project Clp" >&5
 echo $ECHO_N "checking for COIN project Clp... $ECHO_C" >&6
-
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
@@ -22350,7 +22347,6 @@ fi
 
 echo "$as_me:$LINENO: checking for COIN project Bonmin" >&5
 echo $ECHO_N "checking for COIN project Bonmin... $ECHO_C" >&6
-
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
@@ -22516,7 +22512,6 @@ fi
 
 echo "$as_me:$LINENO: checking for COIN project Ipopt" >&5
 echo $ECHO_N "checking for COIN project Ipopt... $ECHO_C" >&6
-
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
@@ -22682,7 +22677,6 @@ fi
 
 echo "$as_me:$LINENO: checking for COIN project Cbc" >&5
 echo $ECHO_N "checking for COIN project Cbc... $ECHO_C" >&6
-
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
@@ -22848,7 +22842,6 @@ fi
 
 echo "$as_me:$LINENO: checking for COIN project Osi" >&5
 echo $ECHO_N "checking for COIN project Osi... $ECHO_C" >&6
-
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
@@ -23014,7 +23007,6 @@ fi
 
 echo "$as_me:$LINENO: checking for COIN project Cgl" >&5
 echo $ECHO_N "checking for COIN project Cgl... $ECHO_C" >&6
-
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
@@ -23180,7 +23172,6 @@ fi
 
 echo "$as_me:$LINENO: checking for COIN project Couenne" >&5
 echo $ECHO_N "checking for COIN project Couenne... $ECHO_C" >&6
-
 # First check, if the sub-project is actually available (ToDo: allow
 # other locations)
 
