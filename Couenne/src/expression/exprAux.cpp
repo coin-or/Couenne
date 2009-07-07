@@ -276,13 +276,13 @@ CouenneObject exprAux::properObject (CouenneProblem *p,
 				     Bonmin::BabSetupBase *base, 
 				     JnlstPtr jnlst) {
 
-  CouenneObject *retp = NULL;
-
-  /*if (image_ -> code () == COU_EXPRMUL) printf ("OK1\n");
+  /*
+  if (image_ -> code () == COU_EXPRMUL) printf ("OK1\n");
   if (image_ -> ArgList () [0] -> Index () >= 0) printf ("OK2\n"); 
   if (image_ -> ArgList () [1] -> Index () >= 0) printf ("OK3\n");
   if (fabs (lb ()) < COUENNE_EPS) printf ("OK4\n");
-  if (fabs (ub ()) < COUENNE_EPS) printf ("OK5\n");*/
+  if (fabs (ub ()) < COUENNE_EPS) printf ("OK5\n");
+  */
 
   // todo: this is an expression method
 
@@ -294,13 +294,9 @@ CouenneObject exprAux::properObject (CouenneProblem *p,
 
     // it's a complementarity constraint object!
 
-    CouenneComplObject obj (p, this, base, jnlst);
-    return obj;
-  }
-  else {
-    CouenneObject obj (p, this, base, jnlst);
-    return obj;
+    return CouenneComplObject(p, this, base, jnlst);
   }
 
-  //  return (*retp);
+  // Otherwise just return a plain CouenneObject
+  return CouenneObject(p, this, base, jnlst);
 }
