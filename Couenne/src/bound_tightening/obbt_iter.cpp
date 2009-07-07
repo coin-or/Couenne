@@ -112,8 +112,8 @@ obbt_iter (CouenneSolverInterface *csi,
       // TODO: write code for monotone functions...
 
       if // independent variable is exactly bounded in both ways
-	((chg_bds [indInd].lower() & t_chg_bounds::EXACT) && 
-	 (chg_bds [indInd].upper() & t_chg_bounds::EXACT) ||
+	(((chg_bds [indInd].lower() & t_chg_bounds::EXACT) && 
+	  (chg_bds [indInd].upper() & t_chg_bounds::EXACT)) ||
 	 // or if this expression is of the form w=cx+d, that is, it
 	 // depends on one variable only and it is linear
 	 (var -> Image () -> Linearity () <= LINEAR)) {
