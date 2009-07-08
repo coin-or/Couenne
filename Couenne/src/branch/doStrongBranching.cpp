@@ -270,77 +270,45 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
 					 Bonmin::HotInfo * result,
 					 int direction) {
 
+  bool boundBranch = branch -> boundBranch ();
+
   int status = -1;
 
-  OsiSolverInterface *thisSolver = solver;
+  OsiSolverInterface *thisSolver = 
+    boundBranch ? solver : solver -> clone ();
 
-  // Bound tightening if not a CouenneObject -- explicit bound tightening
   CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
 
-  if (branch -> boundBranch ()) { // a (variable) bound branch
+  if ((branch -> branch (thisSolver) > COUENNE_INFINITY) || // branch is infeasible
+      // Bound tightening if not a CouenneObject -- explicit 
+      (!CouObj && !StrongBranchingFBBT (Object, thisSolver))) {
 
-    if (branch -> branch (solver) > COUENNE_INFINITY) { // branch is infeasible
-      if (direction < 0) result -> setDownStatus (status = 1);
-      else               result -> setUpStatus   (status = 1);
+    status = 1;
+
+    if (direction < 0) result -> setDownStatus (1);
+    else               result -> setUpStatus   (1);
+
+  } else {
+
+    if (boundBranch) thisSolver -> solveFromHotStart ();
+    else {
+
+      int limit;
+      thisSolver -> getIntParam (OsiMaxNumIterationHotStart, limit);
+      thisSolver -> setIntParam (OsiMaxNumIteration,         limit); 
+
+      thisSolver -> resolve ();
     }
 
-    else // branch seems feasible, solve and compare
-
-      if (!CouObj && !StrongBranchingFBBT (Object, solver)) {
-
-	status = 1;
-
-	if (direction < 0) result -> setDownStatus (1);
-	else               result -> setUpStatus   (1);
-
-      } else {
-
-	solver -> solveFromHotStart ();
-
-	if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
-	  CouNumber dist = distance (info -> solution_, solver -> getColSolution (), 
-				     problem_ -> nVars ());
-	  if (dist > COUENNE_EPS)
-	    CouObj -> setEstimate (dist, 0);
-	}
-      }
-
-  } else {                       // some more complex branch, have to clone solver
-
-    // adding cuts or something 
-    thisSolver = solver -> clone ();
-
-    if (branch -> branch (thisSolver) > COUENNE_INFINITY) {
-
-      if (direction < 0) result -> setDownStatus (status = 1);
-      else               result -> setUpStatus   (status = 1);
-
-    } else // set hot start iterations
-
-      if (!CouObj && !StrongBranchingFBBT (Object, thisSolver)) {
-
-	status = 1;
-
-	if (direction < 0) result -> setDownStatus (1);
-	else               result -> setUpStatus   (1);
-
-      } else {
-
-	int limit;
-	thisSolver -> getIntParam (OsiMaxNumIterationHotStart, limit);
-	thisSolver -> setIntParam (OsiMaxNumIteration,         limit); 
-
-	thisSolver -> resolve ();
-	if (pseudoUpdateLP_ && CouObj && thisSolver -> isProvenOptimal ()) {
-	  CouNumber dist = distance (info -> solution_, thisSolver -> getColSolution (), 
-				   problem_ -> nVars ());
-	  if (dist > COUENNE_EPS)
-	    CouObj -> setEstimate (dist, 0);
-	}
-      }
+    if (pseudoUpdateLP_ && CouObj && thisSolver -> isProvenOptimal ()) {
+      CouNumber dist = distance (info -> solution_, thisSolver -> getColSolution (), 
+				 problem_ -> nVars ());
+      if (dist > COUENNE_EPS)
+	CouObj -> setEstimate (dist, direction < 0 ? 0 : 1);
+    }
   }
 
-  // can check if we got solution
+  // Can check if we got solution
   // status is 0 finished, 1 infeasible and 2 unfinished and 3 is solution
 
   // only update information if this branch is feasible
