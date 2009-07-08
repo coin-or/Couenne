@@ -166,7 +166,7 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
     OsiClpSolverInterface *clpcsi = dynamic_cast <OsiClpSolverInterface *> (csi);
 
-    if (!clpcsi)
+    if (clpcsi)
       clpcsi -> setupForRepeatedUse ();
     //csi -> doingResolve () = false;
 
