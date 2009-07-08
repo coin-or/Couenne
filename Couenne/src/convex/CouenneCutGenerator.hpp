@@ -24,8 +24,9 @@
 #include "CouenneJournalist.hpp"
 
 class CouenneProblem;
-class CouenneSolverInterface;
 class funtriplet;
+
+//template <class T> class CouenneSolverInterface;
 
 struct ASL;
 

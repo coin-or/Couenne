@@ -10,7 +10,6 @@
  */
 
 #include "BonChooseVariable.hpp"
-#include "CouenneSolverInterface.hpp"
 #include "CouenneChooseStrong.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneBranchingObject.hpp"

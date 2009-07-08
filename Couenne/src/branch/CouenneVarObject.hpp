@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneVarObject.hpp
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for branching on variables
@@ -22,7 +22,8 @@ class CouenneVarObject: public CouenneObject {
 public:
 
   /// Constructor with information for branching point selection strategy
-  CouenneVarObject (CouenneProblem *p, 
+  CouenneVarObject (CouenneCutGenerator *c,
+		    CouenneProblem *p, 
 		    exprVar *ref, 
 		    Bonmin::BabSetupBase *base, 
 		    JnlstPtr jnlst);

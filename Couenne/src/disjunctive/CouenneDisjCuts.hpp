@@ -23,7 +23,6 @@
 #include "CouenneJournalist.hpp"
 
 class CouenneCutGenerator;
-class CouenneSolverInterface;
 
 enum {COUENNE_INFEASIBLE, COUENNE_TIGHTENED, COUENNE_FEASIBLE};
 

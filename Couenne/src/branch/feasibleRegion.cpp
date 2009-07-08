@@ -1,17 +1,16 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    feasibleRegion.cpp
  * Authors: Pierre Bonami, IBM Corp.
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Implement feasibleRegion() method of CouenneObject class
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CoinHelperFunctions.hpp"
 
-#include "CouenneSolverInterface.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"

@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: separation method for disjunctive cuts
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -13,7 +13,7 @@
 
 #include "CouenneDisjCuts.hpp"
 #include "CouenneProblem.hpp"
-#include "CouenneSolverInterface.hpp"
+#include "CouenneCutGenerator.hpp"
 
 /// generate disjunctive cuts
 void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si, 

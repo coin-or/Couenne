@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneRestoreUnused.cpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Restore a consistent value of duplicate variables 

@@ -272,7 +272,8 @@ void exprAux::generateCuts (const OsiSolverInterface &si,
 
 /// return proper object to handle expression associated with this
 /// variable (NULL if this is not an auxiliary)
-CouenneObject exprAux::properObject (CouenneProblem *p, 
+CouenneObject exprAux::properObject (CouenneCutGenerator *c,
+				     CouenneProblem *p, 
 				     Bonmin::BabSetupBase *base, 
 				     JnlstPtr jnlst) {
 
@@ -292,11 +293,11 @@ CouenneObject exprAux::properObject (CouenneProblem *p,
 
     // it's a complementarity constraint object!
 
-    CouenneComplObject obj (p, this, base, jnlst);
+    CouenneComplObject obj (c, p, this, base, jnlst);
     return obj;
   }
   else {
-    CouenneObject obj (p, this, base, jnlst);
+    CouenneObject obj (c, p, this, base, jnlst);
     return obj;
   }
 }

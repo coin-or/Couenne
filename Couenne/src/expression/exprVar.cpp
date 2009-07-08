@@ -68,8 +68,9 @@ expression *exprVar::Ub () {return new exprUpperBound (varIndex_, domain_);}///<
 
 // dummy function -- the real one is in exprAux and returns either a
 // CouenneObject or a CouenneComplObject
-CouenneObject exprVar::properObject (CouenneProblem *p, 
-				      Bonmin::BabSetupBase *base, 
-				      JnlstPtr jnlst_) {
+CouenneObject exprVar::properObject (CouenneCutGenerator *c,
+				     CouenneProblem *p, 
+				     Bonmin::BabSetupBase *base, 
+				     JnlstPtr jnlst_) {
   return CouenneObject ();
 }

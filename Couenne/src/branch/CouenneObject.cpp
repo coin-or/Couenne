@@ -24,6 +24,7 @@ const CouNumber max_pseudocost = 1000.;
 CouenneObject::CouenneObject ():
 
   OsiObject (),
+  cutGen_          (NULL),
   problem_         (NULL),
   reference_       (NULL),
   strategy_        (MID_INTERVAL),
@@ -39,11 +40,13 @@ CouenneObject::CouenneObject ():
 
 
 /// Constructor with information for branching point selection strategy
-CouenneObject::CouenneObject (CouenneProblem *p, 
+CouenneObject::CouenneObject (CouenneCutGenerator *cutgen,
+			      CouenneProblem *p, 
 			      exprVar *ref, 
 			      Bonmin::BabSetupBase *base, 
 			      JnlstPtr jnlst):
   OsiObject (),
+  cutGen_         (cutgen),
   problem_        (p),  
   reference_      (ref),
   strategy_       (MID_INTERVAL),
@@ -91,6 +94,7 @@ CouenneObject::CouenneObject (exprVar *ref,
 			      JnlstPtr jnlst):
 
   OsiObject (),
+  cutGen_         (NULL),  
   problem_        (NULL),  
   reference_      (ref),
   strategy_       (MID_INTERVAL),
@@ -112,6 +116,7 @@ CouenneObject::CouenneObject (exprVar *ref,
 /// Copy constructor
 CouenneObject::CouenneObject (const CouenneObject &src):
   OsiObject       (src),
+  cutGen_         (src.cutGen_),
   problem_        (src.problem_),
   reference_      (src.reference_),
   strategy_       (src.strategy_),
@@ -229,7 +234,7 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
 
   // create branching object /////////////////////////////////////// 
   OsiBranchingObject *brObj = new CouenneBranchingObject 
-    (si, this, jnlst_, brVar, way, *brPts, doFBBT_, doConvCuts_);
+    (si, this, jnlst_, cutGen_, problem_, brVar, way, *brPts, doFBBT_, doConvCuts_);
 
   problem_ -> domain () -> pop (); // Couenne discards current point
 

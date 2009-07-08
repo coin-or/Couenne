@@ -1,16 +1,16 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneDisjCuts.cpp
  * Author:  Pietro Belotti
  * Purpose: methods for the disjunctive cuts
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneDisjCuts.hpp"
 #include "CouenneProblem.hpp"
-#include "CouenneSolverInterface.hpp"
+#include "CouenneCutGenerator.hpp"
 
 
 /// constructor

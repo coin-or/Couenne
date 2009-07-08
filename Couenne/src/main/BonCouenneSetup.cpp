@@ -1,4 +1,5 @@
-/* $Id$ */
+// $Id$
+//
 // (C) Copyright International Business Machines Corporation 2007
 // All Rights Reserved.
 // This code is published under the Common Public License.
@@ -25,8 +26,11 @@
 #include "CouenneSolverInterface.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneDisjCuts.hpp"
+
 #include "BonCouenneInfo.hpp"
 #include "BonCbcNode.hpp"
+
+#include "OsiClpSolverInterface.hpp"
 
 // MILP cuts
 #include "CglGomory.hpp"
@@ -102,7 +106,10 @@ namespace Bonmin{
 
     gatherParametersValues(options_);
 
-    continuousSolver_ = new CouenneSolverInterface;
+    CouenneSolverInterface <OsiClpSolverInterface> *CSI 
+      = new CouenneSolverInterface <OsiClpSolverInterface>;
+
+    continuousSolver_ = CSI;
 
     if (!ci) {
 
@@ -115,8 +122,10 @@ namespace Bonmin{
 	aslfg_ = new SmartAsl;
 	aslfg_->asl = readASLfg (argv);
 #else
-	    std::cerr << "Couenne was compiled without AMPL Solver Library. Cannot initialize from AMPL NL File." << std::endl;
-	    return false;
+	std::cerr << 
+	  "Couenne was compiled without AMPL Solver Library. Cannot initialize from AMPL NL File." 
+		  << std::endl;
+	return false;
 #endif
       } 
     }
@@ -165,7 +174,7 @@ namespace Bonmin{
 
     assert (couenneProb);
 
-    couenneProb -> reformulate ();
+    couenneProb -> reformulate (couenneCg);
 
     Bonmin::BabInfo * extraStuff = new Bonmin::CouenneInfo(0);
 
@@ -304,7 +313,7 @@ namespace Bonmin{
 	    // it's a complementarity constraint object!
 	    objects    [nobj] = new CouenneComplObject (couenneProb, var, this, journalist ());
 	    else*/
-	  objects [nobj] = new CouenneObject      (couenneProb, var, this, journalist ());
+	  objects [nobj] = new CouenneObject (couenneCg, couenneProb, var, this, journalist ());
 
 	  objects [nobj++] -> setPriority (contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
@@ -321,7 +330,7 @@ namespace Bonmin{
 	   //|| ((var -> Type () == AUX) &&                                  // or, aux 
 	   //    (var -> Image () -> Linearity () > LINEAR))) {              // of nonlinear
 
-	  objects [nobj] = new CouenneVarObject (couenneProb, var, this, journalist ());
+	  objects [nobj] = new CouenneVarObject (couenneCg, couenneProb, var, this, journalist ());
 	  objects [nobj++] -> setPriority (contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
 	}
@@ -338,7 +347,7 @@ namespace Bonmin{
 	  //|| ((var -> Type () == AUX) &&                      // or, aux 
 	  //(var -> Image () -> Linearity () > LINEAR))) { // of nonlinear
 
-	  objects [nobj] = new CouenneVTObject (couenneProb, var, this, journalist ());
+	  objects [nobj] = new CouenneVTObject (couenneCg, couenneProb, var, this, journalist ());
 	  objects [nobj++] -> setPriority (contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
 	}
@@ -371,8 +380,12 @@ namespace Bonmin{
       cutGenerators().push_back(cg);
 
       // set cut gen pointer
-      dynamic_cast <CouenneSolverInterface *> 
-	(continuousSolver_) -> setCutGenPtr (couenneCg);
+      //dynamic_cast <CouenneSolverInterface <OsiClpSolverInterface> *> 
+      //(continuousSolver_)
+
+      // this is done on an explicitly declared CSI pointer, however
+      // CSI == continuousSolver_
+      CSI-> setCutGenPtr (couenneCg);
     }
 
     // disjunctive cuts generator added AFTER 
@@ -402,20 +415,6 @@ namespace Bonmin{
       h.heuristic = nlpHeuristic;
       heuristics_.push_back(h);
     }
-
-#if 0
-    {
-      CbcCompareEstimate compare;
-      model -> setNodeComparison(compare);
-      GuessHeuristic * guessHeu = new GuessHeuristic (*model);
-      HeuristicMethod h;
-      h.id = "Bonmin Guessing";
-      h.heuristic = guessHeu;
-      heuristics_.push_back (h);
-      //model_.addHeuristic(guessHeu);
-      //delete guessHeu;
-    }
-#endif
 
     // Add Branching rules ///////////////////////////////////////////////////////
 

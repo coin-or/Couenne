@@ -13,9 +13,10 @@
 
 
 /// Constructor with information for branching point selection strategy
-CouenneComplObject::CouenneComplObject (CouenneProblem *p, 
+CouenneComplObject::CouenneComplObject (CouenneCutGenerator *c,
+					CouenneProblem *p, 
 					exprVar *ref, Bonmin::BabSetupBase *base, JnlstPtr jnlst):
-  CouenneObject (p, ref, base, jnlst) {
+  CouenneObject (c, p, ref, base, jnlst) {
   jnlst -> Printf (J_DETAILED, J_PROBLEM, "[created Complementarity constraint object]\n");
 }
 
@@ -79,6 +80,8 @@ OsiBranchingObject *CouenneComplObject::createBranch (OsiSolverInterface *solver
 	  args [1] -> Index ());*/
 
   return new CouenneComplBranchingObject (solver, this, jnlst_,
+					  cutGen_,
+					  problem_,
 					  args [0],
 					  args [1], 
 					  way, 0, doFBBT_, doConvCuts_);

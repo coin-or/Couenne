@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneComplBranchingObject.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Branching object for auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -12,10 +12,10 @@
 
 #include "OsiRowCut.hpp"
 
-#include "CouenneSolverInterface.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneComplBranchingObject.hpp"
+#include "CouenneCutGenerator.hpp"
 
 // translate changed bound sparse array into a dense one
 void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchanged);
@@ -30,13 +30,15 @@ void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchange
 CouenneComplBranchingObject::CouenneComplBranchingObject (OsiSolverInterface *solver,
 							  const OsiObject * originalObject,
 							  JnlstPtr jnlst, 
+							  CouenneCutGenerator *c,
+							  CouenneProblem *p,
 							  expression *var, 
 							  expression *var2, 
 							  int way, 
 							  CouNumber brpoint, 
 							  bool doFBBT, bool doConvCuts):
 
-  CouenneBranchingObject (solver, originalObject, jnlst, var, way, brpoint, doFBBT, doConvCuts),
+  CouenneBranchingObject (solver, originalObject, jnlst, c, p, var, way, brpoint, doFBBT, doConvCuts),
   variable2_    (var2) {
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
@@ -84,14 +86,14 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
 
   ////////////////////////////////////////////////////////////////////
 
-  CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
-  CouenneProblem *p = couenneSolver -> CutGen () -> Problem ();
+  //CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
+  //CouenneProblem *p = couenneSolver -> CutGen () -> Problem ();
 
   int 
-    nvars  = p -> nVars (),
-    objind = p -> Obj (0) -> Body () -> Index ();
+    nvars  = problem_ -> nVars (),
+    objind = problem_ -> Obj (0) -> Body () -> Index ();
 
-  p -> domain () -> push (nvars,
+  problem_ -> domain () -> push (nvars,
 			  solver -> getColSolution (), 
 			  solver -> getColLower    (), 
 			  solver -> getColUpper    ()); // have to alloc+copy
@@ -107,11 +109,11 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
   bool infeasible = false;
 
   if (     doFBBT_ &&           // this branching object should do FBBT, and
-      p -> doFBBT ()) {         // problem allowed to do FBBT
+      problem_ -> doFBBT ()) {         // problem allowed to do FBBT
 
-    p -> installCutOff ();
+    problem_ -> installCutOff ();
 
-    if (!p -> btCore (chg_bds)) // done FBBT and this branch is infeasible
+    if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
       infeasible = true;        // ==> report it
     else {
 
@@ -119,20 +121,20 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
 	*lb = solver -> getColLower (),
 	*ub = solver -> getColUpper ();
 
-      //CouNumber newEst = p -> Lb (objind) - lb [objind];
-      estimate = CoinMax (0., p -> Lb (objind) - lb [objind]);
+      //CouNumber newEst = problem_ -> Lb (objind) - lb [objind];
+      estimate = CoinMax (0., problem_ -> Lb (objind) - lb [objind]);
 
       //if (newEst > estimate) 
       //estimate = newEst;
 
       for (int i=0; i<nvars; i++) {
-	if (p -> Lb (i) > lb [i]) solver -> setColLower (i, p -> Lb (i));
-	if (p -> Ub (i) < ub [i]) solver -> setColUpper (i, p -> Ub (i));
+	if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
+	if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
       }
     }
   }
 
-  if (!infeasible && doConvCuts_ && simulate_) { 
+  if (!infeasible && doConvCuts_ && simulate_ && cutGen_) { 
     // generate convexification cuts before solving new node's LP
 
     int nchanged, *changed = NULL;
@@ -140,7 +142,7 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
 
     // sparsify structure with info on changed bounds and get convexification cuts
     sparse2dense (nvars, chg_bds, changed, nchanged);
-    couenneSolver -> CutGen () -> genRowCuts (*solver, cs, nchanged, changed, chg_bds);
+    cutGen_ -> genRowCuts (*solver, cs, nchanged, changed, chg_bds);
     free (changed);
 
     solver -> applyCuts (cs);
@@ -148,7 +150,7 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
 
   delete [] chg_bds;
 
-  p -> domain () -> pop ();
+  problem_ -> domain () -> pop ();
 
   // next time do other branching
   branchIndex_++;

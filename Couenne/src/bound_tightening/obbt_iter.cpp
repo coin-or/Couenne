@@ -1,17 +1,16 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    obbt.cpp
  * Author:  Pietro Belotti
  * Purpose: Optimality-Based Bound Tightening
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CglCutGenerator.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
-#include "CouenneSolverInterface.hpp"
 
 #define OBBT_EPS 1e-3
 
@@ -20,10 +19,10 @@
 // bounds around 1e14. Fix.
 
 /// reoptimize and change bound of a variable if needed
-static bool obbt_updateBound (CouenneSolverInterface *csi, /// interface to use as a solver
-			      int sense,                   /// 1: minimize, -1: maximize
-			      CouNumber &bound,            /// bound to be updated
-			      bool isint) {                /// is this variable integer
+static bool obbt_updateBound (OsiSolverInterface *csi, /// interface to use as a solver
+			      int sense,               /// 1: minimize, -1: maximize
+			      CouNumber &bound,        /// bound to be updated
+			      bool isint) {            /// is this variable integer
 
   //csi -> deleteScaleFactors ();
   csi -> setDblParam (OsiDualObjectiveLimit, COIN_DBL_MAX); 
@@ -52,8 +51,7 @@ static bool obbt_updateBound (CouenneSolverInterface *csi, /// interface to use 
 
 /// Iteration on one variable
 
-int CouenneProblem::
-obbt_iter (CouenneSolverInterface *csi, 
+int CouenneProblem::obbt_iter (OsiSolverInterface *csi, 
 	   t_chg_bounds *chg_bds, 
 	   const CoinWarmStart *warmstart, 
 	   Bonmin::BabInfo *babInfo,

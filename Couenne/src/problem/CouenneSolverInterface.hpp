@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneSolverInterface.hpp
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: OsiSolverInterface with a pointer to a CouenneCutGenerator object
  *
- * (C) Carnegie-Mellon University, 2007-08. 
+ * (C) Carnegie-Mellon University, 2007-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -12,10 +12,9 @@
 #define COUENNESOLVERINTERFACE_HPP
 
 #include "CoinFinite.hpp"
-#include "OsiClpSolverInterface.hpp"
-#include "CouenneCutGenerator.hpp"
 
-class ClpSimplex;
+class OsiSolverInterface;
+class CouenneCutGenerator;
 
 /// Solver interface class with a pointer to a Couenne cut
 /// generator. Its main purposes are:
@@ -24,7 +23,7 @@ class ClpSimplex;
 /// 2) to replace OsiSolverInterface::isInteger () with problem_ -> [expression] -> isInteger ()
 /// 3) to use NLP solution at branching
  
-class CouenneSolverInterface: public OsiClpSolverInterface {
+template <class T> class CouenneSolverInterface: public T {
 
 public:
 
@@ -56,8 +55,8 @@ public:
   /// algorithm)
   void setCutGenPtr (CouenneCutGenerator *cg) {
     cutgen_ = cg;
-    if (cutgen_ && !(cutgen_ -> enableLpImpliedBounds ()))
-      specialOptions_ = specialOptions_ | 262144; 
+    //if (cutgen_ && !(cutgen_ -> enableLpImpliedBounds ()))
+    //specialOptions_ = specialOptions_ | 262144; 
   }
 
   /// Solve initial LP relaxation 
@@ -68,7 +67,7 @@ public:
 
   /// Resolve an LP without applying bound tightening beforehand
   virtual void resolve_nobt ()
-  {OsiClpSolverInterface::resolve ();}
+  {T::resolve ();}
 
   /** @name Methods for strong branching.
    */
@@ -86,25 +85,21 @@ public:
   /// Tighten bounds on all variables (including continuous).
   virtual int tightenBounds (int lightweight);
 
-  /// Copy of the Clp version --- not light version
-  virtual int tightenBoundsCLP (int lightweight);
-
-  /// Copy of the Clp version --- light version
-  virtual int tightenBoundsCLP_Light (int lightweight);
-
-  /// Returns pointer to CLP structure.
-  ClpSimplex *continuousModel ()
-  {return continuousModel_;}
-
   /// set doingResolve_
-  bool &doingResolve () 
-  {return doingResolve_;}
+  //bool &doingResolve () 
+  //{return doingResolve_;}
 
   /// is this problem unbounded?
   bool isProvenDualInfeasible () const;
   //{return knowDualInfeasible_;}
 
 protected:
+
+  /// Copy of the Clp version --- not light version
+  virtual int tightenBoundsCLP (int lightweight);
+
+  /// Copy of the Clp version --- light version
+  virtual int tightenBoundsCLP_Light (int lightweight);
 
   /// The pointer to the Couenne cut generator. Gives us a lot of
   /// information, for instance the nlp solver pointer, and the chance
@@ -122,7 +117,12 @@ protected:
 
   /// flag to indicate this is an LP for the BB, not for (e.g.) strong
   /// branching or OBBT
-  bool doingResolve_;
+  //bool doingResolve_;
 };
+
+#include "CouenneSolverInterface.cpp"
+#include "CouenneLPtightenBounds.cpp"
+#include "CouenneLPtightenBoundsCLP-light.cpp"
+#include "CouenneLPtightenBoundsCLP.cpp"
 
 #endif

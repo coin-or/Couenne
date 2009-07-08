@@ -18,10 +18,6 @@ libCouenneProblem_la_SOURCES = \
 	constraint.cpp \
 	fillQuadIndices.cpp \
 	fillDependence.cpp \
-	CouenneSolverInterface.cpp \
-	CouenneLPtightenBounds.cpp \
-	CouenneLPtightenBoundsCLP.cpp \
-	CouenneLPtightenBoundsCLP-light.cpp \
 	checkNLP.cpp \
 	getIntegerCandidate.cpp \
 	testIntFix.cpp \
@@ -31,6 +27,16 @@ libCouenneProblem_la_SOURCES = \
 	reformulate.cpp \
 	depGraph/depGraph.cpp \
 	depGraph/checkCycles.cpp
+
+# Note: the files below are #included in CouenneSolverInterface.hpp
+# (it's the only way to make templates work -- see also discussions on
+# the "export" keyword that, as of 2009, hasn't been implemented on
+# most compilers)
+#
+# 	CouenneSolverInterface.cpp \
+# 	CouenneLPtightenBounds.cpp \
+# 	CouenneLPtightenBoundsCLP.cpp \
+# 	CouenneLPtightenBoundsCLP-light.cpp 
 
 if COIN_HAS_ASL
 libCouenneProblem_la_SOURCES += \

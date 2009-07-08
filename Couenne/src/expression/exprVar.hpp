@@ -20,6 +20,8 @@
 #include "exprConst.hpp"
 #include "domain.hpp"
 
+class CouenneCutGenerator;
+
 namespace Bonmin {
   class BabSetupBase;
 }
@@ -191,7 +193,8 @@ class exprVar: public expression {
 
   /// return proper object to handle expression associated with this
   /// variable (NULL if this is not an auxiliary)
-  virtual CouenneObject properObject (CouenneProblem *p, 
+  virtual CouenneObject properObject (CouenneCutGenerator *c, 
+				      CouenneProblem *p, 
 				      Bonmin::BabSetupBase *base, 
 				      JnlstPtr jnlst_);
 };

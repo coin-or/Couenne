@@ -18,7 +18,7 @@
 /// of auxiliary variables (or better, their indices) whose expression
 /// depends on x
 
-void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base) {
+void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base, CouenneCutGenerator *cg) {
 
   // initialize vector of empty sets
   for (int i=nVars (); i--;)
@@ -34,7 +34,7 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base) {
     if (((*i) -> Type () == AUX)                           // consider auxs only
 	&& ((*i) -> Image () -> Linearity () > LINEAR)) {  // and nonlinear
 
-      CouenneObject infeasObj = (*i) -> properObject (this, base, jnlst_);
+      CouenneObject infeasObj = (*i) -> properObject (cg, this, base, jnlst_);
 
       if (!(infeasObj.Reference ())) // found something that will never be infeasible
 	continue;

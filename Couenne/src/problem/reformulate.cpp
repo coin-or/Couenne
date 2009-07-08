@@ -22,7 +22,7 @@
 
 
 /// preprocess problem in order to extract linear relaxations etc.
-void CouenneProblem::reformulate () {
+void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
   double now = CoinCpuTime ();
 
@@ -79,7 +79,7 @@ void CouenneProblem::reformulate () {
   initAuxs ();
 
   // fill dependence_ structure
-  fillDependence (bonBase_);
+  fillDependence (bonBase_, cg);
 
   // quadratic handling
   fillQuadIndices ();

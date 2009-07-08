@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneSOSObject.cpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Branching SOS object 
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -12,7 +12,7 @@
 
 #include "OsiRowCut.hpp"
 
-#include "CouenneSolverInterface.hpp"
+//#include "CouenneSolverInterface.hpp"
 #include "CouenneSOSObject.hpp"
 #include "CouenneProblem.hpp"
 
@@ -32,19 +32,19 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
   // Apply SOS branching first
   double retval = OsiSOSBranchingObject::branch (solver);
 
-  CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
-  CouenneProblem *p = couenneSolver -> CutGen () -> Problem ();
+  //CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
+  //CouenneProblem *p = couenneSolver -> CutGen () -> Problem ();
 
   int 
-    nvars  = p -> nVars (),
-    objind = p -> Obj (0) -> Body () -> Index ();
+    nvars  = problem_ -> nVars (),
+    objind = problem_ -> Obj (0) -> Body () -> Index ();
 
   bool infeasible = false;
 
-  p -> domain () -> push (nvars,
-			  solver -> getColSolution (), 
-			  solver -> getColLower    (), 
-			  solver -> getColUpper    ()); // have to alloc+copy
+  problem_ -> domain () -> push (nvars,
+				 solver -> getColSolution (), 
+				 solver -> getColLower    (), 
+				 solver -> getColUpper    ()); // have to alloc+copy
 
   int       nMembers = dynamic_cast <const OsiSOS *> (originalObject ()) -> numberMembers ();
   const int *Members = dynamic_cast <const OsiSOS *> (originalObject ()) -> members ();
@@ -60,11 +60,11 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
   }
 
   if (     doFBBT_ &&           // this branching object should do FBBT, and
-      p -> doFBBT ()) {         // problem allowed to do FBBT
+      problem_ -> doFBBT ()) {         // problem allowed to do FBBT
 
-    p -> installCutOff ();
+    problem_ -> installCutOff ();
 
-    if (!p -> btCore (chg_bds)) // done FBBT and this branch is infeasible
+    if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
       infeasible = true;        // ==> report it
     else {
 
@@ -72,15 +72,15 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
 	*lb = solver -> getColLower (),
 	*ub = solver -> getColUpper ();
 
-      //CouNumber newEst = p -> Lb (objind) - lb [objind];
-      estimate = CoinMax (0., p -> Lb (objind) - lb [objind]);
+      //CouNumber newEst = problem_ -> Lb (objind) - lb [objind];
+      estimate = CoinMax (0., problem_ -> Lb (objind) - lb [objind]);
 
       //if (newEst > estimate) 
       //estimate = newEst;
 
       for (int i=0; i<nvars; i++) {
-	if (p -> Lb (i) > lb [i]) solver -> setColLower (i, p -> Lb (i));
-	if (p -> Ub (i) < ub [i]) solver -> setColUpper (i, p -> Ub (i));
+	if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
+	if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
       }
     }
   }
@@ -101,7 +101,7 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
 
   delete [] chg_bds;
 
-  p -> domain () -> pop ();
+  problem_ -> domain () -> pop ();
 
   // next time do other branching
   branchIndex_++;
@@ -164,5 +164,6 @@ OsiBranchingObject *CouenneSOSObject::createBranch (OsiSolverInterface* si,
   }
   // create object
 
-  return new CouenneSOSBranchingObject (si, this, way, separator, jnlst_, doFBBT_, doConvCuts_);
+  return new CouenneSOSBranchingObject (problem_, reference_, 
+					si, this, way, separator, jnlst_, doFBBT_, doConvCuts_);
 }

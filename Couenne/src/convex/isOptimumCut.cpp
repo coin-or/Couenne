@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    isOptimumCut.cpp
  * Author:  Pietro Belotti
  * Purpose: check if known optimal solution (read from .txt) is
@@ -14,7 +14,6 @@
 
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
-#include "CouenneSolverInterface.hpp"
 
 
 bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p) {

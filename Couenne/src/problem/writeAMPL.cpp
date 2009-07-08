@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    extended.cpp
  * Author:  Pietro Belotti
  * Purpose: save problem in AMPL format

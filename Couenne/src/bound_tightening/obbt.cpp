@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    obbt.cpp
  * Author:  Pietro Belotti
  * Purpose: Optimality-Based Bound Tightening
@@ -12,7 +12,7 @@
 #include "CglCutGenerator.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
-#include "CouenneSolverInterface.hpp"
+#include "OsiClpSolverInterface.hpp"
 
 #define OBBT_EPS 1e-3
 #define MAX_OBBT_LP_ITERATION 100
@@ -28,7 +28,7 @@ void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchange
 
 
 // OBBT for one sense (max/min) and one class of variables (orig/aux)
-int CouenneProblem::call_iter (CouenneSolverInterface *csi, 
+int CouenneProblem::call_iter (OsiSolverInterface *csi, 
 			       t_chg_bounds *chg_bds, 
 			       const CoinWarmStart *warmstart, 
 			       Bonmin::BabInfo *babInfo,
@@ -62,7 +62,7 @@ int CouenneProblem::call_iter (CouenneSolverInterface *csi,
 
 /// Optimality based bound tightening -- inner loop
 
-int CouenneProblem::obbtInner (CouenneSolverInterface *csi,
+int CouenneProblem::obbtInner (OsiSolverInterface *csi,
 			       OsiCuts &cs,
 			       t_chg_bounds *chg_bds,
 			       Bonmin::BabInfo * babInfo) const {
@@ -161,10 +161,14 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
     // should be anyway checked that info.level be >= 0 as <0 means
     // first call at root node
 
-    CouenneSolverInterface *csi = dynamic_cast <CouenneSolverInterface *> (si.clone (true));
+    OsiSolverInterface *csi = si.clone (true);
+    //dynamic_cast <CouenneSolverInterface<T> *> 
 
-    csi -> setupForRepeatedUse ();
-    csi -> doingResolve () = false;
+    OsiClpSolverInterface *clpcsi = dynamic_cast <OsiClpSolverInterface *> (csi);
+
+    if (!clpcsi)
+      clpcsi -> setupForRepeatedUse ();
+    //csi -> doingResolve () = false;
 
     //csi -> setHintParam (OsiDoDualInResolve, false);
 
@@ -199,7 +203,7 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 	free (changed);
     }
 
-    csi -> doingResolve () = true;
+    //csi -> doingResolve () = true;
 
     delete csi;
 

@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    genRowCuts.cpp
  * Author:  Pietro Belotti
  * Purpose: generate Row Cuts for current convexification
  *
- * (C) Carnegie-Mellon University, 2006, 2007. 
+ * (C) Carnegie-Mellon University, 2006-09. 
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -89,15 +89,17 @@ void CouenneCutGenerator::genRowCuts (const OsiSolverInterface &si,
 	|| info.pass > 0)) {
       */
 
-      if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
-	break;
-
       exprVar *var = problem_ -> Var (problem_ -> evalOrder (i));
 
       if ((var -> Type () == AUX) &&
 	  (var -> Multiplicity () > 0) &&
-	  (var -> Image () -> Linearity () > LINEAR))
+	  (var -> Image () -> Linearity () > LINEAR)) {
+
+	if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
+	  break;
+
 	var -> generateCuts (si, cs, this, chg);
+      }
     }
   }
 }

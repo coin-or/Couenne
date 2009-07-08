@@ -27,6 +27,8 @@ public:
   CouenneComplBranchingObject (OsiSolverInterface *solver,
 			       const OsiObject *originalObject,
 			       JnlstPtr jnlst, 
+			       CouenneCutGenerator *c,
+			       CouenneProblem *p,
 			       expression *var, 
 			       expression *var2,
 			       int way, 

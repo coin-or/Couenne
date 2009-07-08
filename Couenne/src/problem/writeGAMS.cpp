@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    writeGAMS.cpp
  * Author:  Pietro Belotti
  * Purpose: save a problem in GAMS format

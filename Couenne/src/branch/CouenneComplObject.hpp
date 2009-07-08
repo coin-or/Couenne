@@ -22,7 +22,8 @@ class CouenneComplObject: public CouenneObject {
 public:
 
   /// Constructor with information for branching point selection strategy
-  CouenneComplObject (CouenneProblem *p, 
+  CouenneComplObject (CouenneCutGenerator *c,
+		      CouenneProblem *p, 
 		      exprVar *ref, Bonmin::BabSetupBase *base, JnlstPtr jnlst);
 
   /// Constructor with lesser information, used for infeasibility only

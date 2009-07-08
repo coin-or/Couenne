@@ -9,34 +9,34 @@
  */
 
 #include "CouennePrecisions.hpp"
-#include "CouenneSolverInterface.hpp"
-
-#define COIN_DEVELOP 4
+#include "CouenneProblem.hpp"
+#include "CouenneCutGenerator.hpp"
+#include "exprVar.hpp"
 
 // Tighten bounds - lightweight. Returns -1 if infeasible, otherwise
 // number of variables tightened.
-int CouenneSolverInterface::tightenBoundsCLP_Light (int lightweight) {
+template <class T>
+int CouenneSolverInterface<T>::tightenBoundsCLP_Light (int lightweight) {
 
   // Copied from OsiClpSolverInterface::tightenBounds
 
   int
-    numberRows    = getNumRows(),
-    numberColumns = getNumCols(),
-    iRow, iColumn;
+    numberRows    = T::getNumRows(),
+    numberColumns = T::getNumCols();
 
-  const double * columnUpper = getColUpper();
-  const double * columnLower = getColLower();
-  const double * rowUpper = getRowUpper();
-  const double * rowLower = getRowLower();
+  const double * columnUpper = T::getColUpper();
+  const double * columnLower = T::getColLower();
+  const double * rowUpper = T::getRowUpper();
+  const double * rowLower = T::getRowLower();
 
   // Column copy of matrix
-  const double * element = getMatrixByCol()->getElements();
-  const int * row = getMatrixByCol()->getIndices();
-  const CoinBigIndex * columnStart = getMatrixByCol()->getVectorStarts();
-  const int * columnLength = getMatrixByCol()->getVectorLengths();
-  const double *objective = getObjCoefficients() ;
+  const double * element = T::getMatrixByCol()->getElements();
+  const int * row = T::getMatrixByCol()->getIndices();
+  const CoinBigIndex * columnStart = T::getMatrixByCol()->getVectorStarts();
+  const int * columnLength = T::getMatrixByCol()->getVectorLengths();
+  //const double *objective = T::getObjCoefficients() ;
 
-  double direction = getObjSense();
+  //double direction = T::getObjSense();
   double * down = new double [numberRows];
 
   int * first = new int[numberRows];
@@ -72,7 +72,7 @@ int CouenneSolverInterface::tightenBoundsCLP_Light (int lightweight) {
 
   double tolerance = 1.0e-6;
 
-  const char * integerInformation = modelPtr_ -> integerInformation ();
+  std::vector <exprVar *> &vars = cutgen_ -> Problem () -> Variables ();
 
   for (int iRow=0;iRow<numberRows;iRow++) {
 
@@ -117,7 +117,7 @@ int CouenneSolverInterface::tightenBoundsCLP_Light (int lightweight) {
 
       double tolerance2 = 1.0e-6 + 1.0e-8 * sum [iRow];
 
-      if (integerInformation && integerInformation[iColumn]) {
+      if (vars [iColumn] -> isInteger ()) {
 
 	newLower = (newLower-floor(newLower)<tolerance2) ?
 	  floor (newLower) :
@@ -138,8 +138,8 @@ int CouenneSolverInterface::tightenBoundsCLP_Light (int lightweight) {
 	  numberTightened=-1;
 	  break;
 	}
-	setColLower(iColumn,newLower);
-	setColUpper(iColumn,CoinMax(newLower,newUpper));
+	T::setColLower(iColumn,newLower);
+	T::setColUpper(iColumn,CoinMax(newLower,newUpper));
       }
     }
   }

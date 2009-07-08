@@ -183,7 +183,8 @@ class exprAux: public exprVar {
 
   /// return proper object to handle expression associated with this
   /// variable (NULL if this is not an auxiliary)
-  CouenneObject properObject (CouenneProblem *p, 
+  CouenneObject properObject (CouenneCutGenerator *c,
+			      CouenneProblem *p, 
 			      Bonmin::BabSetupBase *base, 
 			      JnlstPtr jnlst);
 };

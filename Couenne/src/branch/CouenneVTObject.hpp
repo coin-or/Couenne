@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneVTObject.hpp
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for branching on variables using violation transfer
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -19,12 +19,13 @@ class CouenneVTObject: public CouenneVarObject {
 public:
 
   /// Constructor with information for branching point selection strategy
-  CouenneVTObject (CouenneProblem *p,
+  CouenneVTObject (CouenneCutGenerator *c,
+		   CouenneProblem *p,
 		   exprVar *ref, 
 		   Bonmin::BabSetupBase *base, 
 		   JnlstPtr jnlst):
 
-    CouenneVarObject (p, ref, base, jnlst) {}
+    CouenneVarObject (c, p, ref, base, jnlst) {}
 
   /// Copy constructor
   CouenneVTObject (const CouenneVTObject &src):

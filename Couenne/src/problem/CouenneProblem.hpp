@@ -29,10 +29,11 @@ struct expr;
 
 class DepGraph;
 class CouenneCutGenerator;
-class CouenneSolverInterface;
 class quadElem;
 class LinMap;
 class QuadMap;
+
+template <class T> class CouenneSolverInterface;
 
 // default tolerance for checking feasibility (and integrality) of NLP solutions
 const CouNumber feas_tolerance_default = 1e-5;
@@ -279,7 +280,7 @@ class CouenneProblem {
   exprAux *addAuxiliary (expression *);
 
   /// preprocess problem in order to extract linear relaxations etc.
-  void reformulate ();
+  void reformulate (CouenneCutGenerator * = NULL);
 
   /// Break problem's nonlinear constraints in simple expressions to
   /// be convexified later. Return true if problem looks feasible,
@@ -507,12 +508,12 @@ protected:
 		    t_chg_bounds *f_chg) const;
 
   /// Optimality Based Bound Tightening -- inner loop
-  int obbtInner (CouenneSolverInterface *, 
+  int obbtInner (OsiSolverInterface *, 
 		 OsiCuts &,
 		 t_chg_bounds *, 
 		 Bonmin::BabInfo *) const;
 
-  int obbt_iter (CouenneSolverInterface *csi, 
+  int obbt_iter (OsiSolverInterface *csi, 
 		 t_chg_bounds *chg_bds, 
 		 const CoinWarmStart *warmstart, 
 		 Bonmin::BabInfo *babInfo,
@@ -520,7 +521,7 @@ protected:
 		 int sense, 
 		 int index) const;
 
-  int call_iter (CouenneSolverInterface *csi, 
+  int call_iter (OsiSolverInterface *csi, 
 		 t_chg_bounds *chg_bds, 
 		 const CoinWarmStart *warmstart, 
 		 Bonmin::BabInfo *babInfo,
@@ -545,7 +546,7 @@ protected:
   void realign ();
 
   /// fill dependence_ structure
-  void fillDependence (Bonmin::BabSetupBase *base);
+  void fillDependence (Bonmin::BabSetupBase *base, CouenneCutGenerator * = NULL);
 
   /// fill freeIntegers_ array
   void fillIntegerRank () const;

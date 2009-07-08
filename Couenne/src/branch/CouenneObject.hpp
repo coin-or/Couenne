@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneObject.hpp
  * Authors: Pierre Bonami, IBM Corp.
  *          Pietro Belotti, Carnegie Mellon University
@@ -34,6 +34,7 @@ enum {TWO_LEFT,                 TWO_RIGHT,   TWO_RAND,
 
 class funtriplet;
 class CouenneProblem;
+class CouenneCutGenerator;
 
 CouNumber minMaxDelta (funtriplet *ft, CouNumber lb, CouNumber ub);
 CouNumber maxHeight   (funtriplet *ft, CouNumber lb, CouNumber ub);
@@ -65,7 +66,8 @@ public:
   CouenneObject ();
 
   /// Constructor with information for branching point selection strategy
-  CouenneObject (CouenneProblem *p, 
+  CouenneObject (CouenneCutGenerator *cutgen,
+		 CouenneProblem *p, 
 		 exprVar *ref, Bonmin::BabSetupBase *base, JnlstPtr jnlst);
 
   /// Constructor with lesser information, used for infeasibility only
@@ -158,6 +160,9 @@ public:
   {return CoinMin (value - floor (value + COUENNE_EPS), ceil (value - COUENNE_EPS) - value);}
 
 protected:
+
+  /// pointer to cut generator (not necessary, can be NULL)
+  CouenneCutGenerator *cutGen_;
 
   /// pointer to Couenne problem
   CouenneProblem *problem_;

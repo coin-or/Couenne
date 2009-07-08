@@ -9,34 +9,37 @@
  */
 
 #include "CouennePrecisions.hpp"
-#include "CouenneSolverInterface.hpp"
+#include "CouenneProblem.hpp"
+#include "CouenneCutGenerator.hpp"
+#include "exprVar.hpp"
 
 //#define COIN_DEVELOP 4
 
 // Tighten bounds. Returns -1 if infeasible, otherwise number of
 // variables tightened.
-int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
+template <class T> 
+int CouenneSolverInterface<T>::tightenBoundsCLP (int lightweight) {
 
   // Copied from OsiClpSolverInterface::tightenBounds
 
   int
-    numberRows    = getNumRows(),
-    numberColumns = getNumCols(),
+    numberRows    = T::getNumRows(),
+    numberColumns = T::getNumCols(),
     iRow, iColumn;
 
-  const double * columnUpper = getColUpper();
-  const double * columnLower = getColLower();
-  const double * rowUpper = getRowUpper();
-  const double * rowLower = getRowLower();
+  const double * columnUpper = T::getColUpper();
+  const double * columnLower = T::getColLower();
+  const double * rowUpper = T::getRowUpper();
+  const double * rowLower = T::getRowLower();
 
   // Column copy of matrix
-  const double * element = getMatrixByCol()->getElements();
-  const int * row = getMatrixByCol()->getIndices();
-  const CoinBigIndex * columnStart = getMatrixByCol()->getVectorStarts();
-  const int * columnLength = getMatrixByCol()->getVectorLengths();
-  const double *objective = getObjCoefficients() ;
+  const double * element = T::getMatrixByCol()->getElements();
+  const int * row = T::getMatrixByCol()->getIndices();
+  const CoinBigIndex * columnStart = T::getMatrixByCol()->getVectorStarts();
+  const int * columnLength = T::getMatrixByCol()->getVectorLengths();
+  const double *objective = T::getObjCoefficients() ;
 
-  double direction = getObjSense();
+  double direction = T::getObjSense();
   double * down = new double [numberRows];
 
   if (lightweight)
@@ -51,7 +54,7 @@ int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
   CoinZeroN(up,numberRows);
   CoinZeroN(sum,numberRows);
   CoinZeroN(type,numberRows);
-  double infinity = getInfinity();
+  double infinity = T::getInfinity();
 
   for (iColumn=0;iColumn<numberColumns;iColumn++) {
     CoinBigIndex start = columnStart[iColumn];
@@ -170,8 +173,10 @@ int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
     // bounds for continuous variables too, so we don't test for
     // integrality.
 
+    std::vector <exprVar *> &vars = cutgen_ -> Problem () -> Variables ();
+
     {
-      if (integerInformation_ && integerInformation_ [iColumn]) {
+      if (vars [iColumn] -> isInteger ()) {
 
 	if (lower < ceil (lower - COUENNE_EPS) - COUENNE_EPS) {
 #ifdef COIN_DEVELOP
@@ -180,7 +185,7 @@ int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
 #endif
 	  lower=ceil(lower - COUENNE_EPS);
 	  gap=upper-lower;
-	  setColLower(iColumn,lower);
+	  T::setColLower(iColumn,lower);
 	}
 
 	if (upper > floor(upper + COUENNE_EPS) + COUENNE_EPS) {
@@ -190,7 +195,7 @@ int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
 #endif
 	  upper=floor(upper + COUENNE_EPS);
 	  gap=upper-lower;
-	  setColUpper(iColumn,upper);
+	  T::setColUpper(iColumn,upper);
 	}
       }
 
@@ -207,7 +212,7 @@ int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
 	      double newGap = (rowUpper[iRow]-down[iRow])/value;
 	      // adjust
 	      newGap += 1.0e-10*sum[iRow];
-	      if (integerInformation_ && integerInformation_ [iColumn])
+	      if (vars [iColumn] -> isInteger ())
 		newGap = floor(newGap);
 	      if (lower+newGap<newUpper)
 		newUpper=lower+newGap;
@@ -221,7 +226,7 @@ int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
 	      double newGap = (up[iRow]-rowLower[iRow])/value;
 	      // adjust
 	      newGap += 1.0e-10*sum[iRow];
-	      if (integerInformation_ && integerInformation_ [iColumn])
+	      if (vars [iColumn] -> isInteger ())
 		newGap = floor(newGap);
 	      if (upper-newGap>newLower)
 		newLower=upper-newGap;
@@ -236,7 +241,7 @@ int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
 	      double newGap = -(rowUpper[iRow]-down[iRow])/value;
 	      // adjust
 	      newGap += 1.0e-10*sum[iRow];
-	      if (integerInformation_ && integerInformation_ [iColumn])
+	      if (vars [iColumn] -> isInteger ())
 		newGap = floor(newGap);
 	      if (upper-newGap>newLower)
 		newLower=upper-newGap;
@@ -250,7 +255,7 @@ int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
 	      double newGap = -(up[iRow]-rowLower[iRow])/value;
 	      // adjust
 	      newGap += 1.0e-10*sum[iRow];
-	      if (integerInformation_ && integerInformation_ [iColumn])
+	      if (vars [iColumn] -> isInteger ())
 		newGap = floor(newGap);
 	      if (lower+newGap<newUpper)
 		newUpper=lower+newGap;
@@ -271,8 +276,8 @@ int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
 	  nTightened=-1;
 	  break;
 	} else {
-	  setColLower(iColumn,newLower);
-	  setColUpper(iColumn,newUpper);
+	  T::setColLower(iColumn,newLower);
+	  T::setColUpper(iColumn,newUpper);
 	}
 	for (CoinBigIndex j=start;j<end;j++) {
 	  int iRow = row[j];
@@ -296,13 +301,13 @@ int CouenneSolverInterface::tightenBoundsCLP (int lightweight) {
 	    printf("dual fix down on column %d\n",iColumn);
 #endif
 	    nTightened++;
-	    setColUpper(iColumn,lower);
+	    T::setColUpper(iColumn,lower);
 	  } else if (objValue<=0.0 && (canGo&2)==0) {
 #if COIN_DEVELOP>2
 	    printf("dual fix up on column %d\n",iColumn);
 #endif
 	    nTightened++;
-	    setColLower(iColumn,upper);
+	    T::setColLower(iColumn,upper);
 	  }
 	}	    
       }

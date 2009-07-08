@@ -8,27 +8,27 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "CoinHelperFunctions.hpp"
 #include "CouenneProblem.hpp"
-#include "CouenneSolverInterface.hpp"
+#include "CouenneCutGenerator.hpp"
 
 // Tighten bounds - lightweight. Returns -1 if infeasible, otherwise
 // number of variables tightened.
-int CouenneSolverInterface::tightenBounds (int lightweight) {
+template <class T> 
+int CouenneSolverInterface<T>::tightenBounds (int lightweight) {
 
   if (!(cutgen_ -> enableLpImpliedBounds ()))
     return 0;
 
   int 
-    ncols = getNumCols (),
+    ncols = T::getNumCols (),
     nTightened;
 
   double 
     *oldLower = new double [ncols],
     *oldUpper = new double [ncols];
 
-  CoinCopyN (getColLower (), ncols, oldLower);
-  CoinCopyN (getColUpper (), ncols, oldUpper);
+  CoinCopyN (T::getColLower (), ncols, oldLower);
+  CoinCopyN (T::getColUpper (), ncols, oldUpper);
 
 //   printf ("-------- BOUNDS BEFORE ------------\n  ");
 //   int j=0;
@@ -57,8 +57,8 @@ int CouenneSolverInterface::tightenBounds (int lightweight) {
     // moscas" (just in case)
 
     const double 
-      *newLower = getColLower (),
-      *newUpper = getColUpper ();
+      *newLower = T::getColLower (),
+      *newUpper = T::getColUpper ();
 
     t_chg_bounds *chgd = new t_chg_bounds [ncols];
 
@@ -81,20 +81,20 @@ int CouenneSolverInterface::tightenBounds (int lightweight) {
       for (int i=0; i<ncols; i++) {
 
 	if (newerLower [i] > newLower [i] + COUENNE_EPS) {
-	  setColLower (i, newerLower [i]);
+	  T::setColLower (i, newerLower [i]);
 	  if (newLower [i] < oldLower [i] + COUENNE_EPS) nTightened++; // extra tightening
 	}
 
       	if (newerUpper [i] < newUpper [i] - COUENNE_EPS) {
-	  setColUpper (i, newerUpper [i]);
+	  T::setColUpper (i, newerUpper [i]);
 	  if (newUpper [i] > oldUpper [i] - COUENNE_EPS) nTightened++; // extra tightening
 	}
       }
     }
 
-    const double 
-      *newerLower = cutgen_ -> Problem () -> Lb (),
-      *newerUpper = cutgen_ -> Problem () -> Ub ();
+//     const double 
+//       *newerLower = cutgen_ -> Problem () -> Lb (),
+//       *newerUpper = cutgen_ -> Problem () -> Ub ();
 
 //     printf ("-------- BOUNDS AFTER ------------\n  ");
 //     for (int i=0; i < ncols; i++) {

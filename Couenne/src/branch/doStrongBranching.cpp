@@ -14,7 +14,6 @@
 #include "CouenneChooseStrong.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneBranchingObject.hpp"
-#include "CouenneSolverInterface.hpp"
 
 /// compute Euclidean distance between two points (most likely LP solutions)
 /// l_2 norm by default, but can change it by fourth parameter
@@ -56,16 +55,16 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
        2 - may be returning early - one can be fixed (last one done) (returnCriterion==1) 
        3 - returning because max time
   */
-  int CouenneChooseStrong::doStrongBranching (OsiSolverInterface * OsiSolver, 
+  int CouenneChooseStrong::doStrongBranching (OsiSolverInterface *solver, 
 					      OsiBranchingInformation *info,
 					      int numberToDo, int returnCriterion) {
 
-    CouenneSolverInterface *solver = dynamic_cast <CouenneSolverInterface *> (OsiSolver);
-
+    //CouenneSolverInterface *solver = dynamic_cast <CouenneSolverInterface *> (OsiSolver);
+    
     jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		      "\n-\n------- CCS: trying %d objects:\n", numberToDo);
 
-    solver -> doingResolve () = false; // turns off setCutoff and restoreUnused
+    //solver -> doingResolve () = false; // turns off setCutoff and restoreUnused
 
     int numberColumns = solver -> getNumCols ();
 
@@ -168,8 +167,8 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
 	  if (infeasible) result -> setDownStatus (status0 = 1);
 	  else {
+
 	    solver -> solveFromHotStart ();
-	    //solver -> solveFromHotStart ();
 
 	    if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
 	      CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
@@ -296,6 +295,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 	  }
 	}
       } else {                     // some more complex branch, have to clone solver
+
         // adding cuts or something 
         thisSolver = solver -> clone ();
 
@@ -460,8 +460,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
     solver -> unmarkHotStart ();     // Delete the snapshot
 
-    solver -> doingResolve () = true;
+    //solver -> doingResolve () = true;
 
     return returnCode;
   }
-//}

@@ -1,11 +1,11 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneBranchingObject.hpp
  * Authors: Pierre Bonami, IBM Corp.
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Branching object for auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -16,6 +16,9 @@
 #include "exprAux.hpp"
 #include "CouenneJournalist.hpp"
 #include "OsiBranchingObject.hpp"
+
+class CouenneCutGenerator;
+class CouenneProblem;
 
 #define COUENNE_CROP 1
 #define COUENNE_LCROP (1e2*COUENNE_CROP)
@@ -37,6 +40,8 @@ public:
   CouenneBranchingObject (OsiSolverInterface *solver,
 			  const OsiObject *originalObject,
 			  JnlstPtr jnlst, 
+			  CouenneCutGenerator *c,
+			  CouenneProblem *p,
 			  expression *var, 
 			  int way, 
 			  CouNumber brpoint, 
@@ -47,6 +52,8 @@ public:
   CouenneBranchingObject (const CouenneBranchingObject &src):
 
     OsiTwoWayBranchingObject (src),
+    cutGen_       (src.cutGen_),
+    problem_      (src.problem_),
     variable_     (src.variable_),
     jnlst_        (src.jnlst_),
     doFBBT_       (src.doFBBT_),
@@ -79,6 +86,13 @@ public:
   {return variable_;}
 
 protected:
+
+  /// Pointer to CouenneCutGenerator (if any); if not NULL, allows to
+  /// do extra cut generation during branching
+  CouenneCutGenerator *cutGen_;
+
+  /// Pointer to CouenneProblem (necessary to allow FBBT)
+  CouenneProblem *problem_;
 
   /// The index of the variable this branching object refers to. If
   /// the corresponding CouenneObject was created on w=f(x,y), it is

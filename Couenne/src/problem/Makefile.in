@@ -42,6 +42,16 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+
+# Note: the files below are #included in CouenneSolverInterface.hpp
+# (it's the only way to make templates work -- see also discussions on
+# the "export" keyword that, as of 2009, hasn't been implemented on
+# most compilers)
+#
+# 	CouenneSolverInterface.cpp \
+# 	CouenneLPtightenBounds.cpp \
+# 	CouenneLPtightenBoundsCLP.cpp \
+# 	CouenneLPtightenBoundsCLP-light.cpp 
 @COIN_HAS_ASL_TRUE@am__append_1 = \
 @COIN_HAS_ASL_TRUE@	../readnl/readnl.cpp \
 @COIN_HAS_ASL_TRUE@	../readnl/nl2e.cpp \
@@ -72,10 +82,7 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneProblem_la_LIBADD =
 am__libCouenneProblem_la_SOURCES_DIST = problem.cpp CouenneProblem.cpp \
 	problemIO.cpp writeAMPL.cpp writeGAMS.cpp constraint.cpp \
-	fillQuadIndices.cpp fillDependence.cpp \
-	CouenneSolverInterface.cpp CouenneLPtightenBounds.cpp \
-	CouenneLPtightenBoundsCLP.cpp \
-	CouenneLPtightenBoundsCLP-light.cpp checkNLP.cpp \
+	fillQuadIndices.cpp fillDependence.cpp checkNLP.cpp \
 	getIntegerCandidate.cpp testIntFix.cpp CouenneSOS.cpp \
 	CouenneProblemConstructors.cpp CouenneRestoreUnused.cpp \
 	reformulate.cpp depGraph/depGraph.cpp depGraph/checkCycles.cpp \
@@ -85,9 +92,7 @@ am__libCouenneProblem_la_SOURCES_DIST = problem.cpp CouenneProblem.cpp \
 @COIN_HAS_ASL_TRUE@	readASLfg.lo
 am_libCouenneProblem_la_OBJECTS = problem.lo CouenneProblem.lo \
 	problemIO.lo writeAMPL.lo writeGAMS.lo constraint.lo \
-	fillQuadIndices.lo fillDependence.lo CouenneSolverInterface.lo \
-	CouenneLPtightenBounds.lo CouenneLPtightenBoundsCLP.lo \
-	CouenneLPtightenBoundsCLP-light.lo checkNLP.lo \
+	fillQuadIndices.lo fillDependence.lo checkNLP.lo \
 	getIntegerCandidate.lo testIntFix.lo CouenneSOS.lo \
 	CouenneProblemConstructors.lo CouenneRestoreUnused.lo \
 	reformulate.lo depGraph.lo checkCycles.lo $(am__objects_1)
@@ -299,10 +304,7 @@ noinst_LTLIBRARIES = libCouenneProblem.la
 # List all source files for this library, including headers
 libCouenneProblem_la_SOURCES = problem.cpp CouenneProblem.cpp \
 	problemIO.cpp writeAMPL.cpp writeGAMS.cpp constraint.cpp \
-	fillQuadIndices.cpp fillDependence.cpp \
-	CouenneSolverInterface.cpp CouenneLPtightenBounds.cpp \
-	CouenneLPtightenBoundsCLP.cpp \
-	CouenneLPtightenBoundsCLP-light.cpp checkNLP.cpp \
+	fillQuadIndices.cpp fillDependence.cpp checkNLP.cpp \
 	getIntegerCandidate.cpp testIntFix.cpp CouenneSOS.cpp \
 	CouenneProblemConstructors.cpp CouenneRestoreUnused.cpp \
 	reformulate.cpp depGraph/depGraph.cpp depGraph/checkCycles.cpp \
@@ -379,14 +381,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneLPtightenBounds.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneLPtightenBoundsCLP-light.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneLPtightenBoundsCLP.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneProblem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneProblemConstructors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneRestoreUnused.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSOS.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSolverInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkCycles.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkNLP.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/constraint.Plo@am__quote@

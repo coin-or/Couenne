@@ -13,7 +13,6 @@
 
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
-#include "CouenneSolverInterface.hpp"
 
 #define Couenne_large_bound2 9.99e12
 

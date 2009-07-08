@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Base object for variables (to be used in branching)
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -16,14 +16,15 @@
 #include "CouenneComplObject.hpp"
 
 /// Constructor with information for branching point selection strategy
-CouenneVarObject::CouenneVarObject (CouenneProblem *p,
+CouenneVarObject::CouenneVarObject (CouenneCutGenerator *c,
+				    CouenneProblem *p,
 				    exprVar *ref, 
 				    Bonmin::BabSetupBase *base, 
 				    JnlstPtr jnlst):
 
   // Do not set variable (expression).
   // This way, no expression-dependent strategy is chosen
-  CouenneObject (p, ref, base, jnlst) {
+  CouenneObject (c, p, ref, base, jnlst) {
 
   if (jnlst_ -> ProduceOutput (J_SUMMARY, J_BRANCHING)) {
     printf ("created Variable Object: "); 
@@ -71,7 +72,8 @@ OsiBranchingObject *CouenneVarObject::createBranch (OsiSolverInterface *si,
 
   OsiBranchingObject *brObj = criticalObject ? 
     criticalObject -> createBranch (si, info, way) :
-    new CouenneBranchingObject (si, this, jnlst_, reference_, way, bestPt, doFBBT_, doConvCuts_);
+    new CouenneBranchingObject (si, this, jnlst_, cutGen_, problem_, reference_, 
+				way, bestPt, doFBBT_, doConvCuts_);
 
   problem_ -> domain () -> pop ();
 

@@ -14,10 +14,8 @@
 #include "BonChooseVariable.hpp"
 #include "CouenneJournalist.hpp"
 
-
-// Forward declaration
 class CouenneProblem;
-class CouenneSolverInterface;
+template <class T> class CouenneSolverInterface;
 
 class CouenneChooseStrong : public Bonmin::BonChooseVariable  {
 

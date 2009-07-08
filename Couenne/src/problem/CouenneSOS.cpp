@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneSOS.cpp
  * Author:  Pietro Belotti
  * Purpose: find SOS in problem 
@@ -17,7 +17,7 @@
 #include "CbcBranchActual.hpp"
 #include "CbcCutGenerator.hpp"
 #include "CbcCompareActual.hpp"
-#include "CouenneSOSObject.hpp"
+//#include "CouenneSOSObject.hpp"
 
 /// find SOS objects
 int CouenneProblem::findSOS (OsiSolverInterface *solver,
