@@ -14,6 +14,7 @@
 #include "BonChooseVariable.hpp"
 #include "CouenneJournalist.hpp"
 
+class Bonmin::HotInfo;
 class CouenneProblem;
 template <class T> class CouenneSolverInterface;
 
@@ -75,6 +76,18 @@ class CouenneChooseStrong : public Bonmin::BonChooseVariable  {
     CouenneChooseStrong ();
     
   protected:
+
+  /// does one side of the branching
+  int simulateBranch (OsiObject *Object,
+		      OsiBranchingInformation *info,
+		      OsiBranchingObject *branch,
+		      OsiSolverInterface *solver,
+		      Bonmin::HotInfo * result,
+		      int direction);
+
+  /// subroutine of simulateBranch for integer FBBT
+  bool StrongBranchingFBBT (OsiObject *Object,
+			    OsiSolverInterface *solver);
 
     /// Pointer to the associated MINLP problem
     CouenneProblem *problem_;

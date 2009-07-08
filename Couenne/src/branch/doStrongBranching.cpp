@@ -101,8 +101,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       Bonmin::HotInfo * result = results_ () + iDo; // retrieve i-th object to test
 
-      OsiObject     *Object = solver_ -> objects () [result -> whichObject ()];
-      CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
+      OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
 
       // For now just 2 way
       OsiBranchingObject * branch = result -> branchingObject ();
@@ -111,118 +110,17 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       CouenneBranchingObject *cb = dynamic_cast <CouenneBranchingObject *> (branch);
       if (cb) cb -> setSimulate (true);
 
-      /* Try the first direction.  Each subsequent call to branch()
-	 performs the specified branch and advances the branch object
-	 state to the next branch alternative. */
-
       int 
 	status0 = -1, 
 	status1 = -1;
 
-      OsiSolverInterface * thisSolver = solver; 
+      ///////////////////////////////////////////////////////////////////////////
 
-      // DOWN DIRECTION ///////////////////////////////////////////////////////
+      /* Try the first direction.  Each subsequent call to branch()
+	 performs the specified branch and advances the branch object
+	 state to the next branch alternative. */
 
-      if (branch -> boundBranch ()) { // a (variable) bound branch
-
-        if (branch -> branch (solver) > COUENNE_INFINITY) // branch is infeasible
-	  result -> setDownStatus (status0 = 1);
-
-	else { // branch is feasible, solve and compare
-
-	  bool infeasible = false;
-
-	  // Bound tightening if not a CouenneObject -- explicit bound tightening
-	  if (!CouObj) {
-
-	    int 
-	      indVar = Object   -> columnNumber (),
-	      nvars  = problem_ -> nVars ();
-
-	    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
-
-	    chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
-
-	    if (problem_ -> doFBBT ()) {         // problem allowed to do FBBT
-
-	      problem_ -> installCutOff ();
-
-	      if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
-		infeasible = true;        // ==> report it
-
-	      else {
-		const double
-		  *lb = solver -> getColLower (),
-		  *ub = solver -> getColUpper ();
-
-		for (int i=0; i<nvars; i++) {
-		  if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
-		  if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
-		}
-	      }
-	    }
-
-	    delete [] chg_bds;
-	  }
-
-	  if (infeasible) result -> setDownStatus (status0 = 1);
-	  else {
-
-	    solver -> solveFromHotStart ();
-
-	    if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
-	      CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
-	      if (dist > COUENNE_EPS)
-		CouObj -> setEstimate (dist, 0);
-	    }
-	  }
-	}
-
-      } else {                       // some more complex branch, have to clone solver
-
-        // adding cuts or something 
-        thisSolver = solver -> clone ();
-
-        if (branch -> branch (thisSolver) > COUENNE_INFINITY)
-	  result -> setDownStatus (status0 = 1);
-
-	else { // set hot start iterations
-	  int limit;
-	  thisSolver -> getIntParam (OsiMaxNumIterationHotStart, limit);
-	  thisSolver -> setIntParam (OsiMaxNumIteration,         limit); 
-
-	  thisSolver -> resolve ();
-	  if (pseudoUpdateLP_ && CouObj && thisSolver -> isProvenOptimal ()) {
-	    CouNumber dist = distance (lpSol, thisSolver -> getColSolution (), numberColumns);
-	    if (dist > COUENNE_EPS)
-	      CouObj -> setEstimate (dist, 0);
-	  }
-	}
-      }
-
-      // can check if we got solution
-      // status is 0 finished, 1 infeasible and 2 unfinished and 3 is solution
-
-      /*if (CouObj)
-	jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "dnEst %g upEst %g\n",
-			  CouObj->downEstimate(),
-			  CouObj->upEstimate());*/
-
-      // only update information if this branch is feasible
-      if (status0 < 0)
-	status0 = result -> updateInformation (thisSolver, info, this);
-
-      numberStrongIterations_ += thisSolver -> getIterationCount();
-
-      if ((status0 == 3) && (trustStrongForSolution_)) {
-        // new solution already saved
-  	info -> cutoff_ = goodObjectiveValue_;
-	problem_ -> setCutOff (goodObjectiveValue_);
-  	status0 = 0;
-      }
-
-      if (solver != thisSolver)
-        delete thisSolver;
+      status0 = simulateBranch (Object, info, branch, solver, result, -1);
 
       // save current bounds as tightened by the down branch; will be
       // used below to update global bounding box in solver
@@ -236,117 +134,15 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
         if (saveUpper [j] != upper [j]) solver -> setColUpper (j, saveUpper [j]);
       }
 
-      // UP DIRECTION ///////////////////////////////////////////////////////
+      status1 = simulateBranch (Object, info, branch, solver, result, +1);
 
-      thisSolver = solver; 
-
-      if (branch -> boundBranch ()) { // (variable) bound branch 
-
-        if (branch -> branch (solver) > COUENNE_INFINITY)
-	  result -> setUpStatus (status1 = 1);
-
-        else {
-
-	  bool infeasible = false;
-
-	  // Bound tightening if not a CouenneObject -- explicit bound tightening
-	  if (!CouObj) {
-
-	    int 
-	      indVar = Object   -> columnNumber (),
-	      nvars  = problem_ -> nVars ();
-
-	    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
-
-	    chg_bds [indVar].setLower (t_chg_bounds::CHANGED);
-
-	    if (problem_ -> doFBBT ()) {         // problem allowed to do FBBT
-
-	      problem_ -> installCutOff ();
-
-	      if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
-		infeasible = true;        // ==> report it
-
-	      else {
-		const double
-		  *lb = solver -> getColLower (),
-		  *ub = solver -> getColUpper ();
-
-		for (int i=0; i<nvars; i++) {
-		  if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
-		  if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
-		}
-	      }
-	    }
-
-	    delete [] chg_bds;
-	  }
-
-	  if (infeasible) result -> setUpStatus (status0 = 1);
-	  else {
-
-	    solver -> solveFromHotStart ();
-
-	    if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
-	      CouNumber dist = distance (lpSol, solver -> getColSolution (), numberColumns);
-	      if (dist > COUENNE_EPS)
-		CouObj -> setEstimate (dist, 1);
-	    }
-	  }
-	}
-      } else {                     // some more complex branch, have to clone solver
-
-        // adding cuts or something 
-        thisSolver = solver -> clone ();
-
-        if (branch -> branch (thisSolver) > COUENNE_INFINITY)
-	  result -> setUpStatus (status1 = 1);
-
-	else {
-	  // set hot start iterations
-	  int limit;
-	  thisSolver -> getIntParam (OsiMaxNumIterationHotStart, limit);
-	  thisSolver -> setIntParam (OsiMaxNumIteration,         limit); 
-
-	  thisSolver -> resolve();
-	  if (pseudoUpdateLP_ && CouObj && thisSolver -> isProvenOptimal ()) {
-	    CouNumber dist = distance (lpSol, thisSolver -> getColSolution (), numberColumns);
-	    if (dist > COUENNE_EPS)
-	      CouObj -> setEstimate (dist, 1);
-	  }
-	}
-      }
-
-      // can check if we got solution
-      // status is 0 finished, 1 infeasible and 2 unfinished and 3 is solution
-
-      /*if (CouObj)
-	jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "dnEst %g upEst %g\n",
-			  CouObj->downEstimate(),
-			  CouObj->upEstimate());*/
-
-      // only update information if this branch is feasible
-      if (status1 < 0)
-	status1 = result -> updateInformation (thisSolver, info, this);
-
-      numberStrongDone_++;
-      numberStrongIterations_ += thisSolver->getIterationCount();
-
-      if ((status1 == 3) && (trustStrongForSolution_)) {
-        // new solution already saved
-	info -> cutoff_ = goodObjectiveValue_;
-	problem_ -> setCutOff (goodObjectiveValue_);
-	status1 = 0;
-      }
+      ///////////////////////////////////////////////////////////////////////////
 
       jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "-------\n");
 
       if (cb) cb -> setSimulate (false);
 
       /////////////////////////////////////////////////////////////////////////////
-
-      if (solver != thisSolver)
-        delete thisSolver;
 
       bool tightened = false;
 
@@ -464,3 +260,140 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
     return returnCode;
   }
+
+
+// Do one side of strong branching
+int CouenneChooseStrong::simulateBranch (OsiObject *Object,
+					 OsiBranchingInformation *info,
+					 OsiBranchingObject *branch,
+					 OsiSolverInterface *solver,
+					 Bonmin::HotInfo * result,
+					 int direction) {
+
+  int status = -1;
+
+  OsiSolverInterface *thisSolver = solver;
+
+  // Bound tightening if not a CouenneObject -- explicit bound tightening
+  CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
+
+  if (branch -> boundBranch ()) { // a (variable) bound branch
+
+    if (branch -> branch (solver) > COUENNE_INFINITY) { // branch is infeasible
+      if (direction < 0) result -> setDownStatus (status = 1);
+      else               result -> setUpStatus   (status = 1);
+    }
+
+    else // branch seems feasible, solve and compare
+
+      if (!CouObj && !StrongBranchingFBBT (Object, solver)) {
+
+	status = 1;
+
+	if (direction < 0) result -> setDownStatus (1);
+	else               result -> setUpStatus   (1);
+
+      } else {
+
+	solver -> solveFromHotStart ();
+
+	if (pseudoUpdateLP_ && CouObj && solver -> isProvenOptimal ()) {
+	  CouNumber dist = distance (info -> solution_, solver -> getColSolution (), 
+				     problem_ -> nVars ());
+	  if (dist > COUENNE_EPS)
+	    CouObj -> setEstimate (dist, 0);
+	}
+      }
+
+  } else {                       // some more complex branch, have to clone solver
+
+    // adding cuts or something 
+    thisSolver = solver -> clone ();
+
+    if (branch -> branch (thisSolver) > COUENNE_INFINITY) {
+
+      if (direction < 0) result -> setDownStatus (status = 1);
+      else               result -> setUpStatus   (status = 1);
+
+    } else // set hot start iterations
+
+      if (!CouObj && !StrongBranchingFBBT (Object, thisSolver)) {
+
+	status = 1;
+
+	if (direction < 0) result -> setDownStatus (1);
+	else               result -> setUpStatus   (1);
+
+      } else {
+
+	int limit;
+	thisSolver -> getIntParam (OsiMaxNumIterationHotStart, limit);
+	thisSolver -> setIntParam (OsiMaxNumIteration,         limit); 
+
+	thisSolver -> resolve ();
+	if (pseudoUpdateLP_ && CouObj && thisSolver -> isProvenOptimal ()) {
+	  CouNumber dist = distance (info -> solution_, thisSolver -> getColSolution (), 
+				   problem_ -> nVars ());
+	  if (dist > COUENNE_EPS)
+	    CouObj -> setEstimate (dist, 0);
+	}
+      }
+  }
+
+  // can check if we got solution
+  // status is 0 finished, 1 infeasible and 2 unfinished and 3 is solution
+
+  // only update information if this branch is feasible
+  if (status < 0)
+    status = result -> updateInformation (thisSolver, info, this);
+
+  numberStrongIterations_ += thisSolver -> getIterationCount ();
+
+  if ((status == 3) && (trustStrongForSolution_)) {
+    // new solution already saved
+    info -> cutoff_ = goodObjectiveValue_;
+    problem_ -> setCutOff (goodObjectiveValue_);
+    status = 0;
+  }
+
+  if (solver != thisSolver)
+    delete thisSolver;
+
+  return status;
+}
+
+
+/// Called from simulateBranch when object is not CouenneObject and
+/// therefore needs explicit FBBT
+bool CouenneChooseStrong::StrongBranchingFBBT (OsiObject *Object,
+					       OsiSolverInterface *solver) {
+
+  bool feasible = true;
+
+  if (problem_ -> doFBBT ()) {
+
+    int 
+      indVar = Object   -> columnNumber (),
+      nvars  = problem_ -> nVars ();
+
+    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
+    chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
+    problem_ -> installCutOff ();
+
+    if ((feasible = problem_ -> btCore (chg_bds))) {
+
+      const double
+	*lb = solver -> getColLower (),
+	*ub = solver -> getColUpper ();
+	  
+      for (int i=0; i<nvars; i++) {
+	if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
+	if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
+      }
+    }
+
+    delete [] chg_bds;
+  }
+
+  return feasible;
+}
