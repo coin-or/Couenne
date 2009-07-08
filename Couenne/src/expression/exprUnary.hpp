@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprUnary.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the class for univariate functions

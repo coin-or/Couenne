@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    quadCuts.cpp
  * Author:  Pierre Bonami
  * Purpose: based on upper and lower convexification, add cuts to convexify

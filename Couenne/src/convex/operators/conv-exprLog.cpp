@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    conv-exprLog.cpp
  * Author:  Pietro Belotti
  * Purpose: convexification and bounding methods for the logarithm operator
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -22,7 +22,7 @@
 
 // generate convexification cut for constraint w = this
 
-void exprLog::generateCuts (expression *aux, const OsiSolverInterface &si, 
+void exprLog::generateCuts (expression *aux, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int wind, 
 			    CouNumber lbw, CouNumber ubw) {

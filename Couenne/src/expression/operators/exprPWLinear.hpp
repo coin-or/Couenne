@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprPWLinear.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the exprPWLinear class implementing piecewise linear functions

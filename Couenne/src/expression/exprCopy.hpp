@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprCopy.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the class exprCopy
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -157,13 +157,13 @@ class exprCopy: public expression {
   {return copy_ -> standardize (p, addAux);}
 
   /// generate convexification cut for constraint w = this
-  inline void generateCuts (expression *w, const OsiSolverInterface &si, 
+  inline void generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg, 
 			    t_chg_bounds *chg = NULL, int wind= -1, 
 			    CouNumber lb = -COUENNE_INFINITY, 
 			    CouNumber ub =  COUENNE_INFINITY)
 
-  {copy_ -> generateCuts (w, si, cs, cg, chg, wind, lb, ub);}
+  {copy_ -> generateCuts (w, /*si,*/ cs, cg, chg, wind, lb, ub);}
 
   /// code for comparisons
   inline enum expr_type code () 

@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprPow.cpp
  * Author:  Pietro Belotti
  * Purpose: definition of powers

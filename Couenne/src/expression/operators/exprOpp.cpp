@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprOpp.cpp
  * Author:  Pietro Belotti
  * Purpose: definition of the opposite -f(x) of a function

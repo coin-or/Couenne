@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    conv-exprAbs.cpp
  * Author:  Pietro Belotti
  * Purpose: convexification methods for |f(x)|
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -17,7 +17,7 @@
 
 // generate convexification cut for constraint w = |x|
 
-void exprAbs::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprAbs::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg, 
 			    t_chg_bounds *chg, int wind, 
 			    CouNumber lbw, CouNumber ubw) {

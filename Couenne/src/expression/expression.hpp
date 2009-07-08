@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the class expression
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-08-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -175,7 +175,7 @@ class expression {
   {return NULL;}
 
   /// generate convexification cut for constraint w = this
-  virtual void generateCuts (expression *w, const OsiSolverInterface &si, 
+  virtual void generateCuts (expression *w, //const OsiSolverInterface &si, 
 			     OsiCuts &cs, const CouenneCutGenerator *cg,
 			     t_chg_bounds *chg = NULL, int wind = -1, 
 			     CouNumber lb = -COUENNE_INFINITY, 

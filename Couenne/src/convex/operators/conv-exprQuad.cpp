@@ -1,12 +1,12 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    conv-exprQuad.cpp
  * Authors: Pierre Bonami
  *          Stefan Vigerske
  *          Pietro Belotti
  * Purpose: implementation of convexification methods for exprQuad
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -38,14 +38,14 @@ void exprQuad::getBounds (CouNumber &lb, CouNumber &ub) {
 
 
 // generate equality between *this and *w
-void exprQuad::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprQuad::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			     OsiCuts &cs, const CouenneCutGenerator *cg,
 			     t_chg_bounds *chg, 
 			     int wind, CouNumber lb, CouNumber ub) {
 
   if ((!(cg -> isFirst ())) &&                    // unless a convexification was never created,
       (fabs ((*this) () - (*w) ()) < COUENNE_EPS) // do we really need a convexification cut?
-      || !alphaConvexify (cg -> Problem (), si))  // ... or a new alpha-convexification?
+      || !alphaConvexify (cg -> Problem ()))  // ... or a new alpha-convexification?
     return;
 
   /*int 

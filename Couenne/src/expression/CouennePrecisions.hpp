@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouennePrecisions.hpp
  * Author:  Pietro Belotti
  * Purpose: constants for evaluation procedures

@@ -176,7 +176,7 @@ expression *exprAux::simplify () {
 
 // generate cuts for expression associated with this auxiliary
 
-void exprAux::generateCuts (const OsiSolverInterface &si, 
+void exprAux::generateCuts (//const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg, 
 			    t_chg_bounds *chg, int,
 			    CouNumber, CouNumber) {
@@ -193,7 +193,7 @@ void exprAux::generateCuts (const OsiSolverInterface &si,
     cg -> createCut (cs, (l+u)/2., 0, varIndex_, 1.);
   else 
   */
-  image_ -> generateCuts (this, si, cs, cg, chg);
+  image_ -> generateCuts (this, /*si,*/ cs, cg, chg);
 
   // check if cuts have coefficients, rhs too large or too small
 

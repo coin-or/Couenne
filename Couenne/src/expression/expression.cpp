@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods of the expression class
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -48,7 +48,7 @@ void expression::getBounds (CouNumber &lb, CouNumber &ub) {
 
 
 // generate one cut for a constant
-void exprConst::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprConst::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			      OsiCuts &cs, const CouenneCutGenerator *cg, 
 			      t_chg_bounds *chg, int,
 			      CouNumber, CouNumber) {

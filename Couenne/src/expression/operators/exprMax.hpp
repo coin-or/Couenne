@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprMax.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of $\f(x_{\argmax_{i\in I} y_i})$ 
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -69,7 +69,7 @@ class exprMax: public exprOp {
     {return NULL;}
 
   /// generate equality between *this and *w
-  void generateCuts (expression *w, const OsiSolverInterface &si, 
+  void generateCuts (expression *w, //const OsiSolverInterface &si, 
 		     OsiCuts &cs, const CouenneCutGenerator *cg, 
 		     t_chg_bounds * = NULL, int = -1, 
 		     CouNumber = -COUENNE_INFINITY, 

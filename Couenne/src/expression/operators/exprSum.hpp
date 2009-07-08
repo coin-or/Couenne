@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprSum.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of sum expressions
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -62,7 +62,7 @@ class exprSum: public exprOp {
   virtual exprAux *standardize (CouenneProblem *p, bool addAux = true);
 
   /// Special version for linear constraints
-  virtual void generateCuts (expression *, const OsiSolverInterface &, 
+  virtual void generateCuts (expression *, //const OsiSolverInterface &, 
 			     OsiCuts &, const CouenneCutGenerator *,
 			     t_chg_bounds * = NULL, int = -1, 
 			     CouNumber = -COUENNE_INFINITY, 

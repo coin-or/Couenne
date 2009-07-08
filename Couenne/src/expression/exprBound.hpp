@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprBound.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the class for variable bounds 

@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    conv-exprSinCos.cpp
  * Author:  Pietro Belotti
  * Purpose: convexification methods for sines and cosines
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -41,7 +41,7 @@ int trigEnvelope (const CouenneCutGenerator *, OsiCuts &,
 
 /// generate convexification cut for constraint w = sin (this)
 
-void exprSin::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprSin::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int wind, 
 			    CouNumber lbw, CouNumber ubw) {
@@ -66,7 +66,7 @@ void exprSin::generateCuts (expression *w, const OsiSolverInterface &si,
 
 /// generate convexification cut for constraint w = cos (this)
 
-void exprCos::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprCos::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int wind, 
 			    CouNumber lbw, CouNumber ubw) {

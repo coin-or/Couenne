@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprOp.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the n-ary expression class

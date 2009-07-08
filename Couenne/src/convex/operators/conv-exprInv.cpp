@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    conv-exprInv.cpp
  * Author:  Pietro Belotti
  * Purpose: convexification and bounding methods for the inverse operator
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -68,7 +68,7 @@ void exprInv::getBounds (CouNumber &lb, CouNumber &ub) {
 
 // generate convexification cut for constraint w = 1/x
 
-void exprInv::generateCuts (expression *aux, const OsiSolverInterface &si, 
+void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int wind, 
 			    CouNumber lbw, CouNumber ubw) {

@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprSub.cpp
  * Author:  Pietro Belotti
  * Purpose: definition of subtractions

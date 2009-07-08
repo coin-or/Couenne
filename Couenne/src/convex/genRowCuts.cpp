@@ -50,7 +50,7 @@ void CouenneCutGenerator::genRowCuts (const OsiSolverInterface &si,
       if ((var -> Multiplicity () > 0) && 
 	  (var -> Type () == AUX)) {
 
-	var -> generateCuts (si, cs, this, chg);
+	var -> generateCuts (/*si,*/ cs, this, chg);
       }
     }
   else { // chg_bds contains the indices of the variables whose bounds
@@ -98,7 +98,7 @@ void CouenneCutGenerator::genRowCuts (const OsiSolverInterface &si,
 	if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
 	  break;
 
-	var -> generateCuts (si, cs, this, chg);
+	var -> generateCuts (/*si,*/ cs, this, chg);
       }
     }
   }

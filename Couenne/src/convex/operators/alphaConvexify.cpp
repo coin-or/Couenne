@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    alphaConvexify.cpp
  * Author:  Stefan Vigerske
  * Purpose: create alpha-convexification of a quadratic expression
@@ -38,8 +38,8 @@
  * Return true if a convexification is there, false otherwise.
  */
 
-bool exprQuad::alphaConvexify (const CouenneProblem *p,
-			       const OsiSolverInterface &si) {
+bool exprQuad::alphaConvexify (const CouenneProblem *p) {
+  //const OsiSolverInterface &si) {
 
   if (matrix_.size () == 0)
     return false;
@@ -49,10 +49,11 @@ bool exprQuad::alphaConvexify (const CouenneProblem *p,
 
   int k=0,
      nDiag    = bounds_.size (),
-    *indexmap = new int [si.getNumCols ()],
+    *indexmap = new int [p -> nVars ()],
     *indices  = new int [nDiag];
 
-  CoinFillN (indexmap, si.getNumCols (), -1);
+  //CoinFillN (indexmap, si.getNumCols (), -1);
+  CoinFillN (indexmap, p -> nVars (), -1);
 
   // box diameter
   double *diam = new double [nDiag];

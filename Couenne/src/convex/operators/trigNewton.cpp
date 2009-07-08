@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    trigNewton.cpp
  * Author:  Pietro Belotti
  * Purpose: numerically find tangents to (co)sines

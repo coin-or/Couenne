@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprOpp.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the opposite -f(x) of a function
@@ -64,7 +64,7 @@ class exprOpp: public exprUnary {
   void getBounds (CouNumber &, CouNumber&);
 
   /// special version for linear constraints
-  virtual void generateCuts (expression *, const OsiSolverInterface &, 
+  virtual void generateCuts (expression *, //const OsiSolverInterface &, 
 			     OsiCuts &, const CouenneCutGenerator *,
 			     t_chg_bounds * = NULL, int = -1, 
 			     CouNumber = -COUENNE_INFINITY, 

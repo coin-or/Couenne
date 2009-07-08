@@ -1,11 +1,11 @@
-/* $Id$ */
-/**
+/* $Id$
+ *
  * Name:    exprQuad.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of quadratic expressions (= exprGroup +
  *          quadratic = constant + linear + [nonlinear] + quadratic)
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -135,7 +135,7 @@ public:
   /// Generate cuts for the quadratic expression, which are supporting
   /// hyperplanes of the concave upper envelope and the convex lower
   /// envelope.
-  virtual void generateCuts (expression *w, const OsiSolverInterface &si, 
+  virtual void generateCuts (expression *w, //const OsiSolverInterface &si, 
 			     OsiCuts &cs, const CouenneCutGenerator *cg, 
 			     t_chg_bounds * = NULL, int = -1, 
 			     CouNumber = -COUENNE_INFINITY, 
@@ -143,7 +143,7 @@ public:
 
   /// Compute data for \f$\alpha\f$-convexification of a quadratic form
   /// (fills in dCoeff_ and dIndex_ for the convex underestimator)
-  virtual bool alphaConvexify (const CouenneProblem *, const OsiSolverInterface &);
+  virtual bool alphaConvexify (const CouenneProblem *);
 
   /** method exprQuad::quadCuts 
    *

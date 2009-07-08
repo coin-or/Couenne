@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprIf.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the exprIf class that implements the ifnl AMPL operator

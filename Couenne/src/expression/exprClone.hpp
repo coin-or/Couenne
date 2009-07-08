@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprClone.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the clone class (different from exprCopy in

@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneTypes.hpp
  * Author:  Pietro Belotti
  * Purpose: define number types used throughout the code

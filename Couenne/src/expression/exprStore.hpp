@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprStore.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of a storage class for expressions

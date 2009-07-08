@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    powNewton.cpp
  * Author:  Pietro Belotti
  * Purpose: numerically find tangents to power functions

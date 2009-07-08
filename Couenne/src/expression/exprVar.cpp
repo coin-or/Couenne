@@ -1,10 +1,10 @@
-/* $Id$ 
+/* $Id$
  *
  * Name:    exprVar.cpp
  * Author:  Pietro Belotti
  * Purpose: methods of the class for defining variables
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -33,7 +33,7 @@ void exprVar::getBounds (CouNumber &lb, CouNumber &ub) {
 
 
 // generate convexification cut for constraint w = this
-void exprVar::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprVar::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg, 
 			    t_chg_bounds *chg, int,
 			    CouNumber, CouNumber) {

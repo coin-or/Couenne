@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    conv-exprSum.cpp
  * Author:  Pietro Belotti
  * Purpose: methods to standardize/convexify sum expressions
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -18,7 +18,7 @@
 
 
 // generate equality between *this and *w
-void exprSum::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprSum::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, 
 			    int wind, CouNumber lb, CouNumber ub) {

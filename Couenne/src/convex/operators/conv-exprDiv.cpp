@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    conv-exprDiv.cpp
  * Author:  Pietro Belotti
  * Purpose: standardization and convexification methods for divisions
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -28,7 +28,7 @@ exprAux *exprDiv::standardize (CouenneProblem *p, bool addAux) {
 
 
 // generate convexification cut for constraint w = x/y
-void exprDiv::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int wind, 
 			    CouNumber lbw, CouNumber ubw) {

@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprOp.cpp
  * Author:  Pietro Belotti
  * Purpose: methods for multivariate function class

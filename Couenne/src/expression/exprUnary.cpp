@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprUnary.cpp
  * Author:  Pietro Belotti
  * Purpose: methods of the unary expression class

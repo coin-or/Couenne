@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprNorm.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the exprNorm class implementing $l_k$ norms

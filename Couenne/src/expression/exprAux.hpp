@@ -125,7 +125,7 @@ class exprAux: public exprVar {
   void crossBounds ();
 
   /// generate cuts for expression associated with this auxiliary
-  void generateCuts (const OsiSolverInterface &, 
+  void generateCuts (//const OsiSolverInterface &, 
 		     OsiCuts &, const CouenneCutGenerator *, 
 		     t_chg_bounds * = NULL, int = -1, 
 		     CouNumber = -COUENNE_INFINITY, 

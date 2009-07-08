@@ -31,14 +31,14 @@ void exprMax::getBounds (expression *&lower, expression *&upper) {
 }
 
 
-void exprMin::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprMin::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int,
 			    CouNumber, CouNumber) 
 {}
 
 
-void exprMax::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprMax::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int,
 			    CouNumber, CouNumber) 

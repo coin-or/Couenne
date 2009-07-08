@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    domain.hpp
  * Author:  Pietro Belotti
  * Purpose: class for point and bounding box

@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprExp.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the exponential of a function
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -50,7 +50,7 @@ class exprExp: public exprUnary {
   virtual void getBounds (CouNumber &lb, CouNumber&ub);
 
   /// Generate convexification cuts for this expression
-  void generateCuts (expression *w, const OsiSolverInterface &si, 
+  void generateCuts (expression *w, //const OsiSolverInterface &si, 
 		     OsiCuts &cs, const CouenneCutGenerator *cg, 
 		     t_chg_bounds * = NULL, int = -1, 
 		     CouNumber = -COUENNE_INFINITY, 

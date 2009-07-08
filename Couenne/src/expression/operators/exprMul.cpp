@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprMul.cpp
  * Author:  Pietro Belotti
  * Purpose: definition of multiplications

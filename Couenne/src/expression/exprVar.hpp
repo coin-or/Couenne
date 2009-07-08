@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the class exprVar for variables 
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -138,7 +138,7 @@ class exprVar: public expression {
   //}
 
   /// generate cuts for expression associated with this auxiliary
-  virtual void generateCuts (const OsiSolverInterface &, 
+  virtual void generateCuts (//const OsiSolverInterface &, 
 			     OsiCuts &, const CouenneCutGenerator *, 
 			     t_chg_bounds * = NULL, int = -1, 
 			     CouNumber = -COUENNE_INFINITY, 
@@ -146,7 +146,7 @@ class exprVar: public expression {
 
   /// generate convexification cut for constraint w = this
   virtual void generateCuts (expression *w, 
-			     const OsiSolverInterface &si, 
+			     //const OsiSolverInterface &si, 
 			     OsiCuts &cs, const CouenneCutGenerator *cg, 
 			     t_chg_bounds * = NULL, int = -1, 
 			     CouNumber = -COUENNE_INFINITY, 

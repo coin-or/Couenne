@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    unifiedProdCuts.cpp
  * Author:  Pietro Belotti
  * Purpose: unified convexification of products and divisions

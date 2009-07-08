@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    conv-exprMul.cpp
  * Author:  Pietro Belotti
  * Purpose: utility methods to convexify multiplications

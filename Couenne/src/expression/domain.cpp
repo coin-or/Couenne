@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    domain.cpp
  * Author:  Pietro Belotti
  * Purpose: implementation of methods of classes for point and bounding box

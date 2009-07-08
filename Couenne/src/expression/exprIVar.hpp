@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprIVar.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the class exprIVar for integer variables 

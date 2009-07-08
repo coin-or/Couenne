@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprInv.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of inverse of a function (1/f(x))
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -68,7 +68,7 @@ class exprInv: public exprUnary {
   void getBounds (CouNumber &lb, CouNumber &ub);
 
   /// generate equality between *this and *w
-  void generateCuts (expression *w, const OsiSolverInterface &si, 
+  void generateCuts (expression *w, //const OsiSolverInterface &si, 
 		     OsiCuts &cs, const CouenneCutGenerator *cg, 
 		     t_chg_bounds * = NULL, int = -1, 
 		     CouNumber = -COUENNE_INFINITY, 

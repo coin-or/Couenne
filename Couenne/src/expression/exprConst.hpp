@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprConst.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of the class exprConst
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -80,7 +80,7 @@ public:
   {lower = upper = value_;}
 
   /// generate convexification cut for constraint w = this
-  void generateCuts (expression *, const OsiSolverInterface &, 
+  void generateCuts (expression *, //const OsiSolverInterface &, 
 		     OsiCuts &, const CouenneCutGenerator *, 
 		     t_chg_bounds * = NULL, int = -1, 
 		     CouNumber = -COUENNE_INFINITY, 

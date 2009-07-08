@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouExpr.hpp
  * Author:  Pietro Belotti
  * Purpose: Container class for expressions

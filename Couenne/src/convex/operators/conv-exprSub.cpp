@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprSub.cpp
  * Author:  Pietro Belotti
  * Purpose: convexification methods for the Subtraction class
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -14,7 +14,7 @@
 #include "exprOpp.hpp"
 
 // generate equality between *this and *w
-void exprSub::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprSub::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, 
 			    int wind, CouNumber lb, CouNumber ub) {

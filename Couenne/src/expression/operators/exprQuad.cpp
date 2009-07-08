@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprQuad.cpp
  * Author:  Pietro Belotti
  * Purpose: implementation of some methods for exprQuad

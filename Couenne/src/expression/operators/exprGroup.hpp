@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprGroup.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of mixed sum expressions (constant+linear+nonlinear)
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -91,7 +91,7 @@ public:
   virtual void getBounds (CouNumber &, CouNumber &);
 
   /// special version for linear constraints
-  virtual void generateCuts (expression *, const OsiSolverInterface &, 
+  virtual void generateCuts (expression *, //const OsiSolverInterface &, 
 			     OsiCuts &, const CouenneCutGenerator *,
 			     t_chg_bounds * = NULL, int = -1, 
 			     CouNumber = -COUENNE_INFINITY, 

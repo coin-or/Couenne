@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    conv-exprOpp.cpp
  * Author:  Pietro Belotti
  * Purpose: methods to convexify opposite of expressions
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -17,7 +17,7 @@
 
 
 // generate equality between *this and *w
-void exprOpp::generateCuts (expression *w, const OsiSolverInterface &si, 
+void exprOpp::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, 
 			    int wind, CouNumber lb, CouNumber ub) {
