@@ -6399,7 +6399,7 @@ AC_MSG_RESULT([$SED])
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 #
-## $Id: coin.m4 1312 2009-07-07 20:22:30Z andreasw $
+## $Id: coin.m4 1313 2009-07-07 22:07:09Z andreasw $
 #
 # Author: Andreas Wachter    IBM      2006-04-14
 
