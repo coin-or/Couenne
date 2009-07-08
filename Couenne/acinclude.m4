@@ -8817,11 +8817,16 @@ if test $m4_tolower(coin_has_$1) != skipping; then
       AC_ARG_WITH([coin-instdir],
 	          AC_HELP_STRING([--with-coin-instdir],
                                  [prefix of installation directory for precompiled COIN packages]),
-                  [m4_tolower(coin_has_$1)=installed
-		   if test -d "$withval"; then : ; else
+                  [if test -d "$withval"; then : ; else
 		     AC_MSG_ERROR([argument for --with-coin-instdir not a directory])
 		   fi
-                   m4_toupper($1INSTDIR)=`cd $withval; pwd`], [])
+		   m4_ifvaln([$2],
+                     [if test -r $withval/include/coin/$2; then
+                        m4_tolower(coin_has_$1)=installed
+			m4_toupper($1INSTDIR)=`cd $withval; pwd`
+                      fi],
+		     [AC_MSG_WARN([Cannot verify availability of $1 with --with-coin-instdir flag.  Project manager needs to provide name of header to look for])])],
+                   [])
     fi
 
     if test "$m4_tolower(coin_has_$1)" = notGiven; then
