@@ -83,13 +83,16 @@ namespace Bonmin{
   }
   
   CouenneSetup::~CouenneSetup(){
-    //if (CouennePtr_)
-    //delete CouennePtr_;
+    if (couenneProb_)
+      delete couenneProb_;
   }
 
   bool CouenneSetup::InitializeCouenne (char **& argv, 
 					CouenneProblem *couenneProb,
 					Bonmin::CouenneInterface *ci) {
+
+    couenneProb_ = couenneProb;
+
     /* Get the basic options. */
     readOptionsFile();
  
@@ -115,7 +118,7 @@ namespace Bonmin{
 
       ci = new CouenneInterface;
 
-      if (!couenneProb && argv) {
+      if (!couenneProb_ && argv) {
 #ifdef COIN_HAS_ASL
 	/* Read the model in various places. */
 	ci->readAmplNlFile(argv,roptions(),options(),journalist());
@@ -162,19 +165,18 @@ namespace Bonmin{
     //int ivalue, num_points;
     //options()->GetEnumValue("convexification_type", ivalue,"bonmin.");
     //options()->GetIntegerValue("convexification_points",num_points,"bonmin.");
-    
+
+    if (!couenneProb_)
+      couenneProb_ = new CouenneProblem (aslfg_ -> asl, this, journalist ());
+
     CouenneCutGenerator * couenneCg = 
-      new CouenneCutGenerator (ci, this, couenneProb ? NULL : aslfg_->asl);
+      new CouenneCutGenerator (ci, this, couenneProb_, NULL);
 
-    if (!couenneProb) couenneProb = couenneCg -> Problem();
-    else {
-      couenneCg   -> setProblem (couenneProb);
-      couenneProb -> setBase    (this);
-    }
+    couenneProb_ -> setBase (this);
 
-    assert (couenneProb);
+    assert (couenneProb_);
 
-    couenneProb -> reformulate (couenneCg);
+    couenneProb_ -> reformulate (couenneCg);
 
     Bonmin::BabInfo * extraStuff = new Bonmin::CouenneInfo(0);
 
@@ -205,7 +207,7 @@ namespace Bonmin{
 
       /// setup initial heuristic (in principle it should only run once...)
       InitHeuristic* initHeuristic = new InitHeuristic 
-	(ci -> getObjValue (), ci -> getColSolution (), *couenneProb);
+	(ci -> getObjValue (), ci -> getColSolution (), *couenneProb_);
       HeuristicMethod h;
       h.id = "Init Rounding NLP";
       h.heuristic = initHeuristic;
@@ -227,7 +229,7 @@ namespace Bonmin{
 
     int 
       nSOS  = 0,
-      nVars = couenneProb -> nVars ();
+      nVars = couenneProb_ -> nVars ();
 
     OsiObject ** objects = NULL;
 
@@ -235,9 +237,9 @@ namespace Bonmin{
     if (s == "yes") {
 
       // allocate sufficient space for both nonlinear variables and SOS's
-      objects = new OsiObject* [couenneProb -> nCons () + nVars];
+      objects = new OsiObject* [couenneProb_ -> nCons () + nVars];
 
-      nSOS = couenneProb -> findSOS (nonlinearSolver (), objects);
+      nSOS = couenneProb_ -> findSOS (nonlinearSolver (), objects);
 
       nonlinearSolver () -> addObjects (nSOS, objects);
 
@@ -289,7 +291,7 @@ namespace Bonmin{
 
     for (int i = 0; i < nVars; i++) { // for each variable
 
-      exprVar *var = couenneProb -> Var (i);
+      exprVar *var = couenneProb_ -> Var (i);
 
       // we only want enabled variables
       if (var -> Multiplicity () <= 0) 
@@ -311,9 +313,9 @@ namespace Bonmin{
 	      (fabs (var -> ub ()) < COUENNE_EPS))
 
 	    // it's a complementarity constraint object!
-	    objects    [nobj] = new CouenneComplObject (couenneProb, var, this, journalist ());
+	    objects    [nobj] = new CouenneComplObject (couenneProb_, var, this, journalist ());
 	    else*/
-	  objects [nobj] = new CouenneObject (couenneCg, couenneProb, var, this, journalist ());
+	  objects [nobj] = new CouenneObject (couenneCg, couenneProb_, var, this, journalist ());
 
 	  objects [nobj++] -> setPriority (contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
@@ -326,11 +328,11 @@ namespace Bonmin{
 	// branching objects on variables
 	if // comment three lines below for linear variables too
 	  (var -> isInteger () || 
-	   (couenneProb -> Dependence () [var -> Index ()] . size () > 0)) {  // has indep
+	   (couenneProb_ -> Dependence () [var -> Index ()] . size () > 0)) {  // has indep
 	   //|| ((var -> Type () == AUX) &&                                  // or, aux 
 	   //    (var -> Image () -> Linearity () > LINEAR))) {              // of nonlinear
 
-	  objects [nobj] = new CouenneVarObject (couenneCg, couenneProb, var, this, journalist ());
+	  objects [nobj] = new CouenneVarObject (couenneCg, couenneProb_, var, this, journalist ());
 	  objects [nobj++] -> setPriority (contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
 	}
@@ -343,11 +345,11 @@ namespace Bonmin{
 	// branching objects on variables
 	if // comment three lines below for linear variables too
 	  (var -> isInteger () || 
-	   (couenneProb -> Dependence () [var -> Index ()] . size () > 0)) { // has indep
+	   (couenneProb_ -> Dependence () [var -> Index ()] . size () > 0)) { // has indep
 	  //|| ((var -> Type () == AUX) &&                      // or, aux 
 	  //(var -> Image () -> Linearity () > LINEAR))) { // of nonlinear
 
-	  objects [nobj] = new CouenneVTObject (couenneCg, couenneProb, var, this, journalist ());
+	  objects [nobj] = new CouenneVTObject (couenneCg, couenneProb_, var, this, journalist ());
 	  objects [nobj++] -> setPriority (contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
 	}
@@ -406,7 +408,7 @@ namespace Bonmin{
       options()->GetIntegerValue("log_num_local_optimization_per_level",numSolve,"couenne.");
       NlpSolveHeuristic * nlpHeuristic = new NlpSolveHeuristic;
       nlpHeuristic->setNlp(*ci,false);
-      nlpHeuristic->setCouenneProblem(couenneProb);
+      nlpHeuristic->setCouenneProblem(couenneProb_);
       //nlpHeuristic->setMaxNlpInf(1e-4);
       nlpHeuristic->setMaxNlpInf(maxNlpInf_0);
       nlpHeuristic->setNumberSolvePerLevel(numSolve);
@@ -428,7 +430,7 @@ namespace Bonmin{
 
     case OSI_STRONG: { // strong branching
       CouenneChooseStrong * chooseVariable = new CouenneChooseStrong
-	(*this, couenneProb, journalist ());
+	(*this, couenneProb_, journalist ());
       chooseVariable->setTrustStrongForSolution(false);
       chooseVariable->setTrustStrongForBound(false);
       chooseVariable->setOnlyPseudoWhenTrusted(true);
@@ -438,7 +440,7 @@ namespace Bonmin{
 
     case OSI_SIMPLE: // default choice
       branchingMethod_ = new CouenneChooseVariable 
-	(continuousSolver_, couenneProb, journalist ());
+	(continuousSolver_, couenneProb_, journalist ());
       break;
 
     default:

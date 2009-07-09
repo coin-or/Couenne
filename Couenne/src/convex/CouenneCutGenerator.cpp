@@ -20,12 +20,13 @@
 /// constructor
 CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
 					  Bonmin::BabSetupBase *base,
+					  CouenneProblem *problem,
 					  struct ASL *asl):
 
   CglCutGenerator (),
   
   firstcall_      (true),
-  problem_        (NULL),
+  problem_        (problem),
   nrootcuts_      (0),
   ntotalcuts_     (0),
   septime_        (0),
@@ -65,14 +66,14 @@ CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
     enable_lp_implied_bounds_ = false;
   }
 
-  if (asl) // deal with problems not originating from AMPL
-    problem_ = new CouenneProblem (asl, base, jnlst_);
+  //if (asl) // deal with problems not originating from AMPL
+  //problem_ = new CouenneProblem (asl, base, jnlst_);
 }
 
 
 /// destructor
 CouenneCutGenerator::~CouenneCutGenerator ()
-{if (problem_) delete problem_;}
+{}//if (problem_) delete problem_;}
 
 
 /// copy constructor
@@ -84,7 +85,7 @@ CouenneCutGenerator::CouenneCutGenerator (const CouenneCutGenerator &src):
   addviolated_ (src. addviolated_), 
   convtype_    (src. convtype_), 
   nSamples_    (src. nSamples_),
-  problem_     (src. problem_ -> clone ()),
+  problem_     (src. problem_),// -> clone ()),
   nrootcuts_   (src. nrootcuts_),
   ntotalcuts_  (src. ntotalcuts_),
   septime_     (src. septime_),

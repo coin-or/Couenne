@@ -100,7 +100,8 @@ exprGroup::~exprGroup () {
 
   for (lincoeff::iterator i = lcoeff_.begin (); i != lcoeff_.end (); ++i) {
     enum expr_type code = i -> first -> code ();
-    if ((code == COU_EXPRLBOUND) || (code == COU_EXPRUBOUND))
+    if ((code == COU_EXPRLBOUND) || 
+	(code == COU_EXPRUBOUND))
       delete i -> first;
   }
 }

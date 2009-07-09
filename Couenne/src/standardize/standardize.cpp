@@ -142,7 +142,6 @@ bool CouenneProblem::standardize () {
   //  std::vector <CouenneConstraint *> con2;
   std::vector <std::vector <CouenneConstraint *>::iterator> iters2erase;
 
-
   // CONSTRAINTS /////////////////////////////////////////////////////////////////////////////
 
   for (std::vector <CouenneConstraint *>::iterator i = constraints_.begin (); 
@@ -161,6 +160,7 @@ bool CouenneProblem::standardize () {
 #endif
 
     if (aux) { // save if standardized
+      
       //delete ((*i) -> Body ());
       (*i) -> Body (new exprClone (aux));
       //      con2.push_back (*i);

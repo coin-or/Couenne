@@ -63,7 +63,7 @@ class exprAux: public exprVar {
 
   /// Node type
   inline enum nodeType Type () const
-    {return AUX;}
+  {return AUX;}
 
   /// Constructor
   exprAux (expression *, int, int, intType = Unset, Domain * = NULL);
@@ -90,19 +90,19 @@ class exprAux: public exprVar {
 
   /// The expression associated with this auxiliary variable
   inline expression *Image () const
-    {return image_;}
+  {return image_;}
 
-  /// The expression associated with this auxiliary variable
+  /// Sets expression associated with this auxiliary variable
   inline void Image (expression *image)
-    {image_ = image;}
+  {image_ = image;}
 
   /// Null function for evaluating the expression
   inline CouNumber operator () ()
-    {return domain_ -> x (varIndex_);}
+  {return domain_ -> x (varIndex_);}
 
   /// Differentiation
   inline expression *differentiate (int index) 
-    {return image_ -> differentiate (index);}
+  {return image_ -> differentiate (index);}
 
   /// fill in the set with all indices of variables appearing in the
   /// expression
@@ -114,7 +114,7 @@ class exprAux: public exprVar {
 
   /// Get a measure of "how linear" the expression is (see CouenneTypes.h)
   inline int Linearity ()
-    {return LINEAR;}
+  {return LINEAR;}
     /*return image_ -> Linearity ();*/
 
   /// Get lower and upper bound of an expression (if any)

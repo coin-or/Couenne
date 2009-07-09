@@ -206,10 +206,8 @@ CouenneProblem::~CouenneProblem () {
   //i != variables_ . end (); ++i)
   //delete (*i);
 
-  for (int i=nVars (); i--;) { // delete in inverse order
-    int ind = numbering_ [i];
-    delete variables_ [ind];
-  }
+  if (numbering_) for (int i=nVars (); i--;) delete variables_ [numbering_ [i]];
+  else            for (int i=nVars (); i--;) delete variables_ [i];
 
   // delete extra structures
   if (graph_)     delete    graph_;

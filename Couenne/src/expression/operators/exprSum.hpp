@@ -29,7 +29,7 @@ class exprSum: public exprOp {
   exprSum (expression *, expression *);
 
   /// Empty destructor
-  ~exprSum () {}
+  virtual ~exprSum () {}
  
   /// Cloning method
   virtual expression *clone (Domain *d = NULL) const

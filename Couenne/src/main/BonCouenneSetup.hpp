@@ -38,18 +38,19 @@ public:
     BabSetupBase(),
     aslfg_(NULL),
     CouennePtr_ (NULL),
-    displayStats_ (false) {}
+    displayStats_ (false),
+    couenneProb_ (NULL) {}
 
     /** Copy constructor.*/
     CouenneSetup(const CouenneSetup& other):
       BabSetupBase(other),
       aslfg_(NULL),
-      displayStats_ (other.displayStats_) {}
+      displayStats_ (other.displayStats_),
+      couenneProb_ (other.couenneProb_) {}
     
     /** virtual copy constructor.*/
-    virtual BabSetupBase * clone() const{
-      return new CouenneSetup(*this);
-    }
+    virtual BabSetupBase * clone () const
+    {return new CouenneSetup (*this);}
     
     /// destructor
     virtual ~CouenneSetup();
@@ -100,6 +101,9 @@ private:
 
     /// true if one wants to display statistics at the end of program
     bool displayStats_;
+
+    /// MINLP formulation
+    CouenneProblem *couenneProb_;
   };
 }
 

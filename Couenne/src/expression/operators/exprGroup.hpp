@@ -50,7 +50,7 @@ public:
   exprGroup (const exprGroup &src, Domain *d = NULL);
 
   /// Destructor -- needed to clear bounds 
-  ~exprGroup ();
+  virtual ~exprGroup ();
 
   /// Cloning method
   virtual expression *clone (Domain *d = NULL) const

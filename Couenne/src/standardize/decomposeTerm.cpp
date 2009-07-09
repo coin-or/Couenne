@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    decomposeTerm.cpp
  * Author:  Pietro Belotti
  * Purpose: decompose sums and products

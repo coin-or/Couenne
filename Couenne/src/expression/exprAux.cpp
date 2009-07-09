@@ -81,8 +81,8 @@ exprAux::exprAux (const exprAux &e, Domain *d):
 
 /// Destructor
 exprAux::~exprAux () {
+  //printf ("deleting %x: ", this);   fflush (stdout); print ();           fflush (stdout);
   if (image_) {
-    //printf ("deleting %x: ", this);   fflush (stdout); print ();           fflush (stdout);
     //printf (" [%x] ",        image_); fflush (stdout); image_ -> print (); fflush (stdout);
     //printf ("\n");
     delete image_; 

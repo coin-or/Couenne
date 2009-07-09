@@ -45,6 +45,7 @@ void CouenneProblem::print (std::ostream &out) {
 
 	out << " (r:" << (*i) -> rank () 
 	    << ", m:" << (*i) -> Multiplicity () << ") := ";
+
 	if ((*i) -> Image ())
 	  (*i) -> Image () -> print (out, false); 
       }

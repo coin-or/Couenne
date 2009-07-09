@@ -95,6 +95,7 @@ class CouenneCutGenerator: public CglCutGenerator {
   /// constructor
   CouenneCutGenerator  (Bonmin::OsiTMINLPInterface * = NULL,
 			Bonmin::BabSetupBase *base = NULL,
+			CouenneProblem * = NULL,
 			struct ASL * = NULL);
 
   /// copy constructor
