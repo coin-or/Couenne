@@ -140,7 +140,9 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
   if (!retval) {
 
-    if (dist>1e10) {
+    retval = true;
+
+    if (dist > 1e10) {
 
       jnlst_ -> Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "TODO: Don't have point for ABT\n");
       retval = true;
