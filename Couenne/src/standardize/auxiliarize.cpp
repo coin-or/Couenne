@@ -124,6 +124,8 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
 
   // replace it with new auxiliary
 
-  if (same_var)
+  if (same_var) {
+    delete *orig;
     *orig = aux;
+  }
 }

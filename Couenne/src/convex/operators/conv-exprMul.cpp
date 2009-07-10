@@ -68,8 +68,8 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
   }
 
-  //expression *aux = arglist_ [0]; // why not this one?
-  expression *aux = new exprClone (arglist_ [0]);
+  expression *aux = arglist_ [0]; // why not this one?
+  //expression *aux = new exprClone (arglist_ [0]);
 
   for (int i = 1; i < nargs_ - 1; i++)
     aux = (areSameVariables (aux, arglist_ [i])) ? 

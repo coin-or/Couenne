@@ -27,7 +27,7 @@
 /// x_i and/or x_j may come from standardizing other (linear or
 /// quadratic operator) sub-expressions
 
-void CouenneProblem::decomposeTerm (expression *term,
+void CouenneProblem::decomposeTerm (expression*& term,
 				    CouNumber initCoe,
 				    CouNumber &c0,
 				    LinMap  &lmap,
@@ -46,7 +46,7 @@ void CouenneProblem::decomposeTerm (expression *term,
     break;
 
   case COU_EXPROPP:   /// the opposite of a term
-    decomposeTerm (term -> Argument (), -initCoe, c0, lmap, qmap);
+    decomposeTerm (*term -> ArgPtr (), -initCoe, c0, lmap, qmap);
     break;
 
   case COU_EXPRSUB:   /// a subtraction
@@ -187,7 +187,9 @@ void CouenneProblem::decomposeTerm (expression *term,
 
       exprMul *mul = new exprMul (al, indices.size ());
       exprAux *aux = mul -> standardize (this);
+      assert(aux);
       lmap.insert (aux -> Index (), coe);
+      delete mul;
 
     } break;
     }
@@ -205,6 +207,7 @@ void CouenneProblem::decomposeTerm (expression *term,
 
       expression *aux = term -> standardize (this);
       if (!aux) aux = term;
+      else term = new exprClone(aux);
       lmap.insert (aux -> Index (), initCoe);
 
     } else { // this is of the form f(x)^k.  If k=2, return square. If
@@ -214,6 +217,15 @@ void CouenneProblem::decomposeTerm (expression *term,
 
       if (!aux)
 	aux = *al; // it was a simple variable, and was not standardized.
+      else {
+        if ((*al)->code() == COU_EXPRGROUP ||
+            (*al)->code() == COU_EXPRSUM || 
+            (*al)->code() == COU_EXPRSUB || 
+            (*al)->code() == COU_EXPROPP || 
+            (*al)->code() == COU_EXPRQUAD)
+          delete *al;
+        *al = new exprClone(aux);
+      }
 
       CouNumber expon = al [1] -> Value ();
       int ind = aux -> Index ();
@@ -230,9 +242,12 @@ void CouenneProblem::decomposeTerm (expression *term,
 
   default: { /// otherwise, simply standardize expression 
 
+    assert(term->Type() == UNARY);
     expression *aux = term -> standardize (this);
     if (!aux) 
       aux = term;
+    else
+      term = new exprClone(aux);
     lmap.insert (aux -> Index (), initCoe);
   } break;
   }

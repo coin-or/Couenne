@@ -440,7 +440,7 @@ class CouenneProblem {
   ///
   /// x_i and/or x_j may come from standardizing other (linear or
   /// quadratic operator) sub-expressions
-  void decomposeTerm (expression *term,
+  void decomposeTerm (expression*& term,
 		      CouNumber initCoe,
 		      CouNumber &c0,
 		      LinMap  &lmap,
@@ -538,7 +538,7 @@ protected:
 
   /// re-organizes multiplication and stores indices (and exponents) of
   /// its variables
-  void flattenMul (expression *mul, 
+  void flattenMul (expression*& mul, 
 		   CouNumber &coe, 
 		   std::map <int, CouNumber> &indices);
 

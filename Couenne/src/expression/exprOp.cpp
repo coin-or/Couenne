@@ -140,6 +140,12 @@ exprAux *exprOp::standardize (CouenneProblem *p, bool addAux) {
 
   for (int i = nargs_; i--;)
     if ((subst = arglist_ [i] -> standardize (p))) {
+      if (arglist_[i]->code() == COU_EXPRGROUP ||
+          arglist_[i]->code() == COU_EXPRSUM || 
+          arglist_[i]->code() == COU_EXPROPP || 
+          arglist_[i]->code() == COU_EXPRSUB || 
+          arglist_[i]->code() == COU_EXPRQUAD)
+        delete arglist_[i];
       if ((subst -> Type () == VAR) ||
 	  (subst -> Type () == AUX))
 	arglist_ [i]    = new exprClone (subst);

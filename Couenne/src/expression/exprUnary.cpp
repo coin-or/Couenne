@@ -49,6 +49,12 @@ exprAux *exprUnary::standardize (CouenneProblem *p, bool addAux) {
   exprAux *subst;
 
   if ((subst = argument_ -> standardize (p))) {
+    if (argument_->code() == COU_EXPRGROUP ||
+        argument_->code() == COU_EXPRSUM || 
+        argument_->code() == COU_EXPRSUB || 
+        argument_->code() == COU_EXPROPP || 
+        argument_->code() == COU_EXPRQUAD)
+    delete argument_;
     if ((subst -> Type () == AUX) ||
 	(subst -> Type () == VAR)) 
       argument_ = new exprClone (subst);
