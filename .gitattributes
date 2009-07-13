@@ -5,7 +5,6 @@ Couenne/LICENSE -text
 Couenne/Makefile.am -text
 Couenne/Makefile.in -text
 Couenne/README -text
-Couenne/acinclude.m4 -text
 Couenne/aclocal.m4 -text
 Couenne/configure -text
 Couenne/configure.ac -text
