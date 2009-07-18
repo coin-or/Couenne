@@ -31,7 +31,9 @@
 #include "BonCbcNode.hpp"
 
 #include "OsiClpSolverInterface.hpp"
+#ifdef COIN_HAS_CPX
 #include "OsiCpxSolverInterface.hpp"
+#endif
 
 // MILP cuts
 #include "CglGomory.hpp"
@@ -180,11 +182,16 @@ namespace Bonmin{
 
     } else if (s == "cplex") {
 
+#ifdef COIN_HAS_CPX
       CouenneSolverInterface <OsiCpxSolverInterface> *CSI 
 	= new CouenneSolverInterface <OsiCpxSolverInterface>;
 
       continuousSolver_ = CSI;
       CSI -> setCutGenPtr (couenneCg);
+#else
+      journalist()->Printf(J_ERROR, J_INITIALIZATION, "Couenne was compiled without CPLEX interface. Please reconfigure, recompile, and try again.\n");
+      return false;
+#endif
     }
 
     couenneProb_ -> setBase (this);
