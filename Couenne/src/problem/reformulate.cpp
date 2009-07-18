@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    reformulate.cpp
  * Author:  Pietro Belotti
  * Purpose: apply reformulation
@@ -57,14 +57,14 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   nOrigCons_    = constraints_. size ();
   nOrigIntVars_ = nIntVars ();
 
-  jnlst_->Printf (Ipopt::J_SUMMARY, J_PROBLEM,
+  jnlst_->Printf (Ipopt::J_ERROR, J_PROBLEM,
 		  "Problem size before reformulation: %d variables (%d integer), %d constraints.\n",
 		  nOrigVars_, nOrigIntVars_, nOrigCons_);
 
   // reformulation
   if (!standardize ()) { // problem is infeasible if standardize returns false
 
-    jnlst_->Printf(Ipopt::J_WARNING, J_PROBLEM,
+    jnlst_->Printf(Ipopt::J_ERROR, J_PROBLEM,
 		   "Couenne: problem infeasible after reformulation\n");
     // fake infeasible bounds for Couenne to bail out
     for (int i = nVars (); i--;)
@@ -85,8 +85,10 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   fillQuadIndices ();
 
   if ((now = (CoinCpuTime () - now)) > 10.)
-    jnlst_->Printf(Ipopt::J_WARNING, J_PROBLEM,
+    jnlst_->Printf(Ipopt::J_ERROR, J_PROBLEM,
     "Couenne: reformulation time %.3fs\n", now);
+
+  jnlst_->Printf (Ipopt::J_WARNING, J_PROBLEM, "Initializing auxiliaries\n");
 
   // give a value to all auxiliary variables
   initAuxs ();
@@ -102,7 +104,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 	nIntVars_++;
     }
 
-  jnlst_->Printf(Ipopt::J_SUMMARY, J_PROBLEM,
+  jnlst_->Printf(Ipopt::J_ERROR, J_PROBLEM,
 		  "Problem size after  reformulation: %d variables (%d integer), %d constraints.\n",
 		  nActualVars, nIntVars_, nCons());
 

@@ -35,12 +35,12 @@ class exprClone: public exprCopy {
 
   /// cloning method
   expression *clone (Domain *d = NULL) const
-  //{return new exprClone (*this, d);}
+  {return new exprClone (*this, d);}
   /*{
     if (copy_ != Original ()) return copy_ -> clone (d);
     else                      return new exprClone (*this, d);
     }*/
-  {return copy_ -> Original () -> clone (d);}
+  //{return copy_ -> Original () -> clone (d);}
 
   /// Destructor
   virtual ~exprClone () {

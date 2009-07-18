@@ -77,12 +77,20 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
     double 
       *saveLower = CoinCopyOfArray (info -> lower_, numberColumns),
       *saveUpper = CoinCopyOfArray (info -> upper_, numberColumns),
-      *Lower0    = CoinCopyOfArray (info -> lower_, numberColumns), // delete afterwards
-      *Upper0    = CoinCopyOfArray (info -> upper_, numberColumns),
+
+      *Lower0, //   = CoinCopyOfArray (info -> lower_, numberColumns), // delete afterwards
+      *Upper0, //   = CoinCopyOfArray (info -> upper_, numberColumns),
+
       *oldLower  = new double [numberColumns],
       *oldUpper  = new double [numberColumns],
+
       *lpSol     = NULL, 
        timeStart = CoinCpuTime ();
+
+    if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
+      Lower0 = CoinCopyOfArray (info -> lower_, numberColumns); // delete afterwards
+      Upper0 = CoinCopyOfArray (info -> upper_, numberColumns);
+    }
 
     // LP solution for distance
     if (pseudoUpdateLP_) 
@@ -233,10 +241,10 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 	if (problem_ -> Lb (j) > Lower0 [j]) printf ("l%d (%g-->%g) ", j,Lower0[j], problem_->Lb (j));
 	if (problem_ -> Ub (j) < Upper0 [j]) printf ("u%d (%g-->%g) ", j,Upper0[j], problem_->Ub (j));
       }
-    }
 
-    delete [] Lower0;
-    delete [] Upper0;
+      delete [] Lower0;
+      delete [] Upper0;
+    }
 
     problem_ -> domain () -> pop (); // discard current point/bounds from problem
 

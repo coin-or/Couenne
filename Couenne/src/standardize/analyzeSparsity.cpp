@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    analyzeSparsity.cpp
  * Author:  Pietro Belotti
  * Purpose: return one or more exprGroup/exprQuad based on sparsity of

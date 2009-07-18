@@ -31,6 +31,7 @@
 #include "BonCbcNode.hpp"
 
 #include "OsiClpSolverInterface.hpp"
+#include "OsiCpxSolverInterface.hpp"
 
 // MILP cuts
 #include "CglGomory.hpp"
@@ -90,6 +91,7 @@ namespace Bonmin{
   bool CouenneSetup::InitializeCouenne (char **& argv, 
 					CouenneProblem *couenneProb,
 					Bonmin::CouenneInterface *ci) {
+    std::string s;
 
     couenneProb_ = couenneProb;
 
@@ -97,22 +99,16 @@ namespace Bonmin{
     readOptionsFile();
  
     // in check mode, avoid pop-up error message (there are quite a few messages)
-    std::string test_mode;
-    options_ -> GetStringValue ("test_mode", test_mode, "couenne.");
-    if (test_mode == "yes")
+    options_ -> GetStringValue ("test_mode", s, "couenne.");
+    if (s == "yes")
       WindowsErrorPopupBlocker();
 
     /** Change default value for failure behavior so that code doesn't crash 
 	when Ipopt does not solve a sub-problem.*/
 
-    options_->SetStringValue ("nlp_failure_behavior", "fathom", "bonmin.");
+    options_ -> SetStringValue ("nlp_failure_behavior", "fathom", "bonmin.");
 
-    gatherParametersValues(options_);
-
-    CouenneSolverInterface <OsiClpSolverInterface> *CSI 
-      = new CouenneSolverInterface <OsiClpSolverInterface>;
-
-    continuousSolver_ = CSI;
+    gatherParametersValues (options_);
 
     if (!ci) {
 
@@ -121,9 +117,9 @@ namespace Bonmin{
       if (!couenneProb_ && argv) {
 #ifdef COIN_HAS_ASL
 	/* Read the model in various places. */
-	ci->readAmplNlFile(argv,roptions(),options(),journalist());
+	ci -> readAmplNlFile (argv, roptions (), options (), journalist ());
 	aslfg_ = new SmartAsl;
-	aslfg_->asl = readASLfg (argv);
+	aslfg_ -> asl = readASLfg (argv);
 #else
 	std::cerr << 
 	  "Couenne was compiled without AMPL Solver Library. Cannot initialize from AMPL NL File." 
@@ -171,6 +167,25 @@ namespace Bonmin{
 
     CouenneCutGenerator * couenneCg = 
       new CouenneCutGenerator (ci, this, couenneProb_, NULL);
+
+    options_ -> GetStringValue ("lp_solver", s, "couenne.");
+
+    if (s == "clp") {
+
+      CouenneSolverInterface <OsiClpSolverInterface> *CSI 
+	= new CouenneSolverInterface <OsiClpSolverInterface>;
+
+      continuousSolver_ = CSI;
+      CSI -> setCutGenPtr (couenneCg);
+
+    } else if (s == "cplex") {
+
+      CouenneSolverInterface <OsiCpxSolverInterface> *CSI 
+	= new CouenneSolverInterface <OsiCpxSolverInterface>;
+
+      continuousSolver_ = CSI;
+      CSI -> setCutGenPtr (couenneCg);
+    }
 
     couenneProb_ -> setBase (this);
 
@@ -225,8 +240,6 @@ namespace Bonmin{
 
     // Add Couenne SOS ///////////////////////////////////////////////////////////////
 
-    std::string s;
-
     int 
       nSOS  = 0,
       nVars = couenneProb_ -> nVars ();
@@ -234,6 +247,7 @@ namespace Bonmin{
     OsiObject ** objects = NULL;
 
     options () -> GetStringValue ("enable_sos", s, "couenne.");
+
     if (s == "yes") {
 
       // allocate sufficient space for both nonlinear variables and SOS's
@@ -387,7 +401,6 @@ namespace Bonmin{
 
       // this is done on an explicitly declared CSI pointer, however
       // CSI == continuousSolver_
-      CSI-> setCutGenPtr (couenneCg);
     }
 
     // disjunctive cuts generator added AFTER 
@@ -521,6 +534,14 @@ namespace Bonmin{
       "yes", "",
       "no", "");
 
+    roptions -> AddStringOption3 (
+      "lp_solver",
+      "Linear Programming solver for the linearization",
+      "clp",
+      "clp", "Use the Coin-OR Open Source solver CLP",
+      "cplex", "Use the commercial solver Cplex (license is needed)",
+      "soplex", "Use the freely available Soplex (not available yet)");
+
     roptions->AddBoundedIntegerOption(
       "branching_print_level", "Output level for braching code in Couenne",
       -2, J_LAST_LEVEL-1, J_NONE, "");
@@ -535,19 +556,19 @@ namespace Bonmin{
 
     roptions->AddBoundedIntegerOption(
       "problem_print_level", "Output level for problem manipulation code in Couenne",
-      -2, J_LAST_LEVEL-1, J_WARNING, "");
+      -2, J_LAST_LEVEL-1, J_ERROR, "");
 
     roptions->AddBoundedIntegerOption(
       "nlpheur_print_level", "Output level for NLP heuristic in Couenne",
-      -2, J_LAST_LEVEL-1, J_WARNING, "");
+      -2, J_LAST_LEVEL-1, J_NONE, "");
 
     roptions->AddBoundedIntegerOption(
     "disjcuts_print_level", "Output level for disjunctive cuts in Couenne",
-    -2, J_LAST_LEVEL-1, J_WARNING, "");
+    -2, J_LAST_LEVEL-1, J_NONE, "");
 
     roptions->AddBoundedIntegerOption(
     "reformulate_print_level", "Output level for reformulating problems in Couenne",
-    -2, J_LAST_LEVEL-1, J_WARNING, "");
+    -2, J_LAST_LEVEL-1, J_NONE, "");
 
 
     // copied from BonminSetup::registerMilpCutGenerators(), in

@@ -27,14 +27,16 @@ static double distanceToBound (int n, const double* xOrig,
 
   double Xdist = 0.;
 
-  for (int i=0; i<n; i++) {
-    if (lower[i] > xOrig[i]) {
-      Xdist += lower[i] - xOrig[i];
-    }
-    if (upper[i] < xOrig[i]) {
-      Xdist += xOrig[i] - upper[i];
-    }
+  for (int i=0, j=n; j--; i++) {
+
+    CouNumber 
+      diff, 
+      xO = xOrig [i];
+
+    if      ((diff = lower [i] - xO) > 0) Xdist += diff;
+    else if ((diff = xO - upper [i]) > 0) Xdist += diff;
   }
+
   return Xdist;
 }
 
@@ -83,7 +85,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     }
   }
 
-  jnlst_ -> Printf(J_VECTOR, J_BOUNDTIGHTENING, "best dist = %e\n", dist);
+  jnlst_ -> Printf (J_VECTOR, J_BOUNDTIGHTENING, "best dist = %e\n", dist);
 
   // If this solution is not sufficiently inside the bounds, we solve the NLP now
   if (dist > 0.1) { // TODO: Find tolerance

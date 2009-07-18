@@ -1,17 +1,18 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    testIntFix.cpp
  * Author:  Pietro Belotti
  * Purpose: select rounding for integer variable based on tightening
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CoinHelperFunctions.hpp"
 #include "CouenneProblem.hpp"
 
-// test
+// test if fixing a variable yields an infeasible (or dually
+// infeasible) problem
 int CouenneProblem::testIntFix (int index, 
 				CouNumber xFrac, 
 				enum fixType *fixed,
@@ -35,10 +36,11 @@ int CouenneProblem::testIntFix (int index,
 
   Lb (index) = Ub (index) = floor (xFrac); 
 
-  for (int j = 0; j<ncols; j++) {
+  // useless
+  /*for (int j = 0; j<ncols; j++) {
     f_chg [j].setLower (t_chg_bounds::UNCHANGED); 
     f_chg [j].setUpper (t_chg_bounds::UNCHANGED);
-  }
+    }*/
 
   f_chg [index].setLower (t_chg_bounds::CHANGED); 
   f_chg [index].setUpper (t_chg_bounds::CHANGED);

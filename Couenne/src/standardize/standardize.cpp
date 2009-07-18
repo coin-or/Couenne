@@ -121,15 +121,7 @@ bool CouenneProblem::standardize () {
 #endif
 
     if (aux) {
-      switch ((*i) -> Body ()->code()) {
-        case COU_EXPRGROUP:
-        case COU_EXPRSUM:
-        case COU_EXPRQUAD:
-        case COU_EXPRSUB:
-        case COU_EXPROPP:
-           delete ((*i) -> Body ());
-        default:;
-      }
+      //delete ((*i) -> Body ());
       (*i) -> Body (new exprClone (aux));
     }
 
@@ -169,11 +161,11 @@ bool CouenneProblem::standardize () {
 
     if (aux) { // save if standardized
       
+      //printf ("delete %x: ", ((*i) -> Body ())); ((*i) -> Body ()) -> print ();
+      //printf ("\n"); 
       //delete ((*i) -> Body ());
-      //(*i) -> Body (new exprClone (aux));
+      (*i) -> Body (new exprClone (aux));
       //      con2.push_back (*i);
-      // body has been replaced in constStandardize call already, so do nothing here
-      ;
     }
     else {
       CouNumber lb, ub;
@@ -201,10 +193,8 @@ bool CouenneProblem::standardize () {
     aux -> Image () -> print (); printf ("\n");*/
   }
 
-  for (unsigned int i = iters2erase.size (); i--;) {
-    delete *iters2erase[i];
+  for (unsigned int i = iters2erase.size (); i--;)
     constraints_. erase (iters2erase [i]);
-  }
 
 #ifdef DEBUG 
   // Use with caution. Bounds on auxs are not defined yet, so valgrind complains

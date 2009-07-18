@@ -232,7 +232,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     } else { // no nonlinear arguments, or the only one is the new aux
 
       nargs++; // !!!!!!!!!!!!!!!!!!!!!!!!!
-      newarglist  = new expression*[1];
+      newarglist  = new expression *;
       *newarglist = new exprConst (0.);
     }
 
@@ -353,7 +353,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	// only nl term is constant
 	if ((nargs <= 1) && ((*newarglist) -> Linearity () <= CONSTANT)) {
 	  *mullist = new exprConst ((*newarglist) -> Value ());
-	  delete *newarglist;
+	  //delete *newarglist;
 	  delete [] newarglist;
 	}
 	else if ((nargs <= 1) && 
@@ -363,11 +363,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	  *mullist = (*newarglist) -> Argument ();//, nargs);
 	else { // multiple nonlinear terms, multiply them by -1/auxcoe
 
-	  if (nargs <= 1) {
+	  if (nargs <= 1)
 	    *mullist = new exprMul (new exprConst (-1. / auxcoe), 
-				    *newarglist);
-            delete[] newarglist;
-          }
+				    *newarglist); // !!! one more leak?
 	  else 
 	    *mullist = new exprMul (new exprConst (-1. / auxcoe), 
 				    new exprSum (newarglist, nargs));
@@ -466,14 +464,6 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 #endif
 
   if (aux) {
-
-    if (rest->code() == COU_EXPRGROUP ||
-        rest->code() == COU_EXPRSUM || 
-        rest->code() == COU_EXPROPP || 
-        rest->code() == COU_EXPRSUB || 
-        rest->code() == COU_EXPRQUAD)
-     delete rest;
-
     //delete rest;
     //rest = aux -> Image () -> clone (&domain_);
     rest = aux -> Image ();// -> clone (&domain_);

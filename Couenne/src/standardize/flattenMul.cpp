@@ -10,13 +10,12 @@
  */
 
 #include "CouenneProblem.hpp"
-#include "exprClone.hpp"
 
 //#define DEBUG
 
 /// re-organizes multiplication and stores indices (and exponents) of
 /// its variables
-void CouenneProblem::flattenMul (expression*& mul, CouNumber &coe, 
+void CouenneProblem::flattenMul (expression *mul, CouNumber &coe, 
 				 std::map <int, CouNumber> &indices) {
 
 #ifdef DEBUG
@@ -29,15 +28,6 @@ void CouenneProblem::flattenMul (expression*& mul, CouNumber &coe,
     exprAux *aux = mul -> standardize (this);
 
     int ind = (aux) ? aux -> Index () : mul -> Index ();
-    if (aux) {
-      if (mul->code() == COU_EXPRGROUP ||
-          mul->code() == COU_EXPRSUM || 
-          mul->code() == COU_EXPRSUB || 
-          mul->code() == COU_EXPROPP || 
-          mul->code() == COU_EXPRQUAD)
-        delete mul;
-      mul = new exprClone(aux);
-    }
 
     std::map <int, CouNumber>::iterator 
       where = indices.find (ind);
@@ -89,7 +79,7 @@ void CouenneProblem::flattenMul (expression*& mul, CouNumber &coe,
       coe = -coe;
 
       if (arg -> Argument () -> Type () == N_ARY) {
-	flattenMul (*arg -> ArgPtr (), coe, indices);
+	flattenMul (arg -> Argument (), coe, indices);
 	break;
       } else arg = arg -> Argument ();
 
@@ -135,21 +125,6 @@ void CouenneProblem::flattenMul (expression*& mul, CouNumber &coe,
       exprAux *aux = arg -> standardize (this);
 
       int ind = (aux) ? aux -> Index () : arg -> Index ();
-
-      if (aux) {
-        if (al[i]->code() == COU_EXPROPP) {
-          *al[i]->ArgPtr() = NULL;
-          delete al[i];
-        } else
-          assert(arg == al[i]);
-        if (arg->code() == COU_EXPRGROUP ||
-            arg->code() == COU_EXPRSUM || 
-            arg->code() == COU_EXPRSUB || 
-            arg->code() == COU_EXPROPP || 
-            arg->code() == COU_EXPRQUAD)
-        delete arg;
-	al[i] = new exprClone(aux);
-      }
 
       std::map <int, CouNumber>::iterator 
 	where = indices.find (ind);

@@ -30,7 +30,11 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
   if (numberInRank_.size () == 0) // there is no original integer to fix
     return 0;
 
-  CouNumber *store_optimum = optimum_; // temporary place for debug optimal solution
+  CouNumber *store_optimum = optimum_; // temporary place for debug
+				       // optimal solution --- we
+				       // don't want to debug while
+				       // faking bounds, or we'd cut
+				       // the optimum all the time
   optimum_ = NULL;
 
   int
@@ -50,8 +54,8 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
   domain_.push (nVars (), xInt, lb, ub);
 
-  CoinCopyN (lb, nVars (), Lb ());
-  CoinCopyN (ub, nVars (), Ub ());
+  //CoinCopyN (lb, nVars (), Lb ()); // useless?
+  //CoinCopyN (ub, nVars (), Ub ()); // useless?
 
   enum fixType *fixed = new enum fixType [nOrigVars_]; // integer variables that were fixed
 
@@ -102,7 +106,8 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
     // for all values of the integer rank
 
-    int rank = 1;
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC,
+		      "Heuristic: looking for an initial point\n");
 
     if (jnlst_ -> ProduceOutput (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC)) {
       printf ("=       ===========================================\n");
@@ -137,7 +142,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
     int 
       ntrials   = 0, 
-      nvars = nVars (),
+      nvars     = nVars (),
       maxtrials =
       (nvars >= N_VARS_HUGE)   ? 0 :
       (nvars >= N_VARS_LARGE)  ? 1 :
@@ -145,10 +150,15 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       (nvars >= N_VARS_SMALL)  ? 4 :
       (nvars >= N_VARS_TINY)   ? 8 : 16;
 
+    int rank = 1;
+
     for (std::vector <int>::iterator rNum = numberInRank_.begin(); 
 	 ++rNum != numberInRank_.end(); rank++) 
 
       if (*rNum > 0) {
+
+	jnlst_ -> Printf (Ipopt::J_STRONGWARNING, J_NLPHEURISTIC,
+			  "Analyzing %d variables with rank %d\n", *rNum, rank);
 
 	if (CoinCpuTime () > maxCpuTime_)
 	  break;
@@ -209,7 +219,18 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	      //if (Lb (i) == Ub (i)) { // doesn't work
 	      if (ceil (Lb (i) - COUENNE_EPS) + COUENNE_EPS >= floor (Ub (i) + COUENNE_EPS)) {
 
-		X (i) = xInt [i] = ceil (Lb (i) - COUENNE_EPS);
+		X (i) = Lb (i) = Ub (i) = xInt [i] = ceil (Lb (i) - COUENNE_EPS);
+		fixed [i] = FIXED;
+		one_fixed = true;
+		--remaining;
+		continue;
+	      }
+
+	      // if variable already integer values, fix it (TODO: do
+	      // this only if impatient, e.g. if #variables huge)
+	      if (ceil (xInt [i] - COUENNE_EPS) - COUENNE_EPS <= xInt [i]) {
+
+		X (i) = Lb (i) = Ub (i) = xInt [i] = ceil (xInt [i] - COUENNE_EPS);
 		fixed [i] = FIXED;
 		one_fixed = true;
 		--remaining;
@@ -220,7 +241,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	      int result = testIntFix (i, xFrac [i], fixed, xInt,
 				       dualL, dualR, olb, oub, ntrials < maxtrials);
 
-	      jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, 
+	      jnlst_ -> Printf (J_STRONGWARNING, J_NLPHEURISTIC, 
 				"testing %d [%g -> %g], res = %d\n", i, xFrac [i], xInt [i], result);
 
 	      if (result > 0) {
@@ -277,6 +298,10 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	    printf ("---------------------------\n");
 
 	  }
+
+	  if (CoinCpuTime () > maxCpuTime_)
+	    break;
+
 	} while (remaining > 0);
       } // for
 
@@ -287,13 +312,16 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	if (fixed [i] == FIXED)       // integer point, fixed
 	  lb [i] = ub [i] = X (i) = xInt [i];
 
-	else if (Lb (i) > Ub (i))     // non-sense bounds, fix them
+	else if (Lb (i) > Ub (i)) {    // non-sense bounds, fix them
 	  xInt [i] = X (i) = lb [i] = ub [i] = 
 	    (fixed [i] == CONTINUOUS) ?
 	                  (0.5 * (Lb (i) + Ub (i))) :
 	    COUENNE_round (0.5 * (Lb (i) + Ub (i)));
 
-	else {                        // normal case
+	  if (fixed [i] != CONTINUOUS)
+	    fixed [i] = FIXED;
+
+	} else {                        // normal case
 	  lb [i] = Lb (i);
 	  ub [i] = Ub (i);
 	  if      (xInt [i] < lb [i]) X (i) = xInt [i] = lb [i];
@@ -340,6 +368,9 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 		  xFrac [i], xInt [i], lb [i], ub [i]);
     } else printf ("no good point was found\n");
   }
+
+  jnlst_ -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC, "Heuristic done\n");
+
 
   delete [] fixed;
 

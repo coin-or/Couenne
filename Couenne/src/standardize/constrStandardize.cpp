@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    constrStandardize.cpp
  * Author:  Pietro Belotti
  * Purpose: standardization of constraints
@@ -12,7 +12,6 @@
 #include "CouenneProblem.hpp"
 
 #include "exprAux.hpp"
-#include "exprClone.hpp"
 #include "depGraph.hpp"
 
 //#define DEBUG
@@ -106,16 +105,5 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
   printf ("\nnormal\n-----------------\n");
 #endif
 
-  exprAux *aux = body_ -> standardize (p);
-  if (aux) {
-    if (body_->code() == COU_EXPRGROUP ||
-        body_->code() == COU_EXPRSUM || 
-        body_->code() == COU_EXPRSUB || 
-        body_->code() == COU_EXPROPP || 
-        body_->code() == COU_EXPRQUAD)
-     delete body_;
-
-     body_ = new exprClone(aux);
-  }
-  return aux;
+  return body_ -> standardize (p);
 }
