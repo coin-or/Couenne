@@ -180,6 +180,9 @@ Couenne/src/main/BonInitHeuristic.hpp -text
 Couenne/src/main/BonNlpHeuristic.cpp -text
 Couenne/src/main/BonNlpHeuristic.hpp -text
 Couenne/src/main/CouTight.cpp -text
+Couenne/src/main/Couenne.cpp -text
+Couenne/src/main/CouenneOSInterface.hpp -text
+Couenne/src/main/CouenneUserInterface.hpp -text
 Couenne/src/main/Makefile.am -text
 Couenne/src/main/Makefile.in -text
 Couenne/src/problem/CouenneJournalist.hpp -text
@@ -203,6 +206,8 @@ Couenne/src/problem/problemIO.cpp -text
 Couenne/src/problem/testIntFix.cpp -text
 Couenne/src/problem/writeAMPL.cpp -text
 Couenne/src/problem/writeGAMS.cpp -text
+Couenne/src/readnl/CouenneAmplInterface.cpp -text
+Couenne/src/readnl/CouenneAmplInterface.hpp -text
 Couenne/src/readnl/invmap.cpp -text
 Couenne/src/readnl/nl2e.cpp -text
 Couenne/src/readnl/readASLfg.cpp -text

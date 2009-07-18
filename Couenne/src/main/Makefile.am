@@ -11,7 +11,7 @@ AUTOMAKE_OPTIONS = foreign
 # what is built at this level
 
 if COIN_HAS_ASL
-  bin_PROGRAMS = couenne
+  bin_PROGRAMS = couenne couenne2
 endif
 
 lib_LTLIBRARIES = libBonCouenne.la
@@ -20,8 +20,7 @@ libBonCouenne_la_SOURCES = \
 	BonCouenneSetup.cpp \
 	BonCouenneInterface.cpp \
 	BonNlpHeuristic.cpp \
-	BonInitHeuristic.cpp \
-	CouenneOSInterface.cpp
+	BonInitHeuristic.cpp
 
 COINLIBS = \
 	$(CBCOBJDIR)/src/libCbc.la \
@@ -59,6 +58,20 @@ couenne_DEPENDENCIES = \
 couenne_SOURCES = \
 	BonCouenne.cpp
 
+couenne2_LDADD        = \
+	libBonCouenne.la \
+	../readnl/libCouenneReadnl.la \
+	../libCouenne.la
+
+couenne2_DEPENDENCIES = \
+	libBonCouenne.la \
+	../readnl/libCouenneReadnl.la \
+	../libCouenne.la
+
+couenne2_SOURCES = \
+	Couenne.cpp \
+	CouenneOSInterface.cpp
+
 #	../readnl/readnl.cpp 
 
 couenne_LDADD += \
@@ -69,11 +82,19 @@ couenne_LDADD += \
 	`cat $(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt` \
 	`cat $(COINUTILSOBJDIR)/coinutils_addlibs.txt`
 
+couenne2_LDADD += \
+	$(LIBCBCCOPY) \
+	$(COINLIBS) \
+	$(ADDLIBS) \
+	$(ASLLIB) \
+	`cat $(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt` \
+	`cat $(COINUTILSOBJDIR)/coinutils_addlibs.txt`
 
 # Finally, the -rpath flag is used by libtool to make sure that the shared
 # library is found (in the lib install directory) when we are using dynamic
 # libraries.
 couenne_LDFLAGS = -rpath $(libdir)
+couenne2_LDFLAGS = -rpath $(libdir)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
@@ -130,13 +151,15 @@ AM_CPPFLAGS += $(ASL_CPPFLAGS)
 #endif
 
 AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/readnl`
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin

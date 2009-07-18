@@ -90,8 +90,9 @@ namespace Bonmin{
       delete couenneProb_;
   }
 
-  bool CouenneSetup::InitializeCouenne (char **& argv, 
+  bool CouenneSetup::InitializeCouenne (char ** argv, 
 					CouenneProblem *couenneProb,
+          Ipopt::SmartPtr<Bonmin::TMINLP> tminlp,
 					Bonmin::CouenneInterface *ci) {
     std::string s;
 
@@ -128,7 +129,11 @@ namespace Bonmin{
 		  << std::endl;
 	return false;
 #endif
-      } 
+      } else {
+      	assert(couenneProb_ != NULL);
+      	assert(IsValid(tminlp));
+      	ci -> initialize(roptions_, options_, journalist_, tminlp);
+      }
     }
 
     nonlinearSolver_ = ci;

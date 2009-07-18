@@ -208,6 +208,8 @@ class CouenneProblem {
   inline int nOrigIntVars () const {return nOrigIntVars_;}             ///< Number of original integers
   inline int nIntVars     () const {return nIntVars_;}                 ///< Number of integer variables
   inline int nVars        () const {return (int) variables_. size ();} ///< Total number of variables
+  
+  void setNDefVars(int ndefined__) { ndefined_ = ndefined__; }
 
   /// get evaluation order index 
   inline int evalOrder (int i) const
@@ -240,6 +242,8 @@ class CouenneProblem {
   /// return current point & bounds
   inline Domain *domain () const
   {return &domain_;}
+  
+  inline std::vector <expression *>& commonExprs() { return commonexprs_; }
 
   // Get and set current variable and bounds
   inline CouNumber   &X     (int i) const {return domain_.x   (i);} ///< \f$x_i\f$
@@ -449,6 +453,9 @@ class CouenneProblem {
   /// return problem name
   const std::string &problemName () const
   {return problemName_;}
+  
+  void setProblemName(std::string& problemName__)
+  { problemName_ = problemName__; }
 
   /// return inverse dependence structure
   const std::vector <std::set <int> > &Dependence () const

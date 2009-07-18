@@ -9,6 +9,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CouenneOSInterface.hpp"
+
 #include "CouenneProblem.hpp"
 
 #include "CouenneTypes.hpp"
@@ -18,12 +20,24 @@
 #include "exprClone.hpp"
 #include "exprGroup.hpp"
 
+//#include "OSInstance.hpp"
+class OSInstance;
 
-CouenneProblem *readProblem (Bonmin::BabSetupBase *base = NULL,
-			     JnlstPtr jnlst = NULL
-			     /* OSil pointer? */) {
+void CouenneOSInterface::registerOptions(Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions) {
+	roptions->AddStringOption1("osilfile", "name of an osil file to read the problem instance from", "", "*", "name of osil file");
+}
 
-  CouenneProblem *p = new CouenneProblem (NULL, base, jnlst);
+CouenneOSInterface::~CouenneOSInterface() {
+	//delete osinstance;
+	delete problem;
+}
+
+CouenneProblem* CouenneOSInterface::getCouenneProblem() {
+	if (!osinstance) {
+		// create osinstance from osilfile
+	}
+
+  problem = new CouenneProblem;
 
   //p -> setProblemName (filename); // sets filename member, for later stats -- TODO
 
@@ -36,12 +50,12 @@ CouenneProblem *readProblem (Bonmin::BabSetupBase *base = NULL,
 
   // nonlinear in both objectives and constraints
   for (int i = 0; i < n_var; i++) 
-    p -> addVariable (false, p -> domain ()); // true if integer
+    problem -> addVariable (false, problem -> domain ()); // true if integer
 
   // add objective function(s) 
   expression *expr = NULL; 
   // fill in the objective
-  p -> addObjective (expr, "min");  // "max" for maximization
+  problem -> addObjective (expr, "min");  // "max" for maximization
 
   // add constraints:
 
@@ -65,19 +79,28 @@ CouenneProblem *readProblem (Bonmin::BabSetupBase *base = NULL,
   }
 
   // create domain point for Couenne
-  p -> domain () -> push (n_var, x, lb, ub);
+  problem -> domain () -> push (n_var, x, lb, ub);
 
   free (x); free (lb); free (ub);
 
   // fill in lower and upper bounds ///////////////////////////////////////////////////////////////
 
   for (register int i=n_var; i--;) {
-    p -> Lb (i) = - COUENNE_INFINITY;
-    p -> Ub (i) =   COUENNE_INFINITY;
-    p -> X  (i) = 0;
+    problem -> Lb (i) = - COUENNE_INFINITY;
+    problem -> Ub (i) =   COUENNE_INFINITY;
+    problem -> X  (i) = 0;
   }
 
   // initial x ////////////////////////////////////////////////////////////////////
 
-  return p;
+  return problem;
+}
+
+Ipopt::SmartPtr<Bonmin::TMINLP> CouenneOSInterface::getTMINLP() {
+	return tminlp;
+}
+
+bool CouenneOSInterface::writeSolution(Bonmin::Bab& bab) {
+
+	return false;
 }

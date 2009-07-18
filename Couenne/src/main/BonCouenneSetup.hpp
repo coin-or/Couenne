@@ -56,10 +56,11 @@ public:
     virtual ~CouenneSetup();
 
     /** Initialize from command line arguments. */
-    bool InitializeCouenne(char **& argv, 
-			   CouenneProblem *couenneProb = NULL, 
+    bool InitializeCouenne(char ** argv = NULL, 
+			   CouenneProblem *couenneProb = NULL,
+			   Ipopt::SmartPtr<Bonmin::TMINLP> tminlp = NULL,
 			   CouenneInterface *ci = NULL);
-
+    
     /** register the options */
     virtual void registerOptions();
     /** Register all Couenne options.*/

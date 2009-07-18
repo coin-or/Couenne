@@ -86,7 +86,7 @@ int main (int argc, char *argv[]) {
 #endif
 
     CouenneSetup couenne;
-    if (!couenne.InitializeCouenne (argv, p, ci))
+    if (!couenne.InitializeCouenne (argv, p, NULL, ci))
       throw infeasible;
 
 #if 0

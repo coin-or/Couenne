@@ -10,7 +10,7 @@ lib_LTLIBRARIES = libCouenneReadnl.la
 
 # List all source files for this library, including headers
 if COIN_HAS_ASL
-libCouenneReadnl_la_SOURCES =
+libCouenneReadnl_la_SOURCES = CouenneAmplInterface.cpp
 #libCouenneReadnl_la_SOURCES = \
 #	readnl.cpp \
 #	nl2e.cpp \
@@ -45,21 +45,21 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(CBCSRCDIR)/src` \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
 	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Interfaces` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/LinAlg` 
+	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/LinAlg` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ampl` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` 
 
 if COIN_HAS_ASL
 AM_CPPFLAGS += $(ASL_CPPFLAGS)
 endif
 
-if COIN_HAS_COUENNE
-  AM_CPPFLAGS += \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` 
-endif
-
 if COIN_HAS_ASL
 install-exec-local:
-	$(install_sh_DATA) ../../../ThirdParty/ASL/amplsolv* $(DESTDIR)$(libdir)
+	mkdir -p $(DESTDIR)$(libdir)
+	cp ../../../ThirdParty/ASL/amplsolv* $(DESTDIR)$(libdir)
 endif

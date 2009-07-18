@@ -43,7 +43,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@COIN_HAS_ASL_TRUE@bin_PROGRAMS = couenne$(EXEEXT)
+@COIN_HAS_ASL_TRUE@bin_PROGRAMS = couenne$(EXEEXT) couenne2$(EXEEXT)
 @COIN_HAS_CPX_TRUE@am__append_1 = $(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
 @COIN_HAS_CPX_TRUE@am__append_2 = \
 @COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
@@ -70,8 +70,7 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libBonCouenne_la_LIBADD =
 am_libBonCouenne_la_OBJECTS = BonCouenneSetup.lo \
-	BonCouenneInterface.lo BonNlpHeuristic.lo BonInitHeuristic.lo \
-	CouenneOSInterface.lo
+	BonCouenneInterface.lo BonNlpHeuristic.lo BonInitHeuristic.lo
 libBonCouenne_la_OBJECTS = $(am_libBonCouenne_la_OBJECTS)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
@@ -90,6 +89,8 @@ am__DEPENDENCIES_2 = $(CBCOBJDIR)/src/libCbc.la \
 	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
 	$(COINUTILSOBJDIR)/src/libCoinUtils.la
 am__DEPENDENCIES_3 =
+am_couenne2_OBJECTS = Couenne.$(OBJEXT) CouenneOSInterface.$(OBJEXT)
+couenne2_OBJECTS = $(am_couenne2_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -100,8 +101,10 @@ LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libBonCouenne_la_SOURCES) $(couenne_SOURCES)
-DIST_SOURCES = $(libBonCouenne_la_SOURCES) $(couenne_SOURCES)
+SOURCES = $(libBonCouenne_la_SOURCES) $(couenne_SOURCES) \
+	$(couenne2_SOURCES)
+DIST_SOURCES = $(libBonCouenne_la_SOURCES) $(couenne_SOURCES) \
+	$(couenne2_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -296,8 +299,7 @@ libBonCouenne_la_SOURCES = \
 	BonCouenneSetup.cpp \
 	BonCouenneInterface.cpp \
 	BonNlpHeuristic.cpp \
-	BonInitHeuristic.cpp \
-	CouenneOSInterface.cpp
+	BonInitHeuristic.cpp
 
 COINLIBS = $(CBCOBJDIR)/src/libCbc.la $(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
@@ -327,11 +329,26 @@ couenne_DEPENDENCIES = \
 couenne_SOURCES = \
 	BonCouenne.cpp
 
+couenne2_LDADD = libBonCouenne.la ../readnl/libCouenneReadnl.la \
+	../libCouenne.la $(LIBCBCCOPY) $(COINLIBS) $(ADDLIBS) \
+	$(ASLLIB) `cat \
+	$(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt` `cat \
+	$(COINUTILSOBJDIR)/coinutils_addlibs.txt`
+couenne2_DEPENDENCIES = \
+	libBonCouenne.la \
+	../readnl/libCouenneReadnl.la \
+	../libCouenne.la
+
+couenne2_SOURCES = \
+	Couenne.cpp \
+	CouenneOSInterface.cpp
+
 
 # Finally, the -rpath flag is used by libtool to make sure that the shared
 # library is found (in the lib install directory) when we are using dynamic
 # libraries.
 couenne_LDFLAGS = -rpath $(libdir)
+couenne2_LDFLAGS = -rpath $(libdir)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
@@ -372,13 +389,15 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglKnapsackCover` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglPreProcess` -I`$(CYGPATH_W) \
 	$(CGLOBJDIR)/inc` $(am__append_2) $(ASL_CPPFLAGS) \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` -I`$(CYGPATH_W) \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src` -I`$(CYGPATH_W) \
+	$(COUENNESRCDIR)/src/convex` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/expression` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/expression/operators` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/disjunctive` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/main` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/problem` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/branch`
+	$(COUENNESRCDIR)/src/branch` -I`$(CYGPATH_W) \
+	$(COUENNESRCDIR)/src/readnl`
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
@@ -476,6 +495,9 @@ clean-binPROGRAMS:
 couenne$(EXEEXT): $(couenne_OBJECTS) $(couenne_DEPENDENCIES) 
 	@rm -f couenne$(EXEEXT)
 	$(CXXLINK) $(couenne_LDFLAGS) $(couenne_OBJECTS) $(couenne_LDADD) $(LIBS)
+couenne2$(EXEEXT): $(couenne2_OBJECTS) $(couenne2_DEPENDENCIES) 
+	@rm -f couenne2$(EXEEXT)
+	$(CXXLINK) $(couenne2_LDFLAGS) $(couenne2_OBJECTS) $(couenne2_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -488,7 +510,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonNlpHeuristic.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneOSInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Couenne.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneOSInterface.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
