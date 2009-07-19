@@ -86,7 +86,7 @@ namespace Bonmin{
   }
   
   CouenneSetup::~CouenneSetup(){
-    if (couenneProb_)
+    if (couenneProb_ && couenneProb_is_own_)
       delete couenneProb_;
   }
 
@@ -96,7 +96,11 @@ namespace Bonmin{
 					Bonmin::CouenneInterface *ci) {
     std::string s;
 
-    couenneProb_ = couenneProb;
+    if (couenneProb) {
+    	//TODO create a copy of user problem, since we modify it? 
+    	couenneProb_ = couenneProb;
+    	couenneProb_is_own_ = false;
+    }
 
     /* Get the basic options. */
     readOptionsFile();
@@ -131,7 +135,7 @@ namespace Bonmin{
 #endif
       } else {
       	assert(couenneProb_ != NULL);
-      	assert(IsValid(tminlp));
+      	assert(IsValid(tminlp)); //TODO would be great to setup own TMINLP based on CouenneProblem formulation
       	ci -> initialize(roptions_, options_, journalist_, tminlp);
       }
     }

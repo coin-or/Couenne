@@ -39,7 +39,8 @@ public:
     aslfg_(NULL),
     CouennePtr_ (NULL),
     displayStats_ (false),
-    couenneProb_ (NULL) {}
+    couenneProb_ (NULL),
+    couenneProb_is_own_(true) {}
 
     /** Copy constructor.*/
     CouenneSetup(const CouenneSetup& other):
@@ -105,6 +106,9 @@ private:
 
     /// MINLP formulation
     CouenneProblem *couenneProb_;
+    
+    /// whether the couenneProb_ has been created by Couenne, and thus will be deleted by Couenne
+    bool couenneProb_is_own_;
   };
 }
 
