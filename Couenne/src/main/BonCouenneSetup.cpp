@@ -122,6 +122,7 @@ namespace Bonmin{
     }
 
     nonlinearSolver_ = ci;
+    continuousSolver_ -> passInMessageHandler(ci -> messageHandler());
 
     /** Set the output level for the journalist for all Couenne
      categories.  We probably want to make that a bit more flexible
