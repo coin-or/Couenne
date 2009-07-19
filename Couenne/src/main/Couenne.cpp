@@ -32,6 +32,13 @@
 #include "BonCouenneSetup.hpp"
 #include "BonCouenneInterface.hpp"
 
+// for printing of statistics
+#include "CbcCutGenerator.hpp"      
+#include "CouenneCutGenerator.hpp" 
+#include "CouenneProblem.hpp"
+// the maximum difference between a printed optimum and a CouNumber
+#define PRINTED_PRECISION 1e-5
+
 using Ipopt::SmartPtr;
 
 static const int infeasible = 1;
@@ -120,6 +127,51 @@ int main (int argc, char *argv[]) {
     	return EXIT_FAILURE;
 
     bb (couenne); // do branch and bound
+    
+    // retrieve test value to check
+    double global_opt;
+    options -> GetNumericValue ("couenne_check", global_opt, "couenne.");
+
+    if (global_opt < COUENNE_INFINITY) { // some value found in couenne.opt
+      double opt = bb.model (). getBestPossibleObjValue ();
+
+      jnlst -> Printf(Ipopt::J_SUMMARY, J_PROBLEM, "Global Optimum Test on %-40s %s\n", 
+	      problem -> problemName ().c_str (), 
+	      (fabs (opt - global_opt) / 
+	       (1. + CoinMax (fabs (opt), fabs (global_opt))) < PRINTED_PRECISION) ? 
+	      "OK" : "FAILED");
+
+    } else if (couenne.displayStats ()) { // print statistics
+
+      int nr=-1, nt=-1;
+      double st=-1;
+
+      CouenneCutGenerator* cg;
+      if (bb.model (). cutGenerators ())
+        cg = dynamic_cast <CouenneCutGenerator *>	(bb.model (). cutGenerators () [0] -> generator ());
+      if (cg) cg -> getStats (nr, nt, st);
+      else jnlst -> Printf(Ipopt::J_WARNING, J_PROBLEM, "Warning: Could not get pointer to CouenneCutGenerator\n");
+
+    	jnlst -> Printf(Ipopt::J_SUMMARY, J_PROBLEM, "Stats: %-15s %4d [var] %4d [int] %4d [con] %4d [aux] "
+    			"%6d [root] %8d [tot] %6g [sep] %8g [time] %8g [bb] "
+    			"%20e [lower] %20e [upper] %7d [nodes]\n",// %s %s\n",
+    			problem -> problemName ().c_str (),
+    			problem -> nOrigVars   (), 
+    			problem -> nOrigIntVars(), 
+    			problem -> nOrigCons   (),
+    			problem -> nVars       () - problem -> nOrigVars (),
+    			nr, nt, st, 
+    			CoinCpuTime () - time_start,
+    			cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
+    			bb.model (). getBestPossibleObjValue (),
+    			bb.model (). getObjValue (),
+    			//bb.bestBound (),
+    			//bb.bestObj (),
+    			bb.numNodes ()
+    			//bb.iterationCount (),
+    			//status.c_str (), message.c_str ()
+    	);
+    }    
 
     if (!userinterface->writeSolution(bb))
     	return EXIT_FAILURE;
@@ -147,7 +199,7 @@ int main (int argc, char *argv[]) {
    
   } catch (int generic_error) {
     if (generic_error == infeasible)
-      jnlst->Printf(Ipopt::J_SUMMARY, Ipopt::J_MAIN, "problem infeasible\n");
+      jnlst->Printf(Ipopt::J_SUMMARY, J_PROBLEM, "problem infeasible\n");
   }
   
   delete userinterface;

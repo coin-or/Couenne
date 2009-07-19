@@ -25,6 +25,7 @@
 #include <string>
 
 #include "BonAmplTMINLP.hpp"
+#include "BonCbc.hpp"
 
 #include "CouenneProblem.hpp"
 #include "CouenneTypes.hpp"
@@ -59,18 +60,16 @@ int getOperator (efunc *);
 
 #include "r_opn.hd" /* for N_OPS */
 
-#define CHR (char*)
-
 static fint timing = 0;
 
 static
 keyword keywds[] = { // must be alphabetical
-   KW(CHR"timing", L_val, &timing, CHR"display timings for the run"),
+   KW(const_cast<char*>("timing"), L_val, &timing, const_cast<char*>("display timings for the run")),
 };
 
 static
-Option_Info Oinfo = { CHR"testampl", CHR"ANALYSIS TEST",
-		      CHR"concert_options", keywds, nkeywds, 0, CHR"ANALYSIS TEST" };
+Option_Info Oinfo = { const_cast<char*>("testampl"), const_cast<char*>("ANALYSIS TEST"),
+		      const_cast<char*>("concert_options"), keywds, nkeywds, 0, const_cast<char*>("ANALYSIS TEST") };
 
 
 // (C++) code starts here ///////////////////////////////////////////////////////////////////////////
@@ -82,7 +81,13 @@ void CouenneAmplInterface::registerOptions(Ipopt::SmartPtr<Bonmin::RegisteredOpt
 CouenneAmplInterface::~CouenneAmplInterface() {
 	delete problem;
 	
-	// TODO free asl
+	if (asl) {
+	  delete[] X0;
+	  delete[] havex0;
+	  delete[] pi0;
+	  delete[] havepi0;		
+		ASL_free(&asl);
+	}
 }
 
 // create an AMPL problem by using ASL interface to the .nl file
@@ -128,9 +133,18 @@ Ipopt::SmartPtr<Bonmin::TMINLP> CouenneAmplInterface::getTMINLP() {
 }
 
 bool CouenneAmplInterface::writeSolution(Bonmin::Bab& bab) {
-	printf("CouenneAmplInterface::writeSolution not implemented yet!\n");
+	const char* message;
+
+	//TODO setup a nicer message
+	if (bab.bestSolution()) {
+		message = "Couenne found a solution.\n";
+	} else {
+		message = "Couenne could not found a solution.\n";
+	}
+
+	write_sol(const_cast<char*>(message), const_cast<double*>(bab.bestSolution()), NULL, NULL);
 	
-	return false;
+	return true;
 }
 
 bool CouenneAmplInterface::readASLfg() {

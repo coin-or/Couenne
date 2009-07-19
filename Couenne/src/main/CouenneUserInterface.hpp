@@ -38,16 +38,27 @@ public:
 	
 	virtual ~CouenneUserInterface() { }
 	
+	/** Setup journals for printing.
+	 * Default is to have one journal that prints to stdout.
+	 */
 	virtual bool setupJournals() {
 		Ipopt::SmartPtr<Ipopt::Journal> stdout_jrnl = jnlst->AddFileJournal("console", "stdout", Ipopt::J_ITERSUMMARY);
 		stdout_jrnl->SetPrintLevel(Ipopt::J_DBG, Ipopt::J_NONE);
 		return true;
 	}
 	
+	/** Should return the problem to solve in algebraic form.
+	 * NOTE: Couenne is (currently) going to modify this problem!
+	 */
 	virtual CouenneProblem* getCouenneProblem() = 0;
 	
+	/** Should return the problem to solve as TMINLP.
+	 */
 	virtual Ipopt::SmartPtr<Bonmin::TMINLP> getTMINLP() = 0;
 	
+	/** Called after B&B object is setup. 
+	 * User should add plugins like cut generators, bound tighteners, or heuristics here.
+	 */
   virtual bool addBabPlugins(Bonmin::Bab& bab) {
   	//  CutGenerator1   myCutGenerator   (problem, optionList);
   	//  BoundTightener1 myBoundTightener (problem, optionList);
@@ -60,6 +71,8 @@ public:
   	return true;
   }
 
+  /** Called after B&B finished. Should write solution information.
+   */
 	virtual bool writeSolution(Bonmin::Bab& bab) {
 		return true;
 	}
