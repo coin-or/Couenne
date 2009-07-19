@@ -568,4 +568,12 @@ protected:
 		  bool patient) const;
 };
 
+
+/// Called from simulateBranch when object is not CouenneObject and
+/// therefore needs explicit FBBT
+bool BranchingFBBT (CouenneProblem *problem,
+		    OsiObject *Object,
+		    OsiSolverInterface *solver);
+
 #endif
+

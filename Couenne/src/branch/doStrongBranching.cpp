@@ -289,7 +289,7 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
 
   if ((branch -> branch (thisSolver) > COUENNE_INFINITY) || // branch is infeasible
       // Bound tightening if not a CouenneObject -- explicit 
-      (!CouObj && !StrongBranchingFBBT (Object, thisSolver))) {
+      (!CouObj && !BranchingFBBT (problem_, Object, thisSolver))) {
 
     status = 1;
 
@@ -336,40 +336,4 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
     delete thisSolver;
 
   return status;
-}
-
-
-/// Called from simulateBranch when object is not CouenneObject and
-/// therefore needs explicit FBBT
-bool CouenneChooseStrong::StrongBranchingFBBT (OsiObject *Object,
-					       OsiSolverInterface *solver) {
-
-  bool feasible = true;
-
-  if (problem_ -> doFBBT ()) {
-
-    int 
-      indVar = Object   -> columnNumber (),
-      nvars  = problem_ -> nVars ();
-
-    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
-    chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
-    problem_ -> installCutOff ();
-
-    if ((feasible = problem_ -> btCore (chg_bds))) {
-
-      const double
-	*lb = solver -> getColLower (),
-	*ub = solver -> getColUpper ();
-	  
-      for (int i=0; i<nvars; i++) {
-	if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
-	if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
-      }
-    }
-
-    delete [] chg_bds;
-  }
-
-  return feasible;
 }

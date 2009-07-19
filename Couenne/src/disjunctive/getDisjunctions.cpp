@@ -56,14 +56,13 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
 	 (candInd < nobjs) && (num < numDisjunctions_); 
 	 candInd++) {
 
-      CouenneObject *cObj = dynamic_cast <CouenneObject *> (objs [candidates [candInd]]);
+      OsiObject *Object = objs [candidates [candInd]];
+      CouenneObject *cObj = dynamic_cast <CouenneObject *> (Object);
 
-      // TODO: consider also integer objects
-
-      if (!cObj ||                                        // IF    not a nonlinear object
-	  (cObj -> checkInfeasibility (&brInfo) == 0.) || //    or nonlinear, but not violated
-	  (cObj -> isCuttable ()))                        //    or we are on the "good" (convex) side
-	continue;                                         // THEN skip
+      if (cObj &&                                          // IF    a nonlinear object BUT:
+	  ((cObj -> checkInfeasibility (&brInfo) == 0.) || //       not violated
+	   (cObj -> isCuttable ())))                       //    or we are on the "good" (convex) side
+	continue;                                          // THEN skip
 
       bool     feasLeft = true,  feasRight = true;
       OsiCuts *leftCuts = NULL, *rightCuts = NULL;
@@ -72,7 +71,7 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
 	*saveLower = CoinCopyOfArray (si.getColLower (), ncols),
 	*saveUpper = CoinCopyOfArray (si.getColUpper (), ncols);
 
-      OsiBranchingObject *brObj = cObj -> createBranch (&si, &brInfo, 0); // down!
+      OsiBranchingObject *brObj = Object -> createBranch (&si, &brInfo, 0); // down!
 
       if (jnlst_ -> ProduceOutput (J_VECTOR, J_DISJCUTS))
 	printf ("---   cand [%d] is %d: x_%d <>= %g [%g,%g]\n", 
@@ -87,7 +86,9 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
 
       // left branch ////////////////////////////////////////////////////////////
 
-      if (brObj -> branch (&si) >= COUENNE_INFINITY)
+      if ((brObj -> branch (&si) >= COUENNE_INFINITY) ||
+	  // Bound tightening if not a CouenneObject -- explicit 
+	  (!cObj && !BranchingFBBT (couenneCG_ -> Problem (), Object, &si)))
 	feasLeft = false;                        // left subtree infeasible
       else leftCuts = getSingleDisjunction (si); // feasible, store new bounds in OsiCuts
 
@@ -99,9 +100,11 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
 
       // right branch ////////////////////////////////////////////////////////////
 
-      brObj = cObj -> createBranch (&si, &brInfo, 1); // up!
+      brObj = Object -> createBranch (&si, &brInfo, 1); // up!
 
-      if (brObj -> branch (&si) >= COUENNE_INFINITY) 
+      if ((brObj -> branch (&si) >= COUENNE_INFINITY)  ||
+	  // Bound tightening if not a CouenneObject -- explicit 
+	  (!cObj && !BranchingFBBT (couenneCG_ -> Problem (), Object, &si)))
 	feasRight = false;                        // right subtree infeasible
       else rightCuts = getSingleDisjunction (si); // feasible, store new bounds in OsiCuts
 
@@ -127,21 +130,18 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
 
       } else if (feasLeft) {
 
-	if (jnlst_ -> ProduceOutput (J_VECTOR, J_DISJCUTS))
-	  printf ("---   disj: infeasible right\n");
+	jnlst_ -> Printf (J_VECTOR, J_DISJCUTS, "---   disj: infeasible right\n");
 	applyColCuts (si, leftCuts); // !!! culprit
 	retval = COUENNE_TIGHTENED;
 
       } else if (feasRight) {
 
-	if (jnlst_ -> ProduceOutput (J_VECTOR, J_DISJCUTS))
-	  printf ("---   infeasible left\n");
+	jnlst_ -> Printf (J_VECTOR, J_DISJCUTS, "---   infeasible left\n");
 	applyColCuts (si, rightCuts); // !!! culprit
 	retval = COUENNE_TIGHTENED;
 
       } else {
-	  if (jnlst_ -> ProduceOutput (J_VECTOR, J_DISJCUTS))
-	    printf ("---   infeasible!!!\n");
+	jnlst_ -> Printf (J_VECTOR, J_DISJCUTS, "---   infeasible!!!\n");
 	retval = COUENNE_INFEASIBLE;
 	break;
       }

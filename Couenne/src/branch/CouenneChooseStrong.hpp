@@ -23,7 +23,7 @@ class CouenneChooseStrong : public Bonmin::BonChooseVariable  {
   public:
 
     /// Constructor from solver (so we can set up arrays etc)
-  CouenneChooseStrong (Bonmin::BabSetupBase& b, CouenneProblem* problem, JnlstPtr jnlst);
+    CouenneChooseStrong (Bonmin::BabSetupBase& b, CouenneProblem* problem, JnlstPtr jnlst);
 
     /// Copy constructor
     CouenneChooseStrong (const CouenneChooseStrong &);
@@ -77,17 +77,13 @@ class CouenneChooseStrong : public Bonmin::BonChooseVariable  {
     
   protected:
 
-  /// does one side of the branching
-  int simulateBranch (OsiObject *Object,
-		      OsiBranchingInformation *info,
-		      OsiBranchingObject *branch,
-		      OsiSolverInterface *solver,
-		      Bonmin::HotInfo * result,
-		      int direction);
-
-  /// subroutine of simulateBranch for integer FBBT
-  bool StrongBranchingFBBT (OsiObject *Object,
-			    OsiSolverInterface *solver);
+    /// does one side of the branching
+    int simulateBranch (OsiObject *Object,
+			OsiBranchingInformation *info,
+			OsiBranchingObject *branch,
+			OsiSolverInterface *solver,
+			Bonmin::HotInfo * result,
+			int direction);
 
     /// Pointer to the associated MINLP problem
     CouenneProblem *problem_;
