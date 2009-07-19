@@ -202,6 +202,7 @@ namespace Bonmin{
       return false;
 #endif
     }
+    continuousSolver_ -> passInMessageHandler(ci -> messageHandler());
 
     couenneProb_ -> setBase (this);
 
