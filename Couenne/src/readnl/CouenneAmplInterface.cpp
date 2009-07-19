@@ -61,7 +61,7 @@ int getOperator (efunc *);
 
 #define CHR (char*)
 
-fint timing = 0;
+static fint timing = 0;
 
 static
 keyword keywds[] = { // must be alphabetical
