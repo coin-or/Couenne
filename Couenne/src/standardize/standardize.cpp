@@ -170,8 +170,10 @@ bool CouenneProblem::standardize () {
       (*i) -> Body () -> getBounds (lb, ub);
       if ((((*((*i) -> Lb ())) ()) > ub) ||
 	  (((*((*i) -> Ub ())) ()) < lb)) {
+#ifdef DEBUG
 	printf ("found infeasible constraint [%g,%g]\n", lb, ub);
 	(*i) -> print ();
+#endif
 	retval = false;
       }
       iters2erase.push_back (i);
