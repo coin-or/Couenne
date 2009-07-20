@@ -172,8 +172,10 @@ bool CouenneProblem::standardize () {
       (*i) -> Body () -> getBounds (lb, ub);
       if ((((*((*i) -> Lb ())) ()) > ub) ||
 	  (((*((*i) -> Ub ())) ()) < lb)) {
-	printf ("found infeasible constraint [%g,%g]\n", lb, ub);
+	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, "found infeasible constraint [%g,%g]\n", lb, ub);
+#ifdef DEBUG
 	(*i) -> print ();
+#endif
 	retval = false;
       }
       iters2erase.push_back (i);
