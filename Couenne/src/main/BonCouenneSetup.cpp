@@ -247,8 +247,7 @@ namespace Bonmin{
     }
 
     if (extraStuff -> infeasibleNode ()){
-      std::cout<<"Initial linear relaxation constructed by Couenne is infeasible, exiting..."
-	       <<std::endl;
+      journalist() -> Printf(J_SUMMARY, J_PROBLEM, "Initial linear relaxation constructed by Couenne is infeasible, exiting...\n");
       return false;
     }
 
