@@ -494,6 +494,9 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
      upper = info -> upper_ [index];
 
   ////////////////////////////////////////////////////////////
+  //
+  // these rules invert the interval, so we just flip the pointers
+
   if ((pseudoMultType_ == INTERVAL_LP_REV) ||
       (pseudoMultType_ == INTERVAL_BR_REV)) {
 
@@ -562,8 +565,13 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
  	    downEstimate_, upEstimate_);*/
 
   if (reference_ -> isInteger ()) {
-    if (downEstimate_ <       point  - floor (point)) downEstimate_ =       point  - floor (point);
-    if (upEstimate_   < ceil (point) -        point)    upEstimate_ = ceil (point) -        point;
+
+    CouNumber 
+      fracDn =       point  - floor (point),
+      fracUp = ceil (point) -        point;
+
+    if (downEstimate_ < fracDn) downEstimate_ = fracDn;
+    if (upEstimate_   < fracUp)   upEstimate_ = fracUp;
   }
 
   assert (downEstimate_ >= 0. &&
