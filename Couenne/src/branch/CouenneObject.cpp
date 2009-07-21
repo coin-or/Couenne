@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneObject.cpp
  * Authors: Pierre Bonami, IBM Corp.
  *          Pietro Belotti, Carnegie Mellon University
@@ -489,7 +489,9 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   CouNumber 
     *up   = &upEstimate_,
     *down = &downEstimate_,
-     point = 0.;
+     point = 0.,
+     lower = info -> lower_ [index],
+     upper = info -> upper_ [index];
 
   ////////////////////////////////////////////////////////////
   if ((pseudoMultType_ == INTERVAL_LP_REV) ||
@@ -514,16 +516,18 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
 
   // now move it away from the bounds
 
-  point = midInterval (point, 
-		       info -> lower_ [index],
-		       info -> upper_ [index]);
+  point = midInterval (point, lower, upper);
 
-  CouNumber delta = closeToBounds * (info -> upper_ [index] - info -> lower_ [index]);
+  if ((lower > -COUENNE_INFINITY) &&
+      (upper <  COUENNE_INFINITY)) {
 
-  if      (point < info -> lower_ [index] + delta)
-    point        = info -> lower_ [index] + delta;
-  else if (point > info -> upper_ [index] - delta)
-    point        = info -> upper_ [index] - delta;
+    CouNumber delta = closeToBounds * (upper - lower);
+
+    if      (point < lower + delta)
+      point        = lower + delta;
+    else if (point > upper - delta)
+      point        = upper - delta;
+  }
 
   ///////////////////////////////////////////////////////////
   switch (pseudoMultType_) {
@@ -538,8 +542,8 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   case INTERVAL_BR:
   case INTERVAL_BR_REV:
     assert (info);
-    *up   = CoinMin (max_pseudocost,         info -> upper_ [index] - point);
-    *down = CoinMin (max_pseudocost, point - info -> lower_ [index]);
+    *up   = CoinMin (max_pseudocost,         upper - point);
+    *down = CoinMin (max_pseudocost, point - lower);
     break;
 
   case PROJECTDIST: // taken care of in selectBranch procedure
@@ -550,15 +554,18 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
     exit (-1);
   }
 
-//   if (downEstimate_ <= 0.0 || upEstimate_ <= 0.0)
-//     printf ("%g [%g,%g] ---> [%g,%g]\n", 
-// 	    point,
-// 	    info -> lower_ [index],
-// 	    info -> upper_ [index],
-// 	    downEstimate_, upEstimate_);
+  /*if (downEstimate_ <= 0.0 || upEstimate_ <= 0.0)
+     printf ("%g [%g,%g] ---> [%g,%g]\n", 
+ 	    point,
+ 	    lower,
+ 	    upper,
+ 	    downEstimate_, upEstimate_);*/
 
   if (reference_ -> isInteger ()) {
     if (downEstimate_ <       point  - floor (point)) downEstimate_ =       point  - floor (point);
-    if (upEstimate_   < ceil (point) -        point)  upEstimate_   = ceil (point) -        point;
+    if (upEstimate_   < ceil (point) -        point)    upEstimate_ = ceil (point) -        point;
   }
+
+  assert (downEstimate_ >= 0. &&
+            upEstimate_ >= 0.);
 }
