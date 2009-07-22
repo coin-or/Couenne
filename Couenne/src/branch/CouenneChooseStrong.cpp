@@ -17,12 +17,13 @@
 const CouNumber estProdEps = 1e-6;
 
 
-  /// constructor
+/// constructor
 CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProblem* p, JnlstPtr jnlst) :
 
   Bonmin::BonChooseVariable (b, b.continuousSolver()),
-    problem_          (p),
-    jnlst_            (jnlst) {
+  problem_          (p),
+  jnlst_            (jnlst),
+  branchtime_       (0.) {
 
     std::string s;
 
@@ -39,12 +40,13 @@ CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProble
     problem_          (rhs.problem_),
     pseudoUpdateLP_   (rhs.pseudoUpdateLP_),
     estimateProduct_  (rhs.estimateProduct_),
-    jnlst_            (rhs.jnlst_)
+    jnlst_            (rhs.jnlst_),
+    branchtime_       (rhs.branchtime_)
   {}
 
   /// destructor
   CouenneChooseStrong::~CouenneChooseStrong()
-  {}
+  {if (branchtime_ > 1e-9) jnlst_ -> Printf (J_ERROR, J_BRANCHING, "Strong branching: total time %g\n", branchtime_);}
 
   /// cloning method
   OsiChooseVariable *
@@ -60,6 +62,8 @@ CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProble
       problem_         = rhs.problem_;
       pseudoUpdateLP_  = rhs.pseudoUpdateLP_;
       estimateProduct_ = rhs.estimateProduct_;
+      jnlst_           = rhs.jnlst_;
+      branchtime_      = rhs.branchtime_;
     }
     return *this;
   }

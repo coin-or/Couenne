@@ -102,7 +102,7 @@ class CouenneDisjCuts: public CglCutGenerator {
   CouenneDisjCuts (const CouenneDisjCuts &);
 
   /// destructor
-  ~CouenneDisjCuts () {}
+  ~CouenneDisjCuts ();
 
   /// clone method (necessary for the abstract CglCutGenerator class)
   CouenneDisjCuts *clone () const

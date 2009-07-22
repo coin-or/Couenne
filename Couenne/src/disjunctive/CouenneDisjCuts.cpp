@@ -49,7 +49,7 @@ CouenneDisjCuts::CouenneDisjCuts (Bonmin::OsiTMINLPInterface *minlp,
 }
 
 
-/// copy constructor
+/// copy constructorProduceOutput
 CouenneDisjCuts::CouenneDisjCuts (const CouenneDisjCuts &src):
   couenneCG_          (src.couenneCG_),
   nrootcuts_          (src.nrootcuts_),
@@ -68,6 +68,12 @@ CouenneDisjCuts::CouenneDisjCuts (const CouenneDisjCuts &src):
   activeCols_         (src.activeCols_),
   addPreviousCut_     (src.addPreviousCut_),
   cpuTime_            (src.cpuTime_) {}
+
+
+
+/// destructor
+CouenneDisjCuts::~CouenneDisjCuts ()
+{if (septime_ > 1e-9) jnlst_ -> Printf (J_ERROR, J_DISJCUTS, "Disjunctive cuts: total time %g\n", septime_);}
 
 
 /// Add list of options to be read from file

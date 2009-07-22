@@ -265,6 +265,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
     solver -> unmarkHotStart ();     // Delete the snapshot
 
     //solver -> doingResolve () = true;
+    branchtime_ += CoinCpuTime () - timeStart;
 
     return returnCode;
   }

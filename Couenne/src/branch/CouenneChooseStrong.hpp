@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneChooseStrong.hpp
  * Authors: Andreas Waechter, IBM Corp.
  * Purpose: Strong branching object for Couenne
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -106,6 +106,9 @@ class CouenneChooseStrong : public Bonmin::BonChooseVariable  {
 
     /// pointer to journalist for detailed information
     JnlstPtr jnlst_;
+
+    /// total time spent in strong branching
+    double branchtime_;
   };
 
 #endif
