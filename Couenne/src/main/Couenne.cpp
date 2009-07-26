@@ -146,7 +146,7 @@ int main (int argc, char *argv[]) {
       int nr=-1, nt=-1;
       double st=-1;
 
-      CouenneCutGenerator* cg;
+      CouenneCutGenerator* cg = NULL;
       if (bb.model (). cutGenerators ())
         cg = dynamic_cast <CouenneCutGenerator *>	(bb.model (). cutGenerators () [0] -> generator ());
       if (cg) cg -> getStats (nr, nt, st);

@@ -631,13 +631,13 @@ bool CouenneAmplInterface::readnl() {
 
 	register int j = 2*i;
 
-	problem -> Lb (i) = LUv [j];
-	problem -> Ub (i) = LUv [j+1];
+        problem -> Lb (i) = LUv[j]   <= -COUENNE_INFINITY ? -COUENNE_INFINITY : LUv[j]  ;
+        problem -> Ub (i) = LUv[j+1] >=  COUENNE_INFINITY ?  COUENNE_INFINITY : LUv[j+1];
       }
     else
       for (register int i=n_var; i--;) {
-	problem -> Lb (i) = LUv [i];
-	problem -> Ub (i) = Uvx_copy [i];
+	problem -> Lb (i) = LUv [i]      <= -COUENNE_INFINITY ? -COUENNE_INFINITY : LUv[i];
+	problem -> Ub (i) = Uvx_copy [i] >=  COUENNE_INFINITY ?  COUENNE_INFINITY : Uvx_copy[i];
       }
 
   } else
