@@ -111,6 +111,13 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
 
+      //  _______    ____    _____      ____          
+      // |__   __|  / __ \  |  __ \    / __ \         
+      //    | |    | |  | | | |  | |  | |  | |        
+      //    | |    | |  | | | |  | |  | |  | |   : apply isCuttable()     
+      //    | |    | |__| | | |__| |  | |__| |        
+      //    |_|     \____/  |_____/    \____/         
+
       // For now just 2 way
       OsiBranchingObject * branch = result -> branchingObject ();
       assert (branch->numberBranches()==2);
