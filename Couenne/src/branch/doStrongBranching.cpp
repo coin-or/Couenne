@@ -78,8 +78,8 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       *saveLower = CoinCopyOfArray (info -> lower_, numberColumns),
       *saveUpper = CoinCopyOfArray (info -> upper_, numberColumns),
 
-      *Lower0, //   = CoinCopyOfArray (info -> lower_, numberColumns), // delete afterwards
-      *Upper0, //   = CoinCopyOfArray (info -> upper_, numberColumns),
+      *Lower0 = NULL,
+      *Upper0 = NULL,
 
       *oldLower  = new double [numberColumns],
       *oldUpper  = new double [numberColumns],
