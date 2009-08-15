@@ -84,27 +84,8 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   // create expression set for binary search
   auxSet_ = new std::set <exprAux *, compExpr>;
 
-  if (base) {
-    std::string s;
-    base -> options() -> GetStringValue ("use_quadratic", s, "couenne."); 
-    useQuadratic_ = (s == "yes");
-  }
-
-  if (base) {
-
-    std::string s;
-
-    base -> options() -> GetStringValue ("feasibility_bt",  s, "couenne."); doFBBT_ = (s == "yes");
-    base -> options() -> GetStringValue ("redcost_bt",      s, "couenne."); doRCBT_ = (s == "yes");
-    base -> options() -> GetStringValue ("optimality_bt",   s, "couenne."); doOBBT_ = (s == "yes");
-    base -> options() -> GetStringValue ("aggressive_fbbt", s, "couenne."); doABT_  = (s == "yes");
-
-    base -> options() -> GetIntegerValue ("log_num_obbt_per_level", logObbtLev_, "couenne.");
-    base -> options() -> GetIntegerValue ("log_num_abt_per_level",  logAbtLev_,  "couenne.");
-
-    base -> options() -> GetNumericValue ("feas_tolerance",  feas_tolerance_, "couenne.");
-    base -> options() -> GetNumericValue ("opt_window",      opt_window_,     "couenne.");
-  }
+  if (base)
+  	initOptions(base -> options());
 }
 
 
@@ -220,4 +201,23 @@ CouenneProblem::~CouenneProblem () {
 
   if (unusedOriginalsIndices_)
     free (unusedOriginalsIndices_);
+}
+
+/// initializes parameters like doOBBT
+void CouenneProblem::initOptions(SmartPtr<OptionsList> options)
+{
+	assert(IsValid(options));
+
+  std::string s;
+  options -> GetStringValue ("use_quadratic",   s, "couenne."); useQuadratic_ = (s == "yes");
+  options -> GetStringValue ("feasibility_bt",  s, "couenne."); doFBBT_ = (s == "yes");
+  options -> GetStringValue ("redcost_bt",      s, "couenne."); doRCBT_ = (s == "yes");
+  options -> GetStringValue ("optimality_bt",   s, "couenne."); doOBBT_ = (s == "yes");
+  options -> GetStringValue ("aggressive_fbbt", s, "couenne."); doABT_  = (s == "yes");
+
+  options -> GetIntegerValue ("log_num_obbt_per_level", logObbtLev_, "couenne.");
+  options -> GetIntegerValue ("log_num_abt_per_level",  logAbtLev_,  "couenne.");
+
+  options -> GetNumericValue ("feas_tolerance",  feas_tolerance_, "couenne.");
+  options -> GetNumericValue ("opt_window",      opt_window_,     "couenne.");
 }

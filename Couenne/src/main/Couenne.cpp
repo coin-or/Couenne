@@ -105,6 +105,7 @@ int main (int argc, char *argv[]) {
 	CouenneProblem* problem = userinterface->getCouenneProblem();
 	if (!problem)
 		return EXIT_FAILURE;
+	problem->initOptions(options);
 	
 	SmartPtr<Bonmin::TMINLP> tminlp = userinterface->getTMINLP();
 	if (Ipopt::IsNull(tminlp))
