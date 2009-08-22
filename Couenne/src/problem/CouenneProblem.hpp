@@ -194,6 +194,9 @@ class CouenneProblem {
   CouenneProblem  (const CouenneProblem &); ///< Copy constructor
   ~CouenneProblem ();                       ///< Destructor
 
+  /// initializes parameters like doOBBT
+  void initOptions(SmartPtr<OptionsList> options);
+
   /// Clone method (for use within CouenneCutGenerator::clone)
   CouenneProblem *clone () const
   {return new CouenneProblem (*this);}
