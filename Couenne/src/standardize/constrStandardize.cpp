@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: standardization of constraints
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-09. 
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -52,6 +52,31 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
     int wind = p -> splitAux ((*lb_) (), body_, rest, p -> Commuted ());
 
     if (wind >= 0) { // this IS the definition of an auxiliary variable w = f(x)
+
+      // first, simplify expression (you never know)
+
+      expression *restSimple = rest -> simplify ();
+
+      if (restSimple) {
+	delete rest;
+	rest = restSimple;
+      }
+
+      // second, if this is a constraint of the form x=k, reset x's
+      // bounds and do nothing else
+
+      if (rest -> code () == COU_EXPRCONST) {
+
+	p -> Var (wind) -> lb () = 
+	p -> Var (wind) -> ub () = rest -> Value ();
+
+	delete rest;
+	return NULL;
+      }
+
+      // now assign a new auxiliary variable (with the same index,
+      // "wind", as the old original variable) to the expression
+      // contained in "rest"
 
       p -> Commuted () [wind] = true;
 
