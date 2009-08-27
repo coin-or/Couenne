@@ -258,6 +258,7 @@ Couenne/test/data/small2.obj -text
 Couenne/test/data/toy.nl -text
 Couenne/test/data/toy.obj -text
 Couenne/test/grandTest.sh.in -text
+/Dependencies -text
 /Externals -text
 /INSTALL -text
 /LICENSE -text
