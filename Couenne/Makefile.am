@@ -14,9 +14,13 @@ AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS = \
 	  src/util \
-	  src/expression \
-	  src/readnl \
-	  src/standardize \
+	  src/expression
+	  
+if COIN_HAS_ASL
+SUBDIRS += src/readnl
+endif
+
+SUBDIRS += src/standardize \
 	  src/problem \
 	  src/bound_tightening \
 	  src/convex \

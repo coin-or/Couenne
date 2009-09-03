@@ -45,7 +45,9 @@ build_triplet = @build@
 host_triplet = @host@
 @COIN_HAS_ASL_TRUE@bin_PROGRAMS = couenne$(EXEEXT)
 @COIN_HAS_CPX_TRUE@am__append_1 = $(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
-@COIN_HAS_CPX_TRUE@am__append_2 = \
+@COIN_HAS_ASL_TRUE@am__append_2 = ../readnl/libCouenneReadnl.la
+@COIN_HAS_ASL_TRUE@am__append_3 = ../readnl/libCouenneReadnl.la
+@COIN_HAS_CPX_TRUE@am__append_4 = \
 @COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
 @COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(CPXINCDIR)`
 
@@ -77,19 +79,20 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_couenne_OBJECTS = BonCouenne.$(OBJEXT)
 couenne_OBJECTS = $(am_couenne_OBJECTS)
-@COIN_HAS_CPX_TRUE@am__DEPENDENCIES_1 =  \
+@COIN_HAS_ASL_TRUE@am__DEPENDENCIES_1 = ../readnl/libCouenneReadnl.la
+@COIN_HAS_CPX_TRUE@am__DEPENDENCIES_2 =  \
 @COIN_HAS_CPX_TRUE@	$(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
-am__DEPENDENCIES_2 = $(CBCOBJDIR)/src/libCbc.la \
+am__DEPENDENCIES_3 = $(CBCOBJDIR)/src/libCbc.la \
 	$(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
 	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
 	$(BONMINOBJDIR)/src/Algorithms/Branching/libbonbranching.la \
 	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
 	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
-	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la $(am__DEPENDENCIES_1) \
+	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la $(am__DEPENDENCIES_2) \
 	$(OSIOBJDIR)/src/libOsi.la $(CLPOBJDIR)/src/libClp.la \
 	$(COINUTILSOBJDIR)/src/libCoinUtils.la
-am__DEPENDENCIES_3 =
+am__DEPENDENCIES_4 =
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -312,18 +315,12 @@ IPOPTLIBS = \
         $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
         $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 
-
-#	../readnl/readnl.cpp 
-couenne_LDADD = libBonCouenne.la ../readnl/libCouenneReadnl.la \
-	../libCouenne.la $(LIBCBCCOPY) $(COINLIBS) $(ADDLIBS) \
-	$(ASLLIB) `cat \
+couenne_LDADD = libBonCouenne.la $(am__append_2) ../libCouenne.la \
+	$(LIBCBCCOPY) $(COINLIBS) $(ADDLIBS) $(ASLLIB) `cat \
 	$(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt` `cat \
 	$(COINUTILSOBJDIR)/coinutils_addlibs.txt`
-couenne_DEPENDENCIES = \
-	libBonCouenne.la \
-	../readnl/libCouenneReadnl.la \
+couenne_DEPENDENCIES = libBonCouenne.la $(am__append_3) \
 	../libCouenne.la
-
 couenne_SOURCES = \
 	BonCouenne.cpp
 
@@ -370,7 +367,7 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglMixedIntegerRounding` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglTwomir` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglKnapsackCover` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglPreProcess` $(am__append_2) \
+	$(CGLSRCDIR)/src/CglPreProcess` $(am__append_4) \
 	$(ASL_CPPFLAGS) -I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
