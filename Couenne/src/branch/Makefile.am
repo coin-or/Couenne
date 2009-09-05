@@ -23,6 +23,8 @@ libCouenneBranch_la_SOURCES = \
 	feasibleRegion.cpp \
 	CouenneComplObject.cpp \
 	CouenneComplBranchingObject.cpp \
+	CouenneOrbitObj.cpp \
+	CouenneOrbitBranchingObj.cpp \
 	CouenneSOSObject.cpp
 # 	operators/branchExprAbs.cpp \
 # 	operators/branchExprExp.cpp \

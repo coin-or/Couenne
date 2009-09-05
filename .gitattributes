@@ -40,6 +40,10 @@ Couenne/src/branch/CouenneComplObject.cpp -text
 Couenne/src/branch/CouenneComplObject.hpp -text
 Couenne/src/branch/CouenneObject.cpp -text
 Couenne/src/branch/CouenneObject.hpp -text
+Couenne/src/branch/CouenneOrbitBranchingObj.cpp -text
+Couenne/src/branch/CouenneOrbitBranchingObj.hpp -text
+Couenne/src/branch/CouenneOrbitObj.cpp -text
+Couenne/src/branch/CouenneOrbitObj.hpp -text
 Couenne/src/branch/CouenneSOSObject.cpp -text
 Couenne/src/branch/CouenneSOSObject.hpp -text
 Couenne/src/branch/CouenneThreeWayBranchObj.cpp -text

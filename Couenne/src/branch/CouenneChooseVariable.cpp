@@ -223,4 +223,11 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
      "no",
      "no", "Use Violation Transfer with $\\sum |\\pi_i a_{ij}|$",
      "yes","Use Reduced cost branching with $|\\sum \\pi_i a_{ij}|$");
+
+    roptions -> AddStringOption2 (
+      "orbital_branching",
+      "detect symmetries and apply orbital branching",
+      "no",
+      "yes", "",
+      "no", "");
 }

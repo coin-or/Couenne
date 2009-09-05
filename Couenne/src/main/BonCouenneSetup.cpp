@@ -18,9 +18,10 @@
 #include "CbcCompareActual.hpp"
 
 #include "CouenneObject.hpp"
-#include "CouenneComplObject.hpp"
+//#include "CouenneComplObject.hpp"
 #include "CouenneVarObject.hpp"
 #include "CouenneVTObject.hpp"
+#include "CouenneOrbitObj.hpp"
 #include "CouenneChooseVariable.hpp"
 #include "CouenneChooseStrong.hpp"
 #include "CouenneSolverInterface.hpp"
@@ -386,6 +387,15 @@ namespace Bonmin{
 
 	break;
       }
+    }
+
+    // Experimental: orbital branching //////////////////////////////////////////////
+    options () -> GetStringValue ("orbital_branching", s, "couenne.");
+
+    if (s == "yes") {
+
+      objects [nobj] = new CouenneOrbitObj (couenneCg, couenneProb_, NULL, this, journalist ());
+      objects [nobj++] -> setPriority (contObjPriority);
     }
 
     // Add objects /////////////////////////////////

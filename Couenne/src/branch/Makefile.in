@@ -68,7 +68,8 @@ am_libCouenneBranch_la_OBJECTS = CouenneThreeWayBranchObj.lo \
 	CouenneChooseVariable.lo CouenneChooseStrong.lo \
 	doStrongBranching.lo projections.lo infeasibility.lo \
 	infeasibilityVT.lo feasibleRegion.lo CouenneComplObject.lo \
-	CouenneComplBranchingObject.lo CouenneSOSObject.lo
+	CouenneComplBranchingObject.lo CouenneOrbitObj.lo \
+	CouenneOrbitBranchingObj.lo CouenneSOSObject.lo
 libCouenneBranch_la_OBJECTS = $(am_libCouenneBranch_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
@@ -289,6 +290,8 @@ libCouenneBranch_la_SOURCES = \
 	feasibleRegion.cpp \
 	CouenneComplObject.cpp \
 	CouenneComplBranchingObject.cpp \
+	CouenneOrbitObj.cpp \
+	CouenneOrbitBranchingObj.cpp \
 	CouenneSOSObject.cpp
 
 # 	operators/branchExprAbs.cpp \
@@ -381,6 +384,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneComplBranchingObject.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneComplObject.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneObject.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneOrbitBranchingObj.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneOrbitObj.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSOSObject.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneThreeWayBranchObj.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneVarObject.Plo@am__quote@

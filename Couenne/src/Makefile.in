@@ -375,6 +375,8 @@ includecoin_HEADERS = \
 	branch/CouenneChooseStrong.hpp \
 	branch/CouenneComplObject.hpp \
 	branch/CouenneComplBranchingObject.hpp \
+	branch/CouenneOrbitObj.hpp \
+	branch/CouenneOrbitBranchingObj.hpp \
 	branch/CouenneSOSObject.hpp \
 	branch/projections.hpp \
 	standardize/lqelems.hpp \
