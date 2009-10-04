@@ -45,7 +45,7 @@ public:
   CouenneOrbitObj (const CouenneOrbitObj &src);
 
   /// Cloning method
-  virtual OsiObject * clone () const
+  virtual CouenneObject * clone () const
   {return new CouenneOrbitObj (*this);}
 
   /// set object parameters by reading from command line

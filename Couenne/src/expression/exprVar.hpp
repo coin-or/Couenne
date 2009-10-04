@@ -193,10 +193,10 @@ class exprVar: public expression {
 
   /// return proper object to handle expression associated with this
   /// variable (NULL if this is not an auxiliary)
-  virtual CouenneObject properObject (CouenneCutGenerator *c, 
-				      CouenneProblem *p, 
-				      Bonmin::BabSetupBase *base, 
-				      JnlstPtr jnlst_);
+  virtual CouenneObject *properObject (CouenneCutGenerator *c, 
+				       CouenneProblem *p, 
+				       Bonmin::BabSetupBase *base, 
+				       JnlstPtr jnlst_);
 };
 
 #endif

@@ -5,7 +5,7 @@
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Branching object for auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -155,62 +155,66 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
     nvars  = problem_ -> nVars (),
     objind = problem_ -> Obj (0) -> Body () -> Index ();
 
-  problem_ -> domain () -> push (nvars,
-			  solver -> getColSolution (), 
-			  solver -> getColLower    (), 
-			  solver -> getColUpper    ()); // have to alloc+copy
-
   //CouNumber &estimate = way ? upEstimate_ : downEstimate_;
   CouNumber estimate = 0.;//way ? upEstimate_ : downEstimate_;
 
-  t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
+  if ((doFBBT_ && problem_ -> doFBBT ()) ||
+      (doConvCuts_ && simulate_ && cutGen_)) {
 
-  if (!way) chg_bds [index].setUpper (t_chg_bounds::CHANGED);
-  else      chg_bds [index].setLower (t_chg_bounds::CHANGED);
+    problem_ -> domain () -> push (nvars,
+				   solver -> getColSolution (), 
+				   solver -> getColLower    (), 
+				   solver -> getColUpper    ()); // have to alloc+copy
 
-  if (     doFBBT_ &&           // this branching object should do FBBT, and
-      problem_ -> doFBBT ()) {         // problem allowed to do FBBT
+    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
 
-    problem_ -> installCutOff ();
+    if (!way) chg_bds [index].setUpper (t_chg_bounds::CHANGED);
+    else      chg_bds [index].setLower (t_chg_bounds::CHANGED);
 
-    if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
-      infeasible = true;        // ==> report it
-    else {
+    if (            doFBBT_ &&           // this branching object should do FBBT, and
+	problem_ -> doFBBT ()) {         // problem allowed to do FBBT
 
-      const double
-	*lb = solver -> getColLower (),
-	*ub = solver -> getColUpper ();
+      problem_ -> installCutOff ();
 
-      //CouNumber newEst = problem_ -> Lb (objind) - lb [objind];
-      estimate = CoinMax (0., problem_ -> Lb (objind) - lb [objind]);
+      if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
+	infeasible = true;        // ==> report it
+      else {
 
-      //if (newEst > estimate) 
-      //estimate = newEst;
+	const double
+	  *lb = solver -> getColLower (),
+	  *ub = solver -> getColUpper ();
 
-      for (int i=0; i<nvars; i++) {
-	if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
-	if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
+	//CouNumber newEst = problem_ -> Lb (objind) - lb [objind];
+	estimate = CoinMax (0., problem_ -> Lb (objind) - lb [objind]);
+
+	//if (newEst > estimate) 
+	//estimate = newEst;
+
+	for (int i=0; i<nvars; i++) {
+	  if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
+	  if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
+	}
       }
     }
+
+    if (!infeasible && doConvCuts_ && simulate_ && cutGen_) { 
+
+      // generate convexification cuts before solving new node's LP
+      int nchanged, *changed = NULL;
+      OsiCuts cs;
+
+      // sparsify structure with info on changed bounds and get convexification cuts
+      sparse2dense (nvars, chg_bds, changed, nchanged);
+      cutGen_ -> genRowCuts (*solver, cs, nchanged, changed, chg_bds);
+      free (changed);
+
+      solver -> applyCuts (cs);
+    }
+
+    delete [] chg_bds;
+
+    problem_ -> domain () -> pop ();
   }
-
-  if (!infeasible && doConvCuts_ && simulate_ && cutGen_) { 
-
-    // generate convexification cuts before solving new node's LP
-    int nchanged, *changed = NULL;
-    OsiCuts cs;
-
-    // sparsify structure with info on changed bounds and get convexification cuts
-    sparse2dense (nvars, chg_bds, changed, nchanged);
-    cutGen_ -> genRowCuts (*solver, cs, nchanged, changed, chg_bds);
-    free (changed);
-
-    solver -> applyCuts (cs);
-  }
-
-  delete [] chg_bds;
-
-  problem_ -> domain () -> pop ();
 
   // next time do other branching
   branchIndex_++;

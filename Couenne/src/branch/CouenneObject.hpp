@@ -5,7 +5,7 @@
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -80,7 +80,7 @@ public:
   CouenneObject (const CouenneObject &src);
 
   /// Cloning method
-  virtual OsiObject * clone () const
+  virtual CouenneObject * clone () const
   {return new CouenneObject (*this);}
 
   /// set object parameters by reading from command line

@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for branching on variables
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -36,7 +36,7 @@ public:
   ~CouenneVarObject () {}
 
   /// Cloning method
-  virtual OsiObject *clone () const
+  virtual CouenneObject *clone () const
   {return new CouenneVarObject (*this);}
 
   /// compute infeasibility of this variable x as the sum/min/max of

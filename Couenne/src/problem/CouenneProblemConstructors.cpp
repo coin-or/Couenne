@@ -137,6 +137,10 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
     variables_ [ind] = p.Var (ind) -> clone (&domain_);
   }
 
+  for (std::vector <CouenneObject *>::iterator i = objects_.begin ();
+       i != objects_.end (); ++i)
+    (*i) = (*i) -> clone ();
+
   if (p.numbering_)
     numbering_ = CoinCopyOfArray (p.numbering_, nVars ());
 
@@ -201,6 +205,10 @@ CouenneProblem::~CouenneProblem () {
 
   if (unusedOriginalsIndices_)
     free (unusedOriginalsIndices_);
+
+  for (std::vector <CouenneObject *>::iterator i = objects_.begin ();
+       i != objects_.end (); ++i)
+    delete (*i);
 }
 
 /// initializes parameters like doOBBT

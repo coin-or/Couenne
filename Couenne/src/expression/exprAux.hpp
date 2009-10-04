@@ -5,7 +5,7 @@
  * Purpose: definition of the auxiliary variable class (used in
  *          standardization and convexification)
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -183,7 +183,7 @@ class exprAux: public exprVar {
 
   /// return proper object to handle expression associated with this
   /// variable (NULL if this is not an auxiliary)
-  CouenneObject properObject (CouenneCutGenerator *c,
+  CouenneObject *properObject (CouenneCutGenerator *c,
 			      CouenneProblem *p, 
 			      Bonmin::BabSetupBase *base, 
 			      JnlstPtr jnlst);

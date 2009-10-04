@@ -5,7 +5,7 @@
  * Purpose: Compute violation transfer of a variable. See Tawarmalani
  *          and Sahinidis' book or article on MathProg 2002
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -102,13 +102,13 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
     for (std::set <int>::const_iterator i = dependence.begin ();
 	 i != dependence.end (); ++i) {
 
-      const CouenneObject &obj = problem_ -> Objects () [*i];
-      assert (obj. Reference ());
+      const CouenneObject *obj = problem_ -> Objects () [*i];
+      assert (obj -> Reference ());
 
       CouNumber 
 	left   = xcurr,
 	right  = xcurr,
-	infeas = obj. checkInfeasibility (info);
+	infeas = obj -> checkInfeasibility (info);
 
       if (infeas > maxInf)
 	maxInf = infeas;
@@ -120,24 +120,25 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
 	// feasibility (see page 582, Tawarmalani and Sahinidis,
 	// MathProg A: 99, pp. 563-591)
 	//if (obj. Reference () -> Image ()) // not needed! obj only has nonlinear objects
-	obj. Reference () -> Image () -> closestFeasible 
-	  (reference_, obj. Reference (), left, right);
+	obj -> Reference () -> Image () -> closestFeasible 
+	  (reference_, obj -> Reference (), left, right);
 
 	if (left  < lFeas) lFeas = left;
 	if (right > rFeas) rFeas = right;
       }
 
       if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) { // debug output
+	expression *ref = obj -> Reference ();
 	jnlst_ -> Printf (J_MATRIX, J_BRANCHING, "[%g,%g] --> %g - %g = %g (diff = %g - %g = %g): ", 
 			  left, right, rFeas, lFeas, rFeas - lFeas,
-			  (obj. Reference () -> Image ()) ? 
-			  (*(obj. Reference () -> Image ())) () : 0.,  
-			  (*(obj. Reference ())) (),
-			  (obj. Reference () -> Image ()) ? 
-			  (*(obj. Reference () -> Image ())) () - (*(obj. Reference ())) () : 0.);
-	obj. Reference () -> print (); 
-	if (obj. Reference () -> Image ()) 
-	  {printf (" := "); obj. Reference() -> Image() -> print();}
+			  (ref -> Image ()) ? 
+			  (*(ref-> Image ())) () : 0.,  
+			  (*(ref)) (),
+			  (ref -> Image ()) ? 
+			  (*(ref -> Image ())) () - (*(ref)) () : 0.);
+	ref -> print (); 
+	if (ref -> Image ()) 
+	  {printf (" := "); ref -> Image() -> print();}
 	printf ("\n");
       }
     }

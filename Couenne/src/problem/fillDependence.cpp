@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: fill in inverse dependence structure, for CouenneObject
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -26,7 +26,7 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base, CouenneCutGener
 
   // empty object to fill space for linear-defined auxiliaries and for
   // originals
-  CouenneObject nullObject;
+  //CouenneObject nullObject;
 
   for (std::vector <exprVar *>::iterator i = variables_.begin (); 
        i != variables_.end (); ++i) {
@@ -34,9 +34,9 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base, CouenneCutGener
     if (((*i) -> Type () == AUX)                           // consider auxs only
 	&& ((*i) -> Image () -> Linearity () > LINEAR)) {  // and nonlinear
 
-      CouenneObject infeasObj = (*i) -> properObject (cg, this, base, jnlst_);
+      CouenneObject *infeasObj = (*i) -> properObject (cg, this, base, jnlst_);
 
-      if (!(infeasObj.Reference ())) // found something that will never be infeasible
+      if (!(infeasObj -> Reference ())) // found something that will never be infeasible
 	continue;
 
       // add object for this variable
@@ -58,7 +58,7 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base, CouenneCutGener
 	  obj.insert (ind);
       }
 
-    } else objects_.push_back (nullObject); 
+    } else objects_.push_back (new CouenneObject ()); 
     // null object for original and linear auxiliaries
   }
 }
