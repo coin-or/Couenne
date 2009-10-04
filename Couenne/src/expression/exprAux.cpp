@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods of the class of auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -272,32 +272,42 @@ void exprAux::generateCuts (//const OsiSolverInterface &si,
 
 /// return proper object to handle expression associated with this
 /// variable (NULL if this is not an auxiliary)
-CouenneObject exprAux::properObject (CouenneCutGenerator *c,
-				     CouenneProblem *p, 
-				     Bonmin::BabSetupBase *base, 
-				     JnlstPtr jnlst) {
-
-  /*if (image_ -> code () == COU_EXPRMUL) printf ("OK1\n");
-  if (image_ -> ArgList () [0] -> Index () >= 0) printf ("OK2\n"); 
-  if (image_ -> ArgList () [1] -> Index () >= 0) printf ("OK3\n");
-  if (fabs (lb ()) < COUENNE_EPS) printf ("OK4\n");
-  if (fabs (ub ()) < COUENNE_EPS) printf ("OK5\n");*/
+CouenneObject *exprAux::properObject (CouenneCutGenerator *c,
+				      CouenneProblem *p, 
+				      Bonmin::BabSetupBase *base, 
+				      JnlstPtr jnlst) {
 
   // todo: this is an expression method
 
   if ((image_ -> code () == COU_EXPRMUL) &&
       (image_ -> ArgList () [0] -> Index () >= 0) &&
       (image_ -> ArgList () [1] -> Index () >= 0) &&
-      (fabs (lb ()) < COUENNE_EPS) &&
-      (fabs (ub ()) < COUENNE_EPS)) {
+      (((fabs (lb ()) <  COUENNE_EPS)      && (      ub ()  > COUENNE_INFINITY)) ||
+       ((      lb ()  < -COUENNE_INFINITY) && (fabs (ub ()) < COUENNE_EPS )) ||
+       ((fabs (lb ()) <  COUENNE_EPS)      && (fabs (ub ()) < COUENNE_EPS)))) {
 
     // it's a complementarity constraint object!
 
-    CouenneComplObject obj (c, p, this, base, jnlst);
-    return obj;
+    // generalizing: now a complementarity constraint object is any
+    // constraint of the form
+    //
+    // x_i * x_j >= 0 or
+    // x_i * x_j <= 0 or
+    // x_i * x_j  = 0
+    //
+    // In fact, for all these cases branching is as straightforward as
+    // the old one, which was defined on equality only.
+    //
+    // Define the "sign" of the object as 
+    //
+    // -1: <=
+    // +1: >=
+    //  0:  =
+
+    return new CouenneComplObject (c, p, this, base, jnlst,
+				   lb () < -1 ? -1 : 
+				   ub () >  1 ?  1 : 0);
   }
-  else {
-    CouenneObject obj (c, p, this, base, jnlst);
-    return obj;
-  }
+  else
+    return new CouenneObject (c, p, this, base, jnlst);
 }

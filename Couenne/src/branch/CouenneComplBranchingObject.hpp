@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneComplBranchingObject.hpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Branching object for complementarity constraints
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -34,12 +34,14 @@ public:
 			       int way, 
 			       CouNumber brpoint, 
 			       bool doFBBT, 
-			       bool doConvCuts);
+			       bool doConvCuts,
+			       int sign);
 
   /// Copy constructor
   CouenneComplBranchingObject (const CouenneComplBranchingObject &src):
     CouenneBranchingObject (src),
-    variable2_ (src.variable2_) {}
+    variable2_ (src.variable2_),
+    sign_      (src.sign_) {}
 
   /// cloning method
   virtual OsiBranchingObject *clone () const
@@ -57,6 +59,11 @@ protected:
   /// use CouenneBranchingObject::variable_ as the first variable to set to 0,
   /// and this one as the second
   expression *variable2_;
+
+  /// -1 if object is for xi * xj <= 0
+  /// +1 if object is for xi * xj <= 0
+  ///  0 if object is for xi * xj  = 0 (classical)
+  int sign_;
 };
 
 #endif

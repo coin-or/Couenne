@@ -36,10 +36,11 @@ CouenneComplBranchingObject::CouenneComplBranchingObject (OsiSolverInterface *so
 							  expression *var2, 
 							  int way, 
 							  CouNumber brpoint, 
-							  bool doFBBT, bool doConvCuts):
+							  bool doFBBT, bool doConvCuts, int sign):
 
   CouenneBranchingObject (solver, originalObject, jnlst, c, p, var, way, brpoint, doFBBT, doConvCuts),
-  variable2_    (var2) {
+  variable2_    (var2),
+  sign_         (sign) {
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		    "Complem. Branch: x%-3d = 0 or x%-3d = 0\n", 
@@ -81,8 +82,32 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
 
   ////////////////////////////////////////////////////////////////////
 
-  solver -> setColLower (index, 0.);
-  solver -> setColUpper (index, 0.);
+  int 
+    ind0 = variable_  -> Index (),
+    ind1 = variable2_ -> Index ();
+
+  if (!sign_) { // constraint x1 x2 = 0
+    solver -> setColLower (index, 0.);
+    solver -> setColUpper (index, 0.);
+  } else {
+
+    if (sign_ < 0) // it is a x1 x2 <= 0
+      if (!way) {  // branch on second orthant first
+	solver -> setColUpper (ind0, 0.);
+	solver -> setColLower (ind1, 0.);
+      } else {     // branch on fourth orthant first
+	solver -> setColLower (ind0, 0.);
+	solver -> setColUpper (ind1, 0.);
+      }
+    else           // it is a x1 x2 >= 0
+      if (!way) {  // branch on first orthant first
+	solver -> setColLower (ind0, 0.);
+	solver -> setColLower (ind1, 0.);
+      } else {     // branch on third orthant first
+	solver -> setColUpper (ind0, 0.);
+	solver -> setColUpper (ind1, 0.);
+      }
+  }
 
   ////////////////////////////////////////////////////////////////////
 
@@ -93,64 +118,78 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
     nvars  = problem_ -> nVars (),
     objind = problem_ -> Obj (0) -> Body () -> Index ();
 
-  problem_ -> domain () -> push (nvars,
-			  solver -> getColSolution (), 
-			  solver -> getColLower    (), 
-			  solver -> getColUpper    ()); // have to alloc+copy
-
   //CouNumber &estimate = way ? upEstimate_ : downEstimate_;
   CouNumber estimate = 0.;//way ? upEstimate_ : downEstimate_;
 
-  t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
-
-  chg_bds [index].setUpper (t_chg_bounds::CHANGED);
-  chg_bds [index].setLower (t_chg_bounds::CHANGED);
-
   bool infeasible = false;
 
-  if (     doFBBT_ &&           // this branching object should do FBBT, and
-      problem_ -> doFBBT ()) {         // problem allowed to do FBBT
+  // only bother doing all of the below if the allocated and pushed
+  // stuff will be really used
+  if ((doFBBT_ && problem_ -> doFBBT ()) ||
+      (doConvCuts_ && simulate_ && cutGen_)) { 
 
-    problem_ -> installCutOff ();
+    problem_ -> domain () -> push (nvars,
+				   solver -> getColSolution (), 
+				   solver -> getColLower    (), 
+				   solver -> getColUpper    ()); // have to alloc+copy
 
-    if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
-      infeasible = true;        // ==> report it
-    else {
+    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
 
-      const double
-	*lb = solver -> getColLower (),
-	*ub = solver -> getColUpper ();
+    if (!sign_) {
+      chg_bds [index].setLower (t_chg_bounds::CHANGED);
+      chg_bds [index].setUpper (t_chg_bounds::CHANGED);
+    } else {
+      chg_bds [ind0].setLower (t_chg_bounds::CHANGED);
+      chg_bds [ind0].setUpper (t_chg_bounds::CHANGED);
 
-      //CouNumber newEst = problem_ -> Lb (objind) - lb [objind];
-      estimate = CoinMax (0., problem_ -> Lb (objind) - lb [objind]);
+      chg_bds [ind1].setLower (t_chg_bounds::CHANGED);
+      chg_bds [ind1].setUpper (t_chg_bounds::CHANGED);
+    }
 
-      //if (newEst > estimate) 
-      //estimate = newEst;
+    if (            doFBBT_ &&           // this branching object should do FBBT, and
+	problem_ -> doFBBT ()) {         // problem allowed to do FBBT
 
-      for (int i=0; i<nvars; i++) {
-	if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
-	if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
+      problem_ -> installCutOff ();
+
+      if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
+	infeasible = true;        // ==> report it
+      else {
+
+	const double
+	  *lb = solver -> getColLower (),
+	  *ub = solver -> getColUpper ();
+
+	//CouNumber newEst = problem_ -> Lb (objind) - lb [objind];
+	estimate = CoinMax (0., problem_ -> Lb (objind) - lb [objind]);
+
+	//if (newEst > estimate) 
+	//estimate = newEst;
+
+	for (int i=0; i<nvars; i++) {
+	  if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
+	  if (problem_ -> Ub (i) < ub [i]) solver -> setColUpper (i, problem_ -> Ub (i));
+	}
       }
     }
+
+    if (!infeasible && doConvCuts_ && simulate_ && cutGen_) { 
+      // generate convexification cuts before solving new node's LP
+
+      int nchanged, *changed = NULL;
+      OsiCuts cs;
+
+      // sparsify structure with info on changed bounds and get convexification cuts
+      sparse2dense (nvars, chg_bds, changed, nchanged);
+      cutGen_ -> genRowCuts (*solver, cs, nchanged, changed, chg_bds);
+      free (changed);
+
+      solver -> applyCuts (cs);
+    }
+
+    delete [] chg_bds;
+
+    problem_ -> domain () -> pop ();
   }
-
-  if (!infeasible && doConvCuts_ && simulate_ && cutGen_) { 
-    // generate convexification cuts before solving new node's LP
-
-    int nchanged, *changed = NULL;
-    OsiCuts cs;
-
-    // sparsify structure with info on changed bounds and get convexification cuts
-    sparse2dense (nvars, chg_bds, changed, nchanged);
-    cutGen_ -> genRowCuts (*solver, cs, nchanged, changed, chg_bds);
-    free (changed);
-
-    solver -> applyCuts (cs);
-  }
-
-  delete [] chg_bds;
-
-  problem_ -> domain () -> pop ();
 
   // next time do other branching
   branchIndex_++;

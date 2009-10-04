@@ -118,6 +118,9 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       //    | |    | |__| | | |__| |  | |__| |        
       //    |_|     \____/  |_____/    \____/         
 
+      // todo: set a cutoff for dual bound in dual simplex
+      //       do the same for primal based on SB's alpha
+
       // For now just 2 way
       OsiBranchingObject * branch = result -> branchingObject ();
       assert (branch->numberBranches()==2);
