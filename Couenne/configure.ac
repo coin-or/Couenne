@@ -12,7 +12,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[0.2stable],[belotti@lehigh.edu])
+AC_INIT([Couenne],[0.2.2],[belotti@lehigh.edu])
 
 AC_COPYRIGHT([
 Copyright 2006 Carnegie Mellon University, International Business Machines and others.
