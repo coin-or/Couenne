@@ -138,14 +138,17 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
      "Apply bound tightening before branching",
      "yes",
      "no","",
-     "yes","");
+     "yes","",
+     "After applying a branching rule and before re-solving the subproblem, apply Bound Tightening.");
 
   roptions -> AddStringOption2
     ("branch_conv_cuts",
      "Apply convexification cuts before branching (for now only within strong branching)",
      "yes",
      "no","",
-     "yes","");
+     "yes","",
+     "After applying a branching rule and before resolving the subproblem, generate a round of linearization cuts with the new bounds enforced by the rule."
+    );
 
   roptions -> AddStringOption6
     ("branch_pt_select",
@@ -177,9 +180,9 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
        "common",
        "common",    "use strategy defined for generic operators",
        "lp-clamped", "LP point clamped in [k,1-k] of the bound intervals "
-       "(k defined by lp_clamp_${this operator})",
+       "(k defined by lp_clamp_${this operator}$)",
        "lp-central", "LP point if within [k,1-k] of the bound intervals, middle point otherwise" 
-       "(k defined by branch_lp_clamp_${this operator})",
+       "(k defined by branch_lp_clamp_${this operator}$)",
        "balanced",  "minimizes max distance from curve to convexification",
        "min-area",  "minimizes total area of the two convexifications",
        "mid-point", "convex combination of current point and mid point",
@@ -215,7 +218,10 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
   roptions -> AddLowerBoundedIntegerOption
     ("cont_var_priority",
      "Priority of continuous variable branching",
-     1, 2000, "Default value is 2000 (it is 1000 for integers and 10 for SOS).");
+     1, 2000,
+     "When branching, this is compared to the priority of integer variables, whose priority is fixed to 1000, and SOS, whose priority is 10. "
+     "Higher values mean smaller priority, so if this parameter is set to 1001 or higher, if a branch-and-bound node has at least one integer variable whose value is fractional, then branching will be performed on that variable."
+    );
 
   roptions -> AddStringOption2
     ("red_cost_branching",

@@ -156,7 +156,9 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
      "Do we search for local solutions of NLP's",
      "yes",
      "no","",
-     "yes","");
+     "yes","",
+     "If enabled, a heuristic based on Ipopt is used to find feasible solutions for the problem. "
+     "It is highly recommended that this option is left enabled, as it would be difficult to find feasible solutions otherwise.");
 
   roptions -> AddLowerBoundedIntegerOption
     ("log_num_local_optimization_per_level",
@@ -172,16 +174,19 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
 
   roptions -> AddStringOption3
     ("convexification_type",
-     "Deterimnes in which point the linear over/under-estimator are generated",
+     "Determines in which point the linear over/under-estimator are generated",
      "current-point-only",
      "current-point-only","Only at current optimum of relaxation",
-     "uniform-grid","Points chosen in a unform grid between the bounds of the problem",
-     "around-current-point","At points around current optimum of relaxation");
+     "uniform-grid","Points chosen in a uniform grid between the bounds of the problem",
+     "around-current-point","At points around current optimum of relaxation",
+     "For the lower envelopes of convex functions, this is the number of points where a supporting hyperplane is generated. "
+     "This only holds for the initial linearization, as all other linearizations only add at most one cut per expression."
+    );
     
   roptions -> AddLowerBoundedIntegerOption
     ("convexification_points",
-     "Specify the number of points at which to convexify when convexification type"
-     "is uniform-grid or arround-current-point.",
+     "Specify the number of points at which to convexify when convexification type "
+     "is uniform-grid or around-current-point.",
      0,4,
      "");
 

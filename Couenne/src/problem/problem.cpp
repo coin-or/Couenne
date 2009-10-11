@@ -347,31 +347,41 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
 
   roptions -> AddStringOption2 
     ("feasibility_bt",
-     "Feasibility-based (cheap) bound tightening",
+     "Feasibility-based (cheap) bound tightening (FBBT)",
      "yes",
      "no","",
-     "yes","");
+     "yes","",
+     "A pre-processing technique to reduce the bounding box, before the generation of linearization cuts. "
+     "This is a quick and effective way to reduce the solution set, and it is highly recommended to keep it active."
+    );
 
   roptions -> AddStringOption2 
     ("redcost_bt",
      "Reduced cost bound tightening",
      "yes",
      "no","",
-     "yes","");
+     "yes","",
+     "This bound reduction technique uses the reduced costs of the LP in order to infer better variable bounds.");
 
   roptions -> AddStringOption2 
     ("use_quadratic",
      "Use quadratic expressions and related exprQuad class",
      "no",
      "no","Use an auxiliary for each bilinear term",
-     "yes","Create one only auxiliary for a quadrati expression");
+     "yes","Create only one auxiliary for a quadratic expression",
+     "If enabled, then quadratic forms are not reformulated and therefore decomposed as a sum of auxiliary variables, each associated with a bilinear term, but rather taken as a whole expression. "
+     "Envelopes for these expressions are generated through alpha-convexification."
+    );
 
   roptions -> AddStringOption2 
     ("optimality_bt",
-     "Optimality-based (expensive) bound tightening",
+     "Optimality-based (expensive) bound tightening (OBBT)",
      "yes",
      "no","",
-     "yes","");
+     "yes","",
+     "This is another bound reduction technique aiming at reducing the solution set by looking at the initial LP relaxation. "
+     "This technique is computationally expensive, and should be used only when necessary."
+    );
 
   roptions -> AddLowerBoundedIntegerOption
     ("log_num_obbt_per_level",
@@ -387,7 +397,11 @@ If k>=0, apply with probability 2^(k - level), level being the current depth of 
      "Aggressive feasibility-based bound tightening (to use with NLP points)",
      "yes",
      "no","",
-     "yes","");
+     "yes","",
+     "Aggressive FBBT is a version of probing that also allows to reduce the solution set, although it is not as quick as FBBT. "
+     "It can be applied up to a certain depth of the B&B tree -- see ``log_num_abt_per_level''. "
+     "In general, this option is useful but can be switched off if a problem is too large and seems not to benefit from it."
+    );
 
   roptions -> AddLowerBoundedIntegerOption
     ("log_num_abt_per_level",
@@ -417,5 +431,5 @@ If k>=0, apply with probability 2^(k - level), level being the current depth of 
      "Eliminate redundant variables, which appear in the problem as x_k = x_h",
      "yes",
      "no","Keep redundant variables, making the problem a bit larger",
-     "yes","Eliminate redundant (the problem will be equivalent, only smaller)");
+     "yes","Eliminate redundant variables (the problem will be equivalent, only smaller)");
 }

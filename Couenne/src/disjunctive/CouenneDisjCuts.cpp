@@ -83,48 +83,58 @@ void CouenneDisjCuts::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
     ("minlp_disj_cuts",
      "The frequency (in terms of nodes) at which Couenne disjunctive cuts are generated.",
      -99, 0,
-     "A frequency of 0 (default) means these cuts are never generated.");
+     "A frequency of 0 (default) means these cuts are never generated. "
+     "Any positive number n instructs Couenne to generate them at every n nodes of the B&B tree. "
+     "A negative number -n means that generation should be attempted at the root node, and if successful it can be repeated at every n nodes, otherwise it is stopped altogether."
+    );
 
   roptions -> AddLowerBoundedIntegerOption
     ("disj_init_number",
-     "Maximum number of disjunction to consider at each iteration (-1 for unlimited, default 10).",
-     -1, 10, "");
+     "Maximum number of disjunction to consider at each iteration.",
+     -1, 10, "-1 means no limit.");
 
   roptions -> AddBoundedNumberOption
     ("disj_init_perc",
-     "The maximum fraction of OsiObjects to consider for generating disjunctions",
+     "The maximum fraction of all disjunctions currently violated by the problem to consider for generating disjunctions.",
      0., false,
      1., false,
      0.5, "");
 
   roptions -> AddLowerBoundedIntegerOption
     ("disj_depth_level",
-     "Depth of the BB tree when to start decreasing the number of objects that generate disjunctions.",
-     -1, 5, "");
+     "Depth of the B&B tree when to start decreasing the number of objects that generate disjunctions.",
+     -1, 5, "This has a similar behavior as log_num_obbt_per_level. "
+     "A value of -1 means that generation can be done at all nodes.");
 
   roptions -> AddLowerBoundedIntegerOption
     ("disj_depth_stop",
-     "Depth of the BB tree where separation is stopped.",
-     -1, 20, "");
+     "Depth of the B&B tree where separation of disjunctive cuts is stopped.",
+     -1, 20, "A value of -1 means that generation can be done at all nodes");
 
   roptions -> AddStringOption2
     ("disj_active_rows",
-     "Only include active rows in the CGLP.",
+     "Only include violated linear inequalities in the CGLP.",
      "no", 
      "yes", "",
-     "no", "");
+     "no", "",
+     "This reduces the size of the CGLP, but may produce less efficient cuts.");
 
   roptions -> AddStringOption2
     ("disj_active_cols",
-     "Only include active cols in the CGLP.",
+     "Only include violated variable bounds in the Cut Generating LP (CGLP).",
      "no", 
      "yes", "",
-     "no", "");
+     "no", "",
+     "This reduces the size of the CGLP, but may produce less efficient cuts."
+     );
 
   roptions -> AddStringOption2
     ("disj_cumulative",
-     "Add previous disj. cut to current CGLP.",
+     "Add previous disjunctive cut to current CGLP.",
      "no", 
      "yes", "",
-     "no", "");
+     "no", "",
+     "When generating disjunctive cuts on a set of disjunctions 1, 2, ..., k, introduce the cut relative to the previous disjunction i-1 in the CGLP used for disjunction i. "
+     "Notice that, although this makes the cut generated more efficient, it increases the rank of the disjunctive cut generated."
+    );
 }
