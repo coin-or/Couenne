@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    splitAux.cpp
  * Author:  Pietro Belotti
  * Purpose: extract auxiliary variable from implicit equality constraint

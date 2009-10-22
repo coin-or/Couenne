@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    sumStandardize.cpp
  * Author:  Pietro Belotti
  * Purpose: check if expr{Group,Sum,Sub} contains a lot of quadratic/bilinear terms

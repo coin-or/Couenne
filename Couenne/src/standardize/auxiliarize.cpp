@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    auxiliarize.cpp
  * Author:  Pietro Belotti
  * Purpose: replace occurrences of original variable in a problem with
@@ -98,12 +98,13 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
        i != variables_.end (); ++i)
 
     if (((*i) -> Type () == AUX) &&                  // replace in all aux's image
+	//((*i) -> Multiplicity () > 0) &&             // this variable is actually used
 	((*i) -> Index () != (*orig) -> Index ())) { // skip same variable
 
 #ifdef DEBUG
-      //printf ("replacing aux "); (*i) -> print (); 
-      //printf (" := "); (*i) -> Image () -> print (); 
-      //printf ("\n");
+      printf ("replacing aux "); (*i) -> print (); 
+      printf (" := "); (*i) -> Image () -> print (); 
+      printf ("\n");
 #endif
 
       expression *image = (*i) -> Image ();

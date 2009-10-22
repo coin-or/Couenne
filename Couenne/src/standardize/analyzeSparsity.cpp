@@ -5,7 +5,7 @@
  * Purpose: return one or more exprGroup/exprQuad based on sparsity of
  *          original one
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-09.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -65,8 +65,8 @@ void CouenneProblem::analyzeSparsity (CouNumber c0,
   int nterms = occur.size ();
   
   if (useQuadratic_ &&
-      ((qmap.Map().size () >= MIN_DENSITY * nterms * (nterms+1) / 2) && 
-       (nterms >= 2)
+      (((qmap.Map().size () >= MIN_DENSITY * nterms * (nterms+1) / 2) && 
+	(nterms >= 2))
       //|| (nsquares > nterms/2)
        || (nsquares >= occur.size ()))
       )

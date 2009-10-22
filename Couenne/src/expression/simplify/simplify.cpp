@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    simplify.cpp
  * Author:  Pietro Belotti
  * Purpose: symbolic expression simplifier

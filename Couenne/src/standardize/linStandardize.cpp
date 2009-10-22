@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    linStandardize.cpp
  * Author:  Pietro Belotti
  * Purpose: standardize sum expressions (expr{Sum,Sub,Quad,Group,Opp})

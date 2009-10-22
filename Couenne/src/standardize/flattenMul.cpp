@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    flattenMul.cpp
  * Author:  Pietro Belotti
  * Purpose: flatten multiplication expression tree into monomial
