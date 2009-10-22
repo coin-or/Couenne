@@ -87,40 +87,51 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
       assert (p -> Var (wind) -> Type () == VAR);
 
-      // create new variable, it has to be integer if original variable was integer
-      exprAux *w = new exprAux (rest, wind, 1 + rest -> rank (),
-				p -> Var (wind) -> isInteger () ? 
-				exprAux::Integer : exprAux::Continuous,
-				p -> domain ());
+      // check if constraint now reduces to w_k = x_h, and if so
+      // replace all occurrences of x_k with x_h
 
-      std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> find (w);
+      int xind = rest -> Index ();
 
-      // no such expression found in the set:
-      if (i == p -> AuxSet () -> end ()) {
+      if (xind >= 0) {
+	p -> auxiliarize (p -> Var (wind), p -> Var (xind));
+	p -> Var (wind) -> zeroMult ();
+      } else {
 
-	p -> AuxSet      () -> insert (w); // 1) beware of useless copies
-	p -> getDepGraph () -> insert (w); // 2) introduce it in acyclic structure
+	// create new variable, it has to be integer if original variable was integer
+	exprAux *w = new exprAux (rest, wind, 1 + rest -> rank (),
+				  p -> Var (wind) -> isInteger () ? 
+				  exprAux::Integer : exprAux::Continuous,
+				  p -> domain ());
+
+	std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> find (w);
+
+	// no such expression found in the set:
+	if (i == p -> AuxSet () -> end ()) {
+
+	  p -> AuxSet      () -> insert (w); // 1) beware of useless copies
+	  p -> getDepGraph () -> insert (w); // 2) introduce it in acyclic structure
 
 #ifdef DEBUG
-	printf ("now replacing x [%d] with ", wind);
-	w -> print (); printf (" := ");
-	w -> Image () -> print (); printf ("\n");
+	  printf ("now replacing x [%d] with ", wind); fflush (stdout);
+	  w -> print (); printf (" := ");
+	  w -> Image () -> print (); printf ("\n");
 #endif
 
-	// replace ALL occurrences of original variable (with index
-	// wind) with newly created auxiliary
-	p -> auxiliarize (w);
-      } 
+	  // replace ALL occurrences of original variable (with index
+	  // wind) with newly created auxiliary
+	  p -> auxiliarize (w);
+	} 
 
 #ifdef DEBUG
-      else {
-	printf ("found aux occurrence of "); 
-	w -> print (); printf (" := ");
-	w -> Image () -> print (); printf (" ... ");
-	(*i) -> print (); printf (" := ");
-	(*i) -> Image () -> print (); printf ("\n");
+	else {
+	  printf ("found aux occurrence of "); fflush (stdout);
+	  w -> print (); printf (" := ");
+	  w -> Image () -> print (); printf (" ... ");
+	  (*i) -> print (); printf (" := ");
+	  (*i) -> Image () -> print (); printf ("\n");
+	}
+#endif
       }
-#endif
 
       return NULL;
     }
