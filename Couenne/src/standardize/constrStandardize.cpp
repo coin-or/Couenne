@@ -12,6 +12,7 @@
 #include "CouenneProblem.hpp"
 
 #include "exprAux.hpp"
+#include "exprIVar.hpp"
 #include "depGraph.hpp"
 
 //#define DEBUG
@@ -93,8 +94,35 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
       int xind = rest -> Index ();
 
       if (xind >= 0) {
+
+	exprVar 
+	  *varStays  = p -> Variables () [xind],
+	  *varLeaves = p -> Variables () [wind];
+
+	// intersect features of the two variables (integrality, bounds)
+
+	varStays -> lb () = varLeaves -> lb () = CoinMax (varStays -> lb (), varLeaves -> lb ());
+	varStays -> ub () = varLeaves -> ub () = CoinMin (varStays -> ub (), varLeaves -> ub ());
+
+	if (varStays  -> isInteger () ||
+	    varLeaves -> isInteger ()) {
+
+	  varStays -> lb () = ceil  (varStays -> lb ());
+	  varStays -> ub () = floor (varStays -> ub ());
+
+	  if (varStays -> Type () == AUX)
+	    varStays -> setInteger (true);
+	  else {
+	    //expression *old = varStays; // !!! leak
+	    p -> Variables () [xind] = varStays = new exprIVar (xind, p -> domain ());
+	    p -> auxiliarize (varStays); // replace it everywhere in the problem
+	    //delete old;
+	  }
+	}
+
 	p -> auxiliarize (p -> Var (wind), p -> Var (xind));
-	p -> Var (wind) -> zeroMult ();
+	p -> Var (wind) -> zeroMult (); // redundant variable is neutralized
+
       } else {
 
 	// create new variable, it has to be integer if original variable was integer
