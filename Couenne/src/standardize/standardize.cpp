@@ -160,7 +160,12 @@ bool CouenneProblem::standardize () {
 #endif
 
     if (aux) { // save if standardized
-      
+
+      // this is a top level auxiliary, i.e., an auxiliary whose node
+      // in the DAG stands at the maximum level -- no other variable
+      // depends on it as it is the lhs of a constraint.
+      aux -> top_level () = true;
+
       //printf ("delete %x: ", ((*i) -> Body ())); ((*i) -> Body ()) -> print ();
       //printf ("\n"); 
       //delete ((*i) -> Body ());

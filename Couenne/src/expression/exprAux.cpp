@@ -28,7 +28,8 @@ exprAux::exprAux (expression *image, int index, int rank, enum intType isInteger
   image_        (image),
   rank_         (rank),
   multiplicity_ (1),
-  integer_      (isInteger) {
+  integer_      (isInteger),
+  top_level_    (false) {
 
   // do this later, in standardize()
   //  image_ -> getBounds (lb_, ub_);
@@ -54,7 +55,8 @@ exprAux::exprAux (expression *image, Domain *d):
   ub_           (NULL),
   rank_         (-1),
   multiplicity_ (0),
-  integer_      (Unset) {}
+  integer_      (Unset),
+  top_level_    (false) {}
 //(image -> isInteger () ? Integer : Continuous)
 
 
@@ -64,7 +66,8 @@ exprAux::exprAux (const exprAux &e, Domain *d):
   image_        (e.image_ -> clone (d)),
   rank_         (e.rank_),
   multiplicity_ (e.multiplicity_),
-  integer_      (e.integer_) {
+  integer_      (e.integer_),
+  top_level_    (e.top_level_) {
 
   //  image_ -> getBounds (lb_, ub_);
   // getBounds (lb_, ub_);
@@ -279,12 +282,21 @@ CouenneObject *exprAux::properObject (CouenneCutGenerator *c,
 
   // todo: this is an expression method
 
-  if ((image_ -> code () == COU_EXPRMUL) &&
-      (image_ -> ArgList () [0] -> Index () >= 0) &&
-      (image_ -> ArgList () [1] -> Index () >= 0) &&
-      (((fabs (lb ()) <  COUENNE_EPS)      && (      ub ()  > COUENNE_INFINITY)) ||
-       ((      lb ()  < -COUENNE_INFINITY) && (fabs (ub ()) < COUENNE_EPS )) ||
-       ((fabs (lb ()) <  COUENNE_EPS)      && (fabs (ub ()) < COUENNE_EPS)))) {
+  // create Complementary objects for variable if: 
+
+  if ((image_ -> code () == COU_EXPRMUL) &&          // it's a product x3 = x1 x2
+
+      (image_ -> ArgList () [0] -> Index () >= 0) && // first  operand is a variable
+      (image_ -> ArgList () [1] -> Index () >= 0) && // second operand is a variable
+
+      (  
+       ((fabs (lb ()) <  COUENNE_EPS)      && (fabs (ub ()) < COUENNE_EPS)) // it's defined as x1 x2 = 0
+       ||                                                                   // OR
+       (top_level_  &&                                                      // x3 is the lhs of a constraint
+	((((fabs (lb ()) <  COUENNE_EPS)      && (      ub ()  > COUENNE_INFINITY)) || // and (x1 x2 >= 0
+	  ((      lb ()  < -COUENNE_INFINITY) && (fabs (ub ()) < COUENNE_EPS )))))     // or   x1 x2 <= 0)
+	 )
+      ) {
 
     // it's a complementarity constraint object!
 

@@ -17,8 +17,8 @@
 const CouNumber estProdEps = 1e-6;
 
 
-/// constructor
-CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProblem* p, JnlstPtr jnlst) :
+  /// constructor
+  CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProblem* p, JnlstPtr jnlst) :
 
   Bonmin::BonChooseVariable (b, b.continuousSolver()),
   problem_          (p),
@@ -69,14 +69,15 @@ CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProble
   }
 
 
-  /* Choose a variable
-     Returns -
-     -1 Node is infeasible
+  /* Choose a variable. Returns:
+
+    -1  Node is infeasible
      0  Normal termination - we have a candidate
-     1  All looks satisfied - no candidate
+     1  All look satisfied - no candidate
      2  We can change the bound on a variable - but we also have a strong branching candidate
      3  We can change the bound on a variable - but we have a non-strong branching candidate
      4  We can change the bound on a variable - no other candidates
+
      We can pick up branch from whichObject() and whichWay()
      We can pick up a forced branch (can change bound) from whichForcedObject() and whichForcedWay()
      If we have a solution then we can pick up from goodObjectiveValue() and goodSolution()
@@ -168,7 +169,10 @@ CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProble
       }
       int numberFixed=0;
       if (results_.size() > 0) {
+
+	// do strong branching //////////////////////////////////////////////////
         returnCode = doStrongBranching (solver, info, results_.size(), 1);
+
         if (bb_log_level_>=3) {
           const char* stat_msg[] = {"NOTDON", "FEAS", "INFEAS", "NOFINI"};
           message(SB_HEADER)<<CoinMessageEol;
@@ -181,12 +185,10 @@ CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProble
             <<stat_msg[up_status+1]<< up_change<< CoinMessageEol;
           }
         }
-        if (returnCode>=0&&returnCode<=2) {
-          if (returnCode) {
-            returnCode=4;
-            if (bestObjectIndex_>=0)
-              returnCode=3;
-          }
+        if (returnCode >= 0 && 
+	    returnCode <= 2) {
+          if (returnCode)
+            returnCode = (bestObjectIndex_>=0) ? 3 : 4;
           for (unsigned int i=0;i < results_.size();i++) {
             int iObject = results_[i].whichObject();
             double upEstimate;
@@ -236,8 +238,10 @@ CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProble
                 delete branch;
               }
             }
-            double MAXMIN_CRITERION = maxminCrit(info),	      
-	    minVal, maxVal, value;
+
+            double
+	      MAXMIN_CRITERION = maxminCrit(info),	      
+	      minVal, maxVal, value;
 
 	    if (downEstimate < upEstimate) {
 	      minVal = downEstimate;
@@ -262,7 +266,7 @@ CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProble
               if (obj->preferredWay()>=0&&obj->infeasibility())
                 bestWhichWay_ = obj->preferredWay();
               if (returnCode)
-                returnCode=2;
+                returnCode = 2;
             }
           }
         }
@@ -276,13 +280,15 @@ CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProble
       else {
         bestObjectIndex_=list_[0];
       }
+
       if ( bestObjectIndex_ >=0 ) {
         OsiObject * obj = solver->objects()[bestObjectIndex_];
         obj->setWhichWay(bestWhichWay_);
-        message(BRANCH_VAR)<<obj->columnNumber()<< bestWhichWay_
-        <<CoinMessageEol;
+        message(BRANCH_VAR)<<obj->columnNumber()<< bestWhichWay_ <<CoinMessageEol;
       }
+
       message(CHOSEN_VAR)<<bestObjectIndex_<<CoinMessageEol;
+
       if (numberFixed==numberUnsatisfied_&&numberFixed)
         returnCode=4;
       retval = returnCode;

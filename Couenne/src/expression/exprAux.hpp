@@ -59,6 +59,10 @@ class exprAux: public exprVar {
   /// is this variable integer?
   enum intType integer_;
 
+  /// True if this variable replaces the lhs of a constraint, i.e., if
+  /// it is a top level variable in the DAG of the problem
+  bool top_level_;
+
  public:
 
   /// Node type
@@ -180,6 +184,9 @@ class exprAux: public exprVar {
     if (ub_) ub_ -> linkDomain (d);
   }
 
+  /// return top_level_
+  bool &top_level () 
+  {return top_level_;}
 
   /// return proper object to handle expression associated with this
   /// variable (NULL if this is not an auxiliary)
