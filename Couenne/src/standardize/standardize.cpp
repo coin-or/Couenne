@@ -339,8 +339,6 @@ bool CouenneProblem::standardize () {
 	if (varStays  -> isInteger () ||
 	    varLeaves -> isInteger ()) {
 
-	  printf ("either is integer\n");
-
 	  varStays -> lb () = ceil  (varStays -> lb ());
 	  varStays -> ub () = floor (varStays -> ub ());
 
