@@ -99,6 +99,7 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(CLPSRCDIR)/src` \
 	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` \
 	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCbc`\
+	-I`$(CYGPATH_W) $(CGLOBJDIR)/inc` \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding2` \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglLandP` \
