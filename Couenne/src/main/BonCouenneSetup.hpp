@@ -61,7 +61,14 @@ public:
 			   CouenneProblem *couenneProb = NULL,
 			   Ipopt::SmartPtr<Bonmin::TMINLP> tminlp = NULL,
 			   CouenneInterface *ci = NULL);
-    
+
+    /** Initialize from command line arguments.
+     * This function is DEPRECATED and may be removed in future versions. */
+    bool InitializeCouenne(char ** argv = NULL,
+         CouenneProblem *couenneProb = NULL,
+         CouenneInterface *ci = NULL)
+    { InitializeCouenne(argv, couenneProb, NULL, ci); }
+
     /** register the options */
     virtual void registerOptions();
     /** Register all Couenne options.*/
