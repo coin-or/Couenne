@@ -66,8 +66,7 @@ public:
      * This function is DEPRECATED and may be removed in future versions. */
     bool InitializeCouenne(char ** argv = NULL,
          CouenneProblem *couenneProb = NULL,
-         CouenneInterface *ci = NULL)
-    { InitializeCouenne(argv, couenneProb, NULL, ci); }
+         CouenneInterface *ci = NULL);
 
     /** register the options */
     virtual void registerOptions();
