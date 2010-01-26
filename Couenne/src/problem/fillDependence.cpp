@@ -24,10 +24,6 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base, CouenneCutGener
   for (int i=nVars (); i--;)
     dependence_.push_back (std::set <int> ());
 
-  // empty object to fill space for linear-defined auxiliaries and for
-  // originals
-  //CouenneObject nullObject;
-
   for (std::vector <exprVar *>::iterator i = variables_.begin (); 
        i != variables_.end (); ++i) {
 

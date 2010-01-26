@@ -15,9 +15,7 @@
 #include "CouenneOrbitObj.hpp"
 #include "CouenneBranchingObject.hpp"
 
-const CouNumber default_alpha  = 0.2;
-const CouNumber default_clamp  = 0.2;
-const CouNumber max_pseudocost = 1000.;
+#include "exprGroup.hpp"
 
 /// Empty constructor
 CouenneOrbitObj::CouenneOrbitObj ():
@@ -31,7 +29,104 @@ CouenneOrbitObj::CouenneOrbitObj (CouenneCutGenerator *cutgen,
 				  exprVar *ref, 
 				  Bonmin::BabSetupBase *base, 
 				  JnlstPtr jnlst):
-  CouenneObject (cutgen, p, ref, base, jnlst) {}
+  CouenneObject (cutgen, p, ref, base, jnlst) {
+
+  // nautyGraph_ = createNautyGraph (p);
+
+  // create graph
+
+  // create p -> nVars () nodes for (aux+orig) variables.
+
+
+  // join them
+
+  for (std::vector <exprVar *>:: iterator i = p -> Variables (). begin (); 
+       i != p -> Variables (). end (); ++i) {
+
+    if ((*i) -> Type () == AUX) {
+
+      // this is an auxiliary variable
+
+      // add node in nauty graph for its index, (*i) -> Index ()
+
+      if        ((*i) -> Image () -> Type () == N_ARY) {
+
+	for (int a=0; a < (*i) -> Image () -> nArgs(); a++) {
+
+	  expression *arg = (*i) -> Image () -> ArgList () [a];
+
+	  if (arg -> Type () == AUX) {
+
+	    // a-th argument is an auxiliary variable
+
+	  } else if (arg -> Type () == VAR) {
+
+	    CouNumber lb, ub;
+
+	    arg -> getBounds (lb, ub);
+
+	    // a-th argument is an original variable
+
+	  } else {
+
+	    assert (arg -> Type () == CONST);
+
+	    // this is a constant.
+
+	  }
+	}
+
+
+	if ((*i) -> Image () -> code () == COU_EXPRGROUP) {
+
+	  // dynamic_cast it to an exprGroup
+
+	  exprGroup *e = dynamic_cast <exprGroup *> ((*i) -> Image ());
+
+	  // add a node for e -> getC0 ();
+
+	  // for each term add nodes for their non-one coefficients and their variable
+
+	  for (exprGroup::lincoeff::iterator el = e ->lcoeff().begin (); el != e -> lcoeff ().end (); ++el) {
+
+	    // coefficient = el -> second
+
+	    // variable index is el -> first -> Index ()
+	  }
+	  
+	}
+
+      } else if ((*i) -> Image () -> Type () == UNARY) {
+
+      }
+
+    } else {
+
+      // this is an original variable
+
+    }
+  }
+
+  // create partitions for log only
+
+  for (std::vector <exprVar *>:: iterator i = p -> Variables (). begin (); 
+       i != p -> Variables (). end (); ++i) {
+
+    if ((*i) -> Type () == AUX) {
+
+      // this is an auxiliary variable
+
+      if ((*i) -> Image () -> code () == COU_EXPRLOG) {
+	printf ("log is %d\n", (*i) -> Index ());
+      }
+
+    } else {
+
+      // this is an original variable
+
+    }
+  }
+}
 
 
 /// Constructor with lesser information, used for infeasibility only

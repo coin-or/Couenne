@@ -41,7 +41,10 @@ CouenneOrbitBranchingObj::CouenneOrbitBranchingObj (OsiSolverInterface *solver,
 						    bool doFBBT, bool doConvCuts):
 
   CouenneBranchingObject (solver, originalObject, jnlst, cutGen, problem, 
-			  var, way, brpoint, doFBBT, doConvCuts) {}
+			  var, way, brpoint, doFBBT, doConvCuts) {
+
+
+}
 
 
 
