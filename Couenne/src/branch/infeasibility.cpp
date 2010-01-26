@@ -76,10 +76,10 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
     setEstimates (info, &retval, &brkPt);
 
   if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
-    printf("index = %d up = %e down = %e bounds [%e,%e] brpt = %e\n", 
+    printf("index = %d up = %e down = %e bounds [%e,%e] brpt = %e inf = %e\n", 
 	   index, upEstimate_, downEstimate_, 
 	   info -> lower_ [index],
-	   info -> upper_ [index], brkPt);
+	   info -> upper_ [index], brkPt, retval);
   }
 
   problem_ -> domain () -> pop (); // domain not used below
@@ -148,9 +148,18 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
     }
 
     double retval = 
+      ((infmax < 1.e20) ? // avoid returning zero infeasibility in
+                          // almost fixed variables that are at some
+                          // denominator (see example triv1.nl from
+                          // Stefano Coniglio)
+
+                          // 1e20 is probably too optimistic, expect
+                          // instances that fail (i.e. give -9.99e+12)
+                          // for much smaller values
+
       // neglect it if variable has small bound interval (check
       // x84=x83/x5 in csched1.nl)
-      (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) *
+       (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) : 1) *
       // to consider maximum, minimum, and sum/avg of the infeasibilities
       (weiSum * infsum + 
        weiAvg * (infsum / CoinMax (1., (CouNumber) dependence.size ())) + 
