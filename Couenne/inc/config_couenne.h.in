@@ -33,6 +33,9 @@
 /* Define to 1 if the Ipopt package is used */
 #undef COIN_HAS_IPOPT
 
+/* Define to 1 if the Nauty package is available */
+#undef COIN_HAS_NTY
+
 /* Define to 1 if the Osi package is used */
 #undef COIN_HAS_OSI
 

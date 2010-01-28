@@ -76,6 +76,11 @@ AC_COIN_HAS_PROJECT(Couenne)
 # Ampl Solver library
 AC_COIN_HAS_ASL
 
+# Nauty library (for symmetry detection)
+AC_LANG_PUSH(C)
+AC_COIN_HAS_USER_LIBRARY([Nauty],[NTY],[nauty.h],[nauty])
+AC_LANG_POP(C)
+
 # CPLEX library
 AC_LANG_PUSH(C)
 AC_COIN_HAS_USER_LIBRARY([Cplex],[CPX],[cplex.h],[CPXgetstat])

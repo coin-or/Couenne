@@ -86,6 +86,11 @@ if COIN_HAS_CPX
 	-I`$(CYGPATH_W) $(CPXINCDIR)`
 endif
 
+if COIN_HAS_NTY
+  AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(NTYINCDIR)`
+endif
+
 #if COIN_HAS_FILTERSQP
 #  AM_CPPFLAGS += -I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Filter` 
 #endif

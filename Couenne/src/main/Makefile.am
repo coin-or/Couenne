@@ -36,6 +36,10 @@ if COIN_HAS_CPX
      COINLIBS += $(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
 endif
 
+if COIN_HAS_NTY
+     COINLIBS += $(NTYLIB)
+endif
+
 COINLIBS += \
      $(OSIOBJDIR)/src/libOsi.la \
      $(CLPOBJDIR)/src/libClp.la \
