@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of multiplications
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -129,6 +129,13 @@ void unifiedProdCuts (const CouenneCutGenerator *, OsiCuts &,
 		      int, CouNumber, CouNumber, CouNumber,
 		      int, CouNumber, CouNumber, CouNumber,
 		      t_chg_bounds *);
+
+
+/// better cuts than those from unifiedProdCuts
+void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs, 
+		   int xi, CouNumber x0, CouNumber xl, CouNumber xu,
+		   int yi, CouNumber y0, CouNumber yl, CouNumber yu,
+		   int wi, CouNumber w0, CouNumber wl, CouNumber wu);
 
 
 // compute distance from future convexifications in set \f$\{(x,y,w):

@@ -4,6 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: Constructors and destructors of the class CouenneProblem
  *
+ * (C) Carnegie-Mellon University, 2009-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -85,7 +86,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   auxSet_ = new std::set <exprAux *, compExpr>;
 
   if (base)
-  	initOptions(base -> options());
+    initOptions(base -> options());
 }
 
 
@@ -212,9 +213,9 @@ CouenneProblem::~CouenneProblem () {
 }
 
 /// initializes parameters like doOBBT
-void CouenneProblem::initOptions(SmartPtr<OptionsList> options)
-{
-	assert(IsValid(options));
+void CouenneProblem::initOptions(SmartPtr<OptionsList> options) {
+
+  assert(IsValid(options));
 
   std::string s;
   options -> GetStringValue ("use_quadratic",   s, "couenne."); useQuadratic_ = (s == "yes");
@@ -228,4 +229,10 @@ void CouenneProblem::initOptions(SmartPtr<OptionsList> options)
 
   options -> GetNumericValue ("feas_tolerance",  feas_tolerance_, "couenne.");
   options -> GetNumericValue ("opt_window",      opt_window_,     "couenne.");
+
+  options -> GetStringValue ("multilinear_separation", s, "couenne.");
+  multilinSep_ = (s == "none"   ? CouenneProblem::MulSepNone   :
+		  s == "simple" ? CouenneProblem::MulSepSimple :
+                 		  CouenneProblem::MulSepTight);
+
 }

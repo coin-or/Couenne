@@ -209,7 +209,9 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
 
       break;
 
-    default: printf ("unknown type of cut\n");
+    default: printf ("Unknown type of cut:");
+      cut -> print ();
+      printf ("Bailing out...\n");
       exit (-1);
     }
   }

@@ -355,6 +355,16 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
      "This is a quick and effective way to reduce the solution set, and it is highly recommended to keep it active."
     );
 
+  roptions -> AddStringOption3
+    ("multilinear_separation",
+     "Separation for multilinear terms",
+     "simple",
+     "none",   "No separation -- just use the four McCormick inequalities",
+     "simple", "Use the old one considering lower curve only",
+     "tight",  "Use the new one -- EXPERIMENTAL!",
+     "Type of separation for multilinear terms where the dependent variable is also bounded"
+    );
+
   roptions -> AddStringOption2 
     ("redcost_bt",
      "Reduced cost bound tightening",

@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: define the class CouenneProblem
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -65,6 +65,11 @@ class CouenneProblem {
 
   /// structure to record fixed, non-fixed, and continuous variables
   enum fixType {UNFIXED, FIXED, CONTINUOUS};
+
+ public:
+
+  /// Type of multilinear separation
+  enum multiSep {MulSepNone, MulSepSimple, MulSepTight};
 
  protected:
 
@@ -186,6 +191,9 @@ class CouenneProblem {
 
   /// number of unused originals
   int nUnusedOriginals_;
+
+  /// Type of Multilinear separation
+  enum multiSep multilinSep_;
 
  public:
 
@@ -497,10 +505,16 @@ class CouenneProblem {
   void restoreUnusedOriginals (CouNumber * = NULL) const;
 
   /// return indices of neglected redundant variables
-  int *unusedOriginalsIndices () {return unusedOriginalsIndices_;}
+  int *unusedOriginalsIndices () 
+  {return unusedOriginalsIndices_;}
 
   /// number of unused originals
-  int nUnusedOriginals ()        {return nUnusedOriginals_;}
+  int nUnusedOriginals ()
+  {return nUnusedOriginals_;}
+
+  /// return type of separator for multilinear terms
+  enum multiSep MultilinSep () const
+  {return multilinSep_;}
 
 protected:
 

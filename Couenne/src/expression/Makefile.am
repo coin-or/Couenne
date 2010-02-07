@@ -41,6 +41,7 @@ libCouenneExpression_la_SOURCES = \
 	../convex/operators/conv-exprMul.cpp \
 	../convex/operators/conv-exprMul-genCuts.cpp \
 	../convex/operators/unifiedProdCuts.cpp \
+	../convex/operators/exprMul-upperHull.cpp \
 	../convex/operators/conv-exprOpp.cpp \
 	../convex/operators/conv-exprPow.cpp \
 	../convex/operators/conv-exprPow-getBounds.cpp \

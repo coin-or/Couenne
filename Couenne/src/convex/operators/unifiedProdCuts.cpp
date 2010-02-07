@@ -4,13 +4,14 @@
  * Author:  Pietro Belotti
  * Purpose: unified convexification of products and divisions
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneTypes.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneCutGenerator.hpp"
+#include "CouenneProblem.hpp"
 #include "exprDiv.hpp"
 #include "exprMul.hpp"
 #include "exprPow.hpp"
@@ -135,27 +136,36 @@ void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
   //
   //    alpha = [-yu + l/xt - l/(xt^2)(xu-xt)] / (xu*yu - l)
 
-  if ((x0 > xl + COUENNE_EPS) && (y0 > yl + COUENNE_EPS) &&
-      (x0 < xu + COUENNE_EPS) && (y0 < yu + COUENNE_EPS)) {
 
-    if (cLW && (wl > 0) && (x0*y0 < wl)) { // that is, if (x0,y0) is out of the contour
+  if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepSimple) {
 
-      CouNumber xyl = xl * yl;
+    if ((x0 > xl + COUENNE_EPS) && (y0 > yl + COUENNE_EPS) &&
+	(x0 < xu + COUENNE_EPS) && (y0 < yu + COUENNE_EPS)) {
 
-      // first and third orthant
-      if      ((xyl <  wl) && (xu*yu >=wl)) contourCut (cg,cs, x0,y0, wl, +1, xl,yl, xu,yu, xi,yi,wi);
-      else if ((xyl >= wl) && (xu*yu < wl)) contourCut (cg,cs, x0,y0, wl, -1, xu,yu, xl,yl, xi,yi,wi);
+      if (cLW && (wl > 0) && (x0*y0 < wl)) { // that is, if (x0,y0) is out of the contour
+
+	CouNumber xyl = xl * yl;
+
+	// first and third orthant
+	if      ((xyl <  wl) && (xu*yu >=wl)) contourCut (cg,cs, x0,y0, wl, +1, xl,yl, xu,yu, xi,yi,wi);
+	else if ((xyl >= wl) && (xu*yu < wl)) contourCut (cg,cs, x0,y0, wl, -1, xu,yu, xl,yl, xi,yi,wi);
+      }
+
+      // Similarly for w <= u < 0 
+
+      if (cRW && (wu < 0) && (x0*y0 > wu)) { // that is, if (x0,y0) is out of the contour
+
+	CouNumber xuyl = xl * yu;
+
+	// second and fourth orthant
+	if      ((xuyl > wu) && (xl*yu <=wu)) contourCut (cg,cs, x0,y0, wu, +1, xu,yl, xl,yu, xi,yi,wi);
+	else if ((xuyl <=wu) && (xl*yu > wu)) contourCut (cg,cs, x0,y0, wu, -1, xl,yu, xu,yl, xi,yi,wi);
+      }
     }
-
-  // Similarly for w <= u < 0 
-
-    if (cRW && (wu < 0) && (x0*y0 > wu)) { // that is, if (x0,y0) is out of the contour
-
-      CouNumber xuyl = xl * yu;
-
-      // second and fourth orthant
-      if      ((xuyl > wu) && (xl*yu <=wu)) contourCut (cg,cs, x0,y0, wu, +1, xu,yl, xl,yu, xi,yi,wi);
-      else if ((xuyl <=wu) && (xl*yu > wu)) contourCut (cg,cs, x0,y0, wu, -1, xl,yu, xu,yl, xi,yi,wi);
-    }
-  }
+  } else
+    if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepTight)
+      upperEnvHull (cg, cs, 
+		    xi, x0, xl, xu, 
+		    yi, y0, yl, yu,
+		    wi, w0, wl, wu);
 }
