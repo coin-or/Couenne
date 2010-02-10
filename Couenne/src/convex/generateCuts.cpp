@@ -168,7 +168,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // run AFTER initial FBBT...
     if (problem_ -> doFBBT () &&
 	(! (problem_ -> boundTightening (chg_bds, babInfo))))
-      printf ("Couenne: WARNING, first convexification is infeasible\n");
+          jnlst_ -> Printf (J_STRONGWARNING, J_CONVEXIFYING,
+            "Couenne: WARNING, first convexification is infeasible\n");
 
     // For each auxiliary variable replacing the original (nonlinear)
     // constraints, check if corresponding bounds are violated, and
