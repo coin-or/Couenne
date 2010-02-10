@@ -531,7 +531,7 @@ namespace Bonmin{
   bool CouenneSetup::InitializeCouenne (char ** argv,
           CouenneProblem *couenneProb,
           Bonmin::CouenneInterface *ci) {
-    InitializeCouenne(argv, couenneProb, ci ? ci->model() : NULL, ci);
+    return InitializeCouenne(argv, couenneProb, ci ? ci->model() : NULL, ci);
   }
  
   void CouenneSetup::registerOptions(){
