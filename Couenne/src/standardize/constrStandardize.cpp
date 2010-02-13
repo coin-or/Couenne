@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: standardization of constraints
  *
- * (C) Carnegie-Mellon University, 2007-09. 
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -17,8 +17,11 @@
 
 //#define DEBUG
 
-/// decompose body of constraint through auxiliary variables
+// replace a variable
+void replace (CouenneProblem *p, int wind, int xind);
 
+
+/// decompose body of constraint through auxiliary variables
 exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
   // spot an auxiliary variable in constraint's body w - f(x) and move
@@ -95,30 +98,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
       if (xind >= 0) {
 
-	exprVar 
-	  *varStays  = p -> Variables () [xind],
-	  *varLeaves = p -> Variables () [wind];
-
-	// intersect features of the two variables (integrality, bounds)
-
-	varStays -> lb () = varLeaves -> lb () = CoinMax (varStays -> lb (), varLeaves -> lb ());
-	varStays -> ub () = varLeaves -> ub () = CoinMin (varStays -> ub (), varLeaves -> ub ());
-
-	if (varStays  -> isInteger () ||
-	    varLeaves -> isInteger ()) {
-
-	  varStays -> lb () = ceil  (varStays -> lb ());
-	  varStays -> ub () = floor (varStays -> ub ());
-
-	  if (varStays -> Type () == AUX)
-	    varStays -> setInteger (true);
-	  else {
-	    //expression *old = varStays; // !!! leak
-	    p -> Variables () [xind] = varStays = new exprIVar (xind, p -> domain ());
-	    p -> auxiliarize (varStays); // replace it everywhere in the problem
-	    //delete old;
-	  }
-	}
+	replace (p, wind, xind);
 
 	p -> auxiliarize (p -> Var (wind), p -> Var (xind));
 	p -> Var (wind) -> zeroMult (); // redundant variable is neutralized
@@ -157,6 +137,29 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	  w -> Image () -> print (); printf (" ... ");
 	  (*i) -> print (); printf (" := ");
 	  (*i) -> Image () -> print (); printf ("\n");
+
+	  // if this is an original variable and is competing with an
+	  // auxiliary variable, or at least this has a lower index,
+	  // we better replace it throughout and eliminate that
+	  // aux. See globallib/st_glmp_fp3 for an example where this
+	  // otherwise would be a bug (x_1 unlinked from x2-x3 and
+	  // leading to unbounded)
+	  
+	  int xind = (*i) -> Index (), iMax, iMin;
+
+	  if (xind < wind) {
+	    iMax = wind;
+	    iMin = xind;
+	  } else {
+	    iMax = xind;
+	    iMin = wind;
+	  }
+
+	  replace (p, iMax, iMin);
+
+	  p -> auxiliarize (p -> Var (iMax), p -> Var (iMin));
+	  p -> Var (iMax) -> zeroMult (); // redundant variable is neutralized
+	  p -> auxiliarize (w);
 	}
 #endif
       }
@@ -170,4 +173,34 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 #endif
 
   return body_ -> standardize (p);
+}
+
+
+// Replace a variable ////////////////////////////////
+void replace (CouenneProblem *p, int wind, int xind) {
+
+  exprVar 
+    *varLeaves = p -> Variables () [wind],
+    *varStays  = p -> Variables () [xind];
+
+  // intersect features of the two variables (integrality, bounds)
+
+  varStays -> lb () = varLeaves -> lb () = CoinMax (varStays -> lb (), varLeaves -> lb ());
+  varStays -> ub () = varLeaves -> ub () = CoinMin (varStays -> ub (), varLeaves -> ub ());
+
+  if (varStays  -> isInteger () ||
+      varLeaves -> isInteger ()) {
+
+    varStays -> lb () = ceil  (varStays -> lb ());
+    varStays -> ub () = floor (varStays -> ub ());
+
+    if (varStays -> Type () == AUX)
+      varStays -> setInteger (true);
+    else {
+      //expression *old = varStays; // !!! leak
+      p -> Variables () [xind] = varStays = new exprIVar (xind, p -> domain ());
+      p -> auxiliarize (varStays); // replace it everywhere in the problem
+      //delete old;
+    }
+  }
 }

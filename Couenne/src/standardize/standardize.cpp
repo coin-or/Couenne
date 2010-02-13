@@ -377,6 +377,35 @@ bool CouenneProblem::standardize () {
     //Lb (i) = Ub (i) = 0.;
   }
 
+  // check how many multiplications there are 
+
+//   int nmul = 0;
+//   // Look for auxiliaries of the form w:=x and replace each occurrence of w with x
+//   for (std::vector <exprVar *>::iterator i = variables_.begin (); 
+//        i != variables_.end (); ++i) {
+
+//     if ((*i) -> Type () != AUX ||
+// 	(*i) -> Multiplicity () <= 0) 
+//       continue;
+
+//     expression *img = (*i) -> Image ();
+
+//     if (img -> code () != COU_EXPRMUL) 
+//       continue;
+
+//     expression **args = img -> ArgList ();
+
+//     if ((args [0] -> Type () == AUX ||
+// 	 args [0] -> Type () == VAR) &&
+// 	(args [1] -> Type () == AUX ||
+// 	 args [1] -> Type () == VAR))
+//       nmul++;
+//   }
+
+//   printf ("MULS: %d/%d\n", nmul, variables_.size());
+
+//   exit (-1);
+
   // TODO: re-compute ranks
 
   delete [] commuted_;  commuted_ = NULL;
