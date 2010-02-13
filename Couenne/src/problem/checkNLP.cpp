@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    checkNLP.cpp
  * Author:  Pietro Belotti
  * Purpose: check NLP feasibility of incumbent integer solution
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -14,24 +14,28 @@
 // check if solution is MINLP feasible
 bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompute) const {
 
-  const int infeasible = 1;
-  const int wrong_obj  = 2;
+  if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
 
-  /*printf ("checking solution: [%.12e] ", obj);
-  for (int i=0; i<nOrigVars_; i++)
-    printf ("%.12e ", solution [i]);
-    printf ("\n");*/
+    printf ("checking solution: [%.12e] ", obj);
 
-  // pre-check on original variables
-  for (int i=0; i < nOrigVars_; i++) {
+    for (int i=0; i<nOrigVars_; i++)
+      printf ("%.12e ", solution [i]);
+    printf ("\n");
+  }
+
+  // pre-check on original variables --- this is done after every LP,
+  // and should be efficient
+  for (register int i=0; i < nOrigVars_; i++) {
 
     CouNumber val = solution [i];
 
     // check (original and auxiliary) variables' integrality
 
-    if ((variables_ [i] -> isInteger ()) &&
-	(variables_ [i] -> Type () == VAR) &&
-	(variables_ [i] -> Multiplicity () > 0) &&
+    exprVar *v = variables_ [i];
+
+    if ((v -> Type ()      == VAR) &&
+	(v -> Multiplicity () > 0) &&
+	(v -> isInteger ())        &&
 	(fabs (val - COUENNE_round (val)) > feas_tolerance_)) {
 
       Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_PROBLEM,
@@ -41,6 +45,9 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
       return false;
     }
   }
+
+  const int infeasible = 1;
+  const int wrong_obj  = 2;
 
   CouNumber *sol = new CouNumber [nVars ()];
 
@@ -53,10 +60,13 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
   // install NL solution candidate in evaluation structure
   domain_.push (nVars (), sol, domain_.lb (), domain_.ub (), false);
 
-  /*printf ("checknlp: %d vars -------------------\n", domain_.current () -> Dimension ());
-  for (int i=0; i<domain_.current () -> Dimension (); i++)
-    printf ("%4d %.12e [%.12e %.12e]\n", 
-    i, domain_.x (i), domain_.lb (i), domain_.ub (i));*/
+
+  if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
+    printf ("checknlp: %d vars -------------------\n", domain_.current () -> Dimension ());
+    for (int i=0; i<domain_.current () -> Dimension (); i++)
+      printf ("%4d %.12e [%.12e %.12e]\n", 
+	      i, domain_.x (i), domain_.lb (i), domain_.ub (i));
+  }
 
   expression *objBody = Obj (0) -> Body ();
 
@@ -73,16 +83,18 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
       sol [objBody -> Index ()] : 
       (*(objBody -> Image () ? objBody -> Image () : objBody)) ();
 
-  /*printf ("%.12e %.12e %.12e ------------------------------\n", 
-	  realobj, sol [objBody -> Index ()], 
-	  (*(objBody -> Image () ? objBody -> Image () : objBody)) ());*/
+  if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
+    printf ("%.12e %.12e %.12e ------------------------------\n", 
+	    realobj, sol [objBody -> Index ()], 
+	    (*(objBody -> Image () ? objBody -> Image () : objBody)) ());
+  }
 
   bool retval = true;
 
   try {
 
     // check if objective corresponds
-
+    
     if (fabs (realobj - obj) / (1. + fabs (realobj)) > feas_tolerance_) {
 
       Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_PROBLEM,
@@ -96,7 +108,8 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
     if (recompute)
       obj = realobj;
 
-    //printf ("recomputed: %.12e\n", obj);
+    if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM))
+      printf ("recomputed: %.12e\n", obj);
 
     for (int i=0; i < nOrigVars_; i++) {
 
@@ -129,20 +142,27 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
 	throw infeasible;
       }
+    }
 
-      /*if (variables_ [i] -> Type () == AUX) {
-	printf ("checking aux ");
-	variables_ [i] -> print (); printf (" := ");
-	variables_ [i] -> Image () -> print (); 
-	printf (" --- %.12e = %.12e [%.12e]; {", 
-		(*(variables_ [i])) (), 
-		(*(variables_ [i] -> Image ())) (),
-		(*(variables_ [i])) () -
-		(*(variables_ [i] -> Image ())) ());
-	for (int j=0; j<nVars (); j++)
-	  printf ("%.12e ", (*(variables_ [j])) ());
-	printf ("}\n");
-	}*/
+    // check ALL auxs
+
+    for (int i=0; i < nVars (); i++) {
+
+      if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
+	if (variables_ [i] -> Type () == AUX) {
+	  printf ("checking aux ");
+	  variables_ [i] -> print (); printf (" := ");
+	  variables_ [i] -> Image () -> print (); 
+	  printf (" --- %.12e = %.12e [%.12e]; {", 
+		  (*(variables_ [i])) (), 
+		  (*(variables_ [i] -> Image ())) (),
+		  (*(variables_ [i])) () -
+		  (*(variables_ [i] -> Image ())) ());
+	  //for (int j=0; j<nVars (); j++)
+	  //printf ("%.12e ", (*(variables_ [j])) ());
+	  printf ("}\n");
+	}
+      }
 
       CouNumber delta;
 
@@ -170,17 +190,15 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 	lhs  = (*(c -> Lb   ())) (),
 	rhs  = (*(c -> Ub   ())) ();
 
-      if ((rhs < COUENNE_INFINITY) &&
-	   (body > rhs + feas_tolerance_ * (1 + CoinMax (fabs (body), fabs (rhs)))) || 
-	  (lhs > -COUENNE_INFINITY) &&
-	  (body < lhs - feas_tolerance_ * (1 + CoinMax (fabs (body), fabs (lhs))))) {
+      if (((rhs < COUENNE_INFINITY) &&
+	   (body > rhs + feas_tolerance_ * (1 + CoinMax (fabs (body), fabs (rhs))))) || 
+	  ((lhs > -COUENNE_INFINITY) &&
+	   (body < lhs - feas_tolerance_ * (1 + CoinMax (fabs (body), fabs (lhs)))))) {
 
 	if (Jnlst()->ProduceOutput(Ipopt::J_MOREVECTOR, J_PROBLEM)) {
 
-	  Jnlst()->Printf
-	    (Ipopt::J_MOREVECTOR, J_PROBLEM,
-	     "checkNLP: constraint %d violated (lhs=%+e body=%+e rhs=%+e, violation %g): ",
-	     i, lhs, body, rhs, CoinMax (lhs-body, body-rhs));
+	  printf ("checkNLP: constraint %d violated (lhs=%+e body=%+e rhs=%+e, violation %g): ",
+		  i, lhs, body, rhs, CoinMax (lhs-body, body-rhs));
 
 	  c -> print ();
 	}

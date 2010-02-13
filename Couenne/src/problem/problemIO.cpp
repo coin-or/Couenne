@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    problemIO.cpp
  * Author:  Pietro Belotti
  * Purpose: methods of the class CouenneProblem
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -70,6 +70,7 @@ void CouenneProblem::print (std::ostream &out) {
     out << "common expressions:" << std::endl;
     for (std::vector <expression *>::iterator i = commonexprs_.begin ();
 	 i != commonexprs_.end (); ++i) {
+      out << "v["    << i - commonexprs_.begin () << "] := ";
       (*i) -> print (out);
       out << std::endl;
     }
