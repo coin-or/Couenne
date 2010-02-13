@@ -23,7 +23,18 @@ int findIntersection (CouNumber  x0, CouNumber  y0,
 int genMulCoeff (CouNumber x1, CouNumber y1, 
 		  CouNumber x2, CouNumber y2, 
 		  char whichUse,
-		  CouNumber &cX, CouNumber &cY, CouNumber &cW, CouNumber &c0);
+		  CouNumber &cX, CouNumber &cY, CouNumber &cW);
+
+
+// invert interval bounds and current point
+inline void invertInterval (register double &l, register double &u, register double x) {
+
+  register double tmp = l; 
+  l  = -u; 
+  u  = -tmp;
+
+  x  = -x;
+}
 
 void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs, 
 		   int xi, CouNumber x0, CouNumber xl, CouNumber xu,
@@ -31,7 +42,7 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 		   int wi, CouNumber w0, CouNumber wl, CouNumber wu) {
 
   //
-  // See upcoming paper for explanation ;-)
+  // See forthcoming paper for explanation ;-)
   //
 
 #ifdef DEBUG
@@ -50,6 +61,8 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
   if (x0 < xl) x0 = xl;  if (x0 > xu) x0 = xu;
   if (y0 < yl) y0 = yl;  if (y0 > yu) y0 = yu;
 
+
+  // preliminary bound tightening
   if (wl >= 0) {
     if        ((xl >= 0) || (yl >= 0) || (xl * yl < wl - COUENNE_EPS)) {
       if (xl < 0) xl = 0;
@@ -73,39 +86,26 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
   bool 
     flipX = xl < 0,
     flipY = yl < 0,
-    flipW;
+    flipW = false;
 
-  { 
-    CouNumber tmp, tmp2;
+  if (flipX && flipY) { // swap bounds on x and y
 
-    if (flipX && flipY) { // swap bounds on x and y
+    invertInterval (xl,xu,x0);
+    invertInterval (yl,yu,y0);
 
-      tmp =  xl;     tmp2 =  yl; 
-      xl  = -xu;     yl   = -yu; 
-      xu  = -tmp;    yu   = -tmp;
+  } else if (flipX) { // swap bounds on x and w only
 
-      x0  = -x0;     y0   = -y0;
+    invertInterval (xl,xu,x0);
+    invertInterval (wl,wu,w0);
 
-    } else if (flipX) { // swap bounds on x and w only
+    flipW = true;
 
-      tmp =  xl;     tmp2 =  wl; 
-      xl  = -xu;     wl   = -wu; 
-      xu  = -tmp;    wu   = -tmp;
+  } else if (flipY) { // swap bounds on y and w only
 
-      x0  = -x0;     w0   = -w0;
+    invertInterval (yl,yu,y0);
+    invertInterval (wl,wu,w0);
 
-      flipW = true;
-
-    } else if (flipY) { // swap bounds on y and w only
-
-      tmp =  yl;     tmp2 =  wl; 
-      yl  = -yu;     wl   = -wu; 
-      yu  = -tmp;    wu   = -tmp;
-
-      y0  = -y0;     w0   = -w0;
-
-      flipW = true;
-    }
+    flipW = true;
   }
 
 #ifdef DEBUG
@@ -146,24 +146,34 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
   // || flipY)
 
   CouNumber
-    cX, cY, cW, c0,
-    cXp, cYp, cWp, c0p; // these only if two inequalities are added 
+    cX,  cY,  cW,  c0,  c0X,  c0Y,  c0W,
+    cXp, cYp, cWp, c0p, c0Xp, c0Yp, c0Wp; // these only if two inequalities are added 
 
-  bool twoIneqs = false;
+  bool 
+    twoIneqs   = false, // generate two inequalities for weird case
+    upperCurve = false; // has lifting taken place from upper curve?
 
   if (xLow >= xl && xUpp <= xu &&
       yLow >= yl && yUpp <= yu) {
 
-    //printf ("easy lifting:\n");
+#ifdef DEBUG
+    printf ("easy lifting:\n");
+#endif
 
     // Case 2: both are inside. Easy lifting...
-    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW, c0))
+    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW))
       return;
+
+    c0X = cX * xLow;
+    c0Y = cY * yLow;
+    c0W = cW * wl;
 
   } else if (xLow >= xl && yLow >= yl && 
 	     (xUpp > xu || yUpp > yu)) {
 
-    //printf ("through lower, not upper:\n");
+#ifdef DEBUG
+    printf ("through lower, not upper:\n");
+#endif
 
     // Case 3a and 3b: through lower curve, but not upper. 
 
@@ -183,13 +193,20 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
       return;
 
     // Otherwise, lift inequality on lower point
-    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW, c0))
+    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW))
       return;
+
+    c0X = cX * xLow;
+    c0Y = cY * yLow;
+    c0W = cW * wl;
 
   } else if (xUpp <= xu && yUpp <= yu && 
 	     (xLow < xl || yLow < yl)) {
 
-    //printf ("through upper, not lower:\n");
+#ifdef DEBUG
+    printf ("through upper, not lower:\n");
+#endif
+
     // Case 4a and 4b: viceversa (lift for validity)
 
     if (yLow < yl) { // upper intersect is South; place it within box
@@ -207,14 +224,22 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
     if (xUpp > xu || yUpp > yu) // McCormick's suffice
       return;
 
+    upperCurve = true;
+
     // Otherwise, lift inequality on UPPER point
-    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW, c0))
+    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cX, cY, cW))
       return;
+
+    c0X = cX * xUpp;
+    c0Y = cY * yUpp;
+    c0W = cW * wu;
 
   } else if ((xLow < xl && xUpp > xu) ||
 	     (yLow < yl && yUpp > yu)) {
 
-    //printf ("between lower and upper:\n");
+#ifdef DEBUG
+    printf ("between lower and upper:\n");
+#endif
 
     // Case 5: both outside of bounding box, N and S or W and
     //         E. Separate both from lower and from upper
@@ -235,9 +260,18 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
     // Nothing to find. Just separate two inequalities at the same
     // point, just using different support
-    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX,  cY,  cW,  c0) ||
-	genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cXp, cYp, cWp, c0p))
+    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX,  cY,  cW) ||
+	genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cXp, cYp, cWp))
       return;
+
+#ifdef DEBUG
+    printf ("coeffs: (%g,%g,%g) [(%g,%g,%g)]\n", 
+	    cX,cY,cW, cXp, cYp, cWp);
+#endif
+
+    c0X = cX * xLow;    c0Xp = cXp * xUpp;
+    c0Y = cY * yLow;    c0Yp = cYp * yUpp;
+    c0W = cW * wl;      c0Wp = cWp * wu;  
 
     twoIneqs = true;
 
@@ -254,15 +288,23 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
   // Re-transform back into original variables
 
-  if (flipX) {cX = -cX; cXp = -cXp;}
-  if (flipY) {cY = -cY; cYp = -cYp;}
-  if (flipW) {cW = -cW; cWp = -cWp;}
+  if (flipX) {cX = -cX; cXp = -cXp; c0X = -c0X; c0Xp = -c0Xp;}
+  if (flipY) {cY = -cY; cYp = -cYp; c0Y = -c0Y; c0Yp = -c0Yp;}
+  if (flipW) {cW = -cW; cWp = -cWp; c0W = -c0W; c0Wp = -c0Wp;}
+
+  c0  = c0X  + c0Y  + c0W;
+
+#ifdef DEBUG
+  printf ("there are cuts\n");
+#endif
 
   //cg -> createCut (cs, alpha*wb + 2*wb/xt, sign, wi, alpha, yi, 1., xi, wb/(xt*xt));
-  cg   -> createCut (cs, -c0,  flipW ? +1 : -1, wi, cW,  yi, -cY,  xi, -cX);
+  cg   -> createCut (cs, c0,  1, wi, cW,  yi, cY,  xi, cX);
 
-  if (twoIneqs) 
-    cg -> createCut (cs, -c0p, flipW ? +1 : -1, wi, cWp, yi, -cYp, xi, -cXp);
+  if (twoIneqs) {
+    c0p = c0Xp + c0Yp + c0Wp;
+    cg -> createCut (cs, c0p, 1, wi, cWp, yi, cYp, xi, cXp);
+  }
 }
 
 
@@ -275,7 +317,7 @@ int findIntersection (CouNumber  x0, CouNumber  y0,
 		      CouNumber *xA, CouNumber *yA,
 		      CouNumber *xB, CouNumber *yB) {
 
-  // The parametric curve is of the form
+  // The parametric line is of the form
   //
   //  x = x0 + t (x1-x0)
   //  y = y0 + t (y1-y0)
@@ -332,7 +374,7 @@ int findIntersection (CouNumber  x0, CouNumber  y0,
 int genMulCoeff (CouNumber x1, CouNumber y1, 
 		  CouNumber x2, CouNumber y2, 
 		  char whichUse,
-		  CouNumber &cX, CouNumber &cY, CouNumber &cW, CouNumber &c0) {
+		  CouNumber &cX, CouNumber &cY, CouNumber &cW) {
 
   // the x-y slope of this constraint must be tangent to a curve xy=k
   // at (xD,yD). Easy:
@@ -349,19 +391,29 @@ int genMulCoeff (CouNumber x1, CouNumber y1,
 
   cX = yD;
   cY = xD;
-  c0 = 2*xD*yD;
+  //c0 = 2*xD*yD;
+
+#ifdef DEBUG
+    printf ("points: (%g,%g) (%g,%g), cW = (%g - %g) / %g = %g\n", 
+	    xD,yD, xO,yO, 2*xD*yD, (cX*xO + cY*yO), (xO*yO - xD*yD),
+	    (2*xD*yD - (cX*xO + cY*yO)) / (xO*yO - xD*yD));
+#endif
 
   // Now the hard part: lift it so that it touches the other curve
 
   if (fabs (xO*yO - xD*xD) < COUENNE_EPS) 
-    return 1;
+    return 1; // no cut if the two points are on the same curve
 
-  cW = (c0 - (cX*xO + cY*yO)) / (xO*yO - xD*xD);
+  // should ALWAYS be negative
+  cW = (2*xD*yD - (cX*xO + cY*yO)) / (xO*yO - xD*yD);
 
-  c0 += cW * xD*yD;
+  //c0 += cW * xD*yD;
 
-  if ((xO < xD) || (yO < yD))
-    cW = -cW;
+  //if ((xO < xD) || (yO < yD))
+  //cW = -cW;
+
+  //if (xO*yO < xD*yD)
+  //cW = -cW;
 
   return 0;
 }
