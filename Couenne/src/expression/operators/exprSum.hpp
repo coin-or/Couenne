@@ -78,7 +78,7 @@ class exprSum: public exprOp {
    *  \f$w = a0 + \sum_{i\in I1} a_i x_i + \sum_{i\in I2} a_i x_i\f$ 
    *
    *  is given such that all \f$a_i\f$ are positive for \f$i \in I1\f$ and
-   *  negative for \f$i \in I2\f$. If the bounds on \f$w \in [l,b]\f$, implied
+   *  negative for \f$i \in I2\f$. If the bounds on \f$w \in [l,u]\f$, implied
    *  bounds on all \f$x_i, i\in I1 \cup I2\f$ are as follows:
    *
    *  \f$\forall i\in I1\f$
