@@ -148,34 +148,42 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
     for (int i=0; i < nVars (); i++) {
 
+      exprVar *v = variables_ [i];
+
       if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
-	if (variables_ [i] -> Type () == AUX) {
+	if (v -> Type () == AUX) {
 	  printf ("checking aux ");
-	  variables_ [i] -> print (); printf (" := ");
-	  variables_ [i] -> Image () -> print (); 
+	  v -> print (); printf (" := ");
+	  v -> Image () -> print (); 
 	  printf (" --- %.12e = %.12e [%.12e]; {", 
-		  (*(variables_ [i])) (), 
-		  (*(variables_ [i] -> Image ())) (),
-		  (*(variables_ [i])) () -
-		  (*(variables_ [i] -> Image ())) ());
+		  (*(v)) (), 
+		  (*(v -> Image ())) (),
+		  (*(v)) () -
+		  (*(v -> Image ())) ());
 	  //for (int j=0; j<nVars (); j++)
 	  //printf ("%.12e ", (*(variables_ [j])) ());
 	  printf ("}\n");
 	}
       }
 
-      CouNumber delta;
-
       // check if auxiliary has zero infeasibility
 
-      if ((variables_ [i] -> Type () == AUX) && 
-	  (fabs (delta = (*(variables_ [i])) () - 
-		 (*(variables_ [i] -> Image ())) ()) > feas_tolerance_)) {
+      if (v -> Type () == AUX) {
 
-	Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_PROBLEM,
-			"checkNLP: auxiliarized %d violated (%g)\n", i, delta);
+	CouNumber
+	  varVal = (*v) (),
+	  imgVal = (*(v -> Image ())) (),
+	  delta  = varVal - imgVal,
+	  normz  = fabs (delta) / (1 + 0.5 * (fabs (varVal) + fabs (imgVal)));
 
-	throw infeasible;
+	if (normz > feas_tolerance_) {
+
+	  Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM,
+			      "checkNLP: auxiliary %d violates tolerance %g by %g\n", 
+			      i, feas_tolerance_, delta);
+
+	  throw infeasible;
+	}
       }
     }
 
