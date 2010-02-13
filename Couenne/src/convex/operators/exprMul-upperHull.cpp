@@ -36,15 +36,19 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
 #ifdef DEBUG
   printf ("entering points: ===================================================\n");
-  printf ("x: %9g\t[%9g\t%9g]\n", x0, xl, xu);
-  printf ("y: %9g\t[%9g\t%9g]\n", y0, yl, yu);
-  printf ("w: %9g\t[%9g\t%9g]\n", w0, wl, wu);
+  printf ("x [%d]: %9g\t[%9g\t%9g]\n", xi, x0, xl, xu);
+  printf ("y [%d]: %9g\t[%9g\t%9g]\n", yi, y0, yl, yu);
+  printf ("w [%d]: %9g\t[%9g\t%9g]\n", wi, w0, wl, wu);
 #endif
 
   // Preprocess to reduce everything to a first-orthant problem
 
-  if ((wl < 0) && (wu > 0)) // nothing to tighten
+  if ((wl <  0 && wu >  0)) // nothing to tighten
     return;
+
+  // project back into bounding box
+  if (x0 < xl) x0 = xl;  if (x0 > xu) x0 = xu;
+  if (y0 < yl) y0 = yl;  if (y0 > yu) y0 = yu;
 
   if (wl >= 0) {
     if        ((xl >= 0) || (yl >= 0) || (xl * yl < wl - COUENNE_EPS)) {
@@ -140,8 +144,6 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
   // OK, if you are here there will be at least one cut. Define
   // coefficients and rhs --- will have to change them back if (flipX
   // || flipY)
-
-  //printf ("there will be cuts!\n");
 
   CouNumber
     cX, cY, cW, c0,
@@ -241,9 +243,11 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
   } else {
 
+#ifdef DEBUG
     printf ("points are in a weird position:\n");
     printf ("lower: %9g\t%9g\tprod %9g\n", xLow, yLow, xLow*yLow);
     printf ("upper: %9g\t%9g\tprod %9g\n", xUpp, yUpp, xUpp*yUpp);
+#endif
 
     return;
   }
