@@ -152,6 +152,33 @@ bool CouenneProblem::standardize () {
     (*i) -> print ();
 #endif
 
+    CouNumber 
+      conLb = (*((*i) -> Lb ())) (),
+      conUb = (*((*i) -> Ub ())) ();
+
+    // sanity check: if (due to bad model or redundancies) the
+    // constraint's body is constant, check if it's within bounds.
+
+    expression *eBody = (*i) -> Body ();
+
+    if (eBody -> Linearity () <= CONSTANT) {
+
+      CouNumber bodyVal = (*eBody)();
+      if ((bodyVal < conLb - COUENNE_EPS) ||
+	  (bodyVal > conUb + COUENNE_EPS)) { // all variables eliminated, but out of bounds
+	
+	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, 
+			  "Constraint %d: all variables eliminated, but value %g out of bounds [%g,%g]\n", 
+			  bodyVal, conLb, conUb);
+	retval = false;
+	break;
+
+      } else {
+	iters2erase.push_back (i);
+	continue; // all variables eliminated and constraint is redundant
+      }
+    }
+
     exprAux *aux = (*i) -> standardize (this);
 
 #ifdef DEBUG
