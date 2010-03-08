@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of powers
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -19,6 +19,7 @@
 #include "exprMul.hpp"
 #include "exprDiv.hpp"
 #include "exprLog.hpp"
+//#include "exprOpp.hpp"
 #include "exprConst.hpp"
 #include "CouenneProblem.hpp"
 
@@ -72,6 +73,34 @@ expression *exprPow::simplify () {
 	arglist_ [0] = arglist_ [1] = NULL;
 	return ret;
       }
+
+      //
+      // x^k = x for x binary. Too bad we don't know bounds yet, so the code below will give segfault
+
+      //       // is it an integer variable with bounds [-1,0] or [0,1]
+      //       else if ((arglist_ [0] -> Type () == VAR) && (arglist_ [0] -> isDefinedInteger ())) {
+
+      // 	CouNumber lb, ub;
+      // 	arglist_ [0] -> getBounds (lb, ub);
+
+      // 	if ((fabs (lb)      < COUENNE_EPS) &&
+      // 	    (fabs (ub - 1.) < COUENNE_EPS)) {  // {0,1}
+
+      // 	  delete arglist_ [1];
+      // 	  expression *ret = arglist_ [0];
+      // 	  arglist_ [0] = arglist_ [1] = NULL;
+      // 	  return ret;
+
+      // 	} else if ((fabs (lb + 1.) < COUENNE_EPS) &&
+      // 		   (fabs (ub)      < COUENNE_EPS)) { // {-1,0}
+
+      // 	  delete arglist_ [1];
+      // 	  expression *ret = new exprOpp (arglist_ [0]);
+      // 	  arglist_ [0] = arglist_ [1] = NULL;
+      // 	  return ret;
+      // 	}
+      //       }
+
     }
 
   return NULL;

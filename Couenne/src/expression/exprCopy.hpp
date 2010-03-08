@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the class exprCopy
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -142,6 +142,10 @@ class exprCopy: public expression {
 
   inline bool isInteger ()
   {return copy_ -> isInteger ();}
+
+  /// is this expression DEFINED as integer?
+  virtual inline bool isDefinedInteger ()
+  {return copy_ -> isDefinedInteger ();}
 
   /// Get lower and upper bound of an expression (if any)
   inline void getBounds (expression *&lower, expression *&upper) 

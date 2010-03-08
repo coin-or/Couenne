@@ -194,7 +194,7 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
       *RC = psi -> getReducedCost ();
 
     if (jnlst_ -> ProduceOutput (J_MATRIX, J_BOUNDTIGHTENING)) {
-      printf ("REDUCED COST BT:\n");
+      printf ("REDUCED COST BT (LB=%g, UB=%g):\n", LB, UB);
       for (int i=0; i < nVars (); i++) 
 	printf ("%3d %10e [%10e %10e] rc %10e\n", i, X [i], L [i], U [i], RC [i]);
       printf ("-----------\n");

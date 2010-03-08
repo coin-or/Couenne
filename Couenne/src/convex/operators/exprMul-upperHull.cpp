@@ -30,10 +30,10 @@ int genMulCoeff (CouNumber x1, CouNumber y1,
 inline void invertInterval (register double &l, register double &u, register double x) {
 
   register double tmp = l; 
-  l  = -u; 
-  u  = -tmp;
+  l = -u; 
+  u = -tmp;
 
-  x  = -x;
+  x = -x;
 }
 
 void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs, 
@@ -335,8 +335,8 @@ int findIntersection (CouNumber  x0, CouNumber  y0,
 
   CouNumber
     a = (x1-x0) * (y1-y0),
-    b = x0*y1 + y0*x1 - 2*x0*y0, // x0 * (y1-y0) + y0 * (x1-x0)
-    c = x0 * y0;
+    c = x0 * y0,
+    b = x0*y1 + y0*x1 - 2*c; // x0 * (y1-y0) + y0 * (x1-x0)
 
   if (fabs (a) < COUENNE_EPS)
     return 1;
@@ -349,14 +349,14 @@ int findIntersection (CouNumber  x0, CouNumber  y0,
     tL1 = (- b - sqrt (b*b - 4*a*(c-*wl))) / (2*a);
     tL2 = (- b + sqrt (b*b - 4*a*(c-*wl))) / (2*a);
     //printf ("solutions L: %g %g (b2-4ac=%g)\n", tL1, tL2, b*b - 4*a*(c-*wl));
-    tL = (tL1 < -COUENNE_EPS) ? tL2 : tL1;
+    tL = (tL1 < 0) ? tL2 : tL1;
   }
 
   if (wu) {
     tU1 = (- b - sqrt (b*b - 4*a*(c-*wu))) / (2*a);
     tU2 = (- b + sqrt (b*b - 4*a*(c-*wu))) / (2*a);
     //printf ("solutions U: %g %g (b2-4ac=%g)\n", tU1, tU2, b*b - 4*a*(c-*wu));
-    tU = (tU1 < -COUENNE_EPS) ? tU2 : tU1;
+    tU = (tU1 < 0) ? tU2 : tU1;
   }
 
   if (xA) *xA = x0 + tL * (x1-x0);   if (yA) *yA = y0 + tL * (y1-y0);

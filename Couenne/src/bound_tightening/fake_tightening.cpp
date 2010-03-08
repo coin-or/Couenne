@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    fake_tightening.cpp
  * Author:  Pietro Belotti
  * Purpose: fake single bounds in variables to exclude parts of the solution space 
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007.
  * This file is licensed under the Common Public License (CPL)
  */
 

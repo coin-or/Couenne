@@ -4,7 +4,7 @@
  * Author:  Stefan Vigerske
  * Purpose: create alpha-convexification of a quadratic expression
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-09.
  * This file is licensed under the Common Public License (CPL)
  */
 

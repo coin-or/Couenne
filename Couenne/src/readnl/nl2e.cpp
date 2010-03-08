@@ -126,6 +126,8 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
 
     if (j >= nOrigVars_) // common expression
       // use base pointer otherwise the .a field returns an awkward, out-of-bound index
+      // TODO: fix! In itointqor.nl should return v51=y44 but returns v52=y44
+      //                                          v??=y39 but returns v79=y39
       j = ((expr_v *) e) - ((const ASL_fg *) asl) -> I.var_e_; 
 
     if (j >= nOrigVars_ + ndefined_) {

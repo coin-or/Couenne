@@ -44,7 +44,7 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
   if (fabs (c3) <= 1.e-21) {                                    i3 = -1;} // shift coeff/index to
   if (fabs (c2) <= 1.e-21) {                  c2 = c3; i2 = i3; i3 = -1;} // keep consistency
   if (fabs (c1) <= 1.e-21) {c1 = c2; i1 = i2; c2 = c3; i2 = i3; i3 = -1;}
-  // why 1.0e-21? Look at CoinPackedMatrix.cpp:2188
+  // why 1.e-21? Look at CoinPackedMatrix.cpp:2273
 
 #if 0
   if (i1 >= 0) {if (fabs (c1) > COU_MAX_COEFF) numerics = true; nterms++;} else c1 = 0;

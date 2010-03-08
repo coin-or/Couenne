@@ -137,7 +137,8 @@ void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
   //    alpha = [-yu + l/xt - l/(xt^2)(xu-xt)] / (xu*yu - l)
 
 
-  if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepSimple) {
+  if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepSimple || 
+      fabs (wu - wl) < COUENNE_EPS) {
 
     if ((x0 > xl + COUENNE_EPS) && (y0 > yl + COUENNE_EPS) &&
 	(x0 < xu + COUENNE_EPS) && (y0 < yu + COUENNE_EPS)) {

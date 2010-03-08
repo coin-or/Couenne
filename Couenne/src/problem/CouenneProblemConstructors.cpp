@@ -234,5 +234,4 @@ void CouenneProblem::initOptions(SmartPtr<OptionsList> options) {
   multilinSep_ = (s == "none"   ? CouenneProblem::MulSepNone   :
 		  s == "simple" ? CouenneProblem::MulSepSimple :
                  		  CouenneProblem::MulSepTight);
-
 }

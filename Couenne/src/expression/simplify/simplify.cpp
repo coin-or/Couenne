@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: symbolic expression simplifier
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -23,7 +23,7 @@ expression *exprOp:: simplify () {
 
     expression *subst;
 
-    if ((subst = (arglist_ [i]) -> simplify ())) {
+    if ((subst = arglist_ [i] -> simplify ())) {
 
       delete arglist_ [i];
       arglist_ [i] = subst;
@@ -54,6 +54,8 @@ expression *exprUnary:: simplify () {
       delete subst;
 
       return ret;
-    } else return NULL;
-  } else return NULL;
+    } 
+  }
+
+  return NULL;
 }

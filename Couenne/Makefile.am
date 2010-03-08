@@ -15,7 +15,7 @@ AUTOMAKE_OPTIONS = foreign
 SUBDIRS = \
 	  src/util \
 	  src/expression
-	  
+
 if COIN_HAS_ASL
 SUBDIRS += src/readnl
 endif
