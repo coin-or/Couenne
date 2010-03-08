@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the exponential of a function
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -60,7 +60,7 @@ class exprExp: public exprUnary {
   virtual enum expr_type code () {return COU_EXPREXP;}
 
   /// Implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
 
   /// Set up branching object by evaluating many branching points for
   /// each expression's arguments

@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods to convexify opposite of expressions
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -33,7 +33,7 @@ void exprOpp::generateCuts (expression *w, //const OsiSolverInterface &si,
 
     if (xind < 0) {
       printf ("#### invalid index for exprOpp::gencuts()\n");
-      return;
+      exit (-1);
     }
 
     OsiColCut *cut = new OsiColCut;
@@ -52,7 +52,11 @@ void exprOpp::generateCuts (expression *w, //const OsiSolverInterface &si,
 
     delete (cut);
   }
-  else // easy... 
-    if (cg -> isFirst ())
-      cg -> createCut (cs, 0., 0, w->Index (), 1., argument_->Index (), 1.);
+  else // easy...
+
+    if (cg -> isFirst ()) {
+
+      int wi = w -> Index ();
+      cg -> createCut (cs, 0., cg -> Problem () -> Var (wi) -> sign (), wi, 1., argument_->Index (), 1.);
+    }
 }

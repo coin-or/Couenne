@@ -4,11 +4,12 @@
  * Author:  Pietro Belotti
  * Purpose: methods of the class for defining variables
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneCutGenerator.hpp"
+#include "CouenneProblem.hpp"
 #include "CouenneObject.hpp"
 #include "exprAux.hpp"
 #include "exprVar.hpp"
@@ -38,20 +39,18 @@ void exprVar::generateCuts (expression *w, //const OsiSolverInterface &si,
 			    t_chg_bounds *chg, int,
 			    CouNumber, CouNumber) {
   if (cg -> isFirst ())
-    cg -> createCut (cs, 0., 0, w -> Index (), 1., varIndex_, -1);
+    cg -> createCut (cs, 0., cg -> Problem () -> Var (w -> Index ()) -> sign (), w -> Index (), 1., varIndex_, -1);
 }
 
 
 /// implied bound processing. Expression w = x, upon change in lower
 /// or upper bound of w, whose index is wind
-bool exprVar::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprVar::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   bool res = false;
 
-  if (updateBound (-1, l + varIndex_, l [wind])) 
-    {res = true; chg [varIndex_].setLower(t_chg_bounds::CHANGED);}
-  if (updateBound (+1, u + varIndex_, u [wind])) 
-    {res = true; chg [varIndex_].setUpper(t_chg_bounds::CHANGED);}
+  if (updateBound (-1, l + varIndex_, sign == expression::GEQ ? -COIN_DBL_MAX : l [wind])) {res = true; chg [varIndex_].setLower(t_chg_bounds::CHANGED);}
+  if (updateBound (+1, u + varIndex_, sign == expression::LEQ ?  COIN_DBL_MAX : u [wind])) {res = true; chg [varIndex_].setUpper(t_chg_bounds::CHANGED);}
 
   return res;
 }

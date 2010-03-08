@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of subtractions
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -77,7 +77,7 @@ class exprSub: public exprOp {
   virtual enum expr_type code () {return COU_EXPRSUB;}
 
   /// Implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
 };
 
 

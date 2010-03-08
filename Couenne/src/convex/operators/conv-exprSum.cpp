@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods to standardize/convexify sum expressions
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -60,8 +60,10 @@ void exprSum::generateCuts (expression *w, //const OsiSolverInterface &si,
   delete [] index;
   delete [] coeff;
 
-  if (lb > -COUENNE_INFINITY) cut -> setLb (lb);
-  if (ub <  COUENNE_INFINITY) cut -> setUb (ub);
+  enum auxSign sign = cg -> Problem () -> Var (w -> Index ()) -> sign ();
+
+  if (lb > -COUENNE_INFINITY && (sign != expression::GEQ)) cut -> setLb (lb);
+  if (ub <  COUENNE_INFINITY && (sign != expression::LEQ)) cut -> setUb (ub);
 
   /// added only once, it is global
   cut -> setGloballyValid ();

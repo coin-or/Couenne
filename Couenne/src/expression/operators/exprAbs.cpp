@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprAbs.cpp
  * Author:  Pietro Belotti
  * Purpose: definition of the absulute value of a function
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -82,12 +82,12 @@ expression *exprAbs::differentiate (int index) {
 /// implied bound processing for expression w = |x|, upon change in
 /// lower- and/or upper bound of w, whose index is wind
 
-bool exprAbs::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprAbs::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   int index = argument_ -> Index ();
 
-  CouNumber *xl = l + index, wl = l [wind],
-            *xu = u + index, wu = u [wind];
+  CouNumber *xl = l + index, wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
+            *xu = u + index, wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
 
   // for w >= b > 0, we can only improve xlb if it is at least  b
   //                                     xub             most  -b

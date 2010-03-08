@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: implementation of convexification methods for exprGroup
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -190,7 +190,7 @@ void exprGroup::getBounds (CouNumber &lb, CouNumber &ub) {
 
 
 // generate equality between *this and *w
-void exprGroup::generateCuts (expression *w, //const OsiSolverInterface &si, 
+void exprGroup::generateCuts (expression *w,
 			      OsiCuts &cs, const CouenneCutGenerator *cg,
 			      t_chg_bounds *chg, 
 			      int wind, CouNumber lb, CouNumber ub) {
@@ -227,7 +227,7 @@ void exprGroup::generateCuts (expression *w, //const OsiSolverInterface &si,
   for (int i=0; el != lcoeff_.end (); ++el) 
 
     if (fabs (el -> second) > 1.0e-21) { 
-      // why 1.0e-21? Look at CoinPackedMatrix.cpp:2188
+      // why 1.0e-21? Look at CoinPackedMatrix.cpp:2237
 
       coeff [i   + displacement] = el -> second; 
       index [i++ + displacement] = el -> first -> Index ();
@@ -253,8 +253,13 @@ void exprGroup::generateCuts (expression *w, //const OsiSolverInterface &si,
   delete [] index;
   delete [] coeff;
 
-  if (lb > -COUENNE_INFINITY) cut -> setLb (lb);
-  if (ub <  COUENNE_INFINITY) cut -> setUb (ub);
+  enum auxSign sign;
+
+  if (wind < 0)
+    sign = cg -> Problem () -> Var (w -> Index ()) -> sign ();
+
+  if (lb > -COUENNE_INFINITY && (wind >= 0 || sign != expression::GEQ)) cut -> setLb (lb);
+  if (ub <  COUENNE_INFINITY && (wind >= 0 || sign != expression::LEQ)) cut -> setUb (ub);
 
   cut -> setGloballyValid (); // added only once, it is global
   cs.insert (cut);

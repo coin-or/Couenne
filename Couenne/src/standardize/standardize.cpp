@@ -5,7 +5,7 @@
  * Author:  Pietro Belotti
  * Purpose: standardize all expressions in a problem
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -324,7 +324,7 @@ bool CouenneProblem::standardize () {
     for (std::vector <exprVar *>::iterator i = variables_.begin (); 
        i != variables_.end (); ++i)
 
-    if ((*i) -> Type () == AUX) {
+    if (((*i) -> Type () == AUX) && ((*i) -> sign () == expression::EQ)) {
 
       int type = (*i) -> Image () -> Type ();
 
@@ -397,7 +397,8 @@ bool CouenneProblem::standardize () {
 
     if ((Var (i) -> Multiplicity () > 0) &&
 	(Var (i) -> Type () == AUX) &&
-	(Var (i) -> Image () -> isInteger ()))
+	(Var (i) -> Image () -> isInteger ()) &&
+	(Var (i) -> sign () == expression::EQ))
       Var (i) -> setInteger (true);
 
     //if (Var (i) -> Multiplicity () == 0)

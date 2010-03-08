@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the class expression
  *
- * (C) Carnegie-Mellon University, 2006-08-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -46,6 +46,11 @@ struct compNode;
 class expression {
 
  public:
+
+  /// "sign" of the constraint defining an auxiliary. If the auxiliary
+  /// is defined as \f$w \le f(x)\f$, then it is LEQ. It is EQ and GEQ,
+  /// respectively, if it is defined with \f$=\f$ and  \f$\ge\f$.
+  enum auxSign {UNDEF=-2, LEQ=-1, EQ, GEQ};
 
   /// Constructor
   expression () {}
@@ -208,7 +213,7 @@ class expression {
   /// (auxiliary) variable in question and the current lower/upper
   /// bound. The method returns true if there has been a change on any
   /// bound on the variables on which the expression depends.
-  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *)
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ)
   {return false;}
 
   /// multiplicity of a variable

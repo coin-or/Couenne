@@ -4,18 +4,19 @@
  * Author:  Pietro Belotti
  * Purpose: method to convexify multiplications
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneTypes.hpp"
 #include "exprMul.hpp"
 #include "CouenneCutGenerator.hpp"
+#include "CouenneProblem.hpp"
 
 
 /// generate convexification cut for constraint w = x*y
 
-void exprMul::generateCuts (expression *w, //const OsiSolverInterface &si, 
+void exprMul::generateCuts (expression *w, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int wind, 
 			    CouNumber lbw, CouNumber ubw) {
@@ -99,7 +100,7 @@ void exprMul::generateCuts (expression *w, //const OsiSolverInterface &si,
 	// w = c0*c1, which is either because the intervals got very
 	// narrow, or because these are indeed constant (which should
 	// have been dealt with in simplify(), but who knows...)
-	cg -> createCut (cs, c0 * c1, 0, wi, 1.);
+	cg -> createCut (cs, c0 * c1, cg -> Problem () -> Var (wi) -> sign (), wi, 1.);
 
       else {
 
@@ -109,12 +110,14 @@ void exprMul::generateCuts (expression *w, //const OsiSolverInterface &si,
 	if (is0const) {coe = c0; ind = yi;} // c*y
 	else          {coe = c1; ind = xi;} // x*c
 
-	cg -> createCut (cs, 0., 0, wi, -1., ind, coe);
+	cg -> createCut (cs, 0., cg -> Problem () -> Var (wi) -> sign (), wi, 1., ind, -coe);
       }
     }
 
     return;
   }
+
+  enum auxSign sign = cg -> Problem () -> Var (wi) -> sign ();
 
   // add different cuts, to cut out current point in bounding box but
   // out of the hyperbola's belly
@@ -125,5 +128,8 @@ void exprMul::generateCuts (expression *w, //const OsiSolverInterface &si,
   unifiedProdCuts (cg, cs, 
 		   xi, x0,      xl, xu, 
 		   yi, y0,      yl, yu,
-		   wi, (*w) (), wl, wu, chg);
+		   wi, (*w) (), 
+		   sign == expression::LEQ ? -COIN_DBL_MAX : wl, 
+		   sign == expression::GEQ ?  COIN_DBL_MAX : wu,
+		   chg);
 }

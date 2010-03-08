@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods of the class of auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -22,14 +22,17 @@ class Domain;
 //#define DEBUG
 
 // auxiliary expression Constructor
-exprAux::exprAux (expression *image, int index, int rank, enum intType isInteger, Domain *d): 
+exprAux::exprAux (expression *image, int index, int rank, 
+		  enum intType isInteger, Domain *d,
+		  enum auxSign sign): 
 
   exprVar       (index, d),
   image_        (image),
   rank_         (rank),
   multiplicity_ (1),
   integer_      (isInteger),
-  top_level_    (false) {
+  top_level_    (false),
+  sign_         (sign) {
 
   // do this later, in standardize()
   //  image_ -> getBounds (lb_, ub_);
@@ -47,7 +50,8 @@ exprAux::exprAux (expression *image, int index, int rank, enum intType isInteger
 
 
 /// Constructor to be used with standardize ([...], false)
-exprAux::exprAux (expression *image, Domain *d):
+exprAux::exprAux (expression *image, Domain *d,
+		  enum auxSign sign):
 
   exprVar       (-1, d),
   image_        (image),
@@ -56,7 +60,8 @@ exprAux::exprAux (expression *image, Domain *d):
   rank_         (-1),
   multiplicity_ (0),
   integer_      (Unset),
-  top_level_    (false) {}
+  top_level_    (false),
+  sign_         (sign) {}
 //(image -> isInteger () ? Integer : Continuous)
 
 
@@ -67,7 +72,8 @@ exprAux::exprAux (const exprAux &e, Domain *d):
   rank_         (e.rank_),
   multiplicity_ (e.multiplicity_),
   integer_      (e.integer_),
-  top_level_    (e.top_level_) {
+  top_level_    (e.top_level_),
+  sign_         (e.sign_) {
 
   //  image_ -> getBounds (lb_, ub_);
   // getBounds (lb_, ub_);
@@ -122,8 +128,8 @@ void exprAux::crossBounds () {
 
   //image_ -> getBounds (lb_, ub_);
 
-  lb_ = new exprMax (lb_, l0);
-  ub_ = new exprMin (ub_, u0);
+  if (sign_ != expression::LEQ) lb_ = new exprMax (lb_, l0);
+  if (sign_ != expression::GEQ) ub_ = new exprMin (ub_, u0);
 }
 
 

@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprLog.cpp
  * Author:  Pietro Belotti
  * Purpose: methods for class logarithm
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -73,7 +73,7 @@ expression *exprLog::differentiate (int index) {
 
 /// implied bound processing for expression w = log(x), upon change in
 /// lower- and/or upper bound of w, whose index is wind
-bool exprLog::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprLog::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   int ind = argument_ -> Index ();
 
@@ -81,12 +81,16 @@ bool exprLog::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     res   = false,
     isint = argument_ -> isInteger();
 
-  if (updateBound (-1, l+ind, isint ? ceil (exp (l [wind]) - COUENNE_EPS) : exp (l [wind]))) {
+  CouNumber 
+    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+
+  if (updateBound (-1, l+ind, isint ? ceil (exp (wl) - COUENNE_EPS) : exp (wl))) {
     res = true; 
     chg [ind].setLower (t_chg_bounds::CHANGED);
   }
 
-  if (updateBound ( 1, u+ind, isint? floor (exp (u [wind]) + COUENNE_EPS) : exp (u [wind]))) {
+  if (updateBound ( 1, u+ind, isint? floor (exp (wu) + COUENNE_EPS) : exp (wu))) {
     res = true; 
     chg [ind].setUpper (t_chg_bounds::CHANGED);
   }

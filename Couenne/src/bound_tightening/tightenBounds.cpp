@@ -1,18 +1,16 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    tightenBounds.cpp
  * Author:  Pietro Belotti
  * Purpose: bound tightening for current linear relaxation
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CglCutGenerator.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
-
-//#define DEBUG
 
 /// Bound propagation for auxiliary variables
 
@@ -27,13 +25,14 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
   // lower bound, depending on the bound changes of the variables
   // they depend on
 
-  if (Jnlst () -> ProduceOutput (J_DETAILED, J_BOUNDTIGHTENING)) {
+  bool dbgOutput = Jnlst () -> ProduceOutput (J_DETAILED, J_BOUNDTIGHTENING);
+
+  if (dbgOutput) {
     // ToDo: Pipe all output through journalist
-    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-		    "  forward  =====================\n  ");
+    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING, "  forward  =====================\n  ");
     int j=0;
     for (int i=0; i < nVars (); i++) 
-      if (variables_ [i] -> Multiplicity () >= 0) {
+      if (variables_ [i] -> Multiplicity () > 0) {
 	Jnlst()->Printf(J_VECTOR, J_BOUNDTIGHTENING,
 			"x_%03d [%+10g %+10g] ", i, 
 			domain_. lb (i),
@@ -64,7 +63,7 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
 			"pre-check: w_%d has infeasible bounds [%.10e,%.10e]. ", i, lower_i, upper_i);
 
-	if (Jnlst()->ProduceOutput(J_DETAILED, J_BOUNDTIGHTENING)) {
+	if (dbgOutput) {
 	  Var (i) -> Lb () -> print (std::cout);
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");
 	  Var (i) -> Ub () -> print (std::cout);
@@ -93,9 +92,12 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
       variables_ [i] -> Image () -> getBounds (ll, uu);
 
       if (variables_ [i] -> isInteger ()) {
-	ll = ceil  (ll - COUENNE_EPS);
-	uu = floor (uu + COUENNE_EPS);
+	if (variables_ [i] -> sign () != expression::LEQ) ll = ceil  (ll - COUENNE_EPS);
+	if (variables_ [i] -> sign () != expression::GEQ) uu = floor (uu + COUENNE_EPS);
       }
+
+      if      (variables_ [i] -> sign () == expression::LEQ) ll = (*(variables_ [i] -> Lb ())) ();
+      else if (variables_ [i] -> sign () == expression::GEQ) uu = (*(variables_ [i] -> Ub ())) ();
 
       if (ll - uu > COUENNE_EPS * (1 + CoinMin (fabs (ll), fabs (uu)))) {
 
@@ -104,7 +106,7 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
 			"w_%d has infeasible bounds [%g,%g]: ", i, ll, uu);
 
-	if (Jnlst()->ProduceOutput(J_DETAILED, J_BOUNDTIGHTENING)) {
+	if (dbgOutput) {
 	  Var (i) -> Lb () -> print (std::cout);
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");
 	  Var (i) -> Ub () -> print (std::cout);
@@ -116,6 +118,14 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	return -1; // declare this node infeasible
       }
 
+      // Enter the sign of this auxiliary: if defined as w <= f(x),
+      // then the lower bound on f(x) shouldn't be propagated to
+      // w. similarly, if defined as w >= f(x), then the same should
+      // hold for the upper bound.
+
+      if (variables_ [i] -> sign () == exprVar::LEQ) ll = -COUENNE_INFINITY;
+      if (variables_ [i] -> sign () == exprVar::GEQ) uu =  COUENNE_INFINITY;
+
       // check if lower bound got higher
       if ((ll > - COUENNE_INFINITY) && 
 	  (ll >= lower_i + COUENNE_EPS) &&
@@ -123,7 +133,7 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	   (fabs (lower_i) < COUENNE_EPS) ||
 	   (fabs (ll / (lower_i) - 1) > COUENNE_EPS)) ) {
 
-	if (Jnlst()->ProduceOutput(J_DETAILED, J_BOUNDTIGHTENING)) {
+	if (dbgOutput) {
 
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
 			  "  prop L %2d [%g,(%g)] -> [%g,(%g)] (%g) ", 
@@ -176,7 +186,7 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	/*printf ("update ubound %d: %g >= %g\n", 
 	  i+j, uu, ub_ [i+j]);*/
 
-	if (Jnlst()->ProduceOutput(J_DETAILED, J_BOUNDTIGHTENING)) {
+	if (dbgOutput) {
 
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
 			  "  prop U %2d [(%g),%g] -> [(%g),%g] (%g) ", 

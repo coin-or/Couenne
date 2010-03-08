@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    problem.cpp
  * Author:  Pietro Belotti
  * Purpose: methods of the class CouenneProblem
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -44,9 +44,9 @@ void CouenneProblem::initAuxs () const {
 
     int indvar = variables_ [i] -> Index ();
 
-    if ((variables_ [i] -> Type () == AUX) &&                   // this is an auxiliary
-	(indvar >= nOrigVars_) || // and not an original, originally
-	(variables_ [i] -> Multiplicity () == 0))               // or a useless one
+    if (((variables_ [i] -> Type () == AUX) &&     // this is an auxiliary
+	 (indvar >= nOrigVars_))            ||     // and not an original, originally
+	(variables_ [i] -> Multiplicity () == 0))  // or a useless one
       //int index = variables_ [i] -> Index ();
       Lb (indvar) = - (Ub (indvar) = COIN_DBL_MAX);
   }
@@ -86,41 +86,43 @@ void CouenneProblem::initAuxs () const {
       continue;
     }
 
+    exprVar *var = variables_ [ord];
+
     // and handle only those with nonzero multiplicity
-    if (variables_ [ord] -> Type () == AUX) {
+    if (var -> Type () == AUX) {
 
       Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
 			  "w_%04d [%10g,%10g] ", ord, Lb (ord), Ub (ord));
 
       CouNumber l, u;
 
-      variables_ [ord] -> Image () -> getBounds (l, u);
+      var -> Image () -> getBounds (l, u);
 
       /*printf ("printing bounds: [%g %g]\n", Lb (ord), Ub (ord));
-      variables_ [ord] -> Lb () -> print (); printf ("\n");
-      variables_ [ord] -> Ub () -> print (); printf ("\n");*/
+      var -> Lb () -> print (); printf ("\n");
+      var -> Ub () -> print (); printf ("\n");*/
 
       Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
 			  " ( --> w_%04d [%10g,%10g] ) vs [%10g %10g]", 
 			  ord, l, u, Lb (ord), Ub (ord));
 
       // set bounds 
-      if ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY) Lb (ord) = -COIN_DBL_MAX;
-      if ((Ub (ord) = CoinMin (Ub (ord), u)) >=  COUENNE_INFINITY) Ub (ord) =  COIN_DBL_MAX;
+      if (var -> sign () != expression::GEQ) if ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY) Lb (ord) = -COIN_DBL_MAX;
+      if (var -> sign () != expression::LEQ) if ((Ub (ord) = CoinMin (Ub (ord), u)) >=  COUENNE_INFINITY) Ub (ord) =  COIN_DBL_MAX;
       //if ((lb_ [ord] = (*(aux -> Lb ())) ()) <= -COUENNE_INFINITY) lb_ [ord] = -DBL_MAX;
       //if ((ub_ [ord] = (*(aux -> Ub ())) ()) >=  COUENNE_INFINITY) ub_ [ord] =  DBL_MAX;
 
       Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
 			  " --> [%10g,%10g]\n", Lb (ord), Ub (ord));
 
-      bool integer = variables_ [ord] -> isInteger ();
+      bool integer = var -> isInteger ();
 
       if (integer) {
 	Lb (ord) = ceil  (Lb (ord) - COUENNE_EPS);
 	Ub (ord) = floor (Ub (ord) + COUENNE_EPS);
       }
 
-      X (ord) = CoinMax (Lb (ord), CoinMin (Ub (ord), (*(variables_ [ord] -> Image ())) ()));
+      X (ord) = CoinMax (Lb (ord), CoinMin (Ub (ord), (*(var -> Image ())) ()));
     }
   }
 
@@ -158,7 +160,8 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 
       if (var -> Type () == AUX) {
 	X (index) =  // addresses of x[] and X() are equal
-	  CoinMax (l, CoinMin (u, (*(var -> Image ())) ())); 
+	  CoinMax ((var -> sign () != expression::LEQ) ? l : -COIN_DBL_MAX, 
+          CoinMin ((var -> sign () != expression::GEQ) ? u :  COIN_DBL_MAX, (*(var -> Image ())) ())); 
       }
     } else X (index) = 0.;
   }
@@ -265,10 +268,11 @@ void CouenneProblem::setCutOff (CouNumber cutoff) const {
   //     Couenne here?
   if ((indobj >= 0) && (cutoff < pcutoff_ -> getCutOff () - COUENNE_EPS)) {
 
-    Jnlst () -> Printf (Ipopt::J_DETAILED, J_PROBLEM,
-			"Setting new cutoff %.10e for optimization variable index %d val = %.10e\n",
-			cutoff, indobj,
-			pcutoff_ -> getCutOff ());
+    if (fabs (cutoff - pcutoff_ -> getCutOff ()) > (1 + fabs (cutoff)) * 2 * SafeCutoff) // avoid too many printouts
+      Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
+			  "Setting new cutoff %.10e for optimization variable index %d val = %.10e\n",
+			  cutoff, indobj,
+			  pcutoff_ -> getCutOff ());
 
     if (Var (indobj) -> isInteger ())
       pcutoff_    -> setCutOff (floor (cutoff + COUENNE_EPS));
@@ -343,7 +347,7 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
     ("feas_tolerance",
      "Tolerance for constraints/auxiliary variables",
      feas_tolerance_default,
-     "Default value is zero.");
+     "Default value is 1e-5.");
 
   roptions -> AddStringOption2 
     ("feasibility_bt",

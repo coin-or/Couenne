@@ -4,13 +4,13 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the opposite -f(x) of a function
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "exprOpp.hpp"
 #include "exprConst.hpp"
-
+#include "CoinHelperFunctions.hpp"
 
 // find bounds of -x given bounds on x
 void exprOpp::getBounds (expression *&lb, expression *&ub) {
@@ -41,7 +41,7 @@ inline expression *exprOpp::differentiate (int index)
 
 /// implied bound processing for expression w = -x, upon change in
 /// lower- and/or upper bound of w, whose index is wind
-bool exprOpp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprOpp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   int ind = argument_ -> Index ();
 
@@ -49,12 +49,16 @@ bool exprOpp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     res    = false, 
     argInt = argument_ -> isInteger ();
 
-  if (updateBound (-1, l + ind, argInt ? ceil  (- u [wind] - COUENNE_EPS) : - u [wind])) {
+  CouNumber 
+    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+
+  if (updateBound (-1, l + ind, argInt ? ceil  (- wu - COUENNE_EPS) : - wu)) {
     res = true; 
     chg [ind].setLower(t_chg_bounds::CHANGED);
   }
 
-  if (updateBound ( 1, u + ind, argInt ? floor (- l [wind] + COUENNE_EPS) : - l [wind])) {
+  if (updateBound ( 1, u + ind, argInt ? floor (- wl + COUENNE_EPS) : - wl)) {
     res = true; 
     chg [ind].setUpper(t_chg_bounds::CHANGED);
   }

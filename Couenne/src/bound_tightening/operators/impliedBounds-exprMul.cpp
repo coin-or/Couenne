@@ -1,26 +1,31 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    impliedBounds-exprMul.cpp
  * Author:  Pietro Belotti
  * Purpose: implied bounds for multiplications
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "exprMul.hpp"
 #include "CouennePrecisions.hpp"
+#include "CoinFinite.hpp"
 
 
 /// implied bound processing for expression w = x*y, upon change in
 /// lower- and/or upper bound of w, whose index is wind
 
-bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   //return false; // !!!
 
   bool resL, resU = resL = false;
   int ind;
+
+  CouNumber 
+    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
 
   if ((arglist_ [ind=0] -> Type () <= CONST) || 
       (arglist_ [ind=1] -> Type () <= CONST)) {
@@ -42,20 +47,20 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
     if (c > COUENNE_EPS) {
 
-      resL = (l [wind] > - COUENNE_INFINITY) && 
-	updateBound (-1, l + ind, argInt ? ceil  (l [wind] / c - COUENNE_EPS) : (l [wind] / c));
-      resU = (u [wind] <   COUENNE_INFINITY) && 
-	updateBound ( 1, u + ind, argInt ? floor (u [wind] / c + COUENNE_EPS) : (u [wind] / c));
+      resL = (wl > - COUENNE_INFINITY) && 
+	updateBound (-1, l + ind, argInt ? ceil  (wl / c - COUENNE_EPS) : (wl / c));
+      resU = (wu <   COUENNE_INFINITY) && 
+	updateBound ( 1, u + ind, argInt ? floor (wu / c + COUENNE_EPS) : (wu / c));
     } 
     else if (c < - COUENNE_EPS) {
 
       //      printf ("w_%d [%g,%g] = %g x_%d [%g,%g]\n", 
       //	      wind, l [wind], u [wind], c, ind, l [ind], u [ind]);
 
-      resL = (u [wind] <   COUENNE_INFINITY) && 
-	updateBound (-1, l + ind, argInt ? ceil  (u [wind] / c - COUENNE_EPS) : (u [wind] / c));
-      resU = (l [wind] > - COUENNE_INFINITY) && 
-	updateBound ( 1, u + ind, argInt ? floor (l [wind] / c + COUENNE_EPS) : (l [wind] / c));
+      resL = (wu <   COUENNE_INFINITY) && 
+	updateBound (-1, l + ind, argInt ? ceil  (wu / c - COUENNE_EPS) : (wu / c));
+      resU = (wl > - COUENNE_INFINITY) && 
+	updateBound ( 1, u + ind, argInt ? floor (wl / c + COUENNE_EPS) : (wl / c));
     } 
 
     if (resL) chg [ind].setLower(t_chg_bounds::CHANGED);
@@ -73,9 +78,9 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     int xi = arglist_ [0] -> Index (),
         yi = arglist_ [1] -> Index ();
 
-    CouNumber *xl = l + xi, *yl = l + yi, wl = l [wind],
-              *xu = u + xi, *yu = u + yi, wu = u [wind];
-
+    CouNumber
+      *xl = l + xi, *yl = l + yi,
+      *xu = u + xi, *yu = u + yi;
 
     // w's lower bound ///////////////////////////////////////////
 

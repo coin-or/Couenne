@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of subtractions
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -116,7 +116,7 @@ void exprSub::getBounds (CouNumber &lb, CouNumber &ub) {
 /// implied bound processing for expression w = x-y, upon change in
 /// lower- and/or upper bound of w, whose index is wind
 
-bool exprSub::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprSub::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   // caution, xi or yi might be -1
   int xi = arglist_ [0] -> Index (),
@@ -126,7 +126,8 @@ bool exprSub::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     return false;
 
   CouNumber xl, xu, yl, yu, 
-            wl = l [wind], wu = u [wind];
+    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind], 
+    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
 
   if (xi==-1) xl =         xu = arglist_ [0] -> Value ();
   else       {xl = l [xi]; xu = u [xi];}

@@ -1,26 +1,27 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    impliedBounds-exprPow.cpp
  * Author:  Pietro Belotti
  * Purpose: implied bounds for power operators
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "exprPow.hpp"
+#include "expression.hpp"
 #include "CoinHelperFunctions.hpp"
 
 /// set implied bounds for function w = x^k, k negative, integer or
 /// inverse integer, and odd
 
-void invPowImplBounds (int, int, CouNumber *, CouNumber *, CouNumber, bool &, bool &);
+void invPowImplBounds (int, int, CouNumber *, CouNumber *, CouNumber, bool &, bool &, enum expression::auxSign);
 
 
 /// implied bound processing for expression w = x^k, upon change in
 /// lower- and/or upper bound of w, whose index is wind
 
-bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum expression::auxSign sign) {
 
   //int xi = arglist_ [0] -> Index ();
   //if (xi>=0) printf ("in implBound-pow: %g,%g\n", l [xi], u [xi]);
@@ -48,8 +49,8 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     isint    =           (fabs (k    - (intk = COUENNE_round (k)))    < COUENNE_EPS), // k   integer
     isinvint = !isint && (fabs (1./k - (intk = COUENNE_round (1./k))) < COUENNE_EPS); // 1/k integer
 
-  CouNumber wl = l [wind], // lower w
-            wu = u [wind]; // upper w
+  CouNumber wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind], // lower w
+            wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind]; // upper w
 
   if ((isint || isinvint) && (intk % 2)) { 
 
@@ -62,7 +63,7 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       if (wu <   COUENNE_INFINITY) resU = updateBound (+1, u + index, safe_pow (wu, 1./k));
 
     } else // slightly more complicated, resort to same method as in exprInv
-      invPowImplBounds (wind, index, l, u, 1./k, resL, resU);
+      invPowImplBounds (wind, index, l, u, 1./k, resL, resU, sign);
   } 
   else 
     if (isint) { // x^k, k integer and even --> non monotone

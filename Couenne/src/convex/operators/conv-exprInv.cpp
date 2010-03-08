@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: convexification and bounding methods for the inverse operator
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -87,11 +87,13 @@ void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
   // special case: l and u are very close, replace function with
   // linear term
 
+  enum auxSign sign = cg -> Problem () -> Var (wi) -> sign ();
+
   if (fabs (u - l) < COUENNE_EPS) {
 
     CouNumber x0 = 0.5 * (u+l);
     if (cL || cR) 
-      cg -> createCut (cs, 2/x0, 0, wi, 1., xi, 1/(x0*x0));
+      cg -> createCut (cs, 2/x0, sign, wi, 1., xi, 1/(x0*x0));
     return;
   }
 
@@ -99,8 +101,8 @@ void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
   if (cL || cR) {
     // bounding box is within ]0,+inf[
-    if ((l> COUENNE_EPS) && (u< COU_MAX_COEFF)) cg -> createCut (cs, 1/l+1/u, -1, wi,1., xi,1/(l*u));
-    if ((u<-COUENNE_EPS) && (l>-COU_MAX_COEFF)) cg -> createCut (cs, 1/l+1/u, +1, wi,1., xi,1/(l*u));
+    if ((l> COUENNE_EPS) && (u< COU_MAX_COEFF) && sign != expression::GEQ) cg -> createCut (cs, 1/l+1/u, -1, wi,1., xi,1/(l*u));
+    if ((u<-COUENNE_EPS) && (l>-COU_MAX_COEFF) && sign != expression::LEQ) cg -> createCut (cs, 1/l+1/u, +1, wi,1., xi,1/(l*u));
     // bounding box is within ]-inf,0[
   }
 
@@ -116,13 +118,15 @@ void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
   if (fabs (u) < COUENNE_EPS) u = (u<0) ? - MIN_DENOMINATOR : MIN_DENOMINATOR;
 
   // bound
-  cg -> addEnvelope 
-    (cs, (l > 0) ? +1 : -1, 
-     inv, oppInvSqr, wi, xi, 
-     (cg -> isFirst ()) ? // is this first call?
+  if ((l > 0 && sign != expression::LEQ) ||
+               (sign != expression::GEQ))
+    cg -> addEnvelope 
+      (cs, (l > 0) ? +1 : -1, 
+       inv, oppInvSqr, wi, xi, 
+       (cg -> isFirst ()) ? // is this first call?
        // place it somewhere in the interval (we don't care)
        ((l > COUENNE_EPS) ? l : u) :
        // otherwise, replace it where it gives deepest cut
        powNewton ((*argument_) (), (*aux) (), inv, oppInvSqr, inv_dblprime),
-     l, u, chg);
+       l, u, chg);
 }

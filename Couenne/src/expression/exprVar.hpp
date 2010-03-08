@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the class exprVar for variables 
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -157,7 +157,7 @@ class exprVar: public expression {
   {return COU_EXPRVAR;}
 
   /// implied bound processing
-  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *);
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
 
   /// rank of an original variable is always one
   virtual inline int rank () 
@@ -197,6 +197,10 @@ class exprVar: public expression {
 				       CouenneProblem *p, 
 				       Bonmin::BabSetupBase *base, 
 				       JnlstPtr jnlst_);
+
+  /// return its sign in the definition constraint
+  virtual inline enum auxSign sign () const 
+  {return exprVar::UNDEF;}
 };
 
 #endif

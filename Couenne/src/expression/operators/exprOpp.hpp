@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the opposite -f(x) of a function
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -79,7 +79,7 @@ class exprOpp: public exprUnary {
     {return argument_ -> isInteger ();}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
 
   /// standardization (to deal with complex arguments)
   exprAux *standardize (CouenneProblem *, bool addAux = true);

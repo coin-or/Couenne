@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprInv.cpp
  * Author:  Pietro Belotti
  * Purpose: definition of inverse of a function (1/f(x))
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -12,7 +12,7 @@
 #include "exprClone.hpp"
 #include "exprMul.hpp"
 #include "CouenneProblem.hpp"
-
+#include "expression.hpp"
 
 // differentiation
 expression *exprInv::differentiate (int index) {
@@ -41,10 +41,11 @@ void exprInv::print (std::ostream &out,
 /// k negative, integer or inverse integer, and odd
 void invPowImplBounds (int wind, int index, 
 		       CouNumber *l, CouNumber *u, CouNumber k,
-		       bool &resL, bool &resU) {
+		       bool &resL, bool &resU, 
+		       enum expression::auxSign sign) {
 
-  CouNumber wl = l [wind], 
-            wu = u [wind];
+  CouNumber wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
+            wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
 
   // 0 <= l <= w <= u
 
@@ -70,7 +71,7 @@ void invPowImplBounds (int wind, int index,
 
 /// implied bound processing for expression w = 1/x, upon change in
 /// lower- and/or upper bound of w, whose index is wind
-bool exprInv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprInv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   // Expression w = 1/x: we can only improve the bounds if 
   //
@@ -83,7 +84,7 @@ bool exprInv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   bool resL, resU = resL = false;
 
-  invPowImplBounds (wind, index, l, u, -1., resL, resU);
+  invPowImplBounds (wind, index, l, u, -1., resL, resU, sign);
 
   bool argInt = argument_ -> isInteger ();
 
@@ -123,6 +124,6 @@ bool exprInv::isCuttable (CouenneProblem *problem, int index) const {
     x = problem -> X (xind),
     y = problem -> X (index);
 
-  return ((problem -> Lb (xind) >= 0) && (x > 0) && (y*x <= 1) ||
-	  (problem -> Ub (xind) <= 0) && (x < 0) && (y*x <= 1));
+  return (((problem -> Lb (xind) >= 0) && (x > 0) && (y*x <= 1)) ||
+	  ((problem -> Ub (xind) <= 0) && (x < 0) && (y*x <= 1)));
 }

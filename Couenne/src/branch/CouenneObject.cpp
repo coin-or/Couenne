@@ -5,7 +5,7 @@
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Base object for variables (to be used in branching)
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -311,11 +311,13 @@ double CouenneObject::infeasibility (const OsiBranchingInformation *info, int &w
 
   problem_ -> domain () -> pop ();
 
+  bool isInt = reference_ -> isInteger ();
+
   if (pseudoMultType_ == INFEASIBILITY) {
 
     double point = info -> solution_ [reference_ -> Index ()];
 
-    if (reference_ -> isInteger ()) {
+    if (isInt) {
       if (retval < intInfeasibility (point)) {
 	if (downEstimate_ <       point  - floor (point)) downEstimate_ =       point  - floor (point);
 	if (upEstimate_   < ceil (point) -        point)  upEstimate_   = ceil (point) -        point;
@@ -326,9 +328,9 @@ double CouenneObject::infeasibility (const OsiBranchingInformation *info, int &w
   }
   else setEstimates (info, &retval, NULL);
 
-  return (reference_ -> isInteger ()) ? 
-    CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
-    retval;
+  return (isInt ? 
+	  CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
+	  retval);
 }
 
 
@@ -356,7 +358,10 @@ double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) c
     fval = COUENNE_INFINITY;
 
   double
-    retval = fabs (vval - fval),
+    retval = 
+    ((reference_ -> sign () == expression::GEQ) && (vval >= fval)) ? 0. : 
+    ((reference_ -> sign () == expression::LEQ) && (vval <= fval)) ? 0. : fabs (vval - fval),
+
     ratio = (CoinMax (1., fabs (vval)) / 
 	     CoinMax (1., fabs (fval)));
 

@@ -53,15 +53,16 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
 
   if ((yl < -0) && (yu > 0)) return;   // no convexification
 
-  // special case #1: y is almost constant (nonzero) --> y = k. We
-  // only need a single plane w = x/k.
-
   CouNumber k;
 
+  enum auxSign sign = cg -> Problem () -> Var (wi) -> sign ();
+
+  // special case #1: y is almost constant (nonzero) --> y = k. We
+  // only need a single plane w >/</= x/k.
   if ((fabs (yl-yu) < COUENNE_EPS) && 
       ((fabs (k = ((yl+yu) / 2)) > COUENNE_EPS))) {
     if (cLY || cRY)
-      cg -> createCut (cs, 0., 0, wi, -1, xi, 1/k);
+      cg -> createCut (cs, 0., sign, wi, -1, xi, 1/k);
     return;
   }
 
@@ -77,7 +78,7 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
   if ((fabs (wl-wu) < COUENNE_EPS) &&
       ((k = fabs (wl+wu) / 2) > COUENNE_EPS)) {
     if (cLW || cRW)
-      cg -> createCut (cs, 0., 0, yi, k, xi, -1.);
+      cg -> createCut (cs, 0., sign, yi, k, xi, -1.);
     return;
   }
 
@@ -90,7 +91,9 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
   CouNumber *x = cg -> Problem () -> X ();
 
   unifiedProdCuts (cg, cs,
-		   wi, x [wi], wl, wu,
+		   wi, x [wi], 
+		   sign == expression::LEQ ? -COIN_DBL_MAX : wl, 
+		   sign == expression::GEQ ?  COIN_DBL_MAX : wu,
 		   yi, x [yi], yl, yu,
 		   xi, x [xi], xl, xu, chg);
 

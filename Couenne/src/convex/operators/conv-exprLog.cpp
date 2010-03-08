@@ -38,18 +38,20 @@ void exprLog::generateCuts (expression *aux, //const OsiSolverInterface &si,
   CouNumber l, u;
   argument_ -> getBounds (l, u);
 
+  enum auxSign sign = cg -> Problem () -> Var (w_ind) -> sign ();
+
   // if bounds are very close, convexify with a single line
   if ((fabs (u - l) < COUENNE_EPS) && (l > COUENNE_EPS)) {
 
     CouNumber x0 = 0.5 * (u+l);
-    if (changed) cg -> createCut (cs, log (x0) - 1, 0, w_ind, 1., x_ind, - 1/x0);
+    if (changed) cg -> createCut (cs, log (x0) - 1, sign, w_ind, 1., x_ind, - 1/x0);
     return;
   }
 
   // fix lower bound
   if (l < LOG_MININF) l = LOG_MININF;
   else   // lower segment (if l is far from zero and u finite)
-    if ((u < COUENNE_INFINITY) && changed) { 
+    if ((u < COUENNE_INFINITY) && changed && sign != expression::LEQ) { 
 
       CouNumber dx   = u-l;
       CouNumber logu = log (u);
@@ -57,6 +59,10 @@ void exprLog::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
       cg -> createCut (cs, dx*logu - u*dw, +1, w_ind, dx, x_ind, -dw);
     }
+
+  // no need to continue if auxiliary is defined as w >= log (x)
+  if (sign == expression::GEQ) 
+    return;
 
   // pick tangent point closest to current point (x0,y0)
   CouNumber x = (cg -> isFirst ()) ? 

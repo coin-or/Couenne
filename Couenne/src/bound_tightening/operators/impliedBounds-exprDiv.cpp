@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    impliedBounds-exprDiv.cpp
  * Author:  Pietro Belotti
  * Purpose: implied bounds for division operators
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -16,11 +16,15 @@
 /// implied bound processing for expression w = x/y, upon change in
 /// lower- and/or upper bound of w, whose index is wind
 
-bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   //return false; // !!!
 
   bool resx, resy = resx = false;
+
+  CouNumber 
+    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
 
   // y is a constant
   if (arglist_ [1] -> Type () == CONST) {
@@ -45,24 +49,24 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
     if (c > COUENNE_EPS) {
 
-      if (updateBound (-1, l+ind, xInt ? ceil (l[wind]*c - COUENNE_EPS) : (l[wind]*c))) {
+      if (updateBound (-1, l+ind, xInt ? ceil (wl*c - COUENNE_EPS) : (wl*c))) {
 	resx = true; 
 	chg [ind].setLower (t_chg_bounds::CHANGED);
       }
 
-      if (updateBound (+1, u+ind, xInt ? floor (u[wind]*c + COUENNE_EPS) : (u[wind]*c))) {
+      if (updateBound (+1, u+ind, xInt ? floor (wu*c + COUENNE_EPS) : (wu*c))) {
 	resx = true; 
 	chg [ind].setUpper (t_chg_bounds::CHANGED);
       }
     } 
     else if (c < - COUENNE_EPS) {
 
-      if (updateBound (-1, l+ind, xInt ? ceil  (u[wind]*c - COUENNE_EPS) : (u[wind]*c))) {
+      if (updateBound (-1, l+ind, xInt ? ceil  (wu*c - COUENNE_EPS) : (wu*c))) {
 	resx = true; 
 	chg [ind].setLower (t_chg_bounds::CHANGED);
       }
 
-      if (updateBound (+1, u+ind, xInt ? floor (l[wind]*c + COUENNE_EPS) : (l[wind]*c))) {
+      if (updateBound (+1, u+ind, xInt ? floor (wl*c + COUENNE_EPS) : (wl*c))) {
 	resx = true; 
 	chg [ind].setUpper (t_chg_bounds::CHANGED);
       }
@@ -106,10 +110,9 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     int xi = arglist_ [0] -> Index (),
         yi = arglist_ [1] -> Index ();
 
-    CouNumber x0=0;
-
-    CouNumber *xl = l + xi, *yl = l + yi, wl = l [wind],
-              *xu = u + xi, *yu = u + yi, wu = u [wind];
+    CouNumber x0 = 0, 
+      *xl = l + xi, *yl = l + yi,
+      *xu = u + xi, *yu = u + yi;
 
     /*printf ("from              : w[%d] [%e %e], x%d [%e %e] / y%d [%e %e]",
       wind, wl, wu, xi, *xl, *xu, yi, *yl, *yu);*/

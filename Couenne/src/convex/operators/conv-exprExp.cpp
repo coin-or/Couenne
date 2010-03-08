@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: convexification and bounding methods for the exponential operator
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -33,11 +33,13 @@ void exprExp::generateCuts (expression *aux, //const OsiSolverInterface &si,
   bool cL = !chg || (chg [x_ind].lower() != t_chg_bounds::UNCHANGED) || cg -> isFirst ();
   bool cR = !chg || (chg [x_ind].upper() != t_chg_bounds::UNCHANGED) || cg -> isFirst ();
 
+  enum auxSign sign = cg -> Problem () -> Var (w_ind) -> sign ();
+
   if (fabs (u-l) < COUENNE_EPS) {  // bounds very close, convexify with a single line
 
     CouNumber x0 = 0.5 * (u+l), ex0 = exp (x0);
     if (cL || cR)
-      cg -> createCut (cs, ex0 * (1 - x0), 0, w_ind, 1., x_ind, - ex0);
+      cg -> createCut (cs, ex0 * (1 - x0), sign, w_ind, 1., x_ind, - ex0);
 
     return;
   }
@@ -47,7 +49,8 @@ void exprExp::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
   // upper segment
 
-  if ((cL || cR) 
+  if ((sign != expression::GEQ)
+      && (cL || cR) 
       && (u < log (COUENNE_INFINITY) ) 
       && (l > -    COUENNE_INFINITY / 1e4)) { // tame lower bound
 
@@ -68,5 +71,6 @@ void exprExp::generateCuts (expression *aux, //const OsiSolverInterface &si,
   if (u >   logMC) u =   logMC;
 
   // approximate the exponential function from below
-  cg -> addEnvelope (cs, +1, exp, exp, w_ind, x_ind, x, l, u, chg, true);
+  if (sign != expression::LEQ)
+    cg -> addEnvelope (cs, +1, exp, exp, w_ind, x_ind, x, l, u, chg, true);
 }

@@ -173,7 +173,10 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 	CouNumber
 	  varVal = (*v) (),
 	  imgVal = (*(v -> Image ())) (),
-	  delta  = varVal - imgVal,
+	  delta  = 
+	  ((v -> sign () == expression::GEQ) && (varVal >= imgVal)) ? 0. :
+	  ((v -> sign () == expression::LEQ) && (varVal <= imgVal)) ? 0. : 
+	                                                                (varVal - imgVal),
 	  normz  = fabs (delta) / (1 + 0.5 * (fabs (varVal) + fabs (imgVal)));
 
 	if (normz > feas_tolerance_) {

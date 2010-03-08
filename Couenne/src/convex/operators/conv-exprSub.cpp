@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: convexification methods for the Subtraction class
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -45,6 +45,11 @@ void exprSub::generateCuts (expression *w, //const OsiSolverInterface &si,
     lb += y0;
     ub += y0;
   }
+
+  enum auxSign sign = cg -> Problem () -> Var (wi) -> sign ();
+
+  if      (sign == expression::GEQ) lb = -COIN_DBL_MAX;
+  else if (sign == expression::LEQ) ub =  COIN_DBL_MAX;
 
   cg -> createCut (cs, lb, ub, wi, -1., xi, 1., yi, -1., true);
 }

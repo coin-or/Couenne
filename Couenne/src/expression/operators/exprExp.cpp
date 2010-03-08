@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprExp.cpp
  * Author:  Pietro Belotti
  * Purpose: definition of the exponential
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -45,18 +45,19 @@ void exprExp::getBounds (CouNumber &lb, CouNumber&ub) {
 
 /// implied bound processing for expression w = exp(x), upon change in
 /// lower- and/or upper bound of w, whose index is wind
-bool exprExp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprExp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   bool resU, resL = resU = false;
   int ind = argument_ -> Index ();
 
   CouNumber b;
 
-  if ((b = l [wind]) >= COUENNE_EPS) // lower bound
+  if ((b = sign == expression::GEQ ? 0            : l [wind]) >= COUENNE_EPS) // lower bound    
     resL = updateBound (-1, l + ind, argument_->isInteger () ? ceil  (log (b)-COUENNE_EPS) : log (b));
 
-  if ((b = u [wind]) < COUENNE_INFINITY / 1e5) // upper bound
+  if ((b = sign == expression::LEQ ? COIN_DBL_MAX : u [wind]) < COUENNE_INFINITY / 1e5) // upper bound
     resU = updateBound ( 1, u + ind, argument_->isInteger () ? floor (log (b)+COUENNE_EPS) : log (b));
+
   else if (b < - COUENNE_EPS) {
     // make it infeasible
     resU = updateBound ( 1, u + ind, -1.) || true;

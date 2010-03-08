@@ -4,7 +4,7 @@
  * Author:  Pierre Bonami
  * Purpose: based on upper and lower convexification, add cuts to convexify
  *
- * (C) International Business Machines 2007. 
+ * (C) International Business Machines 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -76,6 +76,13 @@ void exprQuad::quadCuts (expression *w, OsiCuts &cs, const CouenneCutGenerator *
       CoinMin (0., eigen_.begin  () -> first) : // Use under-estimator
       CoinMax (0., eigen_.rbegin () -> first),  // Use  over-estimator
     convVal = 0.;
+
+  enum auxSign sign = cg -> Problem () -> Var (w -> Index ()) -> sign ();
+
+  // if this is a "semi"-auxiliary, check if necessary to separate
+  if ((sign == expression::GEQ && varVal > exprVal) ||
+      (sign == expression::LEQ && varVal < exprVal)) 
+    return;
 
   const CouenneProblem& problem = *(cg -> Problem ());
   const int numcols = problem.nVars ();

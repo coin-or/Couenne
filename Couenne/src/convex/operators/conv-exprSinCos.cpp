@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: convexification methods for sines and cosines
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -19,6 +19,10 @@
 #include "OsiSolverInterface.hpp"
 #include "CouenneTypes.hpp"
 #include "CouenneCutGenerator.hpp"
+#include "CouenneProblem.hpp"
+
+//#include "expression.hpp"
+
 #include "exprSin.hpp"
 #include "exprCos.hpp"
 #include "exprAux.hpp"
@@ -119,7 +123,7 @@ int trigEnvelope (const CouenneCutGenerator *cg, // cut generator that has calle
     if (which_trig == COU_SINE) {f = sin (x0); fp =  cos (x0);}
     else                        {f = cos (x0); fp = -sin (x0);}
 
-    return cg -> createCut (cs, f - fp*x0, 0, wi, 1., xi, -fp);
+    return cg -> createCut (cs, f - fp*x0, cg -> Problem () -> Var (wi) -> sign (), wi, 1., xi, -fp);
   }
 
   // true if, in the first call (lb), a lower/upper chord was added
@@ -148,6 +152,8 @@ int bayEnvelope (const CouenneCutGenerator *cg, // cut generator that has called
 		 bool &skip_up, 
 		 bool &skip_dn) {
 
+  enum expression::auxSign sign = cg -> Problem () -> Var (wi) -> sign ();
+
   CouNumber tpt,
     rx0  = modulo (x0 + displacement, 2*M_PI),
     rx1  = rx0 + x1 - x0,
@@ -173,7 +179,8 @@ int bayEnvelope (const CouenneCutGenerator *cg, // cut generator that has called
 
     // out of the "belly": tangent. If on upper bay consider the lower
     // half-plane, and viceversa --> use -up
-    ncuts += cg -> addTangent (cs, wi, xi, x0, sin (rx0), cos (rx0), -up);
+    if (sign != up) 
+      ncuts += cg -> addTangent (cs, wi, xi, x0, sin (rx0), cos (rx0), -up);
 
     // leftmost extreme to search for tangent point
     CouNumber extr0 = .75 * M_PI * (left+1) - M_PI_2 * up; 
@@ -182,11 +189,12 @@ int bayEnvelope (const CouenneCutGenerator *cg, // cut generator that has called
     if ((left * (rx1 - M_PI * ((left - up) / 2 + 1)) <= 0) ||   // if rx1 in same "belly", or
 	(left * (rx1 - (tpt = trigNewton
 			(rx0, extr0, extr0 + M_PI_2))) <= 0)) { // before closest leaning point 
-      if (!*s1) // -> chord, if not already added in previous call
+      if (!*s1 && (sign != -up)) // -> chord, if not already added in previous call
 	*s1 = ((ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), x1,       sin (rx1), up)) > 0);
-    } else      ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), base+tpt, sin (tpt), up);
-  }
-  else {
+    } else      
+      if (sign != -up) 
+	ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), base+tpt, sin (tpt), up);
+  } else {
 
     // after  stationary point (i.e., _/ or ~\ ) for left  bound, 
     // before stationary point (i.e., /~ or \_ ) for right bound
@@ -194,30 +202,36 @@ int bayEnvelope (const CouenneCutGenerator *cg, // cut generator that has called
     //    if (left * (rx1 - left * (zero + 5*M_PI_2)) < 0) {
     if (left * (rx1 - (4*left - up + 2) * M_PI_2) < 0) {
       CouNumber cosrx0 = cos (rx0);
-      if (up * (sin (rx1) - sinrx0 - cosrx0 * (rx1-rx0)) < 0) 
+      if (up * (sin (rx1) - sinrx0 - cosrx0 * (rx1-rx0)) < 0) {
 	// (b,sinb) below tangent --> tangent
-	ncuts += cg -> addTangent (cs, wi, xi, x0, sinrx0, cosrx0, -up);
-      else {    // up: either chord or leaning plane
+	if (sign != up) 
+	  ncuts += cg -> addTangent (cs, wi, xi, x0, sinrx0, cosrx0, -up);
+      } else {    // up: either chord or leaning plane
 	CouNumber searchpt = M_PI_2 * (2 + 3*left - up);
 	tpt = trigNewton (rx0, searchpt, searchpt + left * M_PI_2);
 	if (left * (rx1 - tpt) < 0) {
-	  if (!*s0)
+	  if (!*s0 && (sign != up) )
 	    *s0 = ((ncuts += cg->addSegment (cs, wi, xi, x0, sin(rx0), x1,       sin(rx1), -up)) > 0);
-	} else      ncuts += cg->addSegment (cs, wi, xi, x0, sin(rx0), base+tpt, sin(tpt), -up);
+	} else 
+	  if (sign != up) 
+	    ncuts += cg->addSegment (cs, wi, xi, x0, sin(rx0), base+tpt, sin(tpt), -up);
       }
     } else {
       CouNumber searchpt = M_PI_2 * (2 + 3*left - up);
       tpt = trigNewton (rx0, searchpt, searchpt + left * M_PI_2);
-      ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), base + tpt, sin (tpt), -up);
+      if (sign != up) 
+	ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), base + tpt, sin (tpt), -up);
     }
 
     // down: other chord or leaning plane
     if ((left * (rx1 - (zero + M_PI)) < 0) || 
 	(left * (rx1 - (tpt = trigNewton (rx0, (2 +   left - up) * M_PI_2, 
 		  			       (2 + 2*left - up) * M_PI_2))) < 0)) {
-      if (!*s1) 
+      if (!*s1 && (sign != -up)) 
 	*s1 = ((ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), x1, sin (rx1), up)) > 0);
-    } else      ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), base + tpt, sin (tpt), up);
+    } else 
+      if (sign != -up) 
+	ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), base + tpt, sin (tpt), up);
   }
 
   return ncuts;
@@ -243,6 +257,8 @@ int addHexagon (const CouenneCutGenerator *cg, // cut generator that has called 
     x_ind = arg -> Index (),
     w_ind = aux -> Index ();
 
+  enum auxSign sign = cg -> Problem () -> Var (w_ind) -> sign ();
+
   if (fabs (ub - lb) < COUENNE_EPS) {
 
     CouNumber x0 = 0.5 * (ub+lb), f, fp;
@@ -250,7 +266,7 @@ int addHexagon (const CouenneCutGenerator *cg, // cut generator that has called 
     if (tt == COU_SINE) {f = sin (x0); fp =  cos (x0);}
     else                {f = cos (x0); fp = -sin (x0);}
 
-    return cg -> createCut (cs, f - fp*x0, 0, w_ind, 1., x_ind, -fp);
+    return cg -> createCut (cs, f - fp*x0, sign, w_ind, 1., x_ind, -fp);
   }
 
   // add  /    \ envelope
@@ -259,24 +275,24 @@ int addHexagon (const CouenneCutGenerator *cg, // cut generator that has called 
   // left
   if (lb > -COUENNE_INFINITY) { // if not unbounded
     if (tt == COU_SINE) {
-      ncuts += cg -> createCut (cs, sin (lb) - lb, -1, w_ind, 1., x_ind, -1.); // up: w-x <= f lb - lb
-      ncuts += cg -> createCut (cs, sin (lb) + lb, +1, w_ind, 1., x_ind,  1.); // dn: w+x >= f lb + lb
+      if (sign != expression::GEQ) ncuts += cg -> createCut (cs, sin (lb) - lb, -1, w_ind, 1., x_ind, -1.); // up: w-x <= f lb - lb
+      if (sign != expression::LEQ) ncuts += cg -> createCut (cs, sin (lb) + lb, +1, w_ind, 1., x_ind,  1.); // dn: w+x >= f lb + lb
     }
     else {
-      ncuts += cg -> createCut (cs, cos (lb) - lb, -1, w_ind, 1., x_ind, -1.); // up: w-x <= f lb - lb
-      ncuts += cg -> createCut (cs, cos (lb) + lb, +1, w_ind, 1., x_ind,  1.); // dn: w+x >= f lb + lb
+      if (sign != expression::GEQ) ncuts += cg -> createCut (cs, cos (lb) - lb, -1, w_ind, 1., x_ind, -1.); // up: w-x <= f lb - lb
+      if (sign != expression::LEQ) ncuts += cg -> createCut (cs, cos (lb) + lb, +1, w_ind, 1., x_ind,  1.); // dn: w+x >= f lb + lb
     }
   }
 
   // right
   if (ub <  COUENNE_INFINITY) { // if not unbounded
     if (tt == COU_SINE) {
-      ncuts += cg -> createCut (cs, sin (ub) - ub, +1, w_ind, 1., x_ind, -1.); // dn: w-x >= f ub - ub
-      ncuts += cg -> createCut (cs, sin (ub) + ub, -1, w_ind, 1., x_ind,  1.); // up: w+x <= f ub + ub
+      if (sign != expression::LEQ) ncuts += cg -> createCut (cs, sin (ub) - ub, +1, w_ind, 1., x_ind, -1.); // dn: w-x >= f ub - ub
+      if (sign != expression::GEQ) ncuts += cg -> createCut (cs, sin (ub) + ub, -1, w_ind, 1., x_ind,  1.); // up: w+x <= f ub + ub
     }
     else {
-      ncuts += cg -> createCut (cs, cos (ub) - ub, +1, w_ind, 1., x_ind, -1.); // dn: w-x >= f ub - ub
-      ncuts += cg -> createCut (cs, cos (ub) + ub, -1, w_ind, 1., x_ind,  1.); // up: w+x <= f ub + ub
+      if (sign != expression::LEQ) ncuts += cg -> createCut (cs, cos (ub) - ub, +1, w_ind, 1., x_ind, -1.); // dn: w-x >= f ub - ub
+      if (sign != expression::GEQ) ncuts += cg -> createCut (cs, cos (ub) + ub, -1, w_ind, 1., x_ind,  1.); // up: w+x <= f ub + ub
     }
   }
 

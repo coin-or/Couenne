@@ -5,7 +5,7 @@
  * Purpose: definition of quadratic expressions (= exprGroup +
  *          quadratic = constant + linear + [nonlinear] + quadratic)
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -261,7 +261,7 @@ public:
   virtual void realign (const CouenneProblem *p);
 
   /// implied bound processing
-  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *);
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
 
   /// method to compute the bound based on sign: -1 for lower, +1 for
   /// upper

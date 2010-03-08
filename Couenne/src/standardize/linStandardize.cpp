@@ -122,7 +122,7 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
   delete [] qc;
 
 #ifdef DEBUG
-  printf ("\nlinstand ==> "); 
+  printf ("\nlinstand (addaux = %d) ==> ", addAux); 
   ret -> print (); printf ("\n"); 
   //  ret -> Image () -> print (); printf ("\n");
 #endif

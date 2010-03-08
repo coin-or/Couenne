@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    impliedBounds.cpp
  * Author:  Pietro Belotti
  * Purpose: backward implied bound search
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10. 
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -28,7 +28,7 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 	if (!(++j % 6)) Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING,"\n  ");
       }
     if (j % 6) Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING,"\n");
-    }
+  }
 
   for (int ii = nVars (); ii--;) {
 
@@ -72,7 +72,7 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 	u0 = Ub (i);
 
       if (variables_ [i] -> Image () -> impliedBound 
-	  (variables_ [i] -> Index (), Lb (), Ub (), chg_bds)) {
+	  (variables_ [i] -> Index (), Lb (), Ub (), chg_bds, variables_ [i] -> sign ())) {
 
 	// conservative check for integer variables. 
 	/*if (Var (i) -> isInteger ()) {

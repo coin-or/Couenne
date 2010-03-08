@@ -5,7 +5,7 @@
  * Purpose: definition of the auxiliary variable class (used in
  *          standardization and convexification)
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -63,6 +63,9 @@ class exprAux: public exprVar {
   /// it is a top level variable in the DAG of the problem
   bool top_level_;
 
+  /// "sign" of the defining constraint
+  enum auxSign sign_;
+
  public:
 
   /// Node type
@@ -70,10 +73,10 @@ class exprAux: public exprVar {
   {return AUX;}
 
   /// Constructor
-  exprAux (expression *, int, int, intType = Unset, Domain * = NULL);
+  exprAux (expression *, int, int, intType = Unset, Domain * = NULL, enum auxSign = expression::EQ);
 
   /// Constructor to be used with standardize ([...], false)
-  exprAux (expression *, Domain * = NULL);
+  exprAux (expression *, Domain * = NULL, enum auxSign = expression::EQ);
 
   /// Destructor
   virtual ~exprAux ();
@@ -194,6 +197,10 @@ class exprAux: public exprVar {
 			      CouenneProblem *p, 
 			      Bonmin::BabSetupBase *base, 
 			      JnlstPtr jnlst);
+
+  /// return its sign in the definition constraint
+  inline enum auxSign sign () const 
+  {return sign_;}
 };
 
 

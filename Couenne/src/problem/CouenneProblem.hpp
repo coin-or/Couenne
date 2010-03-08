@@ -432,7 +432,7 @@ class CouenneProblem {
 
   /// split a constraint w - f(x) = c into w's index (it is returned)
   /// and rest = f(x) + c
-  int splitAux (CouNumber, expression *, expression *&, bool *);
+  int splitAux (CouNumber, expression *, expression *&, bool *, enum expression::auxSign &);
 
   /// translates pair (indices, coefficients) into vector with pointers to variables
   void indcoe2vector (int *indexL,

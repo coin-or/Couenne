@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of logarithm
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -60,7 +60,7 @@ class exprLog: public exprUnary {
   {return COU_EXPRLOG;}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments

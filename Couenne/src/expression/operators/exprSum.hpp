@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of sum expressions
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -93,7 +93,7 @@ class exprSum: public exprOp {
    *  respectively, of \f$x_i\f$. We also have to check if some of
    *  these bounds are infinite.
    */
-  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *);
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
 
   /// Checks for quadratic terms in the expression and returns an
   /// exprQuad if there are enough to create something that can be

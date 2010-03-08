@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of cosine 
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -62,7 +62,7 @@ class exprCos: public exprUnary {
   {return COU_EXPRCOS;}
 
   /// implied bound processing
-  bool impliedBound (int index, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+  bool impliedBound (int index, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign = expression::EQ) {
 
     bool impl = trigImpliedBound (COU_COSINE, index, argument_ -> Index (), l, u, chg);
 

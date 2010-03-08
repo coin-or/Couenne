@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: extract auxiliary variable from implicit equality constraint
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -27,10 +27,11 @@
 void elementBreak (expression *, int &, CouNumber &);
 
 
-/// split a constraint w - f(x) = c into w's index (returned)
-/// and rest = f(x) + c
+/// split a constraint aw + f(x) >/</= c into w's index (returned)
+/// and rest = (-f(x) + c)/a
 
-int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest, bool *wentAux) {
+int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest, 
+			      bool *wentAux, enum expression::auxSign &sign) {
 
   int auxInd = -1,          // index of the auxiliary to be extracted
     code = body -> code (); // type of expression
@@ -90,6 +91,11 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     rest = (fabs (rhs) < COUENNE_EPS) ?                              // no extra constant?
       (auxdef) :                                                     // just put other argument
       (new exprSum (auxdef, new exprConst ((pos==1) ? -rhs : rhs))); // otherwise sum it with \pm rhs
+
+    if (pos==1) {
+      if      (sign == expression::GEQ)  sign = expression::LEQ;
+      else if (sign == expression::LEQ)  sign = expression::GEQ;
+    }
 
   } break;
 
@@ -429,6 +435,11 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 #endif
 
     auxInd = maxindex;
+
+    if (auxcoe < 0) {
+      if      (sign == expression::GEQ)  sign = expression::LEQ;
+      else if (sign == expression::LEQ)  sign = expression::GEQ;
+    }
 
   } break;
 

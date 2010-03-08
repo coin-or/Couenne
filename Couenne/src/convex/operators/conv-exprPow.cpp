@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods to convexify an expression x^k, k constant
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -125,6 +125,8 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
     w = (*aux) (), 
     x = (*xe)  ();
 
+  enum auxSign aSign = cg -> Problem () -> Var (w_ind) -> sign ();
+
   // if xl and xu are too close, approximate it as a line: sum the
   // segment through the two extreme points (l,l^k) and (u,u^k), and
   // the tangent at the midpoint ((l+u)/2, ((l+u)/2)^k)
@@ -137,7 +139,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
               uk      = safe_pow (u,   k);
 
     if (cL || cR) 
-      cg -> createCut (cs, u*lk - l*uk + avg * avg_k_1 * (1-k), 0,
+      cg -> createCut (cs, u*lk - l*uk + avg * avg_k_1 * (1-k), aSign,
 		       w_ind, u - l + 1, x_ind, lk-uk - k * avg_k_1);
     return;
   }
@@ -147,7 +149,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
   int intk = 0;
 
   if (k < - COUENNE_INFINITY) { // w=x^{-inf} means w=0
-    if (cL || cR) cg -> createCut (cs, 0., 0, w_ind, 1.);
+    if (cL || cR) cg -> createCut (cs, 0., aSign, w_ind, 1.);
     return;
   }
 
@@ -155,7 +157,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
     return;
 
   if (fabs (k) < COUENNE_EPS) { // w = x^0 means w=1
-    if (cL || cR) cg -> createCut (cs, 1., 0, w_ind, 1.);
+    if (cL || cR) cg -> createCut (cs, 1., aSign, w_ind, 1.);
     return;
   }
 
@@ -208,7 +210,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
     CouNumber powThres = (k<=1) ? COUENNE_INFINITY : pow (COU_MAX_COEFF, 1./k);
 
     // lower envelope
-    if (l > -powThres) {
+    if ((aSign != expression::LEQ) && (l > -powThres)) {
       if (l>0) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k,   l, u, sign); // 0<l<u, tangents only
       else if (u > q * l) { // upper x is after "turning point", add lower envelope
 	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, q*l, u, sign);
@@ -217,7 +219,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
     }
 
     // upper envelope
-    if (u < powThres) {
+    if ((aSign != expression::GEQ) && (u < powThres)) {
       if (u<0) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l,   u, -sign);  // l<u<0, tangents only
       else if (l < q * u) { // lower x is before "turning point", add upper envelope
 	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, l, q*u, -sign);
@@ -245,7 +247,8 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     if ((k < 0) && 
 	(l < - COUENNE_EPS) && 
-	(u >   COUENNE_EPS)) {
+	(u >   COUENNE_EPS) &&
+	aSign != expression::LEQ) {
 
       if (!(intk % 2))
 	cg -> addSegment (cs, w_ind, arglist_ [0] -> Index (), 
@@ -276,7 +279,8 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 	(l < -COUENNE_EPS) &&       // bounds do not contain 0
 	(u >  COUENNE_EPS) &&
 	(l > - powThres) &&         // and are finite
-	(u <   powThres)) 
+	(u <   powThres) &&
+	aSign != expression::LEQ) 
 
       cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l, k), u, safe_pow (u, k), 1);
 
@@ -287,7 +291,8 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 	|| (u < - COUENNE_EPS)) &&
 	(l > - powThres) &&         // and are finite
 	(u <   powThres) &&
-	(fabs (l+u) > COUENNE_EPS)) // bounds are not opposite (otherwise it's a variable bound)
+	(fabs (l+u) > COUENNE_EPS) &&
+	aSign != expression::GEQ) // bounds are not opposite (otherwise it's a variable bound)
 
       cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l, k), u, safe_pow (u, k), -sign);
 
@@ -309,6 +314,8 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
       if (fabs (u) < COUENNE_EPS) u = -1. / powThres; // u --> 0-
     }
 
-    addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l, u, sign);
+    if ((sign ==  1 && aSign != expression::LEQ) ||
+	(sign == -1 && aSign != expression::GEQ))
+      addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l, u, sign);
   }
 }

@@ -1,11 +1,11 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    impliedBounds-exprQuad.cpp
  * Author:  Pietro Belotti
  * Purpose: inferring bounds on independent variables of an exprQuad
  *          given bounds on the auxiliary variable
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -33,7 +33,7 @@ struct compVar {
 /// implied bound processing for quadratic form upon change in lower-
 /// and/or upper bound of w, whose index is wind
 
-bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
+bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   //return false; // !!!
 
@@ -41,8 +41,12 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
   // first reduces this sum to a sum of aux and tries, after
   // tightening bounds of each aux, to infer new bounds
 
+  CouNumber 
+    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+
 #ifdef DEBUG
-  printf ("################ implied bounds: [%g,%g], ", l [wind], u [wind]);
+  printf ("################ implied bounds: [%g,%g], ", wl, wu);
   print (); printf ("\n");
 #endif
 
@@ -105,7 +109,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 
   if (((indInfLo == -2) && (indInfUp == -2)) || // at least two variables are unbounded
       ((indInfLo == -1) && (indInfUp == -1) &&  // or, none is (and qMin, qMax are exact) 
-       (qMin > l [wind]) && (qMax < u [wind]))) // but explicit bounds are loose
+       (qMin > wl) && (qMax < wu))) // but explicit bounds are loose
     return false;
 
 #ifdef DEBUG
@@ -296,8 +300,8 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 	// c_MIN = qMin - bCutLb [indn]
 
 	CouNumber 
-	  l_b = l [wind] - qMax + bCutUb [indn],
-	  u_b = u [wind] - qMin + bCutLb [indn];
+	  l_b = wl - qMax + bCutUb [indn],
+	  u_b = wu - qMin + bCutLb [indn];
 
 	if (al > 0) { // care about min -- see outer if, it means 0 < al < au
 
@@ -333,7 +337,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 	continue;
 
       // case 2: qii is positive, the parabola is facing upwards and
-      // we only need to look at w_U = u [wind]
+      // we only need to look at w_U = wu
 
       // there are two parabolas, with linear coefficient linCoeMin
       // and linCoeMax, respectively. If both cut the line $w=w_U$
@@ -347,7 +351,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
       // maximum or minimum, that is, at linCoeMax and linCoeMin.
 
       CouNumber 
-	deltaSecond = 4 * q * (qMin - bCutLb [indn] - u [wind]),
+	deltaSecond = 4 * q * (qMin - bCutLb [indn] - wu),
 	deltaUp     = au*au - deltaSecond,
 	deltaLo     = al*al - deltaSecond;
 
@@ -409,7 +413,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
     } else {
 
       // case 3: qii is negative, the parabola is facing downwards and
-      // we only need to look at l [wind]
+      // we only need to look at wl
 
       // skip if constant term is unbounded from above
       if ((indInfUp != -1) && 
@@ -417,7 +421,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 	continue;
 
       CouNumber 
-	deltaSecond = 4 * q * (qMax - bCutUb [indn] - l [wind]),
+	deltaSecond = 4 * q * (qMax - bCutUb [indn] - wl),
 	deltaUp     = au*au - deltaSecond,
 	deltaLo     = al*al - deltaSecond;
 

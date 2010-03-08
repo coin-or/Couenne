@@ -6,7 +6,7 @@
  *          exclude parts of the solution space through fathoming on
  *          bounds/infeasibility
  *
- * (C) Carnegie-Mellon University, 2007-09.
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -207,26 +207,33 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
 	  // if (index == objind) continue; // don't do it on objective function
 
-	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-			  "------------- tighten left x%d\n", index);
+	  improved = 0;
 
-	  // tighten on left
-	  if ((X [index] >= Lb (index) + COUENNE_EPS)
-	      && ((improved = fake_tighten (0, index, X, olb, oub, chg_bds, f_chg)) < 0)) {
-	    retval = false;
-	    break;
+	  if (variables_ [index] -> sign () != exprVar::GEQ) {
+
+	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
+			    "------------- tighten left x%d\n", index);
+
+	    // tighten on left
+	    if ((X [index] >= Lb (index) + COUENNE_EPS)
+		&& ((improved = fake_tighten (0, index, X, olb, oub, chg_bds, f_chg)) < 0)) {
+	      retval = false;
+	      break;
+	    }
 	  }
 
 	  second = 0;
 
-	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-			  "------------- tighten right x%d\n", index);
+	  if (variables_ [index] -> sign () != exprVar::LEQ) {
+	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
+			    "------------- tighten right x%d\n", index);
 
-	  // tighten on right
-	  if ((X [index] <= Ub (index) - COUENNE_EPS)
-	      && ((second = fake_tighten (1, index, X, olb, oub, chg_bds, f_chg) < 0))) {
-	    retval = false;
-	    break;
+	    // tighten on right
+	    if ((X [index] <= Ub (index) - COUENNE_EPS)
+		&& ((second = fake_tighten (1, index, X, olb, oub, chg_bds, f_chg) < 0))) {
+	      retval = false;
+	      break;
+	    }
 	  }
 
 	  improved += second;

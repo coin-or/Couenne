@@ -11,6 +11,7 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
 
+#include "expression.hpp"
 #include "exprAux.hpp"
 #include "exprIVar.hpp"
 #include "depGraph.hpp"
@@ -45,15 +46,33 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
   printf ("]\n");
 #endif
 
-  if (compareExpr (&lb_, &ub_) == 0) {
+  // Auxiliaries used to be definable with a constraint f(x) + bw = c,
+  // which implies w := (c - f(x)) / b. Semi-auxiliaries no longer
+  // need the equality sign, but their sign will be determined by lb_
+  // and ub_. Their values allow us to decide whether we should create
+  // a (semi)auxiliary or not.
 
-    // this is an equality constraint, and could be the definition of
-    // an auxiliary
+  CouNumber 
+    rLb = (*lb_) (),
+    rUb = (*ub_) ();
+
+  if (rLb < -COUENNE_INFINITY/2 ||
+      rUb >  COUENNE_INFINITY/2 ||
+      fabs (rLb-rUb) <= COUENNE_EPS) {
+
+    enum expression::auxSign aSign = expression::EQ;
+
+    if      (rLb < -COUENNE_INFINITY/2) aSign = expression::LEQ;
+    else if (rUb >  COUENNE_INFINITY/2) aSign = expression::GEQ;
+
+    CouNumber rhs = rLb >= -COUENNE_INFINITY/2 ? rLb : rUb;
+
+    // this could be the definition of a (semi)-auxiliary
 
     expression *rest;
 
     // split w from f(x)
-    int wind = p -> splitAux ((*lb_) (), body_, rest, p -> Commuted ());
+    int wind = p -> splitAux (rhs, body_, rest, p -> Commuted (), aSign);
 
     if (wind >= 0) { // this IS the definition of an auxiliary variable w = f(x)
 
@@ -71,8 +90,10 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
       if (rest -> code () == COU_EXPRCONST) {
 
-	p -> Var (wind) -> lb () = 
-	p -> Var (wind) -> ub () = rest -> Value ();
+	CouNumber constRHS = rest -> Value ();
+
+	if (aSign == expression::GEQ) p -> Var (wind) -> lb () = constRHS;
+	if (aSign == expression::LEQ) p -> Var (wind) -> ub () = constRHS;
 
 	delete rest;
 	return NULL;
@@ -86,17 +107,17 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
 #ifdef DEBUG
       printf ("---> %d & ", wind); fflush (stdout);
-      rest -> print (); printf ("\n");
+      rest -> print (); printf ("[sign: %d]\n", aSign);
 #endif
 
       assert (p -> Var (wind) -> Type () == VAR);
 
+      int xind = rest -> Index ();
+
       // check if constraint now reduces to w_k = x_h, and if so
       // replace all occurrences of x_k with x_h
 
-      int xind = rest -> Index ();
-
-      if (xind >= 0) {
+      if ((xind >= 0) && (aSign == expression::EQ)) {
 
 	replace (p, wind, xind);
 
@@ -107,14 +128,18 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
 	// create new variable, it has to be integer if original variable was integer
 	exprAux *w = new exprAux (rest, wind, 1 + rest -> rank (),
-				  p -> Var (wind) -> isInteger () ? 
+				  ((p -> Var (wind) -> isInteger ()) || 
+				   (false && (rest -> isInteger ()) && (aSign == expression::EQ))) ? 
 				  exprAux::Integer : exprAux::Continuous,
-				  p -> domain ());
+				  p -> domain (), aSign);
 
-	std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> find (w);
+	std::set <exprAux *, compExpr>::iterator i;
+
+	if (aSign == expression::EQ)
+	  i = p -> AuxSet () -> find (w);
 
 	// no such expression found in the set:
-	if (i == p -> AuxSet () -> end ()) {
+	if ((i == p -> AuxSet () -> end ()) || (aSign != expression::EQ)) {
 
 	  p -> AuxSet      () -> insert (w); // 1) beware of useless copies
 	  p -> getDepGraph () -> insert (w); // 2) introduce it in acyclic structure
@@ -171,6 +196,10 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 #ifdef DEBUG
   printf ("\nnormal\n-----------------\n");
 #endif
+
+  //body_ -> standardize (p, false); // TODO: check!
+
+  //return NULL;
 
   return body_ -> standardize (p);
 }

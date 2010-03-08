@@ -73,7 +73,7 @@ class exprMul: public exprOp {
   {return COU_EXPRMUL;}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
