@@ -49,8 +49,8 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   CouNumber
     a0 = 0.,   // constant term in the sum
-    wl = /*sign == expression::GEQ ? -COIN_DBL_MAX : */ l [wind],
-    wu = /*sign == expression::LEQ ?  COIN_DBL_MAX : */ u [wind];
+    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
 
   // quick check: if both are infinite, nothing is implied...
 

@@ -66,7 +66,7 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
   // from w1 to w2 and mark it as exact (depending on whether it is
   // non-decreasing or non-increasing
 
-  //  static int iter = 0;
+  //static int iter = 0;
 
   std::set <int> deplist;
   int deplistsize;
@@ -136,8 +136,8 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 
   // only improve bounds if
   if (!issimple &&
-      ((Var (index) -> Type () == VAR) ||             // it is an original variable 
-       (Var (index) -> Multiplicity () > 0)) &&       // or its multiplicity is at least 1
+      ((Var (index) -> Type () == VAR) ||        // it is an original variable 
+       (Var (index) -> Multiplicity () > 0)) &&  // or its multiplicity is at least 1
       (Lb (index) < Ub (index) - COUENNE_EPS) && // in any case, bounds are not equal
 
       ((index != objind) // this is not the objective
@@ -168,8 +168,7 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 
     // m{in,ax}imize xi on csi
 
-    /*
-    if (Jnlst()->ProduceOutput(J_MOREVECTOR, J_BOUNDTIGHTENING)) {
+    /*if (Jnlst()->ProduceOutput(J_MOREVECTOR, J_BOUNDTIGHTENING)) {
       Jnlst()->Printf(J_MOREVECTOR, J_BOUNDTIGHTENING,
 		      "m%simizing x%d [%g,%g] %c= %g\n",
 	    (sense==1) ? "in" : "ax", index, Lb (index), Ub (index),
@@ -177,11 +176,11 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
       if (Jnlst()->ProduceOutput(J_MOREMATRIX, J_BOUNDTIGHTENING)) {
 	char fname [20];
 	sprintf (fname, "m%s_w%03d_%03d", (sense == 1) ? "in" : "ax", index, iter);
+	printf ("saving in %s\n", fname);
 	//Jnlst()->Printf(J_MOREVECTOR, J_BOUNDTIGHTENING,"writing %s\n", fname);
 	csi -> writeLp (fname);
       }
-    }
-    */
+      }*/
 
     csi -> setWarmStart (warmstart);
     //csi -> continuousModel () -> setPerturbation (50);

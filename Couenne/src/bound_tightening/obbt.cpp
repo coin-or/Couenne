@@ -4,12 +4,14 @@
  * Author:  Pietro Belotti
  * Purpose: Optimality-Based Bound Tightening
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CoinHelperFunctions.hpp"
 #include "CglCutGenerator.hpp"
+
+#include "expression.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 #include "OsiClpSolverInterface.hpp"
@@ -46,8 +48,14 @@ int CouenneProblem::call_iter (OsiSolverInterface *csi,
 
     int i = evalOrder (ii);
 
-    if ((Var (i) -> Type () == type) &&
-	(Var (i) -> Multiplicity () > 0)) {
+    enum expression::auxSign aSign = Var (i) -> sign ();
+
+    if ((Var (i) -> Type () == type)     &&
+	(Var (i) -> Multiplicity () > 0) &&
+	((type == VAR)                               || 
+	 (aSign  == expression::EQ)                  ||
+	 ((aSign == expression::LEQ) && (sense > 0)) ||
+	 ((aSign == expression::GEQ) && (sense < 0)))) {
 
       int ni = obbt_iter (csi, chg_bds, warmstart, babInfo, objcoe, sense, i);
 

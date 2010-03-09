@@ -107,8 +107,8 @@ void CouenneProblem::initAuxs () const {
 			  ord, l, u, Lb (ord), Ub (ord));
 
       // set bounds 
-      if (var -> sign () != expression::GEQ) if ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY) Lb (ord) = -COIN_DBL_MAX;
-      if (var -> sign () != expression::LEQ) if ((Ub (ord) = CoinMin (Ub (ord), u)) >=  COUENNE_INFINITY) Ub (ord) =  COIN_DBL_MAX;
+      if (var -> sign () != expression::LEQ) if ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY) Lb (ord) = -COIN_DBL_MAX;
+      if (var -> sign () != expression::GEQ) if ((Ub (ord) = CoinMin (Ub (ord), u)) >=  COUENNE_INFINITY) Ub (ord) =  COIN_DBL_MAX;
       //if ((lb_ [ord] = (*(aux -> Lb ())) ()) <= -COUENNE_INFINITY) lb_ [ord] = -DBL_MAX;
       //if ((ub_ [ord] = (*(aux -> Ub ())) ()) >=  COUENNE_INFINITY) ub_ [ord] =  DBL_MAX;
 
@@ -118,8 +118,8 @@ void CouenneProblem::initAuxs () const {
       bool integer = var -> isInteger ();
 
       if (integer) {
-	Lb (ord) = ceil  (Lb (ord) - COUENNE_EPS);
-	Ub (ord) = floor (Ub (ord) + COUENNE_EPS);
+	if (var -> sign () != expression::GEQ) Lb (ord) = ceil  (Lb (ord) - COUENNE_EPS);
+	if (var -> sign () != expression::LEQ) Ub (ord) = floor (Ub (ord) + COUENNE_EPS);
       }
 
       X (ord) = CoinMax (Lb (ord), CoinMin (Ub (ord), (*(var -> Image ())) ()));
@@ -159,9 +159,27 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
       }
 
       if (var -> Type () == AUX) {
-	X (index) =  // addresses of x[] and X() are equal
-	  CoinMax ((var -> sign () != expression::LEQ) ? l : -COIN_DBL_MAX, 
-          CoinMin ((var -> sign () != expression::GEQ) ? u :  COIN_DBL_MAX, (*(var -> Image ())) ())); 
+
+	bool isInt = var -> isInteger ();
+
+	/*printf ("checking "); var -> print ();
+	printf (" = %g = %g. Sign: %d, int: %d, [%g,%g]", 
+		X (index), (*(var -> Image ())) (),
+		var -> sign (), isInt, l, u);*/
+
+	if (var -> sign () == expression::EQ)
+	  X (index) = (*(var -> Image ())) ();  // addresses of x[] and X() are equal
+    
+	X (index) = 
+	  CoinMax ((var -> sign () != expression::LEQ) ? (isInt ? ceil  (l - COUENNE_EPS) : l) : -COIN_DBL_MAX, 
+	  CoinMin ((var -> sign () != expression::GEQ) ? (isInt ? floor (u + COUENNE_EPS) : u) :  COIN_DBL_MAX, X (index)));
+
+	if (isInt) {
+	  if (var -> sign () == expression::GEQ) X (index) = ceil  (X (index) - COUENNE_EPS);
+	  if (var -> sign () == expression::LEQ) X (index) = floor (X (index) + COUENNE_EPS);
+	}
+
+	//printf (" -> %g\n", X (index));
       }
     } else X (index) = 0.;
   }
