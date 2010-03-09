@@ -53,9 +53,10 @@ int CouenneProblem::call_iter (OsiSolverInterface *csi,
     if ((Var (i) -> Type () == type)     &&
 	(Var (i) -> Multiplicity () > 0) &&
 	((type == VAR)                               || 
-	 (aSign  == expression::EQ)                  ||
-	 ((aSign == expression::LEQ) && (sense > 0)) ||
-	 ((aSign == expression::GEQ) && (sense < 0)))) {
+	 (aSign  == expression::EQ))) {
+      //||
+      //((aSign == expression::LEQ) && (sense > 0)) ||
+      //((aSign == expression::GEQ) && (sense < 0)))) {
 
       int ni = obbt_iter (csi, chg_bds, warmstart, babInfo, objcoe, sense, i);
 
