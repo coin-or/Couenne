@@ -12,12 +12,12 @@
 
 #include "CoinHelperFunctions.hpp"
 
-#include "exprClone.hpp"
-#include "exprSum.hpp"
-#include "exprMul.hpp"
-#include "exprGroup.hpp"
-#include "exprQuad.hpp"
-#include "lqelems.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprSum.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprGroup.hpp"
+#include "CouenneExprQuad.hpp"
+#include "CouenneLQelems.hpp"
 
 //#define DEBUG
 

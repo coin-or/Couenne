@@ -13,7 +13,7 @@
 #include "CouennePrecisions.hpp"
 #include "CouenneTypes.hpp"
 #include "CouenneCutGenerator.hpp"
-#include "funtriplets.hpp"
+#include "CouenneFunTriplets.hpp"
 
 
 void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,

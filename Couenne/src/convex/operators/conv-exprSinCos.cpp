@@ -21,11 +21,11 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
-//#include "expression.hpp"
+//#include "CouenneExpression.hpp"
 
-#include "exprSin.hpp"
-#include "exprCos.hpp"
-#include "exprAux.hpp"
+#include "CouenneExprSin.hpp"
+#include "CouenneExprCos.hpp"
+#include "CouenneExprAux.hpp"
 
 #define NEW_TRIG
 

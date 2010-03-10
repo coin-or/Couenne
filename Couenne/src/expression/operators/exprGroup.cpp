@@ -8,12 +8,12 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprConst.hpp"
-#include "exprVar.hpp"
-#include "exprGroup.hpp"
-#include "exprClone.hpp"
-#include "exprMul.hpp"
-#include "depGraph.hpp"
+#include "CouenneExprConst.hpp"
+#include "CouenneExprVar.hpp"
+#include "CouenneExprGroup.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneDepGraph.hpp"
 #include "CouenneProblem.hpp"
 
 class Domain;

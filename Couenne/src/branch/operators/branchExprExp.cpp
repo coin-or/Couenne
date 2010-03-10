@@ -10,11 +10,11 @@
 
 #include "CoinHelperFunctions.hpp"
 
-#include "exprExp.hpp"
+#include "CouenneExprExp.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
-#include "projections.hpp"
-#include "funtriplets.hpp"
+#include "CouenneProjections.hpp"
+#include "CouenneFunTriplets.hpp"
 
 
 /// set up branching object by evaluating many branching points for

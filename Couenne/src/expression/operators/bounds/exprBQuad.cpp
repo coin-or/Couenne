@@ -9,7 +9,7 @@
  */
 
 #include "CoinHelperFunctions.hpp"
-#include "exprBQuad.hpp"
+#include "CouenneExprBQuad.hpp"
 
 //#define DEBUG
 

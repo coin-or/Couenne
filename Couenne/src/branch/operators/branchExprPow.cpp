@@ -10,11 +10,11 @@
 
 #include "CoinHelperFunctions.hpp"
 
-#include "exprPow.hpp"
+#include "CouenneExprPow.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
-#include "projections.hpp"
-#include "funtriplets.hpp"
+#include "CouenneProjections.hpp"
+#include "CouenneFunTriplets.hpp"
 
 
 /// generic approach for negative powers (commom with exprInv::selectBranch

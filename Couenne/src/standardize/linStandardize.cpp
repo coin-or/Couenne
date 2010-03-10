@@ -9,14 +9,14 @@
  */
 
 #include "CouenneProblem.hpp"
-#include "exprSum.hpp"
-#include "exprSub.hpp"
-#include "exprOpp.hpp"
-#include "exprMul.hpp"
-#include "exprPow.hpp"
-#include "exprGroup.hpp"
-#include "exprQuad.hpp"
-#include "lqelems.hpp"
+#include "CouenneExprSum.hpp"
+#include "CouenneExprSub.hpp"
+#include "CouenneExprOpp.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprPow.hpp"
+#include "CouenneExprGroup.hpp"
+#include "CouenneExprQuad.hpp"
+#include "CouenneLQelems.hpp"
 
 //#define DEBUG
 

@@ -14,12 +14,12 @@
 #include "CoinHelperFunctions.hpp"
 
 #include "CouenneTypes.hpp"
-#include "expression.hpp"
-#include "exprIVar.hpp"
-#include "exprClone.hpp"
+#include "CouenneExpression.hpp"
+#include "CouenneExprIVar.hpp"
+#include "CouenneExprClone.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
-#include "depGraph.hpp"
+#include "CouenneDepGraph.hpp"
 
 //#define DEBUG
 

@@ -9,12 +9,12 @@
  */
 
 #include "CouenneTypes.hpp"
-#include "expression.hpp"
-#include "exprAux.hpp"
-#include "exprOp.hpp"
-#include "exprDiv.hpp"
-#include "exprClone.hpp"
-#include "exprMul.hpp"
+#include "CouenneExpression.hpp"
+#include "CouenneExprAux.hpp"
+#include "CouenneExprOp.hpp"
+#include "CouenneExprDiv.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprMul.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 

@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "CoinHelperFunctions.hpp"
-#include "exprSum.hpp"
+#include "CouenneExprSum.hpp"
 
 #define ALMOST_INF (1e-5 * COUENNE_INFINITY)
 

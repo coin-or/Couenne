@@ -10,12 +10,12 @@
 
 #include <math.h>
 
-#include "exprCos.hpp"
-#include "exprSin.hpp"
-#include "exprBCos.hpp"
-#include "exprOpp.hpp"
-#include "exprMul.hpp"
-#include "exprClone.hpp"
+#include "CouenneExprCos.hpp"
+#include "CouenneExprSin.hpp"
+#include "CouenneExprBCos.hpp"
+#include "CouenneExprOpp.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprClone.hpp"
 
 
 static const CouNumber 

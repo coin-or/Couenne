@@ -8,11 +8,11 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprInv.hpp"
-#include "exprClone.hpp"
-#include "exprMul.hpp"
+#include "CouenneExprInv.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprMul.hpp"
 #include "CouenneProblem.hpp"
-#include "expression.hpp"
+#include "CouenneExpression.hpp"
 
 // differentiation
 expression *exprInv::differentiate (int index) {

@@ -18,7 +18,7 @@
 //#define DEBUG_POWNEW
 
 #ifndef DEBUG_POWNEW
-#include "funtriplets.hpp"
+#include "CouenneFunTriplets.hpp"
 #else
 #include <stdlib.h>
 #include <stdio.h>

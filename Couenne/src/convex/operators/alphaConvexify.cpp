@@ -13,7 +13,7 @@
 #include "OsiSolverInterface.hpp"
 #include "IpLapack.hpp"
 
-#include "exprQuad.hpp"
+#include "CouenneExprQuad.hpp"
 #include "CouenneProblem.hpp"
 
 //#define DEBUG

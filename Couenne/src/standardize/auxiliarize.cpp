@@ -10,7 +10,7 @@
  */
 
 #include "CouenneProblem.hpp"
-#include "exprClone.hpp"
+#include "CouenneExprClone.hpp"
 
 //#define DEBUG
 

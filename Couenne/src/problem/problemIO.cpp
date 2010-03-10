@@ -13,8 +13,8 @@
 
 #include "CoinHelperFunctions.hpp"
 
-#include "expression.hpp"
-#include "exprAux.hpp"
+#include "CouenneExpression.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneProblem.hpp"
 
 

@@ -14,8 +14,8 @@
 #include <iostream>
 
 #include "CouenneTypes.hpp"
-#include "expression.hpp"
-#include "exprConst.hpp"
+#include "CouenneExpression.hpp"
+#include "CouenneExprConst.hpp"
 
 
 /** Class to represent nonlinear constraints

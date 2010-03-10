@@ -10,12 +10,12 @@
 
 #include "CoinHelperFunctions.hpp"
 #include "CouenneProblem.hpp"
-#include "exprConst.hpp"
-#include "exprQuad.hpp"
-#include "exprPow.hpp"
-#include "exprMul.hpp"
-#include "depGraph.hpp"
-#include "lqelems.hpp"
+#include "CouenneExprConst.hpp"
+#include "CouenneExprQuad.hpp"
+#include "CouenneExprPow.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneDepGraph.hpp"
+#include "CouenneLQelems.hpp"
 
 class Domain;
 

@@ -10,8 +10,8 @@
 
 #include "CouenneTypes.hpp"
 
-#include "exprSum.hpp"
-#include "exprConst.hpp"
+#include "CouenneExprSum.hpp"
+#include "CouenneExprConst.hpp"
 
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"

@@ -7,7 +7,7 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "expression.hpp"
+#include "CouenneExpression.hpp"
 
 class CouExpr {
 

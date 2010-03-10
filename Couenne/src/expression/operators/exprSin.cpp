@@ -10,11 +10,11 @@
 
 #include <math.h>
 
-#include "exprSin.hpp"
-#include "exprClone.hpp"
-#include "exprCos.hpp"
-#include "exprBSin.hpp"
-#include "exprMul.hpp"
+#include "CouenneExprSin.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprCos.hpp"
+#include "CouenneExprBSin.hpp"
+#include "CouenneExprMul.hpp"
 
 static const CouNumber 
   pi  = M_PI,

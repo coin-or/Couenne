@@ -15,10 +15,10 @@
 
 #include "CouenneTypes.hpp"
 
-#include "exprSum.hpp"
-#include "exprMul.hpp"
-#include "exprClone.hpp"
-#include "exprGroup.hpp"
+#include "CouenneExprSum.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprGroup.hpp"
 
 //#include "OSInstance.hpp"
 class OSInstance;

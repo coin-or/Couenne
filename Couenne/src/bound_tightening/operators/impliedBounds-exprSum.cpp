@@ -9,8 +9,8 @@
  */
 
 #include "CoinHelperFunctions.hpp"
-#include "exprSum.hpp"
-#include "exprGroup.hpp"
+#include "CouenneExprSum.hpp"
+#include "CouenneExprGroup.hpp"
 
 /// vector operation to find bound to variable in a sum
 static CouNumber scanBounds (int, int, int *, CouNumber *, CouNumber *, int *);

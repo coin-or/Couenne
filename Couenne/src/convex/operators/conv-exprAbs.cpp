@@ -12,8 +12,8 @@
 #include "CouenneTypes.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
-#include "exprAbs.hpp"
-#include "exprAux.hpp"
+#include "CouenneExprAbs.hpp"
+#include "CouenneExprAux.hpp"
 
 
 // generate convexification cut for constraint w = |x|

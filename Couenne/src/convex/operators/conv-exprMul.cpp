@@ -9,11 +9,11 @@
  */
 
 #include "CouenneTypes.hpp"
-#include "exprMul.hpp"
-#include "exprBMul.hpp"
-#include "exprConst.hpp"
-#include "exprPow.hpp"
-#include "exprClone.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprBMul.hpp"
+#include "CouenneExprConst.hpp"
+#include "CouenneExprPow.hpp"
+#include "CouenneExprClone.hpp"
 #include "CouenneProblem.hpp"
 
 

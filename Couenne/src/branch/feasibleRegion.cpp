@@ -16,9 +16,9 @@
 #include "CouenneBranchingObject.hpp"
 #include "CouenneThreeWayBranchObj.hpp"
 
-#include "exprGroup.hpp"
-#include "exprQuad.hpp"
-#include "lqelems.hpp"
+#include "CouenneExprGroup.hpp"
+#include "CouenneExprQuad.hpp"
+#include "CouenneLQelems.hpp"
 
 #define TOL 0.
 

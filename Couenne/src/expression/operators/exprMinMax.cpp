@@ -12,9 +12,9 @@
 
 #include "CouenneCutGenerator.hpp"
 #include "CouenneTypes.hpp"
-#include "exprMax.hpp"
-#include "exprMin.hpp"
-#include "exprConst.hpp"
+#include "CouenneExprMax.hpp"
+#include "CouenneExprMin.hpp"
+#include "CouenneExprConst.hpp"
 
 
 // Get lower and upper bound of an expression (if any)

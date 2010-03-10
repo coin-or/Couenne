@@ -15,15 +15,14 @@
 
 #include "CouenneTypes.hpp"
 
-#include "expression.hpp"
-#include "exprConst.hpp"
-#include "exprGroup.hpp"
-#include "exprClone.hpp"
-#include "exprAux.hpp"
-#include "lqelems.hpp"
+#include "CouenneExpression.hpp"
+#include "CouenneExprConst.hpp"
+#include "CouenneExprGroup.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
-#include "lqelems.hpp"
+#include "CouenneLQelems.hpp"
 
 // tricky... smaller values cut the optimum in OS unitTest
 const CouNumber SafeCutoff = 1e-4; 

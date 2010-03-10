@@ -12,10 +12,10 @@
 #include "CouennePrecisions.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
-#include "exprDiv.hpp"
-#include "exprMul.hpp"
-#include "exprPow.hpp"
-#include "funtriplets.hpp"
+#include "CouenneExprDiv.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprPow.hpp"
+#include "CouenneFunTriplets.hpp"
 
 
 /// Add cut around curve x*y=k 

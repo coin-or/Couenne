@@ -14,11 +14,11 @@
 
 #include "CouenneTypes.hpp"
 
-#include "exprVar.hpp"
+#include "CouenneExprVar.hpp"
 
 #include "CouenneProblem.hpp"
-#include "depGraph.hpp"
-#include "lqelems.hpp"
+#include "CouenneDepGraph.hpp"
+#include "CouenneLQelems.hpp"
 
 
 /// preprocess problem in order to extract linear relaxations etc.

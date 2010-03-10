@@ -10,11 +10,11 @@
 
 #include "CoinHelperFunctions.hpp"
 
-#include "exprLog.hpp"
+#include "CouenneExprLog.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
-#include "projections.hpp"
-#include "funtriplets.hpp"
+#include "CouenneProjections.hpp"
+#include "CouenneFunTriplets.hpp"
 
 
 #define SQ_COUENNE_EPS COUENNE_EPS * COUENNE_EPS

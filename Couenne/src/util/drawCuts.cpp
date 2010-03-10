@@ -11,7 +11,7 @@
 
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
-#include "exprAux.hpp"
+#include "CouenneExprAux.hpp"
 
 
 // [cool!] print graph-readable output for displaying inequalities

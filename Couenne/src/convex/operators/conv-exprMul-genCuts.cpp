@@ -9,7 +9,7 @@
  */
 
 #include "CouenneTypes.hpp"
-#include "exprMul.hpp"
+#include "CouenneExprMul.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 

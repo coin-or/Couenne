@@ -8,7 +8,7 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprQuad.hpp"
+#include "CouenneExprQuad.hpp"
 #include "CoinHelperFunctions.hpp"
 
 

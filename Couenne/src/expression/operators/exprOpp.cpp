@@ -8,8 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprOpp.hpp"
-#include "exprConst.hpp"
+#include "CouenneExprOpp.hpp"
+#include "CouenneExprConst.hpp"
 #include "CoinHelperFunctions.hpp"
 
 // find bounds of -x given bounds on x

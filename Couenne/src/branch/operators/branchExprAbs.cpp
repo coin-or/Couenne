@@ -11,7 +11,7 @@
 #include <math.h>
 
 #include "CoinHelperFunctions.hpp"
-#include "exprAbs.hpp"
+#include "CouenneExprAbs.hpp"
 #include "CouenneObject.hpp"
 
 static const double sqrt_2 = sqrt (2.);

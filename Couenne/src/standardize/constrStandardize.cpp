@@ -11,10 +11,10 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
 
-#include "expression.hpp"
-#include "exprAux.hpp"
-#include "exprIVar.hpp"
-#include "depGraph.hpp"
+#include "CouenneExpression.hpp"
+#include "CouenneExprAux.hpp"
+#include "CouenneExprIVar.hpp"
+#include "CouenneDepGraph.hpp"
 
 //#define DEBUG
 

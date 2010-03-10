@@ -8,7 +8,7 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprMul.hpp"
+#include "CouenneExprMul.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneCutGenerator.hpp"
 

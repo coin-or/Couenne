@@ -13,7 +13,7 @@
 #define COUENNEBRANCHINGOBJECT_HPP
 
 #include "CoinFinite.hpp"
-#include "exprAux.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneJournalist.hpp"
 #include "OsiBranchingObject.hpp"
 

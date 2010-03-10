@@ -14,13 +14,13 @@
 #include "CoinHelperFunctions.hpp"
 
 #include "CouennePrecisions.hpp"
-#include "exprPow.hpp"
-#include "exprSum.hpp"
-#include "exprMul.hpp"
-#include "exprDiv.hpp"
-#include "exprLog.hpp"
-//#include "exprOpp.hpp"
-#include "exprConst.hpp"
+#include "CouenneExprPow.hpp"
+#include "CouenneExprSum.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprDiv.hpp"
+#include "CouenneExprLog.hpp"
+//#include "CouenneExprOpp.hpp"
+#include "CouenneExprConst.hpp"
 #include "CouenneProblem.hpp"
 
 

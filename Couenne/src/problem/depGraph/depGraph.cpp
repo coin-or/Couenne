@@ -10,7 +10,7 @@
 
 #include <cstdlib>
 #include <cstdio>
-#include "depGraph.hpp"
+#include "CouenneDepGraph.hpp"
 
 //#define DEBUG
 

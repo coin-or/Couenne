@@ -9,7 +9,7 @@
  */
 
 #include "CoinHelperFunctions.hpp"
-#include "domain.hpp"
+#include "CouenneDomain.hpp"
 #include "CouennePrecisions.hpp"
 
 #define EXTRA_STORAGE 1024

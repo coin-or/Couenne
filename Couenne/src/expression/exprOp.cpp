@@ -8,12 +8,12 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "expression.hpp"
-#include "exprAux.hpp"
-#include "exprClone.hpp"
-#include "exprOp.hpp"
-#include "exprGroup.hpp"
-#include "exprQuad.hpp"
+#include "CouenneExpression.hpp"
+#include "CouenneExprAux.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprOp.hpp"
+#include "CouenneExprGroup.hpp"
+#include "CouenneExprQuad.hpp"
 
 #include <cstdio>
 

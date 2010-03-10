@@ -15,7 +15,7 @@
 #include "CoinFinite.hpp"
 #include "OsiBranchingObject.hpp"
 
-#include "exprAux.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneObject.hpp"
 
 

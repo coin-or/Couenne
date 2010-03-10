@@ -11,12 +11,12 @@
 #include <math.h>
 
 #include "CouenneTypes.hpp"
-#include "rootQ.hpp"
-#include "exprPow.hpp"
+#include "CouenneRootQ.hpp"
+#include "CouenneExprPow.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
-#include "funtriplets.hpp"
+#include "CouenneFunTriplets.hpp"
 
 
 // adds convex (upper/lower) envelope to a power function

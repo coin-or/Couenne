@@ -14,10 +14,10 @@
 
 #include "CouenneTypes.hpp"
 #include "CouenneProblem.hpp"
-#include "exprQuad.hpp"
-#include "exprMul.hpp"
-#include "exprPow.hpp"
-#include "lqelems.hpp"
+#include "CouenneExprQuad.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprPow.hpp"
+#include "CouenneLQelems.hpp"
 
 #define MIN_DENSITY 0.5
 

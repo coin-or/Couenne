@@ -12,9 +12,9 @@
 #include "CouenneTypes.hpp"
 #include "CouenneObject.hpp"
 
-#include "exprMul.hpp"
-#include "funtriplets.hpp"
-#include "projections.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneFunTriplets.hpp"
+#include "CouenneProjections.hpp"
 
 
 /// set up branching object by evaluating many branching points for

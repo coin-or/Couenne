@@ -8,12 +8,12 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprSum.hpp"
-#include "exprSub.hpp"
-#include "exprOpp.hpp"
-#include "exprGroup.hpp"
-#include "exprQuad.hpp"
-#include "lqelems.hpp"
+#include "CouenneExprSum.hpp"
+#include "CouenneExprSub.hpp"
+#include "CouenneExprOpp.hpp"
+#include "CouenneExprGroup.hpp"
+#include "CouenneExprQuad.hpp"
+#include "CouenneLQelems.hpp"
 
 //#define DEBUG
 

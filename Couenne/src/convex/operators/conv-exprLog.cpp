@@ -9,9 +9,9 @@
  */
 
 #include "CouenneTypes.hpp"
-#include "exprLog.hpp"
-#include "exprPow.hpp"
-#include "exprAux.hpp"
+#include "CouenneExprLog.hpp"
+#include "CouenneExprPow.hpp"
+#include "CouenneExprAux.hpp"
 
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"

@@ -9,8 +9,8 @@
  */
 
 #include "CouenneTypes.hpp"
-#include "exprOpp.hpp"
-#include "exprConst.hpp"
+#include "CouenneExprOpp.hpp"
+#include "CouenneExprConst.hpp"
 
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"

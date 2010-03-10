@@ -8,10 +8,10 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprAux.hpp"
-#include "exprBound.hpp"
-#include "exprMax.hpp"
-#include "exprMin.hpp"
+#include "CouenneExprAux.hpp"
+#include "CouenneExprBound.hpp"
+#include "CouenneExprMax.hpp"
+#include "CouenneExprMin.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneComplObject.hpp"
 #include "CouenneJournalist.hpp"

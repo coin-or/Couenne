@@ -8,13 +8,13 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprDiv.hpp"
-#include "exprConst.hpp"
-#include "exprClone.hpp"
-#include "exprMul.hpp"
-#include "exprInv.hpp"
-#include "exprSub.hpp"
-#include "exprBDiv.hpp"
+#include "CouenneExprDiv.hpp"
+#include "CouenneExprConst.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprInv.hpp"
+#include "CouenneExprSub.hpp"
+#include "CouenneExprBDiv.hpp"
 
 #include "CouennePrecisions.hpp"
 

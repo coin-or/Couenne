@@ -12,12 +12,12 @@
 
 #include "CoinHelperFunctions.hpp"
 
-#include "exprLog.hpp"
-#include "exprConst.hpp"
-#include "exprClone.hpp"
-#include "exprMax.hpp"
-#include "exprMin.hpp"
-#include "exprDiv.hpp"
+#include "CouenneExprLog.hpp"
+#include "CouenneExprConst.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprMax.hpp"
+#include "CouenneExprMin.hpp"
+#include "CouenneExprDiv.hpp"
 #include "CouenneProblem.hpp"
 
 

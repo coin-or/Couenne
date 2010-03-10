@@ -10,7 +10,7 @@
 
 #include "CoinHelperFunctions.hpp"
 
-#include "exprQuad.hpp"
+#include "CouenneExprQuad.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
 

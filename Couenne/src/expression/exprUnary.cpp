@@ -10,9 +10,9 @@
 
 #include "CouenneProblem.hpp"
 #include "CouenneTypes.hpp"
-#include "exprUnary.hpp"
-#include "exprVar.hpp"
-#include "exprClone.hpp"
+#include "CouenneExprUnary.hpp"
+#include "CouenneExprVar.hpp"
+#include "CouenneExprClone.hpp"
 
 // print unary expression
 void exprUnary::print (std::ostream &out, 

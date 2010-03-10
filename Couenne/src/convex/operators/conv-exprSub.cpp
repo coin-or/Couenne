@@ -10,8 +10,8 @@
 
 #include "CouenneTypes.hpp"
 #include "CouenneCutGenerator.hpp"
-#include "exprSub.hpp"
-#include "exprOpp.hpp"
+#include "CouenneExprSub.hpp"
+#include "CouenneExprOpp.hpp"
 
 // generate equality between *this and *w
 void exprSub::generateCuts (expression *w, //const OsiSolverInterface &si, 

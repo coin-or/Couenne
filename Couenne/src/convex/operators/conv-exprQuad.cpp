@@ -13,9 +13,9 @@
 #include "OsiRowCut.hpp"
 #include "OsiCuts.hpp"
 
-#include "exprAux.hpp"
-#include "exprQuad.hpp"
-#include "exprBQuad.hpp"
+#include "CouenneExprAux.hpp"
+#include "CouenneExprQuad.hpp"
+#include "CouenneExprBQuad.hpp"
 #include "CouenneCutGenerator.hpp"
 
 /// Get lower and upper bound of an expression (if any)

@@ -17,12 +17,12 @@
 #include "BonBabInfos.hpp"
 
 #include "CouenneTypes.hpp"
-#include "expression.hpp"
-#include "exprAux.hpp"
+#include "CouenneExpression.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneJournalist.hpp"
-#include "domain.hpp"
+#include "CouenneDomain.hpp"
 
 struct ASL;
 struct expr;

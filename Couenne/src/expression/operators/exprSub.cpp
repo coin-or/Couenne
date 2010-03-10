@@ -8,8 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprSub.hpp"
-#include "exprOpp.hpp"
+#include "CouenneExprSub.hpp"
+#include "CouenneExprOpp.hpp"
 #include "CouennePrecisions.hpp"
 
 

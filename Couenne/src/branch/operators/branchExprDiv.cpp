@@ -8,8 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprDiv.hpp"
-#include "exprMul.hpp"
+#include "CouenneExprDiv.hpp"
+#include "CouenneExprMul.hpp"
 #include "CouenneBranchingObject.hpp"
 #include "CouenneObject.hpp"
 

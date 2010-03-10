@@ -11,12 +11,12 @@
 #include <math.h>
 
 #include "CouenneTypes.hpp"
-#include "exprPow.hpp"
-#include "exprConst.hpp"
-#include "exprClone.hpp"
-#include "exprMax.hpp"
-#include "exprMin.hpp"
-#include "exprOpp.hpp"
+#include "CouenneExprPow.hpp"
+#include "CouenneExprConst.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprMax.hpp"
+#include "CouenneExprMin.hpp"
+#include "CouenneExprOpp.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
 

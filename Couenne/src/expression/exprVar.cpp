@@ -11,10 +11,10 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneObject.hpp"
-#include "exprAux.hpp"
-#include "exprVar.hpp"
-#include "exprBound.hpp"
-#include "depGraph.hpp"
+#include "CouenneExprAux.hpp"
+#include "CouenneExprVar.hpp"
+#include "CouenneExprBound.hpp"
+#include "CouenneDepGraph.hpp"
 
 
 // Get lower and upper bound of a variable expression (if any)

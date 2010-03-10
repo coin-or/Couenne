@@ -14,7 +14,7 @@
 #include "BonBabSetupBase.hpp"
 #include "CoinFinite.hpp"
 
-#include "exprVar.hpp"
+#include "CouenneExprVar.hpp"
 #include "CouenneJournalist.hpp"
 #include "OsiBranchingObject.hpp"
 

@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "CoinHelperFunctions.hpp"
-#include "exprMul.hpp"
+#include "CouenneExprMul.hpp"
 
 int exprMul::impliedBoundMul (CouNumber wl, 
 			      CouNumber wu, 

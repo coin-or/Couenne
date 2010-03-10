@@ -8,11 +8,11 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprAbs.hpp"
-#include "exprClone.hpp"
-#include "exprMin.hpp"
-#include "exprMax.hpp"
-#include "exprOpp.hpp"
+#include "CouenneExprAbs.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprMin.hpp"
+#include "CouenneExprMax.hpp"
+#include "CouenneExprOpp.hpp"
 
 #include "CouenneProblem.hpp"
 

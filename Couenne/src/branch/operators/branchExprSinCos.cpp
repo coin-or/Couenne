@@ -10,8 +10,8 @@
 
 #include <math.h>
 
-#include "funtriplets.hpp"
-#include "exprSin.hpp"
+#include "CouenneFunTriplets.hpp"
+#include "CouenneExprSin.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
 

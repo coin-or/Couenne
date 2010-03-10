@@ -8,7 +8,7 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprDiv.hpp"
+#include "CouenneExprDiv.hpp"
 #include "CouennePrecisions.hpp"
 #include "CoinHelperFunctions.hpp"
 

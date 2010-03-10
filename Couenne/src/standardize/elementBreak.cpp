@@ -8,7 +8,7 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "expression.hpp"
+#include "CouenneExpression.hpp"
 
 /// given an element of a sum, check if it is a variable (possibly
 /// with a coefficient) and return its index (and the coefficient) if

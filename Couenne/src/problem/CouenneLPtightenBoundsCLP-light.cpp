@@ -11,7 +11,7 @@
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
-#include "exprVar.hpp"
+#include "CouenneExprVar.hpp"
 
 // Tighten bounds - lightweight. Returns -1 if infeasible, otherwise
 // number of variables tightened.

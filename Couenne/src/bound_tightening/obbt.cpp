@@ -11,7 +11,7 @@
 #include "CoinHelperFunctions.hpp"
 #include "CglCutGenerator.hpp"
 
-#include "expression.hpp"
+#include "CouenneExpression.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 #include "OsiClpSolverInterface.hpp"

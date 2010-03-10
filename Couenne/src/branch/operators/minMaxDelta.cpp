@@ -11,7 +11,7 @@
  */
 
 #include "CouenneObject.hpp"
-#include "funtriplets.hpp"
+#include "CouenneFunTriplets.hpp"
 
 const int maxIter = 20;
 

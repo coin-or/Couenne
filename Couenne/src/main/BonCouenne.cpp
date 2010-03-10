@@ -40,10 +40,10 @@ using namespace Bonmin;
 // the maximum difference between a printed optimum and a CouNumber
 #define PRINTED_PRECISION 1e-5
 
-#include "exprVar.hpp"
-#include "exprConst.hpp"
-#include "exprSum.hpp"
-#include "exprClone.hpp"
+#include "CouenneExprVar.hpp"
+#include "CouenneExprConst.hpp"
+#include "CouenneExprSum.hpp"
+#include "CouenneExprClone.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
 

@@ -8,8 +8,8 @@
  */
 
 #include "CouExpr.hpp"
-#include "exprClone.hpp"
-#include "exprSum.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprSum.hpp"
 
 
 CouExpr operator+(CouExpr &e1, CouExpr &e2) {

@@ -10,9 +10,9 @@
 
 #include <stdlib.h>
 
-#include "exprSum.hpp"
-#include "exprCopy.hpp"
-#include "exprConst.hpp"
+#include "CouenneExprSum.hpp"
+#include "CouenneExprCopy.hpp"
+#include "CouenneExprConst.hpp"
 
 
 /// Constructor

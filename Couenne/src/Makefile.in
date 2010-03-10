@@ -370,8 +370,8 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
 includecoindir = $(includedir)/coin
 includecoin_HEADERS = \
 	../inc/config_couenne.h \
-	util/rootQ.hpp \
-	util/funtriplets.hpp \
+	util/CouenneRootQ.hpp \
+	util/CouenneFunTriplets.hpp \
 	main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp \
 	interfaces/BonCouenneInterface.hpp \
@@ -389,46 +389,46 @@ includecoin_HEADERS = \
 	branch/CouenneOrbitObj.hpp \
 	branch/CouenneOrbitBranchingObj.hpp \
 	branch/CouenneSOSObject.hpp \
-	branch/projections.hpp \
-	standardize/lqelems.hpp \
-	expression/domain.hpp \
-	expression/operators/exprAbs.hpp \
-	expression/operators/exprExp.hpp \
-	expression/operators/exprInv.hpp \
-	expression/operators/exprMul.hpp \
-	expression/operators/exprOpp.hpp \
-	expression/operators/exprLog.hpp \
-	expression/operators/exprDiv.hpp \
-	expression/operators/exprMin.hpp \
-	expression/operators/exprSum.hpp \
-	expression/operators/exprMax.hpp \
-	expression/operators/exprPow.hpp \
-	expression/operators/exprSin.hpp \
-	expression/operators/exprCos.hpp \
-	expression/operators/exprSub.hpp \
-	expression/operators/exprGroup.hpp \
-	expression/operators/exprQuad.hpp \
-	expression/operators/exprIf.hpp \
-	expression/operators/exprNorm.hpp \
-	expression/operators/exprPWLinear.hpp \
-	expression/operators/bounds/exprBMul.hpp \
-	expression/operators/bounds/exprBDiv.hpp \
-	expression/operators/bounds/exprBSin.hpp \
-	expression/operators/bounds/exprBCos.hpp \
-	expression/exprConst.hpp \
-	expression/exprIVar.hpp \
-	expression/exprVar.hpp \
-	expression/exprAux.hpp \
-	expression/exprUnary.hpp \
-	expression/expression.hpp \
-	expression/exprClone.hpp \
-	expression/exprBound.hpp \
-	expression/exprCopy.hpp \
-	expression/exprStore.hpp \
-	expression/exprOp.hpp \
+	branch/CouenneProjections.hpp \
+	standardize/CouenneLQelems.hpp \
+	expression/CouenneDomain.hpp \
+	expression/operators/CouenneExprAbs.hpp \
+	expression/operators/CouenneExprExp.hpp \
+	expression/operators/CouenneExprInv.hpp \
+	expression/operators/CouenneExprMul.hpp \
+	expression/operators/CouenneExprOpp.hpp \
+	expression/operators/CouenneExprLog.hpp \
+	expression/operators/CouenneExprDiv.hpp \
+	expression/operators/CouenneExprMin.hpp \
+	expression/operators/CouenneExprSum.hpp \
+	expression/operators/CouenneExprMax.hpp \
+	expression/operators/CouenneExprPow.hpp \
+	expression/operators/CouenneExprSin.hpp \
+	expression/operators/CouenneExprCos.hpp \
+	expression/operators/CouenneExprSub.hpp \
+	expression/operators/CouenneExprGroup.hpp \
+	expression/operators/CouenneExprQuad.hpp \
+	expression/operators/CouenneExprIf.hpp \
+	expression/operators/CouenneExprNorm.hpp \
+	expression/operators/CouenneExprPWLinear.hpp \
+	expression/operators/bounds/CouenneExprBMul.hpp \
+	expression/operators/bounds/CouenneExprBDiv.hpp \
+	expression/operators/bounds/CouenneExprBSin.hpp \
+	expression/operators/bounds/CouenneExprBCos.hpp \
+	expression/CouenneExprConst.hpp \
+	expression/CouenneExprIVar.hpp \
+	expression/CouenneExprVar.hpp \
+	expression/CouenneExprAux.hpp \
+	expression/CouenneExprUnary.hpp \
+	expression/CouenneExpression.hpp \
+	expression/CouenneExprClone.hpp \
+	expression/CouenneExprBound.hpp \
+	expression/CouenneExprCopy.hpp \
+	expression/CouenneExprStore.hpp \
+	expression/CouenneExprOp.hpp \
 	expression/CouExpr.hpp \
 	expression/CouennePrecisions.hpp \
-	problem/depGraph/depGraph.hpp \
+	problem/depGraph/CouenneDepGraph.hpp \
 	problem/CouenneProblemElem.hpp \
 	problem/CouenneProblem.hpp \
 	problem/CouenneSolverInterface.hpp \

@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "CouenneProblem.hpp"
-#include "exprGroup.hpp"
+#include "CouenneExprGroup.hpp"
 
 #include "CbcModel.hpp"
 #include "CbcBranchActual.hpp"

@@ -15,18 +15,18 @@
 
 #include "CouenneTypes.hpp"
 
-#include "expression.hpp"
-#include "exprConst.hpp"
-#include "exprQuad.hpp"
-#include "exprClone.hpp"
-#include "exprIVar.hpp"
-#include "exprAux.hpp"
-#include "exprOpp.hpp"
+#include "CouenneExpression.hpp"
+#include "CouenneExprConst.hpp"
+#include "CouenneExprQuad.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprIVar.hpp"
+#include "CouenneExprAux.hpp"
+#include "CouenneExprOpp.hpp"
 
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
-#include "depGraph.hpp"
-#include "lqelems.hpp"
+#include "CouenneDepGraph.hpp"
+#include "CouenneLQelems.hpp"
 
 
 /// methods to add objective function. 

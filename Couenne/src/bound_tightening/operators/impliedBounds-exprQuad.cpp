@@ -12,7 +12,7 @@
 #include <set>
 
 #include "CoinHelperFunctions.hpp"
-#include "exprQuad.hpp"
+#include "CouenneExprQuad.hpp"
 
 //#define DEBUG
 

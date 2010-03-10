@@ -12,9 +12,9 @@
 #include "CouenneTypes.hpp"
 #include "CouenneObject.hpp"
 
-#include "exprMul.hpp"
-#include "funtriplets.hpp"
-#include "projections.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneFunTriplets.hpp"
+#include "CouenneProjections.hpp"
 
 // compute distance from future convexifications in set \f$\{(x,y,w):
 // w = xy\}\f$ with x,y,w bounded

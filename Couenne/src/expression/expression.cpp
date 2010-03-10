@@ -12,12 +12,12 @@
 #include "CouenneProblem.hpp"
 
 #include "CouenneTypes.hpp"
-#include "expression.hpp"
-#include "exprClone.hpp"
-#include "exprAux.hpp"
-#include "exprOp.hpp"
-#include "exprUnary.hpp"
-#include "exprStore.hpp"
+#include "CouenneExpression.hpp"
+#include "CouenneExprClone.hpp"
+#include "CouenneExprAux.hpp"
+#include "CouenneExprOp.hpp"
+#include "CouenneExprUnary.hpp"
+#include "CouenneExprStore.hpp"
 
 
 // empty differentiation method

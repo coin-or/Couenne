@@ -8,7 +8,7 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "depGraph.hpp"
+#include "CouenneDepGraph.hpp"
 
 //#define DEBUG
 

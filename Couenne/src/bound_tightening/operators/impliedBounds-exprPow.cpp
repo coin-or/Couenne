@@ -8,8 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "exprPow.hpp"
-#include "expression.hpp"
+#include "CouenneExprPow.hpp"
+#include "CouenneExpression.hpp"
 #include "CoinHelperFunctions.hpp"
 
 /// set implied bounds for function w = x^k, k negative, integer or

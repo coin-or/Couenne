@@ -9,10 +9,10 @@
  */
 
 #include "CouenneProblem.hpp"
-#include "exprMul.hpp"
-#include "exprPow.hpp"
-#include "exprQuad.hpp"
-#include "lqelems.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprPow.hpp"
+#include "CouenneExprQuad.hpp"
+#include "CouenneLQelems.hpp"
 
 //#define DEBUG
 

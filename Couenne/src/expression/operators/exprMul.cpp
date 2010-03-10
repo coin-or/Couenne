@@ -12,10 +12,10 @@
 #include <assert.h>
 
 #include "CoinHelperFunctions.hpp"
-#include "exprMul.hpp"
-#include "exprSum.hpp"
-#include "exprConst.hpp"
-#include "exprClone.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprSum.hpp"
+#include "CouenneExprConst.hpp"
+#include "CouenneExprClone.hpp"
 #include "CouennePrecisions.hpp"
 
 
