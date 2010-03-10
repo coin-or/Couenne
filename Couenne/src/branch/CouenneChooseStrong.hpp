@@ -14,8 +14,8 @@
 #include "BonChooseVariable.hpp"
 #include "CouenneJournalist.hpp"
 
-class Bonmin::HotInfo;
 class CouenneProblem;
+
 template <class T> class CouenneSolverInterface;
 
 class CouenneChooseStrong : public Bonmin::BonChooseVariable  {

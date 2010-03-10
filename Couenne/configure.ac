@@ -12,7 +12,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[0.2],[couenne@list.coin-or.org])
+AC_INIT([Couenne],[0.3],[couenne@list.coin-or.org])
 
 AC_COPYRIGHT([
 Copyright 2006 Carnegie Mellon University, International Business Machines and others.
@@ -108,6 +108,8 @@ AC_CONFIG_FILES([Makefile
                  src/bound_tightening/Makefile
                  src/branch/Makefile
                  src/convex/Makefile
+                 src/interfaces/Makefile
+                 src/heuristics/Makefile
                  src/disjunctive/Makefile
                  src/expression/Makefile
                  src/problem/Makefile

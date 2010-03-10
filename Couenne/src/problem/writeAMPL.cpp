@@ -32,8 +32,8 @@ void CouenneProblem::writeAMPL (const std::string &fname,  /// name of the mod f
 
     f << "var ";
     variables_ [i] -> print (f);
-    if (Lb (i) > - COUENNE_INFINITY + 1) f << " >= " << Lb (i);
-    if (Ub (i) < + COUENNE_INFINITY - 1) f << " <= " << Ub (i);
+    if (Lb (i) > - COUENNE_INFINITY/2) f << " >= " << Lb (i);
+    if (Ub (i) < + COUENNE_INFINITY/2) f << " <= " << Ub (i);
     if (variables_ [i] -> isInteger ())   f << " integer";
     if (fabs (X (i)) < COUENNE_INFINITY)    
       f << " default " << X (i); 

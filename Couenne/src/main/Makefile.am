@@ -17,10 +17,7 @@ endif
 lib_LTLIBRARIES = libBonCouenne.la
 
 libBonCouenne_la_SOURCES = \
-	BonCouenneSetup.cpp \
-	BonCouenneInterface.cpp \
-	BonNlpHeuristic.cpp \
-	BonInitHeuristic.cpp
+	BonCouenneSetup.cpp
 
 COINLIBS = \
 	$(CBCOBJDIR)/src/libCbc.la \
@@ -28,8 +25,6 @@ COINLIBS = \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
         $(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
         $(BONMINOBJDIR)/src/Algorithms/Branching/libbonbranching.la \
-	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
-        $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
         $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 
 if COIN_HAS_CPX
@@ -51,10 +46,20 @@ IPOPTLIBS = \
 
 couenne_LDADD         = libBonCouenne.la
 couenne_DEPENDENCIES  = libBonCouenne.la
+
 if COIN_HAS_ASL
 couenne_LDADD        += ../readnl/libCouenneReadnl.la
 couenne_DEPENDENCIES += ../readnl/libCouenneReadnl.la
+COINLIBS             += \
+	$(BONMINOBJDIR)/src/Interfaces/Ampl/libbonamplinterface.la \
+	$(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
 endif
+
+
+COINLIBS += \
+	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
+	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la
+
 couenne_LDADD        += ../libCouenne.la
 couenne_DEPENDENCIES += ../libCouenne.la
 
@@ -63,10 +68,12 @@ couenne_SOURCES = \
 
 couenne2_LDADD         = libBonCouenne.la
 couenne2_DEPENDENCIES  = libBonCouenne.la
+
 if COIN_HAS_ASL
 couenne2_LDADD        += ../readnl/libCouenneReadnl.la
 couenne2_DEPENDENCIES += ../readnl/libCouenneReadnl.la
 endif
+
 couenne2_LDADD        += ../libCouenne.la
 couenne2_DEPENDENCIES += ../libCouenne.la
 
@@ -154,6 +161,8 @@ AM_CPPFLAGS += $(ASL_CPPFLAGS)
 
 AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/interfaces` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/heuristics` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \

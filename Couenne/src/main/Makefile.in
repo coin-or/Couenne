@@ -48,9 +48,13 @@ host_triplet = @host@
 @COIN_HAS_NTY_TRUE@am__append_2 = $(NTYLIB)
 @COIN_HAS_ASL_TRUE@am__append_3 = ../readnl/libCouenneReadnl.la
 @COIN_HAS_ASL_TRUE@am__append_4 = ../readnl/libCouenneReadnl.la
-@COIN_HAS_ASL_TRUE@am__append_5 = ../readnl/libCouenneReadnl.la
+@COIN_HAS_ASL_TRUE@am__append_5 = \
+@COIN_HAS_ASL_TRUE@	$(BONMINOBJDIR)/src/Interfaces/Ampl/libbonamplinterface.la \
+@COIN_HAS_ASL_TRUE@	$(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
+
 @COIN_HAS_ASL_TRUE@am__append_6 = ../readnl/libCouenneReadnl.la
-@COIN_HAS_CPX_TRUE@am__append_7 = \
+@COIN_HAS_ASL_TRUE@am__append_7 = ../readnl/libCouenneReadnl.la
+@COIN_HAS_CPX_TRUE@am__append_8 = \
 @COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
 @COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(CPXINCDIR)`
 
@@ -74,8 +78,7 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libBonCouenne_la_LIBADD =
-am_libBonCouenne_la_OBJECTS = BonCouenneSetup.lo \
-	BonCouenneInterface.lo BonNlpHeuristic.lo BonInitHeuristic.lo
+am_libBonCouenne_la_OBJECTS = BonCouenneSetup.lo
 libBonCouenne_la_OBJECTS = $(am_libBonCouenne_la_OBJECTS)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
@@ -86,17 +89,19 @@ couenne_OBJECTS = $(am_couenne_OBJECTS)
 @COIN_HAS_CPX_TRUE@	$(OSIOBJDIR)/src/OsiCpx/libOsiCpx.la
 am__DEPENDENCIES_3 =
 @COIN_HAS_NTY_TRUE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_3)
-am__DEPENDENCIES_5 = $(CBCOBJDIR)/src/libCbc.la \
+@COIN_HAS_ASL_TRUE@am__DEPENDENCIES_5 = $(BONMINOBJDIR)/src/Interfaces/Ampl/libbonamplinterface.la \
+@COIN_HAS_ASL_TRUE@	$(IPOPTOBJDIR)/src/Apps/AmplSolver/libamplinterface.la
+am__DEPENDENCIES_6 = $(CBCOBJDIR)/src/libCbc.la \
 	$(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
 	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
 	$(BONMINOBJDIR)/src/Algorithms/Branching/libbonbranching.la \
-	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
-	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
 	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la $(am__DEPENDENCIES_2) \
 	$(am__DEPENDENCIES_4) $(OSIOBJDIR)/src/libOsi.la \
 	$(CLPOBJDIR)/src/libClp.la \
-	$(COINUTILSOBJDIR)/src/libCoinUtils.la
+	$(COINUTILSOBJDIR)/src/libCoinUtils.la $(am__DEPENDENCIES_5) \
+	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
+	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la
 am_couenne2_OBJECTS = Couenne.$(OBJEXT) CouenneOSInterface.$(OBJEXT)
 couenne2_OBJECTS = $(am_couenne2_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
@@ -308,21 +313,18 @@ target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
 lib_LTLIBRARIES = libBonCouenne.la
 libBonCouenne_la_SOURCES = \
-	BonCouenneSetup.cpp \
-	BonCouenneInterface.cpp \
-	BonNlpHeuristic.cpp \
-	BonInitHeuristic.cpp
+	BonCouenneSetup.cpp
 
 COINLIBS = $(CBCOBJDIR)/src/libCbc.la $(CGLOBJDIR)/src/libCgl.la \
 	$(OSIOBJDIR)/src/OsiClp/libOsiClp.la \
 	$(BONMINOBJDIR)/src/CbcBonmin/libbonmin.la \
 	$(BONMINOBJDIR)/src/Algorithms/Branching/libbonbranching.la \
-	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la \
-	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
 	$(IPOPTOBJDIR)/src/LinAlg/liblinalg.la $(am__append_1) \
 	$(am__append_2) $(OSIOBJDIR)/src/libOsi.la \
 	$(CLPOBJDIR)/src/libClp.la \
-	$(COINUTILSOBJDIR)/src/libCoinUtils.la
+	$(COINUTILSOBJDIR)/src/libCoinUtils.la $(am__append_5) \
+	$(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
+	$(BONMINOBJDIR)/src/Interfaces/libbonmininterfaces.la
 IPOPTLIBS = \
         $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
         $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
@@ -338,11 +340,11 @@ couenne_DEPENDENCIES = libBonCouenne.la $(am__append_4) \
 couenne_SOURCES = \
 	BonCouenne.cpp
 
-couenne2_LDADD = libBonCouenne.la $(am__append_5) ../libCouenne.la \
+couenne2_LDADD = libBonCouenne.la $(am__append_6) ../libCouenne.la \
 	$(LIBCBCCOPY) $(COINLIBS) $(ADDLIBS) $(ASLLIB) `cat \
 	$(IPOPTOBJDIR)/src/Interfaces/ipopt_addlibs_cpp.txt` `cat \
 	$(COINUTILSOBJDIR)/coinutils_addlibs.txt`
-couenne2_DEPENDENCIES = libBonCouenne.la $(am__append_6) \
+couenne2_DEPENDENCIES = libBonCouenne.la $(am__append_7) \
 	../libCouenne.la
 couenne2_SOURCES = \
 	Couenne.cpp \
@@ -393,8 +395,10 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglTwomir` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglKnapsackCover` -I`$(CYGPATH_W) \
 	$(CGLSRCDIR)/src/CglPreProcess` -I`$(CYGPATH_W) \
-	$(CGLOBJDIR)/inc` $(am__append_7) $(ASL_CPPFLAGS) \
+	$(CGLOBJDIR)/inc` $(am__append_8) $(ASL_CPPFLAGS) \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src` -I`$(CYGPATH_W) \
+	$(COUENNESRCDIR)/src/interfaces` -I`$(CYGPATH_W) \
+	$(COUENNESRCDIR)/src/heuristics` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/convex` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/expression` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/expression/operators` -I`$(CYGPATH_W) \
@@ -511,10 +515,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenne.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonNlpHeuristic.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Couenne.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneOSInterface.Po@am__quote@
 

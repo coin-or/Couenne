@@ -48,6 +48,7 @@ class CouenneInterface : public AmplInterface
                               Ipopt::SmartPtr<Ipopt::OptionsList> options,
                               Ipopt::SmartPtr<Ipopt::Journalist> journalist);
 #endif
+
   /** \name Overloaded methods to build outer approximations */
   //@{
   /** \brief Extract a linear relaxation of the MINLP.

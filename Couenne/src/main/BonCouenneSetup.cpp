@@ -91,9 +91,9 @@ namespace Bonmin{
       delete couenneProb_;
   }
 
-  bool CouenneSetup::InitializeCouenne (char ** argv, 
+  bool CouenneSetup::InitializeCouenne (char ** argv,  
 					CouenneProblem *couenneProb,
-          Ipopt::SmartPtr<Bonmin::TMINLP> tminlp,
+					Ipopt::SmartPtr<Bonmin::TMINLP> tminlp,
 					Bonmin::CouenneInterface *ci) {
     std::string s;
 
@@ -135,9 +135,9 @@ namespace Bonmin{
 	return false;
 #endif
       } else {
-      	assert(couenneProb_ != NULL);
-      	assert(IsValid(tminlp)); //TODO would be great to setup own TMINLP based on CouenneProblem formulation
-      	ci -> initialize(roptions_, options_, journalist_, tminlp);
+      	assert (couenneProb_ != NULL);
+      	assert (IsValid (tminlp)); //TODO would be great to setup own TMINLP based on CouenneProblem formulation
+      	ci -> initialize (roptions_, options_, journalist_, tminlp);
       }
     }
 
@@ -334,8 +334,8 @@ namespace Bonmin{
 
 	// if this variable is associated with a nonlinear function
 	if (var -> isInteger () || 
-	    (var -> Type  () == AUX) && 
-	    (var -> Image () -> Linearity () > LINEAR)) {
+	    ((var -> Type  () == AUX) && 
+	     (var -> Image () -> Linearity () > LINEAR))) {
 
 	  /*if ((var -> Image () -> code () == COU_EXPRMUL) &&
 	      (var -> Image () -> ArgList () [0] -> Index () >= 0) &&

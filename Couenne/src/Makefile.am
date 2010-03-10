@@ -19,6 +19,8 @@ lib_LTLIBRARIES = libCouenne.la
 libCouenne_la_SOURCES = 
 
 libCouenne_la_LIBADD = \
+	./interfaces/libCouenneInterfaces.la \
+	./heuristics/libCouenneHeuristics.la \
 	./problem/libCouenneProblem.la \
 	./standardize/libCouenneStandardize.la \
 	./expression/libCouenneExpression.la \
@@ -97,6 +99,8 @@ endif
 
 AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/interfaces` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/heuristics` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
@@ -121,9 +125,9 @@ includecoin_HEADERS = \
 	util/funtriplets.hpp \
 	main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp \
-	main/BonCouenneInterface.hpp \
-	main/BonNlpHeuristic.hpp \
-	main/BonInitHeuristic.hpp \
+	interfaces/BonCouenneInterface.hpp \
+	heuristics/BonNlpHeuristic.hpp \
+	heuristics/BonInitHeuristic.hpp \
 	branch/CouenneObject.hpp \
 	branch/CouenneVarObject.hpp \
 	branch/CouenneVTObject.hpp \

@@ -66,7 +66,7 @@ int main (int argc, char *argv[]) {
     CouenneInterface *ci = NULL;
 
 #if 0
-    ci = new CouenneInterface;
+    //ci = new CouenneInterface;
     p = new CouenneProblem;
 
     p -> addVariable (false, p -> domain ());

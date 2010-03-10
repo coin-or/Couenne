@@ -50,6 +50,7 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ampl` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/interfaces` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \

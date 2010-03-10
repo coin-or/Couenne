@@ -26,6 +26,8 @@ SUBDIRS += src/standardize \
 	  src/convex \
 	  src/branch \
 	  src/disjunctive \
+	  src/interfaces \
+	  src/heuristics \
 	  src \
 	  src/main 
 
