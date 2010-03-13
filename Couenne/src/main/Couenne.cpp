@@ -207,3 +207,25 @@ int main (int argc, char *argv[]) {
   
   return EXIT_SUCCESS;
 }
+
+
+
+//int main (int argc, char **argv) {
+
+  // read options
+
+  // create problem
+
+  // create bb solver
+
+  // add cut generators
+  // add heuristics
+  // add branching rules
+  // add bound reduction
+
+  // solve
+
+  // print result
+
+//  return retval;
+//}

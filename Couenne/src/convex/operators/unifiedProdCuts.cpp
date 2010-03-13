@@ -78,7 +78,7 @@ void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
 		      int xi, CouNumber x0, CouNumber xl, CouNumber xu,
 		      int yi, CouNumber y0, CouNumber yl, CouNumber yu,
 		      int wi, CouNumber w0, CouNumber wl, CouNumber wu,
-		      t_chg_bounds *chg) {
+		      t_chg_bounds *chg, enum expression::auxSign sign) {
 
   bool cLX,  cRX,  cLY,  cRY,  cLW,  cRW = 
        cLX = cRX = cLY = cRY = cLW = true;
@@ -99,10 +99,15 @@ void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
   //
   // These cuts are added if the corresponding bounds are finite
 
-  if ((cLX || cLY) && is_boundbox_regular (yl, xl)) cg -> createCut (cs, yl*xl,-1,wi,-1.,xi,yl,yi,xl);
-  if ((cRX || cRY) && is_boundbox_regular (yu, xu)) cg -> createCut (cs, yu*xu,-1,wi,-1.,xi,yu,yi,xu);
-  if ((cRX || cLY) && is_boundbox_regular (yl, xu)) cg -> createCut (cs, yl*xu,+1,wi,-1.,xi,yl,yi,xu);
-  if ((cLX || cRY) && is_boundbox_regular (yu, xl)) cg -> createCut (cs, yu*xl,+1,wi,-1.,xi,yu,yi,xl);
+  if (sign != expression::LEQ) {
+    if ((cLX || cLY) && is_boundbox_regular (yl, xl)) cg -> createCut (cs,yl*xl,-1,wi,-1.,xi,yl,yi,xl);
+    if ((cRX || cRY) && is_boundbox_regular (yu, xu)) cg -> createCut (cs,yu*xu,-1,wi,-1.,xi,yu,yi,xu);
+  }
+
+  if (sign != expression::GEQ) {
+    if ((cRX || cLY) && is_boundbox_regular (yl, xu)) cg -> createCut (cs,yl*xu,+1,wi,-1.,xi,yl,yi,xu);
+    if ((cLX || cRY) && is_boundbox_regular (yu, xl)) cg -> createCut (cs,yu*xl,+1,wi,-1.,xi,yu,yi,xl);
+  }
 
   // If w=xy and w >= l > 0 (resp. w <= u < 0) are "tight" bounds
   // (i.e. they are tighter than those obtained through propagation of
@@ -136,6 +141,8 @@ void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
   //
   //    alpha = [-yu + l/xt - l/(xt^2)(xu-xt)] / (xu*yu - l)
 
+  if (sign == expression::GEQ)
+    return; // nothing else to do here
 
   if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepSimple || 
       fabs (wu - wl) < COUENNE_EPS) {

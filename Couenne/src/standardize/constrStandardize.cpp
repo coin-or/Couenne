@@ -92,8 +92,8 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
 	CouNumber constRHS = rest -> Value ();
 
-	if (aSign == expression::GEQ) p -> Var (wind) -> lb () = constRHS;
-	if (aSign == expression::LEQ) p -> Var (wind) -> ub () = constRHS;
+	if (aSign != expression::LEQ) p -> Var (wind) -> lb () = constRHS;
+	if (aSign != expression::GEQ) p -> Var (wind) -> ub () = constRHS;
 
 	delete rest;
 	return NULL;

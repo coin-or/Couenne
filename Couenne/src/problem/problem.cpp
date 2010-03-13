@@ -304,16 +304,17 @@ void CouenneProblem::installCutOff () const {
 
   int indobj = objectives_ [0] -> Body () -> Index ();
 
-  if (indobj >= 0) {
+  assert (indobj >= 0);
 
-    // all problem are assumed to be minimization
-    double cutoff = pcutoff_ -> getCutOff();
+  // all problem are assumed to be minimization
+  double cutoff = pcutoff_ -> getCutOff();
 
-    if (cutoff < Ub (indobj))
-      Ub (indobj) = cutoff;
+  Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
+		      "installing cutoff %.10e vs current ub %.10e\n",
+		      cutoff, Ub (indobj));
 
-  } else jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, 
-			   "Warning, could not install cutoff - negative objective index\n");
+  if (cutoff < Ub (indobj))
+    Ub (indobj) = cutoff;
 }
 
 

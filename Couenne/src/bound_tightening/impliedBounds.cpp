@@ -22,7 +22,7 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
     for (int i=0; i < nVars (); i++) 
       if (variables_ [i] -> Multiplicity () >= 0) {
 	Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING,
-			"x_%03d [%+15.8g %+15.8g] ", i, 
+			"x_%03d [%+10g %+10g] ", i, 
 			domain_.lb (i),
 			domain_.ub (i));
 	if (!(++j % 6)) Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING,"\n  ");

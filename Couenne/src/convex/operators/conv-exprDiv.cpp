@@ -13,7 +13,7 @@
 #include "CouenneExprAux.hpp"
 #include "CouenneExprOp.hpp"
 #include "CouenneExprDiv.hpp"
-#include "CouenneExprClone.hpp"
+//#include "CouenneExprClone.hpp"
 #include "CouenneExprMul.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
@@ -91,11 +91,14 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
   CouNumber *x = cg -> Problem () -> X ();
 
   unifiedProdCuts (cg, cs,
-		   wi, x [wi], 
-		   sign == expression::LEQ ? -COIN_DBL_MAX : wl, 
-		   sign == expression::GEQ ?  COIN_DBL_MAX : wu,
+		   wi, x [wi], wl, wu,
+		   //sign == expression::LEQ ? -COIN_DBL_MAX : wl,  // wrong - pass sign
+		   //sign == expression::GEQ ?  COIN_DBL_MAX : wu,
 		   yi, x [yi], yl, yu,
-		   xi, x [xi], xl, xu, chg);
+		   xi, x [xi], xl, xu, chg, 
+		   (sign == expression::LEQ) ? expression::GEQ :
+		   (sign == expression::GEQ) ? expression::LEQ : expression::EQ);
+
 
   // TODO: put real convexification...
 }

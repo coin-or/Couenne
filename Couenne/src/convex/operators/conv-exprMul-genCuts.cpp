@@ -128,8 +128,8 @@ void exprMul::generateCuts (expression *w,
   unifiedProdCuts (cg, cs, 
 		   xi, x0,      xl, xu, 
 		   yi, y0,      yl, yu,
-		   wi, (*w) (), 
-		   sign == expression::LEQ ? -COIN_DBL_MAX : wl, 
-		   sign == expression::GEQ ?  COIN_DBL_MAX : wu,
-		   chg);
+		   wi, (*w) (), wl, wu,
+		   //sign == expression::LEQ ? -COIN_DBL_MAX : wl, 
+		   //sign == expression::GEQ ?  COIN_DBL_MAX : wu,
+		   chg, sign);
 }

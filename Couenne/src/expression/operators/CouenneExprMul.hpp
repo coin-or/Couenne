@@ -85,7 +85,7 @@ class exprMul: public exprOp {
 					  	    // point to new convexifications
 				  int &way);
 
-  /// compute $y^{lv}$ and $y^{uv}$ for Violation Transfer algorithm
+  /// compute \f$y^{lv}\f$ and \f$y^{uv}\f$ for Violation Transfer algorithm
   virtual void closestFeasible (expression *varind,
 				expression *vardep,
 				CouNumber &left,
@@ -128,7 +128,7 @@ void unifiedProdCuts (const CouenneCutGenerator *, OsiCuts &,
 		      int, CouNumber, CouNumber, CouNumber,
 		      int, CouNumber, CouNumber, CouNumber,
 		      int, CouNumber, CouNumber, CouNumber,
-		      t_chg_bounds *);
+		      t_chg_bounds *, enum expression::auxSign);
 
 
 /// better cuts than those from unifiedProdCuts
@@ -138,8 +138,8 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 		   int wi, CouNumber w0, CouNumber wl, CouNumber wu);
 
 
-// compute distance from future convexifications in set \f$\{(x,y,w):
-// w = xy\}\f$ with x,y,w bounded. Unified with exprDiv
+/// compute distance from future convexifications in set \f$\{(x,y,w):
+/// w = xy\}\f$ with x,y,w bounded. Unified with exprDiv
 double *computeMulBrDist (const OsiBranchingInformation *info,
 			  int xi, int yi, int wi, int brind, double *brpt, int nPts = 1);
 
