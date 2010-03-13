@@ -46,6 +46,5 @@ if COIN_HAS_COUENNE
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem/depGraph` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` 
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem/depGraph`
 endif

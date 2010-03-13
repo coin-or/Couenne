@@ -26,6 +26,7 @@ libCouenneBranch_la_SOURCES = \
 	CouenneOrbitObj.cpp \
 	CouenneOrbitBranchingObj.cpp \
 	CouenneSOSObject.cpp
+
 # 	operators/branchExprAbs.cpp \
 # 	operators/branchExprExp.cpp \
 # 	operators/branchExprDiv.cpp \

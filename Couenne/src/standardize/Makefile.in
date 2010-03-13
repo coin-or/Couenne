@@ -47,8 +47,7 @@ host_triplet = @host@
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
-@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem/depGraph` \
-@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` 
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem/depGraph`
 
 subdir = src/standardize
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
