@@ -302,16 +302,19 @@ void CouenneProblem::setCutOff (CouNumber cutoff) const {
 /// used in bound tightening
 void CouenneProblem::installCutOff () const {
 
+  // all problem are assumed to be minimization
+  double cutoff = pcutoff_ -> getCutOff();
+
+  if (cutoff > COUENNE_INFINITY) 
+    return;
+
   int indobj = objectives_ [0] -> Body () -> Index ();
 
   assert (indobj >= 0);
 
-  // all problem are assumed to be minimization
-  double cutoff = pcutoff_ -> getCutOff();
-
-  Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
-		      "installing cutoff %.10e vs current ub %.10e\n",
-		      cutoff, Ub (indobj));
+  //Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
+  //"installing cutoff %.10e vs current ub %.10e\n",
+  //cutoff, Ub (indobj));
 
   if (cutoff < Ub (indobj))
     Ub (indobj) = cutoff;

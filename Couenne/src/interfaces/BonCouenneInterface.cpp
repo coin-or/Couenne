@@ -67,7 +67,7 @@ CouenneInterface::extractLinearRelaxation
   CouenneProblem *p = couenneCg.Problem ();
   bool is_feasible = true;
 
-  if (false && solveNlp) {
+  if (solveNlp) {
 
     int nvars = p -> nVars();
 

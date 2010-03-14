@@ -78,6 +78,15 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   // recognize complementarity constraints in fillDependence()
   initAuxs ();
 
+  CouNumber cutoff;
+  // check for initial solution given to Couenne. If feasible, set cutoff
+  if (checkNLP (X (), cutoff = X (objectives_ [0] -> Body () -> Index ()), true)) {
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM,
+		      "Couenne: initial solution (value %g) is MINLP feasible\n",
+		      cutoff);
+    setCutOff (cutoff);    
+  }
+
   // fill dependence_ structure
   fillDependence (bonBase_, cg);
 
