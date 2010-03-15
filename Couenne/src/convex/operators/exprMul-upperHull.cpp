@@ -260,20 +260,34 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
     // Nothing to find. Just separate two inequalities at the same
     // point, just using different support
-    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX,  cY,  cW) ||
-	genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cXp, cYp, cWp))
+    //if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX,  cY,  cW) ||
+    //genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cXp, cYp, cWp))
+    //return;
+
+    // A more clever way (courtesy of Andrew J. Miller): find the
+    // intersect on the lower (upper) curve on the line through xLP
+    // and the upper (lower) point
+
+    CouNumber xLow2, yLow2, xUpp2, yUpp2;
+
+    if (findIntersection (xLow, yLow, x0, y0, NULL, &wu, NULL, NULL, &xUpp2, &yUpp2) && 
+	genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW))
+      return;
+
+    if (findIntersection (xUpp, yUpp, x0, y0, &wl, NULL, &xLow2, &yLow2, NULL, NULL) &&
+	genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cX, cY, cW))
       return;
 
 #ifdef DEBUG
-    printf ("coeffs: (%g,%g,%g) [(%g,%g,%g)]\n", 
-	    cX,cY,cW, cXp, cYp, cWp);
+    printf ("coeffs: (%g,%g,%g)\n", // [(%g,%g,%g)]\n", 
+	    cX,cY,cW);
 #endif
 
-    c0X = cX * xLow;    c0Xp = cXp * xUpp;
-    c0Y = cY * yLow;    c0Yp = cYp * yUpp;
-    c0W = cW * wl;      c0Wp = cWp * wu;  
+//     c0X = cX * xLow;    c0Xp = cXp * xUpp;
+//     c0Y = cY * yLow;    c0Yp = cYp * yUpp;
+//     c0W = cW * wl;      c0Wp = cWp * wu;  
 
-    twoIneqs = true;
+//     twoIneqs = true;
 
   } else {
 
