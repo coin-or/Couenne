@@ -53,12 +53,27 @@ int CouenneProblem::call_iter (OsiSolverInterface *csi,
     if ((Var (i) -> Type () == type)     &&
 	(Var (i) -> Multiplicity () > 0) &&
 	((type == VAR)                               || 
-	 (aSign  == expression::EQ))) {
-      //||
-      //((aSign == expression::LEQ) && (sense > 0)) ||
-      //((aSign == expression::GEQ) && (sense < 0)))) {
+	 (aSign  == expression::EQ) ||
+	 ((aSign == expression::LEQ) && (sense > 0)) ||
+	 ((aSign == expression::GEQ) && (sense < 0)))) {
 
       int ni = obbt_iter (csi, chg_bds, warmstart, babInfo, objcoe, sense, i);
+
+//       {
+// 	// ToDo: Pipe all output through journalist
+// 	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING, 
+// 			"  bounds after obbt step  =====================\n  ");
+// 	int j=0;
+// 	for (int i=0; i < nVars (); i++) 
+// 	  if (variables_ [i] -> Multiplicity () > 0) {
+// 	    Jnlst()->Printf(J_VECTOR, J_BOUNDTIGHTENING,
+// 			    "x_%03d [%+10g %+10g] ", i, 
+// 			    domain_. lb (i),
+// 			    domain_. ub (i));
+// 	    if (!(++j % 6)) Jnlst()->Printf(J_VECTOR, J_BOUNDTIGHTENING,"\n  ");
+// 	  }
+// 	if (j % 6) Jnlst()->Printf(J_VECTOR, J_BOUNDTIGHTENING,"\n");
+//       }
 
       if (ni < 0) return ni;
       nimprov += ni;

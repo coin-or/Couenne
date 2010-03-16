@@ -117,7 +117,7 @@ fake_tighten (char direction,  // 0: left, 1: right
 	break;
       }
 
-      if ( (direction  && ((fb < inner) || (fb > outer))) ||
+      if ( (direction && ((fb < inner) || (fb > outer))) ||
 	  (!direction && ((fb > inner) || (fb < outer))))
 	fb = 0.5 * (inner + outer);
     }

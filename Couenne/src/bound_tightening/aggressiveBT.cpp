@@ -209,14 +209,14 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
 	  improved = 0;
 
-	  if (variables_ [index] -> sign () != exprVar::GEQ) {
+	  if ((variables_ [index] -> sign () != expression::GEQ) &&
+	      (X [index] >= Lb (index) + COUENNE_EPS)) {
 
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
 			    "------------- tighten left x%d\n", index);
 
 	    // tighten on left
-	    if ((X [index] >= Lb (index) + COUENNE_EPS)
-		&& ((improved = fake_tighten (0, index, X, olb, oub, chg_bds, f_chg)) < 0)) {
+	    if ((improved = fake_tighten (0, index, X, olb, oub, chg_bds, f_chg)) < 0) {
 	      retval = false;
 	      break;
 	    }
@@ -224,13 +224,13 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
 	  second = 0;
 
-	  if (variables_ [index] -> sign () != exprVar::LEQ) {
+	  if (retval && (variables_ [index] -> sign () != expression::LEQ) &&
+	      (X [index] <= Ub (index) - COUENNE_EPS)) {
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
 			    "------------- tighten right x%d\n", index);
 
 	    // tighten on right
-	    if ((X [index] <= Ub (index) - COUENNE_EPS)
-		&& ((second = fake_tighten (1, index, X, olb, oub, chg_bds, f_chg) < 0))) {
+	    if ((second = fake_tighten (1, index, X, olb, oub, chg_bds, f_chg) < 0)) {
 	      retval = false;
 	      break;
 	    }
@@ -246,6 +246,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     CoinCopyN (oub, ncols, Ub ());
 
     if (Jnlst()->ProduceOutput(J_ITERSUMMARY, J_BOUNDTIGHTENING)) {
+
       Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,"------------------\n");
 
       if (!retval) Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,

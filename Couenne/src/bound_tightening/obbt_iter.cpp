@@ -110,24 +110,32 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
       // TODO: write code for monotone functions...
 
       if // independent variable is exactly bounded in both ways
-	(((chg_bds [indInd].lower() & t_chg_bounds::EXACT) && 
-	  (chg_bds [indInd].upper() & t_chg_bounds::EXACT)) ||
-	 // or if this expression is of the form w=cx+d, that is, it
-	 // depends on one variable only and it is linear
-	 (var -> Image () -> Linearity () <= LINEAR)) {
+	((((chg_bds [indInd].lower() & t_chg_bounds::EXACT) && 
+	   (chg_bds [indInd].upper() & t_chg_bounds::EXACT)) ||
+	  // or if this expression is of the form w=cx+d, that is, it
+	  // depends on one variable only and it is linear
+	  (var -> Image () -> Linearity () <= LINEAR)) &&
+	 (var -> sign () == expression::EQ)) {
 
 	issimple = true;
 
 	CouNumber lb, ub;
 	var -> Image () -> getBounds (lb, ub);
 
+	if (var -> isInteger ()) {
+	  lb = ceil  (lb - COUENNE_EPS);
+	  ub = floor (ub + COUENNE_EPS);
+	}
+
 	if (csi -> getColLower () [index] < lb - COUENNE_EPS) {
 	  csi -> setColLower (index, lb); 
+	  Lb (index) = lb;
 	  chg_bds      [index].setLowerBits(t_chg_bounds::CHANGED | t_chg_bounds::EXACT);
 	} else chg_bds [index].setLowerBits(t_chg_bounds::EXACT);
 
 	if (csi -> getColUpper () [index] > ub + COUENNE_EPS) {
 	  csi -> setColUpper (index, ub); 
+	  Ub (index) = ub;
 	  chg_bds      [index].setUpperBits(t_chg_bounds::CHANGED | t_chg_bounds::EXACT);
 	} else chg_bds [index].setUpperBits(t_chg_bounds::EXACT);
       }
@@ -319,7 +327,7 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 
   if (nImprov && jnlst_ -> ProduceOutput (J_ITERSUMMARY, J_BOUNDTIGHTENING)) {
     Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "OBBT: tightened ", nImprov);
-    if (jnlst_ -> ProduceOutput (J_ITERSUMMARY, J_BOUNDTIGHTENING)) Var (index) -> print ();
+    Var (index) -> print ();
     Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "\n");
   }
 
