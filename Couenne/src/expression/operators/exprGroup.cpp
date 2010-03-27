@@ -341,8 +341,13 @@ void exprGroup::replace (exprVar *x, exprVar *w) {
     if (w_occur == lcoeff_ . end ()) // not found w, simply substitute 
       x_occur -> first = w;
     else {
-      if ((w_occur -> second += x_occur -> second) == 0.) // add coefficients
+		if ((w_occur -> second += x_occur -> second) == 0.) { // add coefficients
 	lcoeff_.erase (w_occur);                // if they cancel out, delete w as well
+
+	// under Microsoft, x_occur may have been invalidated by removing w_occur from lcoeff_, so we search for it again
+	for( x_occur = lcoeff_.begin (); x_occur -> first -> Index () != xind; ++x_occur )
+		assert(x_occur != lcoeff_ .end ()); // it was found before, so it should be still found
+	}
       lcoeff_.erase   (x_occur);                // delete entry of x
     }
   }
