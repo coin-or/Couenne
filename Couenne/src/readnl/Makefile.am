@@ -65,3 +65,8 @@ install-exec-local:
 	mkdir -p $(DESTDIR)$(libdir)
 	cp ../../../ThirdParty/ASL/amplsolv* $(DESTDIR)$(libdir)
 endif
+
+if COIN_HAS_NTY
+  AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(NTYINCDIR)`
+endif

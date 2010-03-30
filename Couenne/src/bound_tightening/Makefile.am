@@ -65,3 +65,8 @@ if COIN_HAS_COUENNE
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` 
 endif
+
+if COIN_HAS_NTY
+  AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(NTYINCDIR)`
+endif

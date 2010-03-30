@@ -175,3 +175,10 @@ AM_CPPFLAGS += \
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
+
+
+
+if COIN_HAS_NTY
+  AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(NTYINCDIR)`
+endif

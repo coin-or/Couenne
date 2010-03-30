@@ -87,3 +87,8 @@ endif
 if COIN_HAS_ASL
 AM_CPPFLAGS += $(ASL_CPPFLAGS)
 endif
+
+if COIN_HAS_NTY
+  AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(NTYINCDIR)`
+endif

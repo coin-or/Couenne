@@ -68,6 +68,9 @@ host_triplet = @host@
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
 
 @COIN_HAS_ASL_TRUE@am__append_3 = $(ASL_CPPFLAGS)
+@COIN_HAS_NTY_TRUE@am__append_4 = \
+@COIN_HAS_NTY_TRUE@	-I`$(CYGPATH_W) $(NTYINCDIR)`
+
 subdir = src/problem
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -333,7 +336,7 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` -I`$(CYGPATH_W) \
 	$(CLPSRCDIR)/src` -I`$(CYGPATH_W) \
 	$(BONMINSRCDIR)/src/Algorithms/OaGenerators` -I`$(CYGPATH_W) \
 	$(CLPOBJDIR)/inc` -I`$(CYGPATH_W) $(CBCOBJDIR)/inc` \
-	$(am__append_2) $(am__append_3)
+	$(am__append_2) $(am__append_3) $(am__append_4)
 all: all-am
 
 .SUFFIXES:
