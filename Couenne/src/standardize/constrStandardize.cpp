@@ -155,13 +155,15 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	  p -> auxiliarize (w);
 	} 
 
-#ifdef DEBUG
 	else {
+
+#ifdef DEBUG
 	  printf ("found aux occurrence of "); fflush (stdout);
 	  w -> print (); printf (" := ");
 	  w -> Image () -> print (); printf (" ... ");
 	  (*i) -> print (); printf (" := ");
 	  (*i) -> Image () -> print (); printf ("\n");
+#endif
 
 	  // if this is an original variable and is competing with an
 	  // auxiliary variable, or at least this has a lower index,
@@ -186,7 +188,6 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	  p -> Var (iMax) -> zeroMult (); // redundant variable is neutralized
 	  p -> auxiliarize (w);
 	}
-#endif
       }
 
       return NULL;
