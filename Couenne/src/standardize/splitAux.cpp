@@ -136,10 +136,10 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	//lincoe [i] = lcoe [i]. second;
 
 	// prefer non-integer. If integer, only take it if none chosen yet
-	if ((!(lcoe [i].first -> isInteger ()) || (which==1)) &&  
-	    (j > maxindex) &&
+	if ((j > maxindex) &&
 	    !(wentAux [j]) && 
-	    (fabs (lcoe [i]. second) > COUENNE_EPS)) {
+	    (fabs (lcoe [i]. second) > COUENNE_EPS) &&
+	    (!(lcoe [i].first -> isInteger ()) || (which==1))) {
 
 	  // fake cut in linind and check dependence. Only mark if
 	  // dependsOn() gives 0

@@ -148,6 +148,8 @@ bool CouenneProblem::standardize () {
        i != constraints_.end (); ++i) {
 
 #ifdef DEBUG
+    printf ("############# problem status now:\n"); 
+    print (); 
     printf ("############# Constraint "); 
     (*i) -> print ();
 #endif

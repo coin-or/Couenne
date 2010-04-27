@@ -170,8 +170,9 @@ int exprAux::DepList (std::set <int> &deplist,
 /// simplify
 expression *exprAux::simplify () {
 
-  if ((image_ -> Type () == AUX) || 
-      (image_ -> Type () == VAR)) {
+  if (((image_ -> Type () == AUX) || 
+       (image_ -> Type () == VAR)) &&
+      sign_ == expression::EQ) {
 
     --multiplicity_;
     expression *ret = image_;
