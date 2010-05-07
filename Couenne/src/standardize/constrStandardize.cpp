@@ -96,9 +96,9 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
       int xind = rest -> Index ();
 
-      if (xind >= 0) {
+      if (false && (xind >= 0)) {
 
-	replace (p, wind, xind);
+	//replace (p, wind, xind);
 
 	p -> auxiliarize (p -> Var (wind), p -> Var (xind));
 	p -> Var (wind) -> zeroMult (); // redundant variable is neutralized
