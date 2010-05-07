@@ -114,7 +114,7 @@ namespace Bonmin{
     /** Change default value for failure behavior so that code doesn't crash 
 	when Ipopt does not solve a sub-problem.*/
 
-    options_ -> SetStringValue ("nlp_failure_behavior", "fathom", "bonmin.");
+    options_ -> SetStringValue ("nlp_failure_behavior", "fathom", "couenne.");
 
     gatherParametersValues (options_);
 
@@ -148,31 +148,31 @@ namespace Bonmin{
      later. */
     int i;
 
-    options()->GetIntegerValue("boundtightening_print_level", i, "bonmin.");
+    options()->GetIntegerValue("boundtightening_print_level", i, "couenne.");
     journalist()->GetJournal("console")-> SetPrintLevel(J_BOUNDTIGHTENING, (EJournalLevel) i);
 
-    options()->GetIntegerValue("branching_print_level", i, "bonmin.");
+    options()->GetIntegerValue("branching_print_level", i, "couenne.");
     journalist()->GetJournal("console")-> SetPrintLevel(J_BRANCHING, (EJournalLevel) i);
 
-    options()->GetIntegerValue("convexifying_print_level", i, "bonmin.");
+    options()->GetIntegerValue("convexifying_print_level", i, "couenne.");
     journalist()->GetJournal("console")-> SetPrintLevel(J_CONVEXIFYING, (EJournalLevel) i);
 
-    options()->GetIntegerValue("problem_print_level", i, "bonmin.");
+    options()->GetIntegerValue("problem_print_level", i, "couenne.");
     journalist()->GetJournal("console")-> SetPrintLevel(J_PROBLEM, (EJournalLevel) i);
 
-    options()->GetIntegerValue("nlpheur_print_level", i, "bonmin.");
+    options()->GetIntegerValue("nlpheur_print_level", i, "couenne.");
     journalist()->GetJournal("console")-> SetPrintLevel(J_NLPHEURISTIC, (EJournalLevel) i);
 
-    options()->GetIntegerValue("disjcuts_print_level", i, "bonmin.");
+    options()->GetIntegerValue("disjcuts_print_level", i, "couenne.");
     journalist()->GetJournal("console")-> SetPrintLevel(J_DISJCUTS, (EJournalLevel) i);
 
-    options()->GetIntegerValue("reformulate_print_level", i, "bonmin.");
+    options()->GetIntegerValue("reformulate_print_level", i, "couenne.");
     journalist()->GetJournal("console")-> SetPrintLevel(J_REFORMULATE, (EJournalLevel) i);
 
     /* Initialize Couenne cut generator.*/
     //int ivalue, num_points;
-    //options()->GetEnumValue("convexification_type", ivalue,"bonmin.");
-    //options()->GetIntegerValue("convexification_points",num_points,"bonmin.");
+    //options()->GetEnumValue("convexification_type", ivalue,"couenne.");
+    //options()->GetIntegerValue("convexification_points",num_points,"couenne.");
 
     if (!couenneProb_)
       couenneProb_ = new CouenneProblem (aslfg_ -> asl, this, journalist ());
@@ -221,10 +221,10 @@ namespace Bonmin{
     
     extraStuff = dynamic_cast <Bonmin::BabInfo *> (continuousSolver_ -> getAuxiliaryInfo ());
 
-    /* Setup log level*/
+    // Setup log level of LP solver
     int lpLogLevel;
-    options()->GetIntegerValue("lp_log_level",lpLogLevel,"bonmin.");
-    continuousSolver_->messageHandler()->setLogLevel(lpLogLevel);
+    options () -> GetIntegerValue ("lp_log_level", lpLogLevel, "couenne.");
+    continuousSolver_ -> messageHandler () -> setLogLevel (lpLogLevel);
 
     //////////////////////////////////////////////////////////////
 
@@ -318,7 +318,7 @@ namespace Bonmin{
 
     int contObjPriority = 2000; // default object priority -- it is 1000 for integers and 10 for SOS
 
-    options () -> GetIntegerValue ("cont_var_priority", contObjPriority, "bonmin.");
+    options () -> GetIntegerValue ("cont_var_priority", contObjPriority, "couenne.");
 
     for (int i = 0; i < nVars; i++) { // for each variable
 
@@ -460,7 +460,7 @@ namespace Bonmin{
     // Add Branching rules ///////////////////////////////////////////////////////
 
     int varSelection;
-    if (!options_->GetEnumValue("variable_selection",varSelection,"bonmin.")) {
+    if (!options_->GetEnumValue("variable_selection", varSelection, "couenne.")) {
       // change the default for Couenne
       varSelection = OSI_SIMPLE;
     }
@@ -668,7 +668,7 @@ namespace Bonmin{
 
     for (int i=0; cutList [i]. optname; i++) {
 
-      options_ -> GetIntegerValue (std::string (cutList [i]. optname), freq, "bonmin.");
+      options_ -> GetIntegerValue (std::string (cutList [i]. optname), freq, "couenne.");
 
       if (!freq) {
 	delete cutList [i].cglptr;

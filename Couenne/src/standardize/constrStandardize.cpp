@@ -119,7 +119,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
       if (false && (xind >= 0) && (aSign == expression::EQ)) {
 
-	replace (p, wind, xind);
+	//replace (p, wind, xind);
 
 	p -> auxiliarize (p -> Var (wind), p -> Var (xind));
 	p -> Var (wind) -> zeroMult (); // redundant variable is neutralized

@@ -64,6 +64,12 @@ void
 CouenneInterface::extractLinearRelaxation 
 (OsiSolverInterface &si, CouenneCutGenerator & couenneCg, bool getObj, bool solveNlp) {
 
+  {
+    int nlpLogLevel;
+    options () -> GetIntegerValue ("nlp_log_level", nlpLogLevel, "couenne.");
+    messageHandler () -> setLogLevel (nlpLogLevel);
+  }
+
   CouenneProblem *p = couenneCg.Problem ();
   bool is_feasible = true;
 

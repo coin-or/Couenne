@@ -274,7 +274,6 @@ namespace Bonmin{
 	else if (Y [i] > upper [i]) Y [i] = upper [i];
       }
 
-
       nlp_ -> setColLower    (lower);
       nlp_ -> setColUpper    (upper);
       nlp_ -> setColSolution (Y);

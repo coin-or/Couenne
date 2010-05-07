@@ -168,8 +168,8 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 		X (index), (*(var -> Image ())) (),
 		var -> sign (), isInt, l, u);*/
 
-	//if (var -> sign () == expression::EQ)
-	X (index) = (*(var -> Image ())) ();  // addresses of x[] and X() are equal
+	if (var -> sign () == expression::EQ)
+	  X (index) = (*(var -> Image ())) ();  // addresses of x[] and X() are equal
     
 	X (index) = 
 	  CoinMax ((var -> sign () != expression::LEQ) ? (isInt ? ceil  (l - COUENNE_EPS) : l) : -COIN_DBL_MAX, 
@@ -287,7 +287,7 @@ void CouenneProblem::setCutOff (CouNumber cutoff) const {
   //     Couenne here?
   if ((indobj >= 0) && (cutoff < pcutoff_ -> getCutOff () - COUENNE_EPS)) {
 
-    if (fabs (cutoff - pcutoff_ -> getCutOff ()) > (1 + fabs (cutoff)) * 2 * SafeCutoff) // avoid too many printouts
+    //if (fabs (cutoff - pcutoff_ -> getCutOff ()) > (1 + fabs (cutoff)) * 2 * SafeCutoff) // avoid too many printouts
       Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
 			  "Setting new cutoff %.10e for optimization variable index %d val = %.10e\n",
 			  cutoff, indobj,
@@ -295,9 +295,9 @@ void CouenneProblem::setCutOff (CouNumber cutoff) const {
 
     if (Var (indobj) -> isInteger ())
       pcutoff_    -> setCutOff (floor (cutoff + COUENNE_EPS));
-    else pcutoff_ -> setCutOff (cutoff + SafeCutoff * (1. + fabs(cutoff)));
+    else pcutoff_ -> setCutOff (cutoff);
   }
-} // tolerance needed to retain feasibility
+}
 
 
 /// Tell problem that auxiliary related to obj has a cutoff, to be
@@ -317,6 +317,10 @@ void CouenneProblem::installCutOff () const {
   //Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
   //"installing cutoff %.10e vs current ub %.10e\n",
   //cutoff, Ub (indobj));
+
+  cutoff = (Var (indobj) -> isInteger ()) ?
+    floor (cutoff + COUENNE_EPS) :
+    (cutoff + SafeCutoff * (1. + fabs(cutoff)));  // tolerance needed to retain feasibility
 
   if (cutoff < Ub (indobj))
     Ub (indobj) = cutoff;
