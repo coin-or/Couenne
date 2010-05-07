@@ -46,7 +46,9 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 
     int i = numbering_ [ii];
 
-    if (Var (i) -> Multiplicity () <= 0) 
+    exprVar *var = Var (i);
+
+    if (var -> Multiplicity () <= 0) 
       continue;
 
     CouNumber &lower_i = Lb (i);
@@ -64,9 +66,9 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 			"pre-check: w_%d has infeasible bounds [%.10e,%.10e]. ", i, lower_i, upper_i);
 
 	if (dbgOutput) {
-	  Var (i) -> Lb () -> print (std::cout);
+	  var -> Lb () -> print (std::cout);
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");
-	  Var (i) -> Ub () -> print (std::cout);
+	  var -> Ub () -> print (std::cout);
 	}
 
 	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,"\n");
@@ -75,13 +77,13 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
       return -1; // declare this node infeasible
     }
 
-    /*if ((Var (i) -> Type () == VAR) &&
-	(Var (i) -> isInteger ())) {
+    /*if ((var -> Type () == VAR) &&
+	(var -> isInteger ())) {
       lower_i = ceil  (lower_i - COUENNE_EPS);
       upper_i = floor (upper_i + COUENNE_EPS);
       }*/
 
-    if (Var (i) -> Type () == AUX) {
+    if (var -> Type () == AUX) {
       // TODO: also test if any indep variable of this expression
       // have changed. If not, skip
 
@@ -89,15 +91,15 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
       //ll = (*(variables_ [i] -> Lb ())) (),
       //uu = (*(variables_ [i] -> Ub ())) ();
 
-      variables_ [i] -> Image () -> getBounds (ll, uu);
+      var -> Image () -> getBounds (ll, uu);
 
-      if (variables_ [i] -> isInteger ()) {
-	if (variables_ [i] -> sign () != expression::LEQ) ll = ceil  (ll - COUENNE_EPS);
-	if (variables_ [i] -> sign () != expression::GEQ) uu = floor (uu + COUENNE_EPS);
+      if (var -> isInteger ()) {
+	if (var -> sign () != expression::LEQ) ll = ceil  (ll - COUENNE_EPS);
+	if (var -> sign () != expression::GEQ) uu = floor (uu + COUENNE_EPS);
       }
 
-      if      (variables_ [i] -> sign () == expression::LEQ) ll = (*(variables_ [i] -> Lb ())) ();
-      else if (variables_ [i] -> sign () == expression::GEQ) uu = (*(variables_ [i] -> Ub ())) ();
+      if      (var -> sign () == expression::LEQ) ll = (*(var -> Lb ())) ();
+      else if (var -> sign () == expression::GEQ) uu = (*(var -> Ub ())) ();
 
       if (ll - uu > COUENNE_EPS * (1 + CoinMin (fabs (ll), fabs (uu)))) {
 
@@ -107,9 +109,9 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 			"w_%d has infeasible bounds [%g,%g]: ", i, ll, uu);
 
 	if (dbgOutput) {
-	  Var (i) -> Lb () -> print (std::cout);
+	  var -> Lb () -> print (std::cout);
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");
-	  Var (i) -> Ub () -> print (std::cout);
+	  var -> Ub () -> print (std::cout);
 	}
 
 	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,"\n");
@@ -123,8 +125,8 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
       // w. similarly, if defined as w >= f(x), then the same should
       // hold for the upper bound.
 
-      if (variables_ [i] -> sign () == exprVar::LEQ) ll = -COUENNE_INFINITY;
-      if (variables_ [i] -> sign () == exprVar::GEQ) uu =  COUENNE_INFINITY;
+      if (var -> sign () == exprVar::LEQ) ll = -COUENNE_INFINITY;
+      if (var -> sign () == exprVar::GEQ) uu =  COUENNE_INFINITY;
 
       // check if lower bound got higher
       if ((ll > - COUENNE_INFINITY) && 
@@ -138,11 +140,11 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
 			  "  prop L %2d [%g,(%g)] -> [%g,(%g)] (%g) ", 
 			  i, lower_i, upper_i, ll, uu, lower_i - ll);
-	  Var (i) -> print (std::cout);
+	  var -> print (std::cout);
 
 	  if (Jnlst()->ProduceOutput(J_MOREDETAILED, J_BOUNDTIGHTENING)) {
 	    Jnlst()->Printf(J_MOREDETAILED, J_BOUNDTIGHTENING," := ");
-	    Var (i) -> Image () -> print (std::cout);
+	    var -> Image () -> print (std::cout);
 	  }
 
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"\n");
@@ -154,9 +156,9 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	    Jnlst()->Printf(J_STRONGWARNING, J_BOUNDTIGHTENING,
 			    "Couenne: propagating l_%d cuts optimum: [%g --> %g -X-> %g] :: ", 
 			    i, lower_i, optimum_ [i], ll);
-	    Var (i) -> Lb () -> print (std::cout);
+	    var -> Lb () -> print (std::cout);
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");
-	    Var (i) -> Ub () -> print (std::cout);
+	    var -> Ub () -> print (std::cout);
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"\n");
 	  }
 	}
@@ -191,11 +193,11 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
 			  "  prop U %2d [(%g),%g] -> [(%g),%g] (%g) ", 
 			  i, lower_i, upper_i, ll, uu, upper_i - uu);
-	  Var (i) -> print (std::cout);
+	  var -> print (std::cout);
 
 	  if (Jnlst()->ProduceOutput(J_VECTOR, J_BOUNDTIGHTENING)) {
 	    Jnlst()->Printf(J_VECTOR, J_BOUNDTIGHTENING," := ");
-	    Var (i) -> Image () -> print (std::cout);
+	    var -> Image () -> print (std::cout);
 	  }
 
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"\n");
@@ -207,9 +209,9 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	    Jnlst()->Printf(J_STRONGWARNING, J_BOUNDTIGHTENING,
 			    "Couenne: propagating u_%d cuts optimum: [%g <-X- %g <-- %g] :: ", 
 			    i, uu, optimum_ [i], upper_i);
-	    Var (i) -> Lb () -> print (std::cout);
+	    var -> Lb () -> print (std::cout);
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");
-	    Var (i) -> Ub () -> print (std::cout);
+	    var -> Ub () -> print (std::cout);
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"\n");
 	  }
 	}

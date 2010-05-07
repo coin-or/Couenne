@@ -17,7 +17,6 @@
 #define MAX_BT_ITER 3
 #define THRES_IMPROVED 0
 
-
 // core of the bound tightening procedure
 
 bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
