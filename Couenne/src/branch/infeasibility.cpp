@@ -43,7 +43,8 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
     (problem_ -> nVars (),
      info -> solution_, 
      info -> lower_, 
-     info -> upper_);
+     info -> upper_,
+     false);
 
   const std::set <int> &dependence = problem_ -> Dependence () [index];
 

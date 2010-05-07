@@ -46,7 +46,8 @@ public:
   DomainPoint (int dim = 0, 
 	       const CouNumber *x   = NULL, 
 	       const CouNumber *lb  = NULL, 
-	       const CouNumber *ub  = NULL);
+	       const CouNumber *ub  = NULL,
+	       bool copy = true);
 
   /// destructor
   ~DomainPoint () {
@@ -124,7 +125,8 @@ public:
   void push (int dim, 
 	     const CouNumber *x, 
 	     const CouNumber *lb, 
-	     const CouNumber *ub);
+	     const CouNumber *ub,
+	     bool copy = true);
 
   /// save current point and start using another
   void push (const DomainPoint &dp, bool copy = true);

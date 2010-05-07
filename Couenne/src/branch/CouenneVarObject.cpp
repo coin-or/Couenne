@@ -55,7 +55,7 @@ OsiBranchingObject *CouenneVarObject::createBranch (OsiSolverInterface *si,
     (problem_ -> nVars (),
      info -> solution_,
      info -> lower_,
-     info -> upper_); // have to alloc+copy
+     info -> upper_, false); // have to alloc+copy
 
   int bestWay;
   const CouenneObject *criticalObject = NULL; // should create the branchingObject

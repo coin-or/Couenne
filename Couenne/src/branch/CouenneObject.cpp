@@ -154,7 +154,8 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
     (problem_ -> nVars (),
      info -> solution_,
      info -> lower_,
-     info -> upper_);
+     info -> upper_,
+     false);
 
   CouNumber  
     *brPts  = NULL,         // branching point(s)
@@ -305,7 +306,8 @@ double CouenneObject::infeasibility (const OsiBranchingInformation *info, int &w
     (problem_ -> nVars (),
      info -> solution_, 
      info -> lower_, 
-     info -> upper_);
+     info -> upper_,
+     false);
 
   double retval = checkInfeasibility (info);
 

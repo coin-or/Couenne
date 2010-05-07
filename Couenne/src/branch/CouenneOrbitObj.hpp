@@ -20,7 +20,6 @@
 
 #include "CouenneOrbitObj.hpp"
 
-
 /// OsiObject for Orbital Branching
 
 class CouenneOrbitObj: public CouenneObject {

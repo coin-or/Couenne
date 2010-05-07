@@ -43,14 +43,15 @@ DomainPoint::DomainPoint (int dim,
 DomainPoint::DomainPoint (int dim, 
 			  const CouNumber *x, 
 			  const CouNumber *lb, 
-			  const CouNumber *ub):
+			  const CouNumber *ub,
+			  bool copy):
   dimension_ (dim),
-  x_         (NULL),
-  lb_        (NULL),
-  ub_        (NULL),
-  copied_    (true) {
+  x_         (const_cast<CouNumber *>(x)),
+  lb_        (const_cast<CouNumber *>(lb)),
+  ub_        (const_cast<CouNumber *>(ub)),
+  copied_    (copy) {
 
-  if (dimension_ > 0) {
+  if ((dimension_ > 0) && copied_) {
 
     x_  = (CouNumber *) malloc (dim * sizeof (CouNumber)); 
     lb_ = (CouNumber *) malloc (dim * sizeof (CouNumber)); 
@@ -171,12 +172,13 @@ void Domain::push (int dim, CouNumber *x, CouNumber *lb, CouNumber *ub, bool cop
 void Domain::push (int dim, 
 		   const CouNumber *x, 
 		   const CouNumber *lb, 
-		   const CouNumber *ub) {
+		   const CouNumber *ub,
+		   bool copy) {
 
   if (point_) 
     domStack_.push (point_);
 
-  point_ = new DomainPoint (dim, x, lb, ub);
+  point_ = new DomainPoint (dim, x, lb, ub, copy);
 }
 
 

@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    separateWithDisjunction.cpp
  * Author:  Pietro Belotti
  * Purpose: generate cuts of disjunction
