@@ -117,7 +117,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
       // check if constraint now reduces to w_k = x_h, and if so
       // replace all occurrences of x_k with x_h
 
-      if ((xind >= 0) && (aSign == expression::EQ)) {
+      if (false && (xind >= 0) && (aSign == expression::EQ)) {
 
 	replace (p, wind, xind);
 
@@ -129,7 +129,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	// create new variable, it has to be integer if original variable was integer
 	exprAux *w = new exprAux (rest, wind, 1 + rest -> rank (),
 				  ((p -> Var (wind) -> isInteger ()) || 
-				   (false && (rest -> isInteger ()) && (aSign == expression::EQ))) ? 
+				   (false && (rest -> isInteger ()) && (aSign == expression::EQ))) ? // FIXME!!!
 				  exprAux::Integer : exprAux::Continuous,
 				  p -> domain (), aSign);
 
