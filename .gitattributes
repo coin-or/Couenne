@@ -182,7 +182,6 @@ Couenne/src/interfaces/CouenneUserInterface.hpp -text
 Couenne/src/main/BonCouenne.cpp -text
 Couenne/src/main/BonCouenneInfo.cpp -text
 Couenne/src/main/BonCouenneInfo.hpp -text
-Couenne/src/main/BonCouenneInterface.cpp -text
 Couenne/src/main/BonCouenneSetup.cpp -text
 Couenne/src/main/BonCouenneSetup.hpp -text
 Couenne/src/main/CouTight.cpp -text

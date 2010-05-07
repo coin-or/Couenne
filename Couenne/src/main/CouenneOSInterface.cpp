@@ -80,8 +80,12 @@ CouenneProblem* CouenneOSInterface::getCouenneProblem() {
 
   // create domain point for Couenne
   problem -> domain () -> push (n_var, x, lb, ub);
-
   free (x); free (lb); free (ub);
+
+  // suggested:
+  // problem -> domain () -> push (n_var + problem -> nDefVars(), x, lb, ub, false);
+  // //free (x); free (lb); free (ub);
+  // saves three allocations (default last parameter is true, which copies x,l,b)
 
   // fill in lower and upper bounds ///////////////////////////////////////////////////////////////
 
