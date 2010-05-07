@@ -358,8 +358,8 @@ bool exprPow::isCuttable (CouenneProblem *problem, int index) const {
 	x = problem -> X (arglist_ [0] -> Index ()),
 	y = problem -> X (index);
 
-      return ((exponent <= 1.) && (y >= safe_pow (x, exponent)) ||
-	      (exponent >= 1.) && (y <= safe_pow (x, exponent)));
+      return (((exponent <= 1.) && (y >= safe_pow (x, exponent))) ||
+	      ((exponent >= 1.) && (y <= safe_pow (x, exponent))));
     }      
   } else {
 

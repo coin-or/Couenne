@@ -106,13 +106,12 @@ void CouenneProblem::initAuxs () const {
 			  ord, l, u, Lb (ord), Ub (ord));
 
       // set bounds 
-      if (var -> sign () != expression::LEQ) if ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY) Lb (ord) = -COIN_DBL_MAX;
-      if (var -> sign () != expression::GEQ) if ((Ub (ord) = CoinMin (Ub (ord), u)) >=  COUENNE_INFINITY) Ub (ord) =  COIN_DBL_MAX;
+      if ((var -> sign () != expression::LEQ) && 
+	  ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY)) Lb (ord) = -COIN_DBL_MAX;
+      if ((var -> sign () != expression::GEQ) &&
+	  ((Ub (ord) = CoinMin (Ub (ord), u)) >=  COUENNE_INFINITY)) Ub (ord) =  COIN_DBL_MAX;
       //if ((lb_ [ord] = (*(aux -> Lb ())) ()) <= -COUENNE_INFINITY) lb_ [ord] = -DBL_MAX;
       //if ((ub_ [ord] = (*(aux -> Ub ())) ()) >=  COUENNE_INFINITY) ub_ [ord] =  DBL_MAX;
-
-      Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
-			  " --> [%10g,%10g]\n", Lb (ord), Ub (ord));
 
       bool integer = var -> isInteger ();
 
@@ -122,6 +121,9 @@ void CouenneProblem::initAuxs () const {
       }
 
       X (ord) = CoinMax (Lb (ord), CoinMin (Ub (ord), (*(var -> Image ())) ()));
+
+      Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
+			  " --> [%10g,%10g] (%g)\n", Lb (ord), Ub (ord), X (ord));
     }
   }
 
@@ -166,8 +168,8 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 		X (index), (*(var -> Image ())) (),
 		var -> sign (), isInt, l, u);*/
 
-	if (var -> sign () == expression::EQ)
-	  X (index) = (*(var -> Image ())) ();  // addresses of x[] and X() are equal
+	//if (var -> sign () == expression::EQ)
+	X (index) = (*(var -> Image ())) ();  // addresses of x[] and X() are equal
     
 	X (index) = 
 	  CoinMax ((var -> sign () != expression::LEQ) ? (isInt ? ceil  (l - COUENNE_EPS) : l) : -COIN_DBL_MAX, 
