@@ -396,6 +396,14 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
      "Type of separation for multilinear terms where the dependent variable is also bounded"
     );
 
+  roptions -> AddStringOption2
+    ("use_semiaux",
+     "Use semiauxiliaries, i.e. auxiliaries defined as w >= f(x) rather than w := f(x))",
+     "yes",
+     "no",   "Only use auxiliaries assigned with \"=\" ",
+     "yes",  "Use auxiliaries defined by w <= f(x), w >= f(x), and w = f(x)"
+    );
+
   roptions -> AddStringOption2 
     ("redcost_bt",
      "Reduced cost bound tightening",

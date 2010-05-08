@@ -64,7 +64,9 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   asl_         (asl),
 #endif
   unusedOriginalsIndices_ (NULL),
-  nUnusedOriginals_ (-1) {
+  nUnusedOriginals_ (-1),
+  multilinSep_ (CouenneProblem::MulSepNone),
+  useSemiaux_  (false) {
 
   double now = CoinCpuTime ();
 
@@ -128,7 +130,9 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   asl_          (p.asl_),
 #endif
   unusedOriginalsIndices_ (NULL),
-  nUnusedOriginals_ (p.nUnusedOriginals_) {
+  nUnusedOriginals_ (p.nUnusedOriginals_),
+  multilinSep_ (p.multilinSep_),
+  useSemiaux_ (p.useSemiaux_) {
 
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);
@@ -234,4 +238,7 @@ void CouenneProblem::initOptions(SmartPtr<OptionsList> options) {
   multilinSep_ = (s == "none"   ? CouenneProblem::MulSepNone   :
 		  s == "simple" ? CouenneProblem::MulSepSimple :
                  		  CouenneProblem::MulSepTight);
+
+  options -> GetStringValue ("use_semiaux", s, "couenne.");
+  useSemiaux_ = (s == "yes");
 }

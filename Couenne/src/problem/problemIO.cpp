@@ -63,7 +63,11 @@ void CouenneProblem::print (std::ostream &out) {
 	  (*i) -> isInteger ()) out << " binary";
       else {
 
-	out << " [ " << lb << " , " << ub << " ]";
+	out << " [ ";
+
+	if (lb < -COUENNE_INFINITY) out << "-inf"; else out << lb; out << " , ";
+	if (ub >  COUENNE_INFINITY) out <<  "inf"; else out << ub; out << " ]";
+
 	if ((*i) -> isInteger ()) out << " integer";
       }
 

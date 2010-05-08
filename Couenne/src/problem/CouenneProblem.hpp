@@ -195,6 +195,9 @@ class CouenneProblem {
   /// Type of Multilinear separation
   enum multiSep multilinSep_;
 
+  /// Use semiauxiliaries
+  bool useSemiaux_;
+
  public:
 
   CouenneProblem  (ASL * = NULL,
@@ -515,6 +518,10 @@ class CouenneProblem {
   /// return type of separator for multilinear terms
   enum multiSep MultilinSep () const
   {return multilinSep_;}
+
+  /// return usage of semiauxiliaries
+  bool useSemiaux () const
+  {return useSemiaux_;}
 
 protected:
 

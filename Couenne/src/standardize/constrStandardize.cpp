@@ -56,9 +56,10 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
     rLb = (*lb_) (),
     rUb = (*ub_) ();
 
-  if (rLb < -COUENNE_INFINITY/2 ||
-      rUb >  COUENNE_INFINITY/2 ||
-      fabs (rLb-rUb) <= COUENNE_EPS) {
+  if ((p -> useSemiaux () &&
+       ((rLb < -COUENNE_INFINITY/2) ||
+	(rUb >  COUENNE_INFINITY/2))) ||
+      (fabs (rLb-rUb) <= COUENNE_EPS)) {
 
     enum expression::auxSign aSign = expression::EQ;
 

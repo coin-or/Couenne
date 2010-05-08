@@ -184,25 +184,47 @@ namespace Bonmin{
 
     if (s == "clp") {
 
-      CouenneSolverInterface <OsiClpSolverInterface> *CSI 
-	= new CouenneSolverInterface <OsiClpSolverInterface>;
-
+      CouenneSolverInterface <OsiClpSolverInterface> *CSI = new CouenneSolverInterface <OsiClpSolverInterface>;
       continuousSolver_ = CSI;
       CSI -> setCutGenPtr (couenneCg);
 
     } else if (s == "cplex") {
 
 #ifdef COIN_HAS_CPX
-      CouenneSolverInterface <OsiCpxSolverInterface> *CSI 
-	= new CouenneSolverInterface <OsiCpxSolverInterface>;
-
+      CouenneSolverInterface <OsiCpxSolverInterface> *CSI = new CouenneSolverInterface <OsiCpxSolverInterface>;
       continuousSolver_ = CSI;
       CSI -> setCutGenPtr (couenneCg);
 #else
       journalist()->Printf(J_ERROR, J_INITIALIZATION, "Couenne was compiled without CPLEX interface. Please reconfigure, recompile, and try again.\n");
       return false;
 #endif
+    } else if (s == "gurobi") {
+
+#ifdef COIN_HAS_GRB
+      CouenneSolverInterface <OsiGrbSolverInterface> *CSI = new CouenneSolverInterface <OsiGrbSolverInterface>;
+      continuousSolver_ = CSI;
+      CSI -> setCutGenPtr (couenneCg);
+#else
+      journalist()->Printf(J_ERROR, J_INITIALIZATION, "Couenne was compiled without GUROBI interface. Please reconfigure, recompile, and try again.\n");
+      return false;
+#endif
+    } else if (s == "soplex") {
+
+#ifdef COIN_HAS_SPX
+      CouenneSolverInterface <OsiSpxSolverInterface> *CSI 
+	= new CouenneSolverInterface <OsiSpxSolverInterface>;
+
+      continuousSolver_ = CSI;
+      CSI -> setCutGenPtr (couenneCg);
+#else
+      journalist()->Printf(J_ERROR, J_INITIALIZATION, "Couenne was compiled without Soplex. Please reconfigure, recompile, and try again.\n");
+      return false;
+#endif
+    } else {
+      journalist ()-> Printf (J_ERROR, J_INITIALIZATION, "The LP solver you specified hasn't been added to Couenne yet.\n");
+      return false;
     }
+
     continuousSolver_ -> passInMessageHandler(ci -> messageHandler());
 
     couenneProb_ -> setBase (this);
@@ -529,7 +551,7 @@ namespace Bonmin{
   }
  
   void CouenneSetup::registerOptions(){
-    registerAllOptions(roptions());
+    registerAllOptions (roptions ());
   }
 
 
@@ -560,13 +582,14 @@ namespace Bonmin{
       "yes", "",
       "no", "");
 
-    roptions -> AddStringOption3 (
+    roptions -> AddStringOption4 (
       "lp_solver",
       "Linear Programming solver for the linearization",
       "clp",
       "clp", "Use the Coin-OR Open Source solver CLP",
       "cplex", "Use the commercial solver Cplex (license is needed)",
-      "soplex", "Use the freely available Soplex (not available yet)");
+      "gurobi", "Use the commercial solver Gurobi (license is needed)",
+      "soplex", "Use the freely available Soplex");
 
     roptions->AddBoundedIntegerOption(
       "branching_print_level", "Output level for braching code in Couenne",

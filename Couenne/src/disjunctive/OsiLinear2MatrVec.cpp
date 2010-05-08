@@ -132,9 +132,9 @@ void CouenneDisjCuts::OsiSI2MatrVec (CoinPackedMatrix &M,
   // Variables ////////////////////////////////////
   for (int i=0; i<ncols; i++, x++, clb++, cub++) {
 
-    if (activeCols_ && 
-	(*x < *cub - COUENNE_EPS) &&
-	(*x > *clb + COUENNE_EPS) ||
+    if ((activeCols_ && 
+	 (*x < *cub - COUENNE_EPS) &&
+	 (*x > *clb + COUENNE_EPS)) ||
 	(couenneCG_ -> Problem () -> Var (i) -> Multiplicity () <= 0))
       continue;
 
