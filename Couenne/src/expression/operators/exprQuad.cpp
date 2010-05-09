@@ -52,7 +52,7 @@ exprQuad::exprQuad (CouNumber c0,
 
     if (varI -> Index () != varJ -> Index ()) {
 
-      coe /= 2.;
+      //coe /= 2.;
 
       // pick smaller index as row reference
       if (varI -> Index () > varJ -> Index ()) {

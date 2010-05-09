@@ -53,7 +53,6 @@ int main (int argc, char *argv[]) {
   using namespace Ipopt;
 
   char * pbName = NULL;
-  double time_start = CoinCpuTime();
 
   const int infeasible = 1;
 
@@ -89,6 +88,8 @@ int main (int argc, char *argv[]) {
     if (!couenne.InitializeCouenne (argv, p, NULL, ci))
       throw infeasible;
 
+    double time_start = CoinCpuTime();
+
 #if 0
     CouenneFeasibility feasibility;
     bb.model().setProblemFeasibility (feasibility);
@@ -98,7 +99,7 @@ int main (int argc, char *argv[]) {
     double timeLimit = 0;
     couenne.options () -> GetNumericValue ("time_limit", timeLimit, "couenne.");
     couenne.setDoubleParameter (BabSetupBase::MaxTime, 
-				timeLimit - (time_start = (CoinCpuTime () - time_start)));
+				CoinMax (0., timeLimit - time_start));
 
     //////////////////////////////////
 

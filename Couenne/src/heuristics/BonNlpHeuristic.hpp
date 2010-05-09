@@ -10,6 +10,7 @@
 
 #ifndef BonIpoptHeuristic_HPP
 #define BonIpoptHeuristic_HPP
+#include "BonOsiTMINLPInterface.hpp"
 #include "CbcHeuristic.hpp"
 #include "BonOsiTMINLPInterface.hpp"
 #include "CouenneProblem.hpp"
@@ -24,7 +25,7 @@ public:
     /** Default constructor.*/
     NlpSolveHeuristic();
   /** Constructor with model and Ipopt problems.*/
-    NlpSolveHeuristic(CbcModel & mip, OsiSolverInterface &nlp, bool cloneNlp = false, CouenneProblem * couenne = NULL);
+    NlpSolveHeuristic(CbcModel & mip, OsiTMINLPInterface &nlp, bool cloneNlp = false, CouenneProblem * couenne = NULL);
     /** Copy constructor.*/
     NlpSolveHeuristic(const NlpSolveHeuristic &other);
     
@@ -38,7 +39,7 @@ public:
     NlpSolveHeuristic & operator=(const NlpSolveHeuristic &rhs);
     
     /** Set the nlp solver.*/
-    void setNlp(OsiSolverInterface &nlp, bool cloneNlp = true);
+    void setNlp(OsiTMINLPInterface &nlp, bool cloneNlp = true);
     
     /** set the couenne problem to use.*/
     void setCouenneProblem(CouenneProblem *);
@@ -58,7 +59,7 @@ public:
       numberSolvePerLevel_ = value;}
 private:
     /** Pointer to an nlp solver interface.*/
-    OsiSolverInterface * nlp_;
+    OsiTMINLPInterface * nlp_;
     /** is nlp_ cloned or just a pointer?*/
     bool hasCloned_;
     /** maximum nlp infeasibility under which try to solve problem with Ipopt.*/

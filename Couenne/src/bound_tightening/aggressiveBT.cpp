@@ -121,7 +121,10 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
       nlp -> setColUpper    (upper);
       nlp -> setColSolution (Y);
 
-      try {nlp -> initialSolve ();}
+      try {
+	nlp -> options () -> SetNumericValue ("max_cpu_time", CoinMax (0., getMaxCpuTime () - CoinCpuTime ()));
+	nlp -> initialSolve ();
+      }
       catch (Bonmin::TNLPSolver::UnsolvedError *E) {}
     
       delete [] Y;

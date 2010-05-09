@@ -31,13 +31,13 @@ namespace Bonmin{
     setHeuristicName("NlpSolveHeuristic");
   }
   
-  NlpSolveHeuristic::NlpSolveHeuristic(CbcModel & model, OsiSolverInterface &nlp, bool cloneNlp, CouenneProblem * couenne):
+  NlpSolveHeuristic::NlpSolveHeuristic(CbcModel & model, OsiTMINLPInterface &nlp, bool cloneNlp, CouenneProblem * couenne):
   CbcHeuristic(model), nlp_(&nlp), hasCloned_(cloneNlp),maxNlpInf_(maxNlpInf_0),
   numberSolvePerLevel_(-1),
   couenne_(couenne){
     setHeuristicName("NlpSolveHeuristic");
     if(cloneNlp)
-      nlp_ = nlp.clone();
+      nlp_ = dynamic_cast <OsiTMINLPInterface *> (nlp.clone());
   }
   
   NlpSolveHeuristic::NlpSolveHeuristic(const NlpSolveHeuristic & other):
@@ -47,7 +47,7 @@ namespace Bonmin{
   numberSolvePerLevel_(other.numberSolvePerLevel_),
   couenne_(other.couenne_){
     if(hasCloned_ && nlp_ != NULL)
-      nlp_ = other.nlp_->clone();
+      nlp_ = dynamic_cast <OsiTMINLPInterface *> (other.nlp_->clone());
   }
   
   CbcHeuristic * 
@@ -65,7 +65,7 @@ namespace Bonmin{
       hasCloned_ = rhs.hasCloned_;
       if(nlp_ != NULL){
         if(hasCloned_)
-          nlp_ = rhs.nlp_->clone();
+          nlp_ = dynamic_cast <OsiTMINLPInterface *> (rhs.nlp_->clone());
         else
           nlp_ = rhs.nlp_;
       }
@@ -83,12 +83,12 @@ namespace Bonmin{
   }
   
   void
-  NlpSolveHeuristic::setNlp(OsiSolverInterface &nlp, bool cloneNlp){
+  NlpSolveHeuristic::setNlp(OsiTMINLPInterface &nlp, bool cloneNlp){
     if(hasCloned_ && nlp_ != NULL)
       delete nlp_;
     hasCloned_ = cloneNlp;
     if(cloneNlp)
-      nlp_ = nlp.clone();
+      nlp_ = dynamic_cast <OsiTMINLPInterface *> (nlp.clone());
     else
       nlp_ = &nlp;
   }
@@ -100,6 +100,10 @@ namespace Bonmin{
 
   int
   NlpSolveHeuristic::solution( double & objectiveValue, double * newSolution){
+
+    if (CoinCpuTime () > couenne_ -> getMaxCpuTime ())
+      return 0;
+
     OsiSolverInterface * solver = model_->solver();
 
     OsiAuxInfo * auxInfo = solver->getAuxiliaryInfo();
@@ -154,14 +158,17 @@ namespace Bonmin{
 
     bool haveRoundedIntVars = false;
 
-    for(int i = 0 ; i < numberObjects ; i++){
+    for (int i = 0 ; i < numberObjects ; i++) {
+
       CouenneObject * couObj = dynamic_cast <CouenneObject *> (objects [i]);
+
       if (couObj) {
 	if (too_deep) { // only test infeasibility if BB level is high
 	  int dummy;
 	  double infeas;
 	  maxInfeasibility = CoinMax ( maxInfeasibility, infeas = couObj->infeasibility(&info, dummy));
-	  if(maxInfeasibility > maxNlpInf_){
+
+	  if (maxInfeasibility > maxNlpInf_){
 	    delete [] lower;
 	    delete [] upper;
 	    return 0;
@@ -247,7 +254,6 @@ namespace Bonmin{
 	  upper [i] = swap;
 	}
 
-
     {
       //	printf ("[%g <%g> %g] ", lower [i], Y [i], upper [i]);
 
@@ -280,6 +286,7 @@ namespace Bonmin{
 
       // apply NLP solver /////////////////////////////////
       try {
+	nlp_ -> options () -> SetNumericValue ("max_cpu_time", CoinMax (0., couenne_ -> getMaxCpuTime () - CoinCpuTime ()));
 	nlp_ -> initialSolve ();
       }
       catch (TNLPSolver::UnsolvedError *E) {}

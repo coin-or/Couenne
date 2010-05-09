@@ -186,6 +186,8 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
     // first call at root node
 
     OsiSolverInterface *csi = si.clone (true);
+
+    csi -> messageHandler () -> setLogLevel (0);
     //dynamic_cast <CouenneSolverInterface<T> *> 
 
     OsiClpSolverInterface *clpcsi = dynamic_cast <OsiClpSolverInterface *> (csi);

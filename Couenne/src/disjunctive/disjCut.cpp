@@ -12,6 +12,8 @@
 #include "OsiClpSolverInterface.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneDisjCuts.hpp"
+//#include "CouenneCutGenerator.hpp"
+//#include "CouenneProblem.hpp"
 
 #define COEFF_BOUNDS 1.e10
 
@@ -237,6 +239,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
       printLPMatrix (cglp);
     }
 
+    //cglp.options () -> SetNumericValue ("max_cpu_time", couenneCG_ -> Problem () -> getMaxCpuTime () - CoinCpuTime ());
     if (first) {cglp.initialSolve (); first = false;}
     else        cglp.resolve (); // segfault in ex1244
 
