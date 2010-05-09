@@ -30,8 +30,14 @@
 /* Define to 1 if the Cplex package is available */
 #undef COIN_HAS_CPX
 
+/* Define to 1 if the Gurobi package is available */
+#undef COIN_HAS_GRB
+
 /* Define to 1 if the Ipopt package is used */
 #undef COIN_HAS_IPOPT
+
+/* Define to 1 if the Mosek package is available */
+#undef COIN_HAS_MSK
 
 /* Define to 1 if the Nauty package is available */
 #undef COIN_HAS_NTY
@@ -39,8 +45,17 @@
 /* Define to 1 if the Osi package is used */
 #undef COIN_HAS_OSI
 
+/* Define to 1 if the Osl package is available */
+#undef COIN_HAS_OSL
+
+/* Define to 1 if the Soplex package is available */
+#undef COIN_HAS_SPX
+
 /* Define to 1 if the ThirdParty package is used */
 #undef COIN_HAS_THIRDPARTY
+
+/* Define to 1 if the Xpress package is available */
+#undef COIN_HAS_XPR
 
 /* Define to 1 if you have the <cstdint> header file. */
 #undef HAVE_CSTDINT

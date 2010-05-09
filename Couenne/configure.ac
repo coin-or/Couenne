@@ -4,7 +4,8 @@
 
 ## $Id$
 
-# Author:  Andreas Waechter            IBM    2006-12-06
+# Authors:  Andreas Waechter            IBM    2006-12-06
+#           Pietro Belotti
 
 #############################################################################
 #                       Names and other basic things                        #
@@ -12,7 +13,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[0.3],[couenne@list.coin-or.org])
+AC_INIT([Couenne],[trunk],[couenne@list.coin-or.org])
 
 AC_COPYRIGHT([
 Copyright 2006 Carnegie Mellon University, International Business Machines and others.
@@ -81,10 +82,12 @@ AC_LANG_PUSH(C)
 AC_COIN_HAS_USER_LIBRARY([Nauty],[NTY],[nauty.h],[nauty])
 AC_LANG_POP(C)
 
-# CPLEX library
-AC_LANG_PUSH(C)
-AC_COIN_HAS_USER_LIBRARY([Cplex],[CPX],[cplex.h],[CPXgetstat])
-AC_LANG_POP(C)
+AC_COIN_HAS_USER_LIBRARY([Cplex],[CPX],[cplex.h],[CPXgetstat])         # Cplex library
+AC_COIN_HAS_USER_LIBRARY([Gurobi],[GRB],[gurobi_c.h],[GRBgetattrinfo]) # Gurobi library
+AC_COIN_HAS_USER_LIBRARY([Mosek],[MSK],[mosek.h],[MSK_openmosek])      # Mosek
+AC_COIN_HAS_USER_LIBRARY([Osl],[OSL],[ekk_c_api.h],[ekk_simplex])      # OSL
+AC_COIN_HAS_USER_LIBRARY([Soplex],[SPX],[spxsolver.h])                 # Soplex library
+AC_COIN_HAS_USER_LIBRARY([Xpress],[XPR],[xprs.h],[XPRSsetintcontrol])  # XpressMP
 
 ##############################################################################
 #                   VPATH links for example input files                      #
@@ -111,6 +114,7 @@ AC_CONFIG_FILES([Makefile
                  src/interfaces/Makefile
                  src/heuristics/Makefile
                  src/disjunctive/Makefile
+                 src/sdpcuts/Makefile
                  src/expression/Makefile
                  src/problem/Makefile
                  src/standardize/Makefile

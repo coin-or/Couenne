@@ -4,7 +4,8 @@
 
 ## $Id: Makefile.am 405 2006-07-10 18:52:52Z andreasw $
 
-# Author:  Andreas Waechter           IBM    2006-04-13
+# Authors:  Andreas Waechter           IBM    2006-04-13
+#           Pietro Belotti
 
 AUTOMAKE_OPTIONS = foreign
 
@@ -28,7 +29,8 @@ libCouenne_la_LIBADD = \
 	./convex/libCouenneConvex.la \
 	./bound_tightening/libCouenneBoundTightening.la \
 	./util/libCouenneUtil.la \
-	./disjunctive/libCouenneDisjunctive.la
+	./disjunctive/libCouenneDisjunctive.la \
+	./sdpcuts/libCouenneSdpCuts.la
 
 #	./readnl/libCouenneReadnl.la 
 
@@ -103,6 +105,7 @@ AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/sdpcuts` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`
