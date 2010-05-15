@@ -21,18 +21,16 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneDepGraph.hpp"
 
-//#define DEBUG
-
 /// standardize (nonlinear) common expressions, objectives, and constraints
 
 bool CouenneProblem::standardize () {
 
-#ifdef DEBUG
-  printf ("START: current point: %d vars -------------------\n", 
-	  domain_.current () -> Dimension ());
-  for (int i=0; i<domain_.current () -> Dimension (); i++)
-    printf ("%3d %20g [%20g %20g]\n", i, domain_.x (i), domain_.lb (i), domain_.ub (i));
-#endif
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf ("START: current point: %d vars -------------------\n", 
+	    domain_.current () -> Dimension ());
+    for (int i=0; i<domain_.current () -> Dimension (); i++)
+      printf ("%3d %20g [%20g %20g]\n", i, domain_.x (i), domain_.lb (i), domain_.ub (i));
+  }
 
   bool retval = true;
 
@@ -53,21 +51,21 @@ bool CouenneProblem::standardize () {
   // standardize initial aux variables (aka defined variables, aka
   // common expression)
 
-#ifdef DEBUG
-  if (commonexprs_.size ()) printf ("%d common exprs, initVar = %d = %d - %d\n", 
-				    commonexprs_.size (), 
-				    initVar, 
-				    variables_ . size (), 
-				    commonexprs_ . size ());
-#endif
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    if (commonexprs_.size ()) printf ("%d common exprs, initVar = %d = %d - %d\n", 
+				      commonexprs_.size (), 
+				      initVar, 
+				      variables_ . size (), 
+				      commonexprs_ . size ());
+  }
 
   for (std::vector <expression *>::iterator i = commonexprs_ . begin ();
        i != commonexprs_ . end (); ++i) {
 
-#ifdef DEBUG
-    printf ("-- stdz common expr [%d] :=", initVar); fflush (stdout);
-    (*i) -> print (); printf ("\n"); fflush (stdout);
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf ("-- stdz common expr [%d] :=", initVar); fflush (stdout);
+      (*i) -> print (); printf ("\n"); fflush (stdout);
+    }
 
     exprAux *naux = (*i) -> standardize (this, false);
 
@@ -87,19 +85,19 @@ bool CouenneProblem::standardize () {
 
     //variables_ . erase (variables_ . end () - 1);
 
-#ifdef DEBUG
-    if (naux) {
-      printf ("done: "); fflush (stdout);
-      naux -> print ();
-      printf (" := "); fflush (stdout);
-      naux -> Image () -> print (); printf ("\n..."); fflush (stdout);
-    } else if (*i) {
-      (*i) -> print ();
-      //printf (" := "); fflush (stdout);
-      //aux -> Image () -> print (); 
-      printf ("\n");
-    } else printf ("[n]aux NULL!\n");
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      if (naux) {
+	printf ("done: "); fflush (stdout);
+	naux -> print ();
+	printf (" := "); fflush (stdout);
+	naux -> Image () -> print (); printf ("\n..."); fflush (stdout);
+      } else if (*i) {
+	(*i) -> print ();
+	//printf (" := "); fflush (stdout);
+	//aux -> Image () -> print (); 
+	printf ("\n");
+      } else printf ("[n]aux NULL!\n");
+    }
 
     initVar++;
   }
@@ -109,25 +107,25 @@ bool CouenneProblem::standardize () {
   for (std::vector <CouenneObjective *>::iterator i = objectives_.begin ();
        i != objectives_.end (); ++i) {
 
-#ifdef DEBUG
-    printf ("Objective [code: %d]", (*i) -> Body () -> code ()); (*i) -> print ();
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf ("Objective [code: %d]", (*i) -> Body () -> code ()); (*i) -> print ();
+    }
 
     exprAux *aux = (*i) -> standardize (this);
 
-#ifdef DEBUG
-    printf ("      --> "); (*i) -> print (); 
-    if (aux) {printf (" -- aux is "); aux -> print (); printf ("\n");}
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf ("      --> "); (*i) -> print (); 
+      if (aux) {printf (" -- aux is "); aux -> print (); printf ("\n");}
+    }
 
     if (aux) {
       //delete ((*i) -> Body ());
       (*i) -> Body (new exprClone (aux));
     }
 
-#ifdef DEBUG
-    printf ("      --> "); (*i) -> print (); printf ("...................\n");
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf ("      --> "); (*i) -> print (); printf ("...................\n");
+    }
   }
 
   // commuted_ is an array with a flag for each original variable,
@@ -147,12 +145,12 @@ bool CouenneProblem::standardize () {
   for (std::vector <CouenneConstraint *>::iterator i = constraints_.begin (); 
        i != constraints_.end (); ++i) {
 
-#ifdef DEBUG
-    //printf ("############# problem status now:\n"); 
-    //print (); 
-    printf ("############# Constraint "); 
-    (*i) -> print ();
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf ("############# problem status now:\n"); 
+      print (); 
+      printf ("############# Constraint "); 
+      (*i) -> print ();
+    }
 
     CouNumber 
       conLb = (*((*i) -> Lb ())) (),
@@ -183,10 +181,10 @@ bool CouenneProblem::standardize () {
 
     exprAux *aux = (*i) -> standardize (this);
 
-#ifdef DEBUG
-    printf (" ==> [%d] ", aux ? (aux -> Index ()) : -1); 
-    (*i) -> print ();
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf (" ==> [%d] ", aux ? (aux -> Index ()) : -1); 
+      (*i) -> print ();
+    }
 
     if (aux) { // save if standardized
 
@@ -207,9 +205,9 @@ bool CouenneProblem::standardize () {
       if ((((*((*i) -> Lb ())) ()) > ub) ||
 	  (((*((*i) -> Ub ())) ()) < lb)) {
 	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, "found infeasible constraint [%g,%g]\n", lb, ub);
-#ifdef DEBUG
-	(*i) -> print ();
-#endif
+	if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	  (*i) -> print ();
+	}
 	retval = false;
       }
       iters2erase.push_back (i);
@@ -217,12 +215,12 @@ bool CouenneProblem::standardize () {
 
     //(*i) -> Body () -> realign (this);
 
-#ifdef DEBUG
-    printf (" --> ");
-    (*i) -> print ();
-    printf ("..............................................................\n");
-    //print ();
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf (" --> ");
+      (*i) -> print ();
+      printf ("..............................................................\n");
+      //print ();
+    }
 
     /*printf ("=== "); fflush (stdout); 
     aux -> print (); printf (" := "); fflush (stdout);
@@ -232,11 +230,11 @@ bool CouenneProblem::standardize () {
   for (unsigned int i = iters2erase.size (); i--;)
     constraints_. erase (iters2erase [i]);
 
-#ifdef DEBUG 
-  // Use with caution. Bounds on auxs are not defined yet, so valgrind complains
-  printf ("done with standardization: (careful, bounds below can be nonsense)\n");
-  print (); 
-#endif
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) { 
+    // Use with caution. Bounds on auxs are not defined yet, so valgrind complains
+    printf ("done with standardization: (careful, bounds below can be nonsense)\n");
+    print (); 
+  }
 
   // Create evaluation order ////////////////////////////////////////////////////
 
@@ -286,22 +284,22 @@ bool CouenneProblem::standardize () {
 
       //printf ("to "); variables_ [ord] -> Lb    () -> print (); printf (", now eval\n");
 
-#ifdef DEBUG
-      printf (":::: %3d %10g [%10g, %10g]", 
-	      ord, domain_.x (ord), domain_.lb (ord), domain_.ub (ord));
-#endif
+      if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	printf (":::: %3d %10g [%10g, %10g]", 
+		ord, domain_.x (ord), domain_.lb (ord), domain_.ub (ord));
+      }
 
       // and evaluate them
       domain_.x  (ord) = (*(variables_ [ord] -> Image ())) ();
       domain_.lb (ord) = (*(variables_ [ord] -> Lb    ())) ();
       domain_.ub (ord) = (*(variables_ [ord] -> Ub    ())) ();
 
-#ifdef DEBUG
-      printf (" --> %10g [%10g, %10g] [", 
-	      domain_.x (ord), domain_.lb (ord), domain_.ub (ord));
-      variables_ [ord] -> Lb () -> print (); printf (",");
-      variables_ [ord] -> Ub () -> print (); printf ("]\n");
-#endif
+      if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	printf (" --> %10g [%10g, %10g] [", 
+		domain_.x (ord), domain_.lb (ord), domain_.ub (ord));
+	variables_ [ord] -> Lb () -> print (); printf (",");
+	variables_ [ord] -> Ub () -> print (); printf ("]\n");
+      }
 
       bool integer = variables_ [ord] -> isInteger ();
 

@@ -36,12 +36,14 @@ void CouenneProblem::print (std::ostream &out) {
        i != variables_.end (); ++i)
 
     if (((*i) -> Type () != AUX) || 
-	((*i) -> Multiplicity () > 0)) {
+	((*i) -> Multiplicity () > 0) ||
+	(jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE))) {
 
       (*i) -> print (out);
 
       if (((*i) -> Type () == AUX) && 
-	  ((*i) -> Multiplicity () > 0)) {
+	  (((*i) -> Multiplicity () > 0) ||
+	   (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)))) {
 
 	out << " (r:" << (*i) -> rank () 
 	    << ", m:" << (*i) -> Multiplicity () << ") " 

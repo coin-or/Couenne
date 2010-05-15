@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: check if expr{Group,Sum,Sub} contains a lot of quadratic/bilinear terms
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -14,8 +14,6 @@
 #include "CouenneExprGroup.hpp"
 #include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
-
-//#define DEBUG
 
 
 /// translate a sum/difference/exprOpp into:
@@ -78,16 +76,16 @@ exprAux *exprSum::standardize (CouenneProblem *p, bool addAux) {
 
   ////////////////////////////////////////////////////////////////////////////////
 
-#ifdef DEBUG
-  printf ("decompTerm: lin [");
-  for (std::map <int, CouNumber>::iterator i = lmap.Map().begin (); i != lmap.Map().end (); ++i)
-    printf ("<%d,%g>", i -> first, i -> second);
-  printf ("] -- quad [");
-  for (std::map <std::pair <int, int>, CouNumber>::iterator i = qmap.Map ().begin (); 
-       i != qmap.Map ().end (); ++i)
-    printf ("<%d,%d,%g>", i -> first.first, i -> first.second, i -> second);
-  printf ("] (%g)\n", c0);
-#endif
+  if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf ("decompTerm: lin [");
+    for (std::map <int, CouNumber>::iterator i = lmap.Map().begin (); i != lmap.Map().end (); ++i)
+      printf ("<%d,%g>", i -> first, i -> second);
+    printf ("] -- quad [");
+    for (std::map <std::pair <int, int>, CouNumber>::iterator i = qmap.Map ().begin (); 
+	 i != qmap.Map ().end (); ++i)
+      printf ("<%d,%d,%g>", i -> first.first, i -> first.second, i -> second);
+    printf ("] (%g)\n", c0);
+  }
 
   return p -> linStandardize (addAux, c0, lmap, qmap);
 }

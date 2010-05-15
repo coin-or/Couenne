@@ -19,7 +19,6 @@
 #include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
 
-//#define DEBUG
 
 /// given an element of a sum, check if it is a variable (possibly
 /// with a coefficient) and return its index (and the coefficient) if
@@ -38,9 +37,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
   expression **alist = body -> ArgList ();
 
-#ifdef DEBUG
-  printf ("|||||||||| Splitting "); body -> print (); printf ("\n");
-#endif
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf ("|||||||||| Splitting "); body -> print (); printf ("\n");
+  }
 
   switch (code) { // constraint h(x) = 0 may be in different forms:
 		  // subtraction, sum, linear group
@@ -150,11 +149,11 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
 	  if (body -> dependsOn (j, TAG_AND_RECURSIVE) == 0) {
 
-#ifdef DEBUG
-	    printf ("body does not depend on x%d: ", j);
-	    body -> print ();
-	    printf ("\n");
-#endif
+	    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	      printf ("body does not depend on x%d: ", j);
+	      body -> print ();
+	      printf ("\n");
+	    }
 	    // mark which with negative number
 	    which    = - nlin - 1;
 	    auxcoe   = lcoe [i]. second;
@@ -218,10 +217,10 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     int nargs = body -> nArgs ();
     expression **newarglist;
 
-#ifdef DEBUG
-    printf (" [[ind %d, coe %.1g, wh %d, nargs %d, nlin %d]] ", 
-	    maxindex, auxcoe, which, nargs, nlin);
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf (" [[ind %d, coe %.1g, wh %d, nargs %d, nlin %d]] ", 
+	      maxindex, auxcoe, which, nargs, nlin);
+    }
 
     if (nargs > 0) { // there is an element in the nonlinear sum to be drawn
 
@@ -266,10 +265,10 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
       register int j;
 
-#ifdef DEBUG
-      //for (j=0; j<mid;  j++) printf ("{%g x%d} ", lincoe [j], linind [j]);
-      //for (j++; j<nlin; j++) printf ("{%g x%d} ", lincoe [j], linind [j]);
-#endif
+      if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	//for (j=0; j<mid;  j++) printf ("{%g x%d} ", lincoe [j], linind [j]);
+	//for (j++; j<nlin; j++) printf ("{%g x%d} ", lincoe [j], linind [j]);
+      }
 
       CouNumber divider = -1. / auxcoe;
 
@@ -278,10 +277,10 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
       linind2 [j-1] = -1; // terminate list of indices
 
-#ifdef DEBUG
-      for (j=0; j<mid;  j++) printf ("<%g x%d> ", lincoe2 [j],   linind2 [j]);
-      for (j++; j<nlin; j++) printf ("<%g x%d> ", lincoe2 [j-1], linind2 [j-1]);
-#endif
+      if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	for (j=0; j<mid;  j++) printf ("<%g x%d> ", lincoe2 [j],   linind2 [j]);
+	for (j++; j<nlin; j++) printf ("<%g x%d> ", lincoe2 [j-1], linind2 [j-1]);
+      }
 
       if (code == COU_EXPRQUAD) { // copy quadratic elements
 
@@ -320,9 +319,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     if (which >= 0) --nargs; // ...the nonlinear sum
     else            --nlin;  // ...the linear part
 
-#ifdef DEBUG
-    printf ("\n::: auxcoe %g, rhs %g, lin %d, nl %d\n", auxcoe, rhs, nlin, nargs);
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf ("\n::: auxcoe %g, rhs %g, lin %d, nl %d\n", auxcoe, rhs, nlin, nargs);
+    }
 
     // all is ready to take the independent stuff to the other side of
     // the inequality.
@@ -430,9 +429,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
       delete [] lincoe2;
     }
 
-#ifdef DEBUG
-    printf ("gotten "); rest -> print (); printf ("\n");
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf ("gotten "); rest -> print (); printf ("\n");
+    }
 
     auxInd = maxindex;
 
@@ -454,25 +453,25 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
   // standardize remaining of the expression
 
-#ifdef DEBUG
-  printf ("standardize rest (2nd level) "); fflush (stdout);
-  rest -> print (); printf (" [body = ");
-  body -> print (); printf ("]");
-#endif
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf ("standardize rest (2nd level) "); fflush (stdout);
+    rest -> print (); printf (" [body = ");
+    body -> print (); printf ("]");
+  }
 
   // second argument is false to tell standardize not to create a new
   // auxiliary variable (we are creating it ourselves, it's aux)
   exprAux *aux = rest -> standardize (this, false);
 
-#ifdef DEBUG
-  printf (" {body = "); body -> print (); printf ("} ");
-  if (aux) {
-    printf (" --- aux = "); 
-    aux -> print ();
-    printf (" := ");
-    aux -> Image () -> print ();
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf (" {body = "); body -> print (); printf ("} ");
+    if (aux) {
+      printf (" --- aux = "); 
+      aux -> print ();
+      printf (" := ");
+      aux -> Image () -> print ();
+    }
   }
-#endif
 
   if (aux) {
     //delete rest;
@@ -482,11 +481,11 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     delete aux;
   }
 
-#ifdef DEBUG
-  printf (" ==> "); rest -> print ();
-  printf (" and "); fflush (stdout);
-  rest -> print (); printf ("\n");
-#endif
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf (" ==> "); rest -> print ();
+    printf (" and "); fflush (stdout);
+    rest -> print (); printf ("\n");
+  }
 
   return auxInd;
 }

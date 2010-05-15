@@ -16,8 +16,6 @@
 #include "CouenneExprIVar.hpp"
 #include "CouenneDepGraph.hpp"
 
-//#define DEBUG
-
 // replace a variable
 void replace (CouenneProblem *p, int wind, int xind);
 
@@ -32,19 +30,19 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
   // least one variable that did not show up so far (need a problem
   // structure)
 
-#ifdef DEBUG
-  printf ("################################\nStandardizing constraint: "); print ();
+  if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf ("################################\nStandardizing constraint: "); print ();
 
-  printf (" ["); fflush (stdout); lb_ -> print ();
-  printf (","); fflush (stdout);  ub_ -> print (); fflush (stdout);
-  /*  printf ("] {with auxset = ");
-  for (std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> begin ();
-       i != p -> AuxSet () -> end (); i++) {
-    printf ("<"); (*i) -> print (); 
-    printf (","); (*i) -> Image () -> print (); printf ("> ");
-    }*/
-  printf ("]\n");
-#endif
+    printf (" ["); fflush (stdout); lb_ -> print ();
+    printf (","); fflush (stdout);  ub_ -> print (); fflush (stdout);
+    /*  printf ("] {with auxset = ");
+	for (std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> begin ();
+	i != p -> AuxSet () -> end (); i++) {
+	printf ("<"); (*i) -> print (); 
+	printf (","); (*i) -> Image () -> print (); printf ("> ");
+	}*/
+    printf ("]\n");
+  }
 
   // Auxiliaries used to be definable with a constraint f(x) + bw = c,
   // which implies w := (c - f(x)) / b. Semi-auxiliaries no longer
@@ -106,10 +104,10 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
       p -> Commuted () [wind] = true;
 
-#ifdef DEBUG
-      printf ("---> %d & ", wind); fflush (stdout);
-      rest -> print (); printf ("[sign: %d]\n", aSign);
-#endif
+      if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	printf ("---> %d & ", wind); fflush (stdout);
+	rest -> print (); printf ("[sign: %d]\n", aSign);
+      }
 
       assert (p -> Var (wind) -> Type () == VAR);
 
@@ -145,11 +143,11 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	  p -> AuxSet      () -> insert (w); // 1) beware of useless copies
 	  p -> getDepGraph () -> insert (w); // 2) introduce it in acyclic structure
 
-#ifdef DEBUG
-	  printf ("now replacing x [%d] with ", wind); fflush (stdout);
-	  w -> print (); printf (" := ");
-	  w -> Image () -> print (); printf ("\n");
-#endif
+	  if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	    printf ("now replacing x [%d] with ", wind); fflush (stdout);
+	    w -> print (); printf (" := ");
+	    w -> Image () -> print (); printf ("\n");
+	  }
 
 	  // replace ALL occurrences of original variable (with index
 	  // wind) with newly created auxiliary
@@ -158,13 +156,13 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
 	else {
 
-#ifdef DEBUG
-	  printf ("found aux occurrence of "); fflush (stdout);
-	  w -> print (); printf (" := ");
-	  w -> Image () -> print (); printf (" ... ");
-	  (*i) -> print (); printf (" := ");
-	  (*i) -> Image () -> print (); printf ("\n");
-#endif
+	  if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	    printf ("found aux occurrence of "); fflush (stdout);
+	    w -> print (); printf (" := ");
+	    w -> Image () -> print (); printf (" ... ");
+	    (*i) -> print (); printf (" := ");
+	    (*i) -> Image () -> print (); printf ("\n");
+	  }
 
 	  // if this is an original variable and is competing with an
 	  // auxiliary variable, or at least this has a lower index,
@@ -195,9 +193,8 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
     }
   }
 
-#ifdef DEBUG
-  printf ("\nnormal\n-----------------\n");
-#endif
+  if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE))
+    printf ("\nnormal\n-----------------\n");
 
   //body_ -> standardize (p, false); // TODO: check!
 

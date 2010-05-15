@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: decompose sums and products
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -13,8 +13,6 @@
 #include "CouenneExprPow.hpp"
 #include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
-
-//#define DEBUG
 
 /// given (expression *) element of sum, returns (coe,ind0,ind1)
 /// depending on element:
@@ -107,15 +105,15 @@ void CouenneProblem::decomposeTerm (expression *term,
     // return list of variables (some of which auxiliary)
     flattenMul (term, coe, indices);
 
-#ifdef DEBUG
-    printf ("from flattenmul: [%g] ", coe);
-    for (std::map <int, CouNumber>::iterator itt = indices.begin ();
-	 itt != indices.end(); ++itt)
-      printf (" %d,%g",
-	      itt -> first,
-	      itt -> second);
-    printf ("\n");
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf ("from flattenmul: [%g] ", coe);
+      for (std::map <int, CouNumber>::iterator itt = indices.begin ();
+	   itt != indices.end(); ++itt)
+	printf (" %d,%g",
+		itt -> first,
+		itt -> second);
+      printf ("\n");
+    }
 
     // based on number of factors, decide what to return
     switch (indices.size ()) {

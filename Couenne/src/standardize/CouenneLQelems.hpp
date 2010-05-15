@@ -1,5 +1,5 @@
-/* $Id$ */
-/**
+/* $Id$
+ *
  * Name:    lqelems.hpp
  * Author:  Pietro Belotti
  * Purpose: definition of elemental elements of linear and bilinear expressions

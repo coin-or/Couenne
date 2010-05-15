@@ -5,7 +5,7 @@
  * Purpose: return one or more exprGroup/exprQuad based on sparsity of
  *          original one
  *
- * (C) Carnegie-Mellon University, 2007-09.
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -20,8 +20,6 @@
 #include "CouenneLQelems.hpp"
 
 #define MIN_DENSITY 0.5
-
-//#define DEBUG
 
 /// analyze sparsity of potential exprQuad/exprGroup and change
 /// linear/quadratic maps accordingly, if necessary by adding new
@@ -55,12 +53,12 @@ void CouenneProblem::analyzeSparsity (CouNumber c0,
     } else nsquares++;
   }
 
-#ifdef DEBUG
-  printf ("qmap has %d element, occur has %d, md*s*(s+1)/2 = %g\n", 
-	  qmap.Map().size (), 
-	  occur.size (),
-	  MIN_DENSITY * occur.size () * (occur.size () + 1) / 2);
-#endif
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf ("qmap has %d element, occur has %d, md*s*(s+1)/2 = %g\n", 
+	    qmap.Map().size (), 
+	    occur.size (),
+	    MIN_DENSITY * occur.size () * (occur.size () + 1) / 2);
+  }
 
   int nterms = occur.size ();
   

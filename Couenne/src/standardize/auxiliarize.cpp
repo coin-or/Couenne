@@ -5,14 +5,12 @@
  * Purpose: replace occurrences of original variable in a problem with
  *          auxiliary with the same index
  *
- * (C) Carnegie-Mellon University, 2007-08.
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneProblem.hpp"
 #include "CouenneExprClone.hpp"
-
-//#define DEBUG
 
 /// replace, in all expressions of the problem (auxiliaries,
 /// objectives and constraints) link to an original variable that has
@@ -20,11 +18,11 @@
 
 void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
 
-#ifdef DEBUG
-  printf ("replacing  "); if (aux)   aux   -> print (); 
-  printf (" with ");      if (subst) subst -> print (); 
-  printf ("\n");
-#endif
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf ("replacing  "); if (aux)   aux   -> print (); 
+    printf (" with ");      if (subst) subst -> print (); 
+    printf ("\n");
+  }
 
   bool same_var = (subst == NULL);
 
@@ -101,11 +99,11 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
 	((*i) -> Multiplicity () > 0) &&             // this variable is actually used
 	((*i) -> Index () != (*orig) -> Index ())) { // skip same variable
 
-#ifdef DEBUG
-      printf ("replacing aux "); fflush (stdout); (*i) -> print (); 
-      printf (" := "); fflush (stdout); (*i) -> Image () -> print (); 
-      printf ("\n");
-#endif
+      if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	printf ("replacing aux "); fflush (stdout); (*i) -> print (); 
+	printf (" := "); fflush (stdout); (*i) -> Image () -> print (); 
+	printf ("\n");
+      }
 
       expression *image = (*i) -> Image ();
 

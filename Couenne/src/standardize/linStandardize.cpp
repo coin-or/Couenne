@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: standardize sum expressions (expr{Sum,Sub,Quad,Group,Opp})
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -17,8 +17,6 @@
 #include "CouenneExprGroup.hpp"
 #include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
-
-//#define DEBUG
 
 /// standardization of linear exprOp's
 exprAux *CouenneProblem::linStandardize (bool addAux, 
@@ -121,11 +119,11 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
   delete [] qj;
   delete [] qc;
 
-#ifdef DEBUG
-  printf ("\nlinstand (addaux = %d) ==> ", addAux); 
-  ret -> print (); printf ("\n"); 
-  //  ret -> Image () -> print (); printf ("\n");
-#endif
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf ("\nlinstand (addaux = %d) ==> ", addAux); 
+    ret -> print (); printf ("\n"); 
+    //  ret -> Image () -> print (); printf ("\n");
+  }
 
   //if (ret -> Type () == AUX)
   //return ret;

@@ -5,23 +5,21 @@
  * Purpose: flatten multiplication expression tree into monomial
  *          c*\Prod_{k\in K} x_{i_k}^{p_k}
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneProblem.hpp"
-
-//#define DEBUG
 
 /// re-organizes multiplication and stores indices (and exponents) of
 /// its variables
 void CouenneProblem::flattenMul (expression *mul, CouNumber &coe, 
 				 std::map <int, CouNumber> &indices) {
 
-#ifdef DEBUG
-  printf ("flatten %d ---> ", mul -> code ()); mul -> print ();
-  printf ("\n");
-#endif
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    printf ("flatten %d ---> ", mul -> code ()); mul -> print ();
+    printf ("\n");
+  }
 
   if (mul -> code () != COU_EXPRMUL) {
 
@@ -47,10 +45,10 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
 
     expression *arg = al [i];
 
-#ifdef DEBUG
-    printf ("  flatten arg %d ---> ", arg -> code ()); arg -> print ();
-    printf ("\n");
-#endif
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf ("  flatten arg %d ---> ", arg -> code ()); arg -> print ();
+      printf ("\n");
+    }
 
     switch (arg -> code ()) {
 
