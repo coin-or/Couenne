@@ -11,8 +11,13 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
 
+#include "exprIVar.hpp"
 #include "exprAux.hpp"
+#include "exprClone.hpp"
 #include "depGraph.hpp"
+
+// replace a variable
+void replace (CouenneProblem *p, int wind, int xind);
 
 //#define DEBUG
 
@@ -92,9 +97,22 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
       int xind = rest -> Index ();
 
-      if (false && (xind >= 0)) {
+      if (xind >= 0) {
+	// create new variable, it has to be integer if original variable was integer
+	exprAux *w = new exprAux (new exprClone (p -> Var (xind)), wind, 1 + p -> Var (xind) -> rank (),
+				  p -> Var (wind) -> isInteger () ?
+				  exprAux::Integer : exprAux::Continuous,
+				  p -> domain ());
+	p -> auxiliarize (w);
+	w -> zeroMult ();
+	
+	replace (p, wind, xind);
+
 	p -> auxiliarize (p -> Var (wind), p -> Var (xind));
-	p -> Var (wind) -> zeroMult ();
+	//p -> Var (wind) -> zeroMult (); // redundant variable is neutralized
+
+	// p -> auxiliarize (p -> Var (wind), p -> Var (xind));
+	// p -> Var (wind) -> zeroMult ();
       } else {
 
 	// create new variable, it has to be integer if original variable was integer
@@ -142,4 +160,34 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 #endif
 
   return body_ -> standardize (p);
+}
+
+
+// Replace a variable ////////////////////////////////
+void replace (CouenneProblem *p, int wind, int xind) {
+
+  exprVar 
+    *varLeaves = p -> Variables () [wind],
+    *varStays  = p -> Variables () [xind];
+
+  // intersect features of the two variables (integrality, bounds)
+
+  varStays -> lb () = varLeaves -> lb () = CoinMax (varStays -> lb (), varLeaves -> lb ());
+  varStays -> ub () = varLeaves -> ub () = CoinMin (varStays -> ub (), varLeaves -> ub ());
+
+  if (varStays  -> isInteger () ||
+      varLeaves -> isInteger ()) {
+
+    varStays -> lb () = ceil  (varStays -> lb ());
+    varStays -> ub () = floor (varStays -> ub ());
+
+    if (varStays -> Type () == AUX)
+      varStays -> setInteger (true);
+    else {
+      //expression *old = varStays; // !!! leak
+      p -> Variables () [xind] = varStays = new exprIVar (xind, p -> domain ());
+      p -> auxiliarize (varStays); // replace it everywhere in the problem
+      //delete old;
+    }
+  }
 }
