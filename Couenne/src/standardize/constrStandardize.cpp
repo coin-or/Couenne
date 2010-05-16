@@ -11,6 +11,7 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
 
+#include "exprClone.hpp"
 #include "exprAux.hpp"
 #include "exprIVar.hpp"
 #include "depGraph.hpp"
@@ -96,12 +97,26 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
       int xind = rest -> Index ();
 
-      if (false && (xind >= 0)) {
+      if (xind >= 0) {
 
-	//replace (p, wind, xind);
+	// create new variable, it has to be integer if original variable was integer
+	exprAux *w = new exprAux (new exprClone (p -> Var (xind)), wind, 1 + p -> Var (xind) -> rank (),
+				  p -> Var (wind) -> isInteger () ?
+				  exprAux::Integer : exprAux::Continuous,
+				  p -> domain ());
+	p -> auxiliarize (w);
+	w -> zeroMult ();
+	
+	replace (p, wind, xind);
 
 	p -> auxiliarize (p -> Var (wind), p -> Var (xind));
-	p -> Var (wind) -> zeroMult (); // redundant variable is neutralized
+	//p -> Var (wind) -> zeroMult (); // redundant variable is neutralized
+
+
+	// 	//replace (p, wind, xind);
+
+	// 	p -> auxiliarize (p -> Var (wind), p -> Var (xind));
+	// 	p -> Var (wind) -> zeroMult (); // redundant variable is neutralized
 
       } else {
 
