@@ -46,7 +46,7 @@ bool CouenneProblem::standardize () {
 
   int initVar = variables_ . size () - commonexprs_ . size ();
 
-  // Defined variables ///////////////////////////////////////////
+  // DEFINED VARIABLES /////////////////////////////////////////////////////////////////////////////
 
   // standardize initial aux variables (aka defined variables, aka
   // common expression)
@@ -108,14 +108,15 @@ bool CouenneProblem::standardize () {
        i != objectives_.end (); ++i) {
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("Objective [code: %d]", (*i) -> Body () -> code ()); (*i) -> print ();
+      printf ("Objective [code: %d]", (*i) -> Body () -> code ()); 
+      (*i) -> print ();
     }
 
     exprAux *aux = (*i) -> standardize (this);
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("      --> "); (*i) -> print (); 
-      if (aux) {printf (" -- aux is "); aux -> print (); printf ("\n");}
+      printf (" objective "); (*i) -> print (); 
+      if (aux) {printf (" admits aux "); aux -> print ();}
     }
 
     if (aux) {
@@ -124,13 +125,13 @@ bool CouenneProblem::standardize () {
     }
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("      --> "); (*i) -> print (); printf ("...................\n");
+      printf (". New obj: "); (*i) -> print (); printf ("\n");
     }
   }
 
   // commuted_ is an array with a flag for each original variable,
   // which is true at position i if initially original variable x_i
-  // went auxiliary
+  // became auxiliary
 
   commuted_ = new bool [nVars ()];
   for (int i = nVars (); i--;)
@@ -157,23 +158,30 @@ bool CouenneProblem::standardize () {
       conUb = (*((*i) -> Ub ())) ();
 
     // sanity check: if (due to bad model or redundancies) the
-    // constraint's body is constant, check if it's within bounds.
+    // constraint's body is constant, delete it -- check if it's
+    // within bounds.
 
     expression *eBody = (*i) -> Body ();
 
     if (eBody -> Linearity () <= CONSTANT) {
 
       CouNumber bodyVal = (*eBody)();
+
       if ((bodyVal < conLb - COUENNE_EPS) ||
 	  (bodyVal > conUb + COUENNE_EPS)) { // all variables eliminated, but out of bounds
 	
 	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, 
-			  "Constraint %d: all variables eliminated, but value %g out of bounds [%g,%g]\n", 
+			  "Constraint %d: all variables eliminated, but value %g out of bounds [%g,%g]: ", 
 			  bodyVal, conLb, conUb);
+
+	if (jnlst_ -> ProduceOutput (J_SUMMARY, J_PROBLEM))
+	  (*i) -> print ();
+
 	retval = false;
 	break;
 
       } else {
+
 	iters2erase.push_back (i);
 	continue; // all variables eliminated and constraint is redundant
       }
@@ -182,7 +190,7 @@ bool CouenneProblem::standardize () {
     exprAux *aux = (*i) -> standardize (this);
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf (" ==> [%d] ", aux ? (aux -> Index ()) : -1); 
+      printf (" reformulated: aux w[%d] ", aux ? (aux -> Index ()) : -1); 
       (*i) -> print ();
     }
 
@@ -200,14 +208,22 @@ bool CouenneProblem::standardize () {
       //      con2.push_back (*i);
     }
     else {
+
+      // left-hand side not reformulated, therefore this is probably
+      // an affine expression
+
       CouNumber lb, ub;
+
       (*i) -> Body () -> getBounds (lb, ub);
+
       if ((((*((*i) -> Lb ())) ()) > ub) ||
 	  (((*((*i) -> Ub ())) ()) < lb)) {
+
 	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, "found infeasible constraint [%g,%g]\n", lb, ub);
-	if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+
+	if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE))
 	  (*i) -> print ();
-	}
+
 	retval = false;
       }
       iters2erase.push_back (i);
@@ -236,9 +252,9 @@ bool CouenneProblem::standardize () {
     print (); 
   }
 
-  // Create evaluation order ////////////////////////////////////////////////////
-
   delete auxSet_;
+
+  // Create evaluation order ////////////////////////////////////////////////////
 
   // reallocate space for enlarged set of variables
   domain_.current () -> resize (nVars ());
@@ -313,6 +329,7 @@ bool CouenneProblem::standardize () {
   // TODO: resolve duplicate index in exprQuad before restoring this
 
   std::string delete_redund;
+
   if (bonBase_)
     bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne."); 
   else

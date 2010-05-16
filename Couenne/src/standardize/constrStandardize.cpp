@@ -13,6 +13,7 @@
 
 #include "CouenneExpression.hpp"
 #include "CouenneExprAux.hpp"
+#include "CouenneExprClone.hpp"
 #include "CouenneExprIVar.hpp"
 #include "CouenneDepGraph.hpp"
 
@@ -116,12 +117,20 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
       // check if constraint now reduces to w_k = x_h, and if so
       // replace all occurrences of x_k with x_h
 
-      if (false && (xind >= 0) && (aSign == expression::EQ)) {
+      if ((xind >= 0) && (aSign == expression::EQ)) {
 
-	//replace (p, wind, xind);
+	// create new variable, it has to be integer if original variable was integer
+	exprAux *w = new exprAux (new exprClone (p -> Var (xind)), wind, 1 + p -> Var (xind) -> rank (),
+				  p -> Var (wind) -> isInteger () ?
+				  exprAux::Integer : exprAux::Continuous,
+				  p -> domain (), aSign);
+	p -> auxiliarize (w);
+	w -> zeroMult ();
+	
+	replace (p, wind, xind);
 
 	p -> auxiliarize (p -> Var (wind), p -> Var (xind));
-	p -> Var (wind) -> zeroMult (); // redundant variable is neutralized
+	//p -> Var (wind) -> zeroMult (); // redundant variable is neutralized
 
       } else {
 
@@ -132,7 +141,20 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 				  exprAux::Integer : exprAux::Continuous,
 				  p -> domain (), aSign);
 
-	std::set <exprAux *, compExpr>::iterator i;
+// 	if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+
+// 	  printf ("AuxSet:\n");
+// 	  for (std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> begin ();
+// 	       i != p -> AuxSet () -> end (); ++i)
+// 	    if ((*i) -> Image () == NULL) {
+// 	      (*i) -> print (); printf (" does not have an image!!!\n");
+// 	    } else {
+// 	      printf ("-- "); (*i) -> print (); printf (" := ");
+// 	      (*i) -> Image () -> print (); printf ("\n");
+// 	    }
+// 	}
+
+	std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> end ();
 
 	if (aSign == expression::EQ)
 	  i = p -> AuxSet () -> find (w);
