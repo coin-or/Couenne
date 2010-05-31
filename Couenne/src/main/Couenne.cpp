@@ -36,6 +36,26 @@
 #include "CbcCutGenerator.hpp"      
 #include "CouenneCutGenerator.hpp" 
 #include "CouenneProblem.hpp"
+
+
+namespace Ipopt {
+  class OptionsList;
+  class Journalist;
+}
+
+using Ipopt::SmartPtr;
+
+namespace Bonmin {
+  class RegisteredOptions;
+  class TMINLP;
+  class Bab;
+  class BabSetupBase;
+  class TNLPSolver;
+  class OsiTMINLPInterface;
+}
+
+using namespace Couenne;
+
 // the maximum difference between a printed optimum and a CouNumber
 #define PRINTED_PRECISION 1e-5
 
@@ -44,15 +64,15 @@ using Ipopt::SmartPtr;
 static const int infeasible = 1;
 
 bool parseCommandLine(int argc, char* argv[], Ipopt::SmartPtr<Ipopt::OptionsList> options) {
-	assert(IsValid(options));
+  assert(IsValid(options));
 	
-	if (argc==3 && strcmp(argv[1], "-AMPL")==0)
-		options->SetStringValue("nlfile", argv[2]);
+  if (argc==3 && strcmp(argv[1], "-AMPL")==0)
+    options->SetStringValue("nlfile", argv[2]);
 
-	if (argc==3 && strcmp(argv[1], "-OSIL")==0)
-		options->SetStringValue("osilfile", argv[2]);
+  if (argc==3 && strcmp(argv[1], "-OSIL")==0)
+    options->SetStringValue("osilfile", argv[2]);
 
-	return true;
+  return true;
 }
 
 int main (int argc, char *argv[]) {
@@ -60,62 +80,62 @@ int main (int argc, char *argv[]) {
 
   double time_start = CoinCpuTime();
   
-	// register options to prepare for parsing the command line
-	SmartPtr<Bonmin::RegisteredOptions> roptions = new Bonmin::RegisteredOptions();
-	Bonmin::CouenneSetup::registerAllOptions(roptions);
+  // register options to prepare for parsing the command line
+  SmartPtr<Bonmin::RegisteredOptions> roptions = new Bonmin::RegisteredOptions();
+  Couenne::CouenneSetup::registerAllOptions(roptions);
 #ifdef COIN_HAS_ASL
-	CouenneAmplInterface::registerOptions(roptions);
+  CouenneAmplInterface::registerOptions(roptions);
 #endif
 #ifdef COIN_HAS_OS
-	CouenneOSInterface::registerOptions(roptions);
+  CouenneOSInterface::registerOptions(roptions);
 #endif
 	
-	SmartPtr<Ipopt::Journalist> jnlst = new Ipopt::Journalist();
-	// do not add journals yet, maybe the user wants to do so; but what if parsing the command line gives errors?
+  SmartPtr<Ipopt::Journalist> jnlst = new Ipopt::Journalist();
+  // do not add journals yet, maybe the user wants to do so; but what if parsing the command line gives errors?
 	
-	SmartPtr<Ipopt::OptionsList> options = new Ipopt::OptionsList(GetRawPtr(roptions), jnlst);
-	if (!parseCommandLine(argc, argv, options))
-		return EXIT_FAILURE;
+  SmartPtr<Ipopt::OptionsList> options = new Ipopt::OptionsList(GetRawPtr(roptions), jnlst);
+  if (!parseCommandLine(argc, argv, options))
+    return EXIT_FAILURE;
 	
 	
 
-	CouenneUserInterface* userinterface = NULL;
+  CouenneUserInterface* userinterface = NULL;
 	
-	std::string dummy;
+  std::string dummy;
 #ifdef COIN_HAS_ASL
-	if (!userinterface && options->GetStringValue("nlfile", dummy, "")) {
-		userinterface = new CouenneAmplInterface(options, jnlst);
-		((CouenneAmplInterface*)userinterface) -> setRegisteredOptions(roptions); // for some reason the TMINLP constructor needs the registered options
-	}
+  if (!userinterface && options->GetStringValue("nlfile", dummy, "")) {
+    userinterface = new CouenneAmplInterface(options, jnlst);
+    ((CouenneAmplInterface*)userinterface) -> setRegisteredOptions(roptions); // for some reason the TMINLP constructor needs the registered options
+  }
 #endif
 #ifdef COIN_HAS_OS
-	if (!userinterface && options->GetStringValue("osilfile", dummy, "")) {
-		userinterface = new CouenneOSInterface();
-	}
+  if (!userinterface && options->GetStringValue("osilfile", dummy, "")) {
+    userinterface = new CouenneOSInterface();
+  }
 #endif
 	
-	if (!userinterface) {
-		fprintf(stderr, "Error: No input file given.\n");
-		return EXIT_FAILURE;
-	}
+  if (!userinterface) {
+    fprintf(stderr, "Error: No input file given.\n");
+    return EXIT_FAILURE;
+  }
 	
-	if (!userinterface->setupJournals())
-		return EXIT_FAILURE;
+  if (!userinterface->setupJournals())
+    return EXIT_FAILURE;
 	
-	CouenneProblem* problem = userinterface->getCouenneProblem();
-	if (!problem)
-		return EXIT_FAILURE;
-	problem->initOptions(options);
+  CouenneProblem* problem = userinterface->getCouenneProblem();
+  if (!problem)
+    return EXIT_FAILURE;
+  problem->initOptions(options);
 	
-	SmartPtr<Bonmin::TMINLP> tminlp = userinterface->getTMINLP();
-	if (Ipopt::IsNull(tminlp))
-		return EXIT_FAILURE;
+  SmartPtr<Bonmin::TMINLP> tminlp = userinterface->getTMINLP();
+  if (Ipopt::IsNull(tminlp))
+    return EXIT_FAILURE;
 
-	try {
+  try {
     Bonmin::Bab bb;
     bb.setUsingCouenne (true);
 
-    Bonmin::CouenneSetup couenne;
+    CouenneSetup couenne;
     couenne.setOptionsAndJournalist(roptions, options, jnlst);
     if (!couenne.InitializeCouenne (NULL, problem, tminlp))
       throw infeasible;
@@ -125,7 +145,7 @@ int main (int argc, char *argv[]) {
     couenne.setDoubleParameter (Bonmin::BabSetupBase::MaxTime, timeLimit - (time_start = (CoinCpuTime () - time_start)));
   
     if (!userinterface->addBabPlugins(bb))
-    	return EXIT_FAILURE;
+      return EXIT_FAILURE;
 
     bb (couenne); // do branch and bound
     
@@ -137,10 +157,10 @@ int main (int argc, char *argv[]) {
       double opt = bb.model (). getBestPossibleObjValue ();
 
       jnlst -> Printf(Ipopt::J_SUMMARY, J_PROBLEM, "Global Optimum Test on %-40s %s\n", 
-	      problem -> problemName ().c_str (), 
-	      (fabs (opt - global_opt) / 
-	       (1. + CoinMax (fabs (opt), fabs (global_opt))) < PRINTED_PRECISION) ? 
-	      "OK" : "FAILED");
+		      problem -> problemName ().c_str (), 
+		      (fabs (opt - global_opt) / 
+		       (1. + CoinMax (fabs (opt), fabs (global_opt))) < PRINTED_PRECISION) ? 
+		      "OK" : "FAILED");
 
     } else if (couenne.displayStats ()) { // print statistics
 
@@ -153,33 +173,33 @@ int main (int argc, char *argv[]) {
       if (cg) cg -> getStats (nr, nt, st);
       else jnlst -> Printf(Ipopt::J_WARNING, J_PROBLEM, "Warning: Could not get pointer to CouenneCutGenerator\n");
 
-    	jnlst -> Printf(Ipopt::J_SUMMARY, J_PROBLEM, "Stats: %-15s %4d [var] %4d [int] %4d [con] %4d [aux] "
-    			"%6d [root] %8d [tot] %6g [sep] %8g [time] %8g [bb] "
-    			"%20e [lower] %20e [upper] %7d [nodes]\n",// %s %s\n",
-    			problem -> problemName ().c_str (),
-    			problem -> nOrigVars   (), 
-    			problem -> nOrigIntVars(), 
-    			problem -> nOrigCons   (),
-    			problem -> nVars       () - problem -> nOrigVars (),
-    			nr, nt, st, 
-    			CoinCpuTime () - time_start,
-    			cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
-    			bb.model (). getBestPossibleObjValue (),
-    			bb.model (). getObjValue (),
-    			//bb.bestBound (),
-    			//bb.bestObj (),
-    			bb.numNodes ()
-    			//bb.iterationCount (),
-    			//status.c_str (), message.c_str ()
-    	);
+      jnlst -> Printf(Ipopt::J_SUMMARY, J_PROBLEM, "Stats: %-15s %4d [var] %4d [int] %4d [con] %4d [aux] "
+		      "%6d [root] %8d [tot] %6g [sep] %8g [time] %8g [bb] "
+		      "%20e [lower] %20e [upper] %7d [nodes]\n",// %s %s\n",
+		      problem -> problemName ().c_str (),
+		      problem -> nOrigVars   (), 
+		      problem -> nOrigIntVars(), 
+		      problem -> nOrigCons   (),
+		      problem -> nVars       () - problem -> nOrigVars (),
+		      nr, nt, st, 
+		      CoinCpuTime () - time_start,
+		      cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
+		      bb.model (). getBestPossibleObjValue (),
+		      bb.model (). getObjValue (),
+		      //bb.bestBound (),
+		      //bb.bestObj (),
+		      bb.numNodes ()
+		      //bb.iterationCount (),
+		      //status.c_str (), message.c_str ()
+		      );
     }    
 
     if (!userinterface->writeSolution(bb))
-    	return EXIT_FAILURE;
+      return EXIT_FAILURE;
  	
-	} catch(Bonmin::TNLPSolver::UnsolvedError *E) {
-     E->writeDiffFiles();
-     E->printError(std::cerr);
+  } catch(Bonmin::TNLPSolver::UnsolvedError *E) {
+    E->writeDiffFiles();
+    E->printError(std::cerr);
     //There has been a failure to solve a problem with Ipopt.
     //And we will output file with information on what has been changed in the problem to make it fail.
     //Now depending on what algorithm has been called (B-BB or other) the failed problem may be at different place.
@@ -196,7 +216,7 @@ int main (int argc, char *argv[]) {
 	     <<E.message()<<std::endl;
     
   } catch (Ipopt::OPTION_INVALID &E) {
-  	std::cerr<<"Ipopt exception : "<<E.Message()<<std::endl;
+    std::cerr<<"Ipopt exception : "<<E.Message()<<std::endl;
    
   } catch (int generic_error) {
     if (generic_error == infeasible)
@@ -212,20 +232,20 @@ int main (int argc, char *argv[]) {
 
 //int main (int argc, char **argv) {
 
-  // read options
+// read options
 
-  // create problem
+// create problem
 
-  // create bb solver
+// create bb solver
 
-  // add cut generators
-  // add heuristics
-  // add branching rules
-  // add bound reduction
+// add cut generators
+// add heuristics
+// add branching rules
+// add bound reduction
 
-  // solve
+// solve
 
-  // print result
+// print result
 
 //  return retval;
 //}

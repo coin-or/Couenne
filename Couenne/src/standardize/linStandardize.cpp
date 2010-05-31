@@ -8,6 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h>
+
 #include "CouenneProblem.hpp"
 #include "CouenneExprSum.hpp"
 #include "CouenneExprSub.hpp"
@@ -17,6 +19,8 @@
 #include "CouenneExprGroup.hpp"
 #include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
+
+using namespace Couenne;
 
 /// standardization of linear exprOp's
 exprAux *CouenneProblem::linStandardize (bool addAux, 

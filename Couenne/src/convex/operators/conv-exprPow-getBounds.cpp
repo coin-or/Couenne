@@ -10,6 +10,8 @@
 
 #include <math.h>
 
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneTypes.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneExprConst.hpp"
@@ -20,6 +22,7 @@
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
 
 // compute expressions for lower and upper bounds of a power x^y,
 // based on the lower/upper bounds of x and y

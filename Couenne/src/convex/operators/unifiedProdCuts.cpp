@@ -17,6 +17,7 @@
 #include "CouenneExprPow.hpp"
 #include "CouenneFunTriplets.hpp"
 
+namespace Couenne {
 
 /// Add cut around curve x*y=k 
 
@@ -99,12 +100,12 @@ void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
   //
   // These cuts are added if the corresponding bounds are finite
 
-  if (sign != expression::LEQ) {
+  if (sign != expression::AUX_LEQ) {
     if ((cLX || cLY) && is_boundbox_regular (yl, xl)) cg -> createCut (cs,yl*xl,-1,wi,-1.,xi,yl,yi,xl);
     if ((cRX || cRY) && is_boundbox_regular (yu, xu)) cg -> createCut (cs,yu*xu,-1,wi,-1.,xi,yu,yi,xu);
   }
 
-  if (sign != expression::GEQ) {
+  if (sign != expression::AUX_GEQ) {
     if ((cRX || cLY) && is_boundbox_regular (yl, xu)) cg -> createCut (cs,yl*xu,+1,wi,-1.,xi,yl,yi,xu);
     if ((cLX || cRY) && is_boundbox_regular (yu, xl)) cg -> createCut (cs,yu*xl,+1,wi,-1.,xi,yu,yi,xl);
   }
@@ -141,7 +142,7 @@ void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
   //
   //    alpha = [-yu + l/xt - l/(xt^2)(xu-xt)] / (xu*yu - l)
 
-  if (sign == expression::GEQ)
+  if (sign == expression::AUX_GEQ)
     return; // nothing else to do here
 
   if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepSimple || 
@@ -176,4 +177,6 @@ void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
 		    xi, x0, xl, xu, 
 		    yi, y0, yl, yu,
 		    wi, w0, wl, wu);
+}
+
 }

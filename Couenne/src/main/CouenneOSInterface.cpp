@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneOS.cpp
  * Authors: 
  *          
@@ -20,8 +20,21 @@
 #include "CouenneExprClone.hpp"
 #include "CouenneExprGroup.hpp"
 
+#include "BonTMINLP.hpp"
+
 //#include "OSInstance.hpp"
-class OSInstance;
+//class OSInstance;
+
+namespace Bonmin {
+
+  class RegisteredOptions;
+  class Bab;
+  class TMINLP;
+}
+
+using Ipopt::SmartPtr;
+
+using namespace Couenne;
 
 void CouenneOSInterface::registerOptions(Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions) {
 	roptions->AddStringOption1("osilfile", "name of an osil file to read the problem instance from", "", "*", "name of osil file");

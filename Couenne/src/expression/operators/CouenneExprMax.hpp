@@ -15,6 +15,7 @@
 #include "CouenneExprCopy.hpp"
 #include "CouenneExprStore.hpp"
 
+namespace Couenne {
 
 /// class for maxima
 
@@ -99,6 +100,8 @@ inline CouNumber exprMax::operator () () {
   }
 
   return (*(arglist_ [best_ind + 1])) ();
+}
+
 }
 
 #endif

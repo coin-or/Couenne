@@ -3,7 +3,7 @@
  * Name:    CouenneOrbitObj.hpp
  * Authors: Jim Ostrowski, University of Waterloo
  *          Pietro Belotti, Lehigh University
- * Purpose: Object for auxiliary variables
+ * Purpose: Object for orbital branching
  *
  * This file is licensed under the Common Public License (CPL)
  */
@@ -18,7 +18,9 @@
 #include "CouenneJournalist.hpp"
 #include "OsiBranchingObject.hpp"
 
-#include "CouenneOrbitObj.hpp"
+#include "CouenneObject.hpp"
+
+namespace Couenne {
 
 /// OsiObject for Orbital Branching
 
@@ -69,5 +71,7 @@ public:
 protected:
 
 };
+
+}
 
 #endif

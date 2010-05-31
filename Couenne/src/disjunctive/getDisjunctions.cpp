@@ -14,6 +14,7 @@
 #include "CouenneBranchingObject.hpp"
 #include "CouenneDisjCuts.hpp"
 
+using namespace Couenne;
 
 /// generate all disjunctions given current point
 int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts *> > &disjs, 

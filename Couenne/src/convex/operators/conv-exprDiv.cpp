@@ -18,6 +18,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+using namespace Couenne;
 
 // Create standard formulation of this expression
 exprAux *exprDiv::standardize (CouenneProblem *p, bool addAux) {
@@ -92,12 +93,12 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
 
   unifiedProdCuts (cg, cs,
 		   wi, x [wi], wl, wu,
-		   //sign == expression::LEQ ? -COIN_DBL_MAX : wl,  // wrong - pass sign
-		   //sign == expression::GEQ ?  COIN_DBL_MAX : wu,
+		   //sign == expression::AUX_LEQ ? -COIN_DBL_MAX : wl,  // wrong - pass sign
+		   //sign == expression::AUX_GEQ ?  COIN_DBL_MAX : wu,
 		   yi, x [yi], yl, yu,
 		   xi, x [xi], xl, xu, chg, 
-		   (sign == expression::LEQ) ? expression::GEQ :
-		   (sign == expression::GEQ) ? expression::LEQ : expression::EQ);
+		   (sign == expression::AUX_LEQ) ? expression::AUX_GEQ :
+		   (sign == expression::AUX_GEQ) ? expression::AUX_LEQ : expression::AUX_EQ);
 
 
   // TODO: put real convexification...

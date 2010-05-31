@@ -11,6 +11,8 @@
 #include "CoinHelperFunctions.hpp"
 #include "CouenneExprBQuad.hpp"
 
+using namespace Couenne;
+
 //#define DEBUG
 
 CouNumber exprQuad::computeQBound (int sign) {
@@ -55,8 +57,8 @@ CouNumber exprQuad::computeQBound (int sign) {
       lb  = el -> first -> lb (),
       ub  = el -> first -> ub ();
 
-    if ((coe < 0.) && (sign < 0) || 
-	(coe > 0.) && (sign > 0)) 
+    if (((coe < 0.) && (sign < 0)) || 
+	((coe > 0.) && (sign > 0))) 
       {if    ((term=ub) >  COUENNE_INFINITY) return (sign < 0)? -COUENNE_INFINITY : COUENNE_INFINITY;}
     else {if ((term=lb) < -COUENNE_INFINITY) return (sign < 0)? -COUENNE_INFINITY : COUENNE_INFINITY;}
 
@@ -84,8 +86,8 @@ CouNumber exprQuad::computeQBound (int sign) {
 
       if (xind == yind) { // term of the form q_ii x_i^2
 
-	if ((coe > 0.) && (sign < 0) ||
-	    (coe < 0.) && (sign > 0)) 
+	if (((coe > 0.) && (sign < 0)) ||
+	    ((coe < 0.) && (sign > 0))) 
 	  term = (ubi < 0) ? (ubi * ubi) : (lbi > 0) ? (lbi * lbi) : 0.; //min{xi^2: xi in [lbi,ubi]
 	else 
 	  if ((term = CoinMax (lbi*lbi, ubi*ubi)) > COUENNE_INFINITY) 

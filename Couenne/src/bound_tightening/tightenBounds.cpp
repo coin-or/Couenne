@@ -12,6 +12,8 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
+
 /// Bound propagation for auxiliary variables
 
 int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
@@ -94,12 +96,12 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
       var -> Image () -> getBounds (ll, uu);
 
       if (var -> isInteger ()) {
-	if (var -> sign () != expression::LEQ) ll = ceil  (ll - COUENNE_EPS);
-	if (var -> sign () != expression::GEQ) uu = floor (uu + COUENNE_EPS);
+	if (var -> sign () != expression::AUX_LEQ) ll = ceil  (ll - COUENNE_EPS);
+	if (var -> sign () != expression::AUX_GEQ) uu = floor (uu + COUENNE_EPS);
       }
 
-      if      (var -> sign () == expression::LEQ) ll = (*(var -> Lb ())) ();
-      else if (var -> sign () == expression::GEQ) uu = (*(var -> Ub ())) ();
+      if      (var -> sign () == expression::AUX_LEQ) ll = (*(var -> Lb ())) ();
+      else if (var -> sign () == expression::AUX_GEQ) uu = (*(var -> Ub ())) ();
 
       if (ll - uu > COUENNE_EPS * (1 + CoinMin (fabs (ll), fabs (uu)))) {
 
@@ -125,8 +127,8 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
       // w. similarly, if defined as w >= f(x), then the same should
       // hold for the upper bound.
 
-      if (var -> sign () == exprVar::LEQ) ll = -COUENNE_INFINITY;
-      if (var -> sign () == exprVar::GEQ) uu =  COUENNE_INFINITY;
+      if (var -> sign () == expression::AUX_LEQ) ll = -COUENNE_INFINITY;
+      if (var -> sign () == expression::AUX_GEQ) uu =  COUENNE_INFINITY;
 
       // check if lower bound got higher
       if ((ll > - COUENNE_INFINITY) && 

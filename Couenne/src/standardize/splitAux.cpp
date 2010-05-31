@@ -19,6 +19,7 @@
 #include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
 
+using namespace Couenne;
 
 /// given an element of a sum, check if it is a variable (possibly
 /// with a coefficient) and return its index (and the coefficient) if
@@ -92,8 +93,8 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
       (new exprSum (auxdef, new exprConst ((pos==1) ? -rhs : rhs))); // otherwise sum it with \pm rhs
 
     if (pos==1) {
-      if      (sign == expression::GEQ)  sign = expression::LEQ;
-      else if (sign == expression::LEQ)  sign = expression::GEQ;
+      if      (sign == expression::AUX_GEQ)  sign = expression::AUX_LEQ;
+      else if (sign == expression::AUX_LEQ)  sign = expression::AUX_GEQ;
     }
 
   } break;
@@ -436,8 +437,8 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     auxInd = maxindex;
 
     if (auxcoe < 0) {
-      if      (sign == expression::GEQ)  sign = expression::LEQ;
-      else if (sign == expression::LEQ)  sign = expression::GEQ;
+      if      (sign == expression::AUX_GEQ)  sign = expression::AUX_LEQ;
+      else if (sign == expression::AUX_LEQ)  sign = expression::AUX_GEQ;
     }
 
   } break;

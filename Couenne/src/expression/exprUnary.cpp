@@ -14,6 +14,8 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneExprClone.hpp"
 
+using namespace Couenne;
+
 // print unary expression
 void exprUnary::print (std::ostream &out, 
 		       bool descend) const {

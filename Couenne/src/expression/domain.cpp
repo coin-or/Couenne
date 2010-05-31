@@ -14,6 +14,8 @@
 
 #define EXTRA_STORAGE 1024
 
+using namespace Couenne;
+
 /// constructor
 DomainPoint::DomainPoint (int dim, 
 			  CouNumber *x, 

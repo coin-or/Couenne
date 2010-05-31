@@ -13,6 +13,8 @@
 
 #include "CouenneExprSin.hpp"
 
+namespace Couenne {
+
 /// class cosine
 
 class exprCos: public exprUnary {
@@ -62,7 +64,7 @@ class exprCos: public exprUnary {
   {return COU_EXPRCOS;}
 
   /// implied bound processing
-  bool impliedBound (int index, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign = expression::EQ) {
+  bool impliedBound (int index, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign = expression::AUX_EQ) {
 
     bool impl = trigImpliedBound (COU_COSINE, index, argument_ -> Index (), l, u, chg);
 
@@ -104,5 +106,7 @@ class exprCos: public exprUnary {
 
 /// common convexification method used by both cos and sin
 CouNumber trigNewton (CouNumber, CouNumber, CouNumber);
+
+}
 
 #endif

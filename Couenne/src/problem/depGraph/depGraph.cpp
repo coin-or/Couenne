@@ -12,6 +12,8 @@
 #include <cstdio>
 #include "CouenneDepGraph.hpp"
 
+using namespace Couenne;
+
 //#define DEBUG
 
 // Methods of the class DepNode ///////////////////////////////////////////////////////////

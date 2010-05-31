@@ -16,7 +16,22 @@
 #include "CouenneUserInterface.hpp"
 #include "BonRegisteredOptions.hpp"
 
+namespace Bonmin {
+  class RegisteredOptions;
+  class TMINLP;
+  class Bab;
+}
+
+namespace Ipopt {
+  class OptionsList;
+  class Journalist;
+}
+
+using Ipopt::SmartPtr;
+
 class OSInstance;
+
+namespace Couenne {
 
 class CouenneOSInterface : public CouenneUserInterface {
 private:
@@ -41,4 +56,6 @@ public:
 	bool writeSolution(Bonmin::Bab& bab);
 };
 
-#endif /*COUENNEOSINTERFACE_HPP_*/
+}
+
+#endif

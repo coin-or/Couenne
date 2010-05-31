@@ -12,6 +12,7 @@
 #include "CouennePrecisions.hpp"
 #include "CoinHelperFunctions.hpp"
 
+using namespace Couenne;
 
 /// implied bound processing for expression w = x/y, upon change in
 /// lower- and/or upper bound of w, whose index is wind
@@ -23,8 +24,8 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   bool resx, resy = resx = false;
 
   CouNumber 
-    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
-    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+    wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
   // y is a constant
   if (arglist_ [1] -> Type () == CONST) {

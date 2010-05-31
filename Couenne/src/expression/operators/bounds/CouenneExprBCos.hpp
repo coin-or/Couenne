@@ -19,6 +19,7 @@
 # define M_PI 3.14159265358979323846
 #endif
 
+namespace Couenne {
 
 ///  class to compute lower bound of a cosine based on the bounds of
 ///  its arguments
@@ -121,6 +122,8 @@ inline CouNumber exprUBCos::operator () () {
     return 1.;
 
   return CoinMax (cos (l), cos (u));
+}
+
 }
 
 #endif

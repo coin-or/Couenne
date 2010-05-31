@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    drawCuts.cpp
  * Author:  Pietro Belotti
  * Purpose: print function and cut information to be later displayed
@@ -13,6 +13,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneExprAux.hpp"
 
+using namespace Couenne;
 
 // [cool!] print graph-readable output for displaying inequalities
 // on a Cartesian plane

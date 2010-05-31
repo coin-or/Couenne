@@ -8,6 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneExprAbs.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneExprMin.hpp"
@@ -15,6 +17,8 @@
 #include "CouenneExprOpp.hpp"
 
 #include "CouenneProblem.hpp"
+
+using namespace Couenne;
 
 /// find lower and upper bound of a given expression
 
@@ -86,8 +90,8 @@ bool exprAbs::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   int index = argument_ -> Index ();
 
-  CouNumber *xl = l + index, wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
-            *xu = u + index, wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+  CouNumber *xl = l + index, wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
+            *xu = u + index, wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
   // for w >= b > 0, we can only improve xlb if it is at least  b
   //                                     xub             most  -b

@@ -12,6 +12,7 @@
 #include "CouenneExprConst.hpp"
 #include "CouennePrecisions.hpp"
 
+using namespace Couenne;
 
 //
 // shrink argument list

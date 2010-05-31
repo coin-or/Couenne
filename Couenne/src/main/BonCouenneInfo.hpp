@@ -16,8 +16,8 @@
 #include "IpSmartPtr.hpp"
 #include <list>
 
-namespace Bonmin
-{
+namespace Couenne {
+
   /** Bonmin class for passing info between components of branch-and-cuts.*/
   class CouenneInfo : public Bonmin::BabInfo
   {
@@ -91,6 +91,6 @@ namespace Bonmin
     protected:
     std::list<Ipopt::SmartPtr<const NlpSolution> > nlpSols_;
   };
-}/* End namespace.*/
+}
 
 #endif

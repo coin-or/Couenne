@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    rootQ.cpp
  * Author:  Pietro Belotti
  * Purpose: find roots of polynomial Q^k(x) (see Liberti and Pantelides, 2003)
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -14,8 +14,9 @@
 #include "CouenneTypes.hpp"
 #include "CouennePrecisions.hpp"
 
+namespace Couenne {
 
-/* compute Q(x)*/
+/* compute Q(x) */
 
 CouNumber Q (register int k, CouNumber x) {
 
@@ -66,6 +67,8 @@ CouNumber rootQ (int k) {
   }
 }
 
+}
+
 #ifdef DEBUG_ROOTQ
 int main () {
 
@@ -85,4 +88,5 @@ int main () {
     */
   }
 }
+
 #endif

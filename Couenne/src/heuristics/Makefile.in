@@ -62,7 +62,8 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneHeuristics_la_LIBADD =
 am_libCouenneHeuristics_la_OBJECTS = BonInitHeuristic.lo \
-	BonNlpHeuristic.lo
+	BonNlpHeuristic.lo CouenneFeasPumpConstructors.lo \
+	CouenneFeasPump.lo
 libCouenneHeuristics_la_OBJECTS =  \
 	$(am_libCouenneHeuristics_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -296,7 +297,9 @@ noinst_LTLIBRARIES = libCouenneHeuristics.la
 # List all source files for this library, including headers
 libCouenneHeuristics_la_SOURCES = \
 	BonInitHeuristic.cpp \
-	BonNlpHeuristic.cpp
+	BonNlpHeuristic.cpp \
+	CouenneFeasPumpConstructors.cpp \
+	CouenneFeasPump.cpp 
 
 libCouenneHeuristics_la_DEPENDENCIES = $(libCouenneHeuristics_la_LIBADD)
 
@@ -373,6 +376,8 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonNlpHeuristic.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPump.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPumpConstructors.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

@@ -22,6 +22,8 @@ class OsiBranchingInformation;
 class OsiSolverInterface;
 class OsiCuts;
 
+namespace Couenne {
+
 class CouenneProblem;
 class CouenneCutGenerator;
 class CouenneObject;
@@ -50,7 +52,7 @@ class expression {
   /// "sign" of the constraint defining an auxiliary. If the auxiliary
   /// is defined as \f$w \le f(x)\f$, then it is LEQ. It is EQ and GEQ,
   /// respectively, if it is defined with \f$=\f$ and  \f$\ge\f$.
-  enum auxSign {UNDEF=-2, LEQ=-1, EQ, GEQ};
+  enum auxSign {AUX_UNDEF=-2, AUX_LEQ=-1, AUX_EQ, AUX_GEQ};
 
   /// Constructor
   expression () {}
@@ -213,7 +215,7 @@ class expression {
   /// (auxiliary) variable in question and the current lower/upper
   /// bound. The method returns true if there has been a change on any
   /// bound on the variables on which the expression depends.
-  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ)
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ)
   {return false;}
 
   /// multiplicity of a variable
@@ -314,6 +316,8 @@ inline expression *getOriginal (expression *e) {
 
   if (e -> isaCopy ()) return getOriginal (e -> Copy ());
   else return e;
+}
+
 }
 
 #endif

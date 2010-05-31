@@ -20,12 +20,14 @@
 #include "CouenneExprConst.hpp"
 #include "CouenneDomain.hpp"
 
-class CouenneCutGenerator;
 
 namespace Bonmin {
   class BabSetupBase;
 }
 
+namespace Couenne {
+
+class CouenneCutGenerator;
 
 /// variable-type operator
 ///
@@ -122,7 +124,7 @@ class exprVar: public expression {
   /// is this variable integer?
   virtual inline bool isInteger () {
     CouNumber lb = domain_ -> lb (varIndex_);
-    return ((fabs (lb - domain_ -> ub (varIndex_)) < COUENNE_EPS) && (::isInteger (lb)));
+    return ((fabs (lb - domain_ -> ub (varIndex_)) < COUENNE_EPS) && (Couenne::isInteger (lb)));
   }
 
   /// Get expressions of lower and upper bound of an expression (if any)
@@ -157,7 +159,7 @@ class exprVar: public expression {
   {return COU_EXPRVAR;}
 
   /// implied bound processing
-  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// rank of an original variable is always one
   virtual inline int rank () 
@@ -200,7 +202,9 @@ class exprVar: public expression {
 
   /// return its sign in the definition constraint
   virtual inline enum auxSign sign () const 
-  {return exprVar::UNDEF;}
+  {return expression::AUX_UNDEF;}
 };
+
+}
 
 #endif

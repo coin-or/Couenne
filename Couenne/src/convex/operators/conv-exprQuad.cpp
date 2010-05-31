@@ -18,6 +18,8 @@
 #include "CouenneExprBQuad.hpp"
 #include "CouenneCutGenerator.hpp"
 
+using namespace Couenne;
+
 /// Get lower and upper bound of an expression (if any)
 void exprQuad::getBounds (expression *&lb, expression *&ub) {
 
@@ -43,9 +45,9 @@ void exprQuad::generateCuts (expression *w, //const OsiSolverInterface &si,
 			     t_chg_bounds *chg, 
 			     int wind, CouNumber lb, CouNumber ub) {
 
-  if ((!(cg -> isFirst ())) &&                    // unless a convexification was never created,
-      (fabs ((*this) () - (*w) ()) < COUENNE_EPS) // do we really need a convexification cut?
-      || !alphaConvexify (cg -> Problem ()))  // ... or a new alpha-convexification?
+  if (((!(cg -> isFirst ())) &&                     // unless a convexification was never created,
+       (fabs ((*this) () - (*w) ()) < COUENNE_EPS)) // do we really need a convexification cut?
+      || !alphaConvexify (cg -> Problem ()))        // ... or a new alpha-convexification?
     return;
 
   /*int 

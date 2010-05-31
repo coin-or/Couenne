@@ -16,6 +16,7 @@
 #include "CouenneExprUnary.hpp"
 #include "CouenneExprConst.hpp"
 
+namespace Couenne {
 
 /// class for \f$w=|f(x)|\f$
 
@@ -66,7 +67,7 @@ class exprAbs: public exprUnary {
   {return argument_ -> isInteger ();}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
@@ -89,5 +90,7 @@ class exprAbs: public exprUnary {
   /// either CONVEX, CONCAVE, AFFINE, or NONCONVEX
   //virtual enum convexity convexity () const;
 };
+
+}
 
 #endif

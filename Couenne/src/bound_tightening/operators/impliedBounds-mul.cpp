@@ -13,6 +13,8 @@
 #include "CoinHelperFunctions.hpp"
 #include "CouenneExprMul.hpp"
 
+using namespace Couenne;
+
 int exprMul::impliedBoundMul (CouNumber wl, 
 			      CouNumber wu, 
 			      std::vector <CouNumber> &xlv,

@@ -17,6 +17,8 @@
 #include "OsiBranchingObject.hpp"
 #include "CouenneBranchingObject.hpp"
 
+namespace Couenne {
+
 //class CouenneCutGenerator;
 //class CouenneProblem;
 
@@ -75,5 +77,7 @@ public:
 protected:
 
 };
+
+}
 
 #endif

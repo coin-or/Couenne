@@ -11,6 +11,8 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+namespace Couenne {
+
 // Tighten bounds - lightweight. Returns -1 if infeasible, otherwise
 // number of variables tightened.
 template <class T> 
@@ -112,4 +114,6 @@ int CouenneSolverInterface<T>::tightenBounds (int lightweight) {
   delete [] oldUpper;
 
   return nTightened;
+}
+
 }

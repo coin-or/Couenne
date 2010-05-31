@@ -19,6 +19,7 @@
 #include "CouenneExprUnary.hpp"
 #include "CouenneExprStore.hpp"
 
+using namespace Couenne;
 
 // empty differentiation method
 expression *expression::differentiate (int)

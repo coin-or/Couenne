@@ -17,6 +17,8 @@
 
 #include "CouenneExprGroup.hpp"
 
+using namespace Couenne;
+
 /// Empty constructor
 CouenneOrbitObj::CouenneOrbitObj ():
 

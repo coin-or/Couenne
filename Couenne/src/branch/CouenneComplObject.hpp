@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Branching object for complementarity constraints
  *
- * (C) Carnegie-Mellon University, 2008-09.
+ * (C) Carnegie-Mellon University, 2008-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -12,6 +12,8 @@
 #define COUENNECOMPLOBJECT_HPP
 
 #include "CouenneObject.hpp"
+
+namespace Couenne {
 
 /// OsiObject for complementarity constraints $x_1 x_2 <=/>=/= 0$. 
 ///
@@ -62,5 +64,7 @@ private:
   int sign_;
 
 };
+
+}
 
 #endif

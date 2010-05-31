@@ -14,6 +14,7 @@
 #include "CouenneExprCopy.hpp"
 #include "CouenneExprConst.hpp"
 
+using namespace Couenne;
 
 /// Constructor
 exprSum::exprSum  (expression **al, int n): 

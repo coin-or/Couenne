@@ -15,6 +15,7 @@
 #include "CouenneExprAbs.hpp"
 #include "CouenneExprAux.hpp"
 
+using namespace Couenne;
 
 // generate convexification cut for constraint w = |x|
 
@@ -43,7 +44,7 @@ void exprAbs::generateCuts (expression *w,
   else {
 
     // add two global cuts: w >= x and w >= -x
-    if (cg -> isFirst () && sign != expression::LEQ) {
+    if (cg -> isFirst () && sign != expression::AUX_LEQ) {
       cg -> createCut (cs, 0., +1, w_ind, 1., x_ind, -1.);
       cg -> createCut (cs, 0., +1, w_ind, 1., x_ind,  1.);
     }
@@ -52,7 +53,7 @@ void exprAbs::generateCuts (expression *w,
     // so, we can still add a plane, whose slope is 1 (x unbounded
     // from above) or -1 (from below)
 
-    if (sign != expression::GEQ) {
+    if (sign != expression::AUX_GEQ) {
 
       if (l > - COUENNE_INFINITY) {
 	if (u < COUENNE_INFINITY) { // the upper approximation has slope other than -1, 1

@@ -17,12 +17,15 @@
 #include "IpOptionsList.hpp"
 #include "IpJournalist.hpp"
 
-class CouenneProblem;
-class CouenneBaB;
 namespace Bonmin {
 class TMINLP;
 class Bab;
 }
+
+namespace Couenne {
+
+class CouenneProblem;
+class CouenneBaB;
 
 /* abstract base class of an interface for Couenne users
  */ 
@@ -78,5 +81,6 @@ public:
 	}
 };
 
+}
 
 #endif /*COUENNEUSERINTERFACE_HPP_*/

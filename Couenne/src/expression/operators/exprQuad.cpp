@@ -17,6 +17,8 @@
 #include "CouenneDepGraph.hpp"
 #include "CouenneLQelems.hpp"
 
+using namespace Couenne;
+
 class Domain;
 
 //#define DEBUG

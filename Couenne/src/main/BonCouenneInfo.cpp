@@ -10,46 +10,45 @@
 
 #include "BonCouenneInfo.hpp"
 
-namespace Bonmin
+using namespace Couenne;
+
+
+/** Default constructor.*/
+CouenneInfo::CouenneInfo(int type):
+  BabInfo(type)
+{}
+
+/** Constructor from OsiBabSolver.*/
+CouenneInfo::CouenneInfo(const OsiBabSolver &other):
+  BabInfo(other)
+{}
+
+/** Copy constructor.*/
+CouenneInfo::CouenneInfo(const CouenneInfo &other):
+  BabInfo(other)
+{}
+
+/** Destructor.*/
+CouenneInfo::~CouenneInfo()
+{}
+
+/** Virtual copy constructor.*/
+OsiAuxInfo *
+CouenneInfo::clone() const
 {
-  /** Default constructor.*/
-  CouenneInfo::CouenneInfo(int type):
-      BabInfo(type)
-  {}
+  return new CouenneInfo(*this);
+}
 
-  /** Constructor from OsiBabSolver.*/
-  CouenneInfo::CouenneInfo(const OsiBabSolver &other):
-      BabInfo(other)
-  {}
+CouenneInfo::NlpSolution::NlpSolution(int n, const double* sol, double objval)
+  :
+  n_(n),
+  objVal_(objval)
+{
+  sol_ = new double[n];
+  CoinCopyN(sol, n, sol_);
+}
 
-  /** Copy constructor.*/
-  CouenneInfo::CouenneInfo(const CouenneInfo &other):
-      BabInfo(other)
-  {}
-
-  /** Destructor.*/
-  CouenneInfo::~CouenneInfo()
-  {}
-
-  /** Virtual copy constructor.*/
-  OsiAuxInfo *
-  CouenneInfo::clone() const
-  {
-    return new CouenneInfo(*this);
-  }
-
-  CouenneInfo::NlpSolution::NlpSolution(int n, const double* sol, double objval)
-    :
-    n_(n),
-    objVal_(objval)
-  {
-    sol_ = new double[n];
-    CoinCopyN(sol, n, sol_);
-  }
-
-  CouenneInfo::NlpSolution::~NlpSolution()
-  {
-    delete [] sol_;
-  }
-}/* end namespace Bonmin*/
-
+CouenneInfo::NlpSolution::~NlpSolution()
+{
+  delete [] sol_;
+}

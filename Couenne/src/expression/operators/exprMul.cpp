@@ -18,6 +18,7 @@
 #include "CouenneExprClone.hpp"
 #include "CouennePrecisions.hpp"
 
+using namespace Couenne;
 
 /// Constructors, destructor
 exprMul::exprMul  (expression **al, int n): 

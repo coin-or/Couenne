@@ -1,20 +1,22 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    funtriplets.hpp
  * Author:  Pietro Belotti
  * Purpose: class for representing a function and its first- and second-order derivative
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-10
  * This file is licensed under the Common Public License (CPL)
  */
 
-#ifndef FUNTRIPLETS_HPP
-#define FUNTRIPLETS_HPP
+#ifndef Funtriplets_hpp
+#define Funtriplets_hpp
 
 #include <math.h>
 
 #include "CouenneExprPow.hpp"
 
+namespace Couenne
+{
 
 ///
 class funtriplet {
@@ -126,4 +128,5 @@ public:
   {return safe_pow (x / (mult_ * exponent_), 1 / (exponent_ - 1));} //< inverse of first derivative
 };
 
+}
 #endif

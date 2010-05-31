@@ -9,6 +9,7 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h>
 #include <map>
 #include <set>
 
@@ -18,6 +19,8 @@
 #include "CouenneExprMul.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneLQelems.hpp"
+
+using namespace Couenne;
 
 #define MIN_DENSITY 0.5
 

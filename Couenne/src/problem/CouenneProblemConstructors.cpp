@@ -13,6 +13,8 @@
 #include "CoinHelperFunctions.hpp"
 #include "CoinTime.hpp"
 
+#include "BonBabSetupBase.hpp"
+
 #include "CouenneTypes.hpp"
 
 #include "CouenneExpression.hpp"
@@ -27,6 +29,10 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneDepGraph.hpp"
 #include "CouenneLQelems.hpp"
+
+#include "CouenneObject.hpp"
+
+using namespace Couenne;
 
 /// constructor
 CouenneProblem::CouenneProblem (struct ASL *asl,

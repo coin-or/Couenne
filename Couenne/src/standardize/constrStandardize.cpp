@@ -8,6 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
 
@@ -16,6 +18,8 @@
 #include "CouenneExprClone.hpp"
 #include "CouenneExprIVar.hpp"
 #include "CouenneDepGraph.hpp"
+
+using namespace Couenne;
 
 // replace a variable
 void replace (CouenneProblem *p, int wind, int xind);
@@ -60,10 +64,10 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	(rUb >  COUENNE_INFINITY/2))) ||
       (fabs (rLb-rUb) <= COUENNE_EPS)) {
 
-    enum expression::auxSign aSign = expression::EQ;
+    enum expression::auxSign aSign = expression::AUX_EQ;
 
-    if      (rLb < -COUENNE_INFINITY/2) aSign = expression::LEQ;
-    else if (rUb >  COUENNE_INFINITY/2) aSign = expression::GEQ;
+    if      (rLb < -COUENNE_INFINITY/2) aSign = expression::AUX_LEQ;
+    else if (rUb >  COUENNE_INFINITY/2) aSign = expression::AUX_GEQ;
 
     CouNumber rhs = rLb >= -COUENNE_INFINITY/2 ? rLb : rUb;
 
@@ -92,8 +96,8 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
 	CouNumber constRHS = rest -> Value ();
 
-	if (aSign != expression::LEQ) p -> Var (wind) -> lb () = constRHS;
-	if (aSign != expression::GEQ) p -> Var (wind) -> ub () = constRHS;
+	if (aSign != expression::AUX_LEQ) p -> Var (wind) -> lb () = constRHS;
+	if (aSign != expression::AUX_GEQ) p -> Var (wind) -> ub () = constRHS;
 
 	delete rest;
 	return NULL;
@@ -117,7 +121,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
       // check if constraint now reduces to w_k = x_h, and if so
       // replace all occurrences of x_k with x_h
 
-      if ((xind >= 0) && (aSign == expression::EQ)) {
+      if ((xind >= 0) && (aSign == expression::AUX_EQ)) {
 
 	// create new variable, it has to be integer if original variable was integer
 	exprAux *w = new exprAux (new exprClone (p -> Var (xind)), wind, 1 + p -> Var (xind) -> rank (),
@@ -137,7 +141,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	// create new variable, it has to be integer if original variable was integer
 	exprAux *w = new exprAux (rest, wind, 1 + rest -> rank (),
 				  ((p -> Var (wind) -> isInteger ()) || 
-				   (false && (rest -> isInteger ()) && (aSign == expression::EQ))) ? // FIXME!!!
+				   (false && (rest -> isInteger ()) && (aSign == expression::AUX_EQ))) ? // FIXME!!!
 				  exprAux::Integer : exprAux::Continuous,
 				  p -> domain (), aSign);
 
@@ -156,11 +160,11 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
 	std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> end ();
 
-	if (aSign == expression::EQ)
+	if (aSign == expression::AUX_EQ)
 	  i = p -> AuxSet () -> find (w);
 
 	// no such expression found in the set:
-	if ((i == p -> AuxSet () -> end ()) || (aSign != expression::EQ)) {
+	if ((i == p -> AuxSet () -> end ()) || (aSign != expression::AUX_EQ)) {
 
 	  p -> AuxSet      () -> insert (w); // 1) beware of useless copies
 	  p -> getDepGraph () -> insert (w); // 2) introduce it in acyclic structure

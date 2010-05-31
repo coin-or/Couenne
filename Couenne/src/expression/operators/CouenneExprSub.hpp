@@ -15,6 +15,8 @@
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
 
+namespace Couenne {
+
 /// class for subtraction
 
 class exprSub: public exprOp {
@@ -77,7 +79,7 @@ class exprSub: public exprOp {
   virtual enum expr_type code () {return COU_EXPRSUB;}
 
   /// Implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 };
 
 
@@ -85,5 +87,7 @@ class exprSub: public exprOp {
 
 inline CouNumber exprSub::operator () ()
 {return ((*(*arglist_)) () - (*(arglist_ [1])) ());}
+
+}
 
 #endif

@@ -15,6 +15,8 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+using namespace Couenne;
+
 /// generate disjunctive cuts
 void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si, 
 				    OsiCuts &cs, 

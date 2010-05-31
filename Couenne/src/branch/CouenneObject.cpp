@@ -16,6 +16,8 @@
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
 
+using namespace Couenne;
+
 const CouNumber default_alpha  = 0.2;
 const CouNumber default_clamp  = 0.2;
 const CouNumber max_pseudocost = 1000.;
@@ -361,8 +363,8 @@ double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) c
 
   double
     retval = 
-    ((reference_ -> sign () == expression::GEQ) && (vval >= fval)) ? 0. : 
-    ((reference_ -> sign () == expression::LEQ) && (vval <= fval)) ? 0. : fabs (vval - fval),
+    ((reference_ -> sign () == expression::AUX_GEQ) && (vval >= fval)) ? 0. : 
+    ((reference_ -> sign () == expression::AUX_LEQ) && (vval <= fval)) ? 0. : fabs (vval - fval),
 
     ratio = (CoinMax (1., fabs (vval)) / 
 	     CoinMax (1., fabs (fval)));

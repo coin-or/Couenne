@@ -15,6 +15,8 @@
 
 #include "CouenneExprUnary.hpp"
 
+namespace Couenne {
+
 /// class for the exponential
 
 class exprExp: public exprUnary {
@@ -60,7 +62,7 @@ class exprExp: public exprUnary {
   virtual enum expr_type code () {return COU_EXPREXP;}
 
   /// Implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// Set up branching object by evaluating many branching points for
   /// each expression's arguments
@@ -89,5 +91,7 @@ class exprExp: public exprUnary {
   //virtual enum convexity convexity () 
   //{return CONVEX;}
 };
+
+}
 
 #endif

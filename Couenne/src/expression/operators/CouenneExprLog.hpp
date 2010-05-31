@@ -14,6 +14,7 @@
 #include "CouenneExprInv.hpp"
 #include "CouenneExpression.hpp"
 
+namespace Couenne {
 
 /// class logarithm
 
@@ -60,7 +61,7 @@ class exprLog: public exprUnary {
   {return COU_EXPRLOG;}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
@@ -85,5 +86,7 @@ class exprLog: public exprUnary {
   /// concave ("bad") side
   virtual bool isCuttable (CouenneProblem *problem, int index) const;
 };
+
+}
 
 #endif

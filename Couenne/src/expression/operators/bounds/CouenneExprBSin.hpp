@@ -19,6 +19,7 @@
 # define M_PI 3.14159265358979323846
 #endif
 
+namespace Couenne {
 
 ///  class to compute lower bound of a sine based on the bounds on its
 ///  arguments
@@ -121,6 +122,8 @@ inline CouNumber exprUBSin::operator () () {
     return 1.;
 
   return CoinMax (sin (l), sin (u));
+}
+
 }
 
 #endif

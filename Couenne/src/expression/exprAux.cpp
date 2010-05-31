@@ -16,6 +16,8 @@
 #include "CouenneComplObject.hpp"
 #include "CouenneJournalist.hpp"
 
+using namespace Couenne;
+
 class CouenneCutGenerator;
 class Domain;
 
@@ -128,8 +130,8 @@ void exprAux::crossBounds () {
 
   //image_ -> getBounds (lb_, ub_);
 
-  if (sign_ != expression::LEQ) lb_ = new exprMax (lb_, l0);
-  if (sign_ != expression::GEQ) ub_ = new exprMin (ub_, u0);
+  if (sign_ != expression::AUX_LEQ) lb_ = new exprMax (lb_, l0);
+  if (sign_ != expression::AUX_GEQ) ub_ = new exprMin (ub_, u0);
 }
 
 
@@ -172,7 +174,7 @@ expression *exprAux::simplify () {
 
   if (((image_ -> Type () == AUX) || 
        (image_ -> Type () == VAR)) &&
-      sign_ == expression::EQ) {
+      sign_ == expression::AUX_EQ) {
 
     --multiplicity_;
     expression *ret = image_;

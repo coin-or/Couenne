@@ -9,6 +9,7 @@
 
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
 
 /// Some originals may be unused due to their zero multiplicity
 /// (that happens when they are duplicates). This procedure creates

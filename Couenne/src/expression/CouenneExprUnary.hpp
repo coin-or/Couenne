@@ -16,6 +16,7 @@
 #include "CouenneExpression.hpp"
 #include "CouenneTypes.hpp"
 
+namespace Couenne {
 
 /// zero function (used by default by exprUnary)
 inline CouNumber zero_fun (CouNumber x) 
@@ -124,5 +125,7 @@ class exprUnary: public expression {
   virtual inline void realign (const CouenneProblem *p) 
   {argument_ -> realign (p);}
 };
+
+}
 
 #endif

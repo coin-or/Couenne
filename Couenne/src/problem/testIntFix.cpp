@@ -10,6 +10,9 @@
 
 #include "CoinHelperFunctions.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
+
+using namespace Couenne;
 
 // test if fixing a variable yields an infeasible (or dually
 // infeasible) problem

@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    branchExprSinCos.cpp
  * Author:  Pietro Belotti
  * Purpose: return branch gain and branch object for sines/cosines
  *
- * (C) Carnegie-Mellon University, 2006-07.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -14,6 +14,8 @@
 #include "CouenneExprSin.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
+
+namespace Couenne {
 
 static inline double oppcos  (double x) {return -cos (x);}
 static inline double oppsin  (double x) {return -sin (x);}
@@ -53,4 +55,6 @@ CouNumber trigSelBranch (const CouenneObject *obj,
   *brpts = obj -> getBrPoint (&ft, x0, l, u);
 
   return (brDist [0] = brDist [1] = y0 - ((type == COU_SINE) ? sin(x0) : cos(x0)));
+}
+
 }

@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    branchExprPow.cpp
  * Author:  Pietro Belotti
  * Purpose: return branch gain and branch object for powers
  *
- * (C) Carnegie-Mellon University, 2006-07. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -16,6 +16,7 @@
 #include "CouenneProjections.hpp"
 #include "CouenneFunTriplets.hpp"
 
+using namespace Couenne;
 
 /// generic approach for negative powers (commom with exprInv::selectBranch
 CouNumber negPowSelectBranch (const CouenneObject *obj,
@@ -230,24 +231,24 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     way = (x0 > 0.) ? TWO_RIGHT : TWO_LEFT;
 
-    if ((l < - COUENNE_INFINITY) && (u > COUENNE_INFINITY) || // [-inf,+inf[
-	(l < - COUENNE_INFINITY) && (y0 < pow0)            ||
-	(u >   COUENNE_INFINITY) && (y0 > pow0)){ 
+    if (((l < - COUENNE_INFINITY) && (u > COUENNE_INFINITY)) || // [-inf,+inf[
+	((l < - COUENNE_INFINITY) && (y0 < pow0))            ||
+	((u >   COUENNE_INFINITY) && (y0 > pow0))) {
 
-	if ((y0 > 0) && (y0 < pow0) ||  
-	    (y0 < 0) && (y0 > pow0)) {
+      if (((y0 > 0) && (y0 < pow0)) ||  
+	  ((y0 < 0) && (y0 > pow0))) {
 
-	  *brpts = 0;
-	  return (brDist [0] = brDist [1] = fabs (pow0 - y0));
+	*brpts = 0;
+	return (brDist [0] = brDist [1] = fabs (pow0 - y0));
 
-	} else {
+      } else {
 
-	  *brpts = pow (y0, 1./k);
+	*brpts = pow (y0, 1./k);
 
-	  return (brDist [0] = brDist [1] = (y0 > 0) ? // approx distance
-	    projectSeg (x0, y0, x0, CoinMax (pow0, 0.), *brpts, y0, 0) :
-	    projectSeg (x0, y0, x0, CoinMin (pow0, 0.), *brpts, y0, 0));
-	}
+	return (brDist [0] = brDist [1] = (y0 > 0) ? // approx distance
+		projectSeg (x0, y0, x0, CoinMax (pow0, 0.), *brpts, y0, 0) :
+		projectSeg (x0, y0, x0, CoinMin (pow0, 0.), *brpts, y0, 0));
+      }
     }
 
     // otherwise, on the side of the current point the convexification
@@ -291,12 +292,12 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     way = (x0 > 0.) ? TWO_RIGHT : TWO_LEFT;
 
-    if ((l < - COUENNE_INFINITY) && (u > COUENNE_INFINITY) || // ]-inf,+inf[
-	(l < - COUENNE_INFINITY) && (y0 < pow0)            ||
-	(u >   COUENNE_INFINITY) && (y0 > pow0)){ 
+    if (((l < - COUENNE_INFINITY) && (u > COUENNE_INFINITY)) || // ]-inf,+inf[
+	((l < - COUENNE_INFINITY) && (y0 < pow0))            ||
+	((u >   COUENNE_INFINITY) && (y0 > pow0))){ 
 
-      if ((x0 > 0.) && (y0 > pow0) ||  
-	  (x0 < 0.) && (y0 < pow0)) { // in orthant with curve (first or third)
+      if (((x0 > 0.) && (y0 > pow0)) ||  
+	  ((x0 < 0.) && (y0 < pow0))) { // in orthant with curve (first or third)
 
 	*brpts = 0.;
 	return (brDist [0] = brDist [1] = fabs (pow0 - y0));

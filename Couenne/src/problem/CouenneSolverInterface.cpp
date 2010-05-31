@@ -9,8 +9,13 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "OsiSolverInterface.hpp"
+
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 #include "CouenneCutGenerator.hpp"
+
+namespace Couenne {
 
 /// constructor
 template <class T> 
@@ -246,3 +251,5 @@ void CouenneSolverInterface<T>::solveFromHotStart () {
 }
 
 //class CouenneSolverInterface <OsiClpSolverInterface>;
+
+}

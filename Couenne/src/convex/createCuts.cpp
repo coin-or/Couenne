@@ -15,6 +15,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
 
 /// checks if very large or very small nonzero
 bool badCoeff (CouNumber coe) {

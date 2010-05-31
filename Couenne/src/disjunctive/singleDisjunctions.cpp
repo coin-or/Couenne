@@ -12,6 +12,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneDisjCuts.hpp"
 
+using namespace Couenne;
 
 /// create single osicolcut disjunction
 OsiCuts *CouenneDisjCuts::getSingleDisjunction (OsiSolverInterface &si) const { 

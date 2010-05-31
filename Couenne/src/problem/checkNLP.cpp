@@ -10,6 +10,9 @@
 
 #include "CoinHelperFunctions.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
+
+using namespace Couenne;
 
 // check if solution is MINLP feasible
 bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompute) const {
@@ -174,8 +177,8 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 	  varVal = (*v) (),
 	  imgVal = (*(v -> Image ())) (),
 	  delta  = 
-	  ((v -> sign () == expression::GEQ) && (varVal >= imgVal)) ? 0. :
-	  ((v -> sign () == expression::LEQ) && (varVal <= imgVal)) ? 0. : (varVal - imgVal),
+	  ((v -> sign () == expression::AUX_GEQ) && (varVal >= imgVal)) ? 0. :
+	  ((v -> sign () == expression::AUX_LEQ) && (varVal <= imgVal)) ? 0. : (varVal - imgVal),
 	  normz  = fabs (delta) / (1 + 0.5 * (fabs (varVal) + fabs (imgVal)));
 
 	if (normz > feas_tolerance_) {

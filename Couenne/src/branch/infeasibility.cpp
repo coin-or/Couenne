@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Compute infeasibility of a variable, looking at all expressions it appears in
  *
- * (C) Carnegie-Mellon University, 2008-09.
+ * (C) Carnegie-Mellon University, 2008-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -12,6 +12,8 @@
 
 #include "CouenneProblem.hpp"
 #include "CouenneVarObject.hpp"
+
+using namespace Couenne;
 
 /// weights for computing infeasibility
 const CouNumber weiMin = 0.8; // for minimum of infeasibilities of nonlinear objects

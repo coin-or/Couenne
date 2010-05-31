@@ -11,6 +11,7 @@
 #include "CouenneExprClone.hpp"
 #include "CouenneExprSum.hpp"
 
+using namespace Couenne;
 
 CouExpr operator+(CouExpr &e1, CouExpr &e2) {
   return CouExpr (new exprSum (new exprClone (e1.Expression ()),
@@ -46,4 +47,3 @@ CouExpr &operator%(CouExpr &e1, CouNumber &e2);
 CouExpr &operator-(CouExpr &e1, CouNumber &e2);
 CouExpr &operator*(CouExpr &e1, CouNumber &e2);
 CouExpr &operator^(CouExpr &e1, CouNumber &e2);
-

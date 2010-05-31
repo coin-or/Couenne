@@ -5,7 +5,7 @@
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Branching object for auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -16,6 +16,8 @@
 #include "CouenneExprAux.hpp"
 #include "CouenneJournalist.hpp"
 #include "OsiBranchingObject.hpp"
+
+namespace Couenne {
 
 class CouenneCutGenerator;
 class CouenneProblem;
@@ -118,5 +120,7 @@ protected:
   /// are we currently in strong branching?
   bool simulate_;
 };
+
+}
 
 #endif

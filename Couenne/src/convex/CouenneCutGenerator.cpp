@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneCutGenerator.cpp
  * Author:  Pietro Belotti
  * Purpose: define a class of convexification procedures 
@@ -8,7 +8,6 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-
 #include "CglCutGenerator.hpp"
 
 #include "CouenneProblem.hpp"
@@ -16,6 +15,7 @@
 #include "CouenneChooseStrong.hpp"
 #include "CouenneChooseVariable.hpp"
 
+using namespace Couenne;
 
 /// constructor
 CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
@@ -153,12 +153,28 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
 
   roptions -> AddStringOption2
     ("local_optimization_heuristic",
-     "Do we search for local solutions of NLP's",
+     "Search for local solutions of MINLP's",
      "yes",
      "no","",
      "yes","",
      "If enabled, a heuristic based on Ipopt is used to find feasible solutions for the problem. "
      "It is highly recommended that this option is left enabled, as it would be difficult to find feasible solutions otherwise.");
+
+  roptions -> AddStringOption2
+    ("local_branching_heuristic",
+     "Apply local branching heuristic",
+     "no",
+     "no","",
+     "yes","",
+     "A local-branching heuristic based is used to find feasible solutions.");
+
+  roptions -> AddStringOption2
+    ("feas_pump_heuristic",
+     "Apply the nonconvex Feasibility Pump",
+     "no",
+     "no","",
+     "yes","",
+     "An implementation of the Feasibility Pump for nonconvex MINLPs");
 
   roptions -> AddLowerBoundedIntegerOption
     ("log_num_local_optimization_per_level",

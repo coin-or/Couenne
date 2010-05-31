@@ -11,8 +11,10 @@
 
 #include "CoinHelperFunctions.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 #include "CouenneVTObject.hpp"
 
+using namespace Couenne;
 
 /// compute infeasibility of this variable, |w - f(x)| (where w is the
 /// auxiliary variable defined as w = f(x))

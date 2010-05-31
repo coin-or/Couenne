@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for branching on variables using violation transfer
  *
- * (C) Carnegie-Mellon University, 2008-09.
+ * (C) Carnegie-Mellon University, 2008-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -12,6 +12,8 @@
 #define COUENNEVTOBJECT_HPP
 
 #include "CouenneVarObject.hpp"
+
+namespace Couenne {
 
 /// OsiObject for violation transfer on variables in a MINLP
 class CouenneVTObject: public CouenneVarObject {
@@ -43,5 +45,7 @@ public:
   /// depends on x |w - f(x)|
   virtual double infeasibility (const OsiBranchingInformation *info, int &way) const;
 };
+
+}
 
 #endif

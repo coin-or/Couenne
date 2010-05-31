@@ -15,6 +15,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
+namespace Couenne {
 
 bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p) {
 
@@ -118,4 +119,6 @@ bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p) {
   }
 
   return retval;
+}
+
 }

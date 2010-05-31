@@ -16,6 +16,7 @@
 #include "CouenneExprClone.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
 
 /// check if two arguments point to the same variable
 

@@ -15,6 +15,8 @@
 
 #include "CouenneTypes.hpp"
 
+namespace Couenne {
+
 class quadElem {
 
 private:
@@ -96,5 +98,7 @@ public:
     }
   }
 };
+
+}
 
 #endif

@@ -40,6 +40,8 @@
 #include "r_opn.hd" // for N_OPS 
 #include "opcode.hd"
 
+using namespace Couenne;
+
 static int empty_int = 0;
 
 static keyword keywds[] = { /* must be sorted */

@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    branchExprLog.cpp
  * Author:  Pietro Belotti
  * Purpose: return branch gain and branch object for logarithms
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -16,6 +16,7 @@
 #include "CouenneProjections.hpp"
 #include "CouenneFunTriplets.hpp"
 
+using namespace Couenne;
 
 #define SQ_COUENNE_EPS COUENNE_EPS * COUENNE_EPS
 

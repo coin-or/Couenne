@@ -11,7 +11,9 @@ noinst_LTLIBRARIES = libCouenneHeuristics.la
 # List all source files for this library, including headers
 libCouenneHeuristics_la_SOURCES = \
 	BonInitHeuristic.cpp \
-	BonNlpHeuristic.cpp
+	BonNlpHeuristic.cpp \
+	CouenneFeasPumpConstructors.cpp \
+	CouenneFeasPump.cpp 
 
 libCouenneHeuristics_la_DEPENDENCIES = $(libCouenneHeuristics_la_LIBADD)
 

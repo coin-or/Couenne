@@ -15,6 +15,7 @@
 
 #include "CouenneExprOp.hpp"
 
+namespace Couenne {
 
 /// class for multiplications
 
@@ -73,7 +74,7 @@ class exprMul: public exprOp {
   {return COU_EXPRMUL;}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum Couenne::expression::auxSign = Couenne::expression::AUX_EQ);
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
@@ -142,5 +143,7 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 /// w = xy\}\f$ with x,y,w bounded. Unified with exprDiv
 double *computeMulBrDist (const OsiBranchingInformation *info,
 			  int xi, int yi, int wi, int brind, double *brpt, int nPts = 1);
+
+}
 
 #endif

@@ -7,7 +7,12 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#ifndef CouExpr_hpp
+#define CouExpr_hpp
+
 #include "CouenneExpression.hpp"
+
+namespace Couenne {
 
 class CouExpr {
 
@@ -65,3 +70,6 @@ CouExpr &operator-(CouExpr &e1, CouNumber &e2);
 CouExpr &operator*(CouExpr &e1, CouNumber &e2);
 CouExpr &operator^(CouExpr &e1, CouNumber &e2);
 
+}
+
+#endif

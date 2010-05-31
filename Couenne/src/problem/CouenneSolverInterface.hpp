@@ -14,6 +14,9 @@
 #include "CoinFinite.hpp"
 
 class OsiSolverInterface;
+
+namespace Couenne {
+
 class CouenneCutGenerator;
 
 /// Solver interface class with a pointer to a Couenne cut
@@ -119,6 +122,11 @@ protected:
   /// branching or OBBT
   //bool doingResolve_;
 };
+
+}
+
+// These source files are #included due to the template classes
+// defined in there
 
 #include "CouenneSolverInterface.cpp"
 #include "CouenneLPtightenBounds.cpp"

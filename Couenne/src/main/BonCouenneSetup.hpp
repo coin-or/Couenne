@@ -7,22 +7,23 @@
 // Pierre Bonami, International Business Machines Corporation
 //
 // Date : 04/18/2007
+
 #ifndef BonCouenneSetup_H
 #define BonCouenneSetup_H
+
 #include "BonBabSetupBase.hpp"
 #include "CbcFeasibilityBase.hpp"
 
 struct ASL;
 
-class CouenneCutGenerator;
-class CouenneProblem;
-
-namespace Bonmin{
+namespace Couenne {
 
   class CouenneInterface;
+  class CouenneCutGenerator;
+  class CouenneProblem;
 
   class SmartAsl : public Ipopt::ReferencedObject{
-public:
+  public:
     ASL * asl;
     SmartAsl():
       Ipopt::ReferencedObject(),
@@ -30,9 +31,9 @@ public:
     {}
     virtual ~SmartAsl();
   };
-  
-  class CouenneSetup : public BabSetupBase{
-public:
+
+  class CouenneSetup : public Bonmin::BabSetupBase{
+  public:
     /** Default constructor*/
     CouenneSetup():
     BabSetupBase(),
@@ -50,7 +51,7 @@ public:
       couenneProb_ (other.couenneProb_) {}
     
     /** virtual copy constructor.*/
-    virtual BabSetupBase * clone () const
+    virtual Bonmin::BabSetupBase * clone () const
     {return new CouenneSetup (*this);}
     
     /// destructor
@@ -70,7 +71,7 @@ public:
     /** Get the basic options if don't already have them.*/
     virtual void readOptionsFile(){
       if (readOptions_) return;
-      BabSetupBase::readOptionsFile("couenne.opt");
+      Bonmin::BabSetupBase::readOptionsFile("couenne.opt");
     }
 
     /// return pointer to cut generator (used to get pointer to problem)

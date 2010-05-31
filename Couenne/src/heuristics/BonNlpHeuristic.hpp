@@ -10,21 +10,27 @@
 
 #ifndef BonIpoptHeuristic_HPP
 #define BonIpoptHeuristic_HPP
+
 #include "BonOsiTMINLPInterface.hpp"
 #include "CbcHeuristic.hpp"
 #include "BonOsiTMINLPInterface.hpp"
 #include "CouenneProblem.hpp"
-namespace Bonmin{
-  /** An heuristic to call an NlpSolver if all CouenneObjects are close to be satisfied (for other integer objects, rounding is performed, is SOS are not satisfied does not run).
-  */
+
+namespace Couenne {
+
+  /** An heuristic to call an NlpSolver if all CouenneObjects are
+      close to be satisfied (for other integer objects, rounding is
+      performed, is SOS are not satisfied does not run).
+   */
 
   const double maxNlpInf_0 = 1e-5;
 
   class NlpSolveHeuristic : public CbcHeuristic{
-public:
+
+  public:
     /** Default constructor.*/
     NlpSolveHeuristic();
-  /** Constructor with model and Ipopt problems.*/
+    /** Constructor with model and Ipopt problems.*/
     NlpSolveHeuristic(CbcModel & mip, OsiTMINLPInterface &nlp, bool cloneNlp = false, CouenneProblem * couenne = NULL);
     /** Copy constructor.*/
     NlpSolveHeuristic(const NlpSolveHeuristic &other);
@@ -48,8 +54,8 @@ public:
     /** Run heuristic, return 1 if a better solution than the one passed is found and 0 otherwise.
         \argument objectiveValue Best known solution in input and value of solution found in output
         \argument newSolution Solution found by heuristic.
-      \todo Find a quicker way to get to Couenne objects, store them or something
-      */
+	\todo Find a quicker way to get to Couenne objects, store them or something
+    */
     virtual int solution( double & objectiveValue, double * newSolution);
     /** set maxNlpInf. */
     void setMaxNlpInf(double value){
@@ -57,7 +63,7 @@ public:
     /** set number of nlp's solved for each given level of the tree*/
     void setNumberSolvePerLevel(int value){
       numberSolvePerLevel_ = value;}
-private:
+  private:
     /** Pointer to an nlp solver interface.*/
     OsiTMINLPInterface * nlp_;
     /** is nlp_ cloned or just a pointer?*/
@@ -69,7 +75,7 @@ private:
     /** Pointer to a couenne representation of the problem. */
     CouenneProblem * couenne_;
   };
-}/* Ends namespace Bonmin. */
+
+}
 
 #endif
-

@@ -4,12 +4,13 @@
  * Author:  Pietro Belotti
  * Purpose: tighten bounds prior to convexification cuts
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 #include "BonBabInfos.hpp"
 #include "BonCbc.hpp"
 
@@ -17,9 +18,24 @@
 #define MAX_BT_ITER 3
 #define THRES_IMPROVED 0
 
+using namespace Couenne;
+
 // core of the bound tightening procedure
 
 bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
+
+  if (!chg_bds) {
+
+    chg_bds = new t_chg_bounds [nVars ()];
+
+    for (int i=0; i < nVars (); i++) 
+
+    if (Var (i) -> Multiplicity () > 0) {
+
+      chg_bds [i].setLower (t_chg_bounds::CHANGED);
+      chg_bds [i].setUpper (t_chg_bounds::CHANGED);
+    }
+  }
 
   // Bound propagation and implied bounds ////////////////////
 

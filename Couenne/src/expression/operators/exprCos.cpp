@@ -17,6 +17,7 @@
 #include "CouenneExprMul.hpp"
 #include "CouenneExprClone.hpp"
 
+using namespace Couenne;
 
 static const CouNumber 
   pi  = M_PI,

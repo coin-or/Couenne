@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    branchExprExp.cpp
  * Author:  Pietro Belotti
  * Purpose: return branch gain and branch object for exponentials
  *
- * (C) Carnegie-Mellon University, 2006-07. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -16,6 +16,7 @@
 #include "CouenneProjections.hpp"
 #include "CouenneFunTriplets.hpp"
 
+using namespace Couenne;
 
 /// set up branching object by evaluating many branching points for
 /// each expression's arguments

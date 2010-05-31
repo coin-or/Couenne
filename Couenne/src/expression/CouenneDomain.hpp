@@ -16,6 +16,8 @@
 
 #include "CouenneTypes.hpp"
 
+namespace Couenne {
+
 /// Define a point in the solution space and the bounds around it.
 
 class DomainPoint {
@@ -144,5 +146,7 @@ public:
   inline CouNumber *lb () {return point_ -> lb ();}   ///< return current lower bound vector
   inline CouNumber *ub () {return point_ -> ub ();}   ///< return current upper bound vector
 };
+
+}
 
 #endif

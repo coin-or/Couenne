@@ -14,6 +14,8 @@
 #include "CouenneProblem.hpp"
 #include "CouenneExpression.hpp"
 
+using namespace Couenne;
+
 // differentiation
 expression *exprInv::differentiate (int index) {
 
@@ -44,8 +46,8 @@ void invPowImplBounds (int wind, int index,
 		       bool &resL, bool &resU, 
 		       enum expression::auxSign sign) {
 
-  CouNumber wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
-            wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+  CouNumber wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
+            wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
   // 0 <= l <= w <= u
 

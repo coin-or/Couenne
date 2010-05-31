@@ -1,11 +1,11 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneThreeWayBranchObj.hpp
  * Authors: Pierre Bonami, IBM Corp.
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Three way branching object for auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -18,6 +18,7 @@
 #include "CouenneExprAux.hpp"
 #include "CouenneObject.hpp"
 
+namespace Couenne {
 
 /// \brief Spatial, three-way branching object. 
 ///
@@ -78,5 +79,7 @@ protected:
   /// SmartPointer to the Journalist
   JnlstPtr jnlst_;
 };
+
+}
 
 #endif

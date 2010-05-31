@@ -12,6 +12,8 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
+
 //#define DEBUG
 
 /// generate OsiColCuts for improved (implied and propagated) bounds

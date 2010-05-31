@@ -17,6 +17,7 @@
 #include "CouenneExprUnary.hpp"
 #include "CouenneExprConst.hpp"
 
+namespace Couenne {
 
 /// specify which trigonometric function is dealt with in trigEnvelope
 enum cou_trig {COU_SINE, COU_COSINE};
@@ -90,7 +91,7 @@ class exprSin: public exprUnary {
   {return COU_EXPRSIN;}
 
   /// implied bound processing
-  bool impliedBound (int index, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign = expression::EQ) {
+  bool impliedBound (int index, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign = expression::AUX_EQ) {
 
     bool impl = trigImpliedBound (COU_SINE, index, argument_ -> Index (), l, u, chg);
 
@@ -126,5 +127,7 @@ class exprSin: public exprUnary {
   virtual bool isCuttable (CouenneProblem *problem, int index) const
   {return false;}
 };
+
+}
 
 #endif

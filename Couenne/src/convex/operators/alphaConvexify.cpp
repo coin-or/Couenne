@@ -16,6 +16,8 @@
 #include "CouenneExprQuad.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
+
 //#define DEBUG
 
 /** Computes alpha coefficients for an alpha under- and overestimator

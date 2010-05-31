@@ -13,6 +13,7 @@
 #include "CouenneExprUnary.hpp"
 #include "CouenneExprConst.hpp"
 
+using namespace Couenne;
 
 // simplify n-ary expression f (g_1(x), g_2(x)... g_n(x))
 

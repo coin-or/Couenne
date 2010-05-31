@@ -17,6 +17,8 @@
 #include "CouenneJournalist.hpp"
 #include "BonRegisteredOptions.hpp"
 
+namespace Couenne {
+
 class CouenneProblem;
 
 /** \brief Choose a variable for branching
@@ -72,5 +74,7 @@ protected:
   /// journalist for detailed debug information
   JnlstPtr jnlst_;
 };
+
+}
 
 #endif

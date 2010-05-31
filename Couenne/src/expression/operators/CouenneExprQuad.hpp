@@ -18,6 +18,8 @@
 #include "CoinPackedVector.hpp"
 #include "CouenneExprGroup.hpp"
 
+namespace Couenne {
+
 class quadElem;
 class CouenneProblem;
 class Domain;
@@ -261,7 +263,7 @@ public:
   virtual void realign (const CouenneProblem *p);
 
   /// implied bound processing
-  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// method to compute the bound based on sign: -1 for lower, +1 for
   /// upper
@@ -306,6 +308,8 @@ inline CouNumber exprQuad::operator () () {
   }
 
   return (CouNumber) ret;
+}
+
 }
 
 #endif

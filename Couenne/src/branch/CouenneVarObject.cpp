@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Base object for variables (to be used in branching)
  *
- * (C) Carnegie-Mellon University, 2008-09.
+ * (C) Carnegie-Mellon University, 2008-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -14,6 +14,8 @@
 #include "CouenneVarObject.hpp"
 #include "CouenneBranchingObject.hpp"
 #include "CouenneComplObject.hpp"
+
+using namespace Couenne;
 
 /// Constructor with information for branching point selection strategy
 CouenneVarObject::CouenneVarObject (CouenneCutGenerator *c,

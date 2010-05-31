@@ -20,6 +20,7 @@
 #include "CouenneExprDiv.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
 
 /// get bounds of log (x) based on bounds of x
 
@@ -82,8 +83,8 @@ bool exprLog::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     isint = argument_ -> isInteger();
 
   CouNumber 
-    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
-    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+    wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
   if (updateBound (-1, l+ind, isint ? ceil (exp (wl) - COUENNE_EPS) : exp (wl))) {
     res = true; 

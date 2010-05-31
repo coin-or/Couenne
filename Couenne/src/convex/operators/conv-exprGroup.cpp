@@ -18,6 +18,8 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+using namespace Couenne;
+
 /// Get lower and upper bound of an expression (if any)
 void exprGroup::getBounds (expression *&lb, expression *&ub) {
 
@@ -253,13 +255,13 @@ void exprGroup::generateCuts (expression *w,
   delete [] index;
   delete [] coeff;
 
-  enum auxSign sign;
+  enum auxSign sign = expression::AUX_EQ;
 
   if (wind < 0)
     sign = cg -> Problem () -> Var (w -> Index ()) -> sign ();
 
-  if (lb > -COUENNE_INFINITY && (wind >= 0 || sign != expression::GEQ)) cut -> setLb (lb);
-  if (ub <  COUENNE_INFINITY && (wind >= 0 || sign != expression::LEQ)) cut -> setUb (ub);
+  if (lb > -COUENNE_INFINITY && (wind >= 0 || sign != expression::AUX_GEQ)) cut -> setLb (lb);
+  if (ub <  COUENNE_INFINITY && (wind >= 0 || sign != expression::AUX_LEQ)) cut -> setUb (ub);
 
   cut -> setGloballyValid (); // added only once, it is global
   cs.insert (cut);

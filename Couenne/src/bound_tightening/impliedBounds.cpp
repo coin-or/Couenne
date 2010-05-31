@@ -8,7 +8,11 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneProblem.hpp"
+
+using namespace Couenne;
 
 /// Bound tightening for auxiliary variables
 

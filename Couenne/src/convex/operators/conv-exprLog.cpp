@@ -16,6 +16,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+using namespace Couenne;
 
 #define LOG_STEP 10
 #define LOG_MININF 1e-50
@@ -51,7 +52,7 @@ void exprLog::generateCuts (expression *aux, //const OsiSolverInterface &si,
   // fix lower bound
   if (l < LOG_MININF) l = LOG_MININF;
   else   // lower segment (if l is far from zero and u finite)
-    if ((u < COUENNE_INFINITY) && changed && sign != expression::LEQ) { 
+    if ((u < COUENNE_INFINITY) && changed && sign != expression::AUX_LEQ) { 
 
       CouNumber dx   = u-l;
       CouNumber logu = log (u);
@@ -61,7 +62,7 @@ void exprLog::generateCuts (expression *aux, //const OsiSolverInterface &si,
     }
 
   // no need to continue if auxiliary is defined as w >= log (x)
-  if (sign == expression::GEQ) 
+  if (sign == expression::AUX_GEQ) 
     return;
 
   // pick tangent point closest to current point (x0,y0)

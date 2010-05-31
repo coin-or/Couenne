@@ -23,6 +23,7 @@
 #include "CouenneExprConst.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
 
 /// simplify power f(x) ^ g(x)
 

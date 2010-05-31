@@ -115,6 +115,7 @@ AC_CONFIG_FILES([Makefile
                  src/heuristics/Makefile
                  src/disjunctive/Makefile
                  src/sdpcuts/Makefile
+                 src/ellipcuts/Makefile
                  src/expression/Makefile
                  src/problem/Makefile
                  src/standardize/Makefile

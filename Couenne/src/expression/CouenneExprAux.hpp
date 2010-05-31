@@ -16,6 +16,8 @@
 
 #include "CouenneExprVar.hpp"
 
+namespace Couenne {
+
 class CouenneCutGenerator;
 
 /** Auxiliary variable
@@ -73,10 +75,10 @@ class exprAux: public exprVar {
   {return AUX;}
 
   /// Constructor
-  exprAux (expression *, int, int, intType = Unset, Domain * = NULL, enum auxSign = expression::EQ);
+  exprAux (expression *, int, int, intType = Unset, Domain * = NULL, enum auxSign = expression::AUX_EQ);
 
   /// Constructor to be used with standardize ([...], false)
-  exprAux (expression *, Domain * = NULL, enum auxSign = expression::EQ);
+  exprAux (expression *, Domain * = NULL, enum auxSign = expression::AUX_EQ);
 
   /// Destructor
   virtual ~exprAux ();
@@ -158,7 +160,7 @@ class exprAux: public exprVar {
       return true;
 
     CouNumber l = lb ();
-    return (::isInteger (l) && (fabs (l - ub ()) < COUENNE_EPS));
+    return (Couenne::isInteger (l) && (fabs (l - ub ()) < COUENNE_EPS));
     //CouNumber l = (*(Lb ())) ();
     //return (::isInteger (l) && (fabs (l - (*(Ub ())) ()) < COUENNE_EPS));
   }
@@ -218,5 +220,7 @@ struct compExpr {
 /// allow to draw function within intervals and cuts introduced
 void draw_cuts (OsiCuts &, const CouenneCutGenerator *, 
 		int, expression *, expression *);
+
+}
 
 #endif

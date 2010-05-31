@@ -4,13 +4,16 @@
  * Author:  Pietro Belotti
  * Purpose: Optimality-Based Bound Tightening
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CglCutGenerator.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
+
+using namespace Couenne;
 
 #define OBBT_EPS 1e-3
 
@@ -115,7 +118,7 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 	  // or if this expression is of the form w=cx+d, that is, it
 	  // depends on one variable only and it is linear
 	  (var -> Image () -> Linearity () <= LINEAR)) &&
-	 (var -> sign () == expression::EQ)) {
+	 (var -> sign () == expression::AUX_EQ)) {
 
 	issimple = true;
 

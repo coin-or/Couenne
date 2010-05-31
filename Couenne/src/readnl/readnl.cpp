@@ -8,6 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "asl.h"
+
 #include "CouenneProblem.hpp"
 
 #if   defined HAVE_CSTDINT
@@ -16,6 +18,12 @@
 #include "stdint.h"
 #endif
 
+#include "nlp.h"
+#include "getstub.h"
+#include "opcode.hd"
+
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneTypes.hpp"
 
 #include "CouenneExprSum.hpp"
@@ -23,17 +31,14 @@
 #include "CouenneExprClone.hpp"
 #include "CouenneExprGroup.hpp"
 
-#include "asl.h"
-#include "nlp.h"
-#include "getstub.h"
-#include "opcode.hd"
-
 #define OBJ_DE    ((const ASL_fg *) asl) -> I.obj_de_
 #define VAR_E     ((const ASL_fg *) asl) -> I.var_e_
 #define CON_DE    ((const ASL_fg *) asl) -> I.con_de_
 #define OBJ_sense ((const ASL_fg *) asl) -> i.objtype_
 
 //#define DEBUG
+
+using namespace Couenne;
 
 // check if an expression is a null pointer or equals zero
 inline bool is_expr_zero (expr* e)

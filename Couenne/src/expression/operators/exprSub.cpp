@@ -12,6 +12,7 @@
 #include "CouenneExprOpp.hpp"
 #include "CouennePrecisions.hpp"
 
+using namespace Couenne;
 
 // simplify subtractions
 
@@ -126,8 +127,8 @@ bool exprSub::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     return false;
 
   CouNumber xl, xu, yl, yu, 
-    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind], 
-    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+    wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind], 
+    wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
   if (xi==-1) xl =         xu = arglist_ [0] -> Value ();
   else       {xl = l [xi]; xu = u [xi];}

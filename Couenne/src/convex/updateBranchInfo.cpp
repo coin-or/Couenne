@@ -13,6 +13,8 @@
 #include "CouenneProblem.hpp"
 #include "BonAuxInfos.hpp"
 
+namespace Couenne {
+
 //#define DEBUG
 
 /// Get changed bounds due to branching
@@ -85,4 +87,6 @@ void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p,
   }
 
   //p -> domain () -> pop ();
+}
+
 }

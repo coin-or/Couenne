@@ -12,6 +12,8 @@
 #include "CouenneExprSum.hpp"
 #include "CouenneExprGroup.hpp"
 
+using namespace Couenne;
+
 /// vector operation to find bound to variable in a sum
 static CouNumber scanBounds (int, int, int *, CouNumber *, CouNumber *, int *);
 
@@ -49,8 +51,8 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   CouNumber
     a0 = 0.,   // constant term in the sum
-    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
-    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+    wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
   // quick check: if both are infinite, nothing is implied...
 
@@ -183,7 +185,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	(infUp2 == -1)) {   // no implication on lower
 
       // propagate lower bound to w
-      if ((sign != expression::LEQ) && (updateBound (-1, l + wind, lower))) {
+      if ((sign != expression::AUX_LEQ) && (updateBound (-1, l + wind, lower))) {
 	chg [wind].setLower(t_chg_bounds::CHANGED);
 	tighter = true;
 	if (intSet.find (wind)!= intSet.end ()) 
@@ -195,7 +197,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	  (infUp1 == -1)) { // no implication on upper
 
 	// propagate upper bound to w
-	if ((sign != expression::GEQ) && (updateBound (+1, u + wind, upper))) {
+	if ((sign != expression::AUX_GEQ) && (updateBound (+1, u + wind, upper))) {
 	  chg [wind].setUpper(t_chg_bounds::CHANGED);
 	  tighter = true;
 	  if (intSet.find (wind)!= intSet.end ()) 
@@ -213,7 +215,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	     (infUp1 == -1)) {
 
       // propagate upper bound to w
-      if ((sign != expression::GEQ) && (updateBound (+1, u + wind, upper))) {
+      if ((sign != expression::AUX_GEQ) && (updateBound (+1, u + wind, upper))) {
 	tighter = true;
 	chg [wind].setUpper(t_chg_bounds::CHANGED);
 	if (intSet.find (wind)!= intSet.end ()) 

@@ -18,6 +18,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneFunTriplets.hpp"
 
+namespace Couenne {
 
 // adds convex (upper/lower) envelope to a power function
 
@@ -58,4 +59,6 @@ void addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
   // convex envelope
   cg -> addEnvelope (cs, sign, &pt, 
 		     wi, xi, x, l, u);
+}
+
 }

@@ -378,7 +378,9 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` -I`$(CYGPATH_W) \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/sdpcuts` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/main` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/problem` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/branch`
+	$(COUENNESRCDIR)/src/branch` -I`$(CYGPATH_W) \
+	$(COUENNESRCDIR)/src/sdpcuts` -I`$(CYGPATH_W) \
+	$(COUENNESRCDIR)/src/ellipcuts`
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
@@ -398,8 +400,10 @@ includecoin_HEADERS = \
 	main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp \
 	interfaces/BonCouenneInterface.hpp \
+	interfaces/CouenneMINLPInterface.hpp \
 	heuristics/BonNlpHeuristic.hpp \
 	heuristics/BonInitHeuristic.hpp \
+	heuristics/CouenneFeasPump.hpp \
 	branch/CouenneObject.hpp \
 	branch/CouenneVarObject.hpp \
 	branch/CouenneVTObject.hpp \
@@ -458,7 +462,9 @@ includecoin_HEADERS = \
 	problem/CouenneJournalist.hpp \
 	expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp
+	convex/CouenneCutGenerator.hpp \
+	sdpcuts/CouenneSdpCuts.hpp \
+	ellipcuts/CouenneEllipCuts.hpp
 
 
 #############################################################################
@@ -611,7 +617,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/../inc $(distdir)/branch $(distdir)/convex $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/standardize $(distdir)/util
+	$(mkdir_p) $(distdir)/../inc $(distdir)/branch $(distdir)/convex $(distdir)/disjunctive $(distdir)/ellipcuts $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/sdpcuts $(distdir)/standardize $(distdir)/util
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -733,6 +739,7 @@ uninstall-am: uninstall-includecoinHEADERS uninstall-info-am \
 	uninstall-am uninstall-includecoinHEADERS uninstall-info-am \
 	uninstall-libLTLIBRARIES uninstall-local
 
+	./ellipcuts/libCouenneEllipCuts.la
 
 install-exec-local:
 	echo "#ifndef HAVE_CONFIG_H" >bla

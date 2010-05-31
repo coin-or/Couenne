@@ -12,32 +12,53 @@
 #define COUENNE_PROBLEM_HPP
 
 #include <vector>
+#include <map>
 
-#include "OsiRowCut.hpp"
-#include "BonBabInfos.hpp"
+#include "CoinFinite.hpp"
 
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
 #include "CouenneExprAux.hpp"
-#include "CouenneProblemElem.hpp"
-#include "CouenneObject.hpp"
+//#include "CouenneProblemElem.hpp"
 #include "CouenneJournalist.hpp"
 #include "CouenneDomain.hpp"
+
+using namespace Ipopt;
+using namespace Bonmin;
+
+class CglTreeInfo;
+
+namespace Ipopt {
+  class OptionsList;
+}
+
+namespace Bonmin {
+  class RegisteredOptions;
+  class BabInfo;
+  class OsiTMINLPInterface;
+  class BabSetupBase;
+}
 
 struct ASL;
 struct expr;
 
-class DepGraph;
-class CouenneCutGenerator;
-class quadElem;
-class LinMap;
-class QuadMap;
+class OsiObject;
+class CoinWarmStart;
 
-template <class T> class CouenneSolverInterface;
+namespace Couenne {
+
+  class exprAux;
+  class DepGraph;
+  class CouenneObject;
+  class CouenneCutGenerator;
+  class quadElem;
+  class LinMap;
+  class QuadMap;
+  class CouenneConstraint;
+  class CouenneObjective;
 
 // default tolerance for checking feasibility (and integrality) of NLP solutions
 const CouNumber feas_tolerance_default = 1e-5;
-
 
 /** Class for MINLP problems with symbolic information
  *
@@ -177,7 +198,7 @@ class CouenneProblem {
   double maxCpuTime_;
 
   /// options
-  Bonmin::BabSetupBase *bonBase_;
+  BabSetupBase *bonBase_;
 
 #ifdef COIN_HAS_ASL
   /// AMPL structure pointer (temporary --- looking forward to embedding into OS...)
@@ -201,13 +222,13 @@ class CouenneProblem {
  public:
 
   CouenneProblem  (ASL * = NULL,
-		   Bonmin::BabSetupBase *base = NULL,
+		   BabSetupBase *base = NULL,
 		   JnlstPtr jnlst = NULL);  ///< Constructor
   CouenneProblem  (const CouenneProblem &); ///< Copy constructor
   ~CouenneProblem ();                       ///< Destructor
 
   /// initializes parameters like doOBBT
-  void initOptions(SmartPtr<OptionsList> options);
+  void initOptions (SmartPtr <Ipopt::OptionsList> options);
 
   /// Clone method (for use within CouenneCutGenerator::clone)
   CouenneProblem *clone () const
@@ -355,7 +376,7 @@ class CouenneProblem {
 
   /// tighten bounds using propagation, implied bounds and reduced costs
   bool boundTightening (t_chg_bounds *, 
-			Bonmin::BabInfo * = NULL) const;
+			BabInfo * = NULL) const;
 
   /// core of the bound tightening procedure
   bool btCore (t_chg_bounds *chg_bds) const;
@@ -365,15 +386,15 @@ class CouenneProblem {
 	    const OsiSolverInterface &csi,
 	    OsiCuts &cs,
 	    const CglTreeInfo &info,
-	    Bonmin::BabInfo * babInfo,
+	    BabInfo * babInfo,
 	    t_chg_bounds *chg_bds);
 
   /// aggressive bound tightening. Fake bounds in order to cut
   /// portions of the solution space by fathoming on
   /// bounds/infeasibility
-  bool aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
+  bool aggressiveBT (OsiTMINLPInterface *nlp,
 		     t_chg_bounds *, 
-		     Bonmin::BabInfo * = NULL) const;
+		     BabInfo * = NULL) const;
 
   /// procedure to strengthen variable bounds. Return false if problem
   /// turns out to be infeasible with given bounds, true otherwise.
@@ -425,7 +446,7 @@ class CouenneProblem {
   void readCutoff (const std::string &fname);
 
   /// Add list of options to be read from file
-  static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions);
+  static void registerOptions (SmartPtr <Bonmin::RegisteredOptions> roptions);
 
   /// standardization of linear exprOp's
   exprAux *linStandardize (bool addAux, 
@@ -491,10 +512,7 @@ class CouenneProblem {
   {return maxCpuTime_;}
 
   /// save CouenneBase
-  inline void setBase (Bonmin::BabSetupBase *base) {
-    bonBase_ = base;
-    jnlst_   = base -> journalist ();
-  }
+  void setBase (BabSetupBase *base);
 
   /// Some originals may be unused due to their zero multiplicity
   /// (that happens when they are duplicates). This procedure creates
@@ -542,12 +560,12 @@ protected:
   int obbtInner (OsiSolverInterface *, 
 		 OsiCuts &,
 		 t_chg_bounds *, 
-		 Bonmin::BabInfo *) const;
+		 BabInfo *) const;
 
   int obbt_iter (OsiSolverInterface *csi, 
 		 t_chg_bounds *chg_bds, 
 		 const CoinWarmStart *warmstart, 
-		 Bonmin::BabInfo *babInfo,
+		 BabInfo *babInfo,
 		 double *objcoe,
 		 int sense, 
 		 int index) const;
@@ -555,7 +573,7 @@ protected:
   int call_iter (OsiSolverInterface *csi, 
 		 t_chg_bounds *chg_bds, 
 		 const CoinWarmStart *warmstart, 
-		 Bonmin::BabInfo *babInfo,
+		 BabInfo *babInfo,
 		 double *objcoe,
 		 enum nodeType type,
 		 int sense) const;
@@ -577,7 +595,7 @@ protected:
   void realign ();
 
   /// fill dependence_ structure
-  void fillDependence (Bonmin::BabSetupBase *base, CouenneCutGenerator * = NULL);
+  void fillDependence (BabSetupBase *base, CouenneCutGenerator * = NULL);
 
   /// fill freeIntegers_ array
   void fillIntegerRank () const;
@@ -598,6 +616,8 @@ protected:
 bool BranchingFBBT (CouenneProblem *problem,
 		    OsiObject *Object,
 		    OsiSolverInterface *solver);
+
+}
 
 #endif
 

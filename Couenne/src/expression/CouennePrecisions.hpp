@@ -13,6 +13,8 @@
 
 #include <math.h>
 
+namespace Couenne {
+
 // must be >= 1e-7
 #define COUENNE_EPS           1.e-7
 
@@ -38,5 +40,7 @@
 
 /// used to declare LP unbounded
 const double Couenne_large_bound =  9.999e12;
+
+}
 
 #endif

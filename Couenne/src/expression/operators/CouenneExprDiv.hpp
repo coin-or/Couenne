@@ -14,9 +14,10 @@
 #include "CouenneExprOp.hpp"
 #include "CouennePrecisions.hpp"
 
+namespace Couenne {
+
 #define BR_NEXT_ZERO 1e-3
 #define BR_MULT      1e-3
-
 
 /// class for divisions
 
@@ -84,7 +85,7 @@ class exprDiv: public exprOp {
   bool isInteger ();
 
   /// Implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// Set up branching object by evaluating many branching points for
   /// each expression's arguments
@@ -131,6 +132,8 @@ inline bool is_boundbox_regular (register CouNumber b1, register CouNumber b2) {
     (fabs (b2)    < SAFE_COEFFICIENT) && 
     (fabs (b1*b2) < SAFE_COEFFICIENT);
     //    && ((fabs (b1) > COUENNE_EPS) || (fabs (b2) > COUENNE_EPS));
+}
+
 }
 
 #endif

@@ -14,6 +14,8 @@
 #include "CouenneExprOp.hpp"
 #include "CoinHelperFunctions.hpp"
 
+namespace Couenne {
+
 #define MUL_ZERO 1e-20
 #define MUL_INF  1e+20
 
@@ -135,6 +137,8 @@ inline CouNumber exprUBMul::operator () () {
     else 
       if (D>0) return safeProd (N,D);
       else     return safeProd (n,D);
+}
+
 }
 
 #endif

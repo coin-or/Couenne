@@ -13,6 +13,8 @@
 
 #include "CoinHelperFunctions.hpp"
 
+#include "BonBabSetupBase.hpp"
+
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
 #include "CouenneExprIVar.hpp"
@@ -20,6 +22,8 @@
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneDepGraph.hpp"
+
+using namespace Couenne;
 
 /// standardize (nonlinear) common expressions, objectives, and constraints
 
@@ -341,7 +345,7 @@ bool CouenneProblem::standardize () {
     for (std::vector <exprVar *>::iterator i = variables_.begin (); 
        i != variables_.end (); ++i)
 
-    if (((*i) -> Type () == AUX) && ((*i) -> sign () == expression::EQ)) {
+    if (((*i) -> Type () == AUX) && ((*i) -> sign () == expression::AUX_EQ)) {
 
       int type = (*i) -> Image () -> Type ();
 
@@ -415,7 +419,7 @@ bool CouenneProblem::standardize () {
     if ((Var (i) -> Multiplicity () > 0) &&
 	(Var (i) -> Type () == AUX) &&
 	(Var (i) -> Image () -> isInteger ()) &&
-	(Var (i) -> sign () == expression::EQ))
+	(Var (i) -> sign () == expression::AUX_EQ))
       Var (i) -> setInteger (true);
 
     //if (Var (i) -> Multiplicity () == 0)

@@ -13,6 +13,8 @@
 #include "CouenneExprSub.hpp"
 #include "CouenneExprOpp.hpp"
 
+using namespace Couenne;
+
 // generate equality between *this and *w
 void exprSub::generateCuts (expression *w, //const OsiSolverInterface &si, 
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
@@ -48,8 +50,8 @@ void exprSub::generateCuts (expression *w, //const OsiSolverInterface &si,
 
   enum auxSign sign = cg -> Problem () -> Var (wi) -> sign ();
 
-  if      (sign == expression::GEQ) lb = -COIN_DBL_MAX;
-  else if (sign == expression::LEQ) ub =  COIN_DBL_MAX;
+  if      (sign == expression::AUX_GEQ) lb = -COIN_DBL_MAX;
+  else if (sign == expression::AUX_LEQ) ub =  COIN_DBL_MAX;
 
   cg -> createCut (cs, lb, ub, wi, -1., xi, 1., yi, -1., true);
 }

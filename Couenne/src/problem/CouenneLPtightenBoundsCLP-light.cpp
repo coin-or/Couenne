@@ -13,6 +13,8 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneExprVar.hpp"
 
+namespace Couenne {
+
 // Tighten bounds - lightweight. Returns -1 if infeasible, otherwise
 // number of variables tightened.
 template <class T>
@@ -148,4 +150,6 @@ int CouenneSolverInterface<T>::tightenBoundsCLP_Light (int lightweight) {
   delete [] down;
   delete [] sum;
   return numberTightened;
+}
+
 }

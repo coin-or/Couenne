@@ -16,8 +16,9 @@
 #include "CouenneDepGraph.hpp"
 #include "CouenneProblem.hpp"
 
-class Domain;
+using namespace Couenne;
 
+class Domain;
 
 // eliminates elements with zero coefficients
 void cleanZeros (std::vector <std::pair <exprVar *, CouNumber> > &lcoeff) {
@@ -163,7 +164,7 @@ expression *exprGroup::differentiate (int index) {
       arglist [nargs++] = arglist_ [i] -> differentiate (index);
 
   if ((nargs == 0) ||
-      (nargs == 1) && (fabs (totlin) > COUENNE_EPS)) {
+      ((nargs == 1) && (fabs (totlin) > COUENNE_EPS))) {
     delete [] arglist;
     return new exprConst (totlin);
   }

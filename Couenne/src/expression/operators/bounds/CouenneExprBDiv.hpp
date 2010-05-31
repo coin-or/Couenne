@@ -13,6 +13,7 @@
 
 #include "CouenneExprOp.hpp"
 
+namespace Couenne {
 
 /// division that avoids NaN's and considers a sign when returning infinity
 static inline CouNumber safeDiv (register CouNumber a, register CouNumber b, int sign) {
@@ -123,6 +124,8 @@ inline CouNumber exprUBDiv::operator () () {
     else if (n < 0) return safeDiv (n,D,1);      // (-,?,-,-) --> n/D
     else            return safeDiv (n,d,1);      // (+,+,-,-) --> n/d
   }
+}
+
 }
 
 #endif

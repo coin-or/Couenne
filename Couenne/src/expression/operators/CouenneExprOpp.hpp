@@ -14,6 +14,7 @@
 #include "CouennePrecisions.hpp"
 #include "CouenneExprUnary.hpp"
 
+namespace Couenne {
 
 /// operator opp: returns the opposite of a number
 
@@ -79,10 +80,12 @@ class exprOpp: public exprUnary {
     {return argument_ -> isInteger ();}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// standardization (to deal with complex arguments)
   exprAux *standardize (CouenneProblem *, bool addAux = true);
 };
+
+}
 
 #endif

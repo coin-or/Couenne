@@ -17,6 +17,7 @@
 #include "CouenneExpression.hpp"
 #include "CouenneExprConst.hpp"
 
+namespace Couenne {
 
 /** Class to represent nonlinear constraints
  *
@@ -149,5 +150,7 @@ class CouenneObjective {
     out << std::endl;
   }
 };
+
+}
 
 #endif

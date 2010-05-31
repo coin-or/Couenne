@@ -23,6 +23,8 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+using namespace Couenne;
+
 // compute upper- and lower bounds of the expression w = 1/f(x) given
 // bounds of f(x)
 
@@ -101,8 +103,8 @@ void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
   if (cL || cR) {
     // bounding box is within ]0,+inf[
-    if ((l> COUENNE_EPS) && (u< COU_MAX_COEFF) && sign != expression::GEQ) cg -> createCut (cs, 1/l+1/u, -1, wi,1., xi,1/(l*u));
-    if ((u<-COUENNE_EPS) && (l>-COU_MAX_COEFF) && sign != expression::LEQ) cg -> createCut (cs, 1/l+1/u, +1, wi,1., xi,1/(l*u));
+    if ((l> COUENNE_EPS) && (u< COU_MAX_COEFF) && sign != expression::AUX_GEQ) cg -> createCut (cs, 1/l+1/u, -1, wi,1., xi,1/(l*u));
+    if ((u<-COUENNE_EPS) && (l>-COU_MAX_COEFF) && sign != expression::AUX_LEQ) cg -> createCut (cs, 1/l+1/u, +1, wi,1., xi,1/(l*u));
     // bounding box is within ]-inf,0[
   }
 
@@ -118,8 +120,8 @@ void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
   if (fabs (u) < COUENNE_EPS) u = (u<0) ? - MIN_DENOMINATOR : MIN_DENOMINATOR;
 
   // bound
-  if ((l > 0 && sign != expression::LEQ) ||
-               (sign != expression::GEQ))
+  if ((l > 0 && sign != expression::AUX_LEQ) ||
+               (sign != expression::AUX_GEQ))
     cg -> addEnvelope 
       (cs, (l > 0) ? +1 : -1, 
        inv, oppInvSqr, wi, xi, 

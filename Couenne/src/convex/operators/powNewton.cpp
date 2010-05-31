@@ -24,6 +24,8 @@
 #include <stdio.h>
 #endif
 
+namespace Couenne {
+
 CouNumber powNewton (CouNumber xc, CouNumber yc, 
 		     unary_function f, 
 		     unary_function fp, 
@@ -148,3 +150,5 @@ int main (int argc, char **argv) {
 }
 
 #endif
+
+}

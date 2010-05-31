@@ -17,6 +17,8 @@
 #include "CouenneTypes.hpp"
 #include "CouenneExprVar.hpp"
 
+namespace Couenne {
+
 /// These are bound expression classes. They are used in the parametric
 /// convexification part to obtain lower/upper bounds of an expression
 /// as a function of the expression itself.
@@ -127,5 +129,7 @@ class exprUpperBound: public exprVar {
   virtual inline enum expr_type code ()
   {return COU_EXPRUBOUND;}
 };
+
+}
 
 #endif

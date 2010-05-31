@@ -13,6 +13,7 @@
 
 #include "CouenneExprUnary.hpp"
 
+namespace Couenne {
 
 /// the operator itself
 inline CouNumber inv (register CouNumber arg) 
@@ -78,7 +79,7 @@ class exprInv: public exprUnary {
   virtual enum expr_type code () {return COU_EXPRINV;}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
@@ -103,5 +104,7 @@ class exprInv: public exprUnary {
   /// concave ("bad") side
   virtual bool isCuttable (CouenneProblem *problem, int index) const;
 };
+
+}
 
 #endif

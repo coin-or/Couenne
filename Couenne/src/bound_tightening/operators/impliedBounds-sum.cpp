@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    impliedBounds-sum.cpp
  * Author:  Pietro Belotti
  * Purpose: inferring bounds on monomials in a sum
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -12,6 +12,8 @@
 
 #include "CoinHelperFunctions.hpp"
 #include "CouenneExprSum.hpp"
+
+using namespace Couenne;
 
 #define ALMOST_INF (1e-5 * COUENNE_INFINITY)
 

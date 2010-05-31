@@ -14,6 +14,8 @@
 #include "OsiBranchingObject.hpp"
 #include "CouenneJournalist.hpp"
 
+namespace Couenne {
+
 class CouenneProblem;
 class CouenneSOSObject;
 class exprVar;
@@ -149,5 +151,7 @@ public:
   //exprVar *Reference () const
   //{return reference_;}
 };
+
+}
 
 #endif

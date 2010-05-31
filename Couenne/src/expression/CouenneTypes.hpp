@@ -14,6 +14,8 @@
 /** general include file for different compilers */
 #include "CoinPragma.hpp"
 
+namespace Couenne {
+
 /** type of a node in an expression tree */
 enum nodeType       {CONST=0, VAR, UNARY, N_ARY, COPY, AUX, EMPTY};
 
@@ -98,5 +100,7 @@ typedef double CouNumber;
 
 /** unary function, used in all exprUnary */
 typedef CouNumber (*unary_function) (CouNumber);
+
+}
 
 #endif

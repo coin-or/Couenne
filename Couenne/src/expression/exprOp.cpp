@@ -17,6 +17,8 @@
 
 #include <cstdio>
 
+using namespace Couenne;
+
 class CouenneProblem;
 class Domain;
 

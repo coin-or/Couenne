@@ -1,17 +1,20 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneChooseVariable.cpp
  * Authors: Pierre Bonami, IBM Corp.
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Branching object for choosing branching auxiliary variable
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneChooseVariable.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
+#include "OsiSolverInterface.hpp"
 
+using namespace Couenne;
 
 /// Default Constructor 
 CouenneChooseVariable::CouenneChooseVariable (): 

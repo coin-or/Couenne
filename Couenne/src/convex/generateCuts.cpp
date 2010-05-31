@@ -13,6 +13,9 @@
 
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
+
+namespace Couenne {
 
 #define Couenne_large_bound2 9.99e12
 
@@ -532,4 +535,6 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
   if (!(info.inTree)) 
     rootTime_ = CoinCpuTime ();
+}
+
 }

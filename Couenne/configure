@@ -23775,7 +23775,7 @@ fi
 
 # Here list all the files that configure should create (except for the
 # configuration header file)
-                                                                                                                                                                                    ac_config_files="$ac_config_files Makefile test/Makefile src/main/Makefile src/bound_tightening/Makefile src/branch/Makefile src/convex/Makefile src/interfaces/Makefile src/heuristics/Makefile src/disjunctive/Makefile src/sdpcuts/Makefile src/expression/Makefile src/problem/Makefile src/standardize/Makefile src/readnl/Makefile src/util/Makefile src/Makefile test/grandTest.sh couenne_addlibs.txt"
+                                                                                                                                                                                              ac_config_files="$ac_config_files Makefile test/Makefile src/main/Makefile src/bound_tightening/Makefile src/branch/Makefile src/convex/Makefile src/interfaces/Makefile src/heuristics/Makefile src/disjunctive/Makefile src/sdpcuts/Makefile src/ellipcuts/Makefile src/expression/Makefile src/problem/Makefile src/standardize/Makefile src/readnl/Makefile src/util/Makefile src/Makefile test/grandTest.sh couenne_addlibs.txt"
 
 
 # Here put the location and name of the configuration header file
@@ -24546,6 +24546,7 @@ do
   "src/heuristics/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/heuristics/Makefile" ;;
   "src/disjunctive/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/disjunctive/Makefile" ;;
   "src/sdpcuts/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/sdpcuts/Makefile" ;;
+  "src/ellipcuts/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/ellipcuts/Makefile" ;;
   "src/expression/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/expression/Makefile" ;;
   "src/problem/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/problem/Makefile" ;;
   "src/standardize/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/standardize/Makefile" ;;

@@ -1,17 +1,19 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    minMaxDelta.cpp
  * Author:  Pietro Belotti
  * Purpose: general function for computing best branching point based
  *          on min max height of resulting convexifications (dychotomic 
  *          search)
  *
- * (C) Carnegie-Mellon University, 2007-08.
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneObject.hpp"
 #include "CouenneFunTriplets.hpp"
+
+namespace Couenne {
 
 const int maxIter = 20;
 
@@ -91,4 +93,6 @@ CouNumber maxHeight (funtriplet *ft, CouNumber lb, CouNumber ub) {
 	  (ft -> F (ub) - ft -> F (lb)) / (ub - lb),
 	  ft -> FpInv ((ft -> F (ub) - ft -> F (lb)) / (ub - lb)));*/
   return (ft -> FpInv ((ft -> F (ub) - ft -> F (lb)) / (ub - lb)));
+}
+
 }

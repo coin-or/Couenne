@@ -28,6 +28,8 @@
 #include "nlp.h"
 #include "opcode.hd"
 
+using namespace Couenne;
+
 // get ASL op. code relative to function pointer passed as parameter 
 int getOperator (efunc *);
 

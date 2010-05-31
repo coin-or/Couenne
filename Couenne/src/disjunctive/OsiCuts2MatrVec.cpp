@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    OsiCuts2MatrVec.cpp
  * Author:  Pietro Belotti
  * Purpose: turn OsiCuts objects into coefficient matrix and rhs vector
@@ -17,6 +17,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
 
 // add CGLP columns to solver interface; return number of columns
 // added (for later removal)

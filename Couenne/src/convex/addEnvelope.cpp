@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
- * File: addEnvelope.cpp
- * Author: Pietro Belotti, Carnegie Mellon University
- * Purpose: add generic envelope to convex function based on function and its derivative
+/* $Id$
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * File:    addEnvelope.cpp
+ * Author:  Pietro Belotti, Carnegie Mellon University
+ * Purpose: Add generic envelope to convex function based on function and its derivative
+ *
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -15,6 +15,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneFunTriplets.hpp"
 
+using namespace Couenne;
 
 void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
 				       unary_function f,      // function to be linearized

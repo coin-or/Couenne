@@ -8,6 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h>
+
 #include "CouenneExprSum.hpp"
 #include "CouenneExprSub.hpp"
 #include "CouenneExprOpp.hpp"
@@ -15,6 +17,7 @@
 #include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
 
+using namespace Couenne;
 
 /// translate a sum/difference/exprOpp into:
 ///

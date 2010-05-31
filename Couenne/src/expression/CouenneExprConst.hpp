@@ -16,6 +16,7 @@
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
 
+namespace Couenne {
 
 /// constant-type operator
 
@@ -92,11 +93,13 @@ public:
 
   /// is this expression integer?
   virtual inline bool isInteger () 
-  {return ::isInteger (value_);}
+  {return Couenne::isInteger (value_);}
 
   /// used in rank-based branching variable choice
   virtual inline int rank ()
   {return 0;} 
 };
+
+}
 
 #endif

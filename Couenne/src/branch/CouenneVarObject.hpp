@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for branching on variables
  *
- * (C) Carnegie-Mellon University, 2008-09.
+ * (C) Carnegie-Mellon University, 2008-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -12,6 +12,8 @@
 #define COUENNEVAROBJECT_HPP
 
 #include "CouenneObject.hpp"
+
+namespace Couenne {
 
 class CouenneProblem;
 
@@ -68,5 +70,7 @@ protected:
 				   int& bestWay, 
 				   const CouenneObject *&criticalObject) const;
 };
+
+}
 
 #endif

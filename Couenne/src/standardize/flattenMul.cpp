@@ -9,7 +9,11 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h>
+
 #include "CouenneProblem.hpp"
+
+using namespace Couenne;
 
 /// re-organizes multiplication and stores indices (and exponents) of
 /// its variables

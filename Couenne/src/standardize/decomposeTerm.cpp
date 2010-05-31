@@ -8,11 +8,15 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h>
+
 #include "CouenneProblem.hpp"
 #include "CouenneExprMul.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
+
+using namespace Couenne;
 
 /// given (expression *) element of sum, returns (coe,ind0,ind1)
 /// depending on element:

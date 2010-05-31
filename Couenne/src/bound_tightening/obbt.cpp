@@ -16,6 +16,8 @@
 #include "CouenneProblem.hpp"
 #include "OsiClpSolverInterface.hpp"
 
+using namespace Couenne;
+
 #define OBBT_EPS 1e-3
 #define MAX_OBBT_LP_ITERATION 100
 
@@ -53,9 +55,9 @@ int CouenneProblem::call_iter (OsiSolverInterface *csi,
     if ((Var (i) -> Type () == type)     &&
 	(Var (i) -> Multiplicity () > 0) &&
 	((type == VAR)                               || 
-	 (aSign  == expression::EQ) ||
-	 ((aSign == expression::LEQ) && (sense > 0)) ||
-	 ((aSign == expression::GEQ) && (sense < 0)))) {
+	 (aSign  == expression::AUX_EQ) ||
+	 ((aSign == expression::AUX_LEQ) && (sense > 0)) ||
+	 ((aSign == expression::AUX_GEQ) && (sense < 0)))) {
 
       int ni = obbt_iter (csi, chg_bds, warmstart, babInfo, objcoe, sense, i);
 

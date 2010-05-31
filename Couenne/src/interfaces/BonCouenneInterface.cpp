@@ -13,8 +13,9 @@
 #include "BonCouenneInterface.hpp"
 #include "CoinHelperFunctions.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 
-namespace Bonmin {
+using namespace Couenne;
 
 /** Default constructor. */
 CouenneInterface::CouenneInterface():
@@ -403,4 +404,4 @@ void CouenneInterface::setAppDefaultOptions(Ipopt::SmartPtr<Ipopt::OptionsList> 
   Options->SetStringValue("bonmin.algorithm", "B-Couenne", true, true);
   Options->SetIntegerValue("bonmin.filmint_ecp_cuts", 1, true, true);
 }
-} /** End Bonmin namespace. */
+

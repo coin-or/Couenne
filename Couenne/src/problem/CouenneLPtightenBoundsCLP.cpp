@@ -13,6 +13,8 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneExprVar.hpp"
 
+namespace Couenne {
+
 //#define COIN_DEVELOP 4
 
 // Tighten bounds. Returns -1 if infeasible, otherwise number of
@@ -366,3 +368,4 @@ int CouenneSolverInterface<T>::tightenBoundsCLP (int lightweight) {
   return nTightened;
 }
   
+}

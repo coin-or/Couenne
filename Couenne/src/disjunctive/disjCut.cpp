@@ -15,6 +15,8 @@
 //#include "CouenneCutGenerator.hpp"
 //#include "CouenneProblem.hpp"
 
+using namespace Couenne;
+
 #define COEFF_BOUNDS 1.e10
 
 #define MIN_NUM_COEFF 1.e-9

@@ -19,6 +19,8 @@
 #include "CbcCompareActual.hpp"
 //#include "CouenneSOSObject.hpp"
 
+using namespace Couenne;
+
 /// find SOS objects
 int CouenneProblem::findSOS (OsiSolverInterface *solver,
 			     OsiObject **objects) {

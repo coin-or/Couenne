@@ -12,6 +12,8 @@
 #include "CouennePrecisions.hpp"
 #include "CouenneCutGenerator.hpp"
 
+namespace Couenne {
+
 //#define DEBUG
 
 int findIntersection (CouNumber  x0, CouNumber  y0,
@@ -430,4 +432,6 @@ int genMulCoeff (CouNumber x1, CouNumber y1,
   //cW = -cW;
 
   return 0;
+}
+
 }

@@ -14,9 +14,9 @@
 #include "CoinHelperFunctions.hpp"
 #include "CouenneExprQuad.hpp"
 
-//#define DEBUG
+using namespace Couenne;
 
-//struct compExpr;
+// struct compExpr;
 
 /** Structure for comparing variables
  *
@@ -27,7 +27,6 @@ struct compVar {
   inline bool operator () (exprVar* e0, exprVar* e1) const
   {return (e0 -> Index () < e1 -> Index ());}
 };
-
 
 
 /// implied bound processing for quadratic form upon change in lower-
@@ -42,8 +41,8 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
   // tightening bounds of each aux, to infer new bounds
 
   CouNumber 
-    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
-    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+    wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
 #ifdef DEBUG
   printf ("################ implied bounds: [%g,%g], ", wl, wu);

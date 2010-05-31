@@ -12,6 +12,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
 
 /// generate OsiRowCuts for current convexification
 void CouenneCutGenerator::genRowCuts (const OsiSolverInterface &si,

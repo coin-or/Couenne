@@ -13,8 +13,9 @@
 
 #include <cstdio>
 
-// output nonlinear constraint
+using namespace Couenne;
 
+// output nonlinear constraint
 void CouenneConstraint::print (std::ostream &out) {
 
   bool samebounds = ((lb_ -> Type () == CONST) &&

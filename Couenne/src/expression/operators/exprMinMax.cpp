@@ -16,6 +16,7 @@
 #include "CouenneExprMin.hpp"
 #include "CouenneExprConst.hpp"
 
+using namespace Couenne;
 
 // Get lower and upper bound of an expression (if any)
 void exprMin::getBounds (expression *&lower, expression *&upper) {

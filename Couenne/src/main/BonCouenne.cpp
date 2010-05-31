@@ -35,7 +35,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
-using namespace Bonmin;
+using namespace Couenne;
 
 // the maximum difference between a printed optimum and a CouNumber
 #define PRINTED_PRECISION 1e-5

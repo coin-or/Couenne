@@ -12,6 +12,8 @@
 #include "CouenneExprConst.hpp"
 #include "CoinHelperFunctions.hpp"
 
+using namespace Couenne;
+
 // find bounds of -x given bounds on x
 void exprOpp::getBounds (expression *&lb, expression *&ub) {
 
@@ -50,8 +52,8 @@ bool exprOpp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     argInt = argument_ -> isInteger ();
 
   CouNumber 
-    wl = sign == expression::GEQ ? -COIN_DBL_MAX : l [wind],
-    wu = sign == expression::LEQ ?  COIN_DBL_MAX : u [wind];
+    wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
+    wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
   if (updateBound (-1, l + ind, argInt ? ceil  (- wu - COUENNE_EPS) : - wu)) {
     res = true; 

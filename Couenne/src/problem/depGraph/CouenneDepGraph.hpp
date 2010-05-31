@@ -19,6 +19,7 @@
 #include "CouenneExprAux.hpp"
 #include "CouenneProblemElem.hpp"
 
+namespace Couenne {
 
 /// structure for comparing nodes in the dependence graph
 struct compNode {
@@ -143,5 +144,7 @@ public:
   /// check for dependence cycles in graph
   bool checkCycles ();
 };
+
+}
 
 #endif

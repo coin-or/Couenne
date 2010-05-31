@@ -17,6 +17,15 @@
 
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
+
+using namespace Couenne;
+
+namespace Bonmin {
+  class OsiTMINLPInterface;
+  class BabInfo;
+  class TNLPSolver;
+}
 
 #define MAX_ABT_ITER           1  // max # aggressive BT iterations
 #define THRES_ABT_IMPROVED     0  // only continue ABT if at least these bounds have improved
@@ -52,8 +61,8 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
   Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "Aggressive FBBT\n");
 
-  Bonmin::CouenneInfo* couInfo =
-    dynamic_cast <Bonmin::CouenneInfo *> (babInfo);
+  CouenneInfo* couInfo =
+    dynamic_cast <CouenneInfo *> (babInfo);
 
   int  ncols  = nVars ();
   bool retval = false;
@@ -68,13 +77,13 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
   // Find the solution that is closest to the current bounds
   // TODO: Also check obj value
-  SmartPtr<const Bonmin::CouenneInfo::NlpSolution> closestSol;
+  SmartPtr<const CouenneInfo::NlpSolution> closestSol;
   double dist = 1e50;
 
-  const std::list<SmartPtr<const Bonmin::CouenneInfo::NlpSolution> >& solList =
+  const std::list<SmartPtr<const CouenneInfo::NlpSolution> >& solList =
     couInfo->NlpSolutions();
 
-  for (std::list<SmartPtr<const Bonmin::CouenneInfo::NlpSolution> >::const_iterator 
+  for (std::list<SmartPtr<const CouenneInfo::NlpSolution> >::const_iterator 
 	 i = solList.begin();
        i != solList.end(); i++) {
     assert(nOrigVars_ == (*i)->nVars());
@@ -132,7 +141,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
       delete [] upper;
 
       if (nlp->isProvenOptimal()) {
-	closestSol = new Bonmin::CouenneInfo::NlpSolution 
+	closestSol = new CouenneInfo::NlpSolution 
 	  (nOrigVars_, nlp->getColSolution(), nlp->getObjValue());
 	couInfo->addSolution(closestSol);
 	dist = 0.;
@@ -212,7 +221,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
 	  improved = 0;
 
-	  if ((variables_ [index] -> sign () != expression::GEQ) &&
+	  if ((variables_ [index] -> sign () != expression::AUX_GEQ) &&
 	      (X [index] >= Lb (index) + COUENNE_EPS)) {
 
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
@@ -227,7 +236,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
 	  second = 0;
 
-	  if (retval && (variables_ [index] -> sign () != expression::LEQ) &&
+	  if (retval && (variables_ [index] -> sign () != expression::AUX_LEQ) &&
 	      (X [index] <= Ub (index) - COUENNE_EPS)) {
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
 			    "------------- tighten right x%d\n", index);

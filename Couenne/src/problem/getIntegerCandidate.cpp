@@ -10,7 +10,12 @@
  */
 
 #include "CoinTime.hpp"
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
+
+using namespace Couenne;
 
 // lose patience after this many iterations of non-improving valid
 // tightening (step 1)

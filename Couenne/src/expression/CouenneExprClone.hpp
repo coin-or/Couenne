@@ -17,6 +17,7 @@
 #include "CouenneTypes.hpp"
 #include "CouenneExprCopy.hpp"
 
+namespace Couenne {
 
 /// expression clone (points to another expression) 
 
@@ -66,5 +67,7 @@ class exprClone: public exprCopy {
   /// redirect variables to proper variable vector
   //void realign (const CouenneProblem *p);
 };
+
+}
 
 #endif

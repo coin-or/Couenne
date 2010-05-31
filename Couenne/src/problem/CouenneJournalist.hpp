@@ -16,6 +16,8 @@
 
 #include "IpJournalist.hpp"
 
+namespace Couenne {
+
 typedef Ipopt::SmartPtr<Ipopt::Journalist> JnlstPtr;
 typedef Ipopt::SmartPtr<const Ipopt::Journalist> ConstJnlstPtr;
 
@@ -26,5 +28,7 @@ const Ipopt::EJournalCategory J_PROBLEM         (Ipopt::J_USER4);
 const Ipopt::EJournalCategory J_NLPHEURISTIC    (Ipopt::J_USER5);
 const Ipopt::EJournalCategory J_DISJCUTS        (Ipopt::J_USER6);
 const Ipopt::EJournalCategory J_REFORMULATE     (Ipopt::J_USER7);
+
+}
 
 #endif

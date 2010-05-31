@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    branchExprDiv.cpp
  * Author:  Pietro Belotti
  * Purpose: select branch for divisions
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -13,6 +13,7 @@
 #include "CouenneBranchingObject.hpp"
 #include "CouenneObject.hpp"
 
+using namespace Couenne;
 
 /// set up branching object by evaluating many branching points for
 /// each expression's arguments

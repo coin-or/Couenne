@@ -27,6 +27,8 @@
 #include "CouenneExprCos.hpp"
 #include "CouenneExprAux.hpp"
 
+namespace Couenne {
+
 #define NEW_TRIG
 
 #ifndef NEW_TRIG
@@ -275,27 +277,30 @@ int addHexagon (const CouenneCutGenerator *cg, // cut generator that has called 
   // left
   if (lb > -COUENNE_INFINITY) { // if not unbounded
     if (tt == COU_SINE) {
-      if (sign != expression::GEQ) ncuts += cg -> createCut (cs, sin (lb) - lb, -1, w_ind, 1., x_ind, -1.); // up: w-x <= f lb - lb
-      if (sign != expression::LEQ) ncuts += cg -> createCut (cs, sin (lb) + lb, +1, w_ind, 1., x_ind,  1.); // dn: w+x >= f lb + lb
+      if (sign != expression::AUX_GEQ) ncuts += cg -> createCut (cs, sin (lb) - lb, -1, w_ind, 1., x_ind, -1.); // up: w-x <= f lb - lb
+      if (sign != expression::AUX_LEQ) ncuts += cg -> createCut (cs, sin (lb) + lb, +1, w_ind, 1., x_ind,  1.); // dn: w+x >= f lb + lb
     }
     else {
-      if (sign != expression::GEQ) ncuts += cg -> createCut (cs, cos (lb) - lb, -1, w_ind, 1., x_ind, -1.); // up: w-x <= f lb - lb
-      if (sign != expression::LEQ) ncuts += cg -> createCut (cs, cos (lb) + lb, +1, w_ind, 1., x_ind,  1.); // dn: w+x >= f lb + lb
+      if (sign != expression::AUX_GEQ) ncuts += cg -> createCut (cs, cos (lb) - lb, -1, w_ind, 1., x_ind, -1.); // up: w-x <= f lb - lb
+      if (sign != expression::AUX_LEQ) ncuts += cg -> createCut (cs, cos (lb) + lb, +1, w_ind, 1., x_ind,  1.); // dn: w+x >= f lb + lb
     }
   }
 
   // right
   if (ub <  COUENNE_INFINITY) { // if not unbounded
     if (tt == COU_SINE) {
-      if (sign != expression::LEQ) ncuts += cg -> createCut (cs, sin (ub) - ub, +1, w_ind, 1., x_ind, -1.); // dn: w-x >= f ub - ub
-      if (sign != expression::GEQ) ncuts += cg -> createCut (cs, sin (ub) + ub, -1, w_ind, 1., x_ind,  1.); // up: w+x <= f ub + ub
+      if (sign != expression::AUX_LEQ) ncuts += cg -> createCut (cs, sin (ub) - ub, +1, w_ind, 1., x_ind, -1.); // dn: w-x >= f ub - ub
+      if (sign != expression::AUX_GEQ) ncuts += cg -> createCut (cs, sin (ub) + ub, -1, w_ind, 1., x_ind,  1.); // up: w+x <= f ub + ub
     }
     else {
-      if (sign != expression::LEQ) ncuts += cg -> createCut (cs, cos (ub) - ub, +1, w_ind, 1., x_ind, -1.); // dn: w-x >= f ub - ub
-      if (sign != expression::GEQ) ncuts += cg -> createCut (cs, cos (ub) + ub, -1, w_ind, 1., x_ind,  1.); // up: w+x <= f ub + ub
+      if (sign != expression::AUX_LEQ) ncuts += cg -> createCut (cs, cos (ub) - ub, +1, w_ind, 1., x_ind, -1.); // dn: w-x >= f ub - ub
+      if (sign != expression::AUX_GEQ) ncuts += cg -> createCut (cs, cos (ub) + ub, -1, w_ind, 1., x_ind,  1.); // up: w+x <= f ub + ub
     }
   }
 
   return ncuts;
 }
+
 #endif
+
+}

@@ -16,7 +16,9 @@
 #include "CouenneExpression.hpp"
 #include "CouenneExprAux.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 
+using namespace Couenne;
 
 // output content of the problem
 void CouenneProblem::print (std::ostream &out) {
@@ -47,9 +49,9 @@ void CouenneProblem::print (std::ostream &out) {
 
 	out << " (r:" << (*i) -> rank () 
 	    << ", m:" << (*i) -> Multiplicity () << ") " 
-	    << (((*i) -> sign () == expression::EQ)  ? ':' :
-		((*i) -> sign () == expression::GEQ) ? '>' : 
-		((*i) -> sign () == expression::LEQ) ? '<' : '?')
+	    << (((*i) -> sign () == expression::AUX_EQ)  ? ':' :
+		((*i) -> sign () == expression::AUX_GEQ) ? '>' : 
+		((*i) -> sign () == expression::AUX_LEQ) ? '<' : '?')
 	    << "= ";
 
 	if ((*i) -> Image ())

@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include "CouenneTypes.hpp"
 
+namespace Couenne {
+
 #define MAX_ITER 1000
 #define COU_TRIG_TOLERANCE 1e-12
 
@@ -61,6 +63,8 @@ CouNumber trigNewton (CouNumber a, CouNumber l, CouNumber u) {
   }
 
   return xk;
+}
+
 }
 
 /*

@@ -65,7 +65,8 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
-am_libCouenneInterfaces_la_OBJECTS = BonCouenneInterface.lo
+am_libCouenneInterfaces_la_OBJECTS = BonCouenneInterface.lo \
+	CouenneMINLPInterface.lo
 libCouenneInterfaces_la_OBJECTS =  \
 	$(am_libCouenneInterfaces_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -298,7 +299,8 @@ noinst_LTLIBRARIES = libCouenneInterfaces.la
 
 # List all source files for this library, including headers
 libCouenneInterfaces_la_SOURCES = \
-	BonCouenneInterface.cpp
+	BonCouenneInterface.cpp \
+	CouenneMINLPInterface.cpp
 
 libCouenneInterfaces_la_LIBADD = \
 	../../../Bonmin/src/Interfaces/Ampl/BonAmplInterface.lo
@@ -378,6 +380,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneMINLPInterface.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

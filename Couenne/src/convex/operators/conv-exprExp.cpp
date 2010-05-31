@@ -17,6 +17,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+using namespace Couenne;
 
 // generate convexification cut for constraint w = this
 
@@ -49,7 +50,7 @@ void exprExp::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
   // upper segment
 
-  if ((sign != expression::GEQ)
+  if ((sign != expression::AUX_GEQ)
       && (cL || cR) 
       && (u < log (COUENNE_INFINITY) ) 
       && (l > -    COUENNE_INFINITY / 1e4)) { // tame lower bound
@@ -71,6 +72,6 @@ void exprExp::generateCuts (expression *aux, //const OsiSolverInterface &si,
   if (u >   logMC) u =   logMC;
 
   // approximate the exponential function from below
-  if (sign != expression::LEQ)
+  if (sign != expression::AUX_LEQ)
     cg -> addEnvelope (cs, +1, exp, exp, w_ind, x_ind, x, l, u, chg, true);
 }

@@ -10,6 +10,8 @@
 
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
+
 void CouenneProblem::fillQuadIndices () {
 
 }

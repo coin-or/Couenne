@@ -18,6 +18,8 @@
 #include "CouenneExprClone.hpp"
 #include "CouenneExprConst.hpp"
 
+namespace Couenne {
+
 class funtriplet;
 
 
@@ -88,7 +90,7 @@ class exprPow: public exprOp {
     {return COU_EXPRPOW;}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
@@ -117,7 +119,7 @@ class exprPow: public exprOp {
 inline CouNumber safe_pow (CouNumber base, 
 			   CouNumber exponent) {
 
-  long double 
+  double 
     lbase     = base,
     lexponent = exponent,
     retval    = 0.;
@@ -170,5 +172,7 @@ CouNumber powNewton (CouNumber, CouNumber, unary_function, unary_function, unary
 
 /// find proper tangent point to add deepest tangent cut
 CouNumber powNewton (CouNumber, CouNumber, funtriplet *);
+
+}
 
 #endif

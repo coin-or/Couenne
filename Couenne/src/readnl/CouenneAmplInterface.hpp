@@ -18,6 +18,9 @@
 
 struct ASL;
 struct expr;
+
+namespace Couenne {
+
 class expression;
 
 class CouenneAmplInterface : public CouenneUserInterface {
@@ -51,5 +54,7 @@ public:
 	{ roptions = roptions_; }
 	
 };
+
+}
 
 #endif /*COUENNEAMPLINTERFACE_HPP_*/

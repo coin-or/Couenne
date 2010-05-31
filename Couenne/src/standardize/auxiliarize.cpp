@@ -9,8 +9,13 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h>
+
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 #include "CouenneExprClone.hpp"
+
+using namespace Couenne;
 
 /// replace, in all expressions of the problem (auxiliaries,
 /// objectives and constraints) link to an original variable that has

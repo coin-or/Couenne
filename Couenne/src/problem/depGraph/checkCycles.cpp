@@ -14,6 +14,8 @@
 
 /// check for cycles in dependence graph
 
+using namespace Couenne;
+
 bool DepGraph::checkCycles () {
 
   for (std::set <DepNode *, compNode>::iterator 

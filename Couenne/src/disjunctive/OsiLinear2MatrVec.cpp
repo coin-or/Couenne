@@ -17,6 +17,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
 
 // construct reduced, standard form matrix M from coefficient matrix of si
 void CouenneDisjCuts::OsiSI2MatrVec (CoinPackedMatrix &M, 

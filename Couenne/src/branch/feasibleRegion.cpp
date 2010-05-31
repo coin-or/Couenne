@@ -5,7 +5,7 @@
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Implement feasibleRegion() method of CouenneObject class
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -19,6 +19,8 @@
 #include "CouenneExprGroup.hpp"
 #include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
+
+using namespace Couenne;
 
 #define TOL 0.
 

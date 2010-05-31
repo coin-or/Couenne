@@ -5,7 +5,7 @@
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -18,6 +18,8 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneJournalist.hpp"
 #include "OsiBranchingObject.hpp"
+
+namespace Couenne {
 
 #define AGGR_MUL 2
 #define THRES_ZERO_SYMM 0.8
@@ -46,7 +48,7 @@ CouNumber maxHeight   (funtriplet *ft, CouNumber lb, CouNumber ub);
 /// infeasibility $|w-f(x)|$, creates branches to help restoring
 /// feasibility
 
-class CouenneObject: public OsiObject {
+  class CouenneObject: public OsiObject {
 
 public:
 
@@ -203,5 +205,7 @@ protected:
   /// multiplier type for pseudocost
   enum pseudocostMult pseudoMultType_;
 };
+
+}
 
 #endif

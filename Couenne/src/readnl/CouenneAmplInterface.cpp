@@ -74,6 +74,8 @@ Option_Info Oinfo = { const_cast<char*>("testampl"), const_cast<char*>("ANALYSIS
 
 // (C++) code starts here ///////////////////////////////////////////////////////////////////////////
 
+using namespace Couenne;
+
 void CouenneAmplInterface::registerOptions(Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions) {
 	roptions->AddStringOption1("nlfile", "name of an ampl .nl file to get the problem from", "", "*", "name of .nl file");
 }

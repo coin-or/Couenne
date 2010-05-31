@@ -5,14 +5,17 @@
  *          Pietro Belotti, Lehigh University
  * Purpose: Strong branching objects for Couenne
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "BonChooseVariable.hpp"
 #include "CouenneChooseStrong.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 #include "CouenneBranchingObject.hpp"
+
+using namespace Couenne;
 
 const CouNumber estProdEps = 1e-6;
 

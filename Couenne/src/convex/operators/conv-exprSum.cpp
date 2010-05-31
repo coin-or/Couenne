@@ -16,6 +16,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+using namespace Couenne;
 
 // generate equality between *this and *w
 void exprSum::generateCuts (expression *w, //const OsiSolverInterface &si, 
@@ -62,8 +63,8 @@ void exprSum::generateCuts (expression *w, //const OsiSolverInterface &si,
 
   enum auxSign sign = cg -> Problem () -> Var (w -> Index ()) -> sign ();
 
-  if (lb > -COUENNE_INFINITY && (sign != expression::GEQ)) cut -> setLb (lb);
-  if (ub <  COUENNE_INFINITY && (sign != expression::LEQ)) cut -> setUb (ub);
+  if (lb > -COUENNE_INFINITY && (sign != expression::AUX_GEQ)) cut -> setLb (lb);
+  if (ub <  COUENNE_INFINITY && (sign != expression::AUX_LEQ)) cut -> setUb (ub);
 
   /// added only once, it is global
   cut -> setGloballyValid ();

@@ -18,6 +18,8 @@
 #include "CouenneOrbitBranchingObj.hpp"
 #include "CouenneCutGenerator.hpp"
 
+using namespace Couenne;
+
 class CouenneCutGenerator;
 
 // translate changed bound sparse array into a dense one

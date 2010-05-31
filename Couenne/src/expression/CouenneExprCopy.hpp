@@ -16,6 +16,8 @@
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
 
+namespace Couenne {
+
 class CouenneObject;
 
 // expression copy (points to VALUE of another expression) 
@@ -235,5 +237,7 @@ class exprCopy: public expression {
   bool isCuttable (CouenneProblem *problem, int index) const
   {return copy_ -> isCuttable (problem, index);}
 };
+
+}
 
 #endif

@@ -16,6 +16,8 @@
 #include "CouenneExprBSin.hpp"
 #include "CouenneExprMul.hpp"
 
+namespace Couenne {
+
 static const CouNumber 
   pi  = M_PI,
   pi2 = M_PI * 2.,
@@ -163,4 +165,6 @@ void exprSin::closestFeasible (expression *varind, expression *vardep,
   }
   left += pih;
   right += pih;
+}
+
 }

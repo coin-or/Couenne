@@ -13,6 +13,8 @@
 
 #include "CouenneBranchingObject.hpp"
 
+namespace Couenne {
+
 /** "Spatial" branching object for complementarity constraints. 
  *
  *  Branching on such an object x_1 x_2 = 0 is performed by setting
@@ -65,5 +67,7 @@ protected:
   ///  0 if object is for xi * xj  = 0 (classical)
   int sign_;
 };
+
+}
 
 #endif

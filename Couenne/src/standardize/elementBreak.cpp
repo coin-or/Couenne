@@ -10,6 +10,8 @@
 
 #include "CouenneExpression.hpp"
 
+using namespace Couenne;
+
 /// given an element of a sum, check if it is a variable (possibly
 /// with a coefficient) and return its index (and the coefficient) if
 /// it has not been spotted as an auxiliary (check wentAux)

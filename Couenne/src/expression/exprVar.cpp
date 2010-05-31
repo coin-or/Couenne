@@ -16,6 +16,7 @@
 #include "CouenneExprBound.hpp"
 #include "CouenneDepGraph.hpp"
 
+using namespace Couenne;
 
 // Get lower and upper bound of a variable expression (if any)
 void exprVar::getBounds (expression *&lb, expression *&ub) {
@@ -49,8 +50,8 @@ bool exprVar::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   bool res = false;
 
-  if (updateBound (-1, l + varIndex_, sign == expression::GEQ ? -COIN_DBL_MAX : l [wind])) {res = true; chg [varIndex_].setLower(t_chg_bounds::CHANGED);}
-  if (updateBound (+1, u + varIndex_, sign == expression::LEQ ?  COIN_DBL_MAX : u [wind])) {res = true; chg [varIndex_].setUpper(t_chg_bounds::CHANGED);}
+  if (updateBound (-1, l + varIndex_, sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind])) {res = true; chg [varIndex_].setLower(t_chg_bounds::CHANGED);}
+  if (updateBound (+1, u + varIndex_, sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind])) {res = true; chg [varIndex_].setUpper(t_chg_bounds::CHANGED);}
 
   return res;
 }

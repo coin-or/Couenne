@@ -10,8 +10,12 @@
 
 #include <vector>
 
+#include "BonRegisteredOptions.hpp"
+
 #include "CoinHelperFunctions.hpp"
 #include "CoinTime.hpp"
+
+#include "BonBabSetupBase.hpp"
 
 #include "CouenneTypes.hpp"
 
@@ -23,6 +27,14 @@
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneLQelems.hpp"
+
+using namespace Couenne;
+
+/// save CouenneBase
+void CouenneProblem::setBase (BabSetupBase *base) {
+  bonBase_ = base;
+  jnlst_   = base -> journalist ();
+}
 
 // tricky... smaller values cut the optimum in OS unitTest
 const CouNumber SafeCutoff = 1e-4; 
@@ -106,9 +118,9 @@ void CouenneProblem::initAuxs () const {
 			  ord, l, u, Lb (ord), Ub (ord));
 
       // set bounds 
-      if ((var -> sign () != expression::LEQ) && 
+      if ((var -> sign () != expression::AUX_LEQ) && 
 	  ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY)) Lb (ord) = -COIN_DBL_MAX;
-      if ((var -> sign () != expression::GEQ) &&
+      if ((var -> sign () != expression::AUX_GEQ) &&
 	  ((Ub (ord) = CoinMin (Ub (ord), u)) >=  COUENNE_INFINITY)) Ub (ord) =  COIN_DBL_MAX;
       //if ((lb_ [ord] = (*(aux -> Lb ())) ()) <= -COUENNE_INFINITY) lb_ [ord] = -DBL_MAX;
       //if ((ub_ [ord] = (*(aux -> Ub ())) ()) >=  COUENNE_INFINITY) ub_ [ord] =  DBL_MAX;
@@ -116,8 +128,8 @@ void CouenneProblem::initAuxs () const {
       bool integer = var -> isInteger ();
 
       if (integer) {
-	if (var -> sign () != expression::GEQ) Lb (ord) = ceil  (Lb (ord) - COUENNE_EPS);
-	if (var -> sign () != expression::LEQ) Ub (ord) = floor (Ub (ord) + COUENNE_EPS);
+	if (var -> sign () != expression::AUX_GEQ) Lb (ord) = ceil  (Lb (ord) - COUENNE_EPS);
+	if (var -> sign () != expression::AUX_LEQ) Ub (ord) = floor (Ub (ord) + COUENNE_EPS);
       }
 
       X (ord) = CoinMax (Lb (ord), CoinMin (Ub (ord), (*(var -> Image ())) ()));
@@ -168,16 +180,16 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 		X (index), (*(var -> Image ())) (),
 		var -> sign (), isInt, l, u);*/
 
-	if (var -> sign () == expression::EQ)
+	if (var -> sign () == expression::AUX_EQ)
 	  X (index) = (*(var -> Image ())) ();  // addresses of x[] and X() are equal
     
 	X (index) = 
-	  CoinMax ((var -> sign () != expression::LEQ) ? (isInt ? ceil  (l - COUENNE_EPS) : l) : -COIN_DBL_MAX, 
-	  CoinMin ((var -> sign () != expression::GEQ) ? (isInt ? floor (u + COUENNE_EPS) : u) :  COIN_DBL_MAX, X (index)));
+	  CoinMax ((var -> sign () != expression::AUX_LEQ) ? (isInt ? ceil  (l - COUENNE_EPS) : l) : -COIN_DBL_MAX, 
+	  CoinMin ((var -> sign () != expression::AUX_GEQ) ? (isInt ? floor (u + COUENNE_EPS) : u) :  COIN_DBL_MAX, X (index)));
 
 	if (isInt) {
-	  if (var -> sign () == expression::GEQ) X (index) = ceil  (X (index) - COUENNE_EPS);
-	  if (var -> sign () == expression::LEQ) X (index) = floor (X (index) + COUENNE_EPS);
+	  if (var -> sign () == expression::AUX_GEQ) X (index) = ceil  (X (index) - COUENNE_EPS);
+	  if (var -> sign () == expression::AUX_LEQ) X (index) = floor (X (index) + COUENNE_EPS);
 	}
 
 	//printf (" -> %g\n", X (index));

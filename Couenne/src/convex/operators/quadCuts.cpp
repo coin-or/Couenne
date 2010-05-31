@@ -15,8 +15,9 @@
 
 #include "CoinHelperFunctions.hpp"
 
-//#define DEBUG
+using namespace Couenne;
 
+//#define DEBUG
 
 void exprQuad::quadCuts (expression *w, OsiCuts &cs, const CouenneCutGenerator *cg){
 
@@ -80,8 +81,8 @@ void exprQuad::quadCuts (expression *w, OsiCuts &cs, const CouenneCutGenerator *
   enum auxSign sign = cg -> Problem () -> Var (w -> Index ()) -> sign ();
 
   // if this is a "semi"-auxiliary, check if necessary to separate
-  if ((sign == expression::GEQ && varVal > exprVal) ||
-      (sign == expression::LEQ && varVal < exprVal)) 
+  if ((sign == expression::AUX_GEQ && varVal > exprVal) ||
+      (sign == expression::AUX_LEQ && varVal < exprVal)) 
     return;
 
   const CouenneProblem& problem = *(cg -> Problem ());

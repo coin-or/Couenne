@@ -11,6 +11,7 @@
 #include "CouenneExprQuad.hpp"
 #include "CoinHelperFunctions.hpp"
 
+using namespace Couenne;
 
 void updateInf (CouNumber coe, CouNumber lb, CouNumber ub, int &indInf1, int &indInf2, int i) {
 

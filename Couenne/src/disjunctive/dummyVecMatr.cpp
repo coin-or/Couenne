@@ -14,6 +14,7 @@
 #include "CoinHelperFunctions.hpp"
 #include "CouennePrecisions.hpp"
 
+using namespace Couenne;
 
 // take columns of matrix and add each to arrays for matrix under construction
 void addSubMatr (int *start, int *len, int *ind, double *el,

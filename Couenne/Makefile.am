@@ -27,6 +27,7 @@ SUBDIRS += src/standardize \
 	  src/branch \
 	  src/disjunctive \
 	  src/sdpcuts \
+	  src/ellipcuts \
 	  src/interfaces \
 	  src/heuristics \
 	  src \

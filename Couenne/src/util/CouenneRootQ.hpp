@@ -1,15 +1,21 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    rootQ.hpp
  * Author:  Pietro Belotti
  * Purpose: find roots of polynomial Q^k(x) (see Liberti and Pantelides, 2003)
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
+#ifndef CouenneRootQ_hpp
+#define CouenneRootQ_hpp
+
 #include "CouenneTypes.hpp"
 #include <map>
+
+namespace Couenne
+{
 
 /// Find roots of polynomial $Q^k(x) = \f$\sum_{i=1}^{2k} i x^{i-1}\f$. Used
 /// in convexification of powers with odd exponent
@@ -61,3 +67,7 @@ class Qroot {
     return root;
   }
 };
+
+}
+
+#endif

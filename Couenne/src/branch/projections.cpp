@@ -1,15 +1,18 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    projections.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: tools for projecting points on lines/planes
  *
- * (C) Carnegie-Mellon University, 2006-07. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneTypes.hpp"
 #include "CouennePrecisions.hpp"
+//#include "CouenneProjections.hpp"
+
+namespace Couenne {
 
 /*  compute projection of point (x0, y0) on the segment defined by
  *  line ax + by + c <>= 0 (sign provided by parameter sign) and
@@ -85,6 +88,8 @@ CouNumber projectSeg (CouNumber x0,  CouNumber y0,
     c = x1*dy - y1*dx;
 
   return project (a, b, c, x0, y0, x1, x2, sign, xp, yp);
+}
+
 }
 
 /*

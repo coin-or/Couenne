@@ -5,7 +5,7 @@
  *          Pietro Belotti, CMU
  * Purpose: actual strong branching method
  *
- * (C) Carnegie-Mellon University, 2008-09.
+ * (C) Carnegie-Mellon University, 2008-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -13,7 +13,10 @@
 #include "BonChooseVariable.hpp"
 #include "CouenneChooseStrong.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
+
+using namespace Couenne;
 
 /// compute Euclidean distance between two points (most likely LP solutions)
 /// l_2 norm by default, but can change it by fourth parameter
@@ -111,14 +114,9 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
 
-      //  _______    ____    _____      ____          
-      // |__   __|  / __ \  |  __ \    / __ \         
-      //    | |    | |  | | | |  | |  | |  | |        
-      //    | |    | |  | | | |  | |  | |  | |   : apply isCuttable()     
-      //    | |    | |__| | | |__| |  | |__| |        
-      //    |_|     \____/  |_____/    \____/         
+      // TODO: apply isCuttable ()
 
-      // todo: set a cutoff for dual bound in dual simplex
+      // TODO: set a cutoff for dual bound in dual simplex
       //       do the same for primal based on SB's alpha
 
       // For now just 2 way

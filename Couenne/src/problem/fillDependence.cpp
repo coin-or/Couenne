@@ -12,7 +12,9 @@
 #include <set>
 
 #include "CouenneProblem.hpp"
+#include "CouenneObject.hpp"
 
+using namespace Couenne;
 
 /// fill in inverse dependence structure: for each variable x give set
 /// of auxiliary variables (or better, their indices) whose expression

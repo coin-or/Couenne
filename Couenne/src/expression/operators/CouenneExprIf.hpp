@@ -13,7 +13,11 @@
 
 #include "CouenneExprOp.hpp"
 
+namespace Couenne {
+
 class exprIf: public exprOp {
+
+};
 
 }
 

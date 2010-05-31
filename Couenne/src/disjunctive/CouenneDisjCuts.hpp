@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneDisjCuts.hpp
  * Author:  Pietro Belotti
  * Purpose: a generator of disjunctive cuts for MINLP problems
@@ -21,6 +21,8 @@
 #include "OsiChooseVariable.hpp"
 #include "CouenneTypes.hpp"
 #include "CouenneJournalist.hpp"
+
+namespace Couenne {
 
 class CouenneCutGenerator;
 
@@ -199,6 +201,8 @@ inline void CoinCopyDisp (register const int *src,
 			  register int displacement) {
   while (num--)
     *dst++ = *src++ + displacement;
+}
+
 }
 
 #endif

@@ -12,7 +12,9 @@
 #include <iomanip> // to use the setprecision manipulator
 
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 
+using namespace Couenne;
 
 // store problem in a .mod file (AMPL)
 

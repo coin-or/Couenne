@@ -15,6 +15,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+using namespace Couenne;
 
 // generate equality between *this and *w
 void exprOpp::generateCuts (expression *w, //const OsiSolverInterface &si, 

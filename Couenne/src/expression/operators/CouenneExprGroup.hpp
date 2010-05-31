@@ -16,6 +16,8 @@
 #include "CouenneExprSum.hpp"
 #include "CouenneExprVar.hpp"
 
+namespace Couenne {
+
 class Domain;
 
 /// class Group, with constant, linear and nonlinear terms
@@ -131,6 +133,8 @@ inline CouNumber exprGroup::operator () () {
     ret += el -> second * (*(el -> first)) ();
 
   return (CouNumber) ret;
+}
+
 }
 
 #endif

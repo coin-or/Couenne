@@ -13,6 +13,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
 
 /// generate convexification cut for constraint w = x*y
 
@@ -129,7 +130,7 @@ void exprMul::generateCuts (expression *w,
 		   xi, x0,      xl, xu, 
 		   yi, y0,      yl, yu,
 		   wi, (*w) (), wl, wu,
-		   //sign == expression::LEQ ? -COIN_DBL_MAX : wl, 
-		   //sign == expression::GEQ ?  COIN_DBL_MAX : wu,
+		   //sign == expression::AUX_LEQ ? -COIN_DBL_MAX : wl, 
+		   //sign == expression::AUX_GEQ ?  COIN_DBL_MAX : wu,
 		   chg, sign);
 }

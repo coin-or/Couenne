@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneProblem.cpp
  * Author:  Pietro Belotti
  * Purpose: methods of the class CouenneProblem
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -28,6 +28,9 @@
 #include "CouenneDepGraph.hpp"
 #include "CouenneLQelems.hpp"
 
+#include "CouenneObject.hpp"
+
+namespace Couenne {
 
 /// methods to add objective function. 
 
@@ -256,4 +259,6 @@ bool BranchingFBBT (CouenneProblem *problem,
   }
 
   return feasible;
+}
+
 }

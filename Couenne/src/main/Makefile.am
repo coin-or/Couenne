@@ -17,7 +17,8 @@ endif
 lib_LTLIBRARIES = libBonCouenne.la
 
 libBonCouenne_la_SOURCES = \
-	BonCouenneSetup.cpp
+	BonCouenneSetup.cpp \
+	SmartAslDestr.cpp
 
 COINLIBS = \
 	$(CBCOBJDIR)/src/libCbc.la \

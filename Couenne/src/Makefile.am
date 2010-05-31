@@ -31,6 +31,7 @@ libCouenne_la_LIBADD = \
 	./util/libCouenneUtil.la \
 	./disjunctive/libCouenneDisjunctive.la \
 	./sdpcuts/libCouenneSdpCuts.la
+	./ellipcuts/libCouenneEllipCuts.la
 
 #	./readnl/libCouenneReadnl.la 
 
@@ -108,7 +109,9 @@ AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/sdpcuts` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/sdpcuts` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/ellipcuts`
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
@@ -128,8 +131,10 @@ includecoin_HEADERS = \
 	main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp \
 	interfaces/BonCouenneInterface.hpp \
+	interfaces/CouenneMINLPInterface.hpp \
 	heuristics/BonNlpHeuristic.hpp \
 	heuristics/BonInitHeuristic.hpp \
+	heuristics/CouenneFeasPump.hpp \
 	branch/CouenneObject.hpp \
 	branch/CouenneVarObject.hpp \
 	branch/CouenneVTObject.hpp \
@@ -188,7 +193,9 @@ includecoin_HEADERS = \
 	problem/CouenneJournalist.hpp \
 	expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp
+	convex/CouenneCutGenerator.hpp \
+	sdpcuts/CouenneSdpCuts.hpp \
+	ellipcuts/CouenneEllipCuts.hpp
 
 #############################################################################
 # Create the Config.h file that always defines HAVE_CONFIG_H and install it #

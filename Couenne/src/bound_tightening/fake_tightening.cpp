@@ -4,14 +4,19 @@
  * Author:  Pietro Belotti
  * Purpose: fake single bounds in variables to exclude parts of the solution space 
  *
- * (C) Carnegie-Mellon University, 2007.
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 #include "BonBabInfos.hpp"
 
 //#define DEBUG
+
+using namespace Couenne;
 
 #define MAX_ITER  10 // max # fake tightening (inner) iterations 
 #define AGGR_MUL  2 // the larger,  the more conservative. Must be > 0

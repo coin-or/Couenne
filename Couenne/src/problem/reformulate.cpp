@@ -12,6 +12,8 @@
 #include "CoinHelperFunctions.hpp"
 #include "CoinTime.hpp"
 
+#include "BonBabSetupBase.hpp"
+
 #include "CouenneTypes.hpp"
 
 #include "CouenneExprVar.hpp"
@@ -20,6 +22,7 @@
 #include "CouenneDepGraph.hpp"
 #include "CouenneLQelems.hpp"
 
+using namespace Couenne;
 
 /// preprocess problem in order to extract linear relaxations etc.
 void CouenneProblem::reformulate (CouenneCutGenerator *cg) {

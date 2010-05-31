@@ -16,6 +16,7 @@
 #include "CouenneTypes.hpp"
 #include "CouenneExprCopy.hpp"
 
+namespace Couenne {
 
 /// storage class for previously evaluated expressions
 
@@ -60,5 +61,7 @@ class exprStore: public exprCopy {
   /// empty function to redirect variables to proper variable vector
   //virtual void realign (const CouenneProblem *p);
 };
+
+}
 
 #endif

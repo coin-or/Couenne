@@ -15,6 +15,7 @@
 
 #include "CouenneExprOp.hpp"
 
+namespace Couenne {
 
 /// class sum 
 
@@ -93,7 +94,7 @@ class exprSum: public exprOp {
    *  respectively, of \f$x_i\f$. We also have to check if some of
    *  these bounds are infinite.
    */
-  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::EQ);
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// Checks for quadratic terms in the expression and returns an
   /// exprQuad if there are enough to create something that can be
@@ -124,6 +125,8 @@ inline CouNumber exprSum::operator () () {
     ret += (**al++) ();
 
   return ret;
+}
+
 }
 
 #endif

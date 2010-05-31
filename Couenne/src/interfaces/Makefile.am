@@ -10,7 +10,8 @@ noinst_LTLIBRARIES = libCouenneInterfaces.la
 
 # List all source files for this library, including headers
 libCouenneInterfaces_la_SOURCES = \
-	BonCouenneInterface.cpp
+	BonCouenneInterface.cpp \
+	CouenneMINLPInterface.cpp
 
 libCouenneInterfaces_la_LIBADD = \
 	../../../Bonmin/src/Interfaces/Ampl/BonAmplInterface.lo

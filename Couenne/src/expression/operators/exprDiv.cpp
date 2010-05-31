@@ -18,6 +18,7 @@
 
 #include "CouennePrecisions.hpp"
 
+using namespace Couenne;
 
 // simplify division
 

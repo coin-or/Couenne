@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    branchExprAbs.cpp
  * Author:  Pietro Belotti
  * Purpose: return branch suggestion for exprAbs
  *
- * (C) Carnegie-Mellon University, 2006-07.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -13,6 +13,8 @@
 #include "CoinHelperFunctions.hpp"
 #include "CouenneExprAbs.hpp"
 #include "CouenneObject.hpp"
+
+using namespace Couenne;
 
 static const double sqrt_2 = sqrt (2.);
 

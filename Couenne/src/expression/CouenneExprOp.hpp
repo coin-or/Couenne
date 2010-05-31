@@ -16,6 +16,8 @@
 #include "CouenneExpression.hpp"
 #include "CouenneTypes.hpp"
 
+namespace Couenne {
+
 #define MAX_ARG_LINE 10
 
 class CouenneProblem;
@@ -137,5 +139,7 @@ class exprOp: public expression {
   /// empty function to redirect variables to proper variable vector
   virtual void realign (const CouenneProblem *p);
 };
+
+}
 
 #endif

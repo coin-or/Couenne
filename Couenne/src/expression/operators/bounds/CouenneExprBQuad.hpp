@@ -14,6 +14,7 @@
 #include "CouenneExprOp.hpp"
 #include "CouenneExprQuad.hpp"
 
+namespace Couenne {
 
 /// class to compute lower bound of a fraction based on the bounds of
 /// both numerator and denominator
@@ -89,5 +90,7 @@ class exprUBQuad: public expression {
 
   {s << "quadUpper("; ref_ -> print (s, descend); s << ')';}
 };
+
+}
 
 #endif

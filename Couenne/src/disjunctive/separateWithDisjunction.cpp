@@ -13,6 +13,8 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Couenne;
+
 /// generate row cuts for one side of the  disjunction
 int CouenneDisjCuts::separateWithDisjunction (OsiCuts *cuts, 
 					      OsiSolverInterface &si, 
