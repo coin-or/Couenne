@@ -207,7 +207,7 @@ int exprOp::DepList (std::set <int> &deplist,
 		     enum dig_type type) {
   int tot = 0;
 
-  //printf ("  exprop::deplist of "); print (); printf ("\n");
+  //printf ("  exprop::deplist of %x: ", Original ()); print (); printf ("\n");
 
   for (int i = nargs_; i--;) {
 

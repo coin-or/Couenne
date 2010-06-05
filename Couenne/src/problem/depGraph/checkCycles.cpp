@@ -1,48 +1,73 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    checkCycles.cpp
  * Author:  Pietro Belotti
  * Purpose: check for cycles in dependence graph
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
+//#include <stdio.h>
 #include "CouenneDepGraph.hpp"
 
 //#define DEBUG
 
-/// check for cycles in dependence graph
-
 using namespace Couenne;
+
+static bool visit (std::set <DepNode *, compNode>::iterator &v);
+
+/// check for cycles in dependence graph
 
 bool DepGraph::checkCycles () {
 
   for (std::set <DepNode *, compNode>::iterator 
 	 i = vertices_.begin ();
-       i  != vertices_.end   (); ++i) {
+       i  != vertices_.end   (); ++i)
+    (*i) -> color () = DepNode::DEP_WHITE; 
 
-    int xi = (*i) -> Index ();
+  // simple DFS that checks for cycles
 
-    std::set <DepNode *, compNode> *gen2 = (*i) -> DepList ();
+  for (std::set <DepNode *, compNode>::iterator 
+	 i = vertices_.begin ();
+       i  != vertices_.end   (); ++i)
 
-    for (std::set <DepNode *, compNode>::iterator j = gen2 -> begin (); 
-	 j != gen2 -> end (); ++j) {
+    if (((*i) -> color () == DepNode::DEP_WHITE) &&
+	(visit (i)))
+      return true;
 
-      std::set <DepNode *, compNode> already_visited;
+  return false;
+}
 
-      if ((*j) -> depends (xi, true, &already_visited)) {
+// subroutine that visits a single node
+bool visit (std::set <DepNode *, compNode>::iterator &v) {
 
-#ifdef DEBUG
-	printf ("(%d -> %d) ", xi, (*j) -> Index ());
-	fflush (stdout);
-#endif
+  //printf ("%d is gray\n", (*v) -> Index ());
+  (*v) -> color () = DepNode::DEP_GRAY; 
+  std::set <DepNode *, compNode> *list = (*v) -> DepList ();
 
+  // gen2 contains the adjacency list of this node
+
+  for (std::set <DepNode *, compNode>::iterator 
+	 j = list -> begin ();
+       j  != list -> end   (); ++j)
+
+    if ((*j) -> color () == DepNode::DEP_GRAY) {
+      //printf ("%d is gray\n", (*j) -> Index ());
+      return true;
+    }
+    else {
+
+      if ((*j) -> color () == DepNode::DEP_WHITE)
+	//printf ("visiting %d\n", (*j) -> Index ());
+
+      if (((*j) -> color () == DepNode::DEP_WHITE) && (visit (j))) {
+	//printf ("%d is true\n", (*j) -> Index ());
 	return true;
       }
-      else already_visited.insert (*j);
     }
-  }
 
+  (*v) -> color () = DepNode::DEP_BLACK;
+  //printf ("%d is black\n", (*v) -> Index ());
   return false;
 }

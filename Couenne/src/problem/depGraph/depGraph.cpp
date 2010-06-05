@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    depGraph.cpp
  * Author:  Pietro Belotti
  * Purpose: methods for manipulating dependencies between variables
@@ -14,7 +14,7 @@
 
 using namespace Couenne;
 
-//#define DEBUG
+#define DEBUG
 
 // Methods of the class DepNode ///////////////////////////////////////////////////////////
 
@@ -25,6 +25,11 @@ bool DepNode::depends (int xi, bool recursive,
   // check if any node of the forward star has index xi
   for (std::set <DepNode *, compNode>::iterator i = depList_ -> begin (); 
        i != depList_ -> end (); ++i) {
+
+#ifdef DEBUG
+    printf ("checking dependence of %d on %d\n", (*i) -> Index (), xi); 
+    //    fflush (stdout);
+#endif
 
     if (!already_visited || 
 	(already_visited -> find (*i) == already_visited -> end ())) {

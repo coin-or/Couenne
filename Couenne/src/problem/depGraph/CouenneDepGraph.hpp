@@ -1,6 +1,6 @@
-/* $Id$ */
-/*
- * Name:    depGraph.hpp
+/* $Id$
+ *
+ * Name:    CouenneDepGraph.hpp
  * Author:  Pietro Belotti
  * Purpose: class for manipulating dependencies between variables
  *
@@ -32,6 +32,11 @@ struct compNode {
 
 class DepNode {
 
+public:
+
+  /// color used in DFS for checking cycles
+  enum dep_color {DEP_WHITE, DEP_GRAY, DEP_BLACK};
+
 protected:
 
   /// index of variable associated with node
@@ -44,6 +49,9 @@ protected:
   /// order in which this variable should be updated, evaluated, etc.
   int order_;
 
+  /// color used in DFS for checking cycles
+  enum dep_color color_;
+
 public:
 
   /// fictitious constructor: only fill in index (such object is used
@@ -51,7 +59,8 @@ public:
   DepNode  (int ind):
     index_   (ind),
     depList_ (new std::set <DepNode *, compNode>),
-    order_   (-1) {}
+    order_   (-1),
+    color_   (DEP_WHITE) {}
 
   /// destructor
   ~DepNode () 
@@ -78,6 +87,10 @@ public:
 
   /// debugging procedure
   void print (int = 0, bool descend = false) const;
+
+  /// return or set color of a node
+  enum dep_color &color () 
+  {return color_;}
 };
 
 

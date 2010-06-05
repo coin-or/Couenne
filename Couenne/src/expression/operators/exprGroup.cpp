@@ -263,8 +263,21 @@ int exprGroup::DepList (std::set <int> &deplist,
 
   int deps = exprOp::DepList (deplist, type);
 
-  for (lincoeff::iterator el = lcoeff_.begin (); el != lcoeff_.end (); ++el)
+  for (lincoeff::iterator el = lcoeff_.begin (); el != lcoeff_.end (); ++el) {
+
+    /*printf ("prima ["); 
+    el -> first -> print ();
+    printf ("]: {");
+    for (std::set <int>::iterator i=deplist.begin (); i != deplist.end(); ++i)
+    printf ("%d ", *i);*/
+
     deps += el -> first -> DepList (deplist, type);
+
+    /*printf ("}, dopo: {");
+    for (std::set <int>::iterator i=deplist.begin (); i != deplist.end(); ++i)
+      printf ("%d ", *i);
+      printf ("}\n");*/
+  }
 
   return deps;
 }
