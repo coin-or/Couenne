@@ -63,6 +63,11 @@ void exprExp::generateCuts (expression *aux, //const OsiSolverInterface &si,
 		     x_ind, oppslope);
   }
 
+  // no need to continue if this is an expression of the form y<=e^x
+  // (the upper segment is needed only)
+  if (sign == expression::AUX_LEQ)
+    return;
+
   // add tangent points: first choose sampling points
 
   const CouNumber logMC = log (COU_MAX_COEFF);
@@ -72,6 +77,5 @@ void exprExp::generateCuts (expression *aux, //const OsiSolverInterface &si,
   if (u >   logMC) u =   logMC;
 
   // approximate the exponential function from below
-  if (sign != expression::AUX_LEQ)
-    cg -> addEnvelope (cs, +1, exp, exp, w_ind, x_ind, x, l, u, chg, true);
+  cg -> addEnvelope (cs, +1, exp, exp, w_ind, x_ind, x, l, u, chg, true);
 }

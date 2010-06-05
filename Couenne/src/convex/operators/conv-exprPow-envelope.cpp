@@ -32,11 +32,10 @@ void addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
   // set x to get a deeper cut (so that we get a tangent which is
   // orthogonal with line through current- and tangent point)
 
-  if (!(cg -> isFirst ())) {
+  powertriplet pt (k);
 
-    powertriplet pt (k);
+  if (!(cg -> isFirst ()))
     x = powNewton (x, y, &pt);
-  }
 
   if      (x<l) x=l;
   else if (x>u) x=u;
@@ -46,15 +45,34 @@ void addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
   CouNumber powThres = (k<=1) ? COU_MAX_COEFF: pow (COU_MAX_COEFF, 1./k),
             step     = (1 + log (1. + (double) (cg -> nSamples ()))) * powThres / COU_MAX_COEFF;
 
-  if (l < - powThres + 1) {
-    l = x - step;
-    if (u > powThres - 1)
-      u = x + step;
-  } else 
-    if (u > powThres - 1) 
-      u = x + step;
+  // If the bounds are too large, the linearization cuts might have
+  // large coefficients. To prevent that, Couenne used to set very
+  // small fictitious bounds, resulting in
+  //
+  // 1) still valid cuts, but
+  // 2) a very abrupt change in their coefficients; 
+  // 3) cuts that may result in an LP solution far away from x (this
+  // behavior recalls that of bundle methods for NDO);
+  // 4) a non-exact linearization at the bounds (in theory, necessary
+  // for convergence...).
+  //
+  // New values for l and u, if necessary, are therefore set to the
+  // maximum bounds if l and/or u are beyond them.
+  //
+  // Thanks to Sergey for pointing this out.
 
-  powertriplet pt (k);
+  if (l < - powThres + 1) {
+    l = - powThres + 1; // keeps bounds reasonably large 
+    //l = x - step;
+    if (u > powThres - 1) {
+      u = powThres - 1;
+    //u = x + step;
+    }
+  } else 
+    if (u > powThres - 1) {
+      u = powThres - 1;
+      //u = x + step;
+    }
 
   // convex envelope
   cg -> addEnvelope (cs, sign, &pt, 
