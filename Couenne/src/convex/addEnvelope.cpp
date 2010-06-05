@@ -84,11 +84,23 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
       //
       // Thanks to Sergey for gently encouraging me to do this :-)
 
-      CouNumber 
-	x1 = floor (x),  y1 = ft -> F (x1),
-	x2 = ceil  (x),  y2 = ft -> F (x2);
 
-      if (isnan (y1) || isnan (y2) || 
+      CouNumber x1, x2, y1, y2;
+
+      if ((x1 = floor (x)) < l)
+	x1 = ceil (l - COUENNE_EPS);
+
+      y1 = ft -> F (x1);
+
+      x2 = ceil (x);
+
+      if (fabs (x2-x1) < COUENNE_EPS)
+	x2 += 1.;
+
+      y2 = ft -> F (x2);
+
+      if ((x2 > u)   ||
+	  isnan (y1) || isnan (y2) || 
 	  isinf (y1) || isinf (y2)) // fall back to non-integer cut
 
 	createCut (cs, ft -> F (x) + opp_slope * x, sign, w_ind, 1., 
