@@ -7,6 +7,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdint.h>
+
 #include "CouenneProblem.hpp"
 
 #include "CouenneTypes.hpp"

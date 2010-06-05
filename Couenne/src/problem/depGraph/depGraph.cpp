@@ -7,7 +7,9 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h>
 #include <cstdlib>
+
 #include "depGraph.hpp"
 
 //#define DEBUG

@@ -7,6 +7,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h>
+
 #include "expression.hpp"
 #include "exprAux.hpp"
 #include "exprClone.hpp"

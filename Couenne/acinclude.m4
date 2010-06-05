@@ -6399,7 +6399,7 @@ AC_MSG_RESULT([$SED])
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 #
-## $Id: coin.m4 1272 2009-04-24 16:33:02Z andreasw $
+## $Id: coin.m4 1331 2009-07-16 16:00:50Z andreasw $
 #
 # Author: Andreas Wachter    IBM      2006-04-14
 
@@ -6689,6 +6689,10 @@ AC_DEFUN([AC_COIN_PROJECTDIR_INIT],
 [# Initialize the ADDLIBS variable
 ADDLIBS="-lm $LIBS"
 AC_SUBST(ADDLIBS)
+
+# As backup, we make sure we don't loose an FLIBS if it has been set
+# by the user
+save_FLIBS="$FLIBS"
 
 # Initialize the FADDLIBS variable (which is to be used with a fortran
 # compiler and will not include FLIBS)
@@ -7755,10 +7759,9 @@ AC_BEFORE([AC_PROG_F77],[$0])dnl
 
 AC_LANG_PUSH([Fortran 77])
 
-save_FLIBS="$FLIBS"
-
 AC_F77_WRAPPERS
 
+# If FLIBS has been set by the user, we just restore its value here
 if test x"$save_FLIBS" != x; then
   FLIBS="$save_FLIBS"
 else
@@ -7768,6 +7771,7 @@ else
     for flag in $FLIBS; do
       case $flag in
         -lcrt*.o) ;;
+        -lcygwin) ;;
                *) my_flibs="$my_flibs $flag" ;;
       esac
     done
@@ -9715,6 +9719,8 @@ if test x"$use_thirdpartyglpk" = xtry ; then
 	      [Define to 1 if $1 package is available])
     m4_tolower(coin_has_$1)=true
     m4_tolower($1_libcheck)=no
+    m4_toupper($1OBJDIR)=`cd $coin_glpkobjdir; pwd`
+    AC_SUBST(m4_toupper($1OBJDIR))
     AC_MSG_NOTICE([Using $1 in ThirdParty/Glpk])
   fi
 fi
