@@ -14,6 +14,7 @@
 #include "CouenneTypes.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneFunTriplets.hpp"
+#include "CouenneProblem.hpp"
 
 using namespace Couenne;
 
@@ -56,11 +57,63 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
   // Add tangent in any case
 
   if (((!firstcall_) || ((x >= l) && (x <= u)))
-      && (fabs (opp_slope) < COUENNE_INFINITY))
-    createCut (cs, ft -> F (x) + opp_slope * x, sign, w_ind, 1., 
-	       x_ind, opp_slope, -1, 0., is_global);
+      && (fabs (opp_slope) < COUENNE_INFINITY)) {
 
-    //      addTangent (cs, w_ind, x_ind, x, f (x), fprime (x), sign);
+    if (problem_ -> Var (x_ind) -> isInteger ()) {
+
+      // If the independent variable is integer, the envelope cut can
+      // be made tighter: it is the line through
+      //
+      // (x1,y1) = (floor (x), ft -> F (floor (x))) and
+      // (x2,y2) = (ceil  (x), ft -> F (ceil  (x)))
+      //
+      // therefore the inequality will be
+      //
+      // y + ax >=<  b
+      //
+      // where the sign is determined by the variable sign, and since
+      // the line has equation
+      //
+      // x  - x1     y  - y1
+      // -------  =  -------
+      // x2 - x1     y2 - y1
+      //
+      //                  y1 - y2              y1 - y2
+      // we have that a = ------- and b = y1 + -------  x1
+      //                  x2 - x1              x2 - x1
+      //
+      // Thanks to Sergey for gently encouraging me to do this :-)
+
+      CouNumber 
+	x1 = floor (x),  y1 = ft -> F (x1),
+	x2 = ceil  (x),  y2 = ft -> F (x2);
+
+      if (isnan (y1) || isnan (y2) || 
+	  isinf (y1) || isinf (y2)) // fall back to non-integer cut
+
+	createCut (cs, ft -> F (x) + opp_slope * x, sign, w_ind, 1., 
+		   x_ind, opp_slope, -1, 0., is_global);
+
+      else {
+
+	CouNumber 
+	  slope = (y1-y2) / (x2-x1),
+	  rhs   = y1 + slope * x1;
+
+	createCut (cs, rhs, sign, w_ind, 1., 
+		   x_ind, rhs, -1, 0., is_global);
+      }
+
+      // TODO: if the DEPENDENT variable is integer only, in principle
+      // the cut can be made tighter, but not as simply.
+
+    }
+    else createCut (cs, ft -> F (x) + opp_slope * x, sign, w_ind, 1., 
+		    x_ind, opp_slope, -1, 0., is_global);
+  }
+
+  // If this is the first call, add a set of cuts by dividing the
+  // interval in a grid and add a cut at each point of the grid
 
   if ((convtype_ == UNIFORM_GRID) || firstcall_) {
 
