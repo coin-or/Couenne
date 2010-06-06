@@ -62,7 +62,7 @@ namespace Couenne {
     void setObj (int index, expression *newObj);
 
     /// sets the initial solution for the NLP solver
-    void setInitSol (CouNumber *sol);
+    void setInitSol (const CouNumber *sol);
 
     /// solves and returns the optimal objective function and the
     /// solution

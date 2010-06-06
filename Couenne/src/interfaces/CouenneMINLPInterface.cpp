@@ -1,9 +1,12 @@
-/*
+/* $Id$
  *
+ * Name:    CouenneMINLPInterface
+ * Author:  Pietro Belotti
+ * Purpose: MINLP interface with computation of gradient and Jacobian
+ *          through CouenneExpressions
  *
- *
- *
- *
+ * (C) Pietro Belotti 2010
+ * This file is licensed under the Common Public License (CPL)
  */
 
 #include "CouenneMINLPInterface.hpp"
@@ -16,7 +19,7 @@ void CouenneMINLPInterface::setObj (int index, expression *newObj) {
 }
 
 /// sets the initial solution for the NLP solver
-void CouenneMINLPInterface::setInitSol (CouNumber *sol) {
+void CouenneMINLPInterface::setInitSol (const CouNumber *sol) {
   
 }
 
