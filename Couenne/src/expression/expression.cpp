@@ -8,6 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <iostream>
+
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
@@ -229,6 +231,24 @@ void exprCopy::realign (const CouenneProblem *p) {
     delete trash;
   }
 }
+
+/// printing method for copy expressions
+void exprCopy::print (std::ostream &out, bool descend) const
+{copy_ -> Original () -> print (out, descend);}
+//{out << "["; copy_ -> print (out, descend); out << "]<" << copy_ << ">"; } // Must go
+
+
+/// printing method
+void exprClone::print (std::ostream &out, bool descend) const
+{copy_ -> Original () -> print (out, descend);}
+//{out << "{"; copy_ -> print (out, descend); out << "}<" << copy_ << ">"; } // Must go
+
+
+/// printing method
+void exprStore::print (std::ostream &out, bool descend) const
+{copy_ -> Original () -> print (out, descend);}
+//{out << "<"; copy_ -> print (out, descend); out << "><" << copy_ << ">"; }
+
 
 
 // /// redirect variables to proper variable vector

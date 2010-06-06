@@ -42,8 +42,8 @@ void addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
 
   // limit the bounds for the envelope
 
-  CouNumber powThres = (k<=1) ? COU_MAX_COEFF: pow (COU_MAX_COEFF, 1./k),
-            step     = (1 + log (1. + (double) (cg -> nSamples ()))) * powThres / COU_MAX_COEFF;
+  CouNumber powThres = (k<=1) ? COU_MAX_COEFF: pow (COU_MAX_COEFF, 1./k);
+  //step     = (1 + log (1. + (double) (cg -> nSamples ()))) * powThres / COU_MAX_COEFF;
 
   // If the bounds are too large, the linearization cuts might have
   // large coefficients. To prevent that, Couenne used to set very

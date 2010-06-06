@@ -145,7 +145,7 @@ void exprAux::print (std::ostream &out, bool descend) const {
 			       // integer_. Change all "isInteger()"
 			       // to "isInteger() const"
     else          out << "w_";
-    out << varIndex_;
+    out << varIndex_;// << "<" << this << ">";
   }
 }
 

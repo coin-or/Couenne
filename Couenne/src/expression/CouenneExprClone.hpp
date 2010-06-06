@@ -50,11 +50,9 @@ class exprClone: public exprCopy {
     copy_ = NULL; // unlink pointer so that ~exprCopy does nothing
   }
 
-  /// I/O
-  //void print (std::ostream &out = std::cout, 
-  //bool descend      = false) const
-  //{copy_ -> Original () -> print (out, descend);}
-  //{out << "{"; copy_ -> print (out, descend); out << "}"; } // Must go
+  /// Printing
+  virtual void print (std::ostream &out = std::cout, 
+		      bool descend      = false) const;
 
   /// value
   inline CouNumber Value () const 

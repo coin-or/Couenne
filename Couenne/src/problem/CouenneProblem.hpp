@@ -283,7 +283,7 @@ class CouenneProblem {
   // Get and set current variable and bounds
   inline CouNumber   &X     (int i) const {return domain_.x   (i);} ///< \f$x_i\f$
   inline CouNumber   &Lb    (int i) const {return domain_.lb  (i);} ///< lower bound on \f$x_i\f$
-  inline CouNumber   &Ub    (int i) const {return domain_.ub  (i);} ///< upper bound on\f$x_i\f$
+  inline CouNumber   &Ub    (int i) const {return domain_.ub  (i);} ///< upper bound on \f$x_i\f$
 
   // get and set current variable and bounds
   inline CouNumber  *X     () const {return domain_.x  ();} ///< Return vector of variables

@@ -106,9 +106,7 @@ class exprCopy: public expression {
 
   /// I/O
   virtual void print (std::ostream &out = std::cout, 
-		      bool descend      = false) const
-  {copy_ -> Original () -> print (out, descend);}
-  //{out << "["; copy_ -> print (out, descend); out << "]"; } // Must go
+		      bool descend      = false) const;
 
   /// value
   virtual inline CouNumber Value () const 

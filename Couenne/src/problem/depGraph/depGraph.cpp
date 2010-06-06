@@ -4,21 +4,22 @@
  * Author:  Pietro Belotti
  * Purpose: methods for manipulating dependencies between variables
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
 #include <cstdlib>
 #include <cstdio>
+
 #include "CouenneDepGraph.hpp"
 
 using namespace Couenne;
 
-#define DEBUG
+//#define DEBUG
 
 // Methods of the class DepNode ///////////////////////////////////////////////////////////
 
-/// does this variable depend on variable with index xi?
+/// does this variable depend on variable with index xi? (used in checkCycles)
 bool DepNode::depends (int xi, bool recursive, 
 		       std::set <DepNode *, compNode> *already_visited) const {
 
@@ -155,10 +156,10 @@ bool DepGraph::depends (int wi, int xi, bool recursive) {
   std::set <DepNode *, compNode>::iterator i = vertices_. find (el);
   delete el;
 
-  std::set <DepNode *, compNode> already_visited;
-
-  if (i != vertices_. end ())               // if such element is in the set
+  if (i != vertices_. end ()) {              // if such element is in the set
+    std::set <DepNode *, compNode> already_visited;
     return (*i) -> depends (xi, recursive, &already_visited); // then search it
+  }
   else return false;
 }
 

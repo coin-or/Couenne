@@ -52,7 +52,7 @@ void CouenneProblem::print (std::ostream &out) {
 	    << (((*i) -> sign () == expression::AUX_EQ)  ? ':' :
 		((*i) -> sign () == expression::AUX_GEQ) ? '>' : 
 		((*i) -> sign () == expression::AUX_LEQ) ? '<' : '?')
-	    << "= ";
+	    << "= ";// << "<" << (*i) -> Image () << "> ";
 
 	if ((*i) -> Image ())
 	  (*i) -> Image () -> print (out, false); 

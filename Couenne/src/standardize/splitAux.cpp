@@ -178,6 +178,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
       CouNumber coeff = 1;
       int index = alist [i] -> Index ();
 
+      // if index < 0, this is an expression and not a single variable
       if (index < 0)
 	elementBreak (alist [i], index, coeff);
 
@@ -229,8 +230,8 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
       newarglist = new expression * [nargs + 1];
 
-      for (j=0; j<mid;   j++) newarglist [j]   = alist [j] -> clone (&domain_);
-      for (j++; j<nargs; j++) newarglist [j-1] = alist [j] -> clone (&domain_);
+      for (j=0; j<mid;   j++) newarglist [j]   = alist [j];// -> clone (&domain_);
+      for (j++; j<nargs; j++) newarglist [j-1] = alist [j];// -> clone (&domain_);
 
       // nl arglist is done, later decide whether to incorporate it as
       // it is or with a coefficient
@@ -266,10 +267,10 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
       register int j;
 
-      if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-	//for (j=0; j<mid;  j++) printf ("{%g x%d} ", lincoe [j], linind [j]);
-	//for (j++; j<nlin; j++) printf ("{%g x%d} ", lincoe [j], linind [j]);
-      }
+      //if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      //for (j=0; j<mid;  j++) printf ("{%g x%d} ", lincoe [j], linind [j]);
+      //for (j++; j<nlin; j++) printf ("{%g x%d} ", lincoe [j], linind [j]);
+      //}
 
       CouNumber divider = -1. / auxcoe;
 
@@ -320,9 +321,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     if (which >= 0) --nargs; // ...the nonlinear sum
     else            --nlin;  // ...the linear part
 
-    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("\n::: auxcoe %g, rhs %g, lin %d, nl %d\n", auxcoe, rhs, nlin, nargs);
-    }
+    jnlst_ -> Printf (J_ALL, J_REFORMULATE, "\n::: auxcoe %g, rhs %g, lin %d, nl %d\n", auxcoe, rhs, nlin, nargs);
 
     // all is ready to take the independent stuff to the other side of
     // the inequality.
