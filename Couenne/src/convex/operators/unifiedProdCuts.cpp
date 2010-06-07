@@ -27,10 +27,8 @@ void contourCut (const CouenneCutGenerator *cg,
 		 CouNumber wb,               // bound on w
 		 int sign,                   // is wb lower or upper?
 		 CouNumber x0, CouNumber y0, // (allegedly) outside point
-		 CouNumber x1, CouNumber y1, //             inside
+		 CouNumber x1, CouNumber y1, //              inside
 		 int xi, int yi, int wi) {   // indices of the variables
-
-  // TODO: generalize to two bounds [l,u] for w
 
   // Upper right corner of the bounding box of (x,y) is feasible,
   // the opposite corner is not, hence there is a cut violated by
@@ -54,18 +52,37 @@ void contourCut (const CouenneCutGenerator *cg,
     else                                            {xp = sqrt (fabs(wb/yp)); if (xsign<0) xp=-xp;}//y
   else if (((ysign > 0) ? yp : -yp) <= COUENNE_EPS) {yp = sqrt (fabs(wb/xp)); if (ysign<0) yp=-yp;}//x
 
+  // pt here describes a function of the form wb*x^(-1)
   kpowertriplet pt (-1, wb);
 
   CouNumber 
     // tangent point closest to current point
-    xt    = powNewton (xp, yp, &pt),
-    // coefficient of w in the lifted cut
-    alpha = ((fabs (x1) < COUENNE_INFINITY) && 
-	     (fabs (y1) < COUENNE_INFINITY)) ? 
-       ((2*wb/xt - y1 - wb*x1 / (xt*xt)) / (x1*y1 - wb)) : 0;
+    xt = powNewton (xp, yp, &pt),
+    *lb = cg -> Problem () -> Lb (),
+    *ub = cg -> Problem () -> Ub (),
+    xL = lb [xi], xU = ub [xi],
+    yL = lb [yi], yU = ub [yi];  
 
-  //  printf ("+++++ %d %d %d. [%c] xp (%g,%g) wb %g out(%g,%g) in(%g,%g) --> [%g,%g] alpha %g\n",
-  //	         xi, yi, wi, (sign<0) ? '-' : '+', xp, yp, wb, x0, y0, x1, y1, xt, wb/xt, alpha);
+  if (xt == 0.) // no tangents are possible
+    return;
+
+  // check if (xt,wb/xt) is outside of bounds. If so, project it back
+  // into the bounding box
+  if ((xt < xL) && (xL != 0.)) xt = xL;
+  if ((xt > xU) && (xU != 0.)) xt = xU;
+
+  if ((wb / xt < yL) && (yL != 0.)) xt = wb / yL;
+  if ((wb / xt > yU) && (yU != 0.)) xt = wb / yU;
+
+  // coefficient of w in the lifted cut
+  CouNumber
+    alpha = ((fabs (x1) < COUENNE_INFINITY) && 
+	     (fabs (y1) < COUENNE_INFINITY) &&
+	     (fabs (x1*y1 - wb) > 0.)) ? 
+    ((2*wb/xt - y1 - wb*x1 / (xt*xt)) / (x1*y1 - wb)) : 0;
+
+  //printf ("+++++ %d %d %d. [%c] xp (%g,%g) wb %g out(%g,%g) in(%g,%g) --> [%g,%g] alpha %g\n",
+  //xi, yi, wi, (sign<0) ? '-' : '+', xp, yp, wb, x0, y0, x1, y1, xt, wb/xt, alpha);
 
   if (alpha != 0)
     cg     -> createCut (cs, alpha*wb + 2*wb/xt, sign, wi, alpha, yi, 1., xi, wb/(xt*xt));
@@ -142,33 +159,30 @@ void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
   //
   //    alpha = [-yu + l/xt - l/(xt^2)(xu-xt)] / (xu*yu - l)
 
-  if (sign == expression::AUX_GEQ)
-    return; // nothing else to do here
-
   if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepSimple || 
       fabs (wu - wl) < COUENNE_EPS) {
 
     if ((x0 > xl + COUENNE_EPS) && (y0 > yl + COUENNE_EPS) &&
 	(x0 < xu + COUENNE_EPS) && (y0 < yu + COUENNE_EPS)) {
 
-      if (cLW && (wl > 0) && (x0*y0 < wl)) { // that is, if (x0,y0) is out of the contour
+      if (cLW && (wl > 0) && (x0*y0 < wl) && (sign != expression::AUX_GEQ)) { // that is, if (x0,y0) is out of the contour
 
 	CouNumber xyl = xl * yl;
 
 	// first and third orthant
-	if      ((xyl <  wl) && (xu*yu >=wl)) contourCut (cg,cs, x0,y0, wl, +1, xl,yl, xu,yu, xi,yi,wi);
-	else if ((xyl >= wl) && (xu*yu < wl)) contourCut (cg,cs, x0,y0, wl, -1, xu,yu, xl,yl, xi,yi,wi);
+	if      ((xyl <  wl) && (xu*yu >= wl)) contourCut (cg,cs, x0,y0, wl, +1, xl,yl, xu,yu, xi,yi,wi);
+	else if ((xyl >= wl) && (xu*yu <  wl)) contourCut (cg,cs, x0,y0, wl, -1, xu,yu, xl,yl, xi,yi,wi);
       }
 
       // Similarly for w <= u < 0 
 
-      if (cRW && (wu < 0) && (x0*y0 > wu)) { // that is, if (x0,y0) is out of the contour
+      if (cRW && (wu < 0) && (x0*y0 > wu) && (sign != expression::AUX_LEQ)) { // that is, if (x0,y0) is out of the contour
 
 	CouNumber xuyl = xl * yu;
 
 	// second and fourth orthant
-	if      ((xuyl > wu) && (xl*yu <=wu)) contourCut (cg,cs, x0,y0, wu, +1, xu,yl, xl,yu, xi,yi,wi);
-	else if ((xuyl <=wu) && (xl*yu > wu)) contourCut (cg,cs, x0,y0, wu, -1, xl,yu, xu,yl, xi,yi,wi);
+	if      ((xuyl > wu) && (xl*yu <= wu)) contourCut (cg,cs, x0,y0, wu, +1, xu,yl, xl,yu, xi,yi,wi);
+	else if ((xuyl <=wu) && (xl*yu >  wu)) contourCut (cg,cs, x0,y0, wu, -1, xl,yu, xu,yl, xi,yi,wi);
       }
     }
   } else
