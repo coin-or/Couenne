@@ -52,9 +52,9 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
   if (i2 >= 0) {if (fabs (c2) > COU_MAX_COEFF) numerics = true; nterms++;} else c2 = 0;
   if (i3 >= 0) {if (fabs (c3) > COU_MAX_COEFF) numerics = true; nterms++;} else c3 = 0;
 #else
-  if (i1 >= 0){if (badCoeff (c1)) numerics = true; nterms++;} else c1 = 0;
-  if (i2 >= 0){if (badCoeff (c2)) numerics = true; nterms++;} else c2 = 0;
-  if (i3 >= 0){if (badCoeff (c3)) numerics = true; nterms++;} else c3 = 0;
+  if (i1 >= 0) {if (badCoeff (c1)) numerics = true; nterms++;} else c1 = 0;
+  if (i2 >= 0) {if (badCoeff (c2)) numerics = true; nterms++;} else c2 = 0;
+  if (i3 >= 0) {if (badCoeff (c3)) numerics = true; nterms++;} else c3 = 0;
 #endif
 
   if (!nterms) // nonsense cut
@@ -78,13 +78,13 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
     const CouNumber *x = problem_ -> X ();
 
     // compute violation
-    CouNumber violation = 0;
+    CouNumber violation = 0.;
 
     if (i1 >= 0) violation += c1 * x [i1];
     if (i2 >= 0) violation += c2 * x [i2];
     if (i3 >= 0) violation += c3 * x [i3];
 
-    // return 0 if not violated
+    // quit if not violated
 
     if ((violation < ub + 0 * COUENNE_EPS) &&
 	(violation > lb - 0 * COUENNE_EPS))

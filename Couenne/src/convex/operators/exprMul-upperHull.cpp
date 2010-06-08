@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: generates upper envelope of a product
  *
- * (C) Carnegie-Mellon University, 2010.
+ * (C) Pietro Belotti, 2010.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -56,13 +56,12 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
   // Preprocess to reduce everything to a first-orthant problem
 
-  if ((wl <  0 && wu >  0)) // nothing to tighten
+  if ((wl < 0 && wu > 0)) // nothing to tighten
     return;
 
   // project back into bounding box
   if (x0 < xl) x0 = xl;  if (x0 > xu) x0 = xu;
   if (y0 < yl) y0 = yl;  if (y0 > yu) y0 = yu;
-
 
   // preliminary bound tightening
   if (wl >= 0) {
@@ -143,17 +142,11 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
       (yLow <= yl && xUpp >= xu))
     return;
 
-  // OK, if you are here there will be at least one cut. Define
-  // coefficients and rhs --- will have to change them back if (flipX
-  // || flipY)
+  // There will be at least one cut. Define coefficients and rhs ---
+  // will have to change them back if (flipX || flipY)
 
   CouNumber
-    cX,  cY,  cW,  c0,  c0X,  c0Y,  c0W,
-    cXp, cYp, cWp, c0p, c0Xp, c0Yp, c0Wp; // these only if two inequalities are added 
-
-  bool 
-    twoIneqs   = false, // generate two inequalities for weird case
-    upperCurve = false; // has lifting taken place from upper curve?
+    cX,  cY,  cW,  c0,  c0X,  c0Y,  c0W;
 
   if (xLow >= xl && xUpp <= xu &&
       yLow >= yl && yUpp <= yu) {
@@ -188,14 +181,9 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
     }
 
     // find intersection on low curve on half line through new point and (x0,y0)
-    if (findIntersection (xUpp, yUpp, x0, y0, &wl, NULL, &xLow, &yLow, NULL, NULL))
-      return;
-
-    if (xLow < xl || yLow < yl) // McCormick's suffice
-      return;
-
-    // Otherwise, lift inequality on lower point
-    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW))
+    if ((findIntersection (xUpp, yUpp, x0, y0, &wl, NULL, &xLow, &yLow, NULL, NULL)) ||
+	(xLow < xl || yLow < yl) ||                            // McCormick's suffice
+	(genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW))) // Otherwise, lift inequality on lower point
       return;
 
     c0X = cX * xLow;
@@ -225,8 +213,6 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
     if (xUpp > xu || yUpp > yu) // McCormick's suffice
       return;
-
-    upperCurve = true;
 
     // Otherwise, lift inequality on UPPER point
     if (genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cX, cY, cW))
@@ -262,9 +248,10 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
     // Nothing to find. Just separate two inequalities at the same
     // point, just using different support
-    //if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX,  cY,  cW) ||
-    //genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cXp, cYp, cWp))
-    //return;
+    //
+    // if (genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX,  cY,  cW) ||
+    //     genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cXp, cYp, cWp))
+    //   return;
 
     // A more clever way (courtesy of Andrew J. Miller): find the
     // intersect on the lower (upper) curve on the line through xLP
@@ -272,12 +259,8 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
     CouNumber xLow2, yLow2, xUpp2, yUpp2;
 
-    if (findIntersection (xLow, yLow, x0, y0, NULL, &wu, NULL, NULL, &xUpp2, &yUpp2) && 
-	genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW))
-      return;
-
-    if (findIntersection (xUpp, yUpp, x0, y0, &wl, NULL, &xLow2, &yLow2, NULL, NULL) &&
-	genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cX, cY, cW))
+    if ((findIntersection (xLow, yLow, x0, y0, NULL, &wu, NULL,   NULL,   &xUpp2, &yUpp2) || genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW)) &&
+	(findIntersection (xUpp, yUpp, x0, y0, &wl, NULL, &xLow2, &yLow2, NULL,   NULL)   || genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cX, cY, cW)))
       return;
 
 #ifdef DEBUG
@@ -285,9 +268,9 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 	    cX,cY,cW);
 #endif
 
-//     c0X = cX * xLow;    c0Xp = cXp * xUpp;
-//     c0Y = cY * yLow;    c0Yp = cYp * yUpp;
-//     c0W = cW * wl;      c0Wp = cWp * wu;  
+    c0X = cX * xLow; //   c0Xp = cXp * xUpp;
+    c0Y = cY * yLow; //   c0Yp = cYp * yUpp;
+    c0W = cW * wl;   //   c0Wp = cWp * wu;  
 
 //     twoIneqs = true;
 
@@ -304,11 +287,11 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
   // Re-transform back into original variables
 
-  if (flipX) {cX = -cX; cXp = -cXp; c0X = -c0X; c0Xp = -c0Xp;}
-  if (flipY) {cY = -cY; cYp = -cYp; c0Y = -c0Y; c0Yp = -c0Yp;}
-  if (flipW) {cW = -cW; cWp = -cWp; c0W = -c0W; c0Wp = -c0Wp;}
+  if (flipX) {cX = -cX; c0X = -c0X;}
+  if (flipY) {cY = -cY; c0Y = -c0Y;}
+  if (flipW) {cW = -cW; c0W = -c0W;}
 
-  c0  = c0X  + c0Y  + c0W;
+  c0 = c0X + c0Y + c0W;
 
 #ifdef DEBUG
   printf ("there are cuts\n");
@@ -316,11 +299,6 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
   //cg -> createCut (cs, alpha*wb + 2*wb/xt, sign, wi, alpha, yi, 1., xi, wb/(xt*xt));
   cg   -> createCut (cs, c0,  1, wi, cW,  yi, cY,  xi, cX);
-
-  if (twoIneqs) {
-    c0p = c0Xp + c0Yp + c0Wp;
-    cg -> createCut (cs, c0p, 1, wi, cWp, yi, cYp, xi, cXp);
-  }
 }
 
 
@@ -359,7 +337,7 @@ int findIntersection (CouNumber  x0, CouNumber  y0,
 
   // These are the solution to the above equation.
 
-  CouNumber tL1, tL2, tU1, tU2, tL, tU;
+  CouNumber tL1, tL2, tU1, tU2, tL=0., tU=0.;
 
   if (wl) {
     tL1 = (- b - sqrt (b*b - 4*a*(c-*wl))) / (2*a);
@@ -422,14 +400,6 @@ int genMulCoeff (CouNumber x1, CouNumber y1,
 
   // should ALWAYS be negative
   cW = (2*xD*yD - (cX*xO + cY*yO)) / (xO*yO - xD*yD);
-
-  //c0 += cW * xD*yD;
-
-  //if ((xO < xD) || (yO < yD))
-  //cW = -cW;
-
-  //if (xO*yO < xD*yD)
-  //cW = -cW;
 
   return 0;
 }
