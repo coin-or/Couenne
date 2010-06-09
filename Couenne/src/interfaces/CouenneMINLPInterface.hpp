@@ -60,6 +60,10 @@ namespace Couenne {
 
   public:
 
+    /// REMOVE --- backward compatibility
+    /// sets objective[index] at newObj 
+    void setObj (int index, expression *newObj) {}
+
     /// sets the initial solution for the NLP solver
     void setInitSol (const CouNumber *sol);
 

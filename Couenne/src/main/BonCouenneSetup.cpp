@@ -516,7 +516,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
     //    nlpHeuristic->setNlp(*ci,false);
 
-    nlpHeuristic -> setNlp (NULL, false); // TODO: load CouenneMINLPInterface
+    //nlpHeuristic -> setNlp (NULL, false); // TODO: load
+  				 	    // CouenneMINLPInterface and
+					    // restore this
 
     nlpHeuristic -> setCouenneProblem (couenneProb_);
     nlpHeuristic -> setNumberSolvePerLevel (numSolve);
