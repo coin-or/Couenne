@@ -87,7 +87,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
     jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM,
 		      "Couenne: initial solution (value %g) is MINLP feasible\n",
 		      cutoff);
-    setCutOff (cutoff);    
+    setCutOff (cutoff, X ());    
   }
 
   // fill dependence_ structure

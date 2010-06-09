@@ -95,15 +95,30 @@ NlpSolveHeuristic::setNlp(OsiTMINLPInterface &nlp, bool cloneNlp){
 }
   
 void
-NlpSolveHeuristic::setCouenneProblem(CouenneProblem * couenne){
-  couenne_ = couenne;}
+NlpSolveHeuristic::setCouenneProblem(CouenneProblem * couenne)
+{couenne_ = couenne;}
 
 
 int
-NlpSolveHeuristic::solution( double & objectiveValue, double * newSolution){
+NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
+
+  class Exception {
+  };
+
+  Exception noSolution;
+
+  // do heuristic the usual way, but if for any reason (time is up, no
+  // better solution found) there is no improvement, get the best
+  // solution from the GlobalCutOff object in the pointer to the
+  // CouenneProblem and return it instead.
+  //
+  // Although this should be handled by Cbc, very often this doesn't
+  // happen.
+
+  try {
 
   if (CoinCpuTime () > couenne_ -> getMaxCpuTime ())
-    return 0;
+    throw noSolution;
 
   OsiSolverInterface * solver = model_ -> solver();
 
@@ -113,7 +128,7 @@ NlpSolveHeuristic::solution( double & objectiveValue, double * newSolution){
   if(babInfo){
     babInfo->setHasNlpSolution(false);
     if(babInfo->infeasibleNode()){
-      return 0;
+      throw noSolution;
     }
   }
 
@@ -124,7 +139,7 @@ NlpSolveHeuristic::solution( double & objectiveValue, double * newSolution){
   // check depth
   if (numberSolvePerLevel_ > -1){
     if (numberSolvePerLevel_ == 0) 
-      return 0;
+      throw noSolution;
 
     const int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
 
@@ -135,7 +150,7 @@ NlpSolveHeuristic::solution( double & objectiveValue, double * newSolution){
   }
 
   if (too_deep)
-    return 0;
+    throw noSolution;
 
   double *lower = new double [couenne_ -> nVars ()];
   double *upper = new double [couenne_ -> nVars ()];
@@ -172,7 +187,7 @@ NlpSolveHeuristic::solution( double & objectiveValue, double * newSolution){
 	if (maxInfeasibility > maxNlpInf_){
 	  delete [] lower;
 	  delete [] upper;
-	  return 0;
+	  throw noSolution;
 	}
       }
     } else {
@@ -352,4 +367,20 @@ NlpSolveHeuristic::solution( double & objectiveValue, double * newSolution){
   delete [] upper;
 
   return foundSolution;
+
+  }
+  catch (Exception &e) {
+
+    // no solution available? Use the one from the global cutoff
+
+    if ((couenne_ -> getCutOff () < objectiveValue) &&
+	couenne_ -> getCutOffSol ()) {
+
+      objectiveValue = couenne_ -> getCutOff    ();
+      CoinCopyN       (couenne_ -> getCutOffSol (), couenne_ -> nVars (), newSolution);
+
+      return 1;
+
+    } else return 0;
+  }
 }

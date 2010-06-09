@@ -34,7 +34,7 @@ namespace Couenne {
 
 /// methods to add objective function. 
 
-void CouenneProblem::addObjective (expression *newobj, const std::string &sense = "min") {
+void CouenneProblem::addObjective (expression *newobj, const std::string &sense) {
   objectives_ . push_back
     (new CouenneObjective ((sense == "min") ? 
 			   newobj : new exprOpp (new exprClone (newobj))));
@@ -44,32 +44,40 @@ void CouenneProblem::addObjective (expression *newobj, const std::string &sense 
 /// methods to add nonlinear constraints:
 
 /// equality constraint
-void CouenneProblem::addEQConstraint (expression *body, expression *rhs = NULL) {
+void CouenneProblem::addEQConstraint (expression *body, expression *rhs) {
 
   if (!rhs) rhs = new exprConst (0.);
   constraints_ . push_back (new CouenneConstraint (body, rhs, new exprClone (rhs)));
 }
 
 /// "greater than" constraint
-void CouenneProblem::addGEConstraint (expression *body, expression *rhs = NULL) {
+void CouenneProblem::addGEConstraint (expression *body, expression *rhs) {
   if (!rhs) rhs = new exprConst (0.);
   constraints_ . push_back (new CouenneConstraint 
 			    (body, rhs, new exprConst (COUENNE_INFINITY)));
 }
 
 /// "smaller than" constraint
-void CouenneProblem::addLEConstraint (expression *body, expression *rhs = NULL) {
+void CouenneProblem::addLEConstraint (expression *body, expression *rhs) {
   if (!rhs) rhs = new exprConst (0.);
   constraints_ . push_back (new CouenneConstraint 
 			    (body, new exprConst (-COUENNE_INFINITY), rhs));
 }
 
+/// Add (non linear) objective function
+void CouenneProblem::setObjective (int indObj, expression * newObj, const std::string &sense) {
+  objectives_ [indObj] = (new CouenneObjective ((sense == "min") ? 
+						newObj : new exprOpp (new exprClone (newObj))));
+}
+
+
 /// range constraint
-void CouenneProblem::addRNGConstraint (expression *body, expression *lb=NULL, expression *ub=NULL) {
+void CouenneProblem::addRNGConstraint (expression *body, expression *lb, expression *ub) {
   if (!lb) lb = new exprConst (0.);
   if (!ub) ub = new exprConst (0.);
   constraints_ . push_back (new CouenneConstraint (body, lb, ub));
 }
+
 
 
 /// add variable to the problem -- check whether it is integer (isDiscrete)

@@ -337,7 +337,7 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
   if ((status == 3) && (trustStrongForSolution_)) {
     // new solution already saved
     info -> cutoff_ = goodObjectiveValue_;
-    problem_ -> setCutOff (goodObjectiveValue_);
+    //problem_ -> setCutOff (goodObjectiveValue_);
     status = 0;
   }
 

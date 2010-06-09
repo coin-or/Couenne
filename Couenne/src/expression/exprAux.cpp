@@ -98,8 +98,8 @@ exprAux::~exprAux () {
     //printf ("\n");
     delete image_; 
   }
-  if (lb_)    delete lb_;
-  if (ub_)    delete ub_;
+  if (lb_) delete lb_;
+  if (ub_) delete ub_;
 }
 
 

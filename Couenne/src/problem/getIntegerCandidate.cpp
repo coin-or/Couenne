@@ -347,7 +347,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       CouNumber xp = x [objind];
 
       if (checkNLP (x, xp, true)) { // true for recomputing xp
-	setCutOff (xp);
+	setCutOff (xp, x);
 	jnlst_ -> Printf (J_DETAILED, J_NLPHEURISTIC, 
 			  "new cutoff from getIntCand: %g\n", xp);
       }

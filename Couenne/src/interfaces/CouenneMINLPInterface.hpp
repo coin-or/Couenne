@@ -30,11 +30,14 @@
 
 #include "CouenneTypes.hpp"
 
-
+namespace Ipopt {
+  class OptionsList;
+}
 
 namespace Couenne {
 
   class expression;
+  class CouenneProblem;
 
   //class RegisteredOptions;
   //class StrongBranchingSolver;
@@ -55,11 +58,7 @@ namespace Couenne {
 
   class CouenneMINLPInterface: public OsiSolverInterface {
 
-
   public:
-
-    /// sets objective[index] at newObj
-    void setObj (int index, expression *newObj);
 
     /// sets the initial solution for the NLP solver
     void setInitSol (const CouNumber *sol);
@@ -67,6 +66,26 @@ namespace Couenne {
     /// solves and returns the optimal objective function and the
     /// solution
     CouNumber solve (CouNumber *solution);
+
+    /// return pointer to Couenne problem
+    CouenneProblem *problem () const
+    {return problem_;}
+
+    /// return pointer to options
+    Ipopt::OptionsList *options () const
+    {return options_;}
+
+  private:
+
+    /// Symbolic representation of the problem
+    CouenneProblem *problem_;
+
+    /// Options
+    Ipopt::OptionsList *options_;
+
+    /// Virtual callback for application specific stuff
+    virtual std::string appName ()
+    {return "couenne";}
 
 
 #if 0
@@ -1072,12 +1091,6 @@ namespace Couenne {
     /// Initialize data structures for storing the jacobian
     int initializeJacobianArrays();
 
-    ///@name Virtual callbacks for application specific stuff
-    //@{
-    virtual std::string  appName()
-    {
-      return "bonmin";
-    }
     //@}
     ///@name Protected methods
     //@{

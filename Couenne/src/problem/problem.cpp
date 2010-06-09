@@ -291,7 +291,7 @@ void CouenneProblem::fillObjCoeff (double *&obj) {
 
 
 /// set cutoff from NLP solution
-void CouenneProblem::setCutOff (CouNumber cutoff) const {
+void CouenneProblem::setCutOff (CouNumber cutoff, const double *s) const {
 
   int indobj = objectives_ [0] -> Body () -> Index ();
 
@@ -306,8 +306,8 @@ void CouenneProblem::setCutOff (CouNumber cutoff) const {
 			  pcutoff_ -> getCutOff ());
 
     if (Var (indobj) -> isInteger ())
-      pcutoff_    -> setCutOff (floor (cutoff + COUENNE_EPS));
-    else pcutoff_ -> setCutOff (cutoff);
+      pcutoff_    -> setCutOff (floor (cutoff + COUENNE_EPS), s, nVars ());
+    else pcutoff_ -> setCutOff (cutoff, s, nVars ());
   }
 }
 

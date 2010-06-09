@@ -1,7 +1,8 @@
 /* $Id$
  *
  * Name:    CouenneProblem.hpp
- * Author:  Pietro Belotti
+ * Author:  Pietro Belotti, Lehigh University
+ *          Andreas Waechter, IBM
  * Purpose: define the class CouenneProblem
  *
  * (C) Carnegie-Mellon University, 2006-10.
@@ -15,11 +16,11 @@
 #include <map>
 
 #include "CoinFinite.hpp"
+#include "CoinHelperFunctions.hpp"
 
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
 #include "CouenneExprAux.hpp"
-//#include "CouenneProblemElem.hpp"
 #include "CouenneJournalist.hpp"
 #include "CouenneDomain.hpp"
 
@@ -73,15 +74,50 @@ class CouenneProblem {
   /// Class for storing a global cutoff for a CouenneProblem and all
   /// its clones
   class GlobalCutOff {
+
   private:
-    GlobalCutOff(const GlobalCutOff&);
-    double cutoff_;
+
+    GlobalCutOff (const GlobalCutOff&);
+    double  cutoff_; ///< Value of the best solution
+    double *sol_;    ///< Best solution
+    int     size_;   ///< Size of the vector stored in sol (should be #var of reformulation)
+    bool    valid_;  ///< Stored solution corresponds to cutoff
+
   public:
-    GlobalCutOff ()         : cutoff_ (COIN_DBL_MAX) {}
-    GlobalCutOff (double c) : cutoff_ (c) {}
-    ~GlobalCutOff() {}
-    inline void setCutOff (double cutoff) {cutoff_ = cutoff;}
-    inline double getCutOff() const {return cutoff_;}
+
+    GlobalCutOff ()         : 
+      cutoff_ (COIN_DBL_MAX), 
+      sol_    (NULL), 
+      size_   (0), 
+      valid_  (false) {}
+
+    GlobalCutOff (double c, const double *s=NULL, int n=0): 
+      cutoff_ (c),
+      sol_    (NULL),
+      size_   (n),
+      valid_  (false) {
+      if (s) {
+	sol_   = CoinCopyOfArray (s, n);
+	size_  = n;
+	valid_ = true;
+      }
+    }
+
+    ~GlobalCutOff () {
+      if (sol_) delete [] sol_;
+    }
+
+    inline void setCutOff (double cutoff, const double *s=NULL, int n=0) {
+      cutoff_ = cutoff;
+      if (s) {
+	if (!sol_) sol_ = CoinCopyOfArray (s,         n);
+	else              CoinCopyN       (s, size_ = n, sol_);
+	valid_ = true;
+      } 
+    }
+
+    inline double  getCutOff    () const {return cutoff_;}
+    inline double *getCutOffSol () const {return sol_;}
   };
 
   /// structure to record fixed, non-fixed, and continuous variables
@@ -299,14 +335,17 @@ class CouenneProblem {
   {return commuted_;}
 
   /// Add (non linear) objective function
-  void addObjective     (expression *, const std::string &);
+  void addObjective     (expression *, const std::string & = "min");
 
   // Add (non linear) "=", ">=", "<=", and range constraints
-  void addEQConstraint  (expression *, expression *); ///< Add equality constraint \f$ h(x) = b\f$
-  void addGEConstraint  (expression *, expression *); ///< Add \f$\ge\f$ constraint, \f$h(x)\ge b\f$
-  void addLEConstraint  (expression *, expression *); ///< Add \f$\le\f$ constraint, \f$h(x)\le b\f$
-  void addRNGConstraint (expression *, expression *, 
-			 expression *);               ///< Add range constraint, \f$a\le h(x)\le b\f$
+  void addEQConstraint  (expression *, expression * = NULL); ///< Add equality constraint \f$ h(x) = b\f$
+  void addGEConstraint  (expression *, expression * = NULL); ///< Add \f$\ge\f$ constraint, \f$h(x)\ge b\f$
+  void addLEConstraint  (expression *, expression * = NULL); ///< Add \f$\le\f$ constraint, \f$h(x)\le b\f$
+  void addRNGConstraint (expression *, expression * = NULL, 
+			               expression * = NULL); ///< Add range constraint, \f$a\le h(x)\le b\f$
+
+  /// Add (non linear) objective function
+  void setObjective (int indObj = 0, expression * = NULL, const std::string & = "min");
 
   /// Add original variable.
   ///
@@ -419,11 +458,15 @@ class CouenneProblem {
   void auxiliarize (exprVar *, exprVar * = NULL);
 
   /// Set cutoff
-  void setCutOff (CouNumber cutoff) const;
+  void setCutOff (CouNumber cutoff, const CouNumber *sol = NULL) const;
 
-  /// Set cutoff
+  /// Get cutoff
   CouNumber getCutOff () const
   {return pcutoff_ -> getCutOff ();}
+
+  /// Get cutoff solution
+  CouNumber *getCutOffSol () const
+  {return pcutoff_ -> getCutOffSol ();}
 
   /// Make cutoff known to the problem
   void installCutOff () const;
@@ -441,9 +484,6 @@ class CouenneProblem {
 
   /// Read best known solution from file given in argument
   bool readOptimum (std::string *fname = NULL);
-
-  /// Read cutoff value (for testing purposes)
-  void readCutoff (const std::string &fname);
 
   /// Add list of options to be read from file
   static void registerOptions (SmartPtr <Bonmin::RegisteredOptions> roptions);

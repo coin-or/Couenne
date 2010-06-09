@@ -254,16 +254,15 @@ CouenneInterface::extractLinearRelaxation
 
       // re-check optimality in case resolve () was called
       if (isProvenOptimal () && 
-	  (obj < p -> getCutOff ()) && // first check (before re-computing)
+	  (obj < p -> getCutOff ())           && // check #1 (before re-computing)
 	  p -> checkNLP (solution, obj, true) && // true for recomputing obj
-	  (obj < p -> getCutOff ())) { // second check (real object might be different)
+	  (obj < p -> getCutOff ())) {           // check #2 (real object might be different)
 
 	// tell caller there is an initial solution to be fed to the initHeuristic
 	have_nlp_solution_ = true;
 
 	// set cutoff to take advantage of bound tightening
-	//printf ("new cutoff %g from BonCouenneInterface\n", obj);
-	p -> setCutOff (obj);
+	p -> setCutOff (obj, solution);
 
 	OsiAuxInfo * auxInfo = si.getAuxiliaryInfo ();
 	BabInfo * babInfo = dynamic_cast <BabInfo *> (auxInfo);

@@ -157,18 +157,3 @@ bool CouenneProblem::readOptimum (std::string *fname) {
   fclose (f);
   return true;
 }
-
-
-/// read cutoff into member optimum
-void CouenneProblem::readCutoff (const std::string &fname) {
-
-  CouNumber val;
-
-  FILE *f = fopen (fname.c_str (), "r");
-  if (!f) return;
-
-  if (fscanf (f, "%lf", &val) < 1) 
-    return;
-
-  setCutOff (val);
-}

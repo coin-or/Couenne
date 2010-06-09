@@ -13,11 +13,6 @@
 
 using namespace Couenne;
 
-/// sets objective[index] at newObj
-void CouenneMINLPInterface::setObj (int index, expression *newObj) {
-
-}
-
 /// sets the initial solution for the NLP solver
 void CouenneMINLPInterface::setInitSol (const CouNumber *sol) {
   

@@ -508,18 +508,23 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   options () -> GetEnumValue ("feas_pump_heuristic", doHeuristic, "couenne.");
 
   if (doHeuristic) {
+
     int numSolve;
-    options()->GetIntegerValue("log_num_local_optimization_per_level", numSolve, "couenne.");
-    Couenne::CouenneFeasPump * nlpHeuristic = new Couenne::CouenneFeasPump;
-    nlpHeuristic->setNlp(*ci,false);
-    nlpHeuristic->setCouenneProblem(couenneProb_);
-    //nlpHeuristic->setMaxNlpInf(1e-4);
-    //nlpHeuristic->setMaxNlpInf(maxNlpInf_0);
-    nlpHeuristic->setNumberSolvePerLevel(numSolve);
+    options () -> GetIntegerValue ("log_num_local_optimization_per_level", numSolve, "couenne.");
+
+    Couenne::CouenneFeasPump *nlpHeuristic = new Couenne::CouenneFeasPump;
+
+    //    nlpHeuristic->setNlp(*ci,false);
+
+    nlpHeuristic -> setNlp (NULL, false); // TODO: load CouenneMINLPInterface
+
+    nlpHeuristic -> setCouenneProblem (couenneProb_);
+    nlpHeuristic -> setNumberSolvePerLevel (numSolve);
+
     HeuristicMethod h;
     h.id = "Couenne Feasibility Pump";
     h.heuristic = nlpHeuristic;
-    heuristics_.push_back(h);
+    heuristics_. push_back (h);
   }
 
   // Add Branching rules ///////////////////////////////////////////////////////

@@ -197,11 +197,8 @@ CouenneProblem::~CouenneProblem () {
        i != constraints_ . end (); ++i)
     delete (*i);
 
-  // delete variables
-  //for (std::vector <exprVar *>::iterator i = variables_ . begin ();
-  //i != variables_ . end (); ++i)
-  //delete (*i);
-
+  // deletion of variables should be done in reverse order w.r.t. the
+  // dependence. If numbering_ is available, use it.
   if (numbering_) for (int i=nVars (); i--;) delete variables_ [numbering_ [i]];
   else            for (int i=nVars (); i--;) delete variables_ [i];
 
