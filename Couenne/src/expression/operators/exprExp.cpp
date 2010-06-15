@@ -54,20 +54,25 @@ bool exprExp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   CouNumber b;
 
-  if ((b = sign == expression::AUX_GEQ ? 0            : l [wind]) >= COUENNE_EPS) // lower bound    
-    resL = updateBound (-1, l + ind, argument_->isInteger () ? ceil  (log (b)-COUENNE_EPS) : log (b));
+  if ((b = sign == expression::AUX_GEQ ? 0.           : l [wind]) > 0.) // lower bound    
+    resL = updateBound (-1, l + ind, argument_->isInteger () ? ceil  (log (b)) : log (b));
 
-  if ((b = sign == expression::AUX_LEQ ? COIN_DBL_MAX : u [wind]) < COUENNE_INFINITY / 1e5) // upper bound
-    resU = updateBound ( 1, u + ind, argument_->isInteger () ? floor (log (b)+COUENNE_EPS) : log (b));
+  if ((b = sign == expression::AUX_LEQ ? COIN_DBL_MAX : u [wind]) < COIN_DBL_MAX / 10.) { // upper bound
 
-  else if (b < - COUENNE_EPS) {
+    if ((b >= -0.) && (b < COUENNE_EPS)) // to prevent infeasibilities due to numerics
+      b = COUENNE_EPS;
+
+    resU = updateBound ( 1, u + ind, argument_ -> isInteger () ? floor (log (b)) : log (b));
+  }
+
+  if (b < - COUENNE_EPS) {
     // make it infeasible
     resU = updateBound ( 1, u + ind, -1.) || true;
     resL = updateBound (-1, l + ind,  1.) || true;
   }
 
-  if (resL) chg [ind].setLower(t_chg_bounds::CHANGED);
-  if (resU) chg [ind].setUpper(t_chg_bounds::CHANGED);
+  if (resL) chg [ind].setLower (t_chg_bounds::CHANGED);
+  if (resU) chg [ind].setUpper (t_chg_bounds::CHANGED);
 
   return (resL || resU);
 }
