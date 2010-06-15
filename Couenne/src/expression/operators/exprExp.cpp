@@ -8,12 +8,10 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "CouenneExprExp.hpp"
-#include "CouenneExprClone.hpp"
-#include "CouenneExprMul.hpp"
+#include "exprExp.hpp"
+#include "exprClone.hpp"
+#include "exprMul.hpp"
 #include "CouenneProblem.hpp"
-
-using namespace Couenne;
 
 // differentiation
 expression *exprExp::differentiate (int index) {
@@ -47,17 +45,17 @@ void exprExp::getBounds (CouNumber &lb, CouNumber&ub) {
 
 /// implied bound processing for expression w = exp(x), upon change in
 /// lower- and/or upper bound of w, whose index is wind
-bool exprExp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
+bool exprExp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg) {
 
   bool resU, resL = resU = false;
   int ind = argument_ -> Index ();
 
   CouNumber b;
 
-  if ((b = sign == expression::AUX_GEQ ? 0.           : l [wind]) > 0.) // lower bound    
-    resL = updateBound (-1, l + ind, argument_->isInteger () ? ceil  (log (b)) : log (b));
+  if ((b = l [wind]) > 0.) // lower bound    
+    resL = updateBound (-1, l + ind, argument_ -> isInteger () ? ceil  (log (b)) : log (b));
 
-  if ((b = sign == expression::AUX_LEQ ? COIN_DBL_MAX : u [wind]) < COIN_DBL_MAX / 10.) { // upper bound
+  if ((b = u [wind]) < COIN_DBL_MAX / 10.) { // upper bound
 
     if ((b >= -0.) && (b < COUENNE_EPS)) // to prevent infeasibilities due to numerics
       b = COUENNE_EPS;
