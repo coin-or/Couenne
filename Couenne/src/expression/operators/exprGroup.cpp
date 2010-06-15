@@ -41,7 +41,6 @@ void cleanZeros (std::vector <std::pair <exprVar *, CouNumber> > &lcoeff) {
 }
 
 
-
 /// Generalized (static) constructor: check parameters and return a
 /// constant, a single variable, or a real exprGroup
 expression *exprGroup::genExprGroup (CouNumber c0,
@@ -126,9 +125,8 @@ void exprGroup::print (std::ostream &out, bool descend) const {
     CouNumber coeff = lcoeff_ [i]. second;
     out << ' ';
 
-    if      (coeff >   0.) out << '+' << coeff << "*";
-    else if (coeff < - 0.) out        << coeff << "*";
-    //else continue;
+    if      (coeff >   0.) { out << '+'; if (coeff !=  1.) out <<  coeff << "*";}
+    else if (coeff < - 0.) { out << '-'; if (coeff != -1.) out << -coeff << "*";}
 
     lcoeff_ [i]. first -> print (out, descend);
     if (!((i + 1) % MAX_ARG_LINE))
@@ -161,8 +159,8 @@ expression *exprGroup::differentiate (int index) {
     if (arglist_ [i] -> dependsOn (&index, 1))
       arglist [nargs++] = arglist_ [i] -> differentiate (index);
 
-  if ((nargs == 0) ||
-      (nargs == 1) && (fabs (totlin) > COUENNE_EPS)) {
+  if ( (nargs == 0) ||
+      ((nargs == 1) && (fabs (totlin) > COUENNE_EPS))) {
     delete [] arglist;
     return new exprConst (totlin);
   }
