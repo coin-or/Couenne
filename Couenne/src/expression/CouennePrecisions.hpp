@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: constants for evaluation procedures
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -16,7 +16,7 @@
 namespace Couenne {
 
 // must be >= 1e-7
-#define COUENNE_EPS           1.e-7
+#define COUENNE_EPS           1.e-08
 
 // for integrality check
 #define COUENNE_EPS_INT       1.e-9
@@ -27,7 +27,7 @@ namespace Couenne {
 // for bounds
 #define COUENNE_INFINITY      1.e+50
 
-// for cuts, ensures stability and scaling
+// for cuts, ensures stability and scaling in Clp
 #define COU_MAX_COEFF     1.e+9
 
 // for cuts, ditto

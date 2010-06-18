@@ -75,18 +75,18 @@ am_libCouenneExpression_la_OBJECTS = domain.lo expression.lo exprOp.lo \
 	exprOpp.lo exprPow.lo exprSin.lo exprCos.lo exprSub.lo \
 	exprSum.lo exprMinMax.lo exprGroup.lo exprQuad.lo \
 	compQuadFinBounds.lo exprBQuad.lo simplifiers.lo simplify.lo \
-	conv-exprAbs.lo conv-exprDiv.lo conv-exprMul.lo \
-	conv-exprMul-genCuts.lo unifiedProdCuts.lo \
-	exprMul-upperHull.lo conv-exprOpp.lo conv-exprPow.lo \
-	conv-exprPow-getBounds.lo conv-exprPow-envelope.lo \
-	powNewton.lo conv-exprSub.lo conv-exprSum.lo conv-exprInv.lo \
-	conv-exprSinCos.lo conv-exprExp.lo conv-exprLog.lo \
-	conv-exprGroup.lo conv-exprQuad.lo trigNewton.lo \
-	alphaConvexify.lo quadCuts.lo branchExprAbs.lo \
-	branchExprExp.lo branchExprDiv.lo branchExprInv.lo \
-	branchExprLog.lo branchExprMul.lo branchExprPow.lo \
-	branchExprQuad.lo branchExprSinCos.lo minMaxDelta.lo \
-	computeMulBrDist.lo
+	CouenneExprJac.lo CouenneExprHess.lo conv-exprAbs.lo \
+	conv-exprDiv.lo conv-exprMul.lo conv-exprMul-genCuts.lo \
+	unifiedProdCuts.lo exprMul-upperHull.lo conv-exprOpp.lo \
+	conv-exprPow.lo conv-exprPow-getBounds.lo \
+	conv-exprPow-envelope.lo powNewton.lo conv-exprSub.lo \
+	conv-exprSum.lo conv-exprInv.lo conv-exprSinCos.lo \
+	conv-exprExp.lo conv-exprLog.lo conv-exprGroup.lo \
+	conv-exprQuad.lo trigNewton.lo alphaConvexify.lo quadCuts.lo \
+	branchExprAbs.lo branchExprExp.lo branchExprDiv.lo \
+	branchExprInv.lo branchExprLog.lo branchExprMul.lo \
+	branchExprPow.lo branchExprQuad.lo branchExprSinCos.lo \
+	minMaxDelta.lo computeMulBrDist.lo
 libCouenneExpression_la_OBJECTS =  \
 	$(am_libCouenneExpression_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -345,6 +345,8 @@ libCouenneExpression_la_SOURCES = \
 	operators/bounds/exprBQuad.cpp \
 	simplify/simplifiers.cpp \
 	simplify/simplify.cpp \
+	partial/CouenneExprJac.cpp \
+	partial/CouenneExprHess.cpp \
 	../convex/operators/conv-exprAbs.cpp \
 	../convex/operators/conv-exprDiv.cpp \
 	../convex/operators/conv-exprMul.cpp \
@@ -450,6 +452,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouExpr.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneExprHess.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneExprJac.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alphaConvexify.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprAbs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprDiv.Plo@am__quote@
@@ -662,6 +666,20 @@ simplify.lo: simplify/simplify.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='simplify/simplify.cpp' object='simplify.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o simplify.lo `test -f 'simplify/simplify.cpp' || echo '$(srcdir)/'`simplify/simplify.cpp
+
+CouenneExprJac.lo: partial/CouenneExprJac.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CouenneExprJac.lo -MD -MP -MF "$(DEPDIR)/CouenneExprJac.Tpo" -c -o CouenneExprJac.lo `test -f 'partial/CouenneExprJac.cpp' || echo '$(srcdir)/'`partial/CouenneExprJac.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/CouenneExprJac.Tpo" "$(DEPDIR)/CouenneExprJac.Plo"; else rm -f "$(DEPDIR)/CouenneExprJac.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='partial/CouenneExprJac.cpp' object='CouenneExprJac.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CouenneExprJac.lo `test -f 'partial/CouenneExprJac.cpp' || echo '$(srcdir)/'`partial/CouenneExprJac.cpp
+
+CouenneExprHess.lo: partial/CouenneExprHess.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CouenneExprHess.lo -MD -MP -MF "$(DEPDIR)/CouenneExprHess.Tpo" -c -o CouenneExprHess.lo `test -f 'partial/CouenneExprHess.cpp' || echo '$(srcdir)/'`partial/CouenneExprHess.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/CouenneExprHess.Tpo" "$(DEPDIR)/CouenneExprHess.Plo"; else rm -f "$(DEPDIR)/CouenneExprHess.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='partial/CouenneExprHess.cpp' object='CouenneExprHess.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CouenneExprHess.lo `test -f 'partial/CouenneExprHess.cpp' || echo '$(srcdir)/'`partial/CouenneExprHess.cpp
 
 conv-exprAbs.lo: ../convex/operators/conv-exprAbs.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprAbs.lo -MD -MP -MF "$(DEPDIR)/conv-exprAbs.Tpo" -c -o conv-exprAbs.lo `test -f '../convex/operators/conv-exprAbs.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprAbs.cpp; \

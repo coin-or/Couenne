@@ -160,7 +160,7 @@ class exprAux: public exprVar {
       return true;
 
     CouNumber l = lb ();
-    return (Couenne::isInteger (l) && (fabs (l - ub ()) < COUENNE_EPS));
+    return ((l == ub ()) && (COUENNE_round (l) == l));
     //CouNumber l = (*(Lb ())) ();
     //return (::isInteger (l) && (fabs (l - (*(Ub ())) ()) < COUENNE_EPS));
   }

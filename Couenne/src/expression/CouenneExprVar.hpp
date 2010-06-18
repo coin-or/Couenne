@@ -113,7 +113,7 @@ class exprVar: public expression {
   virtual inline expression *simplify () 
   {return NULL;}
 
-  /// get a measure of "how linear" the expression is (see CouenneTypes.h)
+  /// get a measure of "how linear" the expression is (see CouenneTypes.hpp)
   virtual inline int Linearity ()
   {return LINEAR;}
 
@@ -123,8 +123,13 @@ class exprVar: public expression {
 
   /// is this variable integer?
   virtual inline bool isInteger () {
+
+    // we definitely want to be very conservative here. A continuous
+    // variable is integer if and only if its current value is really
+    // integer (no round-off) -- see globallib/bearing and term x^(-3.55)
+
     CouNumber lb = domain_ -> lb (varIndex_);
-    return ((fabs (lb - domain_ -> ub (varIndex_)) < COUENNE_EPS) && (Couenne::isInteger (lb)));
+    return (lb == domain_ -> ub (varIndex_)) && (COUENNE_round (lb) == lb);
   }
 
   /// Get expressions of lower and upper bound of an expression (if any)

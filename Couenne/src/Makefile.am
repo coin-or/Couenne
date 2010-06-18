@@ -131,6 +131,7 @@ includecoin_HEADERS = \
 	main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp \
 	interfaces/BonCouenneInterface.hpp \
+	interfaces/CouenneTNLP.hpp \
 	interfaces/CouenneMINLPInterface.hpp \
 	heuristics/BonNlpHeuristic.hpp \
 	heuristics/BonInitHeuristic.hpp \
@@ -186,6 +187,8 @@ includecoin_HEADERS = \
 	expression/CouenneExprOp.hpp \
 	expression/CouExpr.hpp \
 	expression/CouennePrecisions.hpp \
+	expression/partial/CouenneExprHess.hpp \
+	expression/partial/CouenneExprJac.hpp \
 	problem/depGraph/CouenneDepGraph.hpp \
 	problem/CouenneProblemElem.hpp \
 	problem/CouenneProblem.hpp \
