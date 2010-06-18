@@ -11,6 +11,7 @@ noinst_LTLIBRARIES = libCouenneInterfaces.la
 # List all source files for this library, including headers
 libCouenneInterfaces_la_SOURCES = \
 	BonCouenneInterface.cpp \
+	CouenneTNLP.cpp \
 	CouenneMINLPInterface.cpp
 
 libCouenneInterfaces_la_LIBADD = \
@@ -48,6 +49,7 @@ if COIN_HAS_COUENNE
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/partial` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
