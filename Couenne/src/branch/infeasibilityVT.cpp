@@ -27,7 +27,7 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
 
   // feasible variable
   if (info -> upper_ [indexVar] - 
-      info -> lower_ [indexVar] < tol) {
+      info -> lower_ [indexVar] <= tol) {
     if (reference_ -> isInteger ()) {
       double point = info -> solution_ [reference_ -> Index ()];
       if (downEstimate_ <       point  - floor (point)) downEstimate_ =       point  - floor (point);
@@ -221,7 +221,7 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
     (1-alpha-beta) * leanLeft * (1-leanLeft);  // how in the middle of the interval x is
 
   if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
-    if (retval > CoinMin (COUENNE_EPS, feas_tolerance_)) {
+    if (retval > tol) {
       printf ("vt-delta is %-10g [", retval); 
       reference_ -> print (); 
       if (reference_ -> Image ()) { // if no list, print image
@@ -242,7 +242,7 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
 
   problem_ -> domain () -> pop ();
 
-  if ((retval < tol) &&
+  if ((retval <= tol) &&
       (maxInf > tol)) {
 
     // no improvement with this variable, but need to return nonzero
@@ -251,7 +251,7 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
     retval = maxInf; 
   }
 
-  if (retval < CoinMin (COUENNE_EPS, feas_tolerance_)) 
+  if (retval <= tol) 
     retval = 0.;
 
 #define ALMOST_ZERO 1e-8

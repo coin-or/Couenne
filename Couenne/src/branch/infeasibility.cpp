@@ -87,7 +87,7 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
 
   problem_ -> domain () -> pop (); // domain not used below
 
-  retval = ((retval < CoinMin (COUENNE_EPS, feas_tolerance_)) ? 0. : retval);
+  retval = ((retval <= CoinMin (COUENNE_EPS, feas_tolerance_)) ? 0. : retval);
 
   //printf ("infVar x%d ==> returning %g\n", reference_ -> Index (), (reference_ -> isInteger ()) ? 
   //CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :

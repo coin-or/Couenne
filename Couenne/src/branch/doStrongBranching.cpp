@@ -307,8 +307,11 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
 
   } else {
 
-    if (boundBranch) thisSolver -> solveFromHotStart ();
-    else {
+    if (boundBranch) // branching rule is a variable bound, can use hotstart
+
+      thisSolver -> solveFromHotStart ();
+
+    else { // branching rule is more complicated, need a resolve
 
       int limit;
       thisSolver -> getIntParam (OsiMaxNumIterationHotStart, limit);
