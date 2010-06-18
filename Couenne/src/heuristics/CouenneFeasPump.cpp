@@ -9,41 +9,23 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "CouenneFeasPump.hpp"
-#include "BonCouenneInterface.hpp"
-#include "CouenneMINLPInterface.hpp"
-#include "CouenneObject.hpp"
-#include "CouenneProblem.hpp"
-#include "CbcCutGenerator.hpp"
-#include "CbcBranchActual.hpp"
-#include "BonAuxInfos.hpp"
+#include "CbcModel.hpp"
+#include "CoinTime.hpp"
 #include "CoinHelperFunctions.hpp"
 
-#include "CouenneCutGenerator.hpp"
+#include "CouenneFeasPump.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
+#include "CouenneCutGenerator.hpp"
+#include "CouenneTNLP.hpp"
 
 using namespace Couenne;
 
-// Solve //////////////////////////////////////////////////////// 
-int CouenneFeasPump::solution (double & objectiveValue, double * newSolution) {
+// Solve
+int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
     return 0;
-
-  // clones lower bounding problem (LP)
-  //OsiSolverInterface * solver = model_ -> solver ();
-
-  // OsiAuxInfo * auxInfo = solver -> getAuxiliaryInfo ();
-  // Bonmin::BabInfo * babInfo = dynamic_cast <Bonmin::BabInfo *> (auxInfo);
-
-  // if (babInfo) {
-
-  //   babInfo -> setHasNlpSolution (false);
-
-  //   // avoid doing this if we already found the problem to be infeasible
-  //   if (babInfo -> infeasibleNode ())
-  // 	return 0;
-  // }
 
   // This FP works as follows:
   //
@@ -74,131 +56,159 @@ int CouenneFeasPump::solution (double & objectiveValue, double * newSolution) {
   // resolve NLP
 
   CouNumber 
-    *nSol = getContSolution (),
-    *iSol = NULL,
-    *best = NULL;
+    *nSol = NULL, // solution of the nonlinear problem
+    *iSol = NULL, // solution of the IP problem
+    *best = NULL; // best solution found so far
 
-  int niter = 0;
-  bool foundSol = false;
-  CouNumber 
-    cutoff = problem_ -> getCutOff (),
-    bestZ  = COIN_DBL_MAX;
+  int
+    niter  = 0, // current # of iterations
+    retval = 0; // 1 if found a better solution
 
   /////////////////////////////////////////////////////////////////////////
-  //                      _                   _                   
-  //                     (_)                 | |                  
-  //  _ __ ___     __ _   _    _ __          | |    ___     ___    _ __          
-  // | '_ ` _ \   / _` | | |  | '_ \         | |   / _ \   / _ \  | '_ \         
-  // | | | | | | | (_| | | |  | | | |        | |  | (_) | | (_) | | |_) |        
-  // |_| |_| |_|  \__,_| |_|  |_| |_|        |_|   \___/   \___/  | .__/         
-  //						      	          | |            
+  //                      _                   _
+  //                     (_)                 | |
+  //  _ __ ___     __ _   _    _ __          | |    ___     ___    _ __ 
+  // | '_ ` _ \   / _` | | |  | '_ \         | |   / _ \   / _ \  | '_ `.
+  // | | | | | | | (_| | | |  | | | |        | |  | (_) | | (_) | | |_) |
+  // |_| |_| |_|  \__,_| |_|  |_| |_|        |_|   \___/   \___/  | .__/
+  //						      	          | |
   /////////////////////////////////////////////////////////////// |_| /////
 
+  milp_ = model_ -> solver () -> clone ();
+
+  expression *origObj = problem_ -> Obj (0) -> Body ();
+
+  // copy bounding box and current solution to the problem (better
+  // linearization cuts)
+  problem_ -> domain () -> push (milp_ -> getNumCols (),
+				 milp_ -> getColSolution (),
+				 milp_ -> getColLower (),
+				 milp_ -> getColUpper ());
   do {
 
     // INTEGER PART /////////////////////////////////////////////////////////
 
-    // Pointer to a solution in the pool with a "good solution" (if
-    // nothing found in this call, return the most promising one)
-    double z = getMILPSolution (iSol, nSol); 
+    // Solve IP using nSol as the initial point to minimize weighted
+    // l-1 distance from. If nSol==NULL, the MILP is created using the
+    // original milp's LP solution.
+    double z = solveMILP (nSol, iSol);
 
     if (problem_ -> checkNLP (iSol, z)) {
 
+      // solution is MINLP feasible! 
+      // Save and get out of the loop
+
       if (z < problem_ -> getCutOff ()) {
 
-	foundSol = true;
+	retval = 1;
+	objVal = z;
+	best   = iSol;
 	problem_ -> setCutOff (z);
-	bestZ = z;
-	best  = iSol;
 
 	// if bound tightening clears the whole feasible set, stop
 	if (!(problem_ -> btCore (NULL)))
-	  return -1;
+	  break;
       }
     } else {
 
-      OsiCuts cs;
-      couenneCG_ -> genRowCuts (*nlp_, cs, 0, NULL); // remaining three argument at NULL by default
-      milp_ -> applyCuts (cs);
+      // solution non MINLP feasible, it might get cut by
+      // linearization cuts. If so, add a round of cuts and repeat.
 
-      if (milpCuttingPlane_)
-	continue; // found linearization cut, now re-solve MILP (not quite a FP)
+      OsiCuts cs;
+      // remaining three arguments at NULL by default
+      couenneCG_ -> genRowCuts (*milp_, cs, 0, NULL); 
+
+      if (cs.sizeRowCuts ()) { 
+
+	// the (integer, NLP infeasible) solution could be separated
+
+	milp_ -> applyCuts (cs);
+
+	if (milpCuttingPlane_)
+	  continue; // found linearization cut, now re-solve MILP (not quite a FP)
+      }
     }
 
     // NONLINEAR PART ///////////////////////////////////////////////////////
 
-    // set new objective
-    expression *newObj = updateNLPObj (iSol);
-    nlp_ -> setObj (0, newObj);
+    // solve the NLP to find a NLP (possibly non-MIP) feasible solution
+    z = solveNLP (iSol, nSol); 
 
-    // compute H_2-closest NLP feasible solution
-    nlp_ -> setInitSol (iSol);
-    z = nlp_ -> solve (nSol); // TODO: not necessary! keep cutting
-    // integer solution with nlp cuts
-    // until MINLP feasible
-
-    // check if newly found NLP solution is also integer (unlikely...)
+    // check if newly found NLP solution is also integer
     if (problem_ -> checkNLP (nSol, z) &&
 	(z < problem_ -> getCutOff ())) {
 
-      foundSol = true;
+      retval = 1;
+      objVal = z;
+      best   = nSol;
       problem_ -> setCutOff (z);
-      bestZ = z;
-      best  = nSol;
 
       // if bound tightening clears the whole feasible set, stop
       if (!(problem_ -> btCore (NULL)))
-	return -1;
+	break;
     }	
 
   } while ((niter++ < maxIter_) && 
-	   (!foundSol)          &&
-	   (bestZ >= cutoff - COUENNE_EPS));
+	   (retval == 0));
 
-  // OUT OF THE LOOP: restore original objective and reoptimize
+  // OUT OF THE LOOP ////////////////////////////////////////////////////////
 
-  // fix integer variables
-  // resolve NLP
+  // If MINLP solution found,
+  //
+  // 1) restore original objective 
+  // 2) fix integer variables
+  // 3) resolve NLP
 
-  if (foundSol) {
+  if (retval > 0) {
 
-    nlp_ -> setObj (0, originalObjective_);
+    if (!nlp_) // first call (in this call to FP). Create NLP
+      nlp_ = new CouenneTNLP (problem_);
+
+    problem_ -> setObjective (0, origObj);
 
     fixIntVariables (best);
     nlp_ -> setInitSol (best);
+
+    ////////////////////////////////////////////////////////////////
+
+    // shamelessly copied from hs071_main.cpp (it's Open Source too!)
+
+    SmartPtr <IpoptApplication> app = IpoptApplicationFactory ();
+
+    ApplicationReturnStatus status = app -> Initialize ();
+    if (status != Solve_Succeeded) printf ("Error in initialization\n");
+
+    status = app -> OptimizeTNLP (nlp_);
+    if (status != Solve_Succeeded) printf ("Error solving problem\n");
+
+    ////////////////////////////////////////////////////////////////
+
     double z = nlp_ -> solve (nSol);
+
+    problem_ -> domain () -> pop (); // pushed in fixIntVariables
 
     // check if newly found NLP solution is also integer (unlikely...)
     if (problem_ -> checkNLP (nSol, z) &&
 	(z < problem_ -> getCutOff ())) {
 
       problem_ -> setCutOff (z);
-      bestZ = z;
-      best  = nSol;
-
-      // if bound tightening clears the whole feasible set, stop
-      if (!(problem_ -> btCore (NULL)))
-	return -1;
+      objVal = z;
+      best   = nSol;
     }	
   }
 
-  return foundSol;
-}
+  if (retval > 0) 
+    CoinCopyN (best, problem_ -> nVars (), newSolution);
 
+  delete [] iSol;
+  delete [] nSol; // best is either iSol or nSol, so don't delete [] it
 
-/// find integer (possibly NLP-infeasible) point isol closest
-/// (according to the l-1 norm of the hessian) to the current
-/// NLP-feasible (but fractional) solution nsol
-CouNumber CouenneFeasPump::getMILPSolution (CouNumber *iSol, CouNumber *nSol) {
+  // release bounding box
+  problem_ -> domain () -> pop ();
 
-  return 0.;
-}
+  // milp is deleted at every call since it changes not only in terms
+  // of variable bounds but also in terms of linearization cuts added
+  delete milp_;
 
-/// obtain continuous (if fractional) solution
-CouNumber *CouenneFeasPump::getContSolution () {
-
-  const double *solution = nlp_ -> getColSolution ();
-
-  CouNumber *sol = CoinCopyOfArray (solution, problem_ -> nVars ());
-  return sol;
+  return retval;
 }

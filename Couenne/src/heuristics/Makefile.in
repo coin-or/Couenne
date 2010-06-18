@@ -44,6 +44,8 @@ build_triplet = @build@
 host_triplet = @host@
 @COIN_HAS_COUENNE_TRUE@am__append_1 = \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/partial` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/interfaces` \
@@ -63,7 +65,7 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneHeuristics_la_LIBADD =
 am_libCouenneHeuristics_la_OBJECTS = BonInitHeuristic.lo \
 	BonNlpHeuristic.lo CouenneFeasPumpConstructors.lo \
-	CouenneFeasPump.lo
+	CouenneFeasPump.lo CouenneFPSolveMILP.lo CouenneFPSolveNLP.lo
 libCouenneHeuristics_la_OBJECTS =  \
 	$(am_libCouenneHeuristics_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -299,7 +301,9 @@ libCouenneHeuristics_la_SOURCES = \
 	BonInitHeuristic.cpp \
 	BonNlpHeuristic.cpp \
 	CouenneFeasPumpConstructors.cpp \
-	CouenneFeasPump.cpp 
+	CouenneFeasPump.cpp \
+	CouenneFPSolveMILP.cpp \
+	CouenneFPSolveNLP.cpp 
 
 libCouenneHeuristics_la_DEPENDENCIES = $(libCouenneHeuristics_la_LIBADD)
 
@@ -376,6 +380,8 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonNlpHeuristic.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFPSolveMILP.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFPSolveNLP.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPump.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPumpConstructors.Plo@am__quote@
 

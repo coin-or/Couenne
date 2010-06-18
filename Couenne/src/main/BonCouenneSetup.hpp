@@ -94,7 +94,7 @@ namespace Couenne {
     {return doubleParam_ [p];}
 
 private:
-      SmartPtr<SmartAsl> aslfg_;
+    SmartPtr<SmartAsl> aslfg_;
 
     /// hold a reference to Couenne cut generator to delete it at
     /// last. The alternative would be to clone it every time the

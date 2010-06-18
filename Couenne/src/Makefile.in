@@ -400,6 +400,7 @@ includecoin_HEADERS = \
 	main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp \
 	interfaces/BonCouenneInterface.hpp \
+	interfaces/CouenneTNLP.hpp \
 	interfaces/CouenneMINLPInterface.hpp \
 	heuristics/BonNlpHeuristic.hpp \
 	heuristics/BonInitHeuristic.hpp \
@@ -455,6 +456,8 @@ includecoin_HEADERS = \
 	expression/CouenneExprOp.hpp \
 	expression/CouExpr.hpp \
 	expression/CouennePrecisions.hpp \
+	expression/partial/CouenneExprHess.hpp \
+	expression/partial/CouenneExprJac.hpp \
 	problem/depGraph/CouenneDepGraph.hpp \
 	problem/CouenneProblemElem.hpp \
 	problem/CouenneProblem.hpp \
@@ -617,7 +620,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/../inc $(distdir)/branch $(distdir)/convex $(distdir)/disjunctive $(distdir)/ellipcuts $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/sdpcuts $(distdir)/standardize $(distdir)/util
+	$(mkdir_p) $(distdir)/../inc $(distdir)/branch $(distdir)/convex $(distdir)/disjunctive $(distdir)/ellipcuts $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/sdpcuts $(distdir)/standardize $(distdir)/util
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

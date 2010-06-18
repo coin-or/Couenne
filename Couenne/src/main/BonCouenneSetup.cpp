@@ -57,47 +57,14 @@
 #include "CglLandP.hpp"
 #include "CglRedSplit.hpp"
 
-// #ifdef COIN_HAS_ASL
-// #include "asl.h"
-// #include "getstub.h"
-// #endif
-
 using namespace Couenne;
-  
-// SmartAsl::~SmartAsl(){
-// #ifdef COIN_HAS_ASL
-//   //Code from Ipopt::AmplTNLP to free asl
-//   if(asl != NULL){
-//     if (X0) {
-//       delete [] X0;
-//       X0 = NULL;
-//     }
-//     if (havex0) {
-//       delete [] havex0;
-//       havex0 = NULL;
-//     }
-//     if (pi0) {
-//       delete [] pi0;
-//       pi0 = NULL;
-//     }
-//     if (havepi0) {
-//       delete [] havepi0;
-//       havepi0 = NULL;
-//     }
-//     ASL* asl_to_free = (ASL*)asl;
-//     ASL_free(&asl_to_free);
-//     asl = NULL;
-//   }
-//   ASL_free(&asl);
-// #endif
-// }
   
 CouenneSetup::~CouenneSetup(){
   if (couenneProb_ && couenneProb_is_own_)
     delete couenneProb_;
 }
 
-bool CouenneSetup::InitializeCouenne (char ** argv,  
+bool CouenneSetup::InitializeCouenne (char ** argv,
 				      CouenneProblem *couenneProb,
 				      Ipopt::SmartPtr<Bonmin::TMINLP> tminlp,
 				      CouenneInterface *ci) {
@@ -512,18 +479,13 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     int numSolve;
     options () -> GetIntegerValue ("log_num_local_optimization_per_level", numSolve, "couenne.");
 
-    Couenne::CouenneFeasPump *nlpHeuristic = new Couenne::CouenneFeasPump;
+    CouenneFeasPump *nlpHeuristic = new CouenneFeasPump (//*this, 
+							 couenneProb_, couenneCg, options ());
 
-    //    nlpHeuristic->setNlp(*ci,false);
-
-    //nlpHeuristic -> setNlp (NULL, false); // TODO: load
-  				 	    // CouenneMINLPInterface and
-					    // restore this
-
-    nlpHeuristic -> setCouenneProblem (couenneProb_);
     nlpHeuristic -> setNumberSolvePerLevel (numSolve);
 
     HeuristicMethod h;
+
     h.id = "Couenne Feasibility Pump";
     h.heuristic = nlpHeuristic;
     heuristics_. push_back (h);

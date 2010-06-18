@@ -13,7 +13,9 @@ libCouenneHeuristics_la_SOURCES = \
 	BonInitHeuristic.cpp \
 	BonNlpHeuristic.cpp \
 	CouenneFeasPumpConstructors.cpp \
-	CouenneFeasPump.cpp 
+	CouenneFeasPump.cpp \
+	CouenneFPSolveMILP.cpp \
+	CouenneFPSolveNLP.cpp 
 
 libCouenneHeuristics_la_DEPENDENCIES = $(libCouenneHeuristics_la_LIBADD)
 
@@ -45,6 +47,8 @@ AM_CPPFLAGS = \
 if COIN_HAS_COUENNE
   AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/partial` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/interfaces` \
