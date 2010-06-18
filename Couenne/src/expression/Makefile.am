@@ -36,6 +36,8 @@ libCouenneExpression_la_SOURCES = \
 	operators/bounds/exprBQuad.cpp \
 	simplify/simplifiers.cpp \
 	simplify/simplify.cpp \
+	partial/CouenneExprJac.cpp \
+	partial/CouenneExprHess.cpp \
 	../convex/operators/conv-exprAbs.cpp \
 	../convex/operators/conv-exprDiv.cpp \
 	../convex/operators/conv-exprMul.cpp \
