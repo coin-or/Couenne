@@ -368,8 +368,6 @@ void CouenneProblem::realign () {
 /// Add list of options to be read from file
 void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
 
-  roptions -> SetRegisteringCategory ("Couenne options", Bonmin::RegisteredOptions::CouenneCategory);
-
   roptions -> AddNumberOption
     ("art_cutoff",
      "Artificial cutoff",
@@ -381,32 +379,6 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
      "Window around known optimum",
      COIN_DBL_MAX,
      "Default value is infinity.");
-
-  roptions -> AddNumberOption
-    ("feas_tolerance",
-     "Tolerance for constraints/auxiliary variables",
-     feas_tolerance_default,
-     "Default value is 1e-5.");
-
-  roptions -> AddStringOption2 
-    ("feasibility_bt",
-     "Feasibility-based (cheap) bound tightening (FBBT)",
-     "yes",
-     "no","",
-     "yes","",
-     "A pre-processing technique to reduce the bounding box, before the generation of linearization cuts. "
-     "This is a quick and effective way to reduce the solution set, and it is highly recommended to keep it active."
-    );
-
-  roptions -> AddStringOption3
-    ("multilinear_separation",
-     "Separation for multilinear terms",
-     "simple",
-     "none",   "No separation -- just use the four McCormick inequalities",
-     "simple", "Use the old one considering lower curve only",
-     "tight",  "Use the new one -- EXPERIMENTAL!",
-     "Type of separation for multilinear terms where the dependent variable is also bounded"
-    );
 
   roptions -> AddStringOption2
     ("use_semiaux",

@@ -74,16 +74,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   //						      	          | |
   /////////////////////////////////////////////////////////////// |_| /////
 
-  milp_ = model_ -> solver () -> clone ();
-
   expression *origObj = problem_ -> Obj (0) -> Body ();
 
-  // copy bounding box and current solution to the problem (better
-  // linearization cuts)
-  problem_ -> domain () -> push (milp_ -> getNumCols (),
-				 milp_ -> getColSolution (),
-				 milp_ -> getColLower (),
-				 milp_ -> getColUpper ());
   do {
 
     // INTEGER PART /////////////////////////////////////////////////////////

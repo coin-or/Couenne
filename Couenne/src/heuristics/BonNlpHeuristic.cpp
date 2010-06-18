@@ -137,7 +137,8 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   bool too_deep = false;
 
   // check depth
-  if (numberSolvePerLevel_ > -1){
+  if (numberSolvePerLevel_ > -1) {
+
     if (numberSolvePerLevel_ == 0) 
       throw noSolution;
 
@@ -383,4 +384,30 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
     } else return 0;
   }
+}
+
+
+/// initialize options
+void NlpSolveHeuristic::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
+
+  roptions -> AddStringOption2
+    ("local_optimization_heuristic",
+     "Search for local solutions of MINLP's",
+     "yes",
+     "no","",
+     "yes","",
+     "If enabled, a heuristic based on Ipopt is used to find feasible solutions for the problem. "
+     "It is highly recommended that this option is left enabled, as it would be difficult to find feasible solutions otherwise.");
+
+  roptions -> AddLowerBoundedIntegerOption
+    ("log_num_local_optimization_per_level",
+     "Specify the logarithm of the number of local optimizations to perform" 
+     " on average for each level of given depth of the tree.",
+     -1,
+     2, "Solve as many nlp's at the nodes for each level of the tree. "
+     "Nodes are randomly selected. If for a "
+     "given level there are less nodes than this number nlp are solved for every nodes. "
+     "For example if parameter is 8, nlp's are solved for all node until level 8, " 
+     "then for half the node at level 9, 1/4 at level 10.... "
+     "Value -1 specify to perform at all nodes.");
 }

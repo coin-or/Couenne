@@ -406,7 +406,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   int freq;
 
-  options()->GetIntegerValue("convexification_cuts",freq,"couenne.");
+  options () -> GetIntegerValue ("convexification_cuts", freq, "couenne.");
 
   if (freq != 0) {
 
@@ -477,10 +477,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   if (doHeuristic) {
 
     int numSolve;
-    options () -> GetIntegerValue ("log_num_local_optimization_per_level", numSolve, "couenne.");
+    options () -> GetIntegerValue ("feas_pump_level", numSolve, "couenne.");
 
-    CouenneFeasPump *nlpHeuristic = new CouenneFeasPump (//*this, 
-							 couenneProb_, couenneCg, options ());
+    CouenneFeasPump *nlpHeuristic = new CouenneFeasPump (couenneProb_, couenneCg, options ());
 
     nlpHeuristic -> setNumberSolvePerLevel (numSolve);
 
@@ -557,80 +556,101 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   // Tell Cbc not to check again if a solution returned from
   // heuristic is indeed feasible
-  intParam_[BabSetupBase::SpecialOption] = 16 | 4;
+  intParam_ [BabSetupBase::SpecialOption] = 16 | 4;
 
   return true;
 }
  
-void CouenneSetup::registerOptions(){
-  registerAllOptions (roptions ());
-}
+void CouenneSetup::registerOptions ()
+{registerAllOptions (roptions ());}
 
 
-void
-CouenneSetup::registerAllOptions(Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions){
-  BabSetupBase::registerAllOptions(roptions);
-  BonCbcFullNodeInfo::registerOptions(roptions);
-  CouenneCutGenerator::registerOptions (roptions);
-  CouenneDisjCuts::registerOptions (roptions);
+void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
 
-  roptions -> AddNumberOption
-    ("couenne_check",
-     "known value of a global optimum",
-     COIN_DBL_MAX,
-     "Default value is +infinity.");
+  roptions -> SetRegisteringCategory ("Couenne options", Bonmin::RegisteredOptions::CouenneCategory);
 
-  roptions -> AddStringOption2 (
-				"display_stats",
+  BabSetupBase        ::registerAllOptions (roptions);
+  BonCbcFullNodeInfo  ::registerOptions (roptions);
+
+  CouenneProblem        ::registerOptions (roptions);
+  CouenneCutGenerator   ::registerOptions (roptions);
+  CouenneChooseStrong   ::registerOptions (roptions);
+  CouenneChooseVariable ::registerOptions (roptions);
+  CouenneDisjCuts       ::registerOptions (roptions);
+  NlpSolveHeuristic     ::registerOptions (roptions);
+  CouenneFeasPump       ::registerOptions (roptions);
+
+  /// TODO: move later!
+  roptions -> AddStringOption2
+    ("local_branching_heuristic",
+     "Apply local branching heuristic",
+     "no",
+     "no","",
+     "yes","",
+     "A local-branching heuristic based is used to find feasible solutions.");
+
+
+  roptions -> AddNumberOption  ("couenne_check",
+				"known value of a global optimum (for debug purposes only)",
+				COIN_DBL_MAX,
+				"Default value is +infinity.");
+
+  roptions -> AddStringOption2 ("display_stats",
 				"display statistics at the end of the run",
 				"no",
 				"yes", "",
 				"no", "");
 
-  roptions -> AddStringOption2 (
-				"test_mode",
+  roptions -> AddStringOption2 ("test_mode",
 				"set to true if this is Couenne unit test",
 				"no",
 				"yes", "",
 				"no", "");
 
-  roptions -> AddStringOption4 (
-				"lp_solver",
+  roptions -> AddStringOption4 ("lp_solver",
 				"Linear Programming solver for the linearization",
 				"clp",
-				"clp", "Use the Coin-OR Open Source solver CLP",
-				"cplex", "Use the commercial solver Cplex (license is needed)",
+				"clp",    "Use the Coin-OR Open Source solver CLP",
+				"cplex",  "Use the commercial solver Cplex (license is needed)",
 				"gurobi", "Use the commercial solver Gurobi (license is needed)",
 				"soplex", "Use the freely available Soplex");
 
-  roptions->AddBoundedIntegerOption(
-				    "branching_print_level", "Output level for braching code in Couenne",
+  roptions->AddBoundedIntegerOption("branching_print_level", "Output level for braching code in Couenne",
 				    -2, J_LAST_LEVEL-1, J_NONE, "");
 
-  roptions->AddBoundedIntegerOption(
-				    "boundtightening_print_level", "Output level for bound tightening code in Couenne",
+  roptions->AddBoundedIntegerOption("boundtightening_print_level", "Output level for bound tightening code in Couenne",
 				    -2, J_LAST_LEVEL-1, J_NONE, "");
 
-  roptions->AddBoundedIntegerOption(
-				    "convexifying_print_level", "Output level for convexifying code in Couenne",
+  roptions->AddBoundedIntegerOption("convexifying_print_level", "Output level for convexifying code in Couenne",
 				    -2, J_LAST_LEVEL-1, J_NONE, "");
 
-  roptions->AddBoundedIntegerOption(
-				    "problem_print_level", "Output level for problem manipulation code in Couenne",
+  roptions->AddBoundedIntegerOption("problem_print_level", "Output level for problem manipulation code in Couenne",
 				    -2, J_LAST_LEVEL-1, J_ERROR, "");
 
-  roptions->AddBoundedIntegerOption(
-				    "nlpheur_print_level", "Output level for NLP heuristic in Couenne",
+  roptions->AddBoundedIntegerOption("nlpheur_print_level", "Output level for NLP heuristic in Couenne",
 				    -2, J_LAST_LEVEL-1, J_NONE, "");
 
-  roptions->AddBoundedIntegerOption(
-				    "disjcuts_print_level", "Output level for disjunctive cuts in Couenne",
+  roptions->AddBoundedIntegerOption("disjcuts_print_level", "Output level for disjunctive cuts in Couenne",
 				    -2, J_LAST_LEVEL-1, J_NONE, "");
 
-  roptions->AddBoundedIntegerOption(
-				    "reformulate_print_level", "Output level for reformulating problems in Couenne",
+  roptions->AddBoundedIntegerOption("reformulate_print_level", "Output level for reformulating problems in Couenne",
 				    -2, J_LAST_LEVEL-1, J_NONE, "");
 
+  roptions -> AddNumberOption
+    ("feas_tolerance",
+     "Tolerance for constraints/auxiliary variables",
+     feas_tolerance_default,
+     "Default value is 1e-5.");
+
+  roptions -> AddStringOption2 
+    ("feasibility_bt",
+     "Feasibility-based (cheap) bound tightening (FBBT)",
+     "yes",
+     "no","",
+     "yes","",
+     "A pre-processing technique to reduce the bounding box, before the generation of linearization cuts. "
+     "This is a quick and effective way to reduce the solution set, and it is highly recommended to keep it active."
+    );
 
   // copied from BonminSetup::registerMilpCutGenerators(), in
   // BonBonminSetup.cpp

@@ -26,6 +26,10 @@ namespace Ipopt {
   class IpoptApplication;
 }
 
+namespace Bonmin {
+  class RegisteredOptions;
+}
+
 namespace Couenne {
 
   class expression;
@@ -93,6 +97,9 @@ namespace Couenne {
     /// components in the nonlinear problem for later re-solve
     void fixIntVariables (double *sol);
 
+    /// initialize options to be read later
+    static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions>);
+
   private:
 
     //
@@ -136,7 +143,7 @@ namespace Couenne {
     double betaNLP_;
 
     /// weight of the Hessian in computing the objective functions of MILP
-    double betaMILP_;
+    double betaMILP_; // decrease it over time
 
     /// compute distance from integer variables only, not all variables;
     bool compDistInt_;

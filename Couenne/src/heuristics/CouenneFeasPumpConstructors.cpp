@@ -37,15 +37,14 @@ CouenneFeasPump::CouenneFeasPump ():
   betaMILP_            (0.),
   compDistInt_         (false),
   milpCuttingPlane_    (false),
-  maxIter_             (1e9) {
+  maxIter_             (COIN_INT_MAX) {
 
   setHeuristicName ("Couenne Feasibility Pump");
 }
 
 
 // Constructor ////////////////////////////////////////////////// 
-CouenneFeasPump::CouenneFeasPump (//CbcModel &model, 
-				  CouenneProblem *couenne,
+CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 				  CouenneCutGenerator *cg,
 				  Ipopt::SmartPtr<Ipopt::OptionsList> options):
 
@@ -59,19 +58,19 @@ CouenneFeasPump::CouenneFeasPump (//CbcModel &model,
   betaMILP_            (0.),
   compDistInt_         (false),
   milpCuttingPlane_    (false),
-  maxIter_             (1e9) {
+  maxIter_             (COIN_INT_MAX) {
 
   setHeuristicName ("Couenne Feasibility Pump");
 
   std::string s;
 
-  options -> GetIntegerValue ("feaspump_iter",            maxIter_,             "couenne.");
-  options -> GetIntegerValue ("feaspump_log_solve_level", numberSolvePerLevel_, "couenne.");
-  options -> GetNumericValue ("feaspump_beta_nlp",        betaNLP_,             "couenne.");
-  options -> GetNumericValue ("feaspump_beta_milp",       betaMILP_,            "couenne.");
-
-  options -> GetStringValue  ("feaspump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
-  options -> GetStringValue  ("feaspump_dist_int", s, "couenne."); compDistInt_      = (s == "yes");
+  options -> GetIntegerValue ("feas_pump_iter",      maxIter_,             "couenne.");
+  options -> GetIntegerValue ("feas_pump_level",     numberSolvePerLevel_, "couenne.");
+  options -> GetNumericValue ("feas_pump_beta_nlp",  betaNLP_,             "couenne.");
+  options -> GetNumericValue ("feas_pump_beta_milp", betaMILP_,            "couenne.");
+				    
+  options -> GetStringValue  ("feas_pump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
+  options -> GetStringValue  ("feas_pump_dist_int", s, "couenne."); compDistInt_      = (s == "yes");
 }
 
   
@@ -80,10 +79,10 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
 
   CbcHeuristic         (other),
   problem_             (other. problem_ -> clone ()),
+  couenneCG_           (other. couenneCG_),
   nlp_                 (other. nlp_),
   milp_                (other. milp_),
   pool_                (other. pool_),
-  couenneCG_           (other. couenneCG_),
   numberSolvePerLevel_ (other. numberSolvePerLevel_),
   betaNLP_             (other. betaNLP_),
   betaMILP_            (other. betaMILP_),
@@ -181,4 +180,65 @@ void CouenneFeasPump::fixIntVariables (double *sol) {
       problem_ -> Lb (i) = 
       problem_ -> Ub (i) = value;
     }
+}
+
+
+/// initialize options
+void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
+
+  roptions -> AddStringOption2
+    ("feas_pump_heuristic",
+     "Apply the nonconvex Feasibility Pump",
+     "no",
+     "no","",
+     "yes","",
+     "An implementation of the Feasibility Pump for nonconvex MINLPs");
+
+  roptions -> AddLowerBoundedIntegerOption
+    ("feas_pump_level",
+     "Specify the logarithm of the number of feasibility pumps to perform" 
+     " on average for each level of given depth of the tree.",
+     -1,
+     2, "Solve as many nlp's at the nodes for each level of the tree. "
+     "Nodes are randomly selected. If for a "
+     "given level there are less nodes than this number nlp are solved for every nodes. "
+     "For example if parameter is 8, nlp's are solved for all node until level 8, " 
+     "then for half the node at level 9, 1/4 at level 10.... "
+     "Value -1 specify to perform at all nodes.");
+
+  roptions -> AddLowerBoundedIntegerOption
+    ("feas_pump_iter",
+     "Number of iterations in the main Feasibility Pump loop",
+     -1,
+     10, "-1 means no limit");
+
+  roptions -> AddBoundedNumberOption
+    ("feas_pump_beta_nlp",
+     "Weight of the Lagrangian Hessian in computing the objective function of the NLP problem",
+     0., false,
+     1., false,
+     0., "0 for distance only, 1 for lagrangian hessian only");
+
+  roptions -> AddBoundedNumberOption
+    ("feas_pump_beta_milp",
+     "Weight of the Lagrangian Hessian in computing the objective function of the MILP problem",
+     0., false,
+     1., false,
+     0., "0 for distance only, 1 for lagrangian hessian only");
+
+  roptions -> AddStringOption2
+    ("feas_pump_lincut",
+     "Shortcut to linearization cutting plane applied to the MILP solution instead of solving NLPs",
+     "no",
+     "no","",
+     "yes","",
+     "");
+
+  roptions -> AddStringOption2
+    ("feas_pump_dist_int",
+     "only compute the distance from integer coordinates (\"yes\") instead of all variables (\"no\")",
+     "yes",
+     "no","",
+     "yes","",
+     "");
 }

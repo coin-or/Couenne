@@ -151,43 +151,6 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
      "no","",
      "yes","");
 
-  roptions -> AddStringOption2
-    ("local_optimization_heuristic",
-     "Search for local solutions of MINLP's",
-     "yes",
-     "no","",
-     "yes","",
-     "If enabled, a heuristic based on Ipopt is used to find feasible solutions for the problem. "
-     "It is highly recommended that this option is left enabled, as it would be difficult to find feasible solutions otherwise.");
-
-  roptions -> AddStringOption2
-    ("local_branching_heuristic",
-     "Apply local branching heuristic",
-     "no",
-     "no","",
-     "yes","",
-     "A local-branching heuristic based is used to find feasible solutions.");
-
-  roptions -> AddStringOption2
-    ("feas_pump_heuristic",
-     "Apply the nonconvex Feasibility Pump",
-     "no",
-     "no","",
-     "yes","",
-     "An implementation of the Feasibility Pump for nonconvex MINLPs");
-
-  roptions -> AddLowerBoundedIntegerOption
-    ("log_num_local_optimization_per_level",
-     "Specify the logarithm of the number of local optimizations to perform" 
-     " on average for each level of given depth of the tree.",
-     -1,
-     2, "Solve as many nlp's at the nodes for each level of the tree. "
-     "Nodes are randomly selected. If for a "
-     "given level there are less nodes than this number nlp are solved for every nodes. "
-     "For example if parameter is 8, nlp's are solved for all node until level 8, " 
-     "then for half the node at level 9, 1/4 at level 10.... "
-     "Value -1 specify to perform at all nodes.");
-
   roptions -> AddStringOption3
     ("convexification_type",
      "Determines in which point the linear over/under-estimator are generated",
@@ -221,7 +184,13 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
      "no","",
      "yes","");
 
-  CouenneProblem        :: registerOptions (roptions);
-  CouenneChooseStrong   :: registerOptions (roptions);
-  CouenneChooseVariable :: registerOptions (roptions);
+  roptions -> AddStringOption3
+    ("multilinear_separation",
+     "Separation for multilinear terms",
+     "simple",
+     "none",   "No separation -- just use the four McCormick inequalities",
+     "simple", "Use the old one considering lower curve only",
+     "tight",  "Use the new one -- EXPERIMENTAL!",
+     "Type of separation for multilinear terms where the dependent variable is also bounded"
+    );
 }

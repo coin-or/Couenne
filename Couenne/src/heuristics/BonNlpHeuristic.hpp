@@ -63,6 +63,10 @@ namespace Couenne {
     /** set number of nlp's solved for each given level of the tree*/
     void setNumberSolvePerLevel(int value){
       numberSolvePerLevel_ = value;}
+
+    /// initialize options
+    static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions>);
+
   private:
     /** Pointer to an nlp solver interface.*/
     OsiTMINLPInterface * nlp_;

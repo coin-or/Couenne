@@ -68,6 +68,15 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
   if (!milp_) {
 
+    milp_ = model_ -> solver () -> clone ();
+
+    // copy bounding box and current solution to the problem (better
+    // linearization cuts)
+    problem_ -> domain () -> push (milp_ -> getNumCols (),
+				   milp_ -> getColSolution (),
+				   milp_ -> getColLower (),
+				   milp_ -> getColUpper ());
+
     // no data is available so far, retrieve it from the MILP solver
     // used as the linearization
 
