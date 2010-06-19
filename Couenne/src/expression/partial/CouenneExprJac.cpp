@@ -16,6 +16,8 @@
 
 using namespace Couenne;
 
+//#define DEBUG
+
 ExprJac::ExprJac ():
   nnz_   (0),
   iRow_  (NULL),
@@ -102,10 +104,11 @@ ExprJac::ExprJac (CouenneProblem *p):
 
       expression 
 	*J = c -> Body () -> differentiate (*k), // derivative of the
-	// constraint's body
-	// w.r.t. x_i
-	*sJ = J -> simplify (),                 // a simplification
-	*rJ = sJ ? sJ : J;                      // the real one
+                  	                         // constraint's body
+	                                         // w.r.t. x_i
+
+	*sJ = J -> simplify (),                  // a simplification
+	*rJ = sJ ? sJ : J;                       // the real one
 
       if (sJ) 
 	delete J; // the only remaining expression won't be wasted
@@ -116,9 +119,6 @@ ExprJac::ExprJac (CouenneProblem *p):
 
       // there is a nonzero entry!
 
-      if (!nTerms)
-	nRealCons++; // increase the counter of real constraints 
-
       reAlloc (nnz_ + 1, cursize, iRow_, jCol_, expr_);
 
       iRow_ [nnz_] = nRealCons;
@@ -128,6 +128,9 @@ ExprJac::ExprJac (CouenneProblem *p):
       nnz_++;
       nTerms++;
     }
+
+    if (nTerms)
+      nRealCons++; // increase the counter of real constraints 
   }
 
   // auxiliaries ////////////////////////////////////////////////////////////
@@ -150,7 +153,7 @@ ExprJac::ExprJac (CouenneProblem *p):
 
     std::set <int> deplist;
 
-    e -> DepList (deplist, STOP_AT_AUX);
+    e -> Image () -> DepList (deplist, STOP_AT_AUX);
 
     deplist.insert (e -> Index ());
 
@@ -164,6 +167,7 @@ ExprJac::ExprJac (CouenneProblem *p):
 	     e -> Image () -> differentiate (*k), // derivative of the
 	                                          // constraint's body
 			  		          // w.r.t. x_i
+
 	*sJ = J -> simplify (),                   // a simplification
 	*rJ = sJ ? sJ : J;                        // the real one
 
@@ -176,9 +180,6 @@ ExprJac::ExprJac (CouenneProblem *p):
 
       // there is a nonzero entry!
 
-      if (!nTerms)
-	nRealCons++; // increase the counter of real constraints 
-
       reAlloc (nnz_ + 1, cursize, iRow_, jCol_, expr_);
 
       iRow_ [nnz_] = nRealCons;
@@ -188,5 +189,21 @@ ExprJac::ExprJac (CouenneProblem *p):
       nnz_++;
       nTerms++;
     }
+
+    if (nTerms)
+      nRealCons++; // increase the counter of real constraints 
   }
+
+#ifdef DEBUG
+  printf ("jacobian: %d nonzeros\n", nnz_);
+
+  for (int i=0; i<nnz_; i++) {
+
+    printf ("[%d,%d]: ", iRow_ [i], jCol_ [i]);
+
+    fflush (stdout);
+    expr_ [i] -> print (); 
+    printf ("\n");
+  }
+#endif
 }

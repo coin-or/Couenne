@@ -109,10 +109,6 @@ class exprAux: public exprVar {
   inline CouNumber operator () ()
   {return domain_ -> x (varIndex_);}
 
-  /// Differentiation
-  inline expression *differentiate (int index) 
-  {return image_ -> differentiate (index);}
-
   /// fill in the set with all indices of variables appearing in the
   /// expression
   int DepList (std::set <int> &deplist, 

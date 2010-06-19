@@ -173,8 +173,8 @@ int expression::dependsOn (int *ind, int n, enum dig_type type) {
 
   std::set <int> 
     indlist (ind, ind + n), 
-    deplist,
-    intersectn;
+    deplist;
+  //intersectn;
 
   /*printf (":::::: indlist = {");
   for (std::set <int>::iterator i=indlist.begin (); i != indlist.end(); ++i)
@@ -191,25 +191,15 @@ int expression::dependsOn (int *ind, int n, enum dig_type type) {
 	 i = deplist.begin (), 
 	 j = indlist.begin ();
        (i != deplist.end ()) && 
-       (j != indlist.end ());) {
+	 (j != indlist.end ());) {
 
-    if (*i==*j) return 1;
-    if (*i>*j) ++j;
-    else       ++i;
+    if (*i == *j) return 1;
+
+    if (*i > *j) ++j;
+    else         ++i;
   }
 
-  //printf ("empty\n");
   return 0;
-
-  // std::set_intersection (indlist .begin (), indlist .end (), 
-  // 			 deplist .begin (), deplist .end (),
-  // 			 std::inserter (intersectn, intersectn.begin ()));
-
-  // for (std::set <int>::iterator i=intersectn.begin (); i != intersectn.end(); ++i)
-  //   printf ("%d ", *i);
-  // printf ("} -> returning %d\n", intersectn.size());
-
-  // return intersectn.size();
 }
 
 

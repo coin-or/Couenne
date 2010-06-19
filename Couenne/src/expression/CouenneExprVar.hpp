@@ -91,7 +91,7 @@ class exprVar: public expression {
 
   /// differentiation
   virtual inline expression *differentiate (int index) 
-    {return new exprConst ((index == varIndex_) ? 1. : 0.);}
+  {return new exprConst ((index == varIndex_) ? 1. : 0.);}
 
   /// fill in the set with all indices of variables appearing in the
   /// expression

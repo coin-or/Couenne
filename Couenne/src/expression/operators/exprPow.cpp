@@ -112,11 +112,33 @@ expression *exprPow::simplify () {
 
 expression *exprPow::differentiate (int index) {
 
-  if (!(arglist_ [0] -> dependsOn (&index, 1))  &&
-      !(arglist_ [1] -> dependsOn (&index, 1)))
+  if (!(arglist_ [0] -> dependsOn (index))  &&
+      !(arglist_ [1] -> dependsOn (index)))
     return new exprConst (0.);
 
-  // TODO: two cases
+  if (arglist_ [0] -> Type () == CONST) { // k^f(x), k constant
+
+    CouNumber base = arglist_ [0] -> Value ();
+
+    if (base == 0.)
+      return new exprConst (0.);
+
+    return new exprMul (new exprConst (log (base)),
+			new exprMul (new exprPow (new exprConst (base), 
+						  arglist_ [1] -> clone ()),
+				     arglist_ [1] -> differentiate (index)));
+
+  } else if (arglist_ [1] -> Type () == CONST) { // f(x)^k, k constant
+
+    CouNumber exponent = arglist_ [1] -> Value ();
+
+    return new exprMul (new exprConst (exponent),
+			new exprMul (new exprPow (arglist_ [0] -> clone (),
+						  new exprConst (exponent - 1.)),
+				     arglist_ [0] -> differentiate (index)));
+  }
+
+  // all other cases: f(x)^g(x)
 
   expression **alm  = new expression * [2];
   expression **alp  = new expression * [2];

@@ -8,11 +8,16 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h> // ! must go
+
 #include "CoinFinite.hpp"
 
 #include "CouenneExprInv.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneExprMul.hpp"
+#include "CouenneExprOpp.hpp"
+#include "CouenneExprDiv.hpp"
+#include "CouenneExprPow.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneExpression.hpp"
 
@@ -21,13 +26,9 @@ using namespace Couenne;
 // differentiation
 expression *exprInv::differentiate (int index) {
 
-  expression **alm = new expression * [3];
-  
-  alm [0] = new exprInv (new exprClone (argument_));
-  alm [1] = new exprClone (alm [0]);
-  alm [2] = argument_ -> differentiate (index);
-
-  return new exprMul (alm, 3);
+  return new exprOpp (new exprDiv (argument_ -> differentiate (index),
+				   new exprPow (new exprClone (argument_),
+						new exprConst (2.))));
 }
 
 

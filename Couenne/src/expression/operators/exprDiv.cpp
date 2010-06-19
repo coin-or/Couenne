@@ -78,31 +78,24 @@ expression *exprDiv::simplify () {
 
 
 // differentiate quotient of expressions
-
+//
+// d (f/g) / dx = df/dx / g - f/g^2 * dg/dx = 1/g (f' - f/g g')
 expression *exprDiv::differentiate (int index) {
 
   if (!(arglist_ [0] -> dependsOn (index))  &&
       !(arglist_ [1] -> dependsOn (index)))
     return new exprConst (0.);
 
-  expression **alm  = new expression * [2];
-  expression **als  = new expression * [2];
   expression **alm2 = new expression * [3];
 
-  exprInv *invg = new exprInv (new exprClone (arglist_ [1]));
+  exprInv *invg = new exprInv (arglist_ [1] -> clone ());
 
-  alm [0] = invg; // evaluated before alm2 [2]
-
-  alm2 [0] = new exprClone (arglist_ [0]);
+  alm2 [0] = arglist_ [0] -> clone ();
   alm2 [1] = arglist_ [1] -> differentiate (index);
   alm2 [2] = new exprClone (invg);
 
-  als [0] = arglist_ [0] -> differentiate (index);
-  als [1] = new exprMul (alm2, 3);
-
-  alm [1] = new exprSub (als, 2);
-
-  return new exprMul (alm, 2);
+  return new exprMul (invg, new exprSub (arglist_ [0] -> differentiate (index),
+					 new exprMul (alm2, 3)));
 }
 
 
