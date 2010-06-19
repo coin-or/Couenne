@@ -15,22 +15,18 @@
 #include <vector>
 #include <map>
 
-#include "CoinFinite.hpp"
-#include "CoinHelperFunctions.hpp"
-
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
-#include "CouenneExprAux.hpp"
 #include "CouenneJournalist.hpp"
 #include "CouenneDomain.hpp"
 
 using namespace Ipopt;
-using namespace Bonmin;
 
 class CglTreeInfo;
 
 namespace Ipopt {
   class OptionsList;
+  class Journalist;
 }
 
 namespace Bonmin {
@@ -48,6 +44,7 @@ class CoinWarmStart;
 
 namespace Couenne {
 
+  class exprVar;
   class exprAux;
   class DepGraph;
   class CouenneObject;
@@ -57,6 +54,9 @@ namespace Couenne {
   class QuadMap;
   class CouenneConstraint;
   class CouenneObjective;
+  class GlobalCutOff;
+
+  struct compExpr;
 
 // default tolerance for checking feasibility (and integrality) of NLP solutions
 const CouNumber feas_tolerance_default = 1e-5;
@@ -70,55 +70,6 @@ const CouNumber feas_tolerance_default = 1e-5;
  */
 
 class CouenneProblem {
-
-  /// Class for storing a global cutoff for a CouenneProblem and all
-  /// its clones
-  class GlobalCutOff {
-
-  private:
-
-    GlobalCutOff (const GlobalCutOff&);
-    double  cutoff_; ///< Value of the best solution
-    double *sol_;    ///< Best solution
-    int     size_;   ///< Size of the vector stored in sol (should be #var of reformulation)
-    bool    valid_;  ///< Stored solution corresponds to cutoff
-
-  public:
-
-    GlobalCutOff ()         : 
-      cutoff_ (COIN_DBL_MAX), 
-      sol_    (NULL), 
-      size_   (0), 
-      valid_  (false) {}
-
-    GlobalCutOff (double c, const double *s=NULL, int n=0): 
-      cutoff_ (c),
-      sol_    (NULL),
-      size_   (n),
-      valid_  (false) {
-      if (s) {
-	sol_   = CoinCopyOfArray (s, n);
-	size_  = n;
-	valid_ = true;
-      }
-    }
-
-    ~GlobalCutOff () {
-      if (sol_) delete [] sol_;
-    }
-
-    inline void setCutOff (double cutoff, const double *s=NULL, int n=0) {
-      cutoff_ = cutoff;
-      if (s) {
-	if (!sol_) sol_ = CoinCopyOfArray (s,         n);
-	else              CoinCopyN       (s, size_ = n, sol_);
-	valid_ = true;
-      } 
-    }
-
-    inline double  getCutOff    () const {return cutoff_;}
-    inline double *getCutOffSol () const {return sol_;}
-  };
 
   /// structure to record fixed, non-fixed, and continuous variables
   enum fixType {UNFIXED, FIXED, CONTINUOUS};
@@ -234,7 +185,7 @@ class CouenneProblem {
   double maxCpuTime_;
 
   /// options
-  BabSetupBase *bonBase_;
+  Bonmin::BabSetupBase *bonBase_;
 
 #ifdef COIN_HAS_ASL
   /// AMPL structure pointer (temporary --- looking forward to embedding into OS...)
@@ -258,7 +209,7 @@ class CouenneProblem {
  public:
 
   CouenneProblem  (ASL * = NULL,
-		   BabSetupBase *base = NULL,
+		   Bonmin::BabSetupBase *base = NULL,
 		   JnlstPtr jnlst = NULL);  ///< Constructor
   CouenneProblem  (const CouenneProblem &); ///< Copy constructor
   ~CouenneProblem ();                       ///< Destructor
@@ -415,7 +366,7 @@ class CouenneProblem {
 
   /// tighten bounds using propagation, implied bounds and reduced costs
   bool boundTightening (t_chg_bounds *, 
-			BabInfo * = NULL) const;
+			Bonmin::BabInfo * = NULL) const;
 
   /// core of the bound tightening procedure
   bool btCore (t_chg_bounds *chg_bds) const;
@@ -425,15 +376,15 @@ class CouenneProblem {
 	    const OsiSolverInterface &csi,
 	    OsiCuts &cs,
 	    const CglTreeInfo &info,
-	    BabInfo * babInfo,
+	    Bonmin::BabInfo * babInfo,
 	    t_chg_bounds *chg_bds);
 
   /// aggressive bound tightening. Fake bounds in order to cut
   /// portions of the solution space by fathoming on
   /// bounds/infeasibility
-  bool aggressiveBT (OsiTMINLPInterface *nlp,
+  bool aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 		     t_chg_bounds *, 
-		     BabInfo * = NULL) const;
+		     Bonmin::BabInfo * = NULL) const;
 
   /// procedure to strengthen variable bounds. Return false if problem
   /// turns out to be infeasible with given bounds, true otherwise.
@@ -461,19 +412,17 @@ class CouenneProblem {
   void setCutOff (CouNumber cutoff, const CouNumber *sol = NULL) const;
 
   /// Get cutoff
-  CouNumber getCutOff () const
-  {return pcutoff_ -> getCutOff ();}
+  CouNumber getCutOff () const;
 
   /// Get cutoff solution
-  CouNumber *getCutOffSol () const
-  {return pcutoff_ -> getCutOffSol ();}
+  CouNumber *getCutOffSol () const;
 
   /// Make cutoff known to the problem
   void installCutOff () const;
 
   /// Provide Journalist
   ConstJnlstPtr Jnlst() const 
-  {return ConstPtr(jnlst_);}
+  {return ConstPtr (jnlst_);}
 
   /// Check if solution is MINLP feasible
   bool checkNLP (const double *solution, double &obj, bool recompute = false) const;
@@ -552,7 +501,7 @@ class CouenneProblem {
   {return maxCpuTime_;}
 
   /// save CouenneBase
-  void setBase (BabSetupBase *base);
+  void setBase (Bonmin::BabSetupBase *base);
 
   /// Some originals may be unused due to their zero multiplicity
   /// (that happens when they are duplicates). This procedure creates
@@ -600,12 +549,12 @@ protected:
   int obbtInner (OsiSolverInterface *, 
 		 OsiCuts &,
 		 t_chg_bounds *, 
-		 BabInfo *) const;
+		 Bonmin::BabInfo *) const;
 
   int obbt_iter (OsiSolverInterface *csi, 
 		 t_chg_bounds *chg_bds, 
 		 const CoinWarmStart *warmstart, 
-		 BabInfo *babInfo,
+		 Bonmin::BabInfo *babInfo,
 		 double *objcoe,
 		 int sense, 
 		 int index) const;
@@ -613,7 +562,7 @@ protected:
   int call_iter (OsiSolverInterface *csi, 
 		 t_chg_bounds *chg_bds, 
 		 const CoinWarmStart *warmstart, 
-		 BabInfo *babInfo,
+		 Bonmin::BabInfo *babInfo,
 		 double *objcoe,
 		 enum nodeType type,
 		 int sense) const;
@@ -635,7 +584,7 @@ protected:
   void realign ();
 
   /// fill dependence_ structure
-  void fillDependence (BabSetupBase *base, CouenneCutGenerator * = NULL);
+  void fillDependence (Bonmin::BabSetupBase *base, CouenneCutGenerator * = NULL);
 
   /// fill freeIntegers_ array
   void fillIntegerRank () const;

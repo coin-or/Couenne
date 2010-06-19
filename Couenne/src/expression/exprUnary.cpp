@@ -12,6 +12,7 @@
 #include "CouenneTypes.hpp"
 #include "CouenneExprUnary.hpp"
 #include "CouenneExprVar.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneExprClone.hpp"
 
 using namespace Couenne;

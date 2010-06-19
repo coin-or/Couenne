@@ -10,6 +10,7 @@
 
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneExprVar.hpp"
 #include "CouenneProblemElem.hpp"
 #include "BonBabInfos.hpp"
 #include "BonCbc.hpp"

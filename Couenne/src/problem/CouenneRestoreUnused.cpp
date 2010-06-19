@@ -8,6 +8,7 @@
  */
 
 #include "CouenneProblem.hpp"
+#include "CouenneExprVar.hpp"
 
 using namespace Couenne;
 

@@ -7,6 +7,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h> // ! must go
+
 #include "CouenneExprJac.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
@@ -51,7 +53,12 @@ static void reAlloc (int nCur, int &nMax, int *&r, int *&c, expression **&e) {
   }
 }
 
-ExprJac::ExprJac (CouenneProblem *p) {
+ExprJac::ExprJac (CouenneProblem *p):
+  nnz_   (0),
+  iRow_  (NULL),
+  jCol_  (NULL),
+  expr_  (NULL),
+  nRows_ (0) {
 
   /// constraints: 
   /// 
@@ -67,7 +74,7 @@ ExprJac::ExprJac (CouenneProblem *p) {
     cursize   = 0,
     nRealCons = 0;
 
-  reAlloc (nnz_ = 0, cursize, iRow_, jCol_, expr_);
+  reAlloc (nnz_, cursize, iRow_, jCol_, expr_);
 
   // constraints ////////////////////////////////////////////////////////////
 

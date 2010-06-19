@@ -11,6 +11,7 @@
 #include <stdio.h>
 
 #include "CouenneProblem.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneExprMul.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneExprQuad.hpp"

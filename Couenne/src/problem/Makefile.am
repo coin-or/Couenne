@@ -25,6 +25,7 @@ libCouenneProblem_la_SOURCES = \
 	CouenneProblemConstructors.cpp \
 	CouenneRestoreUnused.cpp \
 	reformulate.cpp \
+	CouenneGlobalCutOff.cpp \
 	depGraph/depGraph.cpp \
 	depGraph/checkCycles.cpp
 

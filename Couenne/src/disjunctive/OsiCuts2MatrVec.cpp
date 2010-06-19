@@ -9,13 +9,17 @@
  */
 
 #include "CouenneDisjCuts.hpp"
+
 #include "OsiSolverInterface.hpp"
+
 #include "CoinPackedVector.hpp"
 #include "CoinPackedMatrix.hpp"
 #include "CoinHelperFunctions.hpp"
+
 #include "CouennePrecisions.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneExprVar.hpp"
 
 using namespace Couenne;
 

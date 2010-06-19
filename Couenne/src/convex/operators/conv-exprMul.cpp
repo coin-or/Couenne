@@ -13,6 +13,7 @@
 #include "CouenneExprBMul.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneExprPow.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneProblem.hpp"
 

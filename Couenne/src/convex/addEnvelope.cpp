@@ -15,6 +15,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneFunTriplets.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneExprVar.hpp"
 
 using namespace Couenne;
 

@@ -8,6 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CoinFinite.hpp"
+
 #include "CouenneExprExp.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneExprMul.hpp"

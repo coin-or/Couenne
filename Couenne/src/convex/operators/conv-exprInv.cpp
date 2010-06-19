@@ -10,6 +10,7 @@
 
 #include "CouenneTypes.hpp"
 
+#include "CouenneExprVar.hpp"
 #include "CouenneExprInv.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneExprConst.hpp"

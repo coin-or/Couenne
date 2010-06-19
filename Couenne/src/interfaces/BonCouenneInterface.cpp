@@ -12,8 +12,10 @@
 
 #include "BonCouenneInterface.hpp"
 #include "CoinHelperFunctions.hpp"
+
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
+#include "CouenneExprVar.hpp"
 
 using namespace Couenne;
 
@@ -141,7 +143,7 @@ CouenneInterface::extractLinearRelaxation
 	options () -> SetNumericValue ("max_cpu_time", CoinMax (0., (p -> getMaxCpuTime () - CoinCpuTime ()) / 2));
 	initialSolve ();
       }
-      catch (TNLPSolver::UnsolvedError *E) {
+      catch (Bonmin::TNLPSolver::UnsolvedError *E) {
 	// wrong, if NLP has problems this is not necessarily true...
 	//is_feasible = false;
       }
@@ -149,7 +151,7 @@ CouenneInterface::extractLinearRelaxation
 
     if (!is_feasible) {
       OsiAuxInfo * auxInfo = si.getAuxiliaryInfo ();
-      BabInfo * babInfo = dynamic_cast <BabInfo *> (auxInfo);
+      Bonmin::BabInfo * babInfo = dynamic_cast <Bonmin::BabInfo *> (auxInfo);
 
       if (babInfo) 
 	babInfo -> setInfeasibleNode ();
@@ -227,7 +229,7 @@ CouenneInterface::extractLinearRelaxation
 	      options () -> SetNumericValue ("max_cpu_time", CoinMax (0., p -> getMaxCpuTime () - CoinCpuTime ()));
 	      resolve (); // solve with integer variables fixed
 	    }
-	    catch(TNLPSolver::UnsolvedError *E) {
+	    catch (Bonmin::TNLPSolver::UnsolvedError *E) {
 	    }
 
 	    //resolve (); 
@@ -265,7 +267,7 @@ CouenneInterface::extractLinearRelaxation
 	p -> setCutOff (obj, solution);
 
 	OsiAuxInfo * auxInfo = si.getAuxiliaryInfo ();
-	BabInfo * babInfo = dynamic_cast <BabInfo *> (auxInfo);
+	Bonmin::BabInfo * babInfo = dynamic_cast <Bonmin::BabInfo *> (auxInfo);
 
 	if (babInfo) {
 	  babInfo -> setNlpSolution (solution, getNumCols (), obj);

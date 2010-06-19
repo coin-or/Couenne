@@ -12,6 +12,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneExprSub.hpp"
 #include "CouenneExprOpp.hpp"
+#include "CouenneExprAux.hpp"
 
 using namespace Couenne;
 

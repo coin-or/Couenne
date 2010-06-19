@@ -11,6 +11,7 @@
 #include "CouenneTypes.hpp"
 #include "CouenneExprOpp.hpp"
 #include "CouenneExprConst.hpp"
+#include "CouenneExprVar.hpp"
 
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"

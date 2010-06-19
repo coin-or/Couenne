@@ -9,11 +9,17 @@
 
 #include "IpTNLP.hpp"
 #include "IpIpoptApplication.hpp"
+
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
+#include "CouenneExprVar.hpp"
 #include "CouenneExprJac.hpp"
 #include "CouenneExprHess.hpp"
 #include "CouenneTNLP.hpp"
+
+#include <stdio.h>
 
 using namespace Couenne;
 
@@ -46,6 +52,8 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
   // constraints
 
+  printf ("constructing TNLP\n");
+
   for (int i = 0; i < problem_ -> nCons (); i++) {
 
     expression *e = problem_ -> Con (i) -> Body ();
@@ -74,6 +82,8 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
     e -> Image () -> DepList (nonLinVars_, STOP_AT_AUX);
   }
+
+  printf ("constructed TNLP\n");
 }
 
 
@@ -102,34 +112,6 @@ bool CouenneTNLP::get_nlp_info (Index& n,
 /// set initial solution
 void CouenneTNLP::setInitSol (double *sol)
 {sol0_ = sol;}
-
-
-/// solves itself (by creating an Ipopt Factory Application?)
-double CouenneTNLP::solve (double *sol) {
-
-  SmartPtr <IpoptApplication> app = IpoptApplicationFactory ();
-
-  app -> Options () -> SetNumericValue ("tol",         1e-7);
-  app -> Options () -> SetStringValue  ("mu_strategy", "adaptive");
-
-  // Intialize the IpoptApplication and process the options
-  ApplicationReturnStatus status;
-  status = app -> Initialize ();
-
-  if (status != Solve_Succeeded)
-    printf("\n\n*** Error during initialization!\n");
-
-  const SmartPtr <Ipopt::TNLP> &couennePtr = this;
-
-  // Ask Ipopt to solve the problem
-  status = app -> OptimizeTNLP (couennePtr);
-
-  if (status == Solve_Succeeded) printf ("\n\n*** The problem solved!\n");
-  else                           printf ("\n\n*** The problem FAILED!\n");
-
-  CoinCopyN (sol_, problem_ -> nVars (), sol);
-  return bestZ_;
-}
 
 
 // overload this method to return the information about the bound on
@@ -244,13 +226,8 @@ bool CouenneTNLP::get_starting_point (Index n,
   if (init_x)
     CoinCopyN (sol0_, n, x);
 
-  if (init_z) {
-    CoinCopyN (problem_ -> Lb (), n, z_L);
-    CoinCopyN (problem_ -> Ub (), n, z_U);
-  }
-
-  assert (!init_lambda); // no idea how to initialize Lagrangian
-			 // Multipliers
+  assert (!init_z);      // can't initialize bound multipliers
+  assert (!init_lambda); // can't initialize Lagrangian multipliers
 
   return true;
 }

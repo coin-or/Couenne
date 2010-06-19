@@ -35,9 +35,6 @@ namespace Couenne {
     /// set initial solution
     void setInitSol (double *sol);
 
-    /// solves itself (by creating an Ipopt Factory Application?)
-    double solve (double *);
-
     /// returns best solution (if it exists)
     CouNumber *getSolution ()
     {return sol_;}

@@ -11,6 +11,7 @@
 #include "CoinHelperFunctions.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
+#include "CouenneExprVar.hpp"
 
 using namespace Couenne;
 

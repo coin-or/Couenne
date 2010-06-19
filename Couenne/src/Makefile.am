@@ -194,6 +194,7 @@ includecoin_HEADERS = \
 	problem/CouenneProblem.hpp \
 	problem/CouenneSolverInterface.hpp \
 	problem/CouenneJournalist.hpp \
+	problem/CouenneGlobalCutOff.hpp \
 	expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp \
 	convex/CouenneCutGenerator.hpp \

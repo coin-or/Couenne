@@ -24,6 +24,8 @@ using namespace Couenne;
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
+  printf ("FP\n");
+
   if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
     return 0;
 
@@ -77,6 +79,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   expression *origObj = problem_ -> Obj (0) -> Body ();
 
   do {
+
+    printf ("FP:main loop\n");
 
     // INTEGER PART /////////////////////////////////////////////////////////
 
@@ -153,6 +157,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   if (retval > 0) {
 
+    printf ("FP: final NLP\n");
+
     if (!nlp_) // first call (in this call to FP). Create NLP
       nlp_ = new CouenneTNLP (problem_);
 
@@ -175,7 +181,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     ////////////////////////////////////////////////////////////////
 
-    double z = nlp_ -> solve (nSol);
+    double z = nlp_ -> getSolValue ();
 
     problem_ -> domain () -> pop (); // pushed in fixIntVariables
 

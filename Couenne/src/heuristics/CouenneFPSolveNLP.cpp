@@ -26,6 +26,8 @@ using namespace Couenne;
 /// obtain continuous (if fractional) solution
 CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
 
+  printf ("FP:solveNLP\n");
+
   // Solve the continuous nonlinear programming problem
   //
   // min  f(x)
@@ -56,9 +58,13 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   if (!nlp_) // first call (in this call to FP). Create NLP
     nlp_ = new CouenneTNLP (problem_);
 
+  printf ("FP: created TNLP\n");
+
   // set new objective
   expression *newObj = updateNLPObj (iSol);
   problem_ -> setObjective (0, newObj);
+
+  printf ("FP: created obj\n");
 
   // compute H_2-closest NLP feasible solution
   nlp_ -> setInitSol (iSol);
@@ -73,6 +79,8 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
 
   if (status != Solve_Succeeded)
     printf ("Error in initialization\n");
+
+  printf ("FP: optimize\n");
 
   status = firstNLP ? 
     app -> OptimizeTNLP   (nlp_) :

@@ -11,6 +11,7 @@
 #include "CglCutGenerator.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneExprVar.hpp"
 
 using namespace Couenne;
 

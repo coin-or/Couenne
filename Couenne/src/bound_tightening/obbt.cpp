@@ -12,6 +12,7 @@
 #include "CglCutGenerator.hpp"
 
 #include "CouenneExpression.hpp"
+#include "CouenneExprVar.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 #include "OsiClpSolverInterface.hpp"

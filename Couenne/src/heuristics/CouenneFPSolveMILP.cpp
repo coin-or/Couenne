@@ -24,6 +24,8 @@ using namespace Couenne;
 /// NLP-feasible (but fractional) solution nsol
 CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
+  printf ("FP:solveMILP\n");
+
   // The problem is of the form
   //
   // min  f(x)
@@ -139,8 +141,14 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
     milp_ -> deleteRows (nDeleted, deleted);
 
+    printf ("FP:deleting last lines\n");
+    milp_ -> writeLp ("fp-milp-del"); // !!
+
     delete [] deleted;
   }
+
+  printf ("FP:add MILP ineq\n");
+  milp_ -> writeLp ("fp-milp0");
 
   // Add 2q inequalities
 
@@ -149,7 +157,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
     if (!compDistInt_ || milp_ -> isInteger (i)) {
 
       double val = 1.;
-      CoinPackedVector vec (2, &i, val);
+      CoinPackedVector vec (1, &i, val);
 
       if (betaMILP_ > 0.) {
 
@@ -163,12 +171,14 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
       double PiX0 = sparseDotProduct (vec, x0); 
 
       vec.insert     (j, -1.); milp_ -> addRow (vec, -COIN_DBL_MAX,         PiX0); // (*)
-      vec.setElement (j, +1.); milp_ -> addRow (vec,          PiX0, COIN_DBL_MAX); // (***)
+      vec.setElement (1, +1.); milp_ -> addRow (vec,          PiX0, COIN_DBL_MAX); // (***)
 
       ++j; // index of variable within problem (plus nVars_)
     }
 
-  milp_ -> resolve ();
+  milp_ -> writeLp ("fp-milp");
+
+  milp_ -> branchAndBound ();
 
   iSol = CoinCopyOfArray (milp_ -> getColSolution (), 
 			  problem_ -> nVars ());

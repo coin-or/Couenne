@@ -49,7 +49,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 				  Ipopt::SmartPtr<Ipopt::OptionsList> options):
 
   CbcHeuristic         (), //(model),
-  problem_             (couenne),
+  problem_             (couenne -> clone ()),
   couenneCG_           (cg),
   nlp_                 (NULL),
   milp_                (NULL),

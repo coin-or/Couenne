@@ -5,6 +5,7 @@
 //
 // Authors :
 // Pierre Bonami, International Business Machines Corporation
+// Pietro Belotti, Lehigh University
 //
 // Date : 04/09/2007
 
@@ -16,7 +17,7 @@
 #include "CbcBranchActual.hpp"
 #include "BonAuxInfos.hpp"
 #include "CoinHelperFunctions.hpp"
-
+#include "BonOsiTMINLPInterface.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
@@ -32,13 +33,13 @@ NlpSolveHeuristic::NlpSolveHeuristic():
   setHeuristicName("NlpSolveHeuristic");
 }
   
-NlpSolveHeuristic::NlpSolveHeuristic(CbcModel & model, OsiTMINLPInterface &nlp, bool cloneNlp, CouenneProblem * couenne):
+NlpSolveHeuristic::NlpSolveHeuristic(CbcModel & model, Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp, CouenneProblem * couenne):
   CbcHeuristic(model), nlp_(&nlp), hasCloned_(cloneNlp),maxNlpInf_(maxNlpInf_0),
   numberSolvePerLevel_(-1),
   couenne_(couenne){
   setHeuristicName("NlpSolveHeuristic");
   if(cloneNlp)
-    nlp_ = dynamic_cast <OsiTMINLPInterface *> (nlp.clone());
+    nlp_ = dynamic_cast <Bonmin::OsiTMINLPInterface *> (nlp.clone());
   }
   
 NlpSolveHeuristic::NlpSolveHeuristic(const NlpSolveHeuristic & other):
@@ -48,7 +49,7 @@ NlpSolveHeuristic::NlpSolveHeuristic(const NlpSolveHeuristic & other):
   numberSolvePerLevel_(other.numberSolvePerLevel_),
   couenne_(other.couenne_){
   if(hasCloned_ && nlp_ != NULL)
-    nlp_ = dynamic_cast <OsiTMINLPInterface *> (other.nlp_->clone());
+    nlp_ = dynamic_cast <Bonmin::OsiTMINLPInterface *> (other.nlp_->clone());
 }
   
 CbcHeuristic * 
@@ -66,7 +67,7 @@ NlpSolveHeuristic::operator=(const NlpSolveHeuristic & rhs){
     hasCloned_ = rhs.hasCloned_;
     if(nlp_ != NULL){
       if(hasCloned_)
-	nlp_ = dynamic_cast <OsiTMINLPInterface *> (rhs.nlp_->clone());
+	nlp_ = dynamic_cast <Bonmin::OsiTMINLPInterface *> (rhs.nlp_->clone());
       else
 	nlp_ = rhs.nlp_;
     }
@@ -84,12 +85,12 @@ NlpSolveHeuristic::~NlpSolveHeuristic(){
 }
   
 void
-NlpSolveHeuristic::setNlp(OsiTMINLPInterface &nlp, bool cloneNlp){
+NlpSolveHeuristic::setNlp (Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp){
   if(hasCloned_ && nlp_ != NULL)
     delete nlp_;
   hasCloned_ = cloneNlp;
   if(cloneNlp)
-    nlp_ = dynamic_cast <OsiTMINLPInterface *> (nlp.clone());
+    nlp_ = dynamic_cast <Bonmin::OsiTMINLPInterface *> (nlp.clone());
   else
     nlp_ = &nlp;
 }
@@ -123,7 +124,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   OsiSolverInterface * solver = model_ -> solver();
 
   OsiAuxInfo * auxInfo = solver->getAuxiliaryInfo();
-  BabInfo * babInfo = dynamic_cast<BabInfo *> (auxInfo);
+  Bonmin::BabInfo * babInfo = dynamic_cast <Bonmin::BabInfo *> (auxInfo);
 
   if(babInfo){
     babInfo->setHasNlpSolution(false);
@@ -306,7 +307,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
       nlp_ -> options () -> SetNumericValue ("max_cpu_time", CoinMax (0., couenne_ -> getMaxCpuTime () - CoinCpuTime ()));
       nlp_ -> initialSolve ();
     }
-    catch (TNLPSolver::UnsolvedError *E) {}
+    catch (Bonmin::TNLPSolver::UnsolvedError *E) {}
 
     double obj = (nlp_ -> isProvenOptimal()) ? nlp_ -> getObjValue (): COIN_DBL_MAX;
 

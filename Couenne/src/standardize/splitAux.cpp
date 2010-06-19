@@ -12,6 +12,7 @@
 
 #include "CoinHelperFunctions.hpp"
 
+#include "CouenneExprAux.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneExprSum.hpp"
 #include "CouenneExprMul.hpp"

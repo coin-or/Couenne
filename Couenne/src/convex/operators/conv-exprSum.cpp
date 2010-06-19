@@ -10,6 +10,7 @@
 
 #include "CouenneTypes.hpp"
 
+#include "CouenneExprAux.hpp"
 #include "CouenneExprSum.hpp"
 #include "CouenneExprConst.hpp"
 

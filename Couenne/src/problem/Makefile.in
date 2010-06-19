@@ -88,8 +88,9 @@ am__libCouenneProblem_la_SOURCES_DIST = problem.cpp CouenneProblem.cpp \
 	fillQuadIndices.cpp fillDependence.cpp checkNLP.cpp \
 	getIntegerCandidate.cpp testIntFix.cpp CouenneSOS.cpp \
 	CouenneProblemConstructors.cpp CouenneRestoreUnused.cpp \
-	reformulate.cpp depGraph/depGraph.cpp depGraph/checkCycles.cpp \
-	../readnl/readnl.cpp ../readnl/nl2e.cpp ../readnl/invmap.cpp \
+	reformulate.cpp CouenneGlobalCutOff.cpp depGraph/depGraph.cpp \
+	depGraph/checkCycles.cpp ../readnl/readnl.cpp \
+	../readnl/nl2e.cpp ../readnl/invmap.cpp \
 	../readnl/readASLfg.cpp
 @COIN_HAS_ASL_TRUE@am__objects_1 = readnl.lo nl2e.lo invmap.lo \
 @COIN_HAS_ASL_TRUE@	readASLfg.lo
@@ -98,7 +99,8 @@ am_libCouenneProblem_la_OBJECTS = problem.lo CouenneProblem.lo \
 	fillQuadIndices.lo fillDependence.lo checkNLP.lo \
 	getIntegerCandidate.lo testIntFix.lo CouenneSOS.lo \
 	CouenneProblemConstructors.lo CouenneRestoreUnused.lo \
-	reformulate.lo depGraph.lo checkCycles.lo $(am__objects_1)
+	reformulate.lo CouenneGlobalCutOff.lo depGraph.lo \
+	checkCycles.lo $(am__objects_1)
 libCouenneProblem_la_OBJECTS = $(am_libCouenneProblem_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
@@ -334,8 +336,8 @@ libCouenneProblem_la_SOURCES = problem.cpp CouenneProblem.cpp \
 	fillQuadIndices.cpp fillDependence.cpp checkNLP.cpp \
 	getIntegerCandidate.cpp testIntFix.cpp CouenneSOS.cpp \
 	CouenneProblemConstructors.cpp CouenneRestoreUnused.cpp \
-	reformulate.cpp depGraph/depGraph.cpp depGraph/checkCycles.cpp \
-	$(am__append_1)
+	reformulate.cpp CouenneGlobalCutOff.cpp depGraph/depGraph.cpp \
+	depGraph/checkCycles.cpp $(am__append_1)
 libCouenneProblem_la_DEPENDENCIES = $(libCouenneProblem_la_LIBADD)
 
 # This is for libtool (on Windows)
@@ -408,6 +410,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneGlobalCutOff.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneProblem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneProblemConstructors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneRestoreUnused.Plo@am__quote@

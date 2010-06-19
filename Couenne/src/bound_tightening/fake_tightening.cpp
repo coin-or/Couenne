@@ -12,6 +12,7 @@
 
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
+#include "CouenneExprVar.hpp"
 #include "BonBabInfos.hpp"
 
 //#define DEBUG

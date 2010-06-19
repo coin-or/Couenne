@@ -26,7 +26,6 @@
 #include "CbcCompareActual.hpp"
 
 #include "CouenneObject.hpp"
-//#include "CouenneComplObject.hpp"
 #include "CouenneVarObject.hpp"
 #include "CouenneVTObject.hpp"
 #include "CouenneOrbitObj.hpp"
@@ -474,7 +473,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   options () -> GetEnumValue ("feas_pump_heuristic", doHeuristic, "couenne.");
 
-  if (doHeuristic) {
+  if (false && doHeuristic) {
 
     int numSolve;
     options () -> GetIntegerValue ("feas_pump_level", numSolve, "couenne.");
@@ -570,7 +569,7 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> SetRegisteringCategory ("Couenne options", Bonmin::RegisteredOptions::CouenneCategory);
 
   BabSetupBase        ::registerAllOptions (roptions);
-  BonCbcFullNodeInfo  ::registerOptions (roptions);
+  Bonmin::BonCbcFullNodeInfo  ::registerOptions (roptions);
 
   CouenneProblem        ::registerOptions (roptions);
   CouenneCutGenerator   ::registerOptions (roptions);

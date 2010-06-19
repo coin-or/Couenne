@@ -15,6 +15,7 @@
 
 #include "CouenneTypes.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneExprQuad.hpp"
 #include "CouenneExprMul.hpp"
 #include "CouenneExprPow.hpp"

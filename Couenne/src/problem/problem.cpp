@@ -25,13 +25,14 @@
 #include "CouenneExprClone.hpp"
 #include "CouenneExprAux.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneGlobalCutOff.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneLQelems.hpp"
 
 using namespace Couenne;
 
 /// save CouenneBase
-void CouenneProblem::setBase (BabSetupBase *base) {
+void CouenneProblem::setBase (Bonmin::BabSetupBase *base) {
   bonBase_ = base;
   jnlst_   = base -> journalist ();
 }
@@ -300,14 +301,14 @@ void CouenneProblem::setCutOff (CouNumber cutoff, const double *s) const {
   if ((indobj >= 0) && (cutoff < pcutoff_ -> getCutOff () - COUENNE_EPS)) {
 
     //if (fabs (cutoff - pcutoff_ -> getCutOff ()) > (1 + fabs (cutoff)) * 2 * SafeCutoff) // avoid too many printouts
-      Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
-			  "Setting new cutoff %.10e for optimization variable index %d val = %.10e\n",
-			  cutoff, indobj,
-			  pcutoff_ -> getCutOff ());
+    Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
+			"Setting new cutoff %.10e for optimization variable index %d val = %.10e\n",
+			cutoff, indobj,
+			pcutoff_ -> getCutOff ());
 
     if (Var (indobj) -> isInteger ())
-      pcutoff_    -> setCutOff (floor (cutoff + COUENNE_EPS), s, nVars ());
-    else pcutoff_ -> setCutOff (cutoff, s, nVars ());
+      pcutoff_    -> setCutOff (this, floor (cutoff + COUENNE_EPS), s);
+    else pcutoff_ -> setCutOff (this, cutoff, s);
   }
 }
 

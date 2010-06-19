@@ -24,13 +24,14 @@
 #include "CouenneExprOpp.hpp"
 
 #include "CouenneProblem.hpp"
+#include "CouenneGlobalCutOff.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneDepGraph.hpp"
 #include "CouenneLQelems.hpp"
 
 #include "CouenneObject.hpp"
 
-namespace Couenne {
+using namespace Couenne;
 
 /// methods to add objective function. 
 
@@ -235,9 +236,9 @@ void CouenneProblem::fillIntegerRank () const {
 
 /// Called from simulateBranch when object is not CouenneObject and
 /// therefore needs explicit FBBT
-bool BranchingFBBT (CouenneProblem *problem,
-		    OsiObject *Object,
-		    OsiSolverInterface *solver) {
+bool Couenne::BranchingFBBT (CouenneProblem *problem,
+			     OsiObject *Object,
+			     OsiSolverInterface *solver) {
 
   bool feasible = true;
 
@@ -269,4 +270,12 @@ bool BranchingFBBT (CouenneProblem *problem,
   return feasible;
 }
 
-}
+
+/// Get cutoff
+CouNumber CouenneProblem::getCutOff () const
+{return pcutoff_ -> getCutOff ();}
+
+
+/// Get cutoff solution
+CouNumber *CouenneProblem::getCutOffSol () const
+{return pcutoff_ -> getCutOffSol ();}

@@ -8,7 +8,10 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CoinFinite.hpp"
+
 #include "CouenneExprSub.hpp"
+#include "CouenneExprConst.hpp"
 #include "CouenneExprOpp.hpp"
 #include "CouennePrecisions.hpp"
 

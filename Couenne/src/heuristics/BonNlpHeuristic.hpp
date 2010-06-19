@@ -31,7 +31,7 @@ namespace Couenne {
     /** Default constructor.*/
     NlpSolveHeuristic();
     /** Constructor with model and Ipopt problems.*/
-    NlpSolveHeuristic(CbcModel & mip, OsiTMINLPInterface &nlp, bool cloneNlp = false, CouenneProblem * couenne = NULL);
+    NlpSolveHeuristic(CbcModel & mip, Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp = false, CouenneProblem * couenne = NULL);
     /** Copy constructor.*/
     NlpSolveHeuristic(const NlpSolveHeuristic &other);
     
@@ -45,7 +45,7 @@ namespace Couenne {
     NlpSolveHeuristic & operator=(const NlpSolveHeuristic &rhs);
     
     /** Set the nlp solver.*/
-    void setNlp(OsiTMINLPInterface &nlp, bool cloneNlp = true);
+    void setNlp (Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp = true);
     
     /** set the couenne problem to use.*/
     void setCouenneProblem(CouenneProblem *);
@@ -69,7 +69,7 @@ namespace Couenne {
 
   private:
     /** Pointer to an nlp solver interface.*/
-    OsiTMINLPInterface * nlp_;
+    Bonmin::OsiTMINLPInterface * nlp_;
     /** is nlp_ cloned or just a pointer?*/
     bool hasCloned_;
     /** maximum nlp infeasibility under which try to solve problem with Ipopt.*/

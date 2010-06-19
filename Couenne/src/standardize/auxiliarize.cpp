@@ -13,6 +13,7 @@
 
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneExprClone.hpp"
 
 using namespace Couenne;

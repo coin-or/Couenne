@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #include "CouenneProblem.hpp"
+#include "CouenneExprAux.hpp"
 
 using namespace Couenne;
 

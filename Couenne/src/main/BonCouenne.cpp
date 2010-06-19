@@ -58,7 +58,7 @@ int main (int argc, char *argv[]) {
 
   try {
 
-    Bab bb;
+    Bonmin::Bab bb;
     bb.setUsingCouenne (true);
 
     CouenneProblem *p = NULL;
@@ -98,7 +98,7 @@ int main (int argc, char *argv[]) {
     /// update time limit (read/preprocessing might have taken some)
     double timeLimit = 0;
     couenne.options () -> GetNumericValue ("time_limit", timeLimit, "couenne.");
-    couenne.setDoubleParameter (BabSetupBase::MaxTime, 
+    couenne.setDoubleParameter (Bonmin::BabSetupBase::MaxTime, 
 				CoinMax (0., timeLimit - time_start));
 
     //////////////////////////////////
@@ -172,7 +172,7 @@ int main (int argc, char *argv[]) {
 
 //    nlp_and_solver -> writeAmplSolFile (message, bb.bestSolution (), NULL);
   }
-  catch(TNLPSolver::UnsolvedError *E) {
+  catch(Bonmin::TNLPSolver::UnsolvedError *E) {
      E->writeDiffFiles();
      E->printError(std::cerr);
     //There has been a failure to solve a problem with Ipopt.
@@ -180,12 +180,12 @@ int main (int argc, char *argv[]) {
     //Now depending on what algorithm has been called (B-BB or other) the failed problem may be at different place.
     //    const OsiSolverInterface &si1 = (algo > 0) ? nlpSolver : *model.solver();
   }
-  catch(OsiTMINLPInterface::SimpleError &E) {
+  catch (Bonmin::OsiTMINLPInterface::SimpleError &E) {
     std::cerr<<E.className()<<"::"<<E.methodName()
 	     <<std::endl
 	     <<E.message()<<std::endl;
   }
-  catch(CoinError &E) {
+  catch (CoinError &E) {
     std::cerr<<E.className()<<"::"<<E.methodName()
 	     <<std::endl
 	     <<E.message()<<std::endl;

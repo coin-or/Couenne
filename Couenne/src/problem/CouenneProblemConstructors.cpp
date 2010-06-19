@@ -27,6 +27,7 @@
 
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
+#include "CouenneGlobalCutOff.hpp"
 #include "CouenneDepGraph.hpp"
 #include "CouenneLQelems.hpp"
 

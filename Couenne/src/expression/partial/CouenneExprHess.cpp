@@ -7,6 +7,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <stdio.h> // ! must go
+
 #include "CoinHelperFunctions.hpp"
 
 #include "CouenneExprHess.hpp"
@@ -53,6 +55,8 @@ void HessElemFill (int i, int level,
 /// code for refilling jacobian
 ExprHess::ExprHess (CouenneProblem *p) {
 
+  printf ("creating Hessian\n");
+
   /// for each j in (obj,con)
   ///   create j->deplist()
 
@@ -77,7 +81,7 @@ ExprHess::ExprHess (CouenneProblem *p) {
     c -> Body () -> DepList (deplist [nLevels++], STOP_AT_AUX);
   }
 
-  // and auxiliaries
+  // ... and auxiliaries
 
   for (int i = 0; i < p -> nVars (); i++) {
 
@@ -102,7 +106,7 @@ ExprHess::ExprHess (CouenneProblem *p) {
 
   int nVars = p -> nVars ();
 
-  /// for each variable
+  /// for each variable (filling a row of the hessian)
   for (int i=0; i < nVars; i++) {
 
     // create dense row. These will become numL later
@@ -111,6 +115,7 @@ ExprHess::ExprHess (CouenneProblem *p) {
     expression ***eee = (expression ***) malloc (nVars * sizeof (expression **));
 
     CoinFillN (row, nVars, 0);
+
     for (int j=0; j<nVars; j++) {
       lam [j] = NULL;
       eee [j] = NULL;

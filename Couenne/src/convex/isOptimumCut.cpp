@@ -14,6 +14,7 @@
 
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneExprVar.hpp"
 
 namespace Couenne {
 

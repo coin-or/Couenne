@@ -9,10 +9,12 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "OsiSolverInterface.hpp"
+
 #include "CouenneChooseVariable.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
-#include "OsiSolverInterface.hpp"
+#include "CouenneExprVar.hpp"
 
 using namespace Couenne;
 
