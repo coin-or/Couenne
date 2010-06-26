@@ -137,7 +137,8 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
     if (cLeft || cRight) {
       // now add tangent at each sampling point
 
-      CouNumber sample = l, 
+      CouNumber 
+	sample = l, 
 	step   = (u-l) / nSamples_;
 
       //    printf ("[%.4f %.4f], step = %.4f, %d samples\n", 
@@ -148,11 +149,41 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
 	opp_slope = - ft -> Fp (sample);
 
 	if ((fabs (opp_slope) < COUENNE_INFINITY) && 
-	    (fabs (sample-x) > COUENNE_EPS)) // do not add twice cut at current point
-	  createCut (cs, ft -> F (sample) + opp_slope * sample, sign, 
-		     w_ind, 1.,
-		     x_ind, opp_slope, 
-		     -1, 0., is_global);
+	    (fabs (sample-x) > COUENNE_EPS)) { // do not add twice cut at current point
+
+
+	  // same as above, check integrality of argument
+
+	  if (!(problem_ -> Var (x_ind) -> isInteger ()))
+
+	    createCut (cs, ft -> F (sample) + opp_slope * sample, sign, 
+		       w_ind, 1.,
+		       x_ind, opp_slope, 
+		       -1, 0., is_global);
+	  else {
+
+	    CouNumber x1, x2, y1, y2;
+
+	    if ((x1 = floor (sample)) < l)
+	      x1 = ceil (l - COUENNE_EPS);
+
+	    y1 = ft -> F (x1);
+
+	    x2 = ceil (sample);
+
+	    if (fabs (x2-x1) < COUENNE_EPS)
+	      x2 += 1.;
+
+	    y2 = ft -> F (x2);
+
+	    if ((x2 > u)   ||
+		isnan (y1) || isnan (y2) || 
+		isinf (y1) || isinf (y2)) // fall back to non-integer cut
+
+	      createCut (cs, ft -> F (sample) + opp_slope * sample, sign, w_ind, 1., 
+			 x_ind, opp_slope, -1, 0., is_global);
+	  }
+      	}
 
 	//	printf ("  Uniform %d: ", i); cut -> print ();
 

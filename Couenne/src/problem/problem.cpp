@@ -301,10 +301,8 @@ void CouenneProblem::setCutOff (CouNumber cutoff, const double *s) const {
   if ((indobj >= 0) && (cutoff < pcutoff_ -> getCutOff () - COUENNE_EPS)) {
 
     //if (fabs (cutoff - pcutoff_ -> getCutOff ()) > (1 + fabs (cutoff)) * 2 * SafeCutoff) // avoid too many printouts
-    Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
-			"Setting new cutoff %.10e for optimization variable index %d val = %.10e\n",
-			cutoff, indobj,
-			pcutoff_ -> getCutOff ());
+    Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM, "Couenne: new MINLP solution, value %.10e\n", cutoff);
+			//pcutoff_ -> getCutOff ());
 
     if (Var (indobj) -> isInteger ())
       pcutoff_    -> setCutOff (this, floor (cutoff + COUENNE_EPS), s);

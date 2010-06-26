@@ -58,6 +58,12 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   if (!nlp_) // first call (in this call to FP). Create NLP
     nlp_ = new CouenneTNLP (problem_);
 
+  problem_ -> domain () -> push (problem_ -> nVars (),
+				 iSol,
+				 NULL, //problem_ -> domain () -> lb (),
+				 NULL, //problem_ -> domain () -> ub (),
+				 false);
+
   printf ("FP: created TNLP\n");
 
   // set new objective
@@ -86,6 +92,8 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
     app -> OptimizeTNLP   (nlp_) :
     app -> ReOptimizeTNLP (nlp_);
 
+  problem_ -> domain () -> pop ();
+
   if (status != Solve_Succeeded)
     printf ("Error solving problem\n");
 
@@ -99,5 +107,5 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
 
   delete newObj;
 
-  return 0.;//nlp_ -> getObjValue ();
+  return nlp_ -> getSolValue ();
 }
