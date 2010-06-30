@@ -86,7 +86,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
       first = false;
 
     if ((ntightened < 0) || (nbwtightened < 0)) {
-      Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "infeasible BT\n");
+      Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "infeasible BT\n");
       return false;
     }
 
@@ -104,6 +104,23 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 	  contains_optimum = false;
 	}
     }
+
+    // double width = 0.;
+
+    // int 
+    //   ninf  = 0,
+    //   ndinf = 0;
+
+    // for (int i=nOrigVars (); i--;)
+
+    //   if ((Lb (i) < -COUENNE_INFINITY/1e3) && 
+    // 	  (Ub (i) >  COUENNE_INFINITY/1e3)) ndinf++;
+    //   else if ((Lb (i) < -COUENNE_INFINITY/1e3) ||
+    // 	       (Ub (i) >  COUENNE_INFINITY/1e3)) ninf++;
+    //   else width += Ub (i) - Lb (i);
+
+    // printf ("pass %5d: %5d fwd, %5d bwd, %5d inf, %5d double inf, width: %g\n", 
+    // 	    niter, ntightened, nbwtightened, ninf, ndinf, width);
 
   } while (((ntightened > 0) || (nbwtightened > 0)) && 
 	   (ntightened + nbwtightened > THRES_IMPROVED) &&
@@ -128,7 +145,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 	  (Ub (i) < - MAX_BOUND) ||
 	  (Lb (i) >   MAX_BOUND)) {
 
-	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "final test: infeasible BT\n");
+	Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "final test: infeasible BT\n");
 	return false;
       }
 
@@ -149,6 +166,14 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
 bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds, 
 				      Bonmin::BabInfo * babInfo) const {
+
+  //  double startTime = CoinCpuTime ();
+  //
+  // #define SMALL_BOUND 1e4
+  //   for (int i=nOrigVars (); i--;) {
+  //     if (Lb (i) < -SMALL_BOUND) Lb (i) = -SMALL_BOUND;
+  //     if (Ub (i) >  SMALL_BOUND) Ub (i) =  SMALL_BOUND;
+  //   } 
 
   Jnlst()->Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING,
 		   "Feasibility-based Bound Tightening\n");
@@ -182,6 +207,10 @@ bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds,
   }
 
   return btCore (chg_bds);
+
+  //printf ("Total cpu time = %e\n", CoinCpuTime () - startTime);
+  //exit (-1);
+  //return retval;
 }
 
 

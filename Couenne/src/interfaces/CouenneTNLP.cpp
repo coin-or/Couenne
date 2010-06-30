@@ -326,10 +326,16 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
     // fill in Jacobian's values. Evaluate each member using the
     // domain modified above by the new value of x
 
+    printf ("filling in jacobian values:\n");
+
     expression **e = Jac_. expr ();
 
-    for (int i=0; i<nele_jac; i++)
+    for (int i=0; i<nele_jac; i++) {
+      printf ("%d: ", i); fflush (stdout);
+      (*e) -> print ();
+      printf ("\n");
       *values++ = (**(e++)) ();
+    }
   }
 
   return true;
