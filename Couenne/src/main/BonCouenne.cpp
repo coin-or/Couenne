@@ -112,9 +112,17 @@ int main (int argc, char *argv[]) {
     //////////////////////////////
     CouenneCutGenerator *cg = NULL;
 
-    if (bb.model (). cutGenerators ())
-      cg = dynamic_cast <CouenneCutGenerator *> 
-	(bb.model (). cutGenerators () [0] -> generator ());
+    // there is only one cut generator, so scan array until
+    // dynamic_cast returns non-NULL
+
+    if (bb.model (). cutGenerators ()) {
+
+      int nGen = bb.model (). numberCutGenerators ();
+      
+      for (int i=0; !cg && i < nGen; i++)
+	cg = dynamic_cast <CouenneCutGenerator *> 
+	  (bb.model (). cutGenerators () [i] -> generator ());
+    }
 
     ////////////////////////////////
     int nr=-1, nt=-1;

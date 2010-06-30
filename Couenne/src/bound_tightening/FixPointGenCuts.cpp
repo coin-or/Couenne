@@ -109,6 +109,15 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     int nEl = A -> getVectorSize (j); // # elements in each row
 
+    // printf ("row %4d: %4d elements\n", j, nEl);
+
+    // for (int i=0; i<nEl; i++) {
+    //   printf ("%+g x%d ", coe [i], ind [i]);
+    //   fflush (stdout);
+    // }
+
+    // printf ("\n");
+
     if (!nEl)
       continue;
 
@@ -148,6 +157,9 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   /// Now we have an fbbt-fixpoint LP problem. Solve it to get
   /// (possibly) better bounds
+
+  printf ("writing lp\n");
+  fplp -> writeLp ("fplp");
 
   fplp -> initialSolve ();
 
@@ -300,7 +312,7 @@ void createRow (int sign,
   ///
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  int nTerms = nEl + extMod ? 1 : 0; // always add one element when using extended model
+  int nTerms = nEl + (extMod ? 1 : 0); // always add one element when using extended model
 
   int    *iInd = new int    [nTerms];
   double *elem = new double [nTerms];
@@ -320,9 +332,9 @@ void createRow (int sign,
                        // original model. Should add n depending on a
                        // few things... 
 
-    if (curInd == indexVar) { // For instance, we are looking at x_i itself
-      if ((sign > 0) && (coe [indexVar] > 0.) || 
-	  (sign < 0) && (coe [indexVar] < 0.))
+    if (curInd == indexVar) { // x_k is x_i itself
+      if (((sign > 0) && (coe [indexVar] > 0.)) || 
+	  ((sign < 0) && (coe [indexVar] < 0.)))
 
       iInd [k] += nVars;
 
