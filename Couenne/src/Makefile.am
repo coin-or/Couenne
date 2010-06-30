@@ -150,6 +150,7 @@ includecoin_HEADERS = \
 	branch/CouenneSOSObject.hpp \
 	branch/CouenneProjections.hpp \
 	standardize/CouenneLQelems.hpp \
+	bound_tightening/CouenneFixPoint.hpp \
 	expression/CouenneDomain.hpp \
 	expression/operators/CouenneExprAbs.hpp \
 	expression/operators/CouenneExprExp.hpp \

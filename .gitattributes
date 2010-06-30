@@ -14,6 +14,7 @@ Couenne/inc/config_couenne.h.in -text
 Couenne/src/CouenneConfig.h -text
 Couenne/src/Makefile.am -text
 Couenne/src/Makefile.in -text
+Couenne/src/bound_tightening/CouenneFixPoint.hpp -text
 Couenne/src/bound_tightening/aggressiveBT.cpp -text
 Couenne/src/bound_tightening/boundTightening.cpp -text
 Couenne/src/bound_tightening/fake_tightening.cpp -text

@@ -426,6 +426,7 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/convex` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/expression` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/expression/operators` -I`$(CYGPATH_W) \
+	$(COUENNESRCDIR)/src/bound_tightening` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/disjunctive` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/main` -I`$(CYGPATH_W) \
 	$(COUENNESRCDIR)/src/problem` -I`$(CYGPATH_W) \

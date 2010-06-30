@@ -32,6 +32,7 @@
 #include "CouenneChooseVariable.hpp"
 #include "CouenneChooseStrong.hpp"
 #include "CouenneSolverInterface.hpp"
+#include "CouenneFixPoint.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneDisjCuts.hpp"
 
@@ -401,9 +402,22 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   delete [] objects;
 
-  // Setup Convexifier generators ////////////////////////////////////////////////
+  // Setup Fix Point bound tightener /////////////////////////////////////////////
 
   int freq;
+
+  options () -> GetIntegerValue ("fixpoint_bt", freq, "couenne.");
+
+  if (freq != 0) {
+
+    CuttingMethod cg;
+    cg.frequency = freq;
+    cg.cgl = new CouenneFixPoint (options ());
+    cg.id = "Couenne Fix Point FBBT";
+    cutGenerators (). push_back (cg);
+  }
+
+  // Setup Convexifier generators ////////////////////////////////////////////////
 
   options () -> GetIntegerValue ("convexification_cuts", freq, "couenne.");
 
@@ -575,6 +589,7 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   CouenneCutGenerator   ::registerOptions (roptions);
   CouenneChooseStrong   ::registerOptions (roptions);
   CouenneChooseVariable ::registerOptions (roptions);
+  CouenneFixPoint       ::registerOptions (roptions);
   CouenneDisjCuts       ::registerOptions (roptions);
   NlpSolveHeuristic     ::registerOptions (roptions);
   CouenneFeasPump       ::registerOptions (roptions);

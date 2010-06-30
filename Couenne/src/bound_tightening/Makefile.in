@@ -68,11 +68,11 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneBoundTightening_la_LIBADD =
 am_libCouenneBoundTightening_la_OBJECTS = boundTightening.lo \
 	aggressiveBT.lo fake_tightening.lo obbt.lo obbt_iter.lo \
-	tightenBounds.lo impliedBounds.lo impliedBounds-mul.lo \
-	impliedBounds-sum.lo impliedBounds-exprSum.lo \
-	impliedBounds-exprDiv.lo impliedBounds-exprMul.lo \
-	impliedBounds-exprQuad.lo impliedBounds-exprPow.lo \
-	BonCouenneInfo.lo
+	tightenBounds.lo impliedBounds.lo FixPointConstructors.lo \
+	FixPointGenCuts.lo impliedBounds-mul.lo impliedBounds-sum.lo \
+	impliedBounds-exprSum.lo impliedBounds-exprDiv.lo \
+	impliedBounds-exprMul.lo impliedBounds-exprQuad.lo \
+	impliedBounds-exprPow.lo BonCouenneInfo.lo
 libCouenneBoundTightening_la_OBJECTS =  \
 	$(am_libCouenneBoundTightening_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -312,6 +312,8 @@ libCouenneBoundTightening_la_SOURCES = \
 	obbt_iter.cpp \
 	tightenBounds.cpp \
 	impliedBounds.cpp \
+	FixPointConstructors.cpp \
+	FixPointGenCuts.cpp \
 	operators/impliedBounds-mul.cpp \
 	operators/impliedBounds-sum.cpp \
 	operators/impliedBounds-exprSum.cpp \
@@ -398,6 +400,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInfo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FixPointConstructors.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FixPointGenCuts.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aggressiveBT.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/boundTightening.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fake_tightening.Plo@am__quote@
