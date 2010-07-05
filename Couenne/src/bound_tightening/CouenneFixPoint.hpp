@@ -20,6 +20,8 @@
 
 namespace Couenne {
 
+  class CouenneProblem;
+
   /// Cut Generator for FBBT fixpoint
 
   class CouenneFixPoint: public CglCutGenerator {
@@ -27,7 +29,8 @@ namespace Couenne {
   public:
 
     /// constructor
-    CouenneFixPoint (const Ipopt::SmartPtr<Ipopt::OptionsList> );
+    CouenneFixPoint (CouenneProblem *,
+		     const Ipopt::SmartPtr<Ipopt::OptionsList>);
 
     /// copy constructor
     CouenneFixPoint  (const CouenneFixPoint &);
@@ -47,10 +50,13 @@ namespace Couenne {
     /// Add list of options to be read from file
     static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions);
 
-  private:
+  protected:
 
     /// should we use an extended model or a more compact one?
     bool extendedModel_;
+
+    /// pointer to the CouenneProblem representation
+    CouenneProblem *problem_;
   };
 }
 

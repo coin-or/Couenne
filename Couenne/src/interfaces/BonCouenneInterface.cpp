@@ -389,7 +389,7 @@ CouenneInterface::extractLinearRelaxation
        si.setInteger (i);
  
    //si.writeMpsNative("toto",NULL,NULL,1);
-   //si.writeLp ("toto");
+   si.writeLp ("toto");
    app_ -> enableWarmStart();
 
    // restored check. With "TOO FEW DEGREES OF FREEDOM" exception, x_sol() is null

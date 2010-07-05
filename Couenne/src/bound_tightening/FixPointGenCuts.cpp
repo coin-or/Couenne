@@ -13,7 +13,9 @@
 #include "OsiCuts.hpp"
 
 #include "CouennePrecisions.hpp"
+#include "CouenneProblem.hpp"
 #include "CouenneFixPoint.hpp"
+#include "CouenneExprVar.hpp"
 
 using namespace Couenne;
 
@@ -93,9 +95,19 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     *rub = si.  getRowUpper (),
     *coe = A -> getElements ();
 
+  //for (int i=0; i<n; i++) 
+  //printf ("----------- x_%d in [%g,%g]\n", i, lb [i], ub [i]);
+
   // add lvars and uvars to the new problem
-  for (int i=0; i<n; i++) fplp -> addCol (0, NULL, NULL, lb [i], ub [i], -1.); // xL_i
-  for (int i=0; i<n; i++) fplp -> addCol (0, NULL, NULL, lb [i], ub [i], +1.); // xU_i
+  for (int i=0; i<n; i++) {
+    bool isActive = problem_ -> Var (i) -> Multiplicity () > 0;
+    fplp -> addCol (0, NULL, NULL, isActive ? lb [i] : 0., isActive ? ub [i] : 0., -1.); // xL_i
+  }
+
+  for (int i=0; i<n; i++) {
+    bool isActive = problem_ -> Var (i) -> Multiplicity () > 0;
+    fplp -> addCol (0, NULL, NULL, isActive ? lb [i] : 0., isActive ? ub [i] : 0., +1.); // xU_i
+  }
 
   if (extendedModel_) {
 
@@ -109,7 +121,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     int nEl = A -> getVectorSize (j); // # elements in each row
 
-    // printf ("row %4d: %4d elements\n", j, nEl);
+    //printf ("row %4d: %4d elements\n", j, nEl);
 
     // for (int i=0; i<nEl; i++) {
     //   printf ("%+g x%d ", coe [i], ind [i]);
@@ -129,7 +141,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     if (extendedModel_ || rub [j] <  COUENNE_INFINITY) 
       for (int i=0; i<nEl; i++) 
-	createRow (+1, ind [i], n, fplp, ind, coe, rub [i], nEl, extendedModel_); // upward constraints -- on xU_i
+	createRow (+1, ind [i], n, fplp, ind, coe, rub [j], nEl, extendedModel_); // upward constraints -- on xU_i
 
     // create (at most 2) cuts for the bL and bU elements //////////////////////
 
@@ -158,8 +170,10 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   /// Now we have an fbbt-fixpoint LP problem. Solve it to get
   /// (possibly) better bounds
 
-  printf ("writing lp\n");
-  fplp -> writeLp ("fplp");
+  fplp -> setObjSense (-1.); // we want to maximize 
+
+  // printf ("writing lp\n");
+  // fplp -> writeLp ("fplp");
 
   fplp -> initialSolve ();
 
@@ -172,6 +186,10 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   // check old and new bounds
 
   for (int i=0; i<n; i++) {
+
+    // printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
+    // 	    oldLB [i], oldUB [i], 
+    // 	    newLB [i], newUB [i]);
 
     if (newLB [i] > oldLB [i] + COUENNE_EPS) {
 
@@ -211,7 +229,7 @@ void createRow (int sign,
 		const int *indices,
 		const double *coe,
 		const double rhs,
-		const int nEl, 
+		const int nEl,
 		bool extMod) {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -280,8 +298,8 @@ void createRow (int sign,
   /// According to my school of thought, instead, there is no
   /// upward/downward directions to simulate. Hence, considering again
   ///
-  /// sum {i=1..n} a_ji x_i <= b_j      (<)
-  /// sum {i=1..n} a_ji x_i >= b_j      (>)
+  /// sum {i=1..n} a_ji x_i <= b_j      (<) -- sign will be -1
+  /// sum {i=1..n} a_ji x_i >= b_j      (>) -- sign will be +1
   ///
   /// we'll have similar constraints, except bL and bU no longer exist
   /// but are replaced by the original rhs.
@@ -312,6 +330,12 @@ void createRow (int sign,
   ///
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+  // printf ("creating constraint from: ");
+  // for (int i=0; i<nEl; i++)
+  //   printf ("%+g x%d ", coe [i], indices [i]);
+  // printf ("%c= %g\n", sign > 0 ? '<' : '>', rhs);
+
   int nTerms = nEl + (extMod ? 1 : 0); // always add one element when using extended model
 
   int    *iInd = new int    [nTerms];
@@ -320,7 +344,11 @@ void createRow (int sign,
   // coefficients are really easy
 
   CoinCopyN (coe, nEl, elem);
-  if (extMod) elem [nEl] = -1.; // extended model, coefficient for bL or bU
+
+  if (extMod) {
+    elem [nEl] = -1.; // extended model, coefficient for bL or bU
+    iInd [nEl] = indexVar;
+  }
 
   // indices are not so easy...
 
@@ -340,6 +368,7 @@ void createRow (int sign,
 
     } else if (((coe [curInd] > 0.) && (sign < 0)) ||
 	       ((coe [curInd] < 0.) && (sign > 0)))
+
       iInd [k] += nVars;
   }
 
@@ -350,4 +379,12 @@ void createRow (int sign,
     ub = sign < 0 ? +COIN_DBL_MAX : extMod ? 0. : rhs;
 
   p -> addRow (vec, lb, ub);
+
+  // OsiRowCut *cut = new OsiRowCut (lb, ub,
+  // 				  nTerms, nTerms,
+  // 				  iInd, elem);
+
+  // cut -> print ();
+
+  // delete cut;
 }

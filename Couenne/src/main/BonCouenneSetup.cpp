@@ -412,7 +412,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
     CuttingMethod cg;
     cg.frequency = freq;
-    cg.cgl = new CouenneFixPoint (options ());
+    cg.cgl = new CouenneFixPoint (couenneProb_, options ());
     cg.id = "Couenne Fix Point FBBT";
     cutGenerators (). push_back (cg);
   }
