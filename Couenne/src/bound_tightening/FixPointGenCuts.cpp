@@ -29,7 +29,9 @@ void createRow (int,
 		const double *,
 		const double,
 		const int,
-		bool);
+		bool,
+		int,
+		int);
 
 void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 				    OsiCuts &cs,
@@ -95,8 +97,11 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     *rub = si.  getRowUpper (),
     *coe = A -> getElements ();
 
-  for (int i=0; i<n; i++) 
-    printf ("----------- x_%d in [%g,%g]\n", i, lb [i], ub [i]);
+  // for (int i=0; i<n; i++) 
+  //   printf ("----------- x_%d in [%g,%g]\n", i, lb [i], ub [i]);
+
+  // turn off logging
+  fplp -> messageHandler () -> setLogLevel (0);
 
   // add lvars and uvars to the new problem
   for (int i=0; i<n; i++) {
@@ -121,14 +126,14 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     int nEl = A -> getVectorSize (j); // # elements in each row
 
-    printf ("row %4d, %4d elements: ", j, nEl);
+    // printf ("row %4d, %4d elements: ", j, nEl);
 
-    for (int i=0; i<nEl; i++) {
-      printf ("%+g x%d ", coe [i], ind [i]);
-      fflush (stdout);
-    }
+    // for (int i=0; i<nEl; i++) {
+    //   printf ("%+g x%d ", coe [i], ind [i]);
+    //   fflush (stdout);
+    // }
 
-    printf ("\n");
+    // printf ("\n");
 
     if (!nEl)
       continue;
@@ -137,17 +142,17 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     if (extendedModel_ || rlb [j] > -COUENNE_INFINITY) 
       for (int i=0; i<nEl; i++) 
-	createRow (-1, ind [i], n, fplp, ind, coe, rlb [j], nEl, extendedModel_); // downward constraints -- on x_i
+	createRow (-1, ind [i], n, fplp, ind, coe, rlb [j], nEl, extendedModel_, j, m); // downward constraints -- on x_i
 
     if (extendedModel_ || rub [j] <  COUENNE_INFINITY) 
       for (int i=0; i<nEl; i++) 
-	createRow (+1, ind [i], n, fplp, ind, coe, rub [j], nEl, extendedModel_); // downward constraints -- on x_i
+	createRow (+1, ind [i], n, fplp, ind, coe, rub [j], nEl, extendedModel_, j, m); // downward constraints -- on x_i
 
     // create (at most 2) cuts for the bL and bU elements //////////////////////
 
     if (extendedModel_) {
-      createRow (-1, 2*n     + j, n, fplp, ind, coe, rlb [j], nEl, extendedModel_); // upward constraints -- on bL_i
-      createRow (+1, 2*n + m + j, n, fplp, ind, coe, rub [j], nEl, extendedModel_); // upward constraints -- on bU_i
+      createRow (-1, 2*n     + j, n, fplp, ind, coe, rlb [j], nEl, extendedModel_, j, m); // upward constraints -- on bL_i
+      createRow (+1, 2*n + m + j, n, fplp, ind, coe, rub [j], nEl, extendedModel_, j, m); // upward constraints -- on bU_i
     }
 
     ind += nEl;
@@ -172,7 +177,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   fplp -> setObjSense (-1.); // we want to maximize 
 
-  printf ("writing lp\n");
+  // printf ("writing lp\n");
   fplp -> writeLp ("fplp");
 
   fplp -> initialSolve ();
@@ -185,42 +190,67 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   // check old and new bounds
 
+  int 
+    *indLB = new int [n],
+    *indUB = new int [n],
+    ntightenedL = 0,
+    ntightenedU = 0;
+
+  double 
+    *valLB = new double [n],
+    *valUB = new double [n];
+
   for (int i=0; i<n; i++) {
 
-    printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
-    	    oldLB [i], oldUB [i], 
-    	    newLB [i], newUB [i]);
+    // printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
+    // 	    oldLB [i], oldUB [i], 
+    // 	    newLB [i], newUB [i]);
 
     if (newLB [i] > oldLB [i] + COUENNE_EPS) {
-
-      OsiColCut newBound;
-      newBound.setLbs (1, &i, newLB + i);
-      cs.insert (newBound);
+      indLB [ntightenedL]   = i;
+      valLB [ntightenedL++] = newLB [i];
     }
 
     if (newUB [i] < oldUB [i] - COUENNE_EPS) {
-
-      OsiColCut newBound;
-      newBound.setUbs (1, &i, newUB + i);
-      cs.insert (newBound);
+      indUB [ntightenedU]   = i;
+      valUB [ntightenedU++] = newUB [i];
     }
   }
+
+  if (ntightenedL || ntightenedU) {
+
+    OsiColCut newBound;
+
+    newBound.setLbs (ntightenedL, indLB, valLB);
+    newBound.setUbs (ntightenedU, indUB, valUB);
+
+    cs.insert (newBound);
+  }
+
+  delete [] indLB;
+  delete [] indUB;
+  delete [] valLB;
+  delete [] valUB;
+
+  delete fplp;
 }
 
 
 // single cut creation. Parameters:
 //
-// 1) sign:     tells us whether this is a <= or a >= (part of a) constraint.
-// 2) indexVar: index of variable we want to do upward or downward bt
-// 3) nVars:    number of variables in the original problems (original +
-//              auxiliaries). Used to understand if we are adding an
-//              up or a down constraint
-// 4) p:        solver interface to which we are adding constraints
-// 5) indices:  vector containing indices of the linearization constraint (the i's)
-// 6) coe:                        coeff                                        a_ji's
-// 7) rhs:      right-hand side of constraint
-// 8) nEl:      number of elements of this linearization cut
-// 9) extMod:   extendedModel_
+//  1) sign:     tells us whether this is a <= or a >= (part of a) constraint.
+//  2) indexVar: index of variable we want to do upward or downward bt
+//  3) nVars:    number of variables in the original problems (original +
+//               auxiliaries). Used to understand if we are adding an
+//               up or a down constraint
+//  4) p:        solver interface to which we are adding constraints
+//  5) indices:  vector containing indices of the linearization constraint (the    i's)
+//  6) coe:                        coeffs                                       a_ji's
+//  7) rhs:      right-hand side of constraint
+//  8) nEl:      number of elements of this linearization cut
+//  9) extMod:   extendedModel_
+// 10) indCon:   index of constraint being treated (and corresponding bL, bU)
+// 11) nCon:     number of constraints
 
 void createRow (int sign,
 		int indexVar,
@@ -230,7 +260,9 @@ void createRow (int sign,
 		const double *coe,
 		const double rhs,
 		const int nEl,
-		bool extMod) {
+		bool extMod,
+		int indCon,
+		int nCon) {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
   ///
@@ -334,13 +366,15 @@ void createRow (int sign,
   ///
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // printf ("creating constraint from: ");
+  // for (int i=0; i<nEl; i++)
+  //   printf ("%+g x%d ", coe [i], indices [i]);
+  // printf ("%c= %g for variable index %d: ", sign > 0 ? '<' : '>', rhs, indexVar);
 
-  printf ("creating constraint from: ");
-  for (int i=0; i<nEl; i++)
-    printf ("%+g x%d ", coe [i], indices [i]);
-  printf ("%c= %g for variable index %d: ", sign > 0 ? '<' : '>', rhs, indexVar);
+  int nTerms = nEl;
 
-  int nTerms = nEl + (extMod ? 1 : 0); // always add one element when using extended model
+  if (extMod) 
+    nTerms++; // always add one element when using extended model
 
   int    *iInd = new int    [nTerms];
   double *elem = new double [nTerms];
@@ -351,7 +385,7 @@ void createRow (int sign,
 
   if (extMod) {
     elem [nEl] = -1.; // extended model, coefficient for bL or bU
-    iInd [nEl] = indexVar;
+    iInd [nEl] = 2*nVars + indCon + ((sign > 0) ? nCon : 0);
   }
 
   // indices are not so easy...
@@ -384,10 +418,13 @@ void createRow (int sign,
 
   p -> addRow (vec, lb, ub);
 
-  for (int i=0; i<nEl; i++)
-    printf ("%+g x%d ", elem [i], iInd [i]);
+  delete iInd;
+  delete elem;
 
-  printf ("in [%g,%g]\n", lb, ub);
+  // for (int i=0; i<nEl; i++)
+  //   printf ("%+g x%d ", elem [i], iInd [i]);
+
+  // printf ("in [%g,%g]\n", lb, ub);
 
   // OsiRowCut *cut = new OsiRowCut (lb, ub,
   // 				  nTerms, nTerms,
