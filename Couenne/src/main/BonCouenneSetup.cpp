@@ -35,6 +35,7 @@
 #include "CouenneFixPoint.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneDisjCuts.hpp"
+#include "CouenneCrossConv.hpp"
 
 #include "BonCouenneInfo.hpp"
 #include "BonCbcNode.hpp"
@@ -555,6 +556,24 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cutGenerators (). push_back(cg);
   }
 
+  // Add cross-aux redundant cuts ///////////////////////////////////////////////////////
+
+  options () -> GetIntegerValue ("crossconv_cuts", freq, "couenne.");
+
+  if (freq != 0) {
+
+    CouenneCrossConv * couenneCross = 
+      new CouenneCrossConv (couenneProb,
+			    journalist (),
+			    options ());
+
+    CuttingMethod cg;
+    cg.frequency = freq;
+    cg.cgl = couenneCross;
+    cg.id = "Couenne cross-aux cuts";
+    cutGenerators (). push_back(cg);
+  }
+
   int ival;
   if (!options_->GetEnumValue("node_comparison",ival,"bonmin.")) {
     // change default for Couenne
@@ -564,7 +583,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     nodeComparisonMethod_ = NodeComparison(ival);
   }
 
-  if(intParam_[NumCutPasses] < 2)
+  if (intParam_[NumCutPasses] < 2)
     intParam_[NumCutPasses] = 2;
 
   // Tell Cbc not to check again if a solution returned from
@@ -591,6 +610,7 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   CouenneChooseVariable ::registerOptions (roptions);
   CouenneFixPoint       ::registerOptions (roptions);
   CouenneDisjCuts       ::registerOptions (roptions);
+  CouenneCrossConv      ::registerOptions (roptions);
   NlpSolveHeuristic     ::registerOptions (roptions);
   CouenneFeasPump       ::registerOptions (roptions);
 

@@ -90,7 +90,7 @@ CTAGS = ctags
 DIST_SUBDIRS = src/util src/expression src/readnl src/standardize \
 	src/problem src/bound_tightening src/convex src/branch \
 	src/disjunctive src/sdpcuts src/ellipcuts src/interfaces \
-	src/heuristics src src/main test
+	src/heuristics src/crossconv src src/main test
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -319,7 +319,7 @@ AUTOMAKE_OPTIONS = foreign
 SUBDIRS = src/util src/expression $(am__append_1) src/standardize \
 	src/problem src/bound_tightening src/convex src/branch \
 	src/disjunctive src/sdpcuts src/ellipcuts src/interfaces \
-	src/heuristics src src/main $(am__append_2)
+	src/heuristics src/crossconv src src/main $(am__append_2)
 
 ########################################################################
 #             Additional files to be included in tarball               #

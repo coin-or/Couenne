@@ -121,6 +121,7 @@ AC_CONFIG_FILES([Makefile
                  src/standardize/Makefile
                  src/readnl/Makefile
                  src/util/Makefile
+                 src/crossconv/Makefile
                  src/Makefile
 		 test/grandTest.sh
 		 couenne_addlibs.txt])

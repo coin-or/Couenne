@@ -23775,7 +23775,7 @@ fi
 
 # Here list all the files that configure should create (except for the
 # configuration header file)
-                                                                                                                                                                                              ac_config_files="$ac_config_files Makefile test/Makefile src/main/Makefile src/bound_tightening/Makefile src/branch/Makefile src/convex/Makefile src/interfaces/Makefile src/heuristics/Makefile src/disjunctive/Makefile src/sdpcuts/Makefile src/ellipcuts/Makefile src/expression/Makefile src/problem/Makefile src/standardize/Makefile src/readnl/Makefile src/util/Makefile src/Makefile test/grandTest.sh couenne_addlibs.txt"
+                                                                                                                                                                                                        ac_config_files="$ac_config_files Makefile test/Makefile src/main/Makefile src/bound_tightening/Makefile src/branch/Makefile src/convex/Makefile src/interfaces/Makefile src/heuristics/Makefile src/disjunctive/Makefile src/sdpcuts/Makefile src/ellipcuts/Makefile src/expression/Makefile src/problem/Makefile src/standardize/Makefile src/readnl/Makefile src/util/Makefile src/crossconv/Makefile src/Makefile test/grandTest.sh couenne_addlibs.txt"
 
 
 # Here put the location and name of the configuration header file
@@ -24552,6 +24552,7 @@ do
   "src/standardize/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/standardize/Makefile" ;;
   "src/readnl/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/readnl/Makefile" ;;
   "src/util/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/util/Makefile" ;;
+  "src/crossconv/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/crossconv/Makefile" ;;
   "src/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
   "test/grandTest.sh" ) CONFIG_FILES="$CONFIG_FILES test/grandTest.sh" ;;
   "couenne_addlibs.txt" ) CONFIG_FILES="$CONFIG_FILES couenne_addlibs.txt" ;;

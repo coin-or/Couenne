@@ -31,7 +31,8 @@ libCouenne_la_LIBADD = \
 	./util/libCouenneUtil.la \
 	./disjunctive/libCouenneDisjunctive.la \
 	./sdpcuts/libCouenneSdpCuts.la \
-	./ellipcuts/libCouenneEllipCuts.la
+	./ellipcuts/libCouenneEllipCuts.la \
+	./crossconv/libCouenneCrossConv.la
 
 #	./readnl/libCouenneReadnl.la 
 
@@ -111,7 +112,8 @@ AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/sdpcuts` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/ellipcuts`
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/ellipcuts` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/crossconv`
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
@@ -200,7 +202,8 @@ includecoin_HEADERS = \
 	disjunctive/CouenneDisjCuts.hpp \
 	convex/CouenneCutGenerator.hpp \
 	sdpcuts/CouenneSdpCuts.hpp \
-	ellipcuts/CouenneEllipCuts.hpp
+	ellipcuts/CouenneEllipCuts.hpp \
+	crossconv/CouenneCrossConv.hpp
 
 #############################################################################
 # Create the Config.h file that always defines HAVE_CONFIG_H and install it #

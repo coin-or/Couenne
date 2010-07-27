@@ -30,6 +30,7 @@ SUBDIRS += src/standardize \
 	  src/ellipcuts \
 	  src/interfaces \
 	  src/heuristics \
+	  src/crossconv \
 	  src \
 	  src/main 
 
