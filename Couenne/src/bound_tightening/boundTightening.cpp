@@ -16,7 +16,7 @@
 #include "BonCbc.hpp"
 
 // max # bound tightening iterations
-#define MAX_BT_ITER 3
+//#define MAX_BT_ITER 3
 #define THRES_IMPROVED 0
 
 using namespace Couenne;
@@ -124,7 +124,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
   } while (((ntightened > 0) || (nbwtightened > 0)) && 
 	   (ntightened + nbwtightened > THRES_IMPROVED) &&
-	   (niter++ < MAX_BT_ITER));
+	   ((max_fbbt_iter_ < 0) || (niter++ < max_fbbt_iter_)));
 
   // TODO: limit should depend on number of constraints, that is,
   // bound transmission should be documented and the cycle should stop

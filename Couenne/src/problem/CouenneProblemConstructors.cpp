@@ -35,6 +35,8 @@
 
 using namespace Couenne;
 
+#define MAX_FBBT_ITER 3
+
 /// constructor
 CouenneProblem::CouenneProblem (struct ASL *asl,
 				Bonmin::BabSetupBase *base,
@@ -73,7 +75,8 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   unusedOriginalsIndices_ (NULL),
   nUnusedOriginals_ (-1),
   multilinSep_ (CouenneProblem::MulSepNone),
-  useSemiaux_  (false) {
+  useSemiaux_  (false),
+  max_fbbt_iter_ (MAX_FBBT_ITER) {
 
   double now = CoinCpuTime ();
 
@@ -138,8 +141,9 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
 #endif
   unusedOriginalsIndices_ (NULL),
   nUnusedOriginals_ (p.nUnusedOriginals_),
-  multilinSep_ (p.multilinSep_),
-  useSemiaux_ (p.useSemiaux_) {
+  multilinSep_  (p.multilinSep_),
+  useSemiaux_   (p.useSemiaux_),
+  max_fbbt_iter_  (p.max_fbbt_iter_) {
 
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);
@@ -234,6 +238,8 @@ void CouenneProblem::initOptions(SmartPtr<OptionsList> options) {
 
   options -> GetIntegerValue ("log_num_obbt_per_level", logObbtLev_, "couenne.");
   options -> GetIntegerValue ("log_num_abt_per_level",  logAbtLev_,  "couenne.");
+
+  options -> GetIntegerValue ("max_fbbt_iter",  max_fbbt_iter_,  "couenne.");
 
   options -> GetNumericValue ("feas_tolerance",  feas_tolerance_, "couenne.");
   options -> GetNumericValue ("opt_window",      opt_window_,     "couenne.");

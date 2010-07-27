@@ -206,6 +206,9 @@ class CouenneProblem {
   /// Use semiauxiliaries
   bool useSemiaux_;
 
+  /// number of FBBT iterations
+  int max_fbbt_iter_;
+
  public:
 
   CouenneProblem  (ASL * = NULL,
@@ -609,4 +612,3 @@ bool BranchingFBBT (CouenneProblem *problem,
 }
 
 #endif
-

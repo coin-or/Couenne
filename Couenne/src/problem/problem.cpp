@@ -31,6 +31,8 @@
 
 using namespace Couenne;
 
+#define MAX_FBBT_ITER 3
+
 /// save CouenneBase
 void CouenneProblem::setBase (Bonmin::BabSetupBase *base) {
   bonBase_ = base;
@@ -423,6 +425,12 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
 If -1, apply at every node (expensive!). \
 If 0, apply at root node only. \
 If k>=0, apply with probability 2^(k - level), level being the current depth of the B&B tree.");
+
+  roptions -> AddLowerBoundedIntegerOption
+    ("max_fbbt_iter",
+     "Number of FBBT iterations before stopping even with tightened bounds.",
+     -1, MAX_FBBT_ITER,
+     "Set to -1 to impose no upper limit");
 
   roptions -> AddStringOption2 
     ("aggressive_fbbt",

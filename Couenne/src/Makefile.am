@@ -30,7 +30,7 @@ libCouenne_la_LIBADD = \
 	./bound_tightening/libCouenneBoundTightening.la \
 	./util/libCouenneUtil.la \
 	./disjunctive/libCouenneDisjunctive.la \
-	./sdpcuts/libCouenneSdpCuts.la
+	./sdpcuts/libCouenneSdpCuts.la \
 	./ellipcuts/libCouenneEllipCuts.la
 
 #	./readnl/libCouenneReadnl.la 
