@@ -398,7 +398,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	if ((nargs == 1) && ((*newarglist) -> Type () == CONST)) {
 
 	  CouNumber val = (*newarglist) -> Value () - rhs;
-	  delete *newarglist;
+	  //delete *newarglist;
 	  *newarglist = new exprConst (val);
 	} 
 	else newarglist [nargs++] = new exprConst (-rhs);
@@ -418,11 +418,25 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
       else if ((fabs (auxcoe - 1) < COUENNE_EPS) && 
 	       (auxDef -> code () == COU_EXPROPP))
 	rest = auxDef -> Argument ();
-      else // TODO: check if auxdef is an exprOpp or an exprMul
-	   // (k*f(x)) and -1/auxcoe simplifies
-	rest = new exprMul (new exprConst (-1./auxcoe), 
-			    ((auxDef -> Type () == AUX) ||
-			     (auxDef -> Type () == VAR)) ? new exprClone (auxDef) : auxDef);
+      else
+	if (auxDef -> Type () == CONST)
+
+	  rest = new exprConst (- auxDef -> Value () / auxcoe);
+	else {
+
+	  // TODO: check if auxdef is an exprMul (k*f(x)) and
+	  // -1/auxcoe simplifies
+
+	  if (auxDef -> code () == COU_EXPROPP) {
+
+	    auxDef = auxDef -> Argument ();
+	    auxcoe = -auxcoe;
+	  }
+
+	  rest = new exprMul (new exprConst (-1./auxcoe), 
+			      ((auxDef -> Type () == AUX) ||
+			       (auxDef -> Type () == VAR)) ? new exprClone (auxDef) : auxDef);
+	}
     }
 
     if (linind2) {
@@ -431,7 +445,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     }
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("gotten "); rest -> print (); printf ("\n");
+      printf ("generated "); rest -> print (); printf ("\n");
     }
 
     auxInd = maxindex;
@@ -460,8 +474,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     body -> print (); printf ("]");
   }
 
-  // second argument is false to tell standardize not to create a new
-  // auxiliary variable (we are creating it ourselves, it's aux)
+  // second argument is set to false so as to instruct standardize not
+  // to create a new auxiliary variable (we are creating it ourselves,
+  // it's aux)
   exprAux *aux = rest -> standardize (this, false);
 
   if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {

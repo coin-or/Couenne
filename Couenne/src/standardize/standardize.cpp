@@ -220,10 +220,13 @@ bool CouenneProblem::standardize () {
 
       (*i) -> Body () -> getBounds (lb, ub);
 
-      if ((((*((*i) -> Lb ())) ()) > ub) ||
-	  (((*((*i) -> Ub ())) ()) < lb)) {
+      if ((((*((*i) -> Lb ())) ()) > ub + COUENNE_EPS) ||
+	  (((*((*i) -> Ub ())) ()) < lb - COUENNE_EPS)) {
 
-	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, "found infeasible constraint [%g,%g]\n", lb, ub);
+	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, "found infeasible constraint [%g,%g] vs [%g,%g]\n", 
+			  lb, ub,
+			  ((*((*i) -> Lb ())) ()),
+			  ((*((*i) -> Ub ())) ()));
 
 	if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE))
 	  (*i) -> print ();
