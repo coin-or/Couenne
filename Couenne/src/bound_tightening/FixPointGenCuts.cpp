@@ -178,7 +178,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   fplp -> setObjSense (-1.); // we want to maximize 
 
   // printf ("writing lp\n");
-  fplp -> writeLp ("fplp");
+  //fplp -> writeLp ("fplp");
 
   fplp -> initialSolve ();
 

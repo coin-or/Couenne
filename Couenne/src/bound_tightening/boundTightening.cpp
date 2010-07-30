@@ -65,7 +65,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
       }
   }
 
-  do {
+  if (max_fbbt_iter_)  do {
 
     if (CoinCpuTime () > maxCpuTime_)
       break;
