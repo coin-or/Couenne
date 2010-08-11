@@ -68,7 +68,13 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
   CoinPackedMatrix P;
 
+  bool firstCall = false ; // true if this is the first call to
+  	                   // solveMILP; initialization will be
+  	                   // necessary
+
   if (!milp_) {
+
+    firstCall = true;
 
     milp_ = model_ -> solver () -> clone ();
 
@@ -147,7 +153,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
     delete [] deleted;
   }
 
-  printf ("FP:add MILP ineq\n");
+  printf ("FP: add MILP ineq\n");
   milp_ -> writeLp ("fp-milp0");
 
   // Add 2q inequalities
@@ -176,9 +182,15 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
       ++j; // index of variable within problem (plus nVars_)
     }
 
-  milp_ -> writeLp ("fp-milp");
+  // The MILP is complete. We have several ways of solving it, or
+  // better, to find feasible solutions to it. We have to interface
+  // with each of them once at the very beginning, and later we loop
+  // through them in order to find a feasible solution
 
-  milp_ -> branchAndBound ();
+  if (firstCall)
+    init_MILP ();
+
+  findSolution ();
 
   iSol = CoinCopyOfArray (milp_ -> getColSolution (), 
 			  problem_ -> nVars ());

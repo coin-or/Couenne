@@ -65,7 +65,8 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneHeuristics_la_LIBADD =
 am_libCouenneHeuristics_la_OBJECTS = BonInitHeuristic.lo \
 	BonNlpHeuristic.lo CouenneFeasPumpConstructors.lo \
-	CouenneFeasPump.lo CouenneFPSolveMILP.lo CouenneFPSolveNLP.lo
+	CouenneFeasPump.lo CouenneFPSolveMILP.lo CouenneFPSolveNLP.lo \
+	CouenneFPFindSolution.lo
 libCouenneHeuristics_la_OBJECTS =  \
 	$(am_libCouenneHeuristics_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -303,7 +304,8 @@ libCouenneHeuristics_la_SOURCES = \
 	CouenneFeasPumpConstructors.cpp \
 	CouenneFeasPump.cpp \
 	CouenneFPSolveMILP.cpp \
-	CouenneFPSolveNLP.cpp 
+	CouenneFPSolveNLP.cpp \
+	CouenneFPFindSolution.cpp 
 
 libCouenneHeuristics_la_DEPENDENCIES = $(libCouenneHeuristics_la_LIBADD)
 
@@ -380,6 +382,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonInitHeuristic.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonNlpHeuristic.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFPFindSolution.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFPSolveMILP.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFPSolveNLP.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPump.Plo@am__quote@

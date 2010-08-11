@@ -15,7 +15,8 @@ libCouenneHeuristics_la_SOURCES = \
 	CouenneFeasPumpConstructors.cpp \
 	CouenneFeasPump.cpp \
 	CouenneFPSolveMILP.cpp \
-	CouenneFPSolveNLP.cpp 
+	CouenneFPSolveNLP.cpp \
+	CouenneFPFindSolution.cpp 
 
 libCouenneHeuristics_la_DEPENDENCIES = $(libCouenneHeuristics_la_LIBADD)
 
