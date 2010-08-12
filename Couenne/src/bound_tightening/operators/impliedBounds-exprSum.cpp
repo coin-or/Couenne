@@ -180,7 +180,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     //
     // steal some work to bound propagation... 
 
-    if ((slackL >  -COUENNE_EPS) &&
+    if ((slackL > 0.) &&
 	(infLo1 == -1) && 
 	(infUp2 == -1)) {   // no implication on lower
 
@@ -192,7 +192,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	  l [wind] = ceil (l [wind] - COUENNE_EPS);
       }
 
-      if ((slackU > -COUENNE_EPS) &&
+      if ((slackU > 0.) &&
 	  (infLo2 == -1) && 
 	  (infUp1 == -1)) { // no implication on upper
 
@@ -210,7 +210,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	return false; // both bounds were weak, no implication possible
       }
     }
-    else if ((slackU > -COUENNE_EPS) && 
+    else if ((slackU > 0.) && 
 	     (infLo2 == -1) && 
 	     (infUp1 == -1)) {
 

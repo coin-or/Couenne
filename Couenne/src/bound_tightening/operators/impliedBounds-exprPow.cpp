@@ -57,7 +57,7 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   if ((isint || isinvint) && (intk % 2)) { 
 
     // k or 1/k integer and odd, or non-integer --> it is a monotone
-    // increasing function
+    // increasing function, apart when k negative
 
     if (k > 0.) { // simple, just follow bounds
 
@@ -123,11 +123,10 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   bool xInt = arglist_ [0] -> isInteger ();
 
   if ((resL || resU) && xInt) {
-    int xi = arglist_ [0] -> Index ();
-    assert (xi >= 0);
+
     // careful with what "integer" means when a bound is 1e-8 (see minlp/deb[789].nl)
-    if (resL && (fabs (l [xi]) > COUENNE_EPS)) l [xi] = ceil  (l [xi] - COUENNE_EPS);
-    if (resU && (fabs (u [xi]) > COUENNE_EPS)) u [xi] = floor (u [xi] + COUENNE_EPS);
+    if (resL && (fabs (l [index]) > COUENNE_EPS)) l [index] = ceil  (l [index] - COUENNE_EPS);
+    if (resU && (fabs (u [index]) > COUENNE_EPS)) u [index] = floor (u [index] + COUENNE_EPS);
   }
 
   return (resL || resU);

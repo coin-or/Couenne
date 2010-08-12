@@ -42,7 +42,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   ///
   /// LP = {x in R^n: Ax <= b}
   /// 
-  /// For suitable nxm matrix A, rhs vector b, and variable vector
+  /// for suitable nxm matrix A, rhs vector b, and variable vector
   /// x. Our purpose is that of creating a much larger LP that will
   /// help us find the interval [l,u] corresponding to the fixpoint of
   /// an FBBT algorithm. To this purpose, consider a single constraint
@@ -53,8 +53,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   /// According to two schools of thought (Leo's and mine), this
   /// single constraint can give rise to a number of FBBT
   /// constraints. The two schools of thoughts differ in the meaning
-  /// of b: in mine, it is constant. In Leo's, it must be defined as a
-  /// variable.
+  /// of b: in mine, it is constant. In Leo's, it is a variable.
 
   OsiSolverInterface *fplp = NULL;
 
@@ -178,59 +177,64 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   fplp -> setObjSense (-1.); // we want to maximize 
 
   // printf ("writing lp\n");
-  //fplp -> writeLp ("fplp");
+  //  fplp -> writeLp ("fplp");
 
   fplp -> initialSolve ();
 
-  const double 
-    *newLB = fplp -> getColSolution (),
-    *newUB = newLB + n,
-    *oldLB = si. getColLower (),
-    *oldUB = si. getColUpper ();
+  if (fplp -> isProvenOptimal ()) {
 
-  // check old and new bounds
+    // if problem not solved to optimality, bounds are useless
 
-  int 
-    *indLB = new int [n],
-    *indUB = new int [n],
-    ntightenedL = 0,
-    ntightenedU = 0;
+    const double 
+      *newLB = fplp -> getColSolution (),
+      *newUB = newLB + n,
+      *oldLB = si. getColLower (),
+      *oldUB = si. getColUpper ();
 
-  double 
-    *valLB = new double [n],
-    *valUB = new double [n];
+    // check old and new bounds
 
-  for (int i=0; i<n; i++) {
+    int 
+      *indLB = new int [n],
+      *indUB = new int [n],
+      ntightenedL = 0,
+      ntightenedU = 0;
 
-    // printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
-    // 	    oldLB [i], oldUB [i], 
-    // 	    newLB [i], newUB [i]);
+    double 
+      *valLB = new double [n],
+      *valUB = new double [n];
 
-    if (newLB [i] > oldLB [i] + COUENNE_EPS) {
-      indLB [ntightenedL]   = i;
-      valLB [ntightenedL++] = newLB [i];
+    for (int i=0; i<n; i++) {
+
+      // printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
+      // 	    oldLB [i], oldUB [i], 
+      // 	    newLB [i], newUB [i]);
+
+      if (newLB [i] > oldLB [i] + COUENNE_EPS) {
+	indLB [ntightenedL]   = i;
+	valLB [ntightenedL++] = newLB [i];
+      }
+
+      if (newUB [i] < oldUB [i] - COUENNE_EPS) {
+	indUB [ntightenedU]   = i;
+	valUB [ntightenedU++] = newUB [i];
+      }
     }
 
-    if (newUB [i] < oldUB [i] - COUENNE_EPS) {
-      indUB [ntightenedU]   = i;
-      valUB [ntightenedU++] = newUB [i];
+    if (ntightenedL || ntightenedU) {
+
+      OsiColCut newBound;
+
+      newBound.setLbs (ntightenedL, indLB, valLB);
+      newBound.setUbs (ntightenedU, indUB, valUB);
+
+      cs.insert (newBound);
     }
+
+    delete [] indLB;
+    delete [] indUB;
+    delete [] valLB;
+    delete [] valUB;
   }
-
-  if (ntightenedL || ntightenedU) {
-
-    OsiColCut newBound;
-
-    newBound.setLbs (ntightenedL, indLB, valLB);
-    newBound.setUbs (ntightenedU, indUB, valUB);
-
-    cs.insert (newBound);
-  }
-
-  delete [] indLB;
-  delete [] indUB;
-  delete [] valLB;
-  delete [] valUB;
 
   delete fplp;
 }
