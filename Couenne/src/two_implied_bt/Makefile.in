@@ -14,13 +14,13 @@
 
 @SET_MAKE@
 
+# $Id$
+#
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 
-# Authors:  Andreas Waechter           IBM    2006-04-13
-#           Pietro Belotti
-
+# Author: Pietro Belotti, from a template by Pierre Bonami
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -28,7 +28,7 @@ VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-top_builddir = ..
+top_builddir = ../..
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = @INSTALL@
 install_sh_DATA = $(install_sh) -c -m 644
@@ -44,16 +44,15 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@COIN_HAS_CPX_TRUE@am__append_1 = \
-@COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
-@COIN_HAS_CPX_TRUE@	-I`$(CYGPATH_W) $(CPXINCDIR)`
+@COIN_HAS_COUENNE_TRUE@am__append_1 = \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` 
 
 @COIN_HAS_NTY_TRUE@am__append_2 = \
 @COIN_HAS_NTY_TRUE@	-I`$(CYGPATH_W) $(NTYINCDIR)`
 
-subdir = src
-DIST_COMMON = $(includecoin_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+subdir = src/two_implied_bt
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
@@ -62,29 +61,25 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
 CONFIG_CLEAN_FILES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includecoindir)"
-libLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(lib_LTLIBRARIES)
-am_libCouenne_la_OBJECTS =
-libCouenne_la_OBJECTS = $(am_libCouenne_la_OBJECTS)
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
+LTLIBRARIES = $(noinst_LTLIBRARIES)
+libCouenneTwoImplied_la_LIBADD =
+am_libCouenneTwoImplied_la_OBJECTS = TwoImpliedConstructors.lo \
+	TwoImpliedIneqCombine.lo TwoImpliedGenCuts.lo
+libCouenneTwoImplied_la_OBJECTS =  \
+	$(am_libCouenneTwoImplied_la_OBJECTS)
+DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
+depcomp = $(SHELL) $(top_srcdir)/../depcomp
+am__depfiles_maybe = depfiles
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libCouenne_la_SOURCES)
-DIST_SOURCES = $(libCouenne_la_SOURCES)
-includecoinHEADERS_INSTALL = $(INSTALL_HEADER)
-HEADERS = $(includecoin_HEADERS)
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+SOURCES = $(libCouenneTwoImplied_la_SOURCES)
+DIST_SOURCES = $(libCouenneTwoImplied_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -298,196 +293,32 @@ sol_cc_compiler = @sol_cc_compiler@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
+noinst_LTLIBRARIES = libCouenneTwoImplied.la
 
-########################################################################
-#                               libCouenne                             #
-########################################################################
+# List all source files for this library, including headers
+libCouenneTwoImplied_la_SOURCES = \
+	TwoImpliedConstructors.cpp \
+	TwoImpliedIneqCombine.cpp \
+	TwoImpliedGenCuts.cpp 
 
-# Name of the library compiled in this directory.  We want it to be installed
-# in the 'lib' directory
-lib_LTLIBRARIES = libCouenne.la
-libCouenne_la_SOURCES = 
-libCouenne_la_LIBADD = \
-	./interfaces/libCouenneInterfaces.la \
-	./heuristics/libCouenneHeuristics.la \
-	./problem/libCouenneProblem.la \
-	./standardize/libCouenneStandardize.la \
-	./expression/libCouenneExpression.la \
-	./branch/libCouenneBranch.la \
-	./convex/libCouenneConvex.la \
-	./bound_tightening/libCouenneBoundTightening.la \
-	./util/libCouenneUtil.la \
-	./disjunctive/libCouenneDisjunctive.la \
-	./sdpcuts/libCouenneSdpCuts.la \
-	./ellipcuts/libCouenneEllipCuts.la \
-	./crossconv/libCouenneCrossConv.la \
-	./two_implied_bt/libCouenneTwoImplied.la
-
-
-#	./readnl/libCouenneReadnl.la 
-libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
+libCouenneTwoImplied_la_DEPENDENCIES = $(libCouenneTwoImplied_la_LIBADD)
 
 # This is for libtool (on Windows)
-libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
-
-########################################################################
-#                            Additional flags                          #
-########################################################################
+libCouenneTwoImplied_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
-# "cygpath" stuff is necessary to compile with native compilers on Windows.
-
-#if COIN_HAS_FILTERSQP
-#  AM_CPPFLAGS += -I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Filter` 
-#endif
-AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Algorithms` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Algorithms/Branching` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Algorithms/OaGenerators` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Algorithms/Ampl` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Interfaces` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Interfaces/Ipopt` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/Interfaces/Ampl` -I`$(CYGPATH_W) \
-	$(BONMINSRCDIR)/src/CbcBonmin` -I`$(CYGPATH_W) \
+# "cygpath" stuff is necessary to compile with native compilers on Windows
+AM_CPPFLAGS = -I`$(CYGPATH_W) $(CGLSRCDIR)/src` -I`$(CYGPATH_W) \
+	$(COINUTILSSRCDIR)/src` -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces` \
+	-I`$(CYGPATH_W) $(COINUTILSOBJDIR)/inc` -I`$(CYGPATH_W) \
 	$(IPOPTOBJDIR)/inc` -I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Interfaces` -I`$(CYGPATH_W) \
-	$(IPOPTSRCDIR)/src/LinAlg` -I`$(CYGPATH_W) \
-	$(IPOPTSRCDIR)/src/Apps/AmplSolver` -I`$(CYGPATH_W) \
-	$(OSISRCDIR)/src` -I`$(CYGPATH_W) $(CBCSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CBCOBJDIR)/inc` -I`$(CYGPATH_W) \
-	$(COINUTILSSRCDIR)/src` -I`$(CYGPATH_W) \
-	$(COINUTILSOBJDIR)/inc` -I`$(CYGPATH_W) $(CLPOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(CLPSRCDIR)/src` -I`$(CYGPATH_W) \
-	$(OSISRCDIR)/src/OsiClp` -I`$(CYGPATH_W) \
-	$(OSISRCDIR)/src/OsiCbc` -I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding2` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglLandP` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglRedSplit` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglGomory` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglProbing` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglOddHole` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglClique` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglFlowCover` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglMixedIntegerRounding` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglTwomir` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglKnapsackCover` -I`$(CYGPATH_W) \
-	$(CGLSRCDIR)/src/CglPreProcess` $(am__append_1) \
-	$(am__append_2) -I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/interfaces` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/heuristics` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/sdpcuts` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/main` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/problem` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/branch` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/sdpcuts` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/ellipcuts` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/crossconv` -I`$(CYGPATH_W) \
-	$(COUENNESRCDIR)/src/two_implied_bt`
-
-# This line is necessary to allow VPATH compilation with MS compilers
-# on Cygwin
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
-
-########################################################################
-#                Headers that need to be installed                     #
-########################################################################
-
-# Here list all the header files that are required by a user of the library,
-# and that therefore should be installed in 'install/coin'
-includecoindir = $(includedir)/coin
-includecoin_HEADERS = \
-	../inc/config_couenne.h \
-	util/CouenneRootQ.hpp \
-	util/CouenneFunTriplets.hpp \
-	main/BonCouenneInfo.hpp \
-	main/BonCouenneSetup.hpp \
-	interfaces/BonCouenneInterface.hpp \
-	interfaces/CouenneTNLP.hpp \
-	interfaces/CouenneMINLPInterface.hpp \
-	heuristics/BonNlpHeuristic.hpp \
-	heuristics/BonInitHeuristic.hpp \
-	heuristics/CouenneFeasPump.hpp \
-	branch/CouenneObject.hpp \
-	branch/CouenneVarObject.hpp \
-	branch/CouenneVTObject.hpp \
-	branch/CouenneThreeWayBranchObj.hpp \
-	branch/CouenneBranchingObject.hpp \
-	branch/CouenneChooseVariable.hpp \
-	branch/CouenneChooseStrong.hpp \
-	branch/CouenneComplObject.hpp \
-	branch/CouenneComplBranchingObject.hpp \
-	branch/CouenneOrbitObj.hpp \
-	branch/CouenneOrbitBranchingObj.hpp \
-	branch/CouenneSOSObject.hpp \
-	branch/CouenneProjections.hpp \
-	standardize/CouenneLQelems.hpp \
-	bound_tightening/CouenneFixPoint.hpp \
-	expression/CouenneDomain.hpp \
-	expression/operators/CouenneExprAbs.hpp \
-	expression/operators/CouenneExprExp.hpp \
-	expression/operators/CouenneExprInv.hpp \
-	expression/operators/CouenneExprMul.hpp \
-	expression/operators/CouenneExprOpp.hpp \
-	expression/operators/CouenneExprLog.hpp \
-	expression/operators/CouenneExprDiv.hpp \
-	expression/operators/CouenneExprMin.hpp \
-	expression/operators/CouenneExprSum.hpp \
-	expression/operators/CouenneExprMax.hpp \
-	expression/operators/CouenneExprPow.hpp \
-	expression/operators/CouenneExprSin.hpp \
-	expression/operators/CouenneExprCos.hpp \
-	expression/operators/CouenneExprSub.hpp \
-	expression/operators/CouenneExprGroup.hpp \
-	expression/operators/CouenneExprQuad.hpp \
-	expression/operators/CouenneExprIf.hpp \
-	expression/operators/CouenneExprNorm.hpp \
-	expression/operators/CouenneExprPWLinear.hpp \
-	expression/operators/bounds/CouenneExprBMul.hpp \
-	expression/operators/bounds/CouenneExprBDiv.hpp \
-	expression/operators/bounds/CouenneExprBSin.hpp \
-	expression/operators/bounds/CouenneExprBCos.hpp \
-	expression/CouenneExprConst.hpp \
-	expression/CouenneExprIVar.hpp \
-	expression/CouenneExprVar.hpp \
-	expression/CouenneExprAux.hpp \
-	expression/CouenneExprUnary.hpp \
-	expression/CouenneExpression.hpp \
-	expression/CouenneExprClone.hpp \
-	expression/CouenneExprBound.hpp \
-	expression/CouenneExprCopy.hpp \
-	expression/CouenneExprStore.hpp \
-	expression/CouenneExprOp.hpp \
-	expression/CouExpr.hpp \
-	expression/CouennePrecisions.hpp \
-	expression/partial/CouenneExprHess.hpp \
-	expression/partial/CouenneExprJac.hpp \
-	problem/depGraph/CouenneDepGraph.hpp \
-	problem/CouenneProblemElem.hpp \
-	problem/CouenneProblem.hpp \
-	problem/CouenneSolverInterface.hpp \
-	problem/CouenneJournalist.hpp \
-	problem/CouenneGlobalCutOff.hpp \
-	expression/CouenneTypes.hpp \
-	disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp \
-	sdpcuts/CouenneSdpCuts.hpp \
-	ellipcuts/CouenneEllipCuts.hpp \
-	crossconv/CouenneCrossConv.hpp \
-	two_implied_bt/CouenneTwoImplied.hpp
-
-
-#############################################################################
-# Create the Config.h file that always defines HAVE_CONFIG_H and install it #
-#############################################################################
-
-# You only need to adapt the following line
-ConfigHeader = CouenneConfig.h
+	-I`$(CYGPATH_W) $(OSISRCDIR)/src` $(am__append_1) \
+	$(am__append_2)
 all: all-am
 
 .SUFFIXES:
+.SUFFIXES: .cpp .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -497,9 +328,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/two_implied_bt/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  src/Makefile
+	  $(AUTOMAKE) --foreign  src/two_implied_bt/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -517,41 +348,48 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-libLTLIBRARIES: $(lib_LTLIBRARIES)
-	@$(NORMAL_INSTALL)
-	test -z "$(libdir)" || $(mkdir_p) "$(DESTDIR)$(libdir)"
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  if test -f $$p; then \
-	    f=$(am__strip_dir) \
-	    echo " $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) '$$p' '$(DESTDIR)$(libdir)/$$f'"; \
-	    $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) "$$p" "$(DESTDIR)$(libdir)/$$f"; \
-	  else :; fi; \
-	done
 
-uninstall-libLTLIBRARIES:
-	@$(NORMAL_UNINSTALL)
-	@set -x; list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  p=$(am__strip_dir) \
-	  echo " $(LIBTOOL) --mode=uninstall rm -f '$(DESTDIR)$(libdir)/$$p'"; \
-	  $(LIBTOOL) --mode=uninstall rm -f "$(DESTDIR)$(libdir)/$$p"; \
-	done
-
-clean-libLTLIBRARIES:
-	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
 	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
 	  test "$$dir" != "$$p" || dir=.; \
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libCouenne.la: $(libCouenne_la_OBJECTS) $(libCouenne_la_DEPENDENCIES) 
-	$(LINK) -rpath $(libdir) $(libCouenne_la_LDFLAGS) $(libCouenne_la_OBJECTS) $(libCouenne_la_LIBADD) $(LIBS)
+libCouenneTwoImplied.la: $(libCouenneTwoImplied_la_OBJECTS) $(libCouenneTwoImplied_la_DEPENDENCIES) 
+	$(CXXLINK)  $(libCouenneTwoImplied_la_LDFLAGS) $(libCouenneTwoImplied_la_OBJECTS) $(libCouenneTwoImplied_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
+
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TwoImpliedConstructors.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TwoImpliedGenCuts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TwoImpliedIneqCombine.Plo@am__quote@
+
+.cpp.o:
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ `$(CYGPATH_W) '$<'`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cpp.lo:
+@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -562,23 +400,6 @@ clean-libtool:
 distclean-libtool:
 	-rm -f libtool
 uninstall-info-am:
-install-includecoinHEADERS: $(includecoin_HEADERS)
-	@$(NORMAL_INSTALL)
-	test -z "$(includecoindir)" || $(mkdir_p) "$(DESTDIR)$(includecoindir)"
-	@list='$(includecoin_HEADERS)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(includecoinHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(includecoindir)/$$f'"; \
-	  $(includecoinHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(includecoindir)/$$f"; \
-	done
-
-uninstall-includecoinHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(includecoin_HEADERS)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(includecoindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(includecoindir)/$$f"; \
-	done
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -629,7 +450,6 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/../inc $(distdir)/bound_tightening $(distdir)/branch $(distdir)/convex $(distdir)/crossconv $(distdir)/disjunctive $(distdir)/ellipcuts $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/sdpcuts $(distdir)/standardize $(distdir)/two_implied_bt $(distdir)/util
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -658,11 +478,8 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includecoindir)"; do \
-	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -689,10 +506,11 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-libtool distclean-tags
@@ -707,9 +525,9 @@ info: info-am
 
 info-am:
 
-install-data-am: install-includecoinHEADERS
+install-data-am:
 
-install-exec-am: install-exec-local install-libLTLIBRARIES
+install-exec-am:
 
 install-info: install-info-am
 
@@ -718,6 +536,7 @@ install-man:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -734,34 +553,20 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-includecoinHEADERS uninstall-info-am \
-	uninstall-libLTLIBRARIES uninstall-local
+uninstall-am: uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libLTLIBRARIES clean-libtool ctags distclean \
+	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-exec \
-	install-exec-am install-exec-local install-includecoinHEADERS \
-	install-info install-info-am install-libLTLIBRARIES \
-	install-man install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-includecoinHEADERS uninstall-info-am \
-	uninstall-libLTLIBRARIES uninstall-local
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-info-am
 
-
-install-exec-local:
-	echo "#ifndef HAVE_CONFIG_H" >bla
-	echo "#define HAVE_CONFIG_H" >>bla
-	echo "#endif" >> bla
-	cat $(srcdir)/$(ConfigHeader) >> bla
-	$(install_sh_DATA) bla $(DESTDIR)$(includecoindir)/$(ConfigHeader)
-	rm -f bla
-
-uninstall-local:
-	rm -f $(DESTDIR)$(includecoindir)/$(ConfigHeader)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -31,6 +31,7 @@ SUBDIRS += src/standardize \
 	  src/interfaces \
 	  src/heuristics \
 	  src/crossconv \
+	  src/two_implied_bt \
 	  src \
 	  src/main 
 
