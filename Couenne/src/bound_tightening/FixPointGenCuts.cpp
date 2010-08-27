@@ -422,8 +422,8 @@ void createRow (int sign,
 
   p -> addRow (vec, lb, ub);
 
-  delete iInd;
-  delete elem;
+  delete [] iInd;
+  delete [] elem;
 
   // for (int i=0; i<nEl; i++)
   //   printf ("%+g x%d ", elem [i], iInd [i]);

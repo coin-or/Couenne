@@ -1,6 +1,6 @@
 /* $Id$
  *
- * Name:    CouenneCrossConvGenCuts.cpp
+ * Name:    CrossConvGenCuts.cpp
  * Author:  Pietro Belotti
  * Purpose: Convexification cuts on redundant relationships between auxiliaries
  *

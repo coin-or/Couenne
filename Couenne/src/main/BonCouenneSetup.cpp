@@ -36,6 +36,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneDisjCuts.hpp"
 #include "CouenneCrossConv.hpp"
+#include "CouenneTwoImplied.hpp"
 
 #include "BonCouenneInfo.hpp"
 #include "BonCbcNode.hpp"
@@ -574,8 +575,25 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cutGenerators (). push_back(cg);
   }
 
+  // Add two-inequalities based bound tightening ///////////////////////////////////////////////////////
+
+  options () -> GetIntegerValue ("two_implied_bt", freq, "couenne.");
+
+  if (freq != 0) {
+
+    CouenneTwoImplied * couenne2I = 
+      new CouenneTwoImplied (journalist (),
+			     options    ());
+
+    CuttingMethod cg;
+    cg.frequency = freq;
+    cg.cgl = couenne2I;
+    cg.id = "Couenne two-implied cuts";
+    cutGenerators (). push_back(cg);
+  }
+
   int ival;
-  if (!options_->GetEnumValue("node_comparison",ival,"bonmin.")) {
+  if (!options_->GetEnumValue("node_comparison", ival, "bonmin.")) {
     // change default for Couenne
     nodeComparisonMethod_ = bestBound;
   }
@@ -611,6 +629,7 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   CouenneFixPoint       ::registerOptions (roptions);
   CouenneDisjCuts       ::registerOptions (roptions);
   CouenneCrossConv      ::registerOptions (roptions);
+  CouenneTwoImplied     ::registerOptions (roptions);
   NlpSolveHeuristic     ::registerOptions (roptions);
   CouenneFeasPump       ::registerOptions (roptions);
 

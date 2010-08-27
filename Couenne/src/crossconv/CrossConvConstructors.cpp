@@ -1,6 +1,6 @@
 /* $Id$
  *
- * Name:    CouenneCrossConvConstructors.cpp
+ * Name:    CrossConvConstructors.cpp
  * Author:  Pietro Belotti
  * Purpose: Convexification cuts on redundant relationships between auxiliaries
  *
@@ -25,9 +25,9 @@ CouenneCrossConv::CouenneCrossConv (CouenneProblem *p,
 }
 
 /// copy constructor
-CouenneCrossConv::CouenneCrossConv  (const CouenneCrossConv &) {
+CouenneCrossConv::CouenneCrossConv  (const CouenneCrossConv &src):
 
-
+  CglCutGenerator (src) {
 }
 
 /// destructor

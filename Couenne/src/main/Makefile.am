@@ -165,6 +165,7 @@ AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/interfaces` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/heuristics` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/crossconv` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/two_implied_bt` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \

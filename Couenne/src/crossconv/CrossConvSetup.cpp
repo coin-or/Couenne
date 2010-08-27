@@ -1,6 +1,6 @@
 /* $Id$
  *
- * Name:    CouenneCrossConvSetup.cpp
+ * Name:    CrossConvSetup.cpp
  * Author:  Pietro Belotti
  * Purpose: Generate data structures and detect potential cuts
  *
