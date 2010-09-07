@@ -223,9 +223,17 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
   roptions -> AddLowerBoundedIntegerOption
     ("cont_var_priority",
      "Priority of continuous variable branching",
-     1, 2000,
-     "When branching, this is compared to the priority of integer variables, whose priority is fixed to 1000, and SOS, whose priority is 10. "
-     "Higher values mean smaller priority, so if this parameter is set to 1001 or higher, if a branch-and-bound node has at least one integer variable whose value is fractional, then branching will be performed on that variable."
+     1, 50,
+     "When branching, this is compared to the priority of integer variables, whose priority is given by int_var_priority, and SOS, whose priority is 10. "
+     "Higher values mean smaller priority."
+    );
+
+  roptions -> AddLowerBoundedIntegerOption
+    ("int_var_priority",
+     "Priority of integer variable branching",
+     1, 50,
+     "When branching, this is compared to the priority of continuous variables, whose priority is given by cont_var_priority, and SOS, whose priority is 10. "
+     "Higher values mean smaller priority."
     );
 
   roptions -> AddStringOption2

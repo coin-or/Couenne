@@ -297,7 +297,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   options () -> GetStringValue ("branching_object", s, "couenne.");
 
-  enum CouenneObject::branch_obj objType = CouenneObject::VAR_OBJ;
+  enum CouenneObject::branch_obj objType;// = CouenneObject::VAR_OBJ;
 
   if      (s ==   "vt_obj") objType = CouenneObject::VT_OBJ;
   else if (s ==  "var_obj") objType = CouenneObject::VAR_OBJ;
@@ -313,9 +313,12 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   if (!objects)
     objects = new OsiObject* [nVars];
 
-  int contObjPriority = 2000; // default object priority -- it is 1000 for integers and 10 for SOS
+  int 
+    contObjPriority, 
+    intObjPriority;
 
   options () -> GetIntegerValue ("cont_var_priority", contObjPriority, "couenne.");
+  options () -> GetIntegerValue ( "int_var_priority",  intObjPriority, "couenne.");
 
   for (int i = 0; i < nVars; i++) { // for each variable
 
@@ -345,7 +348,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 	  else*/
 	objects [nobj] = new CouenneObject (couenneCg, couenneProb_, var, this, journalist ());
 
-	objects [nobj++] -> setPriority (contObjPriority);
+	objects [nobj++] -> setPriority (var -> isInteger () ? intObjPriority : contObjPriority);
 	//objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
       }
 
@@ -361,7 +364,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 	//    (var -> Image () -> Linearity () > LINEAR))) {              // of nonlinear
 
 	objects [nobj] = new CouenneVarObject (couenneCg, couenneProb_, var, this, journalist ());
-	objects [nobj++] -> setPriority (contObjPriority);
+	objects [nobj++] -> setPriority (var -> isInteger () ? intObjPriority : contObjPriority);
 	//objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
       }
 
@@ -378,7 +381,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 	//(var -> Image () -> Linearity () > LINEAR))) { // of nonlinear
 
 	objects [nobj] = new CouenneVTObject (couenneCg, couenneProb_, var, this, journalist ());
-	objects [nobj++] -> setPriority (contObjPriority);
+	objects [nobj++] -> setPriority (var -> isInteger () ? intObjPriority : contObjPriority);
 	//objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
       }
 

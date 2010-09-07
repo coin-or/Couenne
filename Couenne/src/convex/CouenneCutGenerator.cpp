@@ -187,10 +187,10 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
   roptions -> AddStringOption3
     ("multilinear_separation",
      "Separation for multilinear terms",
-     "simple",
+     "tight",
      "none",   "No separation -- just use the four McCormick inequalities",
-     "simple", "Use the old one considering lower curve only",
-     "tight",  "Use the new one -- EXPERIMENTAL!",
+     "simple", "Use one considering lower curve only",
+     "tight",  "Use one considering both curves pi(x) = l_{k+1} and pi(x) = u_{k+1}",
      "Type of separation for multilinear terms where the dependent variable is also bounded"
     );
 }
