@@ -57,6 +57,9 @@ namespace Couenne {
 
     /// pointer to the CouenneProblem representation
     CouenneProblem *problem_;
+
+    /// Is this the first call?
+    mutable bool firstCall_;
   };
 }
 

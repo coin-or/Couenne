@@ -306,8 +306,11 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 		      csi -> getColLower () [index], 
 		      csi -> getColUpper () [index]);
 
-      if (doFBBT_ && !(boundTightening (chg_bds, babInfo))) {
-	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
+      // should be faster
+
+      //if (doFBBT_ && !(boundTightening (chg_bds, babInfo))) {
+      if (doFBBT_ && !(btCore (chg_bds))) {
+	Jnlst () -> Printf (J_DETAILED, J_BOUNDTIGHTENING,
 			"node is infeasible after post-OBBT tightening\n");
 	return -1; // tell caller this is infeasible
       }

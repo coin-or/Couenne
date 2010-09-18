@@ -16,7 +16,8 @@ using namespace Couenne;
 /// constructor
 CouenneFixPoint::CouenneFixPoint (CouenneProblem *p,
 				  const Ipopt::SmartPtr<Ipopt::OptionsList> options):
-  problem_ (p) {
+  problem_   (p),
+  firstCall_ (true) {
 
   std::string s;
   options -> GetStringValue ("fixpoint_bt_model", s, "couenne."); 
@@ -27,7 +28,8 @@ CouenneFixPoint::CouenneFixPoint (CouenneProblem *p,
 /// copy constructor
 CouenneFixPoint::CouenneFixPoint  (const CouenneFixPoint &rhs):
   extendedModel_ (rhs.extendedModel_),
-  problem_       (rhs.problem_) {}
+  problem_       (rhs.problem_),
+  firstCall_     (rhs.firstCall_) {}
 
 
 /// destructor

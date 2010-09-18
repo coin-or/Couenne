@@ -24,8 +24,10 @@ namespace Ipopt {
 
 namespace Couenne {
 
+  class CouenneProblem;
+
   /**
-     Cut Generator for two linear (in)equalities
+     Cut Generator for implied bounds derived from pairs of linear (in)equalities
 
      Implied bounds usually work on a SINGLE inequality of the form
   
@@ -170,7 +172,6 @@ namespace Couenne {
 
   class CouenneTwoImplied: public CglCutGenerator {
 
-
   public:
 
     /// constructor
@@ -202,6 +203,9 @@ namespace Couenne {
 
     /// maximum number of trials in every call
     int nMaxTrials_;
+
+    /// pointer to problem data structure (used for post-BT)
+    CouenneProblem *problem_;
   };
 }
 

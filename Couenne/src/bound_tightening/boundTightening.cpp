@@ -126,6 +126,8 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 	   (ntightened + nbwtightened > THRES_IMPROVED) &&
 	   ((max_fbbt_iter_ < 0) || (niter++ < max_fbbt_iter_)));
 
+  fbbtReachedIterLimit_ = ((max_fbbt_iter_ > 0) && (niter >= max_fbbt_iter_));
+
   // TODO: limit should depend on number of constraints, that is,
   // bound transmission should be documented and the cycle should stop
   // as soon as no new constraint subgraph has benefited from bound

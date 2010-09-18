@@ -117,6 +117,14 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       resxU = (*xu * *yu < wl) && (*yu < 0.) && updateBound (+1, xu, wl / *yu); // point B
     }
 
+    bool
+      xInt = arglist_ [0] -> isInteger (),
+      yInt = arglist_ [1] -> isInteger ();
+
+    if (resxL) {if (xInt) *xl = ceil  (*xl - COUENNE_EPS);}
+    if (resxU) {if (xInt) *xu = floor (*xu + COUENNE_EPS);}
+    if (resyL) {if (yInt) *yl = ceil  (*yl - COUENNE_EPS);}
+    if (resyU) {if (yInt) *yu = floor (*yu + COUENNE_EPS);}
 
     // w's upper bound ///////////////////////////////////////////
 
@@ -151,9 +159,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       }
     }
 
-    bool
-      xInt = arglist_ [0] -> isInteger (),
-      yInt = arglist_ [1] -> isInteger ();
+    // extra integrality check
 
     if (resxL) {chg [xi].setLower(t_chg_bounds::CHANGED); if (xInt) *xl = ceil  (*xl - COUENNE_EPS);}
     if (resxU) {chg [xi].setUpper(t_chg_bounds::CHANGED); if (xInt) *xu = floor (*xu + COUENNE_EPS);}

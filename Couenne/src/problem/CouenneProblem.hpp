@@ -209,6 +209,10 @@ class CouenneProblem {
   /// number of FBBT iterations
   int max_fbbt_iter_;
 
+  /// true if FBBT exited for iteration limits as opposed to inability
+  /// to further tighten bounds
+  mutable bool fbbtReachedIterLimit_;
+
  public:
 
   CouenneProblem  (ASL * = NULL,
@@ -532,6 +536,10 @@ class CouenneProblem {
   /// return usage of semiauxiliaries
   bool useSemiaux () const
   {return useSemiaux_;}
+
+  /// true if latest call to FBBT terminated due to iteration limit reached
+  bool fbbtReachedIterLimit () const
+  {return fbbtReachedIterLimit_;}
 
 protected:
 

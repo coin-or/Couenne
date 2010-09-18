@@ -14,6 +14,7 @@
 #include "CouenneTwoImplied.hpp"
 #include "CoinPackedMatrix.hpp"
 #include "CouennePrecisions.hpp"
+#include "CouenneProblem.hpp"
 
 using namespace Couenne;
 
@@ -51,7 +52,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     m = colA -> getMinorDim (); // # rows
 
   double 
-    *sa1 = new double [n], // contains dense representation of a1
+    *sa1 = new double [n], // contains dense representation of a1 i.e. lots of zeros
     *sa2 = new double [n]; //                                  a2
 
   CoinFillN (sa1, n, 0.);
@@ -65,6 +66,14 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   const int *ind = colA -> getIndices      (),
             *sta = colA -> getVectorStarts ();
 
+  // For every column i, compare pairs of rows j and k with nonzero
+  // coefficients.
+  //
+  // If the coefficients have the same sign and the inequalities are
+  // both >= or both <=, skip this pair -- no tightening can come from
+  // this pair (this doesn't mean that for another variable the
+  // opposite may happen).
+
   for (int i=0; i<n; i++, sta++) {
 
     int nEl = *(sta+1) - *sta;
@@ -73,9 +82,13 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     for   (int jj = nEl,  j = *sta; jj--; j++)
       for (int kk = jj,   k = j+1;  kk--; k++) {
 
+	register int 
+	  indj = ind [j],
+	  indk = ind [k];
+
 	// should never happen, but if it does, just bail out
-	if (ind [j] > m || ind [j] < 0 ||
-	    ind [k] > m || ind [k] < 0) {
+ 	if ((indj > m) || (indj < 0) ||
+ 	    (indk > m) || (indk < 0)) {
 
 	  if (nBadColMatWarnings++ <= 1)
 	    printf ("Couenne: warning, matrix by row has nonsense indices. Skipping\n");
@@ -85,17 +98,29 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
 	double prod = A [j] * A [k];
 
-	if ((prod > 0.) &&
-	    (((rlb [ind [j]] < -COUENNE_INFINITY) && (rlb [ind [k]] < -COUENNE_INFINITY)) ||
-	     ((rub [ind [j]] >  COUENNE_INFINITY) && (rub [ind [k]] >  COUENNE_INFINITY))))
+	if (prod > 0.) { // same sign -- skip unless finite lb/ub OR
+			 // finite ub/lb. This is to avoid a situation
+			 // in which all coefficients in this pair
+			 // have the same sign
+
+	  if (!(
+		((rlb [indj] > -COUENNE_INFINITY) && (rub [indk] <  COUENNE_INFINITY)) || 
+		((rub [indj] <  COUENNE_INFINITY) && (rlb [indk] > -COUENNE_INFINITY))
+		)
+	      )
+	    continue;
+
+	} else
+
+	if ((prod < 0.) && // opposite sign -- multiply second inequality by -1 and repeat
+	    !(
+	      ((rlb [indj] > -COUENNE_INFINITY) && (rlb [indk] > -COUENNE_INFINITY)) || 
+	      ((rub [indj] <  COUENNE_INFINITY) && (rub [indk] <  COUENNE_INFINITY))
+	     )
+	    )
 	  continue;
 
-	if ((prod < 0.) &&
-	    (((rlb [ind [j]] < -COUENNE_INFINITY) && (rub [ind [k]] >  COUENNE_INFINITY)) ||
-	     ((rlb [ind [k]] < -COUENNE_INFINITY) && (rub [ind [j]] >  COUENNE_INFINITY))))
-	  continue;
-
-	pairs.insert (std::pair <int, int> (ind [j], ind [k]));
+	pairs.insert (std::pair <int, int> (indj, indk));
       }
   }
 
@@ -118,9 +143,26 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     ntrials    = 0,
     nCurTightened;
 
+  // info about LP problem: upper bound, dual bound
+
+  //Bonmin::BabInfo * babInfo = dynamic_cast <Bonmin::BabInfo *> (si.getAuxiliaryInfo ());
+
+  // data structure for FBBT
+
+  // t_chg_bounds *chg_bds = new t_chg_bounds [ncols];
+
+  // for (int i=0; i < n; i++) 
+  //   if (problem_ -> Var (i) -> Multiplicity () <= 0) {
+  //     chg_bds [i].setLower (t_chg_bounds::UNCHANGED);
+  //     chg_bds [i].setUpper (t_chg_bounds::UNCHANGED);
+  //   }
+
   do {
 
     nCurTightened = 0;
+
+    // scan all pairs. All are potential pairs of inequalities that
+    // can give a better (combined) implied bound
 
     for (std::set <std::pair <int, int> >:: iterator p = pairs.begin (); p != pairs.end (); ++p) {
 
@@ -164,6 +206,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
       if ((u1 <   COUENNE_INFINITY && l2 > - COUENNE_INFINITY) ||
 	  (l1 > - COUENNE_INFINITY && u2 <   COUENNE_INFINITY))
 
+	// do NOT invert l2 and u2, this is done in combine
 	nCurTightened += combine (cs, n1, n2, ind1, ind2, sa1, sa2, a1, a2, clb, cub, l1, l2, u1, u2, -1);
 
       // clean sa1 and sa2
@@ -171,6 +214,53 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
       for (int i=n1; i--;) sa1 [ind1 [i]] = 0.;
       for (int i=n2; i--;) sa2 [ind2 [i]] = 0.;
     }
+
+#if 0
+    int objInd = Obj (0) -> Body () -> Index ();
+
+    if (nCurTightened &&
+	(objInd >= 0) && 
+	babInfo && 
+	babInfo -> babPtr ()) {
+
+      CouNumber
+	UB      = babInfo  -> babPtr () -> model (). getObjValue(),
+	LB      = babInfo  -> babPtr () -> model (). getBestPossibleObjValue (),
+	primal0 = Ub (objInd), 
+	dual0   = Lb (objInd);
+
+      // Do one round of BT
+
+      if ((UB < COUENNE_INFINITY) && 
+	  (UB < primal0 - COUENNE_EPS)) { // update primal bound (MIP)
+
+	Ub (objInd) = UB;
+	chg_bds [objInd].setUpper (t_chg_bounds::CHANGED);
+      }
+
+      if ((LB > - COUENNE_INFINITY) && 
+	  (LB > dual0 + COUENNE_EPS)) { // update dual bound
+	Lb (objInd) = LB;
+	chg_bds [objInd].setLower (t_chg_bounds::CHANGED);
+      }
+    
+      if (!(problem_ -> btCore (chg_bds))) {
+
+	//problem infeasible, add IIS of size 2
+
+	OsiColCut *infeascut = new OsiColCut;
+
+	if (infeascut) {
+	  int i=0;
+	  double upper = -1., lower = +1.;
+	  infeascut -> setLbs (1, &i, &lower);
+	  infeascut -> setUbs (1, &i, &upper);
+	  cs.insert (infeascut);
+	  delete infeascut;
+	}
+      }
+    }
+#endif
 
     ntightened += nCurTightened;
 

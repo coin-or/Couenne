@@ -37,8 +37,24 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 				    OsiCuts &cs,
 				    const CglTreeInfo treeInfo) const {
 
+  /// Only run this if the latest FBBT terminated on the iteration
+  /// limit, as this suggest that the FPLP might be of some help.
+  /// Termination before iteration limit reached implies that a
+  /// relaxation (on which the FPLP is based) won't generate better
+  /// bounds.
+  ///
+  /// However, we do run the first time as otherwise it would be
+  /// nixed for the whole branch-and-bound.
+
+  if (firstCall_) 
+    firstCall_ = false;
+  else
+    if (!(problem_ -> fbbtReachedIterLimit ()))
+      return;
+
   /// An LP relaxation of a MINLP problem is available in the first
-  /// parameter passed. Let us suppose that this LP relaxation is of the form
+  /// parameter passed. Let us suppose that this LP relaxation is of
+  /// the form
   ///
   /// LP = {x in R^n: Ax <= b}
   /// 
