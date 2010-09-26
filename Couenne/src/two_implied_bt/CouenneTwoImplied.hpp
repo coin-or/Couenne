@@ -175,7 +175,8 @@ namespace Couenne {
   public:
 
     /// constructor
-    CouenneTwoImplied (JnlstPtr,
+    CouenneTwoImplied (CouenneProblem *,
+		       JnlstPtr,
 		       const Ipopt::SmartPtr <Ipopt::OptionsList>);
 
     /// copy constructor
@@ -198,14 +199,14 @@ namespace Couenne {
 
   protected:
 
+    /// pointer to problem data structure (used for post-BT)
+    CouenneProblem *problem_;
+
     /// Journalist
     JnlstPtr jnlst_;
 
     /// maximum number of trials in every call
     int nMaxTrials_;
-
-    /// pointer to problem data structure (used for post-BT)
-    CouenneProblem *problem_;
   };
 }
 

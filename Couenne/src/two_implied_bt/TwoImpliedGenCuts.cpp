@@ -10,9 +10,14 @@
 
 #include <stdlib.h>
 
-#include "CglCutGenerator.hpp"
-#include "CouenneTwoImplied.hpp"
+#include "BonCbc.hpp"
+#include "BonBabInfos.hpp"
 #include "CoinPackedMatrix.hpp"
+#include "CglCutGenerator.hpp"
+
+#include "CouenneProblemElem.hpp"
+#include "CouenneTwoImplied.hpp"
+#include "CouenneExprVar.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
 
@@ -77,7 +82,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   for (int i=0; i<n; i++, sta++) {
 
     int nEl = *(sta+1) - *sta;
-    //    printf ("column %d: %d elements %d -> %d\n", i, nEl, *sta, *(sta+1));
+    printf ("column %d: %d elements %d -> %d\n", i, nEl, *sta, *(sta+1));
 
     for   (int jj = nEl,  j = *sta; jj--; j++)
       for (int kk = jj,   k = j+1;  kk--; k++) {
@@ -145,17 +150,19 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
   // info about LP problem: upper bound, dual bound
 
-  //Bonmin::BabInfo * babInfo = dynamic_cast <Bonmin::BabInfo *> (si.getAuxiliaryInfo ());
+  Bonmin::BabInfo * babInfo = dynamic_cast <Bonmin::BabInfo *> (si.getAuxiliaryInfo ());
 
   // data structure for FBBT
 
-  // t_chg_bounds *chg_bds = new t_chg_bounds [ncols];
+  t_chg_bounds *chg_bds = new t_chg_bounds [n];
 
-  // for (int i=0; i < n; i++) 
-  //   if (problem_ -> Var (i) -> Multiplicity () <= 0) {
-  //     chg_bds [i].setLower (t_chg_bounds::UNCHANGED);
-  //     chg_bds [i].setUpper (t_chg_bounds::UNCHANGED);
-  //   }
+  //int nVars = problem_ -> nVars ();
+
+  for (int i=0; i < n; i++) 
+    if (problem_ -> Var (i) -> Multiplicity () <= 0) {
+      chg_bds [i].setLower (t_chg_bounds::UNCHANGED);
+      chg_bds [i].setUpper (t_chg_bounds::UNCHANGED);
+    }
 
   do {
 
@@ -215,32 +222,33 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
       for (int i=n2; i--;) sa2 [ind2 [i]] = 0.;
     }
 
-#if 0
-    int objInd = Obj (0) -> Body () -> Index ();
+    int objInd = problem_ -> Obj (0) -> Body () -> Index ();
 
     if (nCurTightened &&
 	(objInd >= 0) && 
 	babInfo && 
 	babInfo -> babPtr ()) {
 
+      printf ("FBBT\n");
+
       CouNumber
-	UB      = babInfo  -> babPtr () -> model (). getObjValue(),
-	LB      = babInfo  -> babPtr () -> model (). getBestPossibleObjValue (),
-	primal0 = Ub (objInd), 
-	dual0   = Lb (objInd);
+	UB      = babInfo -> babPtr () -> model (). getObjValue(),
+	LB      = babInfo -> babPtr () -> model (). getBestPossibleObjValue (),
+	primal0 = problem_ -> Ub (objInd), 
+	dual0   = problem_ -> Lb (objInd);
 
       // Do one round of BT
 
       if ((UB < COUENNE_INFINITY) && 
 	  (UB < primal0 - COUENNE_EPS)) { // update primal bound (MIP)
 
-	Ub (objInd) = UB;
+	problem_ -> Ub (objInd) = UB;
 	chg_bds [objInd].setUpper (t_chg_bounds::CHANGED);
       }
 
       if ((LB > - COUENNE_INFINITY) && 
 	  (LB > dual0 + COUENNE_EPS)) { // update dual bound
-	Lb (objInd) = LB;
+	problem_ -> Lb (objInd) = LB;
 	chg_bds [objInd].setLower (t_chg_bounds::CHANGED);
       }
     
@@ -260,7 +268,6 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	}
       }
     }
-#endif
 
     ntightened += nCurTightened;
 

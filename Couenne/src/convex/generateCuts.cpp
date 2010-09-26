@@ -8,7 +8,7 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "BonAuxInfos.hpp"
+#include "BonBabInfos.hpp"
 #include "CglCutGenerator.hpp"
 
 #include "CouenneCutGenerator.hpp"

@@ -19,9 +19,11 @@
 using namespace Couenne;
 
 /// constructor
-CouenneTwoImplied::CouenneTwoImplied (JnlstPtr jnlst,
+CouenneTwoImplied::CouenneTwoImplied (CouenneProblem *p,
+				      JnlstPtr jnlst,
 				      const Ipopt::SmartPtr <Ipopt::OptionsList> options):
-  jnlst_ (jnlst) {
+  problem_ (p),
+  jnlst_   (jnlst) {
 
   options -> GetIntegerValue ("two_implied_max_trials", nMaxTrials_, "couenne.");
 }
@@ -32,6 +34,7 @@ CouenneTwoImplied::CouenneTwoImplied (const CouenneTwoImplied &src):
 
   CglCutGenerator (src),
   jnlst_          (src.jnlst_),
+  problem_        (src.problem_),
   nMaxTrials_     (src.nMaxTrials_) {}
 
 

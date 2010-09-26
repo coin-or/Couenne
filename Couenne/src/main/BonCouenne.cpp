@@ -47,6 +47,8 @@ using namespace Couenne;
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
 
+#include "config_couenne.h"
+
 int main (int argc, char *argv[]) {
 
   //WindowsErrorPopupBlocker();
@@ -57,6 +59,17 @@ int main (int argc, char *argv[]) {
   const int infeasible = 1;
 
   try {
+
+    printf ("\
+========================================================\n\
+Couenne -- an Open-Source solver for Global Optimization\n\
+Version: %s\n\
+Send bug reports to %s\n\
+See http://www.coin-or.org/Couenne for more information\n\
+========================================================\n",
+	    PACKAGE_VERSION,
+	    PACKAGE_BUGREPORT
+	    );
 
     Bonmin::Bab bb;
     bb.setUsingCouenne (true);
@@ -160,7 +173,7 @@ int main (int argc, char *argv[]) {
 	printf ("Stats: %-15s %4d [var] %4d [int] %4d [con] %4d [aux] "
 		"%6d [root] %8d [tot] %6g [sep] %8g [time] %8g [bb] "
 		"%20e [lower] %20e [upper] %7d [nodes]\n",// %s %s\n",
-		cp ? cp -> problemName ().c_str () : "unknown",
+		cp ? cp -> problemName (). c_str () : "unknown",
 		(cp) ? cp -> nOrigVars     () : -1, 
 		(cp) ? cp -> nOrigIntVars  () : -1, 
 		(cp) ? cp -> nOrigCons     () : -1,

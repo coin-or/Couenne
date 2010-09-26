@@ -26,12 +26,16 @@ libCouenneTwoImplied_la_LDFLAGS = $(LT_LDFLAGS)
 AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
 	-I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src`  \
+	-I`$(CYGPATH_W) $(CBCSRCDIR)/src`  \
+	-I`$(CYGPATH_W) $(CBCOBJDIR)/inc`  \
+	-I`$(CYGPATH_W) $(OSISRCDIR)/src`  \
 	-I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` \
 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces` \
+	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/CbcBonmin` \
 	-I`$(CYGPATH_W) $(COINUTILSOBJDIR)/inc` \
 	-I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src`
+	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common`
+
 
 if COIN_HAS_COUENNE
   AM_CPPFLAGS += \

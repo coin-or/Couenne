@@ -585,7 +585,8 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   if (freq != 0) {
 
     CouenneTwoImplied * couenne2I = 
-      new CouenneTwoImplied (journalist (),
+      new CouenneTwoImplied (couenneProb_,
+			     journalist (),
 			     options    ());
 
     CuttingMethod cg;

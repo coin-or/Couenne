@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    CouenneProblemElem.hpp
  * Author:  Pietro Belotti
  * Purpose: define the classes used by class CouenneProblem
