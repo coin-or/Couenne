@@ -82,7 +82,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   for (int i=0; i<n; i++, sta++) {
 
     int nEl = *(sta+1) - *sta;
-    printf ("column %d: %d elements %d -> %d\n", i, nEl, *sta, *(sta+1));
+    //printf ("column %d: %d elements %d -> %d\n", i, nEl, *sta, *(sta+1));
 
     for   (int jj = nEl,  j = *sta; jj--; j++)
       for (int kk = jj,   k = j+1;  kk--; k++) {
@@ -103,8 +103,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
 	double prod = A [j] * A [k];
 
-	if (prod > 0.) { // same sign -- skip unless finite lb/ub OR
-			 // finite ub/lb. This is to avoid a situation
+	if (prod > 0.) { // same sign -- skip unless finite lb1/ub2 OR
+			 // finite ub1/lb2. This is to avoid a situation
 			 // in which all coefficients in this pair
 			 // have the same sign
 
@@ -117,7 +117,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
 	} else
 
-	if ((prod < 0.) && // opposite sign -- multiply second inequality by -1 and repeat
+	if ((prod < 0.) && // opposite sign -- multiply second
+			   // inequality by -1 and repeat
 	    !(
 	      ((rlb [indj] > -COUENNE_INFINITY) && (rlb [indk] > -COUENNE_INFINITY)) || 
 	      ((rub [indj] <  COUENNE_INFINITY) && (rub [indk] <  COUENNE_INFINITY))
@@ -155,8 +156,6 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   // data structure for FBBT
 
   t_chg_bounds *chg_bds = new t_chg_bounds [n];
-
-  //int nVars = problem_ -> nVars ();
 
   for (int i=0; i < n; i++) 
     if (problem_ -> Var (i) -> Multiplicity () <= 0) {

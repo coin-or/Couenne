@@ -61,12 +61,13 @@ int main (int argc, char *argv[]) {
   try {
 
     printf ("\
-========================================================\n\
-Couenne -- an Open-Source solver for Global Optimization\n\
+====================================================================\n\
+Couenne\n\
+An Open-Source solver for Mixed Integer Nonlinear Optimization\n\
 Version: %s\n\
-Send bug reports to %s\n\
+Send questions/comments to %s\n\
 See http://www.coin-or.org/Couenne for more information\n\
-========================================================\n",
+====================================================================\n",
 	    PACKAGE_VERSION,
 	    PACKAGE_BUGREPORT
 	    );

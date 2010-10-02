@@ -588,13 +588,14 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
       new CouenneTwoImplied (couenneProb_,
 			     journalist (),
 			     options    ());
-
     CuttingMethod cg;
     cg.frequency = freq;
     cg.cgl = couenne2I;
     cg.id = "Couenne two-implied cuts";
     cutGenerators (). push_back(cg);
   }
+
+  // Node comparison method ///////////////////////////////////////////////////////////////////////////
 
   int ival;
   if (!options_->GetEnumValue("node_comparison", ival, "bonmin.")) {
