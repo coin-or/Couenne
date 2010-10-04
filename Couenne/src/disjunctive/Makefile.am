@@ -51,6 +51,7 @@ if COIN_HAS_COUENNE
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/bound_tightening` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`
 endif

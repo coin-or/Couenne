@@ -14,6 +14,7 @@
 #include "CouenneDisjCuts.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
+#include "CouenneInfeasCut.hpp"
 
 using namespace Couenne;
 
@@ -21,6 +22,14 @@ using namespace Couenne;
 void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si, 
 				    OsiCuts &cs, 
 				    const CglTreeInfo info) const {
+
+  // Check if cs contains only one cut and if it is of the form 1 <=
+  // x0 <= -1. That means a previous cut generator has determined that
+  // this node is infeasible and we shouldn't take the pain of running
+  // this CGL.
+
+  if (isWiped (cs))
+    return;
 
   if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) 
     printf ("--- generateDisjCuts: level = %d, pass = %d, intree = %d [%d]\n",
@@ -208,14 +217,7 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
       if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS))
 	printf ("---   infeasible node!\n");
 
-      OsiColCut infeascut;
-      int ind = 0;
-      double upper = -1., lower = +1.;
-
-      infeascut. setLbs (1, &ind, &lower);
-      infeascut. setUbs (1, &ind, &upper);
-
-      cs.insert (infeascut);
+      WipeMakeInfeas (cs);
     }
   }
 

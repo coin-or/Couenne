@@ -19,6 +19,7 @@ libCouenneBoundTightening_la_SOURCES = \
 	impliedBounds.cpp \
 	FixPointConstructors.cpp \
 	FixPointGenCuts.cpp \
+	CouenneInfeasCut.cpp \
 	operators/impliedBounds-mul.cpp \
 	operators/impliedBounds-sum.cpp \
 	operators/impliedBounds-exprSum.cpp \

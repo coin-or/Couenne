@@ -14,6 +14,7 @@
 #include "CouenneDisjCuts.hpp"
 //#include "CouenneCutGenerator.hpp"
 //#include "CouenneProblem.hpp"
+#include "CouenneInfeasCut.hpp"
 
 using namespace Couenne;
 

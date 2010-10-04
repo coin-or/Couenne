@@ -15,6 +15,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprVar.hpp"
+#include "CouenneInfeasCut.hpp"
 
 namespace Couenne {
 
@@ -82,6 +83,10 @@ void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p,
 void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 					OsiCuts &cs, 
 					const CglTreeInfo info) const {
+
+  if (isWiped (cs))
+    return;
+
   const int infeasible = 1;
 
   int nInitCuts = cs.sizeRowCuts ();
@@ -483,16 +488,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       jnlst_ -> Printf (J_ITERSUMMARY, J_CONVEXIFYING,
 			"Couenne: Infeasible node\n");
 
-      OsiColCut *infeascut = new OsiColCut;
-
-      if (infeascut) {
-	int i=0;
-	double upper = -1., lower = +1.;
-	infeascut -> setLbs (1, &i, &lower);
-	infeascut -> setUbs (1, &i, &upper);
-	cs.insert (infeascut);
-	delete infeascut;
-      }
+      WipeMakeInfeas (cs);
     }
 
     if (babInfo) // set infeasibility to true in order to skip NLP heuristic
