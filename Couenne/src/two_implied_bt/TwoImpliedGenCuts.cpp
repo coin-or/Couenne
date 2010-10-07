@@ -20,12 +20,14 @@
 #include "CouenneExprVar.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneInfeasCut.hpp"
 
 using namespace Couenne;
 
-// do single pair of inequalities
+// do single pair of inequalities. Return < 0 if infeasible
 
-int combine (OsiCuts &cs, 
+int combine (CouenneProblem *p,
+	     OsiCuts &cs, 
 	     int n1, int n2, 
 	     const int *ind1, // indices
 	     const int *ind2, 
@@ -45,6 +47,9 @@ int combine (OsiCuts &cs,
 void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si, 
 				      OsiCuts &cs, 
 				      const CglTreeInfo info) const {
+
+  if (isWiped (cs))
+    return;
 
   static int nBadColMatWarnings = 0;
 
@@ -163,6 +168,11 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
       chg_bds [i].setUpper (t_chg_bounds::UNCHANGED);
     }
 
+  int result = 0;
+
+  // repeat the scan as long as there is tightening and the bounding
+  // box is nonempty
+
   do {
 
     nCurTightened = 0;
@@ -204,7 +214,13 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
       if ((u1 <   COUENNE_INFINITY && u2 <   COUENNE_INFINITY) ||
 	  (l1 > - COUENNE_INFINITY && l2 > - COUENNE_INFINITY))
 
-	nCurTightened += combine (cs, n1, n2, ind1, ind2, sa1, sa2, a1, a2, clb, cub, l1, l2, u1, u2, 1);
+	result = combine (problem_, cs, n1, n2, ind1, ind2, sa1, sa2, a1, a2, clb, cub, l1, l2, u1, u2, 1);
+
+      if (result < 0)
+	break;
+
+      nCurTightened += result;
+      result = 0;
 
       // fill in sa2 with opposite values
       for (int i=n2; i--;) sa2 [ind2 [i]] = - a2 [i];
@@ -213,13 +229,21 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	  (l1 > - COUENNE_INFINITY && u2 <   COUENNE_INFINITY))
 
 	// do NOT invert l2 and u2, this is done in combine
-	nCurTightened += combine (cs, n1, n2, ind1, ind2, sa1, sa2, a1, a2, clb, cub, l1, l2, u1, u2, -1);
+	result = combine (problem_, cs, n1, n2, ind1, ind2, sa1, sa2, a1, a2, clb, cub, l1, l2, u1, u2, -1);
+
+      if (result < 0)
+	break;
+
+      nCurTightened += result;
 
       // clean sa1 and sa2
 
       for (int i=n1; i--;) sa1 [ind1 [i]] = 0.;
       for (int i=n2; i--;) sa2 [ind2 [i]] = 0.;
     }
+
+    if (result < 0) 
+      break;
 
     int objInd = problem_ -> Obj (0) -> Body () -> Index ();
 
@@ -255,16 +279,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
 	//problem infeasible, add IIS of size 2
 
-	OsiColCut *infeascut = new OsiColCut;
-
-	if (infeascut) {
-	  int i=0;
-	  double upper = -1., lower = +1.;
-	  infeascut -> setLbs (1, &i, &lower);
-	  infeascut -> setUbs (1, &i, &upper);
-	  cs.insert (infeascut);
-	  delete infeascut;
-	}
+	result = -1;
+	break;
       }
     }
 
@@ -274,7 +290,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
   // check if bounds improved, in that case create OsiColCuts
 
-  if (ntightened) {
+  if (result >= 0 && ntightened) {
 
     const double 
       *oldLB = si. getColLower (),
@@ -319,7 +335,12 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     delete [] indUB;
     delete [] valLB;
     delete [] valUB;
-  }
+  } 
+
+  else 
+
+    if (result < 0)
+      WipeMakeInfeas (cs);
 
   delete [] clb;
   delete [] cub;

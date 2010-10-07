@@ -14,6 +14,7 @@
 #include "CouenneTwoImplied.hpp"
 #include "CoinPackedMatrix.hpp"
 #include "CouennePrecisions.hpp"
+#include "CouenneProblem.hpp"
 
 #define MIN_DENOM 1.e-10
 
@@ -53,7 +54,8 @@ int compthres (const void *t1,
 // are defined by the arguments ind, l and u, and a, respectively.
 //
 
-int combine (OsiCuts &cs, 
+int combine (CouenneProblem *p,
+	     OsiCuts &cs, 
 	     int n1, int n2, 
 	     const int *ind1, // indices
 	     const int *ind2, 
@@ -69,9 +71,8 @@ int combine (OsiCuts &cs,
 	     double u2, 
 	     int sign) { // invert second constraint? -1: yes, +1: no
 
-  printf ("here are the two ineqs (sign=%d):\n", sign);
-  printf (" 1: %g <=", l1);             for (int i=0; i<n1; i++) printf (" %+g x%d", a1 [i], ind1 [i]);
-  printf ("<= %g\n 2: %g <=", u1, l2);  for (int i=0; i<n2; i++) printf (" %+g x%d", a2 [i], ind2 [i]); printf ("<= %g\n", u2);
+  // Set multiplier of second constraint, to be used with a2 but not
+  // with sa2.
 
   double signA;
 
@@ -84,6 +85,10 @@ int combine (OsiCuts &cs,
     signA = -1.;
 
   } else signA = 1.;
+
+  printf ("here are the two ineqs (sign=%d):\n", sign);
+  printf (" 1: %g <=", l1);             for (int i=0; i<n1; i++) printf (" %+g x%d",         a1 [i], ind1 [i]);
+  printf ("<= %g\n 2: %g <=", u1, l2);  for (int i=0; i<n2; i++) printf (" %+g x%d", signA * a2 [i], ind2 [i]); printf ("<= %g\n", u2);
 
   threshold
      *alphas   = new threshold  [n1 + n2], // contains all alphas (there might be at most n1+n2-1, but let's be flexible)
@@ -176,11 +181,7 @@ int combine (OsiCuts &cs,
 
   //----------------------------------------------------------------------
   //----------------------------------------------------------------------
-  //----------------------------------------------------------------------
-  //----------------------------------------------------------------------
-  //----------------------------------------------------------------------
-  //----------------------------------------------------------------------
-  //----------------------------------------------------------------------
+  // Done setting up zeros of (alpha a'_i + (1-alpha) a''_i) x_i
   //----------------------------------------------------------------------
   //----------------------------------------------------------------------
 
@@ -400,13 +401,13 @@ int combine (OsiCuts &cs,
 
 	  if (signalpha == DN) { // means sa1 [indVar] > 0 while sa2 [indVar] < 0
 
-	    minSum1 += sa1ic;    minSum2 += sa2ic;
-	    maxSum1 -= sa1ic;    maxSum2 -= sa2ic;
+	    minSum1 -= sa1ic;    minSum2 -= sa2ic;
+	    maxSum1 += sa1ic;    maxSum2 += sa2ic;
 
 	  } else { // sign must be UP
 
-	    minSum1 -= sa1ic;    minSum2 -= sa2ic;
-	    maxSum1 += sa1ic;    maxSum2 += sa2ic;
+	    minSum1 += sa1ic;    minSum2 += sa2ic;
+	    maxSum1 -= sa1ic;    maxSum2 -= sa2ic;
 	  }
 	}
       }
@@ -558,6 +559,19 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
       }
 
       printf ("    bounds for x_%d: [%g,%g] vs [%g,%g]\n", indVar, newL, newU, clb [indVar], cub [indVar]);
+
+      if ((newL > cubi + COUENNE_EPS) || (newU < clbi - COUENNE_EPS)) {
+
+	printf ("infeasible\n");
+	return -1;
+      }
+
+      if (p -> bestSol ()) {
+
+	if ((p -> bestSol () [indVar] > newU + COUENNE_EPS) ||
+	    (p -> bestSol () [indVar] < newL - COUENNE_EPS))
+	  printf ("optimum violated: %g not in [%g,%g]\n", p -> bestSol () [indVar], newL, newU);
+      }
 
       if (newL > clbi) {
 
