@@ -107,9 +107,10 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   const CoinPackedMatrix *A = si. getMatrixByRow ();
 
   const int
-       n = si.  getNumCols  (),
-       m = si.  getNumRows  (),
-    *ind = A -> getIndices  ();
+       n     = si.  getNumCols  (),
+       m     = si.  getNumRows  (),
+       nCuts = cs.sizeRowCuts   (),
+    *ind     = A -> getIndices  ();
 
   const double
     *lb  = si.  getColLower (),
@@ -163,17 +164,58 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     if (extendedModel_ || rlb [j] > -COUENNE_INFINITY) 
       for (int i=0; i<nEl; i++) 
-	createRow (-1, ind [i], n, fplp, ind, coe, rlb [j], nEl, extendedModel_, j, m); // downward constraints -- on x_i
+	createRow (-1, ind [i], n, fplp, ind, coe, rlb [j], nEl, extendedModel_, j, m + nCuts); // downward constraints -- on x_i
 
     if (extendedModel_ || rub [j] <  COUENNE_INFINITY) 
       for (int i=0; i<nEl; i++) 
-	createRow (+1, ind [i], n, fplp, ind, coe, rub [j], nEl, extendedModel_, j, m); // downward constraints -- on x_i
+	createRow (+1, ind [i], n, fplp, ind, coe, rub [j], nEl, extendedModel_, j, m + nCuts); // downward constraints -- on x_i
 
     // create (at most 2) cuts for the bL and bU elements //////////////////////
 
     if (extendedModel_) {
-      createRow (-1, 2*n     + j, n, fplp, ind, coe, rlb [j], nEl, extendedModel_, j, m); // upward constraints -- on bL_i
-      createRow (+1, 2*n + m + j, n, fplp, ind, coe, rub [j], nEl, extendedModel_, j, m); // upward constraints -- on bU_i
+      createRow (-1, 2*n     + j, n, fplp, ind, coe, rlb [j], nEl, extendedModel_, j, m + nCuts); // upward constraints -- on bL_i
+      createRow (+1, 2*n + m + j, n, fplp, ind, coe, rub [j], nEl, extendedModel_, j, m + nCuts); // upward constraints -- on bU_i
+    }
+
+    ind += nEl;
+    coe += nEl;
+  }
+
+  // similarly, scan previous cuts in cs //////////////////////////////////////
+
+  for (int j = 0, jj = nCuts; jj--; j++) {
+
+    // create cuts for the xL and xU elements //////////////////////
+
+    OsiRowCut *cut = cs.rowCutPtr (j);
+
+    const CoinPackedVector &row = cut -> row ();
+
+    const int 
+      nEl = row.getNumElements (),
+      *ind = row.getIndices ();
+
+    const double *coe = row.getElements ();
+
+
+    if (extendedModel_) {
+      fplp -> addCol (0, NULL, NULL, cut -> lb (),       COIN_DBL_MAX, 0.); // bL_j
+      fplp -> addCol (0, NULL, NULL, -COIN_DBL_MAX, cut -> ub (),      0.); // bU_j
+    }
+
+    if (extendedModel_ || cut -> lb () > -COUENNE_INFINITY) 
+      for (int i=0; i<nEl; i++) 
+	createRow (-1, ind [i], n, fplp, ind, coe, cut -> lb (), nEl, extendedModel_, m + j, m + nCuts); // downward constraints -- on x_i
+
+    if (extendedModel_ || cut -> ub () <  COUENNE_INFINITY) 
+      for (int i=0; i<nEl; i++) 
+	createRow (+1, ind [i], n, fplp, ind, coe, cut -> lb (), nEl, extendedModel_, m + j, m + nCuts); // downward constraints -- on x_i
+
+    // create (at most 2) cuts for the bL and bU elements
+
+    if (extendedModel_) {
+      createRow (-1, 2*n             + j, n, fplp, ind, coe, cut -> lb (), nEl, extendedModel_, m + j, m + nCuts); // upward constraints -- on bL_i
+      createRow (+1, 2*n + m + nCuts + j, n, fplp, ind, coe, cut -> ub (), nEl, extendedModel_, m + j, m + nCuts); // upward constraints -- on bU_i
     }
 
     ind += nEl;
