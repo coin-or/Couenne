@@ -87,6 +87,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
   if (isWiped (cs))
     return;
 
+  
+
   const int infeasible = 1;
 
   int nInitCuts = cs.sizeRowCuts ();
@@ -279,11 +281,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     assert (indobj >= 0);
 
     // transmit solution from OsiSolverInterface to problem
-    problem_ -> domain () -> push 
-      (problem_ -> nVars (),
-       si. getColSolution (), 
-       si. getColLower    (),
-       si. getColUpper    ());
+    problem_ -> domain () -> push (&si, &cs);
 
     if (indobj >= 0) {
 

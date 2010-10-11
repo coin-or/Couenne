@@ -9,6 +9,9 @@
  */
 
 #include "CoinHelperFunctions.hpp"
+#include "OsiSolverInterface.hpp"
+#include "OsiCuts.hpp"
+
 #include "CouenneDomain.hpp"
 #include "CouennePrecisions.hpp"
 
@@ -181,6 +184,52 @@ void Domain::push (int dim,
     domStack_.push (point_);
 
   point_ = new DomainPoint (dim, x, lb, ub, copy);
+}
+
+
+/// save current point and start using another -- retrieve
+/// information from solver interface and from previous column cuts
+void Domain::push (const OsiSolverInterface *si,
+		   OsiCuts *cs, 
+		   bool copy) {
+
+  int dim = si -> getNumCols ();
+
+  if (point_) 
+    domStack_.push (point_);
+
+  point_ = new DomainPoint (dim, 
+			    si -> getColSolution (), 
+			    si -> getColLower    (), 
+			    si -> getColUpper    (), copy);
+
+  // copy latest tightened bounds to problem, if any ColCut is there
+
+  if (cs)
+    for (int i = cs -> sizeColCuts (); i--;) {
+
+      const CoinPackedVector
+	&lbs = cs -> colCutPtr (i) -> lbs (),
+	&ubs = cs -> colCutPtr (i) -> ubs ();
+
+      // copy lbs
+
+      const int    *indices  = lbs. getIndices ();
+      const double *elements = lbs. getElements ();
+
+      for (int j = lbs. getNumElements (); j--; elements++, indices++)
+	if (*elements > lb (*indices))
+	  lb (*indices) = *elements;
+
+      // copy ubs
+
+      indices  = ubs. getIndices ();
+      elements = ubs. getElements ();
+
+      for (int j = ubs. getNumElements (); j--; elements++, indices++)
+	if (*elements < ub (*indices))
+	  ub (*indices) = *elements;
+    }
 }
 
 

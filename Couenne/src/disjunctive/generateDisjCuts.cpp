@@ -114,10 +114,7 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
     exc_normal     = 2, 
     max_iterations = 1;
 
-  couenneCG_ -> Problem () -> domain () -> push (couenneCG_ -> Problem () -> nVars  (),
-						 si. getColSolution (),
-						 si. getColLower    (),
-						 si. getColUpper    (), false);
+  couenneCG_ -> Problem () -> domain () -> push (&si, &cs, false);
 
   std::vector <std::pair <OsiCuts *, OsiCuts *> > disjunctions;
 

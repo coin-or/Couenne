@@ -22,8 +22,9 @@ using namespace Couenne;
 CouenneTwoImplied::CouenneTwoImplied (CouenneProblem *p,
 				      JnlstPtr jnlst,
 				      const Ipopt::SmartPtr <Ipopt::OptionsList> options):
-  problem_ (p),
-  jnlst_   (jnlst) {
+  problem_   (p),
+  jnlst_     (jnlst),
+  totalTime_ (0.) {
 
   options -> GetIntegerValue ("two_implied_max_trials", nMaxTrials_, "couenne.");
 }
@@ -33,13 +34,16 @@ CouenneTwoImplied::CouenneTwoImplied (CouenneProblem *p,
 CouenneTwoImplied::CouenneTwoImplied (const CouenneTwoImplied &src):
 
   CglCutGenerator (src),
-  jnlst_          (src.jnlst_),
   problem_        (src.problem_),
-  nMaxTrials_     (src.nMaxTrials_) {}
+  jnlst_          (src.jnlst_),
+  nMaxTrials_     (src.nMaxTrials_),
+  totalTime_      (src.totalTime_) {}
 
 
 /// destructor
-CouenneTwoImplied::~CouenneTwoImplied () {}
+CouenneTwoImplied::~CouenneTwoImplied () {
+  printf ("TwoImpliedCuts: %g seconds\n", totalTime_);
+}
 
 
 /// Add list of options to be read from file

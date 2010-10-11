@@ -16,6 +16,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneFixPoint.hpp"
 #include "CouenneExprVar.hpp"
+#include "CouenneInfeasCut.hpp"
 
 using namespace Couenne;
 
@@ -51,6 +52,11 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   else
     if (!(problem_ -> fbbtReachedIterLimit ()))
       return;
+
+  if (isWiped (cs))
+    return;
+
+  problem_ -> domain () -> push (&si, &cs);
 
   /// An LP relaxation of a MINLP problem is available in the first
   /// parameter passed. Let us suppose that this LP relaxation is of
@@ -253,6 +259,8 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   }
 
   delete fplp;
+
+  problem_ -> domain () -> pop ();
 }
 
 

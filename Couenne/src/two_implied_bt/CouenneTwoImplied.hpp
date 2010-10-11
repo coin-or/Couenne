@@ -207,6 +207,9 @@ namespace Couenne {
 
     /// maximum number of trials in every call
     int nMaxTrials_;
+
+    /// Total CPU time spent separating cuts
+    mutable double totalTime_;
   };
 }
 

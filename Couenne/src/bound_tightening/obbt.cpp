@@ -10,12 +10,13 @@
 
 #include "CoinHelperFunctions.hpp"
 #include "CglCutGenerator.hpp"
+#include "OsiClpSolverInterface.hpp"
 
 #include "CouenneExpression.hpp"
 #include "CouenneExprVar.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
-#include "OsiClpSolverInterface.hpp"
+#include "CouenneInfeasCut.hpp"
 
 using namespace Couenne;
 
@@ -171,8 +172,15 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 			  Bonmin::BabInfo * babInfo,
 			  t_chg_bounds *chg_bds) {
 
-  // Do OBBT if:
+  // Check if cs contains only one cut and if it is of the form 1 <=
+  // x0 <= -1. That means a previous cut generator has determined that
+  // this node is infeasible and we shouldn't take the pain of running
+  // this CGL.
 
+  if (isWiped (cs))
+    return 0;
+
+  // Do OBBT if:
   if (doOBBT_ &&                        // flag is checked, AND
       ((logObbtLev_ != 0) ||               // (parameter is nonzero OR
        (info.level == 0)) &&               //  we are at root node), AND

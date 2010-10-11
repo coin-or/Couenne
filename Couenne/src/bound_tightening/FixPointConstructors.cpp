@@ -1,6 +1,6 @@
 /* $Id$
  *
- * Name:    CouenneFixPoint.cpp
+ * Name:    FixPointConstructors.cpp
  * Author:  Pietro Belotti
  * Purpose: fixpoint bound tightener -- constructors
  *
@@ -26,7 +26,7 @@ CouenneFixPoint::CouenneFixPoint (CouenneProblem *p,
 
 
 /// copy constructor
-CouenneFixPoint::CouenneFixPoint  (const CouenneFixPoint &rhs):
+CouenneFixPoint::CouenneFixPoint (const CouenneFixPoint &rhs):
   extendedModel_ (rhs.extendedModel_),
   problem_       (rhs.problem_),
   firstCall_     (rhs.firstCall_) {}

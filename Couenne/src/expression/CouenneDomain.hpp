@@ -16,6 +16,13 @@
 
 #include "CouenneTypes.hpp"
 
+namespace Osi {
+
+  class OsiSolverInterface;
+  class OsiCuts;
+}
+
+
 namespace Couenne {
 
 /// Define a point in the solution space and the bounds around it.
@@ -128,6 +135,12 @@ public:
 	     const CouNumber *x, 
 	     const CouNumber *lb, 
 	     const CouNumber *ub,
+	     bool copy = true);
+
+  /// save current point and start using another -- retrieve
+  /// information from solver interface and from previous column cuts
+  void push (const OsiSolverInterface *si,
+	     OsiCuts *cs = NULL, 
 	     bool copy = true);
 
   /// save current point and start using another

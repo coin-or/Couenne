@@ -14,6 +14,7 @@
 #include "BonBabInfos.hpp"
 #include "CoinPackedMatrix.hpp"
 #include "CglCutGenerator.hpp"
+#include "CoinTime.hpp"
 
 #include "CouenneProblemElem.hpp"
 #include "CouenneTwoImplied.hpp"
@@ -51,9 +52,13 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   if (isWiped (cs))
     return;
 
+  problem_ -> domain () -> push (&si, &cs);
+
+  double now = CoinCpuTime ();
+
   static int nBadColMatWarnings = 0;
 
-  std::set <std::pair <int, int> > pairs;
+  std::vector <std::pair <int, int> > pairs;
 
   const CoinPackedMatrix *colA = si. getMatrixByCol ();
 
@@ -73,8 +78,9 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     *rlb = si.getRowLower (),
     *rub = si.getRowUpper ();
 
-  const int *ind = colA -> getIndices      (),
-            *sta = colA -> getVectorStarts ();
+  const int
+    *ind = colA -> getIndices      (),
+    *sta = colA -> getVectorStarts ();
 
   // For every column i, compare pairs of rows j and k with nonzero
   // coefficients.
@@ -84,13 +90,15 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   // this pair (this doesn't mean that for another variable the
   // opposite may happen).
 
+  //printf ("looking at a problem with %d, %d\n", m, n);
+
   for (int i=0; i<n; i++, sta++) {
 
     int nEl = *(sta+1) - *sta;
     //printf ("column %d: %d elements %d -> %d\n", i, nEl, *sta, *(sta+1));
 
-    for   (int jj = nEl,  j = *sta; jj--; j++)
-      for (int kk = jj,   k = j+1;  kk--; k++) {
+    for   (int jj = nEl, j = *sta; jj--; j++)
+      for (int kk = jj,  k = j+1;  kk--; k++) {
 
 	register int 
 	  indj = ind [j],
@@ -102,6 +110,13 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
 	  if (nBadColMatWarnings++ <= 1)
 	    printf ("Couenne: warning, matrix by row has nonsense indices. Skipping\n");
+
+	  delete [] sa1;
+	  delete [] sa2;
+
+	  totalTime_ += CoinCpuTime () - now;
+
+	  problem_ -> domain () -> pop ();
 
 	  return; 
 	}
@@ -131,7 +146,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	    )
 	  continue;
 
-	pairs.insert (std::pair <int, int> (indj, indk));
+	pairs.push_back (std::pair <int, int> (indj, indk));
       }
   }
 
@@ -143,8 +158,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     *rA  = rowA -> getElements ();
 
   double
-    *clb = CoinCopyOfArray (si.getColLower (), n),
-    *cub = CoinCopyOfArray (si.getColUpper (), n);
+    *clb = CoinCopyOfArray (problem_ -> Lb (), n),
+    *cub = CoinCopyOfArray (problem_ -> Ub (), n);
 
   const int *rInd = rowA -> getIndices      (),
             *rSta = rowA -> getVectorStarts ();
@@ -180,7 +195,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     // scan all pairs. All are potential pairs of inequalities that
     // can give a better (combined) implied bound
 
-    for (std::set <std::pair <int, int> >:: iterator p = pairs.begin (); p != pairs.end (); ++p) {
+    for (std::vector <std::pair <int, int> >:: iterator p = pairs.begin (); p != pairs.end (); ++p) {
 
       // indices of the two inequalities
 
@@ -252,7 +267,9 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	babInfo && 
 	babInfo -> babPtr ()) {
 
+#ifdef DEBUG
       printf ("FBBT\n");
+#endif
 
       CouNumber
 	UB      = babInfo -> babPtr () -> model (). getObjValue(),
@@ -293,8 +310,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   if (result >= 0 && ntightened) {
 
     const double 
-      *oldLB = si. getColLower (),
-      *oldUB = si. getColUpper ();
+      *oldLB = problem_ -> Lb (),
+      *oldUB = problem_ -> Ub ();
 
     // check old and new bounds
 
@@ -346,4 +363,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   delete [] cub;
   delete [] sa1;
   delete [] sa2; 
+
+  problem_ -> domain () -> pop ();
+
+  totalTime_ += CoinCpuTime () - now;
 }
