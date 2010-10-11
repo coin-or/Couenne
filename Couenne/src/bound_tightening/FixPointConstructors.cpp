@@ -16,8 +16,11 @@ using namespace Couenne;
 /// constructor
 CouenneFixPoint::CouenneFixPoint (CouenneProblem *p,
 				  const Ipopt::SmartPtr<Ipopt::OptionsList> options):
-  problem_   (p),
-  firstCall_ (true) {
+  problem_    (p),
+  firstCall_  (true),
+  CPUtime_    (0.),
+  nRuns_      (0),
+  nTightened_ (0) {
 
   std::string s;
   options -> GetStringValue ("fixpoint_bt_model", s, "couenne."); 
@@ -29,11 +32,19 @@ CouenneFixPoint::CouenneFixPoint (CouenneProblem *p,
 CouenneFixPoint::CouenneFixPoint (const CouenneFixPoint &rhs):
   extendedModel_ (rhs.extendedModel_),
   problem_       (rhs.problem_),
-  firstCall_     (rhs.firstCall_) {}
+  firstCall_     (rhs.firstCall_),
+  CPUtime_       (rhs.CPUtime_),
+  nRuns_         (rhs.nRuns_),
+  nTightened_    (rhs.nTightened_) {}
 
 
 /// destructor
-CouenneFixPoint::~CouenneFixPoint () {}
+CouenneFixPoint::~CouenneFixPoint () {
+
+  if (!firstCall_)
+    printf ("Fixed point BT: CPU time %g, %d runs, %d tighened\n", 
+	    CPUtime_, nRuns_, nTightened_);
+}
 
 
 /// Add list of options to be read from file

@@ -11,6 +11,7 @@
 #include "CoinHelperFunctions.hpp"
 #include "OsiClpSolverInterface.hpp"
 #include "OsiCuts.hpp"
+#include "CoinTime.hpp"
 
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
@@ -55,6 +56,10 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   if (isWiped (cs))
     return;
+
+  ++nRuns_;
+
+  double now = CoinCpuTime ();
 
   problem_ -> domain () -> push (&si, &cs);
 
@@ -274,13 +279,19 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
       // 	    newLB [i], newUB [i]);
 
       if (newLB [i] > oldLB [i] + COUENNE_EPS) {
+
 	indLB [ntightenedL]   = i;
 	valLB [ntightenedL++] = newLB [i];
+
+	++nTightened_;
       }
 
       if (newUB [i] < oldUB [i] - COUENNE_EPS) {
+
 	indUB [ntightenedU]   = i;
 	valUB [ntightenedU++] = newUB [i];
+
+	++nTightened_;
       }
     }
 
@@ -303,6 +314,8 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   delete fplp;
 
   problem_ -> domain () -> pop ();
+
+  CPUtime_ += CoinCpuTime () - now;
 }
 
 
@@ -490,6 +503,8 @@ void createRow (int sign,
 
   delete [] iInd;
   delete [] elem;
+
+  // Update time spent doing this
 
   // for (int i=0; i<nEl; i++)
   //   printf ("%+g x%d ", elem [i], iInd [i]);

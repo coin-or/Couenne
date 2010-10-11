@@ -60,6 +60,15 @@ namespace Couenne {
 
     /// Is this the first call?
     mutable bool firstCall_;
+
+    /// CPU time
+    mutable double CPUtime_;
+
+    /// Number of actual runs
+    mutable int nRuns_;
+
+    /// Number of bounds tightened
+    mutable int nTightened_;
   };
 }
 
