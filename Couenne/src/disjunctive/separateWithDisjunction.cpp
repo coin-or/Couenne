@@ -42,10 +42,7 @@ int CouenneDisjCuts::separateWithDisjunction (OsiCuts *cuts,
   t_chg_bounds *chg = new t_chg_bounds [ncols]; // all init'd automatically to UNCHANGED
   CouenneProblem *p = couenneCG_ -> Problem ();
 
-  p -> domain () -> push (ncols, 
-			  si.getColSolution (),
-			  si.getColLower    (),
-			  si.getColUpper    ());
+  p -> domain () -> push (&si);
 
   // apply cuts
   for (int i = cuts -> sizeColCuts (); i--;) {

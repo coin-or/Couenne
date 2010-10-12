@@ -16,6 +16,10 @@
 
 struct ASL;
 
+namespace Bonmin{
+  class Bab;
+}
+
 namespace Couenne {
 
   class CouenneInterface;
@@ -61,7 +65,8 @@ namespace Couenne {
     bool InitializeCouenne(char ** argv = NULL, 
 			   CouenneProblem *couenneProb = NULL,
 			   Ipopt::SmartPtr<Bonmin::TMINLP> tminlp = NULL,
-			   CouenneInterface *ci = NULL);
+			   CouenneInterface *ci = NULL,
+			   Bonmin::Bab *bb = NULL);
     
     /** register the options */
     virtual void registerOptions();

@@ -2,9 +2,10 @@
  *
  * Name:    CouenneSOS.cpp
  * Author:  Pietro Belotti
- * Purpose: find SOS in problem 
+ * Purpose: find SOS constraints in problem and add them to list of
+ *          branching objects
  *
- * (C) Carnegie-Mellon University, 2008.
+ * (C) Carnegie-Mellon University, 2008-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -12,17 +13,18 @@
 
 #include "CouenneProblem.hpp"
 #include "CouenneExprGroup.hpp"
+#include "CouenneExprAux.hpp"
 
 #include "CbcModel.hpp"
 #include "CbcBranchActual.hpp"
 #include "CbcCutGenerator.hpp"
 #include "CbcCompareActual.hpp"
-//#include "CouenneSOSObject.hpp"
 
 using namespace Couenne;
 
 /// find SOS objects
-int CouenneProblem::findSOS (OsiSolverInterface *solver,
+int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
+			     OsiSolverInterface *solver,
 			     OsiObject **objects) {
 
   // check auxiliaries defined as 
@@ -33,9 +35,10 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
   for (std::vector <exprVar *>::const_iterator v = variables_.begin ();
        v != variables_.end (); ++v) 
 
-    if (((*v) -> Multiplicity () >    0) &&
-	((*v) -> Type         () == AUX) &&
-	((*v) -> Image () -> code () == COU_EXPRGROUP)) {
+    if (((*v) -> Multiplicity () >       0) &&
+	((*v) -> Type         () ==    AUX) &&
+	((*v) -> sign         () == expression::AUX_EQ) &&
+	((*v) -> Image()->code() == COU_EXPRGROUP)) {
 
       expression *img = (*v) -> Image ();
 
@@ -66,7 +69,7 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
 	  ((fabs (Lb (wind)) > COUENNE_EPS)))
 	continue;
 
-      int lsz = group -> lcoeff (). size ();
+      size_t lsz = group -> lcoeff (). size ();
 
       if (((lsz <= 2) &&  defVar) ||
 	  ((lsz <= 1) && !defVar))
@@ -106,9 +109,9 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
       if (!isSOS || !intSOS)// || onlyOrigVars) 
 	continue;
 
-      printf ("----- found SOS: ");
-      (*v) -> print (); printf (" := ");
-      (*v) -> Image () -> print (); printf ("\n");
+      // printf ("----- found SOS: ");
+      // (*v) -> print (); printf (" := ");
+      // (*v) -> Image () -> print (); printf ("\n");
 
       // it is a SOS -- if intSOS==true, it's also integer
 
@@ -125,10 +128,9 @@ int CouenneProblem::findSOS (OsiSolverInterface *solver,
 
       // TODO: if use Cbc, add CbcSOSBranchingObject
 
-      /*CouenneSOSObject *newsos = new CouenneSOSObject (solver, nelem, indices, NULL, 1,
-	jnlst_, true, true);*/
-
-      OsiSOS *newsos = new OsiSOS (solver, nelem, indices, NULL, 1);
+      //CouenneSOSObject *newsos = new CouenneSOSObject (solver, nelem, indices, NULL, 1, jnlst_, true, true);
+      //OsiSOS *newsos = new OsiSOS (solver, nelem, indices, NULL, 1);
+      CbcSOS *newsos = new CbcSOS (CbcModelPtr, nelem, indices, NULL, nSOS, 1);
 
       objects [nSOS] = newsos;
       // as in BonBabSetupBase.cpp:675

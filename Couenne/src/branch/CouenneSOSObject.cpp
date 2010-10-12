@@ -44,10 +44,7 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
 
   bool infeasible = false;
 
-  problem_ -> domain () -> push (nvars,
-				 solver -> getColSolution (), 
-				 solver -> getColLower    (), 
-				 solver -> getColUpper    ()); // have to alloc+copy
+  problem_ -> domain () -> push (solver); // have to alloc+copy
 
   int       nMembers = dynamic_cast <const OsiSOS *> (originalObject ()) -> numberMembers ();
   const int *Members = dynamic_cast <const OsiSOS *> (originalObject ()) -> members ();

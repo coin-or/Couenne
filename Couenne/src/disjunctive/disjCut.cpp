@@ -90,7 +90,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
   // put matrix from base problem in canonical form //////////////////////////////
   CoinPackedMatrix Astd;
   CoinPackedVector rstd;
-  OsiSI2MatrVec (Astd,  rstd,  si); 
+  OsiSI2MatrVec (Astd, rstd, si); 
 
   int
     n   = si.   getNumCols (),      //mC   = 2*n + 3,

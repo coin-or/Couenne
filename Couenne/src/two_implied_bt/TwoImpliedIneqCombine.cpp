@@ -41,7 +41,7 @@ typedef struct {
 int compthres (const void *t1, 
 	       const void *t2) {
 
-  double
+  register double
     a1 = (*(threshold **) t1) -> alpha,
     a2 = (*(threshold **) t2) -> alpha;
 

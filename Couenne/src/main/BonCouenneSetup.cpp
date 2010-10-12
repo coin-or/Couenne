@@ -40,6 +40,7 @@
 
 #include "BonCouenneInfo.hpp"
 #include "BonCbcNode.hpp"
+#include "BonCbc.hpp"
 
 #include "OsiClpSolverInterface.hpp"
 #ifdef COIN_HAS_CPX
@@ -69,7 +70,8 @@ CouenneSetup::~CouenneSetup(){
 bool CouenneSetup::InitializeCouenne (char ** argv,
 				      CouenneProblem *couenneProb,
 				      Ipopt::SmartPtr<Bonmin::TMINLP> tminlp,
-				      CouenneInterface *ci) {
+				      CouenneInterface *ci,
+				      Bonmin::Bab *bb) {
   std::string s;
 
   if (couenneProb) {
@@ -173,6 +175,16 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     journalist()->Printf(J_ERROR, J_INITIALIZATION, "Couenne was compiled without CPLEX interface. Please reconfigure, recompile, and try again.\n");
     return false;
 #endif
+  } else if (s == "xpress-mp") {
+
+#ifdef COIN_HAS_CPX
+    CouenneSolverInterface <OsiXprSolverInterface> *CSI = new CouenneSolverInterface <OsiXprSolverInterface>;
+    continuousSolver_ = CSI;
+    CSI -> setCutGenPtr (couenneCg);
+#else
+    journalist()->Printf(J_ERROR, J_INITIALIZATION, "Couenne was compiled without Xpress-MP interface. Please reconfigure, recompile, and try again.\n");
+    return false;
+#endif
   } else if (s == "gurobi") {
 
 #ifdef COIN_HAS_GRB
@@ -267,7 +279,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     // allocate sufficient space for both nonlinear variables and SOS's
     objects = new OsiObject* [couenneProb_ -> nCons () + nVars];
 
-    nSOS = couenneProb_ -> findSOS (nonlinearSolver (), objects);
+    nSOS = couenneProb_ -> findSOS (&(bb -> model()), nonlinearSolver (), objects);
 
     nonlinearSolver () -> addObjects (nSOS, objects);
 

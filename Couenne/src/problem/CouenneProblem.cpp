@@ -13,6 +13,8 @@
 #include "CoinHelperFunctions.hpp"
 #include "CoinTime.hpp"
 
+#include "CbcBranchActual.hpp"
+
 #include "CouenneTypes.hpp"
 
 #include "CouenneExpression.hpp"
@@ -240,31 +242,38 @@ bool Couenne::BranchingFBBT (CouenneProblem *problem,
 			     OsiObject *Object,
 			     OsiSolverInterface *solver) {
 
+  // do not perform this if object is not a variable object
+
   bool feasible = true;
 
   if (problem -> doFBBT ()) {
 
     int 
-      indVar = Object   -> columnNumber (),
+      indVar = Object  -> columnNumber (),
       nvars  = problem -> nVars ();
 
-    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
-    chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
-    problem -> installCutOff ();
+    // do not perform this if object is not a variable object
 
-    if ((feasible = problem -> btCore (chg_bds))) {
+    if (indVar >= 0) {
 
-      const double
-	*lb = solver -> getColLower (),
-	*ub = solver -> getColUpper ();
+      t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
+      chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
+      problem -> installCutOff ();
+
+      if ((feasible = problem -> btCore (chg_bds))) {
+
+	const double
+	  *lb = solver -> getColLower (),
+	  *ub = solver -> getColUpper ();
 	  
-      for (int i=0; i<nvars; i++) {
-	if (problem -> Lb (i) > lb [i]) solver -> setColLower (i, problem -> Lb (i));
-	if (problem -> Ub (i) < ub [i]) solver -> setColUpper (i, problem -> Ub (i));
+	for (int i=0; i<nvars; i++) {
+	  if (problem -> Lb (i) > lb [i]) solver -> setColLower (i, problem -> Lb (i));
+	  if (problem -> Ub (i) < ub [i]) solver -> setColUpper (i, problem -> Ub (i));
+	}
       }
-    }
 
-    delete [] chg_bds;
+      delete [] chg_bds;
+    }
   }
 
   return feasible;

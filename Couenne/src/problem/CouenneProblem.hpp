@@ -29,6 +29,8 @@ namespace Ipopt {
   class Journalist;
 }
 
+class CbcModel;
+
 namespace Bonmin {
   class RegisteredOptions;
   class BabInfo;
@@ -497,7 +499,9 @@ class CouenneProblem {
   {return objects_;}
 
   /// find SOS constraints in problem
-  int findSOS (OsiSolverInterface *solver, OsiObject ** objects);
+  int findSOS (CbcModel *CbcModelPtr,
+	       OsiSolverInterface *solver, 
+	       OsiObject ** objects);
 
   /// set maximum CPU time
   inline void setMaxCpuTime (double time)

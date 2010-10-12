@@ -217,8 +217,10 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 	//lower[i] = upper[i] = value;
       }
       else{
-	throw CoinError("Bonmin::NlpSolveHeuristic","solution",
-			"Unknown object.");
+
+	// Probably a SOS object -- do not stop here
+	//throw CoinError("Bonmin::NlpSolveHeuristic","solution",
+	//"Unknown object.");
       }
     }
   }

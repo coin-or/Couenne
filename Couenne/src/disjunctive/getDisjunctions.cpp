@@ -60,6 +60,12 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
       OsiObject *Object = objs [candidates [candInd]];
       CouenneObject *cObj = dynamic_cast <CouenneObject *> (Object);
 
+      // TODO: add SOS support in disjunctive cuts
+
+      int indVar = Object -> columnNumber ();
+      if (indVar < 0) 
+	continue;
+
       if (cObj &&                                          // IF    a nonlinear object BUT:
 	  ((cObj -> checkInfeasibility (&brInfo) == 0.) || //       not violated
 	   (cObj -> isCuttable ())))                       //    or we are on the "good" (convex) side

@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    dummyVecMatr.cpp
  * Author:  Pietro Belotti
  * Purpose: fill in empty or single valued vectors and matrices

@@ -52,35 +52,108 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   if (isWiped (cs))
     return;
 
-  problem_ -> domain () -> push (&si, &cs);
-
   double now = CoinCpuTime ();
+
+  problem_ -> domain () -> push (&si, &cs);
 
   static int nBadColMatWarnings = 0;
 
   std::vector <std::pair <int, int> > pairs;
 
-  const CoinPackedMatrix *colA = si. getMatrixByCol ();
+#define USE_ROW
+
+  /// In principle, this should be sufficient:
+
+#ifndef USE_ROW
+  const CoinPackedMatrix *mat = si. getMatrixByCol ();
+#endif
+
+  /// However, there seems to be a bug that doesn't return good values
+  /// from A (and triggers Valgrind errors and segfaults on ex3_1_1
+  /// and others). While waiting for a fix, we'll use the row
+  /// representation.
+
+#ifdef USE_ROW
+  const CoinPackedMatrix *mat = si. getMatrixByRow ();
+#endif
 
   int 
-    n = colA -> getMajorDim (), // # cols
-    m = colA -> getMinorDim (); // # rows
+    n = mat -> getMajorDim (), // # cols
+    m = mat -> getMinorDim (); // # rows
 
-  double 
-    *sa1 = new double [n], // contains dense representation of a1 i.e. lots of zeros
-    *sa2 = new double [n]; //                                  a2
-
-  CoinFillN (sa1, n, 0.);
-  CoinFillN (sa2, n, 0.);
+#ifdef USE_ROW // swap n and m
+  {
+    int tmp = n;
+    n = m;
+    m = tmp;
+  }
+#endif  
 
   const double
-    *A   = colA -> getElements (),
     *rlb = si.getRowLower (),
     *rub = si.getRowUpper ();
 
+#ifdef USE_ROW
+
+  /// These will be used
+
+  int 
+     nnz = mat -> getNumElements (), // # nonzeros
+    *ind = new int [nnz],
+    *sta = new int [n+1];
+
+  double
+    *A   = new double [nnz];
+
+  /// these are the row-format originals
+  {
+    const double
+      *rA   = mat -> getElements ();
+
+    const int
+      *rInd = mat -> getIndices      (),
+      *rSta = mat -> getVectorStarts ();
+
+    // copy rA, rInd, rSta into A, ind, sta
+
+    CoinFillN (sta, n+1, 0);
+
+    for (int i=0; i<nnz; i++)
+      sta [1 + *rInd++] ++;
+
+    rInd -= nnz;
+
+    for (int i=1; i<=n; i++)
+      sta [i] += sta [i-1];
+
+    for (int i=0; i<m; i++) {
+
+      // filling indices of row i
+
+      int 
+	rowStart = rSta [i],
+	nEl      = rSta [i+1] - rowStart;
+
+      for (int j=rowStart, jj=nEl; jj--; j++) {
+	ind [sta [rInd [j]]]   = i;
+	A   [sta [rInd [j]]++] = rA [j];
+      }
+    }
+
+    for (int i=n; --i;)
+      sta [i] = sta [i-1];
+
+    sta [0] = 0;
+  }
+#else
+
+  const double
+    *A   = mat -> getElements ();
+
   const int
-    *ind = colA -> getIndices      (),
-    *sta = colA -> getVectorStarts ();
+    *ind = mat -> getIndices      (),
+    *sta = mat -> getVectorStarts ();
+#endif
 
   // For every column i, compare pairs of rows j and k with nonzero
   // coefficients.
@@ -89,6 +162,13 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   // both >= or both <=, skip this pair -- no tightening can come from
   // this pair (this doesn't mean that for another variable the
   // opposite may happen).
+
+  double 
+    *sa1 = new double [n], // contains dense representation of a1 i.e. lots of zeros
+    *sa2 = new double [n]; //                                  a2
+
+  CoinFillN (sa1, n, 0.);
+  CoinFillN (sa2, n, 0.);
 
   //printf ("looking at a problem with %d, %d\n", m, n);
 
@@ -365,6 +445,12 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   delete [] sa2; 
 
   problem_ -> domain () -> pop ();
+
+#ifdef USE_ROW
+  delete [] A;
+  delete [] ind;
+  delete [] (sta-n);
+#endif
 
   totalTime_ += CoinCpuTime () - now;
 }

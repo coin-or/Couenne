@@ -99,7 +99,7 @@ See http://www.coin-or.org/Couenne for more information\n\
 #endif
 
     CouenneSetup couenne;
-    if (!couenne.InitializeCouenne (argv, p, NULL, ci))
+    if (!couenne.InitializeCouenne (argv, p, NULL, ci, &bb))
       throw infeasible;
 
     double time_start = CoinCpuTime();
