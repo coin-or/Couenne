@@ -6,7 +6,8 @@
 #define NAUTY_H
 
 extern "C" {
-#include </home/jao204/.usr/include/nauty.h>
+  //#include </home/jao204/.usr/include/nauty.h>
+#include "nauty.h"
 }
 
 #include <cstdio>
