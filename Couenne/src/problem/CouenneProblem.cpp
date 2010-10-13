@@ -282,7 +282,7 @@ bool Couenne::BranchingFBBT (CouenneProblem *problem,
 
 //Symmetry Stuff --------------------------------------------------------------------
 
-
+#ifdef COIN_HAS_NTY
 void Node::node(int i, double c , double l, double u, int cod){
   index = i;
   coeff = c;
@@ -601,6 +601,8 @@ void CouenneProblem::ChangeBounds (const double * new_lb, const double * new_ub,
   
 
 }
+
+#endif
 
 
 

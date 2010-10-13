@@ -18,7 +18,11 @@
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
 //#include "CouenneOrbitObj.hpp"
+
+#ifdef COIN_HAS_NTY
 #include "Nauty.h"
+#endif
+
 #include "CouenneJournalist.hpp"
 #include "CouenneDomain.hpp"
 
@@ -52,7 +56,7 @@ class OsiObject;
 class CoinWarmStart;
 //class Nauty;
 
-
+#ifdef COIN_HAS_NTY
   class Node{
     int index;
     double coeff;
@@ -78,8 +82,6 @@ class CoinWarmStart;
     void bounds( double a, double b){ lb = a; ub = b;
     };
   };
-  
-
 
   struct myclass0 {
     bool operator() (Node a, Node b) {
@@ -116,7 +118,7 @@ class CoinWarmStart;
       return (a.get_index() < b.get_index() );
     }
   };
-
+#endif
 
 
 namespace Couenne {
@@ -322,7 +324,8 @@ class CouenneProblem {
 
 
   // Symmetry Info
-  
+
+#ifdef COIN_HAS_NTY
   std::vector<int>  Find_Orbit(int);
   mutable std::vector<Node> node_info;
   mutable Nauty *nauty_info;
@@ -337,9 +340,7 @@ class CouenneProblem {
   bool compare (  Node a, Node b) const;
   // bool node_sort (  Node  a, Node  b);
   // bool index_sort (  Node  a, Node  b);
-  
-
-  
+#endif
   
   /// get evaluation order index 
   inline int evalOrder (int i) const

@@ -139,7 +139,6 @@ includecoin_HEADERS = \
 	interfaces/CouenneMINLPInterface.hpp \
 	heuristics/BonNlpHeuristic.hpp \
 	heuristics/BonInitHeuristic.hpp \
-	branch/Nauty.h \	
 	heuristics/CouenneFeasPump.hpp \
 	branch/CouenneObject.hpp \
 	branch/CouenneVarObject.hpp \
@@ -208,6 +207,11 @@ includecoin_HEADERS = \
 	ellipcuts/CouenneEllipCuts.hpp \
 	crossconv/CouenneCrossConv.hpp \
 	two_implied_bt/CouenneTwoImplied.hpp
+
+if COIN_HAS_NTY
+includecoin_HEADERS += \
+	branch/Nauty.h
+endif
 
 #############################################################################
 # Create the Config.h file that always defines HAVE_CONFIG_H and install it #

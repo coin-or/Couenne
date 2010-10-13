@@ -150,9 +150,9 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 
   //_______ Jim's adding stuff ________
 
+#ifdef COIN_HAS_NTY
   problem_ -> ChangeBounds( solver -> getColLower (),  solver -> getColUpper (), solver -> getNumCols ());
   problem_ -> Compute_Symmetry();
-
   
   std::vector< int > branch_orbit;
   //  problem_ -> Print_Orbits();
@@ -171,6 +171,7 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
     
   }
   
+#endif
   
   
   //CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);

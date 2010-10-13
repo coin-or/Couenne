@@ -10,7 +10,6 @@ noinst_LTLIBRARIES = libCouenneBranch.la
 
 # List all source files for this library, including headers
 libCouenneBranch_la_SOURCES = \
-	Nauty.cpp\
 	CouenneThreeWayBranchObj.cpp \
 	CouenneBranchingObject.cpp \
 	CouenneObject.cpp \
@@ -27,6 +26,11 @@ libCouenneBranch_la_SOURCES = \
 	CouenneOrbitObj.cpp \
 	CouenneOrbitBranchingObj.cpp \
 	CouenneSOSObject.cpp
+
+if COIN_HAS_NTY
+libCouenneBranch_la_SOURCES += \
+	Nauty.cpp
+endif
 
 # 	operators/branchExprAbs.cpp \
 # 	operators/branchExprExp.cpp \

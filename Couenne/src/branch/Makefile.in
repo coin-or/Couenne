@@ -42,7 +42,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@COIN_HAS_COUENNE_TRUE@am__append_1 = \
+@COIN_HAS_NTY_TRUE@am__append_1 = \
+@COIN_HAS_NTY_TRUE@	Nauty.cpp
+
+@COIN_HAS_COUENNE_TRUE@am__append_2 = \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
@@ -51,7 +54,7 @@ host_triplet = @host@
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/standardize` \
 @COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`
 
-@COIN_HAS_NTY_TRUE@am__append_2 = \
+@COIN_HAS_NTY_TRUE@am__append_3 = \
 @COIN_HAS_NTY_TRUE@	-I`$(CYGPATH_W) $(NTYINCDIR)`
 
 subdir = src/branch
@@ -66,13 +69,23 @@ CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneBranch_la_LIBADD =
-am_libCouenneBranch_la_OBJECTS = Nauty.lo CouenneThreeWayBranchObj.lo \
+am__libCouenneBranch_la_SOURCES_DIST = CouenneThreeWayBranchObj.cpp \
+	CouenneBranchingObject.cpp CouenneObject.cpp \
+	CouenneVarObject.cpp CouenneChooseVariable.cpp \
+	CouenneChooseStrong.cpp doStrongBranching.cpp projections.cpp \
+	infeasibility.cpp infeasibilityVT.cpp feasibleRegion.cpp \
+	CouenneComplObject.cpp CouenneComplBranchingObject.cpp \
+	CouenneOrbitObj.cpp CouenneOrbitBranchingObj.cpp \
+	CouenneSOSObject.cpp Nauty.cpp
+@COIN_HAS_NTY_TRUE@am__objects_1 = Nauty.lo
+am_libCouenneBranch_la_OBJECTS = CouenneThreeWayBranchObj.lo \
 	CouenneBranchingObject.lo CouenneObject.lo CouenneVarObject.lo \
 	CouenneChooseVariable.lo CouenneChooseStrong.lo \
 	doStrongBranching.lo projections.lo infeasibility.lo \
 	infeasibilityVT.lo feasibleRegion.lo CouenneComplObject.lo \
 	CouenneComplBranchingObject.lo CouenneOrbitObj.lo \
-	CouenneOrbitBranchingObj.lo CouenneSOSObject.lo
+	CouenneOrbitBranchingObj.lo CouenneSOSObject.lo \
+	$(am__objects_1)
 libCouenneBranch_la_OBJECTS = $(am_libCouenneBranch_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
@@ -86,7 +99,7 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libCouenneBranch_la_SOURCES)
-DIST_SOURCES = $(libCouenneBranch_la_SOURCES)
+DIST_SOURCES = $(am__libCouenneBranch_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -303,25 +316,14 @@ AUTOMAKE_OPTIONS = foreign
 noinst_LTLIBRARIES = libCouenneBranch.la
 
 # List all source files for this library, including headers
-libCouenneBranch_la_SOURCES = \
-	Nauty.cpp\
-	CouenneThreeWayBranchObj.cpp \
-	CouenneBranchingObject.cpp \
-	CouenneObject.cpp \
-	CouenneVarObject.cpp \
-	CouenneChooseVariable.cpp \
-	CouenneChooseStrong.cpp \
-	doStrongBranching.cpp \
-	projections.cpp \
-	infeasibility.cpp \
-	infeasibilityVT.cpp \
-	feasibleRegion.cpp \
-	CouenneComplObject.cpp \
-	CouenneComplBranchingObject.cpp \
-	CouenneOrbitObj.cpp \
-	CouenneOrbitBranchingObj.cpp \
-	CouenneSOSObject.cpp
-
+libCouenneBranch_la_SOURCES = CouenneThreeWayBranchObj.cpp \
+	CouenneBranchingObject.cpp CouenneObject.cpp \
+	CouenneVarObject.cpp CouenneChooseVariable.cpp \
+	CouenneChooseStrong.cpp doStrongBranching.cpp projections.cpp \
+	infeasibility.cpp infeasibilityVT.cpp feasibleRegion.cpp \
+	CouenneComplObject.cpp CouenneComplBranchingObject.cpp \
+	CouenneOrbitObj.cpp CouenneOrbitBranchingObj.cpp \
+	CouenneSOSObject.cpp $(am__append_1)
 
 # 	operators/branchExprAbs.cpp \
 # 	operators/branchExprExp.cpp \
@@ -355,7 +357,7 @@ AM_CPPFLAGS = -I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` -I`$(CYGPATH_W) \
 	-I`$(CYGPATH_W) $(CLPSRCDIR)/src` -I`$(CYGPATH_W) \
 	$(CLPOBJDIR)/inc` -I`$(CYGPATH_W) $(CBCOBJDIR)/inc` \
 	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Interfaces` -I`$(CYGPATH_W) \
-	$(IPOPTSRCDIR)/src/LinAlg` $(am__append_1) $(am__append_2)
+	$(IPOPTSRCDIR)/src/LinAlg` $(am__append_2) $(am__append_3)
 all: all-am
 
 .SUFFIXES:

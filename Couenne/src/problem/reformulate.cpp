@@ -33,9 +33,9 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
     // create room for problem's variables and bounds, if no domain exists
     CouNumber 
-      *x  = (CouNumber *) malloc ((nVars()) * sizeof (CouNumber)),
-      *lb = (CouNumber *) malloc ((nVars()) * sizeof (CouNumber)),
-      *ub = (CouNumber *) malloc ((nVars()) * sizeof (CouNumber));
+      *x  = (CouNumber *) malloc (nVars() * sizeof (CouNumber)),
+      *lb = (CouNumber *) malloc (nVars() * sizeof (CouNumber)),
+      *ub = (CouNumber *) malloc (nVars() * sizeof (CouNumber));
 
     for (int i = nVars(); i--;) {
       x  [i] =  0.;
@@ -147,9 +147,12 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
   createUnusedOriginals ();
 
+#ifdef COIN_HAS_NTY
   sym_setup();
   Compute_Symmetry();
   Print_Orbits();
+#endif
+
   //writeAMPL ("extended-aw.mod", true);
   //writeAMPL ("original.mod", false);
 }
