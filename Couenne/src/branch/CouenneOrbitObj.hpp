@@ -7,7 +7,7 @@
  *
  * This file is licensed under the Common Public License (CPL)
  */
-
+/*
 #ifndef COUENNEORBITOBJ_HPP
 #define COUENNEORBITOBJ_HPP
 
@@ -17,13 +17,43 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneJournalist.hpp"
 #include "OsiBranchingObject.hpp"
-
 #include "CouenneObject.hpp"
+#include "Nauty.h"
 
 namespace Couenne {
 
-/// OsiObject for Orbital Branching
+class Node{
+  int index;
+  double coeff;
+  double lb;
+  double ub;
+  int color;
+  int code;
+public:
+  void node(int, double, double, double, int);
+  void color_vertex(int);
+  int get_index () {return index; 
+  };
+  double get_coeff () {return coeff;      
+  };
+  double get_lb () {return lb;      
+  };
+  double get_ub () {return ub ;     
+  };
+  int get_color () {return color;     
+  };
+  int get_code () {return code;     
+  };
+  void bounds( double a, double b){ lb = a; ub = b;
+  };
+};
 
+  bool compare (  Node a, Node b);
+  bool node_sort (  Node a, Node b);
+  bool index_sort (  Node a, Node b);
+
+
+/// OsiObject for Orbital Branching
 class CouenneOrbitObj: public CouenneObject {
 
 public:
@@ -35,6 +65,9 @@ public:
   CouenneOrbitObj (CouenneCutGenerator *cutgen,
 		   CouenneProblem *p, 
 		   exprVar *ref, Bonmin::BabSetupBase *base, JnlstPtr jnlst);
+
+
+		   
 
   /// Constructor with lesser information, used for infeasibility only
   CouenneOrbitObj (exprVar *ref, Bonmin::BabSetupBase *base, JnlstPtr jnlst);
@@ -49,9 +82,10 @@ public:
   virtual CouenneObject * clone () const
   {return new CouenneOrbitObj (*this);}
 
+
+  
   /// set object parameters by reading from command line
   void setParameters (Bonmin::BabSetupBase *base);
-
   /// compute infeasibility of this variable, |w - f(x)| (where w is
   /// the auxiliary variable defined as w = f(x)
   virtual double infeasibility (const OsiBranchingInformation *info, int &way) const;
@@ -65,9 +99,19 @@ public:
 
   /// create CouenneBranchingObject or CouenneThreeWayBranchObj based
   /// on this object
-  virtual OsiBranchingObject *createBranch (OsiSolverInterface*, 
-					    const OsiBranchingInformation*, int) const;
+  virtual OsiBranchingObject *createBranch (OsiSolverInterface*,const OsiBranchingInformation*, int) const;
 
+
+  
+  void Compute_Symmetry();
+  void Print_Orbits();
+  void ChangeBounds (CouenneProblem *p);
+    
+
+  std::vector<Node> node_info;
+  
+  Nauty *nauty_info;
+  
 protected:
 
 };
@@ -75,3 +119,4 @@ protected:
 }
 
 #endif
+*/

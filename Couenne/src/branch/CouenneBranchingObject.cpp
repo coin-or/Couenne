@@ -147,9 +147,32 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 		    solver -> getColUpper () [index]);
   */
 
-  if (!way) solver -> setColUpper (index, integer ? floor (brpt) : brpt); // down branch
-  else      solver -> setColLower (index, integer ? ceil  (brpt) : brpt); // up   branch
 
+  //_______ Jim's adding stuff ________
+
+  problem_ -> ChangeBounds( solver -> getColLower (),  solver -> getColUpper (), solver -> getNumCols ());
+  problem_ -> Compute_Symmetry();
+
+  
+  std::vector< int > branch_orbit;
+  //  problem_ -> Print_Orbits();
+  //printf("branching on var %i \n", index);
+  branch_orbit = problem_ -> Find_Orbit(index);
+  /*
+  if(branch_orbit.size() >= 2){
+    printf("branching on orbit of size %i \n", branch_orbit.size());
+    problem_ -> Print_Orbits();
+  }
+  */
+  if (!way) solver -> setColUpper (index, integer ? floor (brpt) : brpt); // down branch
+  else {
+    for (std::vector<int>::iterator it = branch_orbit.begin(); it!=branch_orbit.end(); ++it) 
+      solver -> setColLower (*it, integer ? ceil  (brpt) : brpt); // up   branch
+    
+  }
+  
+  
+  
   //CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
   //CouenneProblem *p = cutGen_ -> Problem ();
   //couenneSolver -> CutGen () -> Problem ();

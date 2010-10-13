@@ -40,9 +40,11 @@ AM_CPPFLAGS = \
 if COIN_HAS_COUENNE
   AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression`\ 
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`\
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/bound_tightening`
 endif
+
 
 if COIN_HAS_NTY
   AM_CPPFLAGS += \

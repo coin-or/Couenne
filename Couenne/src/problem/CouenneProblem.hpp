@@ -17,9 +17,16 @@
 
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
+//#include "CouenneOrbitObj.hpp"
+#include "Nauty.h"
 #include "CouenneJournalist.hpp"
 #include "CouenneDomain.hpp"
 
+/*
+extern "C" {
+#include <nauty.h>
+}
+*/
 using namespace Ipopt;
 
 class CglTreeInfo;
@@ -43,6 +50,74 @@ struct expr;
 
 class OsiObject;
 class CoinWarmStart;
+//class Nauty;
+
+
+  class Node{
+    int index;
+    double coeff;
+    double lb;
+    double ub;
+    int color;
+    int code;
+  public:
+    void node(int, double, double, double, int);
+    void color_vertex(int);
+    int get_index () {return index;
+    };
+    double get_coeff () {return coeff;
+    };
+    double get_lb () {return lb;
+    };
+    double get_ub () {return ub ;
+    };
+    int get_color () {return color;
+    };
+    int get_code () {return code;
+    };
+    void bounds( double a, double b){ lb = a; ub = b;
+    };
+  };
+  
+
+
+  struct myclass0 {
+    bool operator() (Node a, Node b) {
+      bool is_less = 0;
+      
+      if(a.get_code() < b.get_code() )
+	is_less = 1;
+      else {
+	if(a.get_code() == b.get_code() )
+	  if(a.get_coeff() < b.get_coeff() )
+	    is_less = 1;
+	  else{
+	    if(a.get_coeff() ==  b.get_coeff() )
+	      if(a.get_lb() < b.get_lb())
+		is_less = 1;
+	      else{
+		if(a.get_lb() == b.get_lb())
+		  if(a.get_ub() < b.get_ub())
+		    is_less = 1;
+		  else{
+		    if(a.get_index() < b.get_index())
+		      is_less = 1;
+		  }
+	      }
+	  }
+      }
+    return is_less;
+    }
+  } ;
+    
+      
+  struct myclass {
+    bool operator() (Node a, Node b) {
+      return (a.get_index() < b.get_index() );
+    }
+  };
+
+
 
 namespace Couenne {
 
@@ -59,6 +134,7 @@ namespace Couenne {
   class GlobalCutOff;
 
   struct compExpr;
+
 
 // default tolerance for checking feasibility (and integrality) of NLP solutions
 const CouNumber feas_tolerance_default = 1e-5;
@@ -242,6 +318,29 @@ class CouenneProblem {
   
   void setNDefVars(int ndefined__) { ndefined_ = ndefined__; }
 
+  
+
+
+  // Symmetry Info
+  
+  std::vector<int>  Find_Orbit(int);
+  mutable std::vector<Node> node_info;
+  mutable Nauty *nauty_info;
+
+  myclass0  node_sort; 
+  myclass index_sort;
+
+  void sym_setup();
+  void Compute_Symmetry() const;
+  void Print_Orbits();
+  void ChangeBounds (const double * , const double *, int ) const;
+  bool compare (  Node a, Node b) const;
+  // bool node_sort (  Node  a, Node  b);
+  // bool index_sort (  Node  a, Node  b);
+  
+
+  
+  
   /// get evaluation order index 
   inline int evalOrder (int i) const
   {return numbering_ [i];}

@@ -210,6 +210,27 @@ bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds,
 
   return btCore (chg_bds);
 
+  //Tighten bounds
+  /*  
+  std::vector<std::vector<int> > new_orbits = nauty_info->getOrbits();
+  
+  for (int i=0; i <  nauty_info -> getNumOrbits(); i++){
+    int ll =-COUENNE_INFINITY;
+    int uu =COUENNE_INFINITY; 
+    for(int j = 0; j < new_orbits[i].size(); j++){
+      if(Lb( new_orbits[i][j]) > ll)
+	ll = Lb( new_orbits[i][j]);
+      if(Ub( new_orbits[i][j]) < uu)
+	uu = Ub( new_orbits[i][j]);
+    }
+    for(int j = 0; j < new_orbits[i].size(); j++){
+      Lb( new_orbits[i][j]) = ll;
+      Ub( new_orbits[i][j]) = uu;
+    }
+  }
+
+  */
+  
   //printf ("Total cpu time = %e\n", CoinCpuTime () - startTime);
   //exit (-1);
   //return retval;
@@ -219,6 +240,13 @@ bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds,
 /// reduced cost bound tightening
 int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
 			       t_chg_bounds *chg_bds) const {
+
+  //Compute symmetry group
+  //  ChangeBounds( psi -> getColLower (),  psi -> getColUpper (), psi -> getNumCols ());
+  //Compute_Symmetry();
+
+  
+  
   int 
     nchanges = 0,
     objind   = Obj (0) -> Body () -> Index ();

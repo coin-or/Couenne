@@ -65,6 +65,7 @@ if COIN_HAS_COUENNE
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/heuristics` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`\
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` 
 endif
 

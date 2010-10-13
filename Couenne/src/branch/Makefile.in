@@ -66,7 +66,7 @@ CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneBranch_la_LIBADD =
-am_libCouenneBranch_la_OBJECTS = CouenneThreeWayBranchObj.lo \
+am_libCouenneBranch_la_OBJECTS = Nauty.lo CouenneThreeWayBranchObj.lo \
 	CouenneBranchingObject.lo CouenneObject.lo CouenneVarObject.lo \
 	CouenneChooseVariable.lo CouenneChooseStrong.lo \
 	doStrongBranching.lo projections.lo infeasibility.lo \
@@ -304,6 +304,7 @@ noinst_LTLIBRARIES = libCouenneBranch.la
 
 # List all source files for this library, including headers
 libCouenneBranch_la_SOURCES = \
+	Nauty.cpp\
 	CouenneThreeWayBranchObj.cpp \
 	CouenneBranchingObject.cpp \
 	CouenneObject.cpp \
@@ -417,6 +418,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSOSObject.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneThreeWayBranchObj.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneVarObject.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Nauty.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/doStrongBranching.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/feasibleRegion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/infeasibility.Plo@am__quote@

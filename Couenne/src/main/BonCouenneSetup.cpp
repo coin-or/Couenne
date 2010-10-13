@@ -401,15 +401,16 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     }
   }
 
-  // Experimental: orbital branching //////////////////////////////////////////////
-  options () -> GetStringValue ("orbital_branching", s, "couenne.");
+    // Experimental: orbital branching //////////////////////////////////////////////
+    /*
+    options () -> GetStringValue ("orbital_branching", s, "couenne.");
 
   if (s == "yes") {
 
     objects [nobj] = new CouenneOrbitObj (couenneCg, couenneProb_, NULL, this, journalist ());
     objects [nobj++] -> setPriority (contObjPriority);
   }
-
+    */
   // Add objects /////////////////////////////////
 
   continuousSolver_ -> addObjects (nobj, objects);

@@ -41,12 +41,12 @@ display_stats no
 branching_print_level       0 # Output level for braching code in Couenne.
 boundtightening_print_level 0 # Output level for bound tightening code in Couenne
 convexifying_print_level    0 # Output level for convexifying code in Couenne
-problem_print_level         4 # Output level for problem manipulation code in Couenne 
+problem_print_level         7 # Output level for problem manipulation code in Couenne 
                               # (4 prints out original problem)
 nlpheur_print_level         0 # Output level for NLP heuristic in Couenne
 #disjcuts_print_level       0 # Output level for disjunctive cuts in Couenne - disabled for now
 
-
+orbital_branching yes
 
 #
 # Option for branching rules

@@ -139,6 +139,7 @@ includecoin_HEADERS = \
 	interfaces/CouenneMINLPInterface.hpp \
 	heuristics/BonNlpHeuristic.hpp \
 	heuristics/BonInitHeuristic.hpp \
+	branch/Nauty.h \	
 	heuristics/CouenneFeasPump.hpp \
 	branch/CouenneObject.hpp \
 	branch/CouenneVarObject.hpp \

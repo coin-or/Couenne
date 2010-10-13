@@ -26,7 +26,7 @@ using namespace Couenne;
 
 /// preprocess problem in order to extract linear relaxations etc.
 void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
-
+  
   double now = CoinCpuTime ();
 
   if (domain_.current () == NULL) {
@@ -147,6 +147,9 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
   createUnusedOriginals ();
 
+  sym_setup();
+  Compute_Symmetry();
+  Print_Orbits();
   //writeAMPL ("extended-aw.mod", true);
   //writeAMPL ("original.mod", false);
 }
