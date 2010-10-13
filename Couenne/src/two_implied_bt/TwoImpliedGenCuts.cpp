@@ -68,7 +68,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   const CoinPackedMatrix *mat = si. getMatrixByCol ();
 #endif
 
-  /// However, there seems to be a bug that doesn't return good values
+  /// However, there seems to be a bug (not sure where... Osi? Clp?
+  /// Or, most probably, Couenne?) that doesn't return good values
   /// from A (and triggers Valgrind errors and segfaults on ex3_1_1
   /// and others). While waiting for a fix, we'll use the row
   /// representation.
@@ -237,6 +238,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   const double
     *rA  = rowA -> getElements ();
 
+  // TODO: no need for copy, though we need it to compare to old problem's bounds
+
   double
     *clb = CoinCopyOfArray (problem_ -> Lb (), n),
     *cub = CoinCopyOfArray (problem_ -> Ub (), n);
@@ -371,6 +374,29 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	problem_ -> Lb (objInd) = LB;
 	chg_bds [objInd].setLower (t_chg_bounds::CHANGED);
       }
+
+      // change chg_bds for all new bounds stored in cs
+
+      for (int i = cs. sizeColCuts (); i--;) {
+
+	const CoinPackedVector
+	  &lbs = cs. colCutPtr (i) -> lbs (),
+	  &ubs = cs. colCutPtr (i) -> ubs ();
+
+	// copy lbs
+
+	const int *indices = lbs. getIndices ();
+
+	for (int j = lbs. getNumElements (); j--; indices++)
+	  chg_bds [*indices].setLower (t_chg_bounds::CHANGED);
+
+	// copy ubs
+
+	indices = ubs. getIndices ();
+
+	for (int j = ubs. getNumElements (); j--; indices++)
+	  chg_bds [*indices].setUpper (t_chg_bounds::CHANGED);
+      }
     
       if (!(problem_ -> btCore (chg_bds))) {
 
@@ -378,6 +404,15 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
 	result = -1;
 	break;
+      } else{
+
+	// update tightened bounds from problem to clb
+
+	for (int i=0; i<n; i++) {
+
+	  if (problem_ -> Lb (i) > clb [i] + COUENNE_EPS) clb [i] = problem_ -> Lb (i);
+	  if (problem_ -> Ub (i) < cub [i] - COUENNE_EPS) cub [i] = problem_ -> Ub (i);
+	}
       }
     }
 

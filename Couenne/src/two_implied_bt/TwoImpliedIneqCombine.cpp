@@ -15,6 +15,7 @@
 #include "CoinPackedMatrix.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneExprVar.hpp"
 
 #define MIN_DENOM 1.e-10
 
@@ -114,9 +115,8 @@ int combine (CouenneProblem *p,
     pairs [i]. position = i;
   }
 
-  // This is not very wise, especially given that qsort behaves
-  // horribly on already sorted arrays (if the pivot element is the
-  // last one).
+  // This is not very wise: qsort behaves horribly on already sorted
+  // arrays (if the pivot element is the last one).
 
   qsort (pairs, n1, sizeof (indPosPair), compPair);
 
@@ -661,6 +661,12 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 	  double tmp = newL <= - COUENNE_INFINITY / 10 ?   COUENNE_INFINITY : newL;
 	  newL       = newU >=   COUENNE_INFINITY / 10 ? - COUENNE_INFINITY : newU;
 	  newU       = tmp;
+	}
+
+	if (p -> Var (indVar) -> isInteger ()) {
+
+	  newL = ceil  (newL - COUENNE_EPS);
+	  newU = floor (newU + COUENNE_EPS);
 	}
 
 #ifdef DEBUG
