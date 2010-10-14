@@ -76,7 +76,8 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   nUnusedOriginals_ (-1),
   multilinSep_ (CouenneProblem::MulSepNone),
   useSemiaux_  (false),
-  max_fbbt_iter_ (MAX_FBBT_ITER) {
+  max_fbbt_iter_ (MAX_FBBT_ITER),
+  orbitalBranching_ (false) {
 
   double now = CoinCpuTime ();
 
@@ -85,7 +86,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
     // read problem from AMPL structure
     readnl (asl);
 #else
-    jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM, "Couenne was compiled without ASL library. Cannot process ASL structure.\n");
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM, "Couenne was compiled without the ASL library. Cannot process ASL structure.\n");
     throw -1;
 #endif
 
@@ -98,7 +99,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   auxSet_ = new std::set <exprAux *, compExpr>;
 
   if (base)
-    initOptions(base -> options());
+    initOptions (base -> options());
 }
 
 
@@ -143,7 +144,8 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   nUnusedOriginals_ (p.nUnusedOriginals_),
   multilinSep_  (p.multilinSep_),
   useSemiaux_   (p.useSemiaux_),
-  max_fbbt_iter_  (p.max_fbbt_iter_) {
+  max_fbbt_iter_  (p.max_fbbt_iter_),
+  orbitalBranching_  (p.orbitalBranching_) {
 
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);
@@ -224,6 +226,7 @@ CouenneProblem::~CouenneProblem () {
     delete (*i);
 }
 
+
 /// initializes parameters like doOBBT
 void CouenneProblem::initOptions(SmartPtr<OptionsList> options) {
 
@@ -249,6 +252,6 @@ void CouenneProblem::initOptions(SmartPtr<OptionsList> options) {
 		  s == "simple" ? CouenneProblem::MulSepSimple :
                  		  CouenneProblem::MulSepTight);
 
-  options -> GetStringValue ("use_semiaux", s, "couenne.");
-  useSemiaux_ = (s == "yes");
+  options -> GetStringValue ("use_semiaux", s, "couenne."); useSemiaux_ = (s == "yes");
+  options -> GetStringValue ("orbital_branching", s, "couenne."); orbitalBranching_ = (s == "yes");
 }

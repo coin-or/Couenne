@@ -1,12 +1,16 @@
-/* 
- * $Id: Nauty.h,v 1.3 2008-09-16 23:37:42 jao204 Exp $ 
+/* $Id: Nauty.h,v 1.3 2008-09-16 23:37:42 jao204 Exp $ 
+ *
+ * Name:    Nauty.cpp
+ * Authors: Jim Ostrowski
+ * Purpose: Branching with symmetry
+ * Date:    October 13, 2010
+ *
  */
 
 #ifndef NAUTY_H
 #define NAUTY_H
 
 extern "C" {
-  //#include </home/jao204/.usr/include/nauty.h>
 #include "nauty.h"
 }
 
@@ -14,15 +18,11 @@ extern "C" {
 #include <map>
 #include <vector>
 
-
 class Nauty
 {
 
 public:
   enum VarStatus { FIX_AT_ZERO, FIX_AT_ONE, FREE };
-
-public:
-  
   
   Nauty(int n_);
   ~Nauty();
@@ -39,17 +39,14 @@ public:
   double getNautyTime() const { return nautyTime_; }
 
   int getN() const { return n_; }
-
   
   int getNumGenerators() const;
   int getNumOrbits() const;
-
 
   /// Returns the orbits in a "convenient" form
   std::vector<std::vector<int> > getOrbits() const;
 
   void getVstat(double *v, int nv);
-
 
   /**
    * Methods to classify orbits.  Not horribly efficient, but gets the job done
@@ -63,11 +60,9 @@ public:
   //  void setWriteAutoms(const std::string &afilename);
   //void unsetWriteAutoms();
 
-
-
 private:
 
-Nauty();
+  Nauty ();
 
   // The base nauty stuff
   graph *G_;
@@ -92,19 +87,13 @@ Nauty();
 
   std::multimap<int,int> constr_rhs;
   std::multimap<int,int>::iterator it;
-  std::pair<std::multimap<int,int>::iterator,std::multimap<int,int>::iterator> ret;
+
+  std::pair<std::multimap<int,int>::iterator,
+            std::multimap<int,int>::iterator> ret;
+
   // File pointer for automorphism group
   FILE *afp_;
 
 };
 
-
 #endif
-
-/* 
-  Local Variables:
-  mode: c++
-  eval: (c-set-style "gnu")
-  eval: (setq indent-tabs-mode nil)
-  End:
-*/

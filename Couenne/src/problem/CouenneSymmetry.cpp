@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <ostream>
 #include <iterator>
-
+#include <stdio.h>
 
 #include "CouenneExprVar.hpp"
 #include "CouenneExprGroup.hpp"
@@ -20,8 +20,6 @@
 #include "CouenneProblem.hpp"
 
 using namespace Couenne;
-
-// Symmetry Stuff --------------------------------------------------------------------
 
 #ifdef COIN_HAS_NTY
 
@@ -123,17 +121,11 @@ void CouenneProblem::sym_setup (){
     }
   }
 
-
-
-
-
-
   // Create global Nauty object
 
   int nc = num_affine + nVars ();
   // printf (" There are   %d  coefficient vertices in the graph \n", num_affine);
   //printf (" Graph has    %d  vertices \n", nc);
-
 
   nauty_info = new Nauty(nc);
   // create graph
@@ -143,8 +135,6 @@ void CouenneProblem::sym_setup (){
        i != Variables (). end (); ++i) {
 
     //    printf ("I have code %d \n",  (*i) ->  Image() -> code() );
-
-
 
     if ((*i) -> Type () == AUX) {
       // printf ("aux is %d with code %d \n", (*i) -> Index (), (*i) -> Image () -> code() );
@@ -248,7 +238,8 @@ void CouenneProblem::sym_setup (){
       //  printf ("variable is %d\n", (*i) -> Index ());
       Node var_vertex;
       var_vertex.node( (*i) -> Index () , 0 , (*i) -> lb () , (*i) -> ub () ,  -1 );
-      //      printf( "var info index %d, coef %f, lb %f, ub %f, code %d \n", var_vertex.get_index() , var_vertex.get_coeff() , var_vertex.get_lb() , var_vertex.get_ub() ,  var_vertex.get_code() );
+      //      printf( "var info index %d, coef %f, lb %f, ub %f, code %d \n", 
+      // var_vertex.get_index() , var_vertex.get_coeff() , var_vertex.get_lb() , var_vertex.get_ub() ,  var_vertex.get_code() );
       node_info.push_back(var_vertex);
       // this is an original variable
 
@@ -300,12 +291,14 @@ void CouenneProblem::Print_Orbits(){
 	 nauty_info->getNumOrbits(),
 	 nauty_info->getNumGenerators());
 
+#if 0
   for (unsigned int i = 0; i < new_orbits.size(); i++) {
     printf( "Orbit %d [", i);
     copy(new_orbits[i].begin(), new_orbits[i].end(),
 	 std::ostream_iterator<int>(std::cout, " "));
     printf("] \n");
   }
+#endif
 }
 
 std::vector<int>  CouenneProblem::Find_Orbit(int index){
@@ -350,5 +343,11 @@ void CouenneProblem::setupSymmetry () {
   sym_setup ();
   Compute_Symmetry ();
   Print_Orbits ();
+#else
+  if (orbitalBranching_) {
+    printf ("\
+Couenne: Warning, you have set orbital_branching but Nauty is not available\n\
+reconfigure with appropriate options --with-nauty-lib and --with-nauty-incdir\n");
+  }
 #endif
 }

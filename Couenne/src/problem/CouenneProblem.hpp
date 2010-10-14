@@ -318,6 +318,9 @@ class CouenneProblem {
   /// to further tighten bounds
   mutable bool fbbtReachedIterLimit_;
 
+  /// use orbital branching?
+  bool orbitalBranching_;
+
  public:
 
   CouenneProblem  (ASL * = NULL,
@@ -669,6 +672,10 @@ class CouenneProblem {
   /// true if latest call to FBBT terminated due to iteration limit reached
   bool fbbtReachedIterLimit () const
   {return fbbtReachedIterLimit_;}
+
+  /// return true if orbital branching activated
+  bool orbitalBranching () const
+  {return orbitalBranching_;}
 
 protected:
 
