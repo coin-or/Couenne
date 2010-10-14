@@ -68,10 +68,13 @@ Nauty::Nauty(int vertices)
   options_->invararg = 0;
   options_->dispatch = &dispatch_graph;
    // Make an empty graph
-  for (int j = 0; j < n_; j++) {
-    set *gv = GRAPHROW(G_, j, m_);
-    EMPTYSET(gv, m_);
-  }
+  // for (int j = 0; j < n_; j++) {
+  //   set *gv = GRAPHROW(G_, j, m_);
+  //   EMPTYSET(gv, m_);
+  // }
+
+  //for (int i = m_ * n_; i--;)
+    //((int *) G_) [i] = 0;
   
   vstat_ = new int[n_];
    clearPartitions();
