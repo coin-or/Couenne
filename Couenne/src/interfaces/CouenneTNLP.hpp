@@ -16,13 +16,15 @@
 
 #include <vector>
 #include <set>
-  
+
+using namespace Ipopt;
+
 namespace Couenne {
 
   class CouenneProblem;
 
   /// Class for handling NLPs using CouenneProblem
-  class CouenneTNLP: public TNLP {
+  class CouenneTNLP: public Ipopt::TNLP {
 
   public:
 
@@ -48,30 +50,30 @@ namespace Couenne {
     /// parameter lets you specify C or Fortran style indexing for the
     /// sparse matrix iRow and jCol parameters.  C_STYLE is 0-based,
     /// and FORTRAN_STYLE is 1-based.
-    virtual bool get_nlp_info (Index& n, 
-			       Index& m, 
-			       Index& nnz_jac_g,
-			       Index& nnz_h_lag, 
-			       IndexStyleEnum& index_style);
+    virtual bool get_nlp_info (Ipopt::Index& n, 
+			       Ipopt::Index& m, 
+			       Ipopt::Index& nnz_jac_g,
+			       Ipopt::Index& nnz_h_lag, 
+			       enum Ipopt::TNLP::IndexStyleEnum& index_style);
 
     /// return the information about the bound on the variables and
     /// constraints. The value that indicates that a bound does not
     /// exist is specified in the parameters nlp_lower_bound_inf and
     /// nlp_upper_bound_inf.  By default, nlp_lower_bound_inf is -1e19
     /// and nlp_upper_bound_inf is 1e19. (see TNLPAdapter)
-    virtual bool get_bounds_info (Index n, Number* x_l, Number* x_u,
-				  Index m, Number* g_l, Number* g_u);
+    virtual bool get_bounds_info (Ipopt::Index n, Ipopt::Number* x_l, Ipopt::Number* x_u,
+				  Ipopt::Index m, Ipopt::Number* g_l, Ipopt::Number* g_u);
 
     /// return the variables linearity (TNLP::Linear or
     /// TNLP::NonLinear). The var_types array should be allocated with
     /// length at least n. (default implementation just return false
     /// and does not fill the array).
-    virtual bool get_variables_linearity (Index n, Ipopt::TNLP::LinearityType* var_types);
+    virtual bool get_variables_linearity (Ipopt::Index n, Ipopt::TNLP::LinearityType* var_types);
 
     /// return the constraint linearity.  array should be alocated
     /// with length at least n. (default implementation just return
     /// false and does not fill the array).
-    virtual bool get_constraints_linearity (Index m, Ipopt::TNLP::LinearityType* const_types);
+    virtual bool get_constraints_linearity (Ipopt::Index m, Ipopt::TNLP::LinearityType* const_types);
 
     /// return the starting point. The bool variables indicate whether
     /// the algorithm wants you to initialize x, z_L/z_u, and lambda,
@@ -79,33 +81,33 @@ namespace Couenne {
     /// initialize these and you cannot, return false, which will
     /// cause Ipopt to stop.  You will have to run Ipopt with
     /// different options then.
-    virtual bool get_starting_point (Index n, 
-				     bool init_x, Number* x,
-				     bool init_z, Number* z_L, Number* z_U,
-				     Index m, 
-				     bool init_lambda, Number* lambda);
+    virtual bool get_starting_point (Ipopt::Index n, 
+				     bool init_x, Ipopt::Number* x,
+				     bool init_z, Ipopt::Number* z_L, Ipopt::Number* z_U,
+				     Ipopt::Index m, 
+				     bool init_lambda, Ipopt::Number* lambda);
 
     /// return the value of the objective function
-    virtual bool eval_f (Index n, const Number* x, bool new_x,
-                         Number& obj_value);
+    virtual bool eval_f (Ipopt::Index n, const Ipopt::Number* x, bool new_x,
+                         Ipopt::Number& obj_value);
 
     /// return the vector of the gradient of the objective w.r.t. x
-    virtual bool eval_grad_f (Index n, const Number* x, 
+    virtual bool eval_grad_f (Ipopt::Index n, const Ipopt::Number* x, 
 			      bool new_x,
-			      Number* grad_f);
+			      Ipopt::Number* grad_f);
 
     /// return the vector of constraint values
-    virtual bool eval_g (Index n, const Number* x, bool new_x,
-			 Index m, Number* g);
+    virtual bool eval_g (Ipopt::Index n, const Ipopt::Number* x, bool new_x,
+			 Ipopt::Index m, Number* g);
 
     /// return the jacobian of the constraints. The vectors iRow and
     /// jCol only need to be set once. The first call is used to set
     /// the structure only (iRow and jCol will be non-NULL, and values
     /// will be NULL) For subsequent calls, iRow and jCol will be
     /// NULL.
-    virtual bool eval_jac_g (Index n, const Number* x, bool new_x,
-                             Index m, Index nele_jac, Index* iRow,
-			     Index *jCol, Number* values);
+    virtual bool eval_jac_g (Ipopt::Index n, const Ipopt::Number* x, bool new_x,
+                             Ipopt::Index m, Ipopt::Index nele_jac, Ipopt::Index* iRow,
+			     Ipopt::Index *jCol, Ipopt::Number* values);
 
     /// return the hessian of the lagrangian. The vectors iRow and
     /// jCol only need to be set once (during the first call). The
@@ -116,10 +118,10 @@ namespace Couenne {
     /// provided, in case the user wants to se quasi-Newton
     /// approximations to estimate the second derivatives and doesn't
     /// not neet to implement this method.
-    virtual bool eval_h (Index n, const Number* x, bool new_x,
-			 Number obj_factor, Index m, const Number* lambda,
-			 bool new_lambda, Index nele_hess,
-			 Index* iRow, Index* jCol, Number* values);
+    virtual bool eval_h (Ipopt::Index n, const Ipopt::Number* x, bool new_x,
+			 Ipopt::Number obj_factor, Ipopt::Index m, const Ipopt::Number* lambda,
+			 bool new_lambda, Ipopt::Index nele_hess,
+			 Ipopt::Index* iRow, Ipopt::Index* jCol, Ipopt::Number* values);
 
     /// This method is called when the algorithm is complete so the TNLP can store/write the solution
     virtual void finalize_solution (SolverReturn status,

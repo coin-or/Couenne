@@ -11,9 +11,9 @@
 #include <vector>
 #include "CoinTime.hpp"
 
+#include "CouenneCutGenerator.hpp"
 #include "CouenneDisjCuts.hpp"
 #include "CouenneProblem.hpp"
-#include "CouenneCutGenerator.hpp"
 #include "CouenneInfeasCut.hpp"
 
 using namespace Couenne;

@@ -12,11 +12,11 @@
 
 #include "OsiRowCut.hpp"
 
+#include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneComplBranchingObject.hpp"
-#include "CouenneCutGenerator.hpp"
 
 using namespace Couenne;
 

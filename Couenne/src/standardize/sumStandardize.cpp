@@ -10,11 +10,12 @@
 
 #include <stdio.h>
 
+#include "CouenneExprQuad.hpp"
+
 #include "CouenneExprSum.hpp"
 #include "CouenneExprSub.hpp"
 #include "CouenneExprOpp.hpp"
 #include "CouenneExprGroup.hpp"
-#include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
 
 using namespace Couenne;
@@ -79,7 +80,7 @@ exprAux *exprSum::standardize (CouenneProblem *p, bool addAux) {
 
   ////////////////////////////////////////////////////////////////////////////////
 
-  if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+  if (p -> Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf ("decompTerm: lin [");
     for (std::map <int, CouNumber>::iterator i = lmap.Map().begin (); i != lmap.Map().end (); ++i)
       printf ("<%d,%g>", i -> first, i -> second);

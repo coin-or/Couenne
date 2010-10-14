@@ -8,6 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CouenneCutGenerator.hpp"
+
 #include "CouenneTypes.hpp"
 
 #include "CouenneExprAux.hpp"
@@ -15,7 +17,6 @@
 #include "CouenneExprConst.hpp"
 
 #include "CouenneProblem.hpp"
-#include "CouenneCutGenerator.hpp"
 
 using namespace Couenne;
 

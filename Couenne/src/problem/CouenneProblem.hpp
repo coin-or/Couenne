@@ -17,25 +17,39 @@
 
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
-//#include "CouenneOrbitObj.hpp"
+
+#include "CouenneJournalist.hpp"
+#include "CouenneDomain.hpp"
+
+// this is temporary and is aimed at overriding all definition from
+// Ipopt with those of Couenne
+
+#undef PACKAGE
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_VERSION
+#undef PACKAGE_TARNAME
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef VERSION
+
+#include "config_couenne.h"
 
 #ifdef COIN_HAS_NTY
 #include "Nauty.h"
 #endif
-
-#include "CouenneJournalist.hpp"
-#include "CouenneDomain.hpp"
 
 /*
 extern "C" {
 #include <nauty.h>
 }
 */
-using namespace Ipopt;
+
+//using namespace Ipopt;
 
 class CglTreeInfo;
 
 namespace Ipopt {
+  template <class T> class SmartPtr;
   class OptionsList;
   class Journalist;
 }
@@ -52,8 +66,12 @@ namespace Bonmin {
 struct ASL;
 struct expr;
 
-class OsiObject;
+//namespace Osi {
+  class OsiObject;
+//}
+
 class CoinWarmStart;
+
 //class Nauty;
 
 #ifdef COIN_HAS_NTY
@@ -90,23 +108,26 @@ class CoinWarmStart;
       if(a.get_code() < b.get_code() )
 	is_less = 1;
       else {
-	if(a.get_code() == b.get_code() )
+	if(a.get_code() == b.get_code() ) {
 	  if(a.get_coeff() < b.get_coeff() )
 	    is_less = 1;
 	  else{
-	    if(a.get_coeff() ==  b.get_coeff() )
+	    if(a.get_coeff() ==  b.get_coeff() ) {
 	      if(a.get_lb() < b.get_lb())
 		is_less = 1;
 	      else{
-		if(a.get_lb() == b.get_lb())
+		if(a.get_lb() == b.get_lb()) {
 		  if(a.get_ub() < b.get_ub())
 		    is_less = 1;
 		  else{
 		    if(a.get_index() < b.get_index())
 		      is_less = 1;
 		  }
+		}
 	      }
+	    }
 	  }
+	}
       }
     return is_less;
     }
@@ -134,9 +155,13 @@ namespace Couenne {
   class CouenneConstraint;
   class CouenneObjective;
   class GlobalCutOff;
+  //  class JnlstPtr;
+  //  class ConstJnlstPtr;
+
+  typedef Ipopt::SmartPtr<Ipopt::Journalist> JnlstPtr;
+  typedef Ipopt::SmartPtr<const Ipopt::Journalist> ConstJnlstPtr;
 
   struct compExpr;
-
 
 // default tolerance for checking feasibility (and integrality) of NLP solutions
 const CouNumber feas_tolerance_default = 1e-5;
@@ -302,7 +327,7 @@ class CouenneProblem {
   ~CouenneProblem ();                       ///< Destructor
 
   /// initializes parameters like doOBBT
-  void initOptions (SmartPtr <Ipopt::OptionsList> options);
+  void initOptions (Ipopt::SmartPtr <Ipopt::OptionsList> options);
 
   /// Clone method (for use within CouenneCutGenerator::clone)
   CouenneProblem *clone () const
@@ -318,10 +343,7 @@ class CouenneProblem {
   inline int nIntVars     () const {return nIntVars_;}                 ///< Number of integer variables
   inline int nVars        () const {return (int) variables_. size ();} ///< Total number of variables
   
-  void setNDefVars(int ndefined__) { ndefined_ = ndefined__; }
-
-  
-
+  void setNDefVars (int ndefined__) {ndefined_ = ndefined__;}
 
   // Symmetry Info
 
@@ -338,9 +360,13 @@ class CouenneProblem {
   void Print_Orbits();
   void ChangeBounds (const double * , const double *, int ) const;
   bool compare (  Node a, Node b) const;
+
   // bool node_sort (  Node  a, Node  b);
   // bool index_sort (  Node  a, Node  b);
 #endif
+
+  /// empty if no NTY, symmetry data structure setup otherwise
+  void setupSymmetry ();
   
   /// get evaluation order index 
   inline int evalOrder (int i) const
@@ -530,8 +556,7 @@ class CouenneProblem {
   void installCutOff () const;
 
   /// Provide Journalist
-  ConstJnlstPtr Jnlst() const 
-  {return ConstPtr (jnlst_);}
+  ConstJnlstPtr Jnlst () const;
 
   /// Check if solution is MINLP feasible
   bool checkNLP (const double *solution, double &obj, bool recompute = false) const;
@@ -544,7 +569,7 @@ class CouenneProblem {
   bool readOptimum (std::string *fname = NULL);
 
   /// Add list of options to be read from file
-  static void registerOptions (SmartPtr <Bonmin::RegisteredOptions> roptions);
+  static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions);
 
   /// standardization of linear exprOp's
   exprAux *linStandardize (bool addAux, 
@@ -713,13 +738,6 @@ protected:
 		  CouNumber *olb,   CouNumber *oub,
 		  bool patient) const;
 };
-
-
-/// Called from simulateBranch when object is not CouenneObject and
-/// therefore needs explicit FBBT
-bool BranchingFBBT (CouenneProblem *problem,
-		    OsiObject *Object,
-		    OsiSolverInterface *solver);
 
 }
 

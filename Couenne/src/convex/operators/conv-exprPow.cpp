@@ -13,6 +13,8 @@
 # define M_E  2.7182818284590452354
 #endif
 
+#include "CouenneCutGenerator.hpp"
+
 #include "CouenneTypes.hpp"
 #include "CouenneRootQ.hpp"
 #include "CouenneExprAux.hpp"
@@ -25,7 +27,6 @@
 #include "CouenneExprLog.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
-#include "CouenneCutGenerator.hpp"
 
 using namespace Couenne;
 

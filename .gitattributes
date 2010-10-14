@@ -32,6 +32,7 @@ Couenne/src/bound_tightening/operators/impliedBounds-exprSum.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-mul.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-sum.cpp -text
 Couenne/src/bound_tightening/tightenBounds.cpp -text
+Couenne/src/branch/BranchCore.cpp -text
 Couenne/src/branch/CouenneBranchingObject.cpp -text
 Couenne/src/branch/CouenneBranchingObject.hpp -text
 Couenne/src/branch/CouenneChooseStrong.cpp -text
@@ -207,6 +208,7 @@ Couenne/src/problem/CouenneProblemElem.hpp -text
 Couenne/src/problem/CouenneSOS.cpp -text
 Couenne/src/problem/CouenneSolverInterface.cpp -text
 Couenne/src/problem/CouenneSolverInterface.hpp -text
+Couenne/src/problem/CouenneSymmetry.cpp -text
 Couenne/src/problem/checkNLP.cpp -text
 Couenne/src/problem/constraint.cpp -text
 Couenne/src/problem/depGraph/CouenneDepGraph.hpp -text

@@ -24,7 +24,7 @@ using namespace Couenne;
 
 void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
 
-  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf ("replacing  "); if (aux)   aux   -> print (); 
     printf (" with ");      if (subst) subst -> print (); 
     printf ("\n");
@@ -105,7 +105,7 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
 	((*i) -> Multiplicity () > 0) &&             // this variable is actually used
 	((*i) -> Index () != (*orig) -> Index ())) { // skip same variable
 
-      if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
 	printf ("replacing aux "); fflush (stdout); (*i) -> print (); 
 	printf (" := "); fflush (stdout); (*i) -> Image () -> print (); 
 	printf ("\n");

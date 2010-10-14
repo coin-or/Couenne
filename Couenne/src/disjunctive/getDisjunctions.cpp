@@ -16,6 +16,12 @@
 
 using namespace Couenne;
 
+/// Called from simulateBranch when object is not CouenneObject and
+/// therefore needs explicit FBBT
+bool BranchingFBBT (CouenneProblem *problem,
+		    OsiObject *Object,
+		    OsiSolverInterface *solver);
+
 /// generate all disjunctions given current point
 int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts *> > &disjs, 
 				      OsiSolverInterface &si, 

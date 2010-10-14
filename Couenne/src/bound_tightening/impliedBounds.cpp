@@ -148,7 +148,7 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
   }
 
   if (nchg)
-    Jnlst () -> Printf (J_DETAILED, J_BOUNDTIGHTENING,
+    Jnlst () -> Printf (Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
 			"  implied bounds: %d changes\n", nchg);
 
   return nchg;

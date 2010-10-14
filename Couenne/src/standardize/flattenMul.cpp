@@ -21,7 +21,7 @@ using namespace Couenne;
 void CouenneProblem::flattenMul (expression *mul, CouNumber &coe, 
 				 std::map <int, CouNumber> &indices) {
 
-  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf ("flatten %d ---> ", mul -> code ()); mul -> print ();
     printf ("\n");
   }
@@ -50,7 +50,7 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
 
     expression *arg = al [i];
 
-    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
       printf ("  flatten arg %d ---> ", arg -> code ()); arg -> print ();
       printf ("\n");
     }

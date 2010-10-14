@@ -8,9 +8,10 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CouenneCutGenerator.hpp"
+
 #include "OsiSolverInterface.hpp"
 #include "CouenneTypes.hpp"
-#include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneExprAbs.hpp"
 #include "CouenneExprAux.hpp"

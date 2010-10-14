@@ -14,18 +14,27 @@
 #include <iostream>
 #include <set>
 
-#include "CouenneJournalist.hpp"
+//#include "CouenneJournalist.hpp"
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneDomain.hpp"
 
+namespace Ipopt {
+  template <class T> class SmartPtr;
+  class OptionsList;
+  class Journalist;
+}
 
 namespace Bonmin {
   class BabSetupBase;
 }
 
 namespace Couenne {
+
+  typedef Ipopt::SmartPtr<Ipopt::Journalist> JnlstPtr;
+  typedef Ipopt::SmartPtr<const Ipopt::Journalist> ConstJnlstPtr;
+
 
 class CouenneCutGenerator;
 

@@ -8,6 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "assert.h"
+
 #include "CoinFinite.hpp"
 
 #include "CouenneExprDiv.hpp"

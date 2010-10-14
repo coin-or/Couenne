@@ -13,10 +13,10 @@
 
 #include "OsiRowCut.hpp"
 
+#include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneOrbitBranchingObj.hpp"
-#include "CouenneCutGenerator.hpp"
 
 using namespace Couenne;
 

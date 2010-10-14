@@ -16,9 +16,10 @@
 # define M_PI_2 1.57079632679489661923
 #endif
 
+#include "CouenneCutGenerator.hpp"
+
 #include "OsiSolverInterface.hpp"
 #include "CouenneTypes.hpp"
-#include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
 //#include "CouenneExpression.hpp"

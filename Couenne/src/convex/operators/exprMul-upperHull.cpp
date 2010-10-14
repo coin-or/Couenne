@@ -8,9 +8,10 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CouenneCutGenerator.hpp"
+
 #include "CouenneExprMul.hpp"
 #include "CouennePrecisions.hpp"
-#include "CouenneCutGenerator.hpp"
 
 namespace Couenne {
 

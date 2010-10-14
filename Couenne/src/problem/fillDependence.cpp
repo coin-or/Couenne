@@ -11,8 +11,8 @@
 #include <vector>
 #include <set>
 
-#include "CouenneProblem.hpp"
 #include "CouenneObject.hpp"
+#include "CouenneProblem.hpp"
 
 using namespace Couenne;
 

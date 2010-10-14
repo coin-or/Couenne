@@ -11,7 +11,6 @@
 
 #include <vector>
 
-#include "CouenneProblem.hpp"
 #include "CouenneExprGroup.hpp"
 #include "CouenneExprAux.hpp"
 
@@ -20,6 +19,9 @@
 #include "CbcCutGenerator.hpp"
 #include "CbcCompareActual.hpp"
 
+#include "CouenneProblem.hpp"
+
+//using namespace Osi;
 using namespace Couenne;
 
 /// find SOS objects
@@ -35,10 +37,10 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
   for (std::vector <exprVar *>::const_iterator v = variables_.begin ();
        v != variables_.end (); ++v) 
 
-    if (((*v) -> Multiplicity () >       0) &&
-	((*v) -> Type         () ==    AUX) &&
-	((*v) -> sign         () == expression::AUX_EQ) &&
-	((*v) -> Image()->code() == COU_EXPRGROUP)) {
+    if (((*v) -> Multiplicity     () >                   0) &&
+	((*v) -> Type             () ==                AUX) &&
+	((*v) -> sign             () == expression::AUX_EQ) &&
+	((*v) -> Image () -> code () ==      COU_EXPRGROUP)) {
 
       expression *img = (*v) -> Image ();
 

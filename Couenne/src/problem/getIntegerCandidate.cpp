@@ -247,7 +247,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	      int result = testIntFix (i, xFrac [i], fixed, xInt,
 				       dualL, dualR, olb, oub, ntrials < maxtrials);
 
-	      jnlst_ -> Printf (J_STRONGWARNING, J_NLPHEURISTIC, 
+	      jnlst_ -> Printf (Ipopt::J_STRONGWARNING, J_NLPHEURISTIC, 
 				"testing %d [%g -> %g], res = %d\n", i, xFrac [i], xInt [i], result);
 
 	      if (result > 0) {
@@ -272,7 +272,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
 	    assert (index < nOrigVars_);
 
-	    jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, 
+	    jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, 
 			      "none fixed, fix %d from %g [%g,%g] [L=%g, R=%g]", 
 			      index, xFrac [index], Lb (index), Ub (index), 
 			      dualL [index], dualR [index]);
@@ -283,7 +283,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	       ((CoinDrand48 () > xFrac [index] - floor (xFrac [index])) ? 
 		floor (xFrac [index]) : ceil (xFrac [index])));
 
-	    jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, " to %g\n", xInt [index]);
+	    jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, " to %g\n", xInt [index]);
 
 	    fixed [index] = FIXED;
 
@@ -349,7 +349,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
       if (checkNLP (x, xp, true)) { // true for recomputing xp
 	setCutOff (xp, x);
-	jnlst_ -> Printf (J_DETAILED, J_NLPHEURISTIC, 
+	jnlst_ -> Printf (Ipopt::J_DETAILED, J_NLPHEURISTIC, 
 			  "new cutoff from getIntCand: %g\n", xp);
       }
     }
@@ -385,7 +385,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
   domain_.pop ();
 
-  jnlst_ -> Printf (J_MOREVECTOR, J_NLPHEURISTIC, "Done with GetIntegerCandidate\n");
+  jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, "Done with GetIntegerCandidate\n");
 
   optimum_ = store_optimum; // restore 
 

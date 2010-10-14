@@ -18,6 +18,12 @@
 
 using namespace Couenne;
 
+/// Called from simulateBranch and from disjunctive cut generators
+/// when object is not CouenneObject and therefore needs explicit FBBT
+bool BranchingFBBT (CouenneProblem *problem,
+		    OsiObject *Object,
+		    OsiSolverInterface *solver);
+
 /// compute Euclidean distance between two points (most likely LP solutions)
 /// l_2 norm by default, but can change it by fourth parameter
 double distance (const double *p1, const double *p2, int size, double k=2.) {
@@ -348,4 +354,47 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
     delete thisSolver;
 
   return status;
+}
+
+/// Called from simulateBranch when object is not CouenneObject and
+/// therefore needs explicit FBBT
+bool BranchingFBBT (CouenneProblem *problem,
+		    OsiObject *Object,
+		    OsiSolverInterface *solver) {
+
+  // do not perform this if object is not a variable object
+
+  bool feasible = true;
+
+  if (problem -> doFBBT ()) {
+
+    int 
+      indVar = Object  -> columnNumber (),
+      nvars  = problem -> nVars ();
+
+    // do not perform this if object is not a variable object
+
+    if (indVar >= 0) {
+
+      t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
+      chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
+      problem -> installCutOff ();
+
+      if ((feasible = problem -> btCore (chg_bds))) {
+
+	const double
+	  *lb = solver -> getColLower (),
+	  *ub = solver -> getColUpper ();
+	  
+	for (int i=0; i<nvars; i++) {
+	  if (problem -> Lb (i) > lb [i]) solver -> setColLower (i, problem -> Lb (i));
+	  if (problem -> Ub (i) < ub [i]) solver -> setColUpper (i, problem -> Ub (i));
+	}
+      }
+
+      delete [] chg_bds;
+    }
+  }
+
+  return feasible;
 }

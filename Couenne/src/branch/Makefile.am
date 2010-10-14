@@ -25,6 +25,7 @@ libCouenneBranch_la_SOURCES = \
 	CouenneComplBranchingObject.cpp \
 	CouenneOrbitObj.cpp \
 	CouenneOrbitBranchingObj.cpp \
+	BranchCore.cpp \
 	CouenneSOSObject.cpp
 
 if COIN_HAS_NTY

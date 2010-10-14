@@ -26,8 +26,9 @@ libCouenneProblem_la_SOURCES = \
 	CouenneRestoreUnused.cpp \
 	reformulate.cpp \
 	CouenneGlobalCutOff.cpp \
+	CouenneSymmetry.cpp \
 	depGraph/depGraph.cpp \
-	depGraph/checkCycles.cpp
+	depGraph/checkCycles.cpp 
 
 # Note: the files below are #included in CouenneSolverInterface.hpp
 # (it's the only way to make templates work -- see also discussions on

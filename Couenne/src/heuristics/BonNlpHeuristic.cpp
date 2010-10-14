@@ -9,17 +9,18 @@
 //
 // Date : 04/09/2007
 
-#include "BonNlpHeuristic.hpp"
+#include "CouenneCutGenerator.hpp"
+
 #include "BonCouenneInterface.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneProblem.hpp"
 #include "CbcCutGenerator.hpp"
-#include "CbcBranchActual.hpp"
+//#include "CbcBranchActual.hpp"
 #include "BonAuxInfos.hpp"
 #include "CoinHelperFunctions.hpp"
 #include "BonOsiTMINLPInterface.hpp"
-#include "CouenneCutGenerator.hpp"
-#include "CouenneProblem.hpp"
+#include "BonNlpHeuristic.hpp"
+//#include "CouenneProblem.hpp"
 
 using namespace Couenne;
 

@@ -13,9 +13,10 @@
 #include "OsiCuts.hpp"
 #include "CoinTime.hpp"
 
-#include "CouennePrecisions.hpp"
-#include "CouenneProblem.hpp"
 #include "CouenneFixPoint.hpp"
+
+#include "CouenneProblem.hpp"
+#include "CouennePrecisions.hpp"
 #include "CouenneExprVar.hpp"
 #include "CouenneInfeasCut.hpp"
 

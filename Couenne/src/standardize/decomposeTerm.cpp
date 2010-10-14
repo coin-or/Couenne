@@ -10,11 +10,13 @@
 
 #include <stdio.h>
 
+#include "CouenneExprQuad.hpp"
+#include "CouenneJournalist.hpp"
+
 #include "CouenneProblem.hpp"
 #include "CouenneExprAux.hpp"
 #include "CouenneExprMul.hpp"
 #include "CouenneExprPow.hpp"
-#include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
 
 using namespace Couenne;
@@ -110,7 +112,7 @@ void CouenneProblem::decomposeTerm (expression *term,
     // return list of variables (some of which auxiliary)
     flattenMul (term, coe, indices);
 
-    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+    if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
       printf ("from flattenmul: [%g] ", coe);
       for (std::map <int, CouNumber>::iterator itt = indices.begin ();
 	   itt != indices.end(); ++itt)

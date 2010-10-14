@@ -9,9 +9,10 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "CouenneGlobalCutOff.hpp"
 #include "CoinFinite.hpp"
 #include "CoinHelperFunctions.hpp"
+
+#include "CouenneGlobalCutOff.hpp"
 
 using namespace Couenne;
 

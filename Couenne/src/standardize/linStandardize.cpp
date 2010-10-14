@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 
+#include "CouenneExprQuad.hpp"
+
 #include "CouenneProblem.hpp"
 #include "CouenneExprAux.hpp"
 #include "CouenneExprSum.hpp"
@@ -18,7 +20,6 @@
 #include "CouenneExprMul.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneExprGroup.hpp"
-#include "CouenneExprQuad.hpp"
 #include "CouenneLQelems.hpp"
 
 using namespace Couenne;
@@ -124,7 +125,7 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
   delete [] qj;
   delete [] qc;
 
-  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf ("\nlinstand (addaux = %d) ==> ", addAux); 
     ret -> print (); printf ("\n"); 
     //  ret -> Image () -> print (); printf ("\n");

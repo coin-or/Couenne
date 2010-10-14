@@ -8,8 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
+#include "CouenneProblem.hpp"
 #include "CouenneDisjCuts.hpp"
 
 using namespace Couenne;

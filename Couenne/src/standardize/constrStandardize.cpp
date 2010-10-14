@@ -35,7 +35,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
   // least one variable that did not show up so far (need a problem
   // structure)
 
-  if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+  if (p -> Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf ("################################\nStandardizing constraint: "); print ();
 
     printf (" ["); fflush (stdout); lb_ -> print ();
@@ -109,7 +109,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
       p -> Commuted () [wind] = true;
 
-      if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      if (p -> Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
 	printf ("---> %d & ", wind); fflush (stdout);
 	rest -> print (); printf ("[sign: %d]\n", aSign);
       }
@@ -145,7 +145,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 				  exprAux::Integer : exprAux::Continuous,
 				  p -> domain (), aSign);
 
-// 	if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+// 	if (p -> Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
 
 // 	  printf ("AuxSet:\n");
 // 	  for (std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> begin ();
@@ -169,7 +169,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	  p -> AuxSet      () -> insert (w); // 1) beware of useless copies
 	  p -> getDepGraph () -> insert (w); // 2) introduce it in acyclic structure
 
-	  if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	  if (p -> Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
 	    printf ("now replacing x [%d] with ", wind); fflush (stdout);
 	    w -> print (); printf (" := ");
 	    w -> Image () -> print (); printf ("\n");
@@ -182,7 +182,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
 	else {
 
-	  if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	  if (p -> Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
 	    printf ("found aux occurrence of "); fflush (stdout);
 	    w -> print (); printf (" := ");
 	    w -> Image () -> print (); printf (" ... ");
@@ -219,7 +219,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
     }
   }
 
-  if (p -> Jnlst () -> ProduceOutput (J_ALL, J_REFORMULATE))
+  if (p -> Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE))
     printf ("\nnormal\n-----------------\n");
 
   //body_ -> standardize (p, false); // TODO: check!

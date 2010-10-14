@@ -10,12 +10,13 @@
 
 #include <math.h>
 
+#include "CouenneCutGenerator.hpp"
+
 #include "CouenneTypes.hpp"
 #include "CouenneRootQ.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
-#include "CouenneCutGenerator.hpp"
 #include "CouenneFunTriplets.hpp"
 
 namespace Couenne {

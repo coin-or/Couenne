@@ -10,12 +10,13 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "CouenneCutGenerator.hpp"
+
 #include "BonTNLPSolver.hpp"
 #include "BonNlpHeuristic.hpp"
 #include "CoinHelperFunctions.hpp"
 #include "BonCouenneInfo.hpp"
 
-#include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneExprVar.hpp"
 #include "CouenneProblemElem.hpp"

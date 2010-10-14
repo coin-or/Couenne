@@ -16,11 +16,29 @@
 #include "getstub.h"
 #endif
 
+#include "OsiClpSolverInterface.hpp"
+#ifdef COIN_HAS_CPX
+#include "OsiCpxSolverInterface.hpp"
+#endif
+
+// MILP cuts
+#include "CglGomory.hpp"
+#include "CglProbing.hpp"
+#include "CglKnapsackCover.hpp"
+#include "CglOddHole.hpp"
+#include "CglClique.hpp"
+#include "CglFlowCover.hpp"
+#include "CglMixedIntegerRounding2.hpp"
+#include "CglTwomir.hpp"
+#include "CglPreProcess.hpp"
+#include "CglLandP.hpp"
+#include "CglRedSplit.hpp"
+
 #include "BonCouenneSetup.hpp"
-#include "BonInitHeuristic.hpp"
-#include "BonNlpHeuristic.hpp"
 #include "CouenneFeasPump.hpp"
 #include "BonCouenneInterface.hpp"
+#include "BonInitHeuristic.hpp"
+#include "BonNlpHeuristic.hpp"
 
 #include "BonGuessHeuristic.hpp"
 #include "CbcCompareActual.hpp"
@@ -42,23 +60,6 @@
 #include "BonCbcNode.hpp"
 #include "BonCbc.hpp"
 
-#include "OsiClpSolverInterface.hpp"
-#ifdef COIN_HAS_CPX
-#include "OsiCpxSolverInterface.hpp"
-#endif
-
-// MILP cuts
-#include "CglGomory.hpp"
-#include "CglProbing.hpp"
-#include "CglKnapsackCover.hpp"
-#include "CglOddHole.hpp"
-#include "CglClique.hpp"
-#include "CglFlowCover.hpp"
-#include "CglMixedIntegerRounding2.hpp"
-#include "CglTwomir.hpp"
-#include "CglPreProcess.hpp"
-#include "CglLandP.hpp"
-#include "CglRedSplit.hpp"
 
 using namespace Couenne;
   
@@ -279,7 +280,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     // allocate sufficient space for both nonlinear variables and SOS's
     objects = new OsiObject* [couenneProb_ -> nCons () + nVars];
 
-    nSOS = couenneProb_ -> findSOS (&(bb -> model()), nonlinearSolver (), objects);
+    nSOS = couenneProb_ -> findSOS (&(bb -> model()), dynamic_cast <OsiSolverInterface *> (nonlinearSolver ()), objects);
 
     nonlinearSolver () -> addObjects (nSOS, objects);
 

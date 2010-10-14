@@ -8,8 +8,9 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "CouenneTypes.hpp"
 #include "CouenneCutGenerator.hpp"
+
+#include "CouenneTypes.hpp"
 #include "CouenneExprSub.hpp"
 #include "CouenneExprOpp.hpp"
 #include "CouenneExprAux.hpp"

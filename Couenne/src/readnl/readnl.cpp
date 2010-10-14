@@ -10,6 +10,12 @@
 
 #include "asl.h"
 
+#include "nlp.h"
+#include "getstub.h"
+#include "opcode.hd"
+
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneProblem.hpp"
 
 #if   defined HAVE_CSTDINT
@@ -18,14 +24,7 @@
 #include "stdint.h"
 #endif
 
-#include "nlp.h"
-#include "getstub.h"
-#include "opcode.hd"
-
-#include "CoinHelperFunctions.hpp"
-
 #include "CouenneTypes.hpp"
-
 #include "CouenneExprSum.hpp"
 #include "CouenneExprMul.hpp"
 #include "CouenneExprClone.hpp"

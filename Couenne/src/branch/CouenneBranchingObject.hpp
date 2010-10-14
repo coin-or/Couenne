@@ -87,6 +87,9 @@ public:
   expression *variable ()
   {return variable_;}
 
+  /// Perform branching step
+  void branchCore (OsiSolverInterface *, int, int, bool, double);
+
 protected:
 
   /// Pointer to CouenneCutGenerator (if any); if not NULL, allows to

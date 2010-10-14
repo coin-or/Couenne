@@ -76,7 +76,7 @@ am__libCouenneBranch_la_SOURCES_DIST = CouenneThreeWayBranchObj.cpp \
 	infeasibility.cpp infeasibilityVT.cpp feasibleRegion.cpp \
 	CouenneComplObject.cpp CouenneComplBranchingObject.cpp \
 	CouenneOrbitObj.cpp CouenneOrbitBranchingObj.cpp \
-	CouenneSOSObject.cpp Nauty.cpp
+	BranchCore.cpp CouenneSOSObject.cpp Nauty.cpp
 @COIN_HAS_NTY_TRUE@am__objects_1 = Nauty.lo
 am_libCouenneBranch_la_OBJECTS = CouenneThreeWayBranchObj.lo \
 	CouenneBranchingObject.lo CouenneObject.lo CouenneVarObject.lo \
@@ -84,7 +84,7 @@ am_libCouenneBranch_la_OBJECTS = CouenneThreeWayBranchObj.lo \
 	doStrongBranching.lo projections.lo infeasibility.lo \
 	infeasibilityVT.lo feasibleRegion.lo CouenneComplObject.lo \
 	CouenneComplBranchingObject.lo CouenneOrbitObj.lo \
-	CouenneOrbitBranchingObj.lo CouenneSOSObject.lo \
+	CouenneOrbitBranchingObj.lo BranchCore.lo CouenneSOSObject.lo \
 	$(am__objects_1)
 libCouenneBranch_la_OBJECTS = $(am_libCouenneBranch_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -323,7 +323,7 @@ libCouenneBranch_la_SOURCES = CouenneThreeWayBranchObj.cpp \
 	infeasibility.cpp infeasibilityVT.cpp feasibleRegion.cpp \
 	CouenneComplObject.cpp CouenneComplBranchingObject.cpp \
 	CouenneOrbitObj.cpp CouenneOrbitBranchingObj.cpp \
-	CouenneSOSObject.cpp $(am__append_1)
+	BranchCore.cpp CouenneSOSObject.cpp $(am__append_1)
 
 # 	operators/branchExprAbs.cpp \
 # 	operators/branchExprExp.cpp \
@@ -409,6 +409,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BranchCore.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneBranchingObject.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneChooseStrong.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneChooseVariable.Plo@am__quote@

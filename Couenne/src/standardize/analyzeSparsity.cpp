@@ -13,10 +13,10 @@
 #include <map>
 #include <set>
 
+#include "CouenneExprQuad.hpp"
 #include "CouenneTypes.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneExprAux.hpp"
-#include "CouenneExprQuad.hpp"
 #include "CouenneExprMul.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneLQelems.hpp"
@@ -57,7 +57,7 @@ void CouenneProblem::analyzeSparsity (CouNumber c0,
     } else nsquares++;
   }
 
-  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf ("qmap has %d element, occur has %d, md*s*(s+1)/2 = %g\n", 
 	    qmap.Map().size (), 
 	    occur.size (),

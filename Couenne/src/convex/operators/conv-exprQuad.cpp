@@ -13,10 +13,11 @@
 #include "OsiRowCut.hpp"
 #include "OsiCuts.hpp"
 
+#include "CouenneCutGenerator.hpp"
+
 #include "CouenneExprAux.hpp"
 #include "CouenneExprQuad.hpp"
 #include "CouenneExprBQuad.hpp"
-#include "CouenneCutGenerator.hpp"
 
 using namespace Couenne;
 

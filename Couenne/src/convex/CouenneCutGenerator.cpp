@@ -10,8 +10,9 @@
 
 #include "CglCutGenerator.hpp"
 
-#include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
+
+#include "CouenneProblem.hpp"
 #include "CouenneChooseStrong.hpp"
 #include "CouenneChooseVariable.hpp"
 

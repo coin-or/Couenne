@@ -8,12 +8,12 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#include "CouenneExprQuad.hpp"
+#include "CoinHelperFunctions.hpp"
 
-#include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
-#include "CoinHelperFunctions.hpp"
+#include "CouenneExprQuad.hpp"
+#include "CouenneProblem.hpp"
 
 using namespace Couenne;
 

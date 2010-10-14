@@ -17,10 +17,14 @@ double Nauty::nautyTime_ = 0.0;
 
 Nauty::Nauty(int vertices)
 {
+
   n_ = vertices;
   m_ = (n_ + WORDSIZE - 1)/WORDSIZE;
 
-  nauty_check(WORDSIZE, m_, n_, NAUTYVERSIONID);
+  printf ("size of long = %d (%d)\nwordsize = %d\nn,m = %d,%d\n", 
+          SIZEOF_LONG, sizeof (long), WORDSIZE, n_, m_);
+
+  nauty_check (WORDSIZE, m_, n_, NAUTYVERSIONID);
 
   G_ = (graph *) malloc(m_ * n_ * sizeof(int));
   lab_ = (int *) malloc(n_ * sizeof(int));  

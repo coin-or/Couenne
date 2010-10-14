@@ -14,6 +14,8 @@
 
 #include "BonBabSetupBase.hpp"
 
+#include "config_couenne.h"
+
 #include "CouenneTypes.hpp"
 
 #include "CouenneExprVar.hpp"
@@ -147,11 +149,13 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
   createUnusedOriginals ();
 
-#ifdef COIN_HAS_NTY
-  sym_setup();
-  Compute_Symmetry();
-  Print_Orbits();
-#endif
+  setupSymmetry ();
+
+// #ifdef COIN_HAS_NTY
+//   sym_setup();
+//   Compute_Symmetry();
+//   Print_Orbits();
+// #endif
 
   //writeAMPL ("extended-aw.mod", true);
   //writeAMPL ("original.mod", false);

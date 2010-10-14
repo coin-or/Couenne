@@ -11,7 +11,7 @@
 #ifndef COUENNE_CUT_GENERATOR_HPP
 #define COUENNE_CUT_GENERATOR_HPP
 
-#include "BonRegisteredOptions.hpp"
+//#include "BonRegisteredOptions.hpp"
 
 #include "BonOaDecBase.hpp"
 #include "CglCutGenerator.hpp"
@@ -20,8 +20,40 @@
 #include "BonBabInfos.hpp"
 #include "OsiSolverInterface.hpp"
 
-#include "CouenneTypes.hpp"
+#undef PACKAGE
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_VERSION
+#undef PACKAGE_TARNAME
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef VERSION
+
 #include "CouenneJournalist.hpp"
+
+#undef PACKAGE
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_VERSION
+#undef PACKAGE_TARNAME
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef VERSION
+
+#include "config_couenne.h"
+
+#include "CouenneTypes.hpp"
+
+namespace Ipopt {
+  template <class T> class SmartPtr;
+  class OptionsList;
+  class Journalist;
+}
+
+namespace Bonmin {
+  class RegisteredOptions;
+  class BabInfo;
+  class OsiTMINLPInterface;
+  class BabSetupBase;
+}
 
 struct ASL;
 
@@ -222,7 +254,7 @@ class CouenneCutGenerator: public CglCutGenerator {
   inline ConstJnlstPtr Jnlst() const 
   {return ConstPtr (jnlst_);}
 
-  void setJnlst(JnlstPtr jnlst__)
+  void setJnlst (JnlstPtr jnlst__)
   { jnlst_ = jnlst__; }
 
   /// Time spent at root node

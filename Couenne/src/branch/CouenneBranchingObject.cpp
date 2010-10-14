@@ -14,11 +14,12 @@
 #include "OsiRowCut.hpp"
 
 //#include "CouenneSolverInterface.hpp"
+#include "CouenneCutGenerator.hpp"
+
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
-#include "CouenneCutGenerator.hpp"
 
 using namespace Couenne;
 
@@ -148,32 +149,38 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
   */
 
 
-  //_______ Jim's adding stuff ________
+  branchCore (solver, index, way, integer, brpt);
 
-#ifdef COIN_HAS_NTY
-  problem_ -> ChangeBounds( solver -> getColLower (),  solver -> getColUpper (), solver -> getNumCols ());
-  problem_ -> Compute_Symmetry();
+//   //_______ Jim's adding stuff ________
+
+// #ifdef COIN_HAS_NTY
+//   problem_ -> ChangeBounds( solver -> getColLower (),  solver -> getColUpper (), solver -> getNumCols ());
+//   problem_ -> Compute_Symmetry();
   
-  std::vector< int > branch_orbit;
-  //  problem_ -> Print_Orbits();
-  //printf("branching on var %i \n", index);
-  branch_orbit = problem_ -> Find_Orbit(index);
-  /*
-  if(branch_orbit.size() >= 2){
-    printf("branching on orbit of size %i \n", branch_orbit.size());
-    problem_ -> Print_Orbits();
-  }
-  */
-  if (!way) solver -> setColUpper (index, integer ? floor (brpt) : brpt); // down branch
-  else {
-    for (std::vector<int>::iterator it = branch_orbit.begin(); it!=branch_orbit.end(); ++it) 
-      solver -> setColLower (*it, integer ? ceil  (brpt) : brpt); // up   branch
-    
-  }
-  
-#endif
-  
-  
+//   std::vector< int > branch_orbit;
+//   //  problem_ -> Print_Orbits();
+//   //printf("branching on var %i \n", index);
+//   branch_orbit = problem_ -> Find_Orbit(index);
+//   /*
+//   if(branch_orbit.size() >= 2){
+//     printf("branching on orbit of size %i \n", branch_orbit.size());
+//     problem_ -> Print_Orbits();
+//   }
+//   */
+// #endif
+
+//   if (!way) solver -> setColUpper (index, integer ? floor (brpt) : brpt); // down branch
+//   else {
+
+//     solver -> setColLower (index, integer ? ceil (brpt) : brpt); // up branch
+
+// #ifdef COIN_HAS_NTY
+//     for (std::vector<int>::iterator it = branch_orbit.begin(); it!=branch_orbit.end(); ++it) 
+//       solver -> setColLower (*it, integer ? ceil  (brpt) : brpt); // up   branch
+// #endif
+
+//   }
+
   //CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
   //CouenneProblem *p = cutGen_ -> Problem ();
   //couenneSolver -> CutGen () -> Problem ();
@@ -188,10 +195,7 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
   if ((doFBBT_ && problem_ -> doFBBT ()) ||
       (doConvCuts_ && simulate_ && cutGen_)) {
 
-    problem_ -> domain () -> push (nvars,
-				   solver -> getColSolution (), 
-				   solver -> getColLower    (), 
-				   solver -> getColUpper    ()); // have to alloc+copy
+    problem_ -> domain () -> push (solver); // have to alloc+copy
 
     t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
 
