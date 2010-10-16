@@ -8,6 +8,7 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <set>
 #include <stdlib.h>
 
 #include "BonCbc.hpp"
@@ -58,7 +59,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
   static int nBadColMatWarnings = 0;
 
-  std::vector <std::pair <int, int> > pairs;
+  std::set <std::pair <int, int> > pairs;
 
 #define USE_ROW
 
@@ -173,6 +174,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
   //printf ("looking at a problem with %d, %d\n", m, n);
 
+  // scan all columns
   for (int i=0; i<n; i++, sta++) {
 
     int nEl = *(sta+1) - *sta;
@@ -198,6 +200,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	  totalTime_ += CoinCpuTime () - now;
 
 	  problem_ -> domain () -> pop ();
+
+	  totalInitTime_ += CoinCpuTime () - now;
 
 	  return; 
 	}
@@ -227,7 +231,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	    )
 	  continue;
 
-	pairs.push_back (std::pair <int, int> (indj, indk));
+	pairs.insert (std::pair <int, int> (indj, indk));
       }
   }
 
@@ -278,7 +282,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     // scan all pairs. All are potential pairs of inequalities that
     // can give a better (combined) implied bound
 
-    for (std::vector <std::pair <int, int> >:: iterator p = pairs.begin (); p != pairs.end (); ++p) {
+    for (std::set <std::pair <int, int> >:: iterator p = pairs.begin (); p != pairs.end (); ++p) {
 
       // indices of the two inequalities
 
@@ -404,6 +408,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
 	result = -1;
 	break;
+
       } else{
 
 	// update tightened bounds from problem to clb
@@ -419,6 +424,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     ntightened += nCurTightened;
 
   } while (++ntrials < nMaxTrials_ && nCurTightened);
+
+  totalInitTime_ += CoinCpuTime () - now;
 
   // check if bounds improved, in that case create OsiColCuts
 

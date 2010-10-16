@@ -534,10 +534,8 @@ int combine (CouenneProblem *p,
 	tickMax = 0; //                                                        max   
 
       double
-
 	sa1i = sa1 [indVar],
 	sa2i = sa2 [indVar],
-
 	ci = alpha * sa1i + (1. - alpha) * sa2i; // combination of coefficients
 
       // ignore variables whose coefficient is cancelled by this
@@ -616,39 +614,31 @@ int combine (CouenneProblem *p,
 
       } else {
 
-	if ((l1 >= -COUENNE_INFINITY) && 
-	    (l2 >= -COUENNE_INFINITY) &&
+	if ((l1 > -COUENNE_INFINITY) && 
+	    (l2 > -COUENNE_INFINITY) &&
 	    (pInfs == tickMax)) {
-
-#ifdef DEBUG
-	  printf ("    \
-attempting newL = ((l1 - l2 - (maxSum1 - maxSum2) + (subMax1 - subMax2)) * alpha + l2 - maxSum2 + subMax2) / ci\n    \
-((%g - %g - (%g - %g) + (%g - %g)) * %g + %g - %g + %g) / %g",
-		  l1, l2, maxSum1, maxSum2, subMax1, subMax2, alpha, l2, maxSum2, subMax2, ci);
-#endif
 
 	  newL = ((l1 - l2 - (maxSum1 - maxSum2) + (subMax1 - subMax2)) * alpha + l2 - maxSum2 + subMax2) / ci;
 
 #ifdef DEBUG
-	  printf (" = %g\n", newL);
+	  printf ("    \
+attempting newL = ((l1 - l2 - (maxSum1 - maxSum2) + (subMax1 - subMax2)) * alpha + l2 - maxSum2 + subMax2) / ci\n    \
+((%g - %g - (%g - %g) + (%g - %g)) * %g + %g - %g + %g) / %g = %g\n",
+		  l1, l2, maxSum1, maxSum2, subMax1, subMax2, alpha, l2, maxSum2, subMax2, ci, newL);
 #endif
 	}
 
-	if ((u1 <=  COUENNE_INFINITY) && 
-	    (u2 <=  COUENNE_INFINITY) &&
+	if ((u1 <  COUENNE_INFINITY) && 
+	    (u2 <  COUENNE_INFINITY) &&
 	    (mInfs == tickMin)) {
-
-#ifdef DEBUG
-	  printf ("    \
-attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha + u2 - minSum2 + subMin2) / ci\n    \
-((%g - %g - (%g - %g) + (%g - %g)) * %g + %g - %g + %g) / %g",
-		  u1, u2, minSum1, minSum2, subMin1, subMin2, alpha, u2, minSum2, subMin2, ci);
-#endif
 
 	  newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha + u2 - minSum2 + subMin2) / ci;
 
 #ifdef DEBUG
-	  printf (" = %g\n", newU);
+	  printf ("    \
+attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha + u2 - minSum2 + subMin2) / ci\n    \
+((%g - %g - (%g - %g) + (%g - %g)) * %g + %g - %g + %g) / %g = %g\n",
+		  u1, u2, minSum1, minSum2, subMin1, subMin2, alpha, u2, minSum2, subMin2, ci, newU);
 #endif
 	}
 
@@ -703,7 +693,10 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
       if (newL > clbi + COUENNE_EPS) {
 
 	ntightened++;
+
+	p -> Lb (indVar) = newL;
 	newLB. push_back (std::pair <int, double> (indVar, newL));
+
 #ifdef DEBUG
 	printf ("    new lower bound: x%d >= %g [%g]\n", indVar, newL, clb [indVar]);
 #endif
@@ -712,7 +705,10 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
       if (newU < cubi - COUENNE_EPS) {
 
 	ntightened++;
+
+	p -> Ub (indVar) = newU;
 	newUB. push_back (std::pair <int, double> (indVar, newU));
+
 #ifdef DEBUG
 	printf ("    new upper bound: x%d <= %g [%g]\n", indVar, newU, cub [indVar]);
 #endif

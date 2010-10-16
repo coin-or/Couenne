@@ -210,6 +210,9 @@ namespace Couenne {
 
     /// Total CPU time spent separating cuts
     mutable double totalTime_;
+
+    /// CPU time spent columning the row formulation
+    mutable double totalInitTime_;
   };
 }
 

@@ -24,7 +24,8 @@ CouenneTwoImplied::CouenneTwoImplied (CouenneProblem *p,
 				      const Ipopt::SmartPtr <Ipopt::OptionsList> options):
   problem_   (p),
   jnlst_     (jnlst),
-  totalTime_ (0.) {
+  totalTime_ (0.),
+  totalInitTime_ (0.) {
 
   options -> GetIntegerValue ("two_implied_max_trials", nMaxTrials_, "couenne.");
 }
@@ -37,12 +38,12 @@ CouenneTwoImplied::CouenneTwoImplied (const CouenneTwoImplied &src):
   problem_        (src.problem_),
   jnlst_          (src.jnlst_),
   nMaxTrials_     (src.nMaxTrials_),
-  totalTime_      (src.totalTime_) {}
-
+  totalTime_      (src.totalTime_),
+  totalInitTime_      (src.totalInitTime_) {}
 
 /// destructor
 CouenneTwoImplied::~CouenneTwoImplied () {
-  printf ("TwoImpliedCuts: %g seconds\n", totalTime_);
+  printf ("TwoImpliedCuts: %g seconds (%g init)\n", totalTime_, totalInitTime_);
 }
 
 
