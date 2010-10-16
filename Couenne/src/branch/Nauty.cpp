@@ -36,7 +36,7 @@ Nauty::Nauty(int vertices)
 
   /// Apparently sizes are skewed on 64bit machines
 
-#define MULTIPLIER 4
+#define MULTIPLIER 2
 
   G_ = (graph *) malloc(MULTIPLIER * m_ * n_ * sizeof(int));
   lab_ = (int *) malloc(MULTIPLIER * n_ * sizeof(int));  

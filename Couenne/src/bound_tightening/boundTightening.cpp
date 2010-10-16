@@ -177,8 +177,8 @@ bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds,
   //     if (Ub (i) >  SMALL_BOUND) Ub (i) =  SMALL_BOUND;
   //   } 
 
-  Jnlst()->Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING,
-		   "Feasibility-based Bound Tightening\n");
+  Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING,
+		      "Feasibility-based Bound Tightening\n");
 
   int objInd = Obj (0) -> Body () -> Index ();
 
@@ -244,8 +244,6 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
   //Compute symmetry group
   //  ChangeBounds( psi -> getColLower (),  psi -> getColUpper (), psi -> getNumCols ());
   //Compute_Symmetry();
-
-  
   
   int 
     nchanges = 0,

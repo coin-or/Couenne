@@ -275,7 +275,6 @@ void CouenneProblem::Compute_Symmetry() const{
       //       else
       // j = node_info. end();
       color++;
-
     }
   }
 

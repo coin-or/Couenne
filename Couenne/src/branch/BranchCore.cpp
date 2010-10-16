@@ -51,7 +51,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
     if (!way) {
 
       jnlst_ -> Printf (J_ERROR, J_BRANCHING, 
-			"bCore: x%3d <= %g [%g,%g]\n", 
+			"Branch: x%d <= %g [%g,%g]\n", 
 			indVar, 
 			integer ? floor (brpt) : brpt,
 			solver -> getColLower () [indVar], 
@@ -61,10 +61,13 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
     } else {
 
+      jnlst_ -> Printf (J_ERROR, J_BRANCHING, 
+			"Branch Symm:");
+
       for (std::vector<int>::iterator it = branch_orbit.begin (); it != branch_orbit.end (); ++it)  {
 
 	jnlst_ -> Printf (J_ERROR, J_BRANCHING, 
-			  "BCORESYMM---: x%3d >= %g [%g,%g]\n", 
+			  " x%d >= %g; ", 
 			  *it, 
 			  integer ? ceil (brpt) : brpt,
 			  solver -> getColLower () [*it], 
@@ -72,6 +75,8 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
 	solver -> setColLower (*it, integer ? ceil  (brpt) : brpt); // up   branch
       }
+
+      jnlst_ -> Printf (J_ERROR, J_BRANCHING, "\n");
     }
 
     return;
@@ -84,7 +89,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
   if (!way) {
 
     jnlst_ -> Printf (J_ERROR, J_BRANCHING, 
-		      "bCore: x%3d <= %g [%g,%g]\n", 
+		      "Branch: x%d <= %g [%g,%g]\n", 
 		      indVar, 
 		      integer ? floor (brpt) : brpt,
 		      solver -> getColLower () [indVar], 
@@ -94,7 +99,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
   } else {
 
     jnlst_ -> Printf (J_ERROR, J_BRANCHING, 
-		      "bCore: x%3d >= %g [%g,%g]\n", 
+		      "Branch: x%d >= %g [%g,%g]\n", 
 		      indVar, 
 		      integer ? ceil (brpt) : brpt,
 		      solver -> getColLower () [indVar], 
