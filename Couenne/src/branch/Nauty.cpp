@@ -1,4 +1,12 @@
-//$Id: Nauty.cpp,v 1.6 2008-10-07 11:42:00 jeff Exp $
+/* $Id:$ 
+ *
+ * Name:    Nauty.cpp
+ * Authors: Jim Ostrowski
+ * Purpose: Branching with symmetry -- implementation of the Nauty object
+ * Date:    October 13, 2010
+ *
+ * This file is licensed under the Common Public License (CPL)
+ */
 
 #include <cassert>
 #include <cmath>
@@ -21,20 +29,24 @@ Nauty::Nauty(int vertices)
   n_ = vertices;
   m_ = (n_ + WORDSIZE - 1)/WORDSIZE;
 
-  printf ("size of long = %d (%d)\nwordsize = %d\nn,m = %d,%d\n", 
-          SIZEOF_LONG, sizeof (long), WORDSIZE, n_, m_);
+  //printf ("size of long = %d (%d)\nwordsize = %d\nn,m = %d,%d\n", 
+  //          SIZEOF_LONG, sizeof (long), WORDSIZE, n_, m_);
 
   nauty_check (WORDSIZE, m_, n_, NAUTYVERSIONID);
 
-  G_ = (graph *) malloc(m_ * n_ * sizeof(int));
-  lab_ = (int *) malloc(n_ * sizeof(int));  
-  ptn_ = (int *) malloc(n_ * sizeof(int));
+  /// Apparently sizes are skewed on 64bit machines
+
+#define MULTIPLIER 4
+
+  G_ = (graph *) malloc(MULTIPLIER * m_ * n_ * sizeof(int));
+  lab_ = (int *) malloc(MULTIPLIER * n_ * sizeof(int));  
+  ptn_ = (int *) malloc(MULTIPLIER * n_ * sizeof(int));
   active_ = NULL;
-  orbits_ = (int *) malloc(n_ * sizeof(int));
-  options_ = (optionblk *) malloc(sizeof(optionblk));
-  stats_ = (statsblk *) malloc(sizeof(statsblk));
+  orbits_ = (int *) malloc(MULTIPLIER * n_ * sizeof(int));
+  options_ = (optionblk *) malloc(MULTIPLIER * sizeof(optionblk));
+  stats_ = (statsblk *) malloc(MULTIPLIER * sizeof(statsblk));
   worksize_ = 100*m_;
-  workspace_ = (setword *) malloc(worksize_*sizeof(setword));
+  workspace_ = (setword *) malloc(MULTIPLIER * worksize_*sizeof(setword));
   canonG_ = NULL;
   if (G_ == 0 || lab_ == 0 || ptn_ == 0 || 
       orbits_ == 0 || options_ == 0 || stats_ == 0 ||
@@ -318,13 +330,4 @@ Nauty::unsetWriteAutoms()
   fclose(afp_);
   options_->writeautoms = FALSE;
 }
-*/
-
-
-/* 
-  Local Variables:
-  mode: c++
-  eval: (c-set-style "gnu")
-  eval: (setq indent-tabs-mode nil)
-  End:
 */

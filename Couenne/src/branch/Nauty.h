@@ -5,6 +5,7 @@
  * Purpose: Branching with symmetry
  * Date:    October 13, 2010
  *
+ * This file is licensed under the Common Public License (CPL)
  */
 
 #ifndef NAUTY_H

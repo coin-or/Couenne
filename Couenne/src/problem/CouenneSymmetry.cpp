@@ -23,6 +23,8 @@ using namespace Couenne;
 
 #ifdef COIN_HAS_NTY
 
+#include "Nauty.h"
+
 void Node::node(int i, double c , double l, double u, int cod){
   index = i;
   coeff = c;
@@ -283,13 +285,13 @@ void CouenneProblem::Compute_Symmetry() const{
   
 void CouenneProblem::Print_Orbits(){
 
-  printf("num gens = %d, num orbits = %d \n", nauty_info -> getNumGenerators(), nauty_info -> getNumOrbits() );
+  //printf("num gens = %d, num orbits = %d \n", nauty_info -> getNumGenerators(), nauty_info -> getNumOrbits() );
 
   std::vector<std::vector<int> > new_orbits = nauty_info->getOrbits();
 
-  printf("There were %d orbits and %d generators\n",
-	 nauty_info->getNumOrbits(),
-	 nauty_info->getNumGenerators());
+  //printf("There were %d orbits and %d generators\n",
+  //nauty_info->getNumOrbits(),
+  //nauty_info->getNumGenerators());
 
 #if 0
   for (unsigned int i = 0; i < new_orbits.size(); i++) {

@@ -34,18 +34,6 @@
 
 #include "config_couenne.h"
 
-#ifdef COIN_HAS_NTY
-#include "Nauty.h"
-#endif
-
-/*
-extern "C" {
-#include <nauty.h>
-}
-*/
-
-//using namespace Ipopt;
-
 class CglTreeInfo;
 
 namespace Ipopt {
@@ -72,7 +60,7 @@ struct expr;
 
 class CoinWarmStart;
 
-//class Nauty;
+class Nauty;
 
 #ifdef COIN_HAS_NTY
   class Node{
