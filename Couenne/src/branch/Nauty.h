@@ -45,7 +45,7 @@ public:
   int getNumOrbits() const;
 
   /// Returns the orbits in a "convenient" form
-  std::vector<std::vector<int> > getOrbits() const;
+  std::vector<std::vector<int> > *getOrbits() const;
 
   void getVstat(double *v, int nv);
 

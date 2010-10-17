@@ -485,6 +485,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   delete [] cub;
   delete [] sa1;
   delete [] sa2; 
+  delete [] chg_bds;
 
   problem_ -> domain () -> pop ();
 

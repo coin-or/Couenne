@@ -350,13 +350,13 @@ int combine (CouenneProblem *p,
 
     if        (a2i < 0.) {
 
-      if (cub1 <   COUENNE_INFINITY) minSum1 += a1i * cub1;
-      if (clb1 > - COUENNE_INFINITY) maxSum1 += a1i * clb1;
-
-    } else if (a2i > 0.) {
-
-      if (clb1 > - COUENNE_INFINITY) minSum1 += a1i * clb1;
-      if (cub1 <   COUENNE_INFINITY) maxSum1 += a1i * cub1;
+      if (cub1 >   COUENNE_INFINITY/10) {if (fabs (sa2 [indVar1]) == 0.) mInfs ++;} else minSum1 += a1i * cub1;
+      if (clb1 < - COUENNE_INFINITY/10) {if (fabs (sa2 [indVar1]) == 0.) pInfs ++;} else maxSum1 += a1i * clb1;
+				                                                         
+    } else if (a2i > 0.) {	                                                         
+				                                                         
+      if (clb1 < - COUENNE_INFINITY/10) {if (fabs (sa2 [indVar1]) == 0.) mInfs ++;} else minSum1 += a1i * clb1;
+      if (cub1 >   COUENNE_INFINITY/10) {if (fabs (sa2 [indVar1]) == 0.) pInfs ++;} else maxSum1 += a1i * cub1;
     }
   }
 
@@ -373,13 +373,13 @@ int combine (CouenneProblem *p,
 
     if (a2i < 0.) {
 
-      if (cub2 >=   COUENNE_INFINITY) mInfs ++; else minSum2 += a2i * cub2;
-      if (clb2 <= - COUENNE_INFINITY) pInfs ++; else maxSum2 += a2i * clb2;
+      if (cub2 >   COUENNE_INFINITY/10) mInfs ++; else minSum2 += a2i * cub2;
+      if (clb2 < - COUENNE_INFINITY/10) pInfs ++; else maxSum2 += a2i * clb2;
 
     } else {
 
-      if (clb2 <= - COUENNE_INFINITY) mInfs ++; else minSum2 += a2i * clb2;
-      if (cub2 >=   COUENNE_INFINITY) pInfs ++; else maxSum2 += a2i * cub2;
+      if (clb2 < - COUENNE_INFINITY/10) mInfs ++; else minSum2 += a2i * clb2;
+      if (cub2 >   COUENNE_INFINITY/10) pInfs ++; else maxSum2 += a2i * cub2;
     }
   }
 
@@ -452,7 +452,7 @@ int combine (CouenneProblem *p,
 
       if (fabs (clbi) > 0.) {
 
-	if (clbi < - COUENNE_INFINITY) {
+	if (clbi < - COUENNE_INFINITY/10) {
 
 	  if (signalpha == DN) {pInfs++; mInfs--;} 
 	  else                 {pInfs--; mInfs++;} // sign is UP
@@ -480,7 +480,7 @@ int combine (CouenneProblem *p,
 
       if (fabs (cubi) > 0.) {
 
-	if (cubi >   COUENNE_INFINITY) {
+	if (cubi >   COUENNE_INFINITY/10) {
 
 	  if (signalpha == DN) {pInfs--; mInfs++;} 
 	  else                 {pInfs++; mInfs--;} // sign is UP
@@ -564,7 +564,7 @@ int combine (CouenneProblem *p,
       // that is now at the denominator (no need to multiply by
       // signA, sa2 is already adjusted)
 
-      if (clbi <= - COUENNE_INFINITY) {
+      if (clbi <= - COUENNE_INFINITY/10) {
 
 	// we are deleting an infinite bound from the numerator, and
 	// whether it goes towards max- or min- Sum? depends on each
@@ -587,7 +587,7 @@ int combine (CouenneProblem *p,
 	}
       }
 
-      if (cubi >=   COUENNE_INFINITY) {
+      if (cubi >=   COUENNE_INFINITY/10) {
 
 	// we are deleting an infinite bound from the numerator, and
 	// whether it goes towards max- or min- Sum?A it depends on
@@ -614,8 +614,8 @@ int combine (CouenneProblem *p,
 
       } else {
 
-	if ((l1 > -COUENNE_INFINITY) && 
-	    (l2 > -COUENNE_INFINITY) &&
+	if ((l1 > -COUENNE_INFINITY/10) && 
+	    (l2 > -COUENNE_INFINITY/10) &&
 	    (pInfs == tickMax)) {
 
 	  newL = ((l1 - l2 - (maxSum1 - maxSum2) + (subMax1 - subMax2)) * alpha + l2 - maxSum2 + subMax2) / ci;
@@ -628,8 +628,8 @@ attempting newL = ((l1 - l2 - (maxSum1 - maxSum2) + (subMax1 - subMax2)) * alpha
 #endif
 	}
 
-	if ((u1 <  COUENNE_INFINITY) && 
-	    (u2 <  COUENNE_INFINITY) &&
+	if ((u1 <  COUENNE_INFINITY/10) && 
+	    (u2 <  COUENNE_INFINITY/10) &&
 	    (mInfs == tickMin)) {
 
 	  newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha + u2 - minSum2 + subMin2) / ci;
@@ -690,8 +690,8 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 
 	printf ("optimum violated: %g not in [%g,%g]\n", p -> bestSol () [indVar], newL, newU);
 
-      if (newL > clbi + COUENNE_EPS) {
-
+      if (newL > -COUENNE_INFINITY / 10 && newL > clbi + COUENNE_EPS) {
+		   
 	ntightened++;
 
 	p -> Lb (indVar) = newL;
@@ -702,7 +702,7 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 #endif
       }
 
-      if (newU < cubi - COUENNE_EPS) {
+      if (newU < COUENNE_INFINITY / 10 && newU < cubi - COUENNE_EPS) {
 
 	ntightened++;
 

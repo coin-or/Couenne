@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: the generateCuts() method of the convexification class CouenneCutGenerator
  *
- * (C) Carnegie-Mellon University, 2006-08.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -16,6 +16,8 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprVar.hpp"
 #include "CouenneInfeasCut.hpp"
+
+#include "Nauty.h"
 
 namespace Couenne {
 
@@ -86,8 +88,6 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
   if (isWiped (cs))
     return;
-
-  
 
   const int infeasible = 1;
 
@@ -334,6 +334,16 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
   try {
 
+    // Before bound tightening, compute symmetry group. After bound
+    // tightening is done, we can apply further tightening using orbit
+    // information.
+
+    //  ChangeBounds( psi -> getColLower (),  psi -> getColUpper (), psi -> getNumCols ());
+#ifdef COIN_HAS_NTY
+    if (false && problem_ -> orbitalBranching ())
+      problem_ -> Compute_Symmetry ();
+#endif
+
     // Bound tightening ////////////////////////////////////
 
     /*printf ("== BT ================\n");
@@ -375,6 +385,36 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 			 problem_ -> X  (i), problem_ -> Lb (i), problem_ -> Ub (i));
       jnlst_->Printf(J_VECTOR, J_CONVEXIFYING,"=============================\n");
     }
+
+    // Use orbit info to tighten bounds
+
+#ifdef COIN_HAS_NTY
+
+    if (false && problem_ -> orbitalBranching ()) {
+
+      std::vector<std::vector<int> > *new_orbits = problem_ -> getNtyInfo () -> getOrbits();
+  
+      for (int i=0; i <  problem_ -> getNtyInfo () -> getNumOrbits(); i++){
+
+	CouNumber ll = -COUENNE_INFINITY;
+	CouNumber uu =  COUENNE_INFINITY; 
+
+	for(int j = 0; j < (*new_orbits)[i].size(); j++){
+	  if (problem_ -> Lb( (*new_orbits)[i][j]) > ll) ll = problem_ -> Lb( (*new_orbits)[i][j]);
+	  if (problem_ -> Ub( (*new_orbits)[i][j]) < uu) uu = problem_ -> Ub( (*new_orbits)[i][j]);
+	}
+
+	for(int j = 0; j < (*new_orbits)[i].size(); j++){
+
+	  problem_ -> Lb( (*new_orbits)[i][j]) = ll;
+	  problem_ -> Ub( (*new_orbits)[i][j]) = uu;
+	}
+      }
+
+      delete new_orbits;
+    }
+
+#endif
 
     // Generate convexification cuts //////////////////////////////
 
@@ -508,7 +548,9 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     fictitiousBound (cs, problem_, true);
     firstcall_  = false;
     ntotalcuts_ = nrootcuts_ = cs.sizeRowCuts ();
+
   } else { 
+
     problem_ -> domain () -> pop ();
 
     ntotalcuts_ += (cs.sizeRowCuts () - nInitCuts);

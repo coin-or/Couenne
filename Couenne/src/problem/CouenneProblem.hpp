@@ -34,15 +34,11 @@
 
 #include "config_couenne.h"
 
-class CglTreeInfo;
-
 namespace Ipopt {
   template <class T> class SmartPtr;
   class OptionsList;
   class Journalist;
 }
-
-class CbcModel;
 
 namespace Bonmin {
   class RegisteredOptions;
@@ -54,15 +50,15 @@ namespace Bonmin {
 struct ASL;
 struct expr;
 
-//namespace Osi {
-  class OsiObject;
-//}
-
+class CglTreeInfo;
+class CbcModel;
+class OsiObject;
 class CoinWarmStart;
+
+#ifdef COIN_HAS_NTY
 
 class Nauty;
 
-#ifdef COIN_HAS_NTY
   class Node{
     int index;
     double coeff;
@@ -351,6 +347,7 @@ class CouenneProblem {
   void Print_Orbits();
   void ChangeBounds (const double * , const double *, int ) const;
   bool compare (  Node a, Node b) const;
+  Nauty *getNtyInfo () {return nauty_info;}
 
   // bool node_sort (  Node  a, Node  b);
   // bool index_sort (  Node  a, Node  b);

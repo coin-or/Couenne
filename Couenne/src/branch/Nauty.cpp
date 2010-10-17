@@ -219,11 +219,11 @@ Nauty::getNumOrbits() const
 }
 
 std::vector<std::vector<int> >
-Nauty::getOrbits() const
+*Nauty::getOrbits() const
 {
-  std::vector<std::vector<int> > orb;
+  std::vector<std::vector<int> > *orb = new std::vector<std::vector<int> >;
   if (!autoComputed_) return orb;
-  orb.resize(getNumOrbits());
+  orb -> resize(getNumOrbits());
   std::multimap<int, int> orbmap;
   std::set<int> orbkeys;
   for (int j = 0; j < n_; j++) {
@@ -237,7 +237,7 @@ Nauty::getOrbits() const
     std::multimap<int, int>::iterator pos;
     for (pos = orbmap.lower_bound(*it);
          pos != orbmap.upper_bound(*it); ++pos) {
-      orb[orbix].push_back(pos->second);
+      (*orb)[orbix].push_back(pos->second);
     }
     orbix++;
   }

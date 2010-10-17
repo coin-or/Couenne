@@ -286,40 +286,44 @@ void CouenneProblem::Print_Orbits(){
 
   //printf("num gens = %d, num orbits = %d \n", nauty_info -> getNumGenerators(), nauty_info -> getNumOrbits() );
 
-  std::vector<std::vector<int> > new_orbits = nauty_info->getOrbits();
+  std::vector<std::vector<int> > *new_orbits = nauty_info->getOrbits();
 
   //printf("There were %d orbits and %d generators\n",
   //nauty_info->getNumOrbits(),
   //nauty_info->getNumGenerators());
 
 #if 0
-  for (unsigned int i = 0; i < new_orbits.size(); i++) {
+  for (unsigned int i = 0; i < new_orbits -> size(); i++) {
     printf( "Orbit %d [", i);
-    copy(new_orbits[i].begin(), new_orbits[i].end(),
+    copy((*new_orbits)[i].begin(), (*new_orbits)[i].end(),
 	 std::ostream_iterator<int>(std::cout, " "));
     printf("] \n");
   }
 #endif
+
+  delete new_orbits;
 }
 
 std::vector<int>  CouenneProblem::Find_Orbit(int index){
 
   std::vector<int> orbit;
   int which_orbit = -1;
-  std::vector<std::vector<int> > new_orbits = nauty_info->getOrbits();
+  std::vector<std::vector<int> > *new_orbits = nauty_info->getOrbits();
 
-  for (unsigned int i = 0; i < new_orbits.size(); i++) {
-    for (unsigned int j = 0; j < new_orbits[i].size(); j++) {
+  for (unsigned int i = 0; i < new_orbits -> size(); i++) {
+    for (unsigned int j = 0; j < (*new_orbits)[i].size(); j++) {
       //   for (std::vector <int>:: iterator j = new_orbits[i].begin(); new_orbits[i].end(); ++j){
-      if( new_orbits[i][j] ==  index)
+      if( (*new_orbits)[i][j] ==  index)
 	which_orbit = i;
     }
   }
   
   //  for (std::vector <int>:: iterator j = new_orbits[which_orbit].begin(); new_orbits[which_orbit].end(), ++j)
-  for (unsigned int j = 0; j < new_orbits[which_orbit].size(); j++) 
-    orbit.push_back(new_orbits[which_orbit][j]);
-    
+  for (unsigned int j = 0; j < (*new_orbits)[which_orbit].size(); j++) 
+    orbit.push_back ((*new_orbits)[which_orbit][j]);
+
+  delete new_orbits;
+
   return orbit;
 }
 
@@ -347,8 +351,8 @@ void CouenneProblem::setupSymmetry () {
 #else
   if (orbitalBranching_) {
     printf ("\
-Couenne: Warning, you have set orbital_branching but Nauty is not available\n\
-reconfigure with appropriate options --with-nauty-lib and --with-nauty-incdir\n");
+Couenne: Warning, you have set orbital_branching but Nauty is not available.\n\
+Reconfigure with appropriate options --with-nauty-lib and --with-nauty-incdir\n");
   }
 #endif
 }
