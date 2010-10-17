@@ -25,13 +25,14 @@ using namespace Couenne;
 
 #include "Nauty.h"
 
-void Node::node(int i, double c , double l, double u, int cod){
+void Node::node(int i, double c , double l, double u, int cod, int s){
   index = i;
   coeff = c;
   lb = l;
   ub = u;
   color = -1;
   code = cod;
+  sign = s;
 }
 
 void Node::color_vertex(int k){
@@ -41,9 +42,10 @@ void Node::color_vertex(int k){
 bool CouenneProblem::compare ( Node a, Node b) const{
   if(a.get_code() == b.get_code() )
     if(a.get_coeff() == b.get_coeff() )
-      if( fabs ( a.get_lb() - b.get_lb() ) <= COUENNE_EPS )
-	if( fabs ( a.get_ub() - b.get_ub() ) <= COUENNE_EPS )
-	  return 1; 
+      if(a.get_sign() == b.get_sign() )
+	if( fabs ( a.get_lb() - b.get_lb() ) <= COUENNE_EPS )
+	  if( fabs ( a.get_ub() - b.get_ub() ) <= COUENNE_EPS )
+	    return 1; 
   return 0;
 }
 
@@ -143,7 +145,8 @@ void CouenneProblem::sym_setup (){
       // this is an auxiliary variable
 
       Node vertex;
-      vertex.node( (*i) -> Index () , 0.0 , (*i) -> lb () , (*i) -> ub () ,  (*i) -> Image () -> code() );
+      vertex.node( (*i) -> Index () , 0.0 , (*i) -> lb () , (*i) -> ub () ,  (*i) -> Image () -> code(), (*i)-> sign() );
+      //printf(" sign of aux %d \n", (*i) -> sign () );
       node_info.push_back( vertex);
 
       // add node in nauty graph for its index, (*i) -> Index ()
@@ -172,7 +175,7 @@ void CouenneProblem::sym_setup (){
 
 
 	      Node coef_vertex;
-	      coef_vertex.node( coef_count, arg -> Value(), arg -> Value() , arg -> Value(), -2 );
+	      coef_vertex.node( coef_count, arg -> Value(), arg -> Value() , arg -> Value(), -2 , 0);
 	      node_info.push_back(coef_vertex);
 	      coef_count ++;
 	    }
@@ -189,11 +192,11 @@ void CouenneProblem::sym_setup (){
 	  // add a node for e -> getC0 ();
 	  if (e -> getc0 () != 0 ){
 	    Node coef_vertex;
-	    coef_vertex.node( coef_count, e -> getc0(), e -> getc0() , e -> getc0(), -2 );
+	    coef_vertex.node( coef_count, e -> getc0(), e -> getc0() , e -> getc0(), -2, 0 );
 	    node_info.push_back(coef_vertex);
 
-	    // printf ("Add coef vertex to graph (coef value   %f) \n", e -> getc0 () );
-	    //printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), coef_count);
+	    //printf ("Add coef vertex to graph (coef value   %f) \n", e -> getc0 () );
+	     //printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), coef_count);
 	    nauty_info->addElement((*i) -> Index (),  coef_count);
 	    nauty_info->addElement( coef_count, (*i) -> Index ());
 
@@ -213,14 +216,14 @@ void CouenneProblem::sym_setup (){
 	    else{
 	      //printf (" add new vertex to graph, coef # %d with coef %f \n", coef_count, el -> second);
 	      Node coef_vertex;
-	      coef_vertex.node( coef_count, el -> second, el -> second, el -> second, -2 );
+	      coef_vertex.node( coef_count, el -> second, el -> second, el -> second, -2, 0 );
 	      node_info.push_back(coef_vertex);
 
 	      //printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), coef_count);
 	      nauty_info->addElement((*i) -> Index (),  coef_count);
 	      nauty_info->addElement( coef_count, (*i) -> Index ());
 
-	      // printf (" add edge coef index %d ,  2nd index %d\n", coef_count,  el -> first -> Index()  );
+	      //    printf (" add edge coef index %d ,  2nd index %d\n", coef_count,  el -> first -> Index()  );
 	      nauty_info->addElement(coef_count,  el -> first -> Index());
 	      nauty_info->addElement( el -> first -> Index (), coef_count);
 	      coef_count ++;
@@ -231,23 +234,34 @@ void CouenneProblem::sym_setup (){
 	  }
 
 	}
-
-      } else if ((*i) -> Image () -> Type () == UNARY) {
-
+	
       }
-
-    } else {
-      //  printf ("variable is %d\n", (*i) -> Index ());
+      else if ((*i) -> Image () -> Type () == UNARY) {
+	//printf ("variable is unary  %d\n", (*i) -> Index ());
+      }
+      else if ((*i) -> Image () -> Type () == AUX) {
+	//printf ("variable is AUX  %d\n", (*i) -> Index ());
+	nauty_info->addElement((*i) -> Index (), (*i) -> Image() -> Index());
+	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), (*i) -> Image() -> Index()); 
+      }
+      else if ((*i) -> Image () -> Type () == VAR) {
+	//printf ("variable is VAR  %d, image %d \n", (*i) -> Index (), (*i) -> Image() -> Index());
+	nauty_info->addElement((*i) -> Index (), (*i) -> Image() -> Index());
+	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), (*i) -> Image() -> Index()); 
+      }
+    }
+    else {
+      //      printf ("variable is %d\n", (*i) -> Index ());
       Node var_vertex;
-      var_vertex.node( (*i) -> Index () , 0 , (*i) -> lb () , (*i) -> ub () ,  -1 );
-      //      printf( "var info index %d, coef %f, lb %f, ub %f, code %d \n", 
+      var_vertex.node( (*i) -> Index () , 0 , (*i) -> lb () , (*i) -> ub () ,  -1, -1 );
+      //     printf( "var info index %d, coef %f, lb %f, ub %f, code %d \n", 
       // var_vertex.get_index() , var_vertex.get_coeff() , var_vertex.get_lb() , var_vertex.get_ub() ,  var_vertex.get_code() );
       node_info.push_back(var_vertex);
       // this is an original variable
-
+      
     }
   }
-
+  
 }
 
 
