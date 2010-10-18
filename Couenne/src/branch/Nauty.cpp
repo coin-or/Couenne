@@ -114,6 +114,8 @@ Nauty::addElement(int ix, int jx)
   if(ix != jx){  //No Loops
     set *gv = GRAPHROW(G_, ix, m_);
     ADDELEMENT(gv, jx);
+    set *gv2 = GRAPHROW(G_, jx, m_);
+    ADDELEMENT(gv2, ix);
     autoComputed_ = false;
   }
 }

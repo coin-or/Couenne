@@ -149,8 +149,11 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
   createUnusedOriginals ();
 
-  if (orbitalBranching_)
+  if (orbitalBranching_){
     setupSymmetry ();
+    Compute_Symmetry();
+    //Print_Orbits();
+  }
 
 // #ifdef COIN_HAS_NTY
 //   sym_setup();

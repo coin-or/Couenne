@@ -93,6 +93,9 @@ void CouenneProblem::sym_setup (){
        i != Variables (). end (); ++i) {
 
     if ((*i) -> Type () == AUX) {
+      if ((*i) -> Image () -> code () == COU_EXPRDIV) {
+	      num_affine ++;
+      }
       if ((*i) -> Image () -> code () != COU_EXPRGROUP) {
 	if ((*i) -> Image () -> Type () == N_ARY) {
 	  for (int a=0; a < (*i) -> Image () -> nArgs(); a++) {
@@ -141,7 +144,7 @@ void CouenneProblem::sym_setup (){
     //    printf ("I have code %d \n",  (*i) ->  Image() -> code() );
 
     if ((*i) -> Type () == AUX) {
-      // printf ("aux is %d with code %d \n", (*i) -> Index (), (*i) -> Image () -> code() );
+      //printf ("aux is %d with code %d \n", (*i) -> Index (), (*i) -> Image () -> code() );
       // this is an auxiliary variable
 
       Node vertex;
@@ -153,6 +156,18 @@ void CouenneProblem::sym_setup (){
 
       if ((*i) -> Image () -> Type () == N_ARY) {
 
+	if ((*i) -> Image () -> code () == COU_EXPRDIV) {
+	  expression *arg = (*i) -> Image () -> ArgList () [0];
+	  nauty_info->addElement((*i) -> Index (),  arg -> Index ());
+	  expression *arg2 = (*i) -> Image () -> ArgList () [1];
+	  nauty_info->addElement((*i) -> Index (),  coef_count);
+	  nauty_info->addElement( coef_count,  arg2 -> Index ());
+	  Node coef_vertex;
+	  coef_vertex.node( coef_count, -1, -1 ,-1, -2 , 0);
+	  node_info.push_back(coef_vertex);
+	  coef_count ++;
+	}
+	
 	if ((*i) -> Image () -> code () != COU_EXPRGROUP) {
 
 	  for (int a=0; a < (*i) -> Image () -> nArgs(); a++) {
@@ -168,8 +183,8 @@ void CouenneProblem::sym_setup (){
 
 	      assert (arg -> Type () == CONST);
 
-	      //printf (" add new vertex to graph, coef # %d, value %g \n", coef_count, arg -> Value() );
-	      //printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (),  coef_count);
+	      // printf (" add new vertex to graph, coef # %d, value %g \n", coef_count, arg -> Value() );
+	      // printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (),  coef_count);
 	      nauty_info->addElement((*i) -> Index (),  coef_count);
 	      nauty_info->addElement( coef_count, (*i) -> Index ());
 
@@ -196,7 +211,7 @@ void CouenneProblem::sym_setup (){
 	    node_info.push_back(coef_vertex);
 
 	    //printf ("Add coef vertex to graph (coef value   %f) \n", e -> getc0 () );
-	     //printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), coef_count);
+	    //printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), coef_count);
 	    nauty_info->addElement((*i) -> Index (),  coef_count);
 	    nauty_info->addElement( coef_count, (*i) -> Index ());
 
@@ -223,7 +238,7 @@ void CouenneProblem::sym_setup (){
 	      nauty_info->addElement((*i) -> Index (),  coef_count);
 	      nauty_info->addElement( coef_count, (*i) -> Index ());
 
-	      //    printf (" add edge coef index %d ,  2nd index %d\n", coef_count,  el -> first -> Index()  );
+	      // printf (" add edge coef index %d ,  2nd index %d\n", coef_count,  el -> first -> Index()  );
 	      nauty_info->addElement(coef_count,  el -> first -> Index());
 	      nauty_info->addElement( el -> first -> Index (), coef_count);
 	      coef_count ++;
@@ -237,28 +252,52 @@ void CouenneProblem::sym_setup (){
 	
       }
       else if ((*i) -> Image () -> Type () == UNARY) {
-	//printf ("variable is unary  %d\n", (*i) -> Index ());
+	//	printf ("variable is unary  %d\n", (*i) -> Index ());
+	expression *arg = (*i) -> Image () -> Argument () ;
+	nauty_info->addElement( arg-> Index(), (*i) -> Index() );
+	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), arg-> Index()); 
       }
       else if ((*i) -> Image () -> Type () == AUX) {
 	//printf ("variable is AUX  %d\n", (*i) -> Index ());
 	nauty_info->addElement((*i) -> Index (), (*i) -> Image() -> Index());
+	nauty_info->addElement( (*i) -> Image() -> Index(), (*i) -> Index() );
 	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), (*i) -> Image() -> Index()); 
       }
       else if ((*i) -> Image () -> Type () == VAR) {
 	//printf ("variable is VAR  %d, image %d \n", (*i) -> Index (), (*i) -> Image() -> Index());
 	nauty_info->addElement((*i) -> Index (), (*i) -> Image() -> Index());
+	nauty_info->addElement( (*i) -> Image() -> Index(), (*i) -> Index() );
+
 	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), (*i) -> Image() -> Index()); 
       }
     }
     else {
-      //      printf ("variable is %d\n", (*i) -> Index ());
+      // printf ("variable is %d\n", (*i) -> Index ());
       Node var_vertex;
-      var_vertex.node( (*i) -> Index () , 0 , (*i) -> lb () , (*i) -> ub () ,  -1, -1 );
-      //     printf( "var info index %d, coef %f, lb %f, ub %f, code %d \n", 
-      // var_vertex.get_index() , var_vertex.get_coeff() , var_vertex.get_lb() , var_vertex.get_ub() ,  var_vertex.get_code() );
-      node_info.push_back(var_vertex);
-      // this is an original variable
-      
+
+      // Bounds of +- infinity make the compare function likely to return a false negative. Rather than add inf as a boud, I use lb-1 (or ub +1 
+      if( (*i) -> ub() >= COUENNE_INFINITY && (*i) -> lb() <= - COUENNE_INFINITY){
+	var_vertex.node( (*i) -> Index () , 0 , 1 , 0 ,  -1, -1 );
+	node_info.push_back(var_vertex);
+	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , 1 , 0 ) ; 
+      }
+      else  if( (*i) -> ub() >= COUENNE_INFINITY ){
+	var_vertex.node( (*i) -> Index () , 0 , (*i) -> lb () , (*i) -> lb() -1 ,  -1, -1 );
+	node_info.push_back(var_vertex);
+	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , (*i) -> lb () , (*i) -> lb () -1 ) ; 
+      }
+      else  if( (*i) -> lb() <= - COUENNE_INFINITY){
+	var_vertex.node( (*i) -> Index () , 0 , (*i) -> ub () +1 , (*i) -> ub () ,  -1, -1 );
+	node_info.push_back(var_vertex);
+	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , (*i) -> ub () +1 , (*i) -> ub () ) ; 
+      }
+      else{
+	var_vertex.node( (*i) -> Index () , 0 , (*i) -> lb () , (*i) -> ub () ,  -1, -1 );
+	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , (*i) -> lb () , (*i) -> ub () ) ; 
+	// var_vertex.get_index() , var_vertex.get_coeff() , var_vertex.get_lb() , var_vertex.get_ub() ,  var_vertex.get_code() );
+	node_info.push_back(var_vertex);
+	// this is an original variable
+      }
     }
   }
   
@@ -269,22 +308,20 @@ void CouenneProblem::Compute_Symmetry() const{
   //printf("Computing Symmetry\n");
   std::sort(node_info. begin (), node_info. end (), node_sort);
 
-  for (std::vector <Node>:: iterator i = node_info. begin ();
-       i != node_info. end (); ++i) 
+  for (std::vector <Node>:: iterator i = node_info. begin ();  i != node_info. end (); ++i) 
     (*i).color_vertex(-1);
   
   int color = 1;
-  for (std::vector <Node>:: iterator i = node_info. begin ();
-       i != node_info. end (); ++i) {
+  for (std::vector <Node>:: iterator i = node_info. begin (); i != node_info. end (); ++i) {
     if( (*i).get_color() == -1){
       (*i).color_vertex(color);
-      // printf ("Graph vertex %d is given color %d\n", (*i).get_index(), color);
+      printf ("Graph vertex %d is given color %d\n", (*i).get_index(), color);
       nauty_info -> color_node((*i).get_index(), color);
       for (std::vector <Node>:: iterator j = i+1; j <= node_info. end (); ++j)
 	if( compare( (*i) , (*j) ) ==1){
 	  (*j).color_vertex(color);
 	  nauty_info -> color_node((*j).get_index(),color);
-	  //	  printf ("Graph vertex %d is given color %d, the same as vertex %d\n", (*j).get_index(), color, (*i).get_index());
+	  printf ("Graph vertex %d is given color %d, the same as vertex %d\n", (*j).get_index(), color, (*i).get_index());
 	}
       //       else
       // j = node_info. end();
@@ -306,7 +343,7 @@ void CouenneProblem::Print_Orbits(){
   //nauty_info->getNumOrbits(),
   //nauty_info->getNumGenerators());
 
-#if 0
+#if 1
   for (unsigned int i = 0; i < new_orbits -> size(); i++) {
     printf( "Orbit %d [", i);
     copy((*new_orbits)[i].begin(), (*new_orbits)[i].end(),
