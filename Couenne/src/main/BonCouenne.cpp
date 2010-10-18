@@ -46,6 +46,7 @@ using namespace Couenne;
 #include "CouenneExprClone.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneJournalist.hpp"
 
 #include "config_couenne.h"
 
@@ -59,18 +60,6 @@ int main (int argc, char *argv[]) {
   const int infeasible = 1;
 
   try {
-
-    printf ("\
-====================================================================\n\
-Couenne\n\
-An Open-Source solver for Mixed Integer Nonlinear Optimization\n\
-Version: %s\n\
-Send questions/comments to %s\n\
-See http://www.coin-or.org/Couenne for more information\n\
-====================================================================\n",
-	    PACKAGE_VERSION,
-	    PACKAGE_BUGREPORT
-	    );
 
     Bonmin::Bab bb;
     bb.setUsingCouenne (true);
@@ -102,6 +91,30 @@ See http://www.coin-or.org/Couenne for more information\n\
     if (!couenne.InitializeCouenne (argv, p, NULL, ci, &bb))
       throw infeasible;
 
+    // initial printout
+
+    ConstJnlstPtr jnlst = couenne. couennePtr () -> Jnlst ();
+
+    jnlst -> Printf (J_INSUPPRESSIBLE, J_COUENNE, "Couenne %s --  an Open-Source exact solver for MINLP\n", strcmp (PACKAGE_VERSION, "trunk") ? PACKAGE_VERSION : "");
+
+    jnlst -> Printf (J_ERROR, J_COUENNE, "\
+Mailing list: %s\n\
+Instructions: http://www.coin-or.org/Couenne\n",
+	    PACKAGE_BUGREPORT);
+
+    CouenneProblem *prob = couenne. couennePtr () -> Problem ();
+
+    jnlst -> Printf (J_ERROR, J_COUENNE, "\n\
+Loaded instance \"%s\"\n\
+Variables:       %8d (%d integer)\n\
+Constraints:     %8d\n\
+Auxiliaries:     %8d\n\n",
+		     prob -> problemName ().c_str (),
+		     prob -> nOrigVars (),
+		     prob -> nOrigIntVars (),
+		     prob -> nOrigCons (),
+		     prob -> nVars () - prob -> nOrigVars ());
+
     double time_start = CoinCpuTime();
 
 #if 0
@@ -117,6 +130,7 @@ See http://www.coin-or.org/Couenne for more information\n\
 
     //////////////////////////////////
 
+    jnlst -> Printf (J_ERROR, J_COUENNE, "Starting branch-and-bound\n");
     bb (couenne); // do branch and bound
 
     //////////////////////////////////
@@ -150,6 +164,22 @@ See http://www.coin-or.org/Couenne for more information\n\
     // retrieve test value to check
     double global_opt;
     couenne.options () -> GetNumericValue ("couenne_check", global_opt, "couenne.");
+
+    jnlst -> Printf (J_ERROR, J_COUENNE, "\n\
+Linearization cuts added at root node:   %8d\n\
+Linearization cuts added in total        %8d  (separation time: %gs)\n\
+Total solving time:                      %8gs (%gs in branch-and-bound)\n\
+Lower bound:                           %10g\n\
+Upper bound:                           %10g  (gap: %.2f%%)\n\
+Branch-and-bound nodes:                  %8d\n\n",
+		     nr, nt, st, 
+		     CoinCpuTime () - time_start,
+		     cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
+		     bb.model (). getBestPossibleObjValue (),
+		     bb.model (). getObjValue (),
+		     100. * (bb.model (). getObjValue () -
+			     bb.model (). getBestPossibleObjValue ()) / (1. + fabs (bb.model (). getBestPossibleObjValue ())),
+		     bb.numNodes ());
 
     if (global_opt < COUENNE_INFINITY) { // some value found in couenne.opt
 

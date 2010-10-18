@@ -17,7 +17,9 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneInfeasCut.hpp"
 
+#ifdef COIN_HAS_NTY
 #include "Nauty.h"
+#endif
 
 namespace Couenne {
 
@@ -389,6 +391,9 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // Use orbit info to tighten bounds
 
 #ifdef COIN_HAS_NTY
+
+    // TODO: when independent bound tightener, can get original bounds
+    // through si.getCol{Low,Upp}er()
 
     if (false && problem_ -> orbitalBranching ()) {
 

@@ -149,17 +149,8 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
   createUnusedOriginals ();
 
-  if (orbitalBranching_){
+  if (orbitalBranching_)
     setupSymmetry ();
-    Compute_Symmetry();
-    //Print_Orbits();
-  }
-
-// #ifdef COIN_HAS_NTY
-//   sym_setup();
-//   Compute_Symmetry();
-//   Print_Orbits();
-// #endif
 
   //writeAMPL ("extended-aw.mod", true);
   //writeAMPL ("original.mod", false);

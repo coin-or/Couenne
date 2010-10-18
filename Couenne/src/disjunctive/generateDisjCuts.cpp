@@ -265,8 +265,8 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
     cs.sizeRowCuts () - initRowCuts + 
     cs.sizeColCuts () - initColCuts;
 
-  if (info.level <= 0) 
-    nrootcuts_ = deltaNcuts;
+  if (info.level <= 0 && !(info.inTree)) 
+    nrootcuts_ += deltaNcuts;
   ntotalcuts_ += deltaNcuts;
 
   if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) {
@@ -274,6 +274,10 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
     if (cs.sizeRowCuts()>initRowCuts) printf ("added %d row cuts\n", cs.sizeRowCuts () - initRowCuts);
     if (cs.sizeColCuts()>initColCuts) printf ("added %d col cuts\n", cs.sizeColCuts () - initColCuts);
   }
+
+  if (info.level <= 0 && !(info.inTree) && nrootcuts_ > 0)  
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, 
+		      "Disjunctive cuts (root node): %d total\n", nrootcuts_);
 
   septime_ += (CoinCpuTime () - time);
 }

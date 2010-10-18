@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprGroup.cpp
  * Author:  Pietro Belotti
  * Purpose: implementation of some methods for exprGroup
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -126,10 +126,10 @@ void exprGroup::print (std::ostream &out, bool descend) const {
   for (int n = lcoeff_.size (), i=0; n--; i++) {
 
     CouNumber coeff = lcoeff_ [i]. second;
-    out << ' ';
+    //out << ' ';
 
-    if      (coeff >   0.) { out << '+'; if (coeff !=  1.) out <<  coeff << "*";}
-    else if (coeff < - 0.) { out << '-'; if (coeff != -1.) out << -coeff << "*";}
+    if      (coeff >   0.) { if (i) out << '+'; if (coeff !=  1.) out <<  coeff << "*";}
+    else if (coeff < - 0.) {        out << '-'; if (coeff != -1.) out << -coeff << "*";}
 
     lcoeff_ [i]. first -> print (out, descend);
     if (!((i + 1) % MAX_ARG_LINE) && n)

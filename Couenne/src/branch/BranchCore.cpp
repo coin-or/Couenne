@@ -34,7 +34,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
     problem_ -> Compute_Symmetry();
   
-    std::vector< int > branch_orbit;
+    std::vector< int > *branch_orbit;
 
     //  problem_ -> Print_Orbits();
     //printf("branching on var %i \n", indVar);
@@ -64,7 +64,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
       jnlst_ -> Printf (J_ERROR, J_BRANCHING, 
 			"Branch Symm:");
 
-      for (std::vector<int>::iterator it = branch_orbit.begin (); it != branch_orbit.end (); ++it)  {
+      for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it)  {
 
 	jnlst_ -> Printf (J_ERROR, J_BRANCHING, 
 			  " x%d >= %g; ", 

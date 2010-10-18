@@ -315,13 +315,13 @@ void CouenneProblem::Compute_Symmetry() const{
   for (std::vector <Node>:: iterator i = node_info. begin (); i != node_info. end (); ++i) {
     if( (*i).get_color() == -1){
       (*i).color_vertex(color);
-      printf ("Graph vertex %d is given color %d\n", (*i).get_index(), color);
+      //printf ("Graph vertex %d is given color %d\n", (*i).get_index(), color);
       nauty_info -> color_node((*i).get_index(), color);
       for (std::vector <Node>:: iterator j = i+1; j <= node_info. end (); ++j)
 	if( compare( (*i) , (*j) ) ==1){
 	  (*j).color_vertex(color);
 	  nauty_info -> color_node((*j).get_index(),color);
-	  printf ("Graph vertex %d is given color %d, the same as vertex %d\n", (*j).get_index(), color, (*i).get_index());
+	  //printf ("Graph vertex %d is given color %d, the same as vertex %d\n", (*j).get_index(), color, (*i).get_index());
 	}
       //       else
       // j = node_info. end();
@@ -335,7 +335,7 @@ void CouenneProblem::Compute_Symmetry() const{
   
 void CouenneProblem::Print_Orbits(){
 
-  //printf("num gens = %d, num orbits = %d \n", nauty_info -> getNumGenerators(), nauty_info -> getNumOrbits() );
+  printf ("num gens = %d, num orbits = %d \n", nauty_info -> getNumGenerators(), nauty_info -> getNumOrbits() );
 
   std::vector<std::vector<int> > *new_orbits = nauty_info->getOrbits();
 
@@ -343,21 +343,19 @@ void CouenneProblem::Print_Orbits(){
   //nauty_info->getNumOrbits(),
   //nauty_info->getNumGenerators());
 
-#if 1
   for (unsigned int i = 0; i < new_orbits -> size(); i++) {
     printf( "Orbit %d [", i);
     copy((*new_orbits)[i].begin(), (*new_orbits)[i].end(),
 	 std::ostream_iterator<int>(std::cout, " "));
     printf("] \n");
   }
-#endif
 
   delete new_orbits;
 }
 
-std::vector<int>  CouenneProblem::Find_Orbit(int index){
+std::vector<int> *CouenneProblem::Find_Orbit(int index){
 
-  std::vector<int> orbit;
+  std::vector<int> *orbit = new std::vector <int>;
   int which_orbit = -1;
   std::vector<std::vector<int> > *new_orbits = nauty_info->getOrbits();
 
@@ -371,7 +369,7 @@ std::vector<int>  CouenneProblem::Find_Orbit(int index){
   
   //  for (std::vector <int>:: iterator j = new_orbits[which_orbit].begin(); new_orbits[which_orbit].end(), ++j)
   for (unsigned int j = 0; j < (*new_orbits)[which_orbit].size(); j++) 
-    orbit.push_back ((*new_orbits)[which_orbit][j]);
+    orbit -> push_back ((*new_orbits)[which_orbit][j]);
 
   delete new_orbits;
 
@@ -398,12 +396,12 @@ void CouenneProblem::setupSymmetry () {
 #ifdef COIN_HAS_NTY
   sym_setup ();
   Compute_Symmetry ();
-  Print_Orbits ();
+  //Print_Orbits ();
 #else
   if (orbitalBranching_) {
     printf ("\
 Couenne: Warning, you have set orbital_branching but Nauty is not available.\n\
-Reconfigure with appropriate options --with-nauty-lib and --with-nauty-incdir\n");
+Reconfigure with appropriate options --with-nauty-lib=/path/to/libnauty.* and --with-nauty-incdir=/path/to/nauty/include/files/\n");
   }
 #endif
 }

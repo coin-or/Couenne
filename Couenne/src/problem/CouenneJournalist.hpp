@@ -28,6 +28,7 @@ const Ipopt::EJournalCategory J_PROBLEM         (Ipopt::J_USER4);
 const Ipopt::EJournalCategory J_NLPHEURISTIC    (Ipopt::J_USER5);
 const Ipopt::EJournalCategory J_DISJCUTS        (Ipopt::J_USER6);
 const Ipopt::EJournalCategory J_REFORMULATE     (Ipopt::J_USER7);
+const Ipopt::EJournalCategory J_COUENNE         (Ipopt::J_USER8);
 
 }
 

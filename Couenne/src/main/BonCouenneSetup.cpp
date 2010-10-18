@@ -124,28 +124,24 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   /** Set the output level for the journalist for all Couenne
       categories.  We probably want to make that a bit more flexible
       later. */
+
   int i;
 
-  options()->GetIntegerValue("boundtightening_print_level", i, "couenne.");
-  journalist()->GetJournal("console")-> SetPrintLevel(J_BOUNDTIGHTENING, (EJournalLevel) i);
+  /// trying to avoid repetitions here...
 
-  options()->GetIntegerValue("branching_print_level", i, "couenne.");
-  journalist()->GetJournal("console")-> SetPrintLevel(J_BRANCHING, (EJournalLevel) i);
+#define addJournalist(optname,jlevel) {					\
+    options    () -> GetIntegerValue ((optname), i, "couenne.");	\
+    journalist () -> GetJournal      ("console") -> SetPrintLevel ((jlevel), (EJournalLevel) i); \
+  }
 
-  options()->GetIntegerValue("convexifying_print_level", i, "couenne.");
-  journalist()->GetJournal("console")-> SetPrintLevel(J_CONVEXIFYING, (EJournalLevel) i);
-
-  options()->GetIntegerValue("problem_print_level", i, "couenne.");
-  journalist()->GetJournal("console")-> SetPrintLevel(J_PROBLEM, (EJournalLevel) i);
-
-  options()->GetIntegerValue("nlpheur_print_level", i, "couenne.");
-  journalist()->GetJournal("console")-> SetPrintLevel(J_NLPHEURISTIC, (EJournalLevel) i);
-
-  options()->GetIntegerValue("disjcuts_print_level", i, "couenne.");
-  journalist()->GetJournal("console")-> SetPrintLevel(J_DISJCUTS, (EJournalLevel) i);
-
-  options()->GetIntegerValue("reformulate_print_level", i, "couenne.");
-  journalist()->GetJournal("console")-> SetPrintLevel(J_REFORMULATE, (EJournalLevel) i);
+  addJournalist ("output_level",                J_COUENNE);
+  addJournalist ("boundtightening_print_level", J_BOUNDTIGHTENING);
+  addJournalist ("branching_print_level",       J_BRANCHING);
+  addJournalist ("convexifying_print_level",    J_CONVEXIFYING);
+  addJournalist ("problem_print_level",         J_PROBLEM);
+  addJournalist ("nlpheur_print_level",         J_NLPHEURISTIC);
+  addJournalist ("disjcuts_print_level",        J_DISJCUTS);
+  addJournalist ("reformulate_print_level",     J_REFORMULATE);
 
   /* Initialize Couenne cut generator.*/
   //int ivalue, num_points;
@@ -178,7 +174,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 #endif
   } else if (s == "xpress-mp") {
 
-#ifdef COIN_HAS_CPX
+#ifdef COIN_HAS_XPR
     CouenneSolverInterface <OsiXprSolverInterface> *CSI = new CouenneSolverInterface <OsiXprSolverInterface>;
     continuousSolver_ = CSI;
     CSI -> setCutGenPtr (couenneCg);
@@ -252,7 +248,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     InitHeuristic* initHeuristic = new InitHeuristic 
       (ci -> getObjValue (), ci -> getColSolution (), *couenneProb_);
     HeuristicMethod h;
-    h.id = "Init Rounding NLP";
+    h.id = "Couenne Rounding NLP"; // same name as the real rounding one
     h.heuristic = initHeuristic;
     heuristics_.push_back(h);
   }
@@ -687,26 +683,16 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
 				"gurobi", "Use the commercial solver Gurobi (license is needed)",
 				"soplex", "Use the freely available Soplex");
 
-  roptions->AddBoundedIntegerOption("branching_print_level", "Output level for braching code in Couenne",
-				    -2, J_LAST_LEVEL-1, J_NONE, "");
+#define addLevOption(optname,comment) roptions -> AddBoundedIntegerOption (optname, comment, -2, J_LAST_LEVEL-1, J_NONE, "")
 
-  roptions->AddBoundedIntegerOption("boundtightening_print_level", "Output level for bound tightening code in Couenne",
-				    -2, J_LAST_LEVEL-1, J_NONE, "");
-
-  roptions->AddBoundedIntegerOption("convexifying_print_level", "Output level for convexifying code in Couenne",
-				    -2, J_LAST_LEVEL-1, J_NONE, "");
-
-  roptions->AddBoundedIntegerOption("problem_print_level", "Output level for problem manipulation code in Couenne",
-				    -2, J_LAST_LEVEL-1, J_ERROR, "");
-
-  roptions->AddBoundedIntegerOption("nlpheur_print_level", "Output level for NLP heuristic in Couenne",
-				    -2, J_LAST_LEVEL-1, J_NONE, "");
-
-  roptions->AddBoundedIntegerOption("disjcuts_print_level", "Output level for disjunctive cuts in Couenne",
-				    -2, J_LAST_LEVEL-1, J_NONE, "");
-
-  roptions->AddBoundedIntegerOption("reformulate_print_level", "Output level for reformulating problems in Couenne",
-				    -2, J_LAST_LEVEL-1, J_NONE, "");
+  addLevOption ("output_level",                "Output level");
+  addLevOption ("branching_print_level",       "Output level for braching code in Couenne");
+  addLevOption ("boundtightening_print_level", "Output level for bound tightening code in Couenne");
+  addLevOption ("convexifying_print_level",    "Output level for convexifying code in Couenne");
+  addLevOption ("problem_print_level",         "Output level for problem manipulation code in Couenne");
+  addLevOption ("nlpheur_print_level",         "Output level for NLP heuristic in Couenne");
+  addLevOption ("disjcuts_print_level",        "Output level for disjunctive cuts in Couenne");
+  addLevOption ("reformulate_print_level",     "Output level for reformulating problems in Couenne");
 
   roptions -> AddNumberOption
     ("feas_tolerance",
@@ -770,6 +756,8 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
 void CouenneSetup::addMilpCutGenerators () {
 
   enum extraInfo_ {CUTINFO_NONE, CUTINFO_MIG, CUTINFO_PROBING, CUTINFO_CLIQUE};
+
+  // extra data structure to avoid repeated code below
 
   struct cutInfo {
 

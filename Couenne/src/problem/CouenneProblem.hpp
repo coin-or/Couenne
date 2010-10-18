@@ -21,7 +21,7 @@
 #include "CouenneJournalist.hpp"
 #include "CouenneDomain.hpp"
 
-// this is temporary and is aimed at overriding all definition from
+// this is temporary and is aimed at overriding all definitions from
 // Ipopt with those of Couenne
 
 #undef PACKAGE
@@ -338,7 +338,7 @@ class CouenneProblem {
   // Symmetry Info
 
 #ifdef COIN_HAS_NTY
-  std::vector<int>  Find_Orbit(int);
+  std::vector<int>  *Find_Orbit(int);
   mutable std::vector<Node> node_info;
   mutable Nauty *nauty_info;
 
