@@ -19,8 +19,6 @@ using namespace Couenne;
 
 bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
-  //return false; // !!!
-
   bool resx, resy = resx = false;
 
   CouNumber 
@@ -143,21 +141,23 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
       // point C: (xl,yl)
 
-      resyL = ((*yl<0) && (*yl > *xl/wl) && updateBound (-1, yl, 0)) || resyL; //
+      resyL = ((*yl<0) && (*yl > *xl/wl + COUENNE_EPS) && updateBound (-1, yl,      0)) || resyL;
+      resxL = ((*yl>0) && (*yu < *xl/wl)               && updateBound (-1, xl, *yu*wl)) || resxL; // new
+      resyL = ((*yl>0) && (*xu < *yl*wl)               && updateBound (-1, yl, *xu/wl)) || resyL; // new
 
-      if ((*yl>0) && (*yl < *xl/wl)) { // point C violates x/y >= wl, down
-	resxL = updateBound (-1, xl, *yu*wl) || resxL; //
-	resyL = updateBound (-1, yl, *xu/wl) || resyL; //
-      }
-
+      // if ((*yl>0) && (*yl < *xl/wl)) { // point C violates x/y >= wl, down
+      // 	resxL = updateBound (-1, xl, *yu*wl) || resxL; //
+      // 	resyL = updateBound (-1, yl, *xu/wl) || resyL; //
+      // }
       // point B: (xu,yu)
+      // if ((*yu<0) && (*yu > *xu/wl)) { // point B violates x/y >= wl, down
+      // 	resxU = updateBound (+1, xu, *yl*wl) || resxU;
+      // 	resyU = updateBound (+1, yu, *xl/wl) || resyU;
+      // }
 
-      if ((*yu<0) && (*yu > *xu/wl)) { // point B violates x/y >= wl, down
-	resxU = updateBound (+1, xu, *yl*wl) || resxU;
-	resyU = updateBound (+1, yu, *xl/wl) || resyU;
-      }
-
-      resyU = ((*yu>0) && (*yu < *xu/wl) && updateBound (+1, yu, 0)) || resyU;
+      resyU = ((*yu>0) && (*yu < *xu/wl - COUENNE_EPS) && updateBound (+1, yu,      0)) || resyU;
+      resxU = ((*yu<0) && (*yl > *xu/wl)               && updateBound (+1, xu, *yl*wl)) || resxU; // new
+      resyU = ((*yu<0) && (*xl > *yu*wl)               && updateBound (+1, yu, *xl/wl)) || resyU; // new
 
     } else if (wl >   COUENNE_EPS) { // w >= wl, wl positive
 
@@ -165,11 +165,9 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
       resyL = ((*yl<0) && (*yl < *xl/wl) && updateBound (-1, yl, CoinMin (*xl/wl, 0.))) || resyL;
       resxL = ((*yl>0) && (*yl > *xl/wl) && updateBound (-1, xl, *yl*wl))               || resxL;
-
       //
-
-      resxU = ((*yu<0) && (*yu < *xu/wl) && updateBound (+1, xu, *yu*wl))               || resxU;
       resyU = ((*yu>0) && (*yu > *xu/wl) && updateBound (+1, yu, CoinMax (*xu/wl, 0.))) || resyU;
+      resxU = ((*yu<0) && (*yu < *xu/wl) && updateBound (+1, xu, *yu*wl))               || resxU;
     }
 
     //////////// deal with upper bound of w=x/y /////////////////////////////////////////////
@@ -177,22 +175,25 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     if        (wu >   COUENNE_EPS) { // w <= wu, wu positive
 
       //
+      resyL = ((*yl<0) && (*yl > *xu/wu + COUENNE_EPS) && updateBound (-1, yl,      0)) || resyL;
+      resxU = ((*yl>0) && (*xu > *yu*wu)               && updateBound (+1, xu, *yu*wu)) || resxU;
+      resyL = ((*yl>0) && (*yl < *xl/wu)               && updateBound (-1, yl, *xl/wu)) || resyL;
 
-      resyL = ((*yl<0) && (*yl > *xu/wu) && updateBound (-1, yl, 0))      || resyL;
+      // if ((*yl>0) && (*yl < *xu/wu)) {
+      // 	resxU = updateBound (+1, xu, *yu*wu) || resxU;
+      // 	resyL = updateBound (-1, yl, *xl/wu) || resyL;
+      // }
 
-      if ((*yl>0) && (*yl < *xu/wu)) {
-	resxU = updateBound (+1, xu, *yu*wu) || resxU;
-	resyL = updateBound (-1, yl, *xl/wu) || resyL;
-      }
+      // //
 
-      //
+      // if ((*yu<0) && (*yu > *xl/wu)) {
+      // 	resxL = updateBound (-1, xl, *yl*wu) || resxL;
+      // 	resyU = updateBound (+1, yu, *xu/wu) || resyU;
+      // }
 
-      if ((*yu<0) && (*yu > *xl/wu)) {
-	resxL = updateBound (-1, xl, *yl*wu) || resxL;
-	resyU = updateBound (+1, yu, *xu/wu) || resyU;
-      }
-
-      resyU = ((*yu>0) && (*yu < *xl/wu) && updateBound (+1, yu, 0))      || resyU;
+      resyU = ((*yu>0) && (*yu < *xl/wu - COUENNE_EPS) && updateBound (+1, yu,      0)) || resyU;
+      resxL = ((*yu<0) && (*xl < *yl*wu)               && updateBound (-1, xl, *yl*wu)) || resxL;
+      resyU = ((*yu<0) && (*yu > *xu/wu)               && updateBound (+1, yu, *xu/wu)) || resyU;
 
     } else if (wu < - COUENNE_EPS) { // w <= wu, wu negative
 
@@ -203,8 +204,8 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
       //
 
-      resxU = ((*yl>0) && (*yl > *xu/wu) && updateBound (+1, xu, *yl*wu))               || resxU;
       resyU = ((*yu>0) && (*yu > *xl/wu) && updateBound (+1, yu, CoinMax (*xl/wu,0.)))  || resyU;
+      resxU = ((*yl>0) && (*yl > *xu/wu) && updateBound (+1, xu, *yl*wu))               || resxU;
     }
 
     if (resxL) chg [xi].setLower(t_chg_bounds::CHANGED);

@@ -114,22 +114,24 @@ void exprGroup::print (std::ostream &out, bool descend) const {
   //if (code () == COU_EXPRGROUP)
   if (lcoeff_.size () > 0)
     out << '(';
-
-  if (nargs_ && ((nargs_ > 1) ||
-		 ((*arglist_) -> Type () != CONST) ||
-		 (fabs ((*arglist_) -> Value ()) > COUENNE_EPS)))
+  
+  bool nzNL = nargs_ && ((nargs_ > 1) ||
+			 ((*arglist_) -> Type () != CONST) ||
+			 (fabs ((*arglist_) -> Value ()) > COUENNE_EPS));
+    
+  if (nzNL)
     exprSum::print (out, descend);
 
-  if      (c0_ >   0.) out << '+' << c0_;
-  else if (c0_ < - 0.) out        << c0_;
+  if      (c0_ >   0.) {if (nzNL) out << '+'; out << c0_;}
+  else if (c0_ < - 0.)                        out << c0_;
 
   for (int n = lcoeff_.size (), i=0; n--; i++) {
 
     CouNumber coeff = lcoeff_ [i]. second;
     //out << ' ';
 
-    if      (coeff >   0.) { if (i) out << '+'; if (coeff !=  1.) out <<  coeff << "*";}
-    else if (coeff < - 0.) {        out << '-'; if (coeff != -1.) out << -coeff << "*";}
+    if      (coeff >   0.) { if (i || c0_ != 0.) out << '+'; if (coeff !=  1.) out <<  coeff << "*";}
+    else if (coeff < - 0.) {                     out << '-'; if (coeff != -1.) out << -coeff << "*";}
 
     lcoeff_ [i]. first -> print (out, descend);
     if (!((i + 1) % MAX_ARG_LINE) && n)
