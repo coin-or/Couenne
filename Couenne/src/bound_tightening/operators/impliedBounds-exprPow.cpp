@@ -28,8 +28,6 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   //int xi = arglist_ [0] -> Index ();
   //if (xi>=0) printf ("in implBound-pow: %g,%g\n", l [xi], u [xi]);
 
-  //return false; // !!!
-
   bool resL, resU = resL = false;
 
   if (arglist_ [0] -> Type () == CONST)   // base is constant or zero, nothing to do

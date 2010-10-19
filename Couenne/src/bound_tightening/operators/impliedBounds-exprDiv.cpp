@@ -137,7 +137,7 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
     // general case
 
-    if        (wl < - COUENNE_EPS) { // w >= wl, wl negative
+    if        (wl < - COUENNE_EPS && wl > - COUENNE_INFINITY / 10) { // w >= wl, wl negative
 
       // point C: (xl,yl)
 
@@ -172,7 +172,8 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
     //////////// deal with upper bound of w=x/y /////////////////////////////////////////////
 
-    if        (wu >   COUENNE_EPS) { // w <= wu, wu positive
+
+    if        (wu >   COUENNE_EPS && wu < COUENNE_INFINITY / 10) { // w <= wu, wu positive
 
       //
       resyL = ((*yl<0) && (*yl > *xu/wu + COUENNE_EPS) && updateBound (-1, yl,      0)) || resyL;

@@ -518,7 +518,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       jnlst_->Printf(J_ITERSUMMARY, J_CONVEXIFYING,
 		     "Couenne: %d initial row cuts\n", cs.sizeRowCuts ());
 
-    if (realOpt && // this is a good time to check if we have messed up with the optimal solution
+    if (realOpt && // this is a good time to check if we have cut the optimal solution
 	isOptimumCut (realOpt, cs, problem_))
       jnlst_->Printf(J_ITERSUMMARY, J_CONVEXIFYING,
 		     "\n\n CUT OPTIMUM\n\n");

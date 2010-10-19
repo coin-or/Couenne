@@ -73,7 +73,7 @@ void CouenneCutGenerator::genColCuts (const OsiSolverInterface &si,
 
       //printf ("chging low %d %g -> %g\n", index, oldLow [index], newLow [index]);
       if (problem_ -> Var (index) -> isInteger ()) 
-	bd = ceil (bd);
+	bd = ceil (bd - COUENNE_EPS);
       indLow [nLow]   = index;
       bndLow [nLow++] = bd;
     }
@@ -83,7 +83,7 @@ void CouenneCutGenerator::genColCuts (const OsiSolverInterface &si,
 
       //printf ("chging upp %d %g -> %g\n", index, oldUpp [index], newUpp [index]);
       if (problem_ -> Var (index) -> isInteger ()) 
-	bd = floor (bd);
+	bd = floor (bd + COUENNE_EPS);
       indUpp [nUpp]   = index;
       bndUpp [nUpp++] = bd;
     }
