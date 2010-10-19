@@ -1,5 +1,4 @@
-/*
- * $Id$
+/* $Id$
  *
  * Name:    standardize.cpp
  * Author:  Pietro Belotti

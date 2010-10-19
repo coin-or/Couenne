@@ -165,21 +165,30 @@ Auxiliaries:     %8d\n\n",
     double global_opt;
     couenne.options () -> GetNumericValue ("couenne_check", global_opt, "couenne.");
 
+    double 
+      ub = bb.model (). getObjValue (),
+      lb = bb.model (). getBestPossibleObjValue ();
+
+    char *gapstr = new char [80];
+
+    sprintf (gapstr, "%.2f%%", 100. * (ub - lb) / (1. + fabs (lb)));
+
     jnlst -> Printf (J_ERROR, J_COUENNE, "\n\
 Linearization cuts added at root node:   %8d\n\
 Linearization cuts added in total        %8d  (separation time: %gs)\n\
 Total solving time:                      %8gs (%gs in branch-and-bound)\n\
 Lower bound:                           %10g\n\
-Upper bound:                           %10g  (gap: %.2f%%)\n\
+Upper bound:                           %10g  (gap: %s)\n\
 Branch-and-bound nodes:                  %8d\n\n",
 		     nr, nt, st, 
 		     CoinCpuTime () - time_start,
 		     cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
-		     bb.model (). getBestPossibleObjValue (),
-		     bb.model (). getObjValue (),
-		     100. * (bb.model (). getObjValue () -
-			     bb.model (). getBestPossibleObjValue ()) / (1. + fabs (bb.model (). getBestPossibleObjValue ())),
+		     lb, 
+		     ub,
+		     (ub > COUENNE_INFINITY/1e4) ? "inf" : gapstr,
 		     bb.numNodes ());
+
+    delete [] gapstr;
 
     if (global_opt < COUENNE_INFINITY) { // some value found in couenne.opt
 

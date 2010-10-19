@@ -34,19 +34,12 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
     problem_ -> Compute_Symmetry();
   
-    std::vector< int > *branch_orbit;
+    std::vector< int > *branch_orbit = problem_ -> Find_Orbit (indVar);
 
-    //  problem_ -> Print_Orbits();
-    //printf("branching on var %i \n", indVar);
-
-    branch_orbit = problem_ -> Find_Orbit (indVar);
-
-    /*
-      if(branch_orbit.size() >= 2){
-      printf("branching on orbit of size %i \n", branch_orbit.size());
-      problem_ -> Print_Orbits();
-      }
-    */
+    // if(branch_orbit -> size() >= 2){
+    //   printf("branching on orbit of size %i \n", branch_orbit -> size());
+    //   problem_ -> Print_Orbits();
+    // }
 
     if (!way) {
 

@@ -432,8 +432,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   if (result >= 0 && ntightened) {
 
     const double 
-      *oldLB = problem_ -> Lb (),
-      *oldUB = problem_ -> Ub ();
+      *oldLB = si.getColLower (),
+      *oldUB = si.getColUpper ();
 
     // check old and new bounds
 

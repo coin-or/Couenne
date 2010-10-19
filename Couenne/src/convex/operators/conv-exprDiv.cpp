@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: standardization and convexification methods for divisions
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -15,7 +15,6 @@
 #include "CouenneExprAux.hpp"
 #include "CouenneExprOp.hpp"
 #include "CouenneExprDiv.hpp"
-//#include "CouenneExprClone.hpp"
 #include "CouenneExprMul.hpp"
 #include "CouenneProblem.hpp"
 
@@ -53,7 +52,7 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
     cRY = chg [yi].upper() != t_chg_bounds::UNCHANGED;
   }
 
-  if ((yl < -0) && (yu > 0)) return;   // no convexification
+  if ((yl < -0.) && (yu > 0.)) return;   // no convexification
 
   CouNumber k;
 
@@ -94,13 +93,12 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
 
   unifiedProdCuts (cg, cs,
 		   wi, x [wi], wl, wu,
-		   //sign == expression::AUX_LEQ ? -COIN_DBL_MAX : wl,  // wrong - pass sign
-		   //sign == expression::AUX_GEQ ?  COIN_DBL_MAX : wu,
 		   yi, x [yi], yl, yu,
-		   xi, x [xi], xl, xu, chg, 
-		   (sign == expression::AUX_LEQ) ? expression::AUX_GEQ :
-		   (sign == expression::AUX_GEQ) ? expression::AUX_LEQ : expression::AUX_EQ);
-
-
-  // TODO: put real convexification...
+		   xi, x [xi], 
+		   (((sign == expression::AUX_LEQ) && (yl >  0.)) || ((sign == expression::AUX_GEQ) && (yu < -0.)))? -COIN_DBL_MAX : xl, 
+		   (((sign == expression::AUX_LEQ) && (yu < -0.)) || ((sign == expression::AUX_GEQ) && (yl >  0.)))?  COIN_DBL_MAX : xu, 
+		   chg, 
+		   (((sign == expression::AUX_LEQ) && (yl >  0.)) || ((sign == expression::AUX_GEQ) && (yu < -0.)))? expression::AUX_GEQ :
+		   (((sign == expression::AUX_LEQ) && (yu < -0.)) || ((sign == expression::AUX_GEQ) && (yl >  0.)))? expression::AUX_LEQ : 
+		   expression::AUX_EQ);
 }

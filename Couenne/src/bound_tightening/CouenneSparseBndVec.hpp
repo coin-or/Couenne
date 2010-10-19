@@ -39,31 +39,22 @@ namespace Couenne {
 
   private:
 
-    /// maximum size
-    int size_;
-
-    /// current number of elements
-    int n_; 
-
-    /// indices vector, dense
-    int *dInd_;
-
-    /// indices vector, sparse (lots of garbage in between entries)
-    int *sInd_;
-
-    /// data vector, sparse (lots of garbage in between entries)
-    T *data_;
+    unsigned int  size_; ///< maximum size
+    unsigned int  n_;    ///< current number of elements
+    unsigned int *dInd_; ///< indices vector, dense (garbage exists past n_)
+    unsigned int *sInd_; ///< indices vector, sparse (lots of garbage in between entries)
+    T            *data_; ///< data vector, sparse (lots of garbage in between entries)
 
   public:
 
     /// Constructor
-    CouenneSparseBndVec (int size):
+    CouenneSparseBndVec (unsigned int size):
 
       size_ (size),
       n_    (0) {
 
-      dInd_ = new int [size_];
-      sInd_ = new int [size_];
+      dInd_ = new unsigned int [size_];
+      sInd_ = new unsigned int [size_];
       data_ = new T   [size_];
     }
 
@@ -73,9 +64,9 @@ namespace Couenne {
       size_ (src.size_),
       n_    (src.n_) {
 
-      for (int i=0; i<n_; i++) {
+      for (register unsigned int i=0; i<n_; i++) {
 
-	int ind = (dInd_ [i] = src.dInd_ [i]);
+	register unsigned int ind = (dInd_ [i] = src.dInd_ [i]);
 	data_ [ind] = src.data_ [ind];	
 	sInd_ [ind] = i; /// assert: src.sInd [ind] == i
       }
@@ -94,14 +85,14 @@ namespace Couenne {
 
     /// Access -- the only chance for garbage to be returned (and for
     /// valgrind to complain) is when object[ind] is READ without
-    /// making sure it has been written. This should not happen as
-    /// read operations are only performed on the dense structure.
-    T &operator[] (int index) {
+    /// making sure it has been written. This should not happen to the
+    /// end user as read operations are only performed on the dense
+    /// structure, after this object has been populated.
+    T &operator[] (register unsigned int index) {
 
-      int sind = sInd_ [index];
+      register unsigned int sind = sInd_ [index];
 
-      if ((sind < 0)   ||
-	  (sind >= n_) || 
+      if ((sind >= n_) || 
 	  (dInd_ [sind] != index)) {
 
 	// this entry is new and has to be initialized
@@ -118,15 +109,15 @@ namespace Couenne {
     {return data_;}
 
     /// Return indices in DENSE format -- for use with data()
-    int *indices ()
+    unsigned int *indices ()
     {return dInd_;}
 
     /// Return current size
-    int nElements ()
+    unsigned int nElements ()
     {return n_;}
 
     /// Resize
-    void resize (int newsize) 
+    void resize (unsigned int newsize) 
     {size_ = newsize;}
   };
 }
