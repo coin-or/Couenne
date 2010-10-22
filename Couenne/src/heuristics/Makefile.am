@@ -16,7 +16,8 @@ libCouenneHeuristics_la_SOURCES = \
 	CouenneFeasPump.cpp \
 	CouenneFPSolveMILP.cpp \
 	CouenneFPSolveNLP.cpp \
-	CouenneFPFindSolution.cpp 
+	CouenneFPFindSolution.cpp \
+	CouenneIterativeRounding.cpp 
 
 libCouenneHeuristics_la_DEPENDENCIES = $(libCouenneHeuristics_la_LIBADD)
 
@@ -54,6 +55,12 @@ if COIN_HAS_COUENNE
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/interfaces` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
+endif
+
+if COIN_HAS_CPX
+  AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
+	-I`$(CYGPATH_W) $(CPXINCDIR)`	
 endif
 
 if COIN_HAS_NTY
