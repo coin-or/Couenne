@@ -537,6 +537,9 @@ class CouenneProblem {
   /// Set cutoff
   void setCutOff (CouNumber cutoff, const CouNumber *sol = NULL) const;
 
+  /// Reset cutoff
+  void resetCutOff (CouNumber value = COUENNE_INFINITY) const;
+
   /// Get cutoff
   CouNumber getCutOff () const;
 

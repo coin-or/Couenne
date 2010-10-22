@@ -312,6 +312,19 @@ void CouenneProblem::setCutOff (CouNumber cutoff, const double *s) const {
   }
 }
 
+/// Reset cutoff to a given value
+void CouenneProblem::resetCutOff (CouNumber value) const {
+
+  int indobj = objectives_ [0] -> Body () -> Index ();
+
+  if ((indobj >= 0)) {
+
+    if (Var (indobj) -> isInteger ())
+      pcutoff_    -> setCutOff (this, floor (value + COUENNE_EPS), NULL);
+    else pcutoff_ -> setCutOff (this, value, NULL);
+  }
+}
+
 
 /// Tell problem that auxiliary related to obj has a cutoff, to be
 /// used in bound tightening
