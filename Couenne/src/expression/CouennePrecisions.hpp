@@ -18,6 +18,9 @@ namespace Couenne {
 // must be >= 1e-7
 #define COUENNE_EPS           1.e-08
 
+// to be used in bounds tightening to avoid node pruning due to strict COUENNE_EPS tolerance
+#define COUENNE_BOUND_PREC 1.e-5
+
 // for integrality check
 #define COUENNE_EPS_INT       1.e-9
 

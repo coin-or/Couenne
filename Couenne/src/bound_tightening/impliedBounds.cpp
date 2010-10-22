@@ -39,35 +39,27 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 
     int i = numbering_ [ii];
 
+    if (Lb (i) > Ub (i) &&
+	(Lb (i) < Ub (i) + .1 * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i)))))) {
+
+      // This is to prevent very tiny infeasibilities to propagate
+      // down and make the problem infeasible. Example pointed out in
+      // http://list.coin-or.org/pipermail/couenne/2010-October/000145.html
+
+      CouNumber tmp = Lb (i);
+      Lb (i)        = Ub (i);
+      Ub (i)        = tmp;
+    }
+
     if ((variables_ [i] -> Type () == AUX) &&
 	(variables_ [i] -> Multiplicity () > 0)) {
 
-      if (Lb (i) > Ub (i) + COUENNE_EPS * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) {
+      if (Lb (i) > Ub (i) + COUENNE_BOUND_PREC * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) {
 	Jnlst () -> Printf (Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
 			    "  implied bounds: w_%d has infeasible bounds [%g,%g]\n", 
 			    i, Lb (i), Ub (i));
 	return -1;
       }
-
-      //    if ((auxiliaries_ [i] -> Image () -> code () == COU_EXPRSUM) ||
-      //	(auxiliaries_ [i] -> Image () -> code () == COU_EXPRGROUP))
-
-      /*if (auxiliaries_ [i] -> Image () -> Argument () || 
-	  auxiliaries_ [i] -> Image () -> ArgList  ()) {
-
-	expression *arg = auxiliaries_ [i] -> Image () -> Argument ();
-	if (!arg)   arg = auxiliaries_ [i] -> Image () -> ArgList  () [0];
-
-	printf (":::: ");
-	  arg -> print (std::cout);
-	  if (arg -> Index () >= 0) {
-	  int ind = arg -> Index ();
-	  printf (" in [%g,%g]", 
-	  expression::Lbound (ind), 
-	  expression::Ubound (ind));
-	  }
-	  printf ("\n");
-      }*/
 
       // TODO: also test if this expression, or any of its indep
       // variables, have changed. If not, skip
@@ -101,13 +93,14 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 	  Jnlst()->Printf(Ipopt::J_VECTOR, J_BOUNDTIGHTENING,"\n");
 	}
 
-	/*if (optimum_ && 
+	if (optimum_ && 
 	    ((optimum_ [i] < Lb (i) - COUENNE_EPS) ||
 	     (optimum_ [i] > Ub (i) + COUENNE_EPS)))
-	  Jnlst()->Printf(Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
-			  "#### implied b_%d [%g,%g] cuts optimum %g: [%g --> %g, %g <-- %g]\n", 
-			  i+nvar, expression::Lbound (i+nvar), expression::Ubound (i+nvar), 
-			  optimum_ [i+nvar], l0, lb_ [i+nvar], ub_ [i+nvar], u0);*/
+
+	  Jnlst () -> Printf (Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
+			      "#### implied b_%d [%g,%g] cuts optimum %g\n",
+			      i, Lb (i), Ub (i), 
+			      optimum_ [i]);
 
 	//printf ("impli %2d ", nvar+i);
 
@@ -148,8 +141,7 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
   }
 
   if (nchg)
-    Jnlst () -> Printf (Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
-			"  implied bounds: %d changes\n", nchg);
+    Jnlst () -> Printf (Ipopt::J_DETAILED, J_BOUNDTIGHTENING, "  implied bounds: %d changes\n", nchg);
 
   return nchg;
 }

@@ -143,7 +143,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
     if (Var (i) -> Multiplicity () > 0) {
 
       // final test 
-      if ((Lb (i) > Ub (i) + COUENNE_EPS * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) || 
+      if ((Lb (i) > Ub (i) + COUENNE_BOUND_PREC * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) || 
 	  (Ub (i) < - MAX_BOUND) ||
 	  (Lb (i) >   MAX_BOUND)) {
 
