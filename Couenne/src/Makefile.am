@@ -140,6 +140,7 @@ includecoin_HEADERS = \
 	heuristics/BonNlpHeuristic.hpp \
 	heuristics/BonInitHeuristic.hpp \
 	heuristics/CouenneFeasPump.hpp \
+	heuristics/CouenneIterativeRounding.hpp \
 	branch/CouenneObject.hpp \
 	branch/CouenneVarObject.hpp \
 	branch/CouenneVTObject.hpp \
@@ -155,6 +156,7 @@ includecoin_HEADERS = \
 	branch/CouenneProjections.hpp \
 	standardize/CouenneLQelems.hpp \
 	bound_tightening/CouenneFixPoint.hpp \
+	bound_tightening/CouenneAggrProbing.hpp \
 	expression/CouenneDomain.hpp \
 	expression/operators/CouenneExprAbs.hpp \
 	expression/operators/CouenneExprExp.hpp \
