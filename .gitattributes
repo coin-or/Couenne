@@ -186,6 +186,8 @@ Couenne/src/heuristics/BonNlpHeuristic.hpp -text
 Couenne/src/heuristics/CouenneFPFindSolution.cpp -text
 Couenne/src/heuristics/CouenneFeasPump.cpp -text
 Couenne/src/heuristics/CouenneFeasPump.hpp -text
+Couenne/src/heuristics/CouenneIterativeRounding.cpp -text
+Couenne/src/heuristics/CouenneIterativeRounding.hpp -text
 Couenne/src/interfaces/BonCouenneInterface.cpp -text
 Couenne/src/interfaces/BonCouenneInterface.hpp -text
 Couenne/src/interfaces/CouenneUserInterface.hpp -text
