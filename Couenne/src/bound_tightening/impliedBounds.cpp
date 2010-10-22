@@ -34,10 +34,22 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 
     int i = numbering_ [ii];
 
+    if (Lb (i) > Ub (i) &&
+	(Lb (i) < Ub (i) + COUENNE_BOUND_PREC * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i)))))) {
+
+      // This is to prevent very tiny infeasibilities to propagate
+      // down and make the problem infeasible. Example pointed out in
+      // http://list.coin-or.org/pipermail/couenne/2010-October/000145.html
+
+      CouNumber tmp = Lb (i);
+      Lb (i)        = Ub (i);
+      Ub (i)        = tmp;
+    }
+
     if ((variables_ [i] -> Type () == AUX) &&
 	(variables_ [i] -> Multiplicity () > 0)) {
 
-      if (Lb (i) > Ub (i) + COUENNE_EPS * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) {
+      if (Lb (i) > Ub (i) + COUENNE_BOUND_PREC * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) {
 	Jnlst () -> Printf (Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
 			    "  implied bounds: w_%d has infeasible bounds [%g,%g]\n", 
 			    i, Lb (i), Ub (i));
