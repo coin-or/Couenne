@@ -130,8 +130,11 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
     couenne_->nodeComparisonMethod();
   int initMaxNodes = couenne_->getIntParameter(Bonmin::BabSetupBase::MaxNodes);
   double initMaxTime = couenne_->getDoubleParameter(Bonmin::BabSetupBase::MaxTime);
-  couenne_->setNodeComparisonMethod(Bonmin::BabSetupBase::bestBound);
+  int initMaxSol = couenne_->getIntParameter(Bonmin::BabSetupBase::MaxSolutions);
+  couenne_->nodeComparisonMethod() = Bonmin::BabSetupBase::bestBound;
   couenne_->setIntParameter(Bonmin::BabSetupBase::MaxNodes, maxNodes_);
+  couenne_->setIntParameter(Bonmin::BabSetupBase::MaxSolutions, COIN_INT_MAX);
+  problem->setCheckAuxBounds(true);
 
   /// First store, then disable all heuristics.
   Bonmin::BabSetupBase::HeuristicMethods heuristics = couenne_->heuristics();
@@ -185,7 +188,11 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
 				 CoinMin(maxTime_-(CoinCpuTime()-startTime),
 					 maxTime_*0.5));
 
-    //couenne_->couennePtr()->isFirst() = true;
+    if (restoreCutoff_){
+      problem->resetCutOff(initCutoff);
+      problem->Ub()[indobj] = initCutoff;
+      problem->installCutOff();
+    }
 
     std::cout << "Iteration " << iter << ", current bound " << currentBound
 	      << ", try bound " << tryBound << std::endl;
@@ -204,11 +211,6 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
       std::cout << "Probing failed; still infinity, exit" << std::endl;
     }    
     iter++;
-    if (restoreCutoff_){
-      problem->resetCutOff(initCutoff);
-      //problem->Ub()[indobj] = initCutoff;
-      problem->installCutOff();
-    }
   }
 
   // Now that we have a finite bound, pick size of the probing interval
@@ -226,13 +228,6 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
 	 (failedSteps < maxFailedSteps_) &&
 	 (intervalSize >= COUENNE_AGGR_PROBING_MIN_INTERVAL) && 
 	 iter < 100){
-
-    lp->setColLower(initLowerLp);
-    lp->setColUpper(initUpperLp);
-    nlp->setColLower(initLowerLp);
-    nlp->setColUpper(initUpperLp);
-    memcpy(problem->Lb(), initLowerLp, numCols_*sizeof(double));
-    memcpy(problem->Ub(), initUpperLp, numCols_*sizeof(double));
 
     /// Set the bound that we want to try
     if (probeLower){
@@ -280,61 +275,52 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
     problem->domain()->push(numCols_, lp->getColSolution(),
 			    lp->getColLower(), lp->getColUpper());
 
-
-
     /// Setup Branch-and-Bound limits
     couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime, 
     				 CoinMin(maxTime_-(CoinCpuTime()-startTime),
     					 maxTime_*0.5));
 
+    if (restoreCutoff_){
+      problem->Ub()[indobj] = initCutoff;
+      problem->resetCutOff(initCutoff);
+      problem->installCutOff();
+    }
+
     std::cout << "Iteration " << iter << ", current bound " << currentBound
 	      << ", try bound " << tryBound << std::endl;
-
-    problem->resetCutOff(initCutoff);
-    problem->installCutOff();
-
-    std::cout << "Current cutoff:" << problem->getCutOff() << std::endl;
 
     /// Now do Branch-and-Bound and see if probing succeeded
     Bonmin::Bab bb;
     bb.setUsingCouenne(true);
     bb(couenne_);
 
-    // Reset the cutoff and do that again!
-    //problem->Ub()[indobj] = initCutoff;
-    problem->resetCutOff(initCutoff);
-    problem->installCutOff();
+    problem->domain()->pop();
 
-    // Second time we do branch-and-bound: why do we obtain different results
-    // from time to time?
-    Bonmin::Bab bb2;
-    bb2.setUsingCouenne(true);
-    bb2(couenne_);
+    double obj = 0.0;
+    /// Is the search in the current interval complete?
+    bool intervalSearched = (bb.model().isProvenOptimal() || 
+			     bb.model().isProvenInfeasible());
 
-    if (bb.model().isProvenOptimal()){
-      double obj = 0.0;
-      bool feas = problem->checkNLP(bb.model().bestSolution(), obj, true);
-      if (feas)
-	std::cout << " Solution is feasible " << std::endl;
-      else
-	std::cout << " Solution is infeasible " << std::endl;
-      std::cout << "Solution" << std::endl;
-      for (int i = 0; i < numCols_; ++i){
-	std::cout << i << " " << problem->Lb()[i] << " " 
-		  << bb.model().bestSolution()[i] << " "
-		  << problem->Ub()[i] << std::endl;
+    if ((!intervalSearched) || // If the search is not complete
+	(restoreCutoff_ && // or we don't want to accept new solutions
+	 problem->getCutOffSol() && // and we have a new feasible solution
+	 problem->checkNLP(problem->getCutOffSol(), obj, true))){
+      /// Try again in a smaller interval
+      if (lp->isInteger(index) && fabs(tryBound-currentBound) < 0.5){
+	/// There is no smaller interval that we can try; bail out
+	failedSteps = maxFailedSteps_;
       }
+      else{
+	intervalSize /= 2;
+      }
+      failedSteps++;
+      std::cout << "Probing failed; shrinking interval" << std::endl;
     }
-
-    if (bb.model().isProvenInfeasible()){
-      /// Problem is infeasible; therefore, probing was successful.
-      /// Save bound and enlarge interval.  We should do this when the
-      /// problem is optimal as well; we should report the optimal
-      /// solution back to the caller and/or update the model, but for
-      /// the moment, we don't do that. So, this iteration was
-      /// successful only if the problem was found infeasible. 
-      ///
-      /// TODO: correct this in the final implementation
+    else{
+      /// We fully explored the current interval, and there is no
+      /// feasible solution, or there is a solution and we have
+      /// already updated the cutoff. So, we can eliminate the current
+      /// interval. We also double the size of the search interval.
       if (lp->isInteger(index) && fabs(tryBound-currentBound) < 0.5){
 	/// Make sure we increase by at least one if it is an integer
 	/// variable
@@ -355,28 +341,17 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
       failedSteps = 0;
       std::cout << "Probing succeeded; enlarging interval" << std::endl;
     }
-    else {
-      /// Problem is not infeasible; try again in a smaller interval
-      if (lp->isInteger(index) && fabs(tryBound-currentBound) < 0.5){
-	/// There is no smaller interval that we can try; bail out
-	failedSteps = maxFailedSteps_;
-      }
-      else{
-	intervalSize /= 2;
-      }
-      failedSteps++;
-      std::cout << "Probing failed; shrinking interval" << std::endl;
-    }
+
     // Check early termination condition: if we manage to fix the
     // variable (unlikely), there is nothing more we can do
     if ((probeLower && fabs(currentBound-initUpper) < COUENNE_EPS) ||
 	(!probeLower && fabs(currentBound-initLower) < COUENNE_EPS)){
       failedSteps = maxFailedSteps_;
     }
-    // Reset cutoff
 
+    // Reset cutoff
     if (restoreCutoff_){
-      //problem->Ub()[indobj] = initCutoff;
+      problem->Ub()[indobj] = initCutoff;
       problem->resetCutOff(initCutoff);
       problem->installCutOff();
     }
@@ -388,17 +363,17 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
 
   /// Restore initial bounds (we do not want to modify the
   /// CouenneSetup object: the caller will do that, if needed)
-  lp->setColLower(index, initLower);
-  problem->Lb()[index] = initLower;
-  lp->setColUpper(index, initUpper);
-  problem->Ub()[index] = initUpper;
-  if (index < problem->nOrigVars()){
-    nlp->setColLower(index, initLower);
-    nlp->setColUpper(index, initUpper);
-  }
+  lp->setColLower(initLowerLp);
+  lp->setColUpper(initUpperLp);
+  nlp->setColLower(initLowerLp);
+  nlp->setColUpper(initUpperLp);
+  memcpy(problem->Lb(), initLowerLp, numCols_*sizeof(double));
+  memcpy(problem->Ub(), initUpperLp, numCols_*sizeof(double));
 
   /// Restore parameters and heuristics
-  couenne_->setNodeComparisonMethod(initNodeComparison);
+  problem->setCheckAuxBounds(false);
+  couenne_->nodeComparisonMethod() = initNodeComparison;
+  couenne_->setIntParameter(Bonmin::BabSetupBase::MaxSolutions, initMaxSol);
   couenne_->setIntParameter(Bonmin::BabSetupBase::MaxNodes, initMaxNodes);
   couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime, initMaxTime);
   couenne_->heuristics() = heuristics;
@@ -406,7 +381,6 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
   /// Restore cutoff
   if (restoreCutoff_){
     problem->resetCutOff();
-    // problem->Ub()[indobj] = initCutoff;
     problem->setCutOff(initCutoff, initCutoffSol);
     if (initCutoffSol){
       delete[] initCutoffSol;

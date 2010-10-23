@@ -12,6 +12,7 @@
 #include "QuadCuts/BonTMINLP2Quad.hpp"
 #include "QuadCuts/BonTMINLPLinObj.hpp"
 #ifdef COIN_HAS_CPX
+#include "OsiCpxSolverInterface.hpp"
 #include "cplex.h"
 #endif
 
