@@ -1,10 +1,11 @@
 #ifndef HEURISTICS_HPP
 #define HEURISTICS_HPP
-#include <CoinPackedVector.hpp>
-#include <OsiSolverInterface.hpp>
-#include <OsiXxxSolverInterface.hpp>
-#include <tracer.hpp>
-#include <misc_util.hpp>
+
+#include "CoinPackedVector.hpp"
+#include "OsiSolverInterface.hpp"
+#include "OsiXxxSolverInterface.hpp"
+#include "tracer.hpp"
+#include "misc_util.hpp"
 
 
 class Heuristics {

@@ -42,34 +42,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-
-# 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/OaGenerators` \
-# 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces` \
-# 	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` \
-# 	-I`$(CYGPATH_W) $(OSISRCDIR)/src` \
-# 	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
-# 	-I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src` \
-# 	-I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
-# 	-I`$(CYGPATH_W) $(COINUTILSOBJDIR)/inc` \
-# 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms` \
-# 	-I`$(CYGPATH_W) $(CBCSRCDIR)/src` \
-# 	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Interfaces` \
-# 	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/LinAlg` \
-# 	-I`$(CYGPATH_W) $(CBCOBJDIR)/inc` \
-# 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/CbcBonmin` \
-# 	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/Branching` \
-# 	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` \
-# 	-I`$(CYGPATH_W) $(CLPSRCDIR)/src` \
-# 	-I`$(CYGPATH_W) $(CLPOBJDIR)/inc` 
 @COIN_HAS_COUENNE_TRUE@am__append_1 = 
-
-# 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
-# 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
-# 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
-# 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators/bounds` \
-# 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/util` \
-# 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
-# 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
 @COIN_HAS_NTY_TRUE@am__append_2 = \
 @COIN_HAS_NTY_TRUE@	-I`$(CYGPATH_W) $(NTYINCDIR)`
 
@@ -313,6 +286,26 @@ noinst_LTLIBRARIES = libCouenneSdpCuts.la
 
 # List all source files for this library, including headers
 libCouenneSdpCuts_la_SOURCES = 
+
+# libCouenneSdpCuts_la_SOURCES = \
+# 	CutGen.cpp \
+# 	dsyevx_wrapper.cpp \
+# 	Heuristics.cpp \
+# 	linquad_cuts.cpp \
+# 	misc_util.cpp \
+# 	orthocut.cpp \
+# 	populate.cpp \
+# 	quadratic_cuts_check.cpp \
+# 	report2.cpp \
+# 	report.cpp \
+# 	sdpcuts.cpp \
+# 	sdpsol.cpp \
+# 	sedumi.cpp \
+# 	tracerreport.cpp
+
+#	disjunctive_cuts.cpp 
+#	tracer.cpp 
+#	rlt_cuts.cpp 
 libCouenneSdpCuts_la_DEPENDENCIES = $(libCouenneSdpCuts_la_LIBADD)
 
 # This is for libtool (on Windows)
@@ -320,7 +313,16 @@ libCouenneSdpCuts_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-AM_CPPFLAGS = $(am__append_1) $(am__append_2)
+AM_CPPFLAGS = -I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` \
+	-I`$(CYGPATH_W) $(OSISRCDIR)/src` -I`$(CYGPATH_W) \
+	$(CGLSRCDIR)/src` -I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src` \
+	-I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` -I`$(CYGPATH_W) \
+	$(COINUTILSOBJDIR)/inc` -I`$(CYGPATH_W) \
+	$(IPOPTSRCDIR)/src/Interfaces` -I`$(CYGPATH_W) \
+	$(IPOPTSRCDIR)/src/LinAlg` -I`$(CYGPATH_W) \
+	$(OSISRCDIR)/src/OsiClp` -I`$(CYGPATH_W) $(CLPSRCDIR)/src` \
+	-I`$(CYGPATH_W) $(CLPOBJDIR)/inc` $(am__append_1) \
+	$(am__append_2)
 all: all-am
 
 .SUFFIXES:
@@ -502,6 +504,10 @@ uninstall-am: uninstall-info-am
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	uninstall uninstall-am uninstall-info-am
 
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
+@COIN_HAS_COUENNE_TRUE@	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

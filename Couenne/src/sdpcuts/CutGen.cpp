@@ -1,16 +1,16 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+#include "stdlib.h"
+#include "stdio.h"
+#include "math.h"
+#include "sys/time.h"
+#include "sys/resource.h"
 
-#include <CutGen.hpp>
-#include <misc_util.hpp>
-#include <dsyevx_wrapper.hpp>
-#include <orthocut.hpp>
-#include <disjunctive_cuts.hpp>
-#include <linquad_cuts.hpp>
-#include <rlt_cuts.hpp>
+#include "CutGen.hpp"
+#include "misc_util.hpp"
+#include "dsyevx_wrapper.hpp"
+#include "orthocut.hpp"
+#include "disjunctive_cuts.hpp"
+#include "linquad_cuts.hpp"
+#include "rlt_cuts.hpp"
 
 static int decomposition_counter;
 
@@ -1015,7 +1015,7 @@ CutGen::CutGen (const int n,
 
 
 
-
+#if 0
 	spartrace.generated_cuts1 = new int[EXIT_ON_ITER];
 	spartrace.generated_cuts2 = new int[EXIT_ON_ITER];
 	spartrace.duplicate1 = new int[EXIT_ON_ITER];
@@ -1051,7 +1051,7 @@ CutGen::CutGen (const int n,
 	spartrace.bounds2 = new double[EXIT_ON_ITER];
 	spartrace.times2 = new double[EXIT_ON_ITER];
 	spartrace.iterations = new int[1];
-
+#endif
 
 }
 /************************************************************************/

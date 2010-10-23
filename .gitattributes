@@ -236,7 +236,7 @@ Couenne/src/sdpcuts/CutGen.cpp -text
 Couenne/src/sdpcuts/CutGen.hpp -text
 Couenne/src/sdpcuts/Heuristics.cpp -text
 Couenne/src/sdpcuts/Heuristics.hpp -text
-Couenne/src/sdpcuts/Makefile -text
+Couenne/src/sdpcuts/Makefile.old -text
 Couenne/src/sdpcuts/OsiXxxSolverInterface.hpp -text
 Couenne/src/sdpcuts/disjunctive_cuts.cpp -text
 Couenne/src/sdpcuts/disjunctive_cuts.hpp -text

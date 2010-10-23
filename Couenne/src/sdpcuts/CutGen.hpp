@@ -1,11 +1,11 @@
 #ifndef SDPCUTGEN2_HPP
 #define SDPCUTGEN2_HPP
 
-#include <CglCutGenerator.hpp>
-#include <OsiSolverInterface.hpp>
-#include <OsiXxxSolverInterface.hpp>
-#include <Heuristics.hpp>
-#include <misc_util.hpp>
+#include "CglCutGenerator.hpp"
+#include "OsiSolverInterface.hpp"
+#include "OsiXxxSolverInterface.hpp"
+#include "Heuristics.hpp"
+#include "misc_util.hpp"
 
 
 #define indexQ(i,j,n) ((n) + (i) * (2*(n)-1-(i)) / 2 + (j))
