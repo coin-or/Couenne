@@ -117,6 +117,8 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   // Although this should be handled by Cbc, very often this doesn't
   // happen.
 
+  int nodeDepth = -1;
+
   try {
 
   if (CoinCpuTime () > couenne_ -> getMaxCpuTime ())
@@ -138,13 +140,14 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   // feasibility is low
   bool too_deep = false;
 
+  const int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
+  nodeDepth = depth;
+
   // check depth
   if (numberSolvePerLevel_ > -1) {
 
     if (numberSolvePerLevel_ == 0) 
       throw noSolution;
-
-    const int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
 
     //if (CoinDrand48 () > pow (2., numberSolvePerLevel_ - depth))
     if (CoinDrand48 () > 1. / CoinMax 
@@ -154,6 +157,9 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
   if (too_deep)
     throw noSolution;
+
+  if (depth <= 0)
+    couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "NLP Heuristic: "); fflush (stdout);
 
   double *lower = new double [couenne_ -> nVars ()];
   double *upper = new double [couenne_ -> nVars ()];
@@ -371,6 +377,11 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   delete [] lower;
   delete [] upper;
 
+  if (nodeDepth <= 0) {
+    if (foundSolution) couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done. Solution: %g\n", objectiveValue);
+    else               couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done (no solution).\n");
+  }
+
   return foundSolution;
 
   }
@@ -378,15 +389,24 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
     // no solution available? Use the one from the global cutoff
 
+
     if ((couenne_ -> getCutOff () < objectiveValue) &&
 	couenne_ -> getCutOffSol ()) {
 
       objectiveValue = couenne_ -> getCutOff    ();
       CoinCopyN       (couenne_ -> getCutOffSol (), couenne_ -> nVars (), newSolution);
 
+      if (nodeDepth <= 0)
+	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done. Solution: %g\n", objectiveValue);
+
       return 1;
 
-    } else return 0;
+    } else {
+
+      if (nodeDepth <= 0)
+	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done (no solution).\n", objectiveValue);
+      return 0;
+    }
   }
 }
 

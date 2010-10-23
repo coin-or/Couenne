@@ -31,7 +31,7 @@ namespace Bonmin {
 
 #define MAX_ABT_ITER           1  // max # aggressive BT iterations
 #define THRES_ABT_IMPROVED     0  // only continue ABT if at least these bounds have improved
-#define THRES_ABT_ORIG      1000  // only do ABT on originals if they are more than this 
+#define THRES_ABT_ORIG       100  // only do ABT on auxiliaries if they are less originals than this 
 
 static double distanceToBound (int n, const double* xOrig,
 			       const double* lower, const double* upper) {
@@ -59,9 +59,15 @@ static double distanceToBound (int n, const double* xOrig,
 
 bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 				   t_chg_bounds *chg_bds, 
+				   const CglTreeInfo &info,
 				   Bonmin::BabInfo * babInfo) const {
 
   Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "Aggressive FBBT\n");
+
+  if (info.level <= 0 && !(info.inTree))  {
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, "Probing: ");
+    fflush (stdout);
+  }
 
   CouenneInfo* couInfo =
     dynamic_cast <CouenneInfo *> (babInfo);
@@ -154,6 +160,8 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
       }
     }
   }
+
+  int nTotImproved = 0;
 
   if (!retval && (dist < 1e10)) {
 
@@ -251,6 +259,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	  }
 
 	  improved += second;
+	  nTotImproved += improved;
 	}
       }
     } while (retval && (improved > THRES_ABT_IMPROVED) && (iter++ < MAX_ABT_ITER));
@@ -292,6 +301,11 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
   delete [] olb;
   delete [] oub;
+
+  if (info.level <= 0 && !(info.inTree))  {
+    if (!retval) jnlst_ -> Printf (J_ERROR, J_COUENNE, "done (infeasible)\n");
+    else         jnlst_ -> Printf (J_ERROR, J_COUENNE, "done (%d improved bounds)\n", nTotImproved);
+  }
 
   return retval;// && btCore (psi, cs, chg_bds, babInfo, true); // !!!
   //return retval && btCore (psi, cs, chg_bds, babInfo, true);

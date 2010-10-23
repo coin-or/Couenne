@@ -83,6 +83,7 @@ int
 InitHeuristic::solution(double & objectiveValue, double * newSolution){
 
   if (!sol_) return 0;
+
   int retval = 0;
   if (objValue_ < objectiveValue) {
     CoinCopyN(sol_, nVars_, newSolution);
@@ -91,6 +92,7 @@ InitHeuristic::solution(double & objectiveValue, double * newSolution){
   }
   delete [] sol_;
   sol_ = NULL;
+
   return retval;
 }
 

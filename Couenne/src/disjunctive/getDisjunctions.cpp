@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    getDisjunctions.cpp
  * Author:  Pietro Belotti
  * Purpose: get nonlinear (and integer?) disjunctions for the problem
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -86,7 +86,10 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
 
       OsiBranchingObject *brObj = Object -> createBranch (&si, &brInfo, 0); // down!
 
-      if (jnlst_ -> ProduceOutput (J_VECTOR, J_DISJCUTS))
+      if (brObj && 
+	  jnlst_ -> ProduceOutput (J_VECTOR, J_DISJCUTS) &&
+	  dynamic_cast <CouenneBranchingObject *> (brObj) &&
+	  dynamic_cast <CouenneBranchingObject *> (brObj) -> variable ())
 	printf ("---   cand [%d] is %d: x_%d <>= %g [%g,%g]\n", 
 	      candInd, 
 		candidates [candInd],
