@@ -74,6 +74,8 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
     // fake infeasible bounds for Couenne to bail out
     for (int i = nVars (); i--;)
       Ub (i) = - (Lb (i) = 1.);
+
+    return;
   }
 
   // clear all spurious variables pointers not referring to the variables_ vector

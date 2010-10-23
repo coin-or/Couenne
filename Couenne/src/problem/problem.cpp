@@ -176,6 +176,8 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 
       if (var -> Type () == AUX) {
 
+	CouNumber &x = X (index);
+
 	bool isInt = var -> isInteger ();
 
 	/*printf ("checking "); var -> print ();
@@ -184,15 +186,15 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 		var -> sign (), isInt, l, u);*/
 
 	if (var -> sign () == expression::AUX_EQ)
-	  X (index) = (*(var -> Image ())) ();  // addresses of x[] and X() are equal
+	  x = (*(var -> Image ())) ();  // addresses of x[] and X() are equal
     
-	X (index) = 
+	x = 
 	  CoinMax ((var -> sign () != expression::AUX_LEQ) ? (isInt ? ceil  (l - COUENNE_EPS) : l) : -COIN_DBL_MAX, 
-	  CoinMin ((var -> sign () != expression::AUX_GEQ) ? (isInt ? floor (u + COUENNE_EPS) : u) :  COIN_DBL_MAX, X (index)));
+	  CoinMin ((var -> sign () != expression::AUX_GEQ) ? (isInt ? floor (u + COUENNE_EPS) : u) :  COIN_DBL_MAX, x));
 
 	if (isInt) {
-	  if (var -> sign () == expression::AUX_GEQ) X (index) = ceil  (X (index) - COUENNE_EPS);
-	  if (var -> sign () == expression::AUX_LEQ) X (index) = floor (X (index) + COUENNE_EPS);
+	  if (var -> sign () == expression::AUX_GEQ) x = ceil  (x - COUENNE_EPS);
+	  if (var -> sign () == expression::AUX_LEQ) x = floor (x + COUENNE_EPS);
 	}
 
 	//printf (" -> %g\n", X (index));

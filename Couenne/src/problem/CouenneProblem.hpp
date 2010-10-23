@@ -510,6 +510,7 @@ class CouenneProblem {
   /// bounds/infeasibility
   bool aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 		     t_chg_bounds *, 
+		     const CglTreeInfo &info,
 		     Bonmin::BabInfo * = NULL) const;
 
   /// procedure to strengthen variable bounds. Return false if problem

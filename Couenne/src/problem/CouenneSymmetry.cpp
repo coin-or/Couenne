@@ -335,7 +335,7 @@ void CouenneProblem::Compute_Symmetry() const{
   
 void CouenneProblem::Print_Orbits(){
 
-  printf ("num gens = %d, num orbits = %d \n", nauty_info -> getNumGenerators(), nauty_info -> getNumOrbits() );
+  //printf ("num gens = %d, num orbits = %d \n", nauty_info -> getNumGenerators(), nauty_info -> getNumOrbits() );
 
   std::vector<std::vector<int> > *new_orbits = nauty_info->getOrbits();
 
@@ -343,12 +343,18 @@ void CouenneProblem::Print_Orbits(){
   //nauty_info->getNumOrbits(),
   //nauty_info->getNumGenerators());
 
+  int nNonTrivialOrbits = 0;
+
   for (unsigned int i = 0; i < new_orbits -> size(); i++) {
-    printf( "Orbit %d [", i);
-    copy((*new_orbits)[i].begin(), (*new_orbits)[i].end(),
-	 std::ostream_iterator<int>(std::cout, " "));
-    printf("] \n");
+    if ((*new_orbits)[i].size() > 1) nNonTrivialOrbits++;
+    int orbsize = (*new_orbits)[i].size();
+    //printf( "Orbit %d [size: %d] [", i, orbsize);
+    //copy((*new_orbits)[i].begin(), (*new_orbits)[i].end(),
+    //std::ostream_iterator<int>(std::cout, " "));
+    //printf("] \n");
   }
+
+  printf ("%d non-trivial orbits\n", nNonTrivialOrbits);
 
   delete new_orbits;
 }
@@ -396,7 +402,7 @@ void CouenneProblem::setupSymmetry () {
 #ifdef COIN_HAS_NTY
   sym_setup ();
   Compute_Symmetry ();
-  //Print_Orbits ();
+  Print_Orbits ();
 #else
   if (orbitalBranching_) {
     printf ("\

@@ -194,6 +194,9 @@ const CouNumber estProdEps = 1e-6;
             returnCode = (bestObjectIndex_>=0) ? 3 : 4;
           for (unsigned int i=0;i < results_.size();i++) {
             int iObject = results_[i].whichObject();
+
+	    // UP ESTIMATE ////////////////////////////////////////
+
             double upEstimate;
             if (results_[i].upStatus()!=1) {
               assert (results_[i].upStatus()>=0);
@@ -218,6 +221,9 @@ const CouNumber estProdEps = 1e-6;
                 delete branch;
               }
             }
+
+	    // DOWN ESTIMATE /////////////////////////////////////
+
             double downEstimate;
             if (results_[i].downStatus()!=1) {
               assert (results_[i].downStatus()>=0);

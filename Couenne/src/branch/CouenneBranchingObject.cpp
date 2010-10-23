@@ -148,38 +148,9 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 		    solver -> getColUpper () [index]);
   */
 
+  t_chg_bounds *chg_bds = NULL;
 
-  branchCore (solver, index, way, integer, brpt);
-
-//   //_______ Jim's adding stuff ________
-
-// #ifdef COIN_HAS_NTY
-//   problem_ -> ChangeBounds( solver -> getColLower (),  solver -> getColUpper (), solver -> getNumCols ());
-//   problem_ -> Compute_Symmetry();
-  
-//   std::vector< int > branch_orbit;
-//   //  problem_ -> Print_Orbits();
-//   //printf("branching on var %i \n", index);
-//   branch_orbit = problem_ -> Find_Orbit(index);
-//   /*
-//   if(branch_orbit.size() >= 2){
-//     printf("branching on orbit of size %i \n", branch_orbit.size());
-//     problem_ -> Print_Orbits();
-//   }
-//   */
-// #endif
-
-//   if (!way) solver -> setColUpper (index, integer ? floor (brpt) : brpt); // down branch
-//   else {
-
-//     solver -> setColLower (index, integer ? ceil (brpt) : brpt); // up branch
-
-// #ifdef COIN_HAS_NTY
-//     for (std::vector<int>::iterator it = branch_orbit.begin(); it!=branch_orbit.end(); ++it) 
-//       solver -> setColLower (*it, integer ? ceil  (brpt) : brpt); // up   branch
-// #endif
-
-//   }
+  branchCore (solver, index, way, integer, brpt, chg_bds);
 
   //CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
   //CouenneProblem *p = cutGen_ -> Problem ();
@@ -196,11 +167,6 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
       (doConvCuts_ && simulate_ && cutGen_)) {
 
     problem_ -> domain () -> push (solver); // have to alloc+copy
-
-    t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
-
-    if (!way) chg_bds [index].setUpper (t_chg_bounds::CHANGED);
-    else      chg_bds [index].setLower (t_chg_bounds::CHANGED);
 
     if (            doFBBT_ &&           // this branching object should do FBBT, and
 	problem_ -> doFBBT ()) {         // problem allowed to do FBBT
@@ -242,10 +208,12 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
       solver -> applyCuts (cs);
     }
 
-    delete [] chg_bds;
+    //delete [] chg_bds;
 
     problem_ -> domain () -> pop ();
   }
+
+  if (chg_bds) delete [] chg_bds;
 
   // next time do other branching
   branchIndex_++;

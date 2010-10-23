@@ -50,8 +50,6 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 }
 
 
-//namespace Bonmin {
-
   /**  This is a utility function which does strong branching on
        a list of objects and stores the results in OsiHotInfo.objects.
        On entry the object sequence is stored in the OsiHotInfo object
@@ -68,8 +66,16 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 					      OsiBranchingInformation *info,
 					      int numberToDo, int returnCriterion) {
 
-    //CouenneSolverInterface *solver = dynamic_cast <CouenneSolverInterface *> (OsiSolver);
-    
+    // // print info at the beginning
+    // printf ("beginning of doSB\n");
+    // for (int i=0; i< problem_ -> nVars (); i++) {
+    //   printf ("x_%-3d @%6g[%6g,%5g] ", i,
+    // 	      info -> solution_ [i],
+    // 	      info -> lower_ [i],
+    // 	      info -> upper_ [i]);
+    //   if (i && !(i%5)) printf ("\n");
+    // }
+
     jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		      "\n-\n------- CCS: trying %d objects:\n", numberToDo);
 
@@ -160,8 +166,6 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       ///////////////////////////////////////////////////////////////////////////
 
-      jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "-------\n");
-
       if (cb) cb -> setSimulate (false);
 
       /////////////////////////////////////////////////////////////////////////////
@@ -205,7 +209,6 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       // set new bounding box as the possibly tightened one (a subset
       // of the initial)
       for (int j=0; j<numberColumns; j++) {
-
         solver -> setColLower (j, saveLower [j] = problem_ -> Lb (j));
         solver -> setColUpper (j, saveUpper [j] = problem_ -> Ub (j));
       }
@@ -280,6 +283,16 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
     //solver -> doingResolve () = true;
     branchtime_ += CoinCpuTime () - timeStart;
+
+    // // print info at the beginning
+    // printf ("end of doSB\n");
+    // for (int i=0; i< problem_ -> nVars (); i++) {
+    //   printf ("x_%-3d @%5g[%5g,%5g] ", i,
+    // 	      info -> solution_ [i],
+    // 	      info -> lower_ [i],
+    // 	      info -> upper_ [i]);
+    //   if (i && !(i%5)) printf ("\n");
+    // }
 
     return returnCode;
   }

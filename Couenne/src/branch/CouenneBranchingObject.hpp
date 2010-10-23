@@ -88,7 +88,7 @@ public:
   {return variable_;}
 
   /// Perform branching step
-  void branchCore (OsiSolverInterface *, int, int, bool, double);
+  void branchCore (OsiSolverInterface *, int, int, bool, double, t_chg_bounds *&);
 
 protected:
 
