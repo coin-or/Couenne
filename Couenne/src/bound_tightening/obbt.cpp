@@ -20,6 +20,7 @@
 
 using namespace Couenne;
 
+#define THRESH_OBBT_AUX 50 // if more than this originals, don't do OBBT on auxs
 #define OBBT_EPS 1e-3
 #define MAX_OBBT_LP_ITERATION 100
 
@@ -144,11 +145,14 @@ int CouenneProblem::obbtInner (OsiSolverInterface *csi,
     if ((ni = call_iter (csi, chg_bds, warmstart, babInfo, objcoe, VAR, -1)) < 0) throw Infeasible;
     nimprov += ni;
 
-    if ((ni = call_iter (csi, chg_bds, warmstart, babInfo, objcoe, AUX,  1)) < 0) throw Infeasible;
-    nimprov += ni;
+    if (nVars () < THRESH_OBBT_AUX) {
 
-    if ((ni = call_iter (csi, chg_bds, warmstart, babInfo, objcoe, AUX, -1)) < 0) throw Infeasible;
-    nimprov += ni;
+      if ((ni = call_iter (csi, chg_bds, warmstart, babInfo, objcoe, AUX,  1)) < 0) throw Infeasible;
+      nimprov += ni;
+
+      if ((ni = call_iter (csi, chg_bds, warmstart, babInfo, objcoe, AUX, -1)) < 0) throw Infeasible;
+      nimprov += ni;
+    }
   }
 
   catch (int exception) {
@@ -179,6 +183,14 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
   if (isWiped (cs))
     return 0;
+
+  if (info.level <= 0 && !(info.inTree))  {
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, "Optimality Based BT on %d variables: ", 
+		      nVars () > THRESH_OBBT_AUX ? nOrigVars_ : nVars ()); 
+    fflush (stdout);
+  }
+
+  int nTotImproved = 0;
 
   // Do OBBT if:
   if (doOBBT_ &&                        // flag is checked, AND
@@ -224,6 +236,8 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
       sparse2dense (nVars (), chg_bds, changed, nchanged);
       cg -> genColCuts (*csi, cs, nchanged, changed);
 
+      nTotImproved += nImprov;
+
       if ((nIter < MAX_OBBT_ITER) && 
 	  (nImprov >= THRES_NBD_CHANGED)) {
 
@@ -249,6 +263,9 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
       return -1;
     }
   }
+
+  if (info.level <= 0 && !(info.inTree))  
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, "done (%d bounds improved)\n", nTotImproved);
 
   return 0;
 }

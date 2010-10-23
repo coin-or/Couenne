@@ -40,7 +40,7 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
     int i = numbering_ [ii];
 
     if (Lb (i) > Ub (i) &&
-	(Lb (i) < Ub (i) + .1 * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i)))))) {
+	(Lb (i) < Ub (i) + COUENNE_BOUND_PREC * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i)))))) {
 
       // This is to prevent very tiny infeasibilities to propagate
       // down and make the problem infeasible. Example pointed out in

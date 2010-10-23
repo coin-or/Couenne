@@ -90,16 +90,11 @@ namespace Couenne {
     /// structure, after this object has been populated.
     T &operator[] (register unsigned int index) {
 
-      register unsigned int sind = sInd_ [index];
+      register unsigned int &sind = sInd_ [index];
 
       if ((sind >= n_) || 
-	  (dInd_ [sind] != index)) {
-
-	// this entry is new and has to be initialized
-	
-	dInd_ [n_] = index;
-	sind = sInd_ [index] = n_++;
-      }
+	  (dInd_ [sind] != index))
+	dInd_ [sind = n_++] = index;	// this entry is new and has to be initialized	
 
       return data_ [sind];
     }
