@@ -95,7 +95,9 @@ int main (int argc, char *argv[]) {
 
     ConstJnlstPtr jnlst = couenne. couennePtr () -> Jnlst ();
 
-    jnlst -> Printf (J_INSUPPRESSIBLE, J_COUENNE, "Couenne %s --  an Open-Source exact solver for MINLP\n", strcmp (PACKAGE_VERSION, "trunk") ? PACKAGE_VERSION : "");
+    jnlst -> Printf (J_INSUPPRESSIBLE, J_COUENNE, 
+		     "Couenne %s --  an Open-Source exact solver for MINLP\n", 
+		     strcmp (PACKAGE_VERSION, "trunk") ? PACKAGE_VERSION : "");
 
     jnlst -> Printf (J_ERROR, J_COUENNE, "\
 Mailing list: %s\n\
@@ -126,11 +128,12 @@ Auxiliaries:     %8d\n\n",
     double timeLimit = 0;
     couenne.options () -> GetNumericValue ("time_limit", timeLimit, "couenne.");
     couenne.setDoubleParameter (Bonmin::BabSetupBase::MaxTime, 
-				CoinMax (0., timeLimit - time_start));
+				CoinMax (1., timeLimit - time_start));
+
+    jnlst -> Printf (J_ERROR, J_COUENNE, "Starting branch-and-bound\n");
 
     //////////////////////////////////
 
-    jnlst -> Printf (J_ERROR, J_COUENNE, "Starting branch-and-bound\n");
     bb (couenne); // do branch and bound
 
     //////////////////////////////////

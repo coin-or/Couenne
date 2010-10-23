@@ -340,20 +340,22 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // tightening is done, we can apply further tightening using orbit
     // information.
 
-    //  ChangeBounds( psi -> getColLower (),  psi -> getColUpper (), psi -> getNumCols ());
 #ifdef COIN_HAS_NTY
-    if (false && problem_ -> orbitalBranching ())
+    //    ChangeBounds (psi -> getColLower (),  
+    //		  psi -> getColUpper (), 
+    //		  psi -> getNumCols ());
+    if (problem_ -> orbitalBranching ())
       problem_ -> Compute_Symmetry ();
 #endif
 
     // Bound tightening ////////////////////////////////////
 
     /*printf ("== BT ================\n");
-    for (int i = 0; i < problem_ -> nVars (); i++)
+      for (int i = 0; i < problem_ -> nVars (); i++)
       if (problem_ -> Var (i) -> Multiplicity () > 0)
-	printf ("%4d %+20.8g [%+20.8g,%+20.8g]\n", i,
-		problem_ -> X  (i), problem_ -> Lb (i), problem_ -> Ub (i));
-		printf("=============================\n");*/
+      printf ("%4d %+20.8g [%+20.8g,%+20.8g]\n", i,
+      problem_ -> X  (i), problem_ -> Lb (i), problem_ -> Ub (i));
+      printf("=============================\n");*/
 
     // Reduced Cost BT -- to be done first to use rcost correctly
     if (!firstcall_  &&                         // have a linearization already
@@ -395,25 +397,51 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // TODO: when independent bound tightener, can get original bounds
     // through si.getCol{Low,Upp}er()
 
-    if (false && problem_ -> orbitalBranching ()) {
+    if (problem_ -> orbitalBranching () && !firstcall_) {
+
+      CouNumber 
+	*lb = problem_ -> Lb (),
+	*ub = problem_ -> Ub ();
 
       std::vector<std::vector<int> > *new_orbits = problem_ -> getNtyInfo () -> getOrbits();
-  
-      for (int i=0; i <  problem_ -> getNtyInfo () -> getNumOrbits(); i++){
 
-	CouNumber ll = -COUENNE_INFINITY;
-	CouNumber uu =  COUENNE_INFINITY; 
+      for (int i=0, ii = problem_ -> getNtyInfo () -> getNumOrbits (); ii--; i++){
 
-	for(int j = 0; j < (*new_orbits)[i].size(); j++){
-	  if (problem_ -> Lb( (*new_orbits)[i][j]) > ll) ll = problem_ -> Lb( (*new_orbits)[i][j]);
-	  if (problem_ -> Ub( (*new_orbits)[i][j]) < uu) uu = problem_ -> Ub( (*new_orbits)[i][j]);
+	CouNumber
+	  ll = -COUENNE_INFINITY,
+	  uu =  COUENNE_INFINITY; 
+
+	std::vector <int> orbit = (*new_orbits)[i];
+
+	if (orbit.size () <= 1)
+	  continue; // not much to do when only one variable in this orbit
+
+	if (jnlst_ -> ProduceOutput (J_VECTOR, J_BOUNDTIGHTENING)) {
+
+	  printf ("orbit bounds: "); fflush (stdout);
+
+	  for(int j = 0; j < orbit.size (); j++) {
+	    printf ("x_%d [%g,%g] ", orbit[j], lb [orbit [j]], ub [orbit [j]]);
+	    fflush (stdout);
+	  }
+	  printf ("\n");
 	}
 
-	for(int j = 0; j < (*new_orbits)[i].size(); j++){
+	for (int j = 0; j < orbit.size (); j++) 
+	  if (orbit [j] < problem_ -> nVars ()) {
 
-	  problem_ -> Lb( (*new_orbits)[i][j]) = ll;
-	  problem_ -> Ub( (*new_orbits)[i][j]) = uu;
-	}
+	    if (lb [orbit [j]] > ll) ll = lb [orbit [j]];
+	    if (ub [orbit [j]] < uu) uu = ub [orbit [j]];
+	  }
+
+	jnlst_ -> Printf (J_VECTOR, J_BOUNDTIGHTENING, 
+			  " --> new common bounds: [%g,%g]\n", ll, uu);
+
+	for(int j = 0; j < orbit.size (); j++) 
+	  if (orbit [j] < problem_ -> nVars ()){
+	    lb [orbit [j]] = ll;
+	    ub [orbit [j]] = uu;
+	  }
       }
 
       delete new_orbits;
@@ -445,7 +473,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	    pow (2., (double) logAbtLev - (info.level + 1))))) {
 
 	jnlst_ -> Printf(J_ITERSUMMARY, J_CONVEXIFYING,"  performing ABT\n");
-	if (! (problem_ -> aggressiveBT (nlp_, chg_bds, babInfo)))
+	if (! (problem_ -> aggressiveBT (nlp_, chg_bds, info, babInfo)))
 	  throw infeasible;
 
 	sparse2dense (ncols, chg_bds, changed, nchanged);

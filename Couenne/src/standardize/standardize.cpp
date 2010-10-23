@@ -170,11 +170,11 @@ bool CouenneProblem::standardize () {
 
       CouNumber bodyVal = (*eBody)();
 
-      if ((bodyVal < conLb - COUENNE_EPS) ||
-	  (bodyVal > conUb + COUENNE_EPS)) { // all variables eliminated, but out of bounds
+      if ((bodyVal < conLb - COUENNE_BOUND_PREC) ||
+	  (bodyVal > conUb + COUENNE_BOUND_PREC)) { // all variables eliminated, but out of bounds
 	
 	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, 
-			  "Constraint %d: all variables eliminated, but value %g out of bounds [%g,%g]: ", 
+			  "Constraint: all variables eliminated, but value %g out of bounds [%g,%g]: ", 			  
 			  bodyVal, conLb, conUb);
 
 	if (jnlst_ -> ProduceOutput (J_SUMMARY, J_PROBLEM))

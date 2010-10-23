@@ -36,12 +36,11 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
 	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common`
 
-
 if COIN_HAS_COUENNE
   AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression`\ 
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch`\
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/bound_tightening`
 endif
 

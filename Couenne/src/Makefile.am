@@ -205,10 +205,23 @@ includecoin_HEADERS = \
 	expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp \
 	convex/CouenneCutGenerator.hpp \
-	sdpcuts/CouenneSdpCuts.hpp \
 	ellipcuts/CouenneEllipCuts.hpp \
 	crossconv/CouenneCrossConv.hpp \
-	two_implied_bt/CouenneTwoImplied.hpp
+	two_implied_bt/CouenneTwoImplied.hpp \
+	sdpcuts/CouenneSdpCuts.hpp \
+	sdpcuts/CutGen.hpp \
+	sdpcuts/disjunctive_cuts.hpp \
+	sdpcuts/dsyevx_wrapper.hpp \
+	sdpcuts/Heuristics.hpp \
+	sdpcuts/linquad_cuts.hpp \
+	sdpcuts/misc_util.hpp \
+	sdpcuts/orthocut.hpp \
+	sdpcuts/OsiXxxSolverInterface.hpp \
+	sdpcuts/populate.hpp \
+	sdpcuts/quadratic_cuts_check.hpp \
+	sdpcuts/rlt_cuts.hpp \
+	sdpcuts/sdpcuts.hpp \
+	sdpcuts/tracer.hpp 
 
 if COIN_HAS_NTY
 includecoin_HEADERS += \

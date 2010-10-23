@@ -142,9 +142,16 @@ am__includecoin_HEADERS_DIST = ../inc/config_couenne.h \
 	problem/CouenneSolverInterface.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
 	expression/CouenneTypes.hpp disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp sdpcuts/CouenneSdpCuts.hpp \
-	ellipcuts/CouenneEllipCuts.hpp crossconv/CouenneCrossConv.hpp \
-	two_implied_bt/CouenneTwoImplied.hpp branch/Nauty.h
+	convex/CouenneCutGenerator.hpp ellipcuts/CouenneEllipCuts.hpp \
+	crossconv/CouenneCrossConv.hpp \
+	two_implied_bt/CouenneTwoImplied.hpp \
+	sdpcuts/CouenneSdpCuts.hpp sdpcuts/CutGen.hpp \
+	sdpcuts/disjunctive_cuts.hpp sdpcuts/dsyevx_wrapper.hpp \
+	sdpcuts/Heuristics.hpp sdpcuts/linquad_cuts.hpp \
+	sdpcuts/misc_util.hpp sdpcuts/orthocut.hpp \
+	sdpcuts/OsiXxxSolverInterface.hpp sdpcuts/populate.hpp \
+	sdpcuts/quadratic_cuts_check.hpp sdpcuts/rlt_cuts.hpp \
+	sdpcuts/sdpcuts.hpp sdpcuts/tracer.hpp branch/Nauty.h
 includecoinHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(includecoin_HEADERS)
 ETAGS = etags
@@ -516,9 +523,16 @@ includecoin_HEADERS = ../inc/config_couenne.h util/CouenneRootQ.hpp \
 	problem/CouenneSolverInterface.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
 	expression/CouenneTypes.hpp disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp sdpcuts/CouenneSdpCuts.hpp \
-	ellipcuts/CouenneEllipCuts.hpp crossconv/CouenneCrossConv.hpp \
-	two_implied_bt/CouenneTwoImplied.hpp $(am__append_3)
+	convex/CouenneCutGenerator.hpp ellipcuts/CouenneEllipCuts.hpp \
+	crossconv/CouenneCrossConv.hpp \
+	two_implied_bt/CouenneTwoImplied.hpp \
+	sdpcuts/CouenneSdpCuts.hpp sdpcuts/CutGen.hpp \
+	sdpcuts/disjunctive_cuts.hpp sdpcuts/dsyevx_wrapper.hpp \
+	sdpcuts/Heuristics.hpp sdpcuts/linquad_cuts.hpp \
+	sdpcuts/misc_util.hpp sdpcuts/orthocut.hpp \
+	sdpcuts/OsiXxxSolverInterface.hpp sdpcuts/populate.hpp \
+	sdpcuts/quadratic_cuts_check.hpp sdpcuts/rlt_cuts.hpp \
+	sdpcuts/sdpcuts.hpp sdpcuts/tracer.hpp $(am__append_3)
 
 #############################################################################
 # Create the Config.h file that always defines HAVE_CONFIG_H and install it #

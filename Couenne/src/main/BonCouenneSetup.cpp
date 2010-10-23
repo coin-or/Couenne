@@ -456,8 +456,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     // CSI == continuousSolver_
   }
 
-  // disjunctive cuts generator added AFTER 
-
   // add other cut generators -- test for integer variables first
   if (couenneCg -> Problem () -> nIntVars () > 0)
     addMilpCutGenerators ();
@@ -476,6 +474,15 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cg.id = "Couenne fixed point FBBT";
     cutGenerators (). push_back (cg);
   }
+
+  // check branch variable selection for disjunctive cuts
+
+  int varSelection;
+  if (!options_->GetEnumValue("variable_selection", varSelection, "couenne.")) {
+    // change the default for Couenne
+    varSelection = OSI_SIMPLE;
+  }
+
 
   // Setup heuristic to solve nlp problems. /////////////////////////////////
 
@@ -537,12 +544,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   // Add Branching rules ///////////////////////////////////////////////////////
 
-  int varSelection;
-  if (!options_->GetEnumValue("variable_selection", varSelection, "couenne.")) {
-    // change the default for Couenne
-    varSelection = OSI_SIMPLE;
-  }
-
   switch (varSelection) {
 
   case OSI_STRONG: { // strong branching
@@ -565,6 +566,24 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     throw;
     break;
   }
+
+  // Node comparison method ///////////////////////////////////////////////////////////////////////////
+
+  int ival;
+  if (!options_->GetEnumValue("node_comparison", ival, "bonmin.")) {
+    // change default for Couenne
+    nodeComparisonMethod_ = bestBound;
+  }
+  else {
+    nodeComparisonMethod_ = NodeComparison(ival);
+  }
+
+  if (intParam_[NumCutPasses] < 2)
+    intParam_[NumCutPasses] = 2;
+
+  // Tell Cbc not to check again if a solution returned from
+  // heuristic is indeed feasible
+  intParam_ [BabSetupBase::SpecialOption] = 16 | 4;
 
   // Add disjunctive cuts ///////////////////////////////////////////////////////
 
@@ -605,23 +624,26 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cutGenerators (). push_back(cg);
   }
 
-  // Node comparison method ///////////////////////////////////////////////////////////////////////////
+  // Add sdp cuts ///////////////////////////////////////////////////////
 
-  int ival;
-  if (!options_->GetEnumValue("node_comparison", ival, "bonmin.")) {
-    // change default for Couenne
-    nodeComparisonMethod_ = bestBound;
-  }
-  else {
-    nodeComparisonMethod_ = NodeComparison(ival);
-  }
+  // options () -> GetIntegerValue ("sdp_cuts", freq, "couenne.");
 
-  if (intParam_[NumCutPasses] < 2)
-    intParam_[NumCutPasses] = 2;
+  // if (freq != 0) {
 
-  // Tell Cbc not to check again if a solution returned from
-  // heuristic is indeed feasible
-  intParam_ [BabSetupBase::SpecialOption] = 16 | 4;
+  //   CouenneDisjCuts * couenneDisj = 
+  //     new CouenneDisjCuts (ci, this, 
+  // 			   couenneCg, 
+  // 			   branchingMethod_, 
+  // 			   varSelection == OSI_STRONG, // if true, use strong branching candidates
+  // 			   journalist (),
+  // 			   options ());
+
+  //   CuttingMethod cg;
+  //   cg.frequency = freq;
+  //   cg.cgl = couenneDisj;
+  //   cg.id = "Couenne disjunctive cuts";
+  //   cutGenerators (). push_back(cg);
+  // }
 
   return true;
 }

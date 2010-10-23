@@ -128,10 +128,9 @@ void exprGroup::print (std::ostream &out, bool descend) const {
   for (int n = lcoeff_.size (), i=0; n--; i++) {
 
     CouNumber coeff = lcoeff_ [i]. second;
-    //out << ' ';
 
-    if      (coeff >   0.) { if (i || c0_ != 0.) out << '+'; if (coeff !=  1.) out <<  coeff << "*";}
-    else if (coeff < - 0.) {                     out << '-'; if (coeff != -1.) out << -coeff << "*";}
+    if      (coeff >   0.) { if (i || (c0_ != 0.) || nzNL) out << '+'; if (coeff !=  1.) out <<  coeff << "*";}
+    else if (coeff < - 0.) {                               out << '-'; if (coeff != -1.) out << -coeff << "*";}
 
     lcoeff_ [i]. first -> print (out, descend);
     if (!((i + 1) % MAX_ARG_LINE) && n)
