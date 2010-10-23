@@ -98,6 +98,9 @@ namespace Couenne {
     inline double getDoubleParameter (const DoubleParameter &p) const
     {return doubleParam_ [p];}
 
+    void setNodeComparisonMethod (Bonmin::BabSetupBase::NodeComparison c)
+    {nodeComparisonMethod_ = c;}
+
 private:
     SmartPtr<SmartAsl> aslfg_;
 

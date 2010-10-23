@@ -13,9 +13,6 @@
 #include "CbcHeuristic.hpp"
 #include "BonOsiTMINLPInterface.hpp"
 
-#include "CouenneCutGenerator.hpp"
-#include "CouenneProblem.hpp"
-
 #ifdef COIN_HAS_CPX
 #include "OsiCpxSolverInterface.hpp"
 #else
@@ -25,6 +22,8 @@
 #include "CbcHeuristicRandRound.hpp"
 #endif
 
+#include "CouenneCutGenerator.hpp"
+#include "CouenneProblem.hpp"
 
 namespace Couenne{
   /** An iterative rounding heuristic, tailored for nonconvex

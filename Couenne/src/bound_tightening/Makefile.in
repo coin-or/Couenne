@@ -73,7 +73,7 @@ am_libCouenneBoundTightening_la_OBJECTS = boundTightening.lo \
 	impliedBounds-sum.lo impliedBounds-exprSum.lo \
 	impliedBounds-exprDiv.lo impliedBounds-exprMul.lo \
 	impliedBounds-exprQuad.lo impliedBounds-exprPow.lo \
-	BonCouenneInfo.lo
+	BonCouenneInfo.lo CouenneAggrProbing.lo
 libCouenneBoundTightening_la_OBJECTS =  \
 	$(am_libCouenneBoundTightening_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -323,7 +323,8 @@ libCouenneBoundTightening_la_SOURCES = \
 	operators/impliedBounds-exprMul.cpp \
 	operators/impliedBounds-exprQuad.cpp \
 	operators/impliedBounds-exprPow.cpp \
-	../main/BonCouenneInfo.cpp
+	../main/BonCouenneInfo.cpp \
+	CouenneAggrProbing.cpp 
 
 libCouenneBoundTightening_la_DEPENDENCIES = $(libCouenneBoundTightening_la_LIBADD)
 
@@ -402,6 +403,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInfo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneAggrProbing.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneInfeasCut.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FixPointConstructors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FixPointGenCuts.Plo@am__quote@

@@ -130,7 +130,7 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
     couenne_->nodeComparisonMethod();
   int initMaxNodes = couenne_->getIntParameter(Bonmin::BabSetupBase::MaxNodes);
   double initMaxTime = couenne_->getDoubleParameter(Bonmin::BabSetupBase::MaxTime);
-  couenne_->nodeComparisonMethod() = Bonmin::BabSetupBase::bestBound;
+  couenne_->setNodeComparisonMethod(Bonmin::BabSetupBase::bestBound);
   couenne_->setIntParameter(Bonmin::BabSetupBase::MaxNodes, maxNodes_);
 
   /// First store, then disable all heuristics.
@@ -398,7 +398,7 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
   }
 
   /// Restore parameters and heuristics
-  couenne_->nodeComparisonMethod() = initNodeComparison;
+  couenne_->setNodeComparisonMethod(initNodeComparison);
   couenne_->setIntParameter(Bonmin::BabSetupBase::MaxNodes, initMaxNodes);
   couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime, initMaxTime);
   couenne_->heuristics() = heuristics;
@@ -446,7 +446,7 @@ double CouenneAggrProbing::probeVariable2(int index, bool probeLower){
   int initMaxNodes = couenne_->getIntParameter(Bonmin::BabSetupBase::MaxNodes);
   double initMaxTime = couenne_->getDoubleParameter(Bonmin::BabSetupBase::MaxTime);
   int initMaxSol = couenne_->getIntParameter(Bonmin::BabSetupBase::MaxSolutions);
-  couenne_->nodeComparisonMethod() = Bonmin::BabSetupBase::bestBound;
+  couenne_->setNodeComparisonMethod (Bonmin::BabSetupBase::bestBound);
   couenne_->setIntParameter(Bonmin::BabSetupBase::MaxNodes, maxNodes_);
   couenne_->setIntParameter(Bonmin::BabSetupBase::MaxSolutions, COIN_INT_MAX);
 
@@ -513,7 +513,7 @@ double CouenneAggrProbing::probeVariable2(int index, bool probeLower){
     lp->writeLp("upper");
   }
 
-  couenne_->nodeComparisonMethod() = Bonmin::BabSetupBase::bestBound;
+  couenne_->setNodeComparisonMethod (Bonmin::BabSetupBase::bestBound);
   couenne_->setIntParameter(Bonmin::BabSetupBase::MaxNodes, maxNodes_);
   couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime, 
 			       maxTime_);
@@ -528,7 +528,7 @@ double CouenneAggrProbing::probeVariable2(int index, bool probeLower){
 
 
   /// Restore parameters
-  couenne_->nodeComparisonMethod() = initNodeComparison;
+  couenne_->setNodeComparisonMethod (initNodeComparison);
   couenne_->setIntParameter(Bonmin::BabSetupBase::MaxNodes, initMaxNodes);
   couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime, initMaxTime);
   couenne_->setIntParameter(Bonmin::BabSetupBase::MaxSolutions, initMaxSol);

@@ -1027,7 +1027,7 @@ namespace Couenne{
       cbcModel.addHeuristic(heuristics_[i]);
     }
     cbcModel.setMaximumSeconds(CBCMILPTIME);
-    CglPreProcess * prep = cbcModel.preProcess(0,2,5);
+    //CglPreProcess * prep = cbcModel.preProcess(0,2,5);
     while ((cbcModel.getSolutionCount() == 0) && 
 	   (!cbcModel.isProvenInfeasible()) &&
 	   (!cbcModel.isProvenDualInfeasible()) &&
@@ -1035,7 +1035,7 @@ namespace Couenne{
 	   ((CoinCpuTime() - start) < maxTime)){
       cbcModel.branchAndBound();
     }
-    cbcModel.postProcess(prep);
+    //cbcModel.postProcess(prep);
     milp = cbcModel.solver();
     if (cbcModel.getSolutionCount() > 0){
       return true;
