@@ -52,6 +52,14 @@ using namespace Couenne;
 
 int main (int argc, char *argv[]) {
 
+    printf ("Couenne %s --  an Open-Source exact solver for MINLP\n", 
+	    strcmp (PACKAGE_VERSION, "trunk") ? PACKAGE_VERSION : "");
+
+    printf ("\
+Mailing list: %s\n\
+Instructions: http://www.coin-or.org/Couenne\n",
+	    PACKAGE_BUGREPORT);
+
   //WindowsErrorPopupBlocker();
   using namespace Ipopt;
 
@@ -94,15 +102,6 @@ int main (int argc, char *argv[]) {
     // initial printout
 
     ConstJnlstPtr jnlst = couenne. couennePtr () -> Jnlst ();
-
-    jnlst -> Printf (J_INSUPPRESSIBLE, J_COUENNE, 
-		     "Couenne %s --  an Open-Source exact solver for MINLP\n", 
-		     strcmp (PACKAGE_VERSION, "trunk") ? PACKAGE_VERSION : "");
-
-    jnlst -> Printf (J_ERROR, J_COUENNE, "\
-Mailing list: %s\n\
-Instructions: http://www.coin-or.org/Couenne\n",
-	    PACKAGE_BUGREPORT);
 
     CouenneProblem *prob = couenne. couennePtr () -> Problem ();
 
