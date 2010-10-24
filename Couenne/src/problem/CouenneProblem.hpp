@@ -308,6 +308,12 @@ class CouenneProblem {
   /// use orbital branching?
   bool orbitalBranching_;
 
+  /// check bounds on auxiliary variables when verifying MINLP
+  /// feasibility of a solution. Usually this is not needed, unless
+  /// some manipulation on auxiliary variables is done before
+  /// Branch-and-Bound
+  bool checkAuxBounds_;
+
  public:
 
   CouenneProblem  (ASL * = NULL,
@@ -668,6 +674,18 @@ class CouenneProblem {
   /// return true if orbital branching activated
   bool orbitalBranching () const
   {return orbitalBranching_;}
+
+  /// set the value for checkAuxBounds. When true, all MINLP feasible
+  /// solutions will additionally be tested for feasibility with
+  /// respect to auxiliary variable bounds. This is normally not needed.
+  void setCheckAuxBounds (bool value) 
+  {checkAuxBounds_ = value;}
+
+  /// return true if bounds of auxiliary variables have to be satisfied
+  /// whenever a solution is tested for MINLP feasibiliry
+  bool checkAuxBounds () const
+  {return checkAuxBounds_;}
+    
 
 protected:
 
