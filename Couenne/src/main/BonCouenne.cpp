@@ -105,7 +105,7 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
     CouenneProblem *prob = couenne. couennePtr () -> Problem ();
 
-    jnlst -> Printf (J_ERROR, J_COUENNE, "\n\
+    jnlst -> Printf (J_ERROR, J_COUENNE, "\
 Loaded instance \"%s\"\n\
 Variables:       %8d (%d integer)\n\
 Constraints:     %8d\n\

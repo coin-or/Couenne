@@ -23,6 +23,7 @@ using namespace Couenne;
 #define THRESH_OBBT_AUX 50 // if more than this originals, don't do OBBT on auxs
 #define OBBT_EPS 1e-3
 #define MAX_OBBT_LP_ITERATION 100
+#define MAX_OBBT_ATTEMPTS 3 // number of OBBT iterations at root node
 
 // minimum #bound changed in obbt to generate further cuts
 #define THRES_NBD_CHANGED 1
@@ -181,12 +182,12 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
   // this node is infeasible and we shouldn't take the pain of running
   // this CGL.
 
-  if (isWiped (cs))
+  if (isWiped (cs) || info.pass >= MAX_OBBT_ATTEMPTS)
     return 0;
 
   if (info.level <= 0 && !(info.inTree))  {
-    jnlst_ -> Printf (J_ERROR, J_COUENNE, "Optimality Based BT on %d variables: ", 
-		      nVars () > THRESH_OBBT_AUX ? nOrigVars_ : nVars ()); 
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, "Optimality Based BT on %d variables attempt #%d: ", 
+		      nVars () > THRESH_OBBT_AUX ? nOrigVars_ : nVars (), info.pass); 
     fflush (stdout);
   }
 
@@ -265,7 +266,7 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
   }
 
   if (info.level <= 0 && !(info.inTree))  
-    jnlst_ -> Printf (J_ERROR, J_COUENNE, "done (%d bounds improved)\n", nTotImproved);
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, "%d bounds improved\n", nTotImproved);
 
   return 0;
 }

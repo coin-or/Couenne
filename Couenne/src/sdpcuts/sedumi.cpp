@@ -24,7 +24,7 @@
 
 
 
-
+#if 0
 double getCoinPackedVectorElementAt(const CoinPackedVector vector, int index){
 	int size = vector.getNumElements();
 	const int *indices = vector.getIndices();
@@ -34,7 +34,9 @@ double getCoinPackedVectorElementAt(const CoinPackedVector vector, int index){
 			return elements[i];
 	return 0.0;
 }
+#endif
 
+#if 0
 int main (int argc, const char **argv) {
 	if (argc < 2) {
 		printf("Missing argument [mps file] <[matlab file]>\n");
@@ -49,7 +51,7 @@ int main (int argc, const char **argv) {
 
 	// determine problem name
 	char name[256];
-	char *name_pos = strrchr(argv[1], '/');
+	char *name_pos = strrchr(const_cast <char *> (argv[1]), '/');
 	if(name_pos != NULL)
 		strcpy(name, &(name_pos[1]));
 	else
@@ -475,6 +477,4 @@ printf("   RHS=%.1f\n",getCoinPackedVectorElementAt(b,i));
 	return 0;
 
 }
-
-
-
+#endif

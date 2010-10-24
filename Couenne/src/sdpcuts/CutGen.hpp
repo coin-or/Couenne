@@ -7,6 +7,12 @@
 #include "Heuristics.hpp"
 #include "misc_util.hpp"
 
+#define SPARSIFY_MAX_CARD  0 // !!! CHANGE THIS
+#define SPARSIFY_OLD_DELTA 0
+#define SPARSIFY_NEW_DELTA 0
+#define WISE_SPARSIFY_GAP  0
+#define SPARSIFY_OLD_NZ_THRESHOLD 0
+#define SPARSIFY_NEW_NZ_THRESHOLD 0
 
 #define indexQ(i,j,n) ((n) + (i) * (2*(n)-1-(i)) / 2 + (j))
 

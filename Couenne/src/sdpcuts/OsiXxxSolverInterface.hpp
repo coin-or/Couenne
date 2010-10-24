@@ -1,10 +1,9 @@
 #ifndef OSIXXXSOLVERINTERFACE_HPP
 #define OSIXXXSOLVERINTERFACE_HPP
 
-#ifdef CPLEX
+#ifdef COIN_HAS_CPX
 #include "cplex.h"
 #include "OsiCpxSolverInterface.hpp"
-
 
 class OsiXxxSolverInterface: public OsiCpxSolverInterface {
 public:
@@ -52,11 +51,8 @@ public:
 };
 
 
+#else
 
-
-#endif
-
-#ifdef CLP
 #include "OsiClpSolverInterface.hpp"
 class OsiXxxSolverInterface: public OsiClpSolverInterface {
 public:
@@ -64,16 +60,7 @@ public:
 		modifyCoefficient (row,col,value,false);
 	}
 };
-#endif
 
-#ifdef VOL
-#include "OsiVolSolverInterface.hpp"
-typedef OsiVolSolverInterface OsiXxxSolverInterface;
-#endif
-
-#ifdef DYLP
-#include "OsiDylpSolverInterface.hpp"
-typedef OsiDylpSolverInterface OsiXxxSolverInterface;
 #endif
 
 #endif

@@ -20,7 +20,7 @@
 #endif
 
 
-
+#if 0
 int main (int argc, const char **argv) {
 	if (argc < 2) {
 		printf("Missing argument [mps file]\n");
@@ -32,7 +32,7 @@ int main (int argc, const char **argv) {
 
 	// determine problem name
 	char name[256];
-	char *name_pos = strrchr(argv[1], '/');
+	char *name_pos = strrchr(const_cast <char *> (argv[1]), '/');
 	if(name_pos != NULL)
 		strcpy(name, &(name_pos[1]));
 	else
@@ -442,9 +442,10 @@ int main (int argc, const char **argv) {
 
 	} while(do_exit == false);
 
+#ifdef SHORT_F_RES
 	print_file_short_sol(short_f_res,name,niter,globaltimer.time(),
 			 tot_gen_cuts,tot_gen_cuts-tot_del_cuts,objValue,cg.bestObj());
-
+#endif
 
 	tracer->detailedReport();
 	tracer->globalReport();
@@ -491,7 +492,7 @@ int main (int argc, const char **argv) {
 
 	return 0;
 }
-
+#endif
 
 
 

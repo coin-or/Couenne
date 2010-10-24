@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/resource.h>
-#include <OsiXxxSolverInterface.hpp>
+#include "OsiXxxSolverInterface.hpp"
+#include "OsiSolverInterface.hpp"
 
 #define indexQ(i,j,n) ((n) + (i) * (2*(n)-1-(i)) / 2 + (j))
 

@@ -172,7 +172,7 @@ public:
 	dataset(const char *filename, solutions *solptr) {
 		_f_res_name = (char*)malloc(sizeof(char)*256);
 		char *name_pos,*last_dot_pos;
-		name_pos = strrchr(filename, '/');
+		name_pos = strrchr(const_cast <char *> (filename), '/');
 		if(name_pos != NULL)
 			strcpy(_f_res_name, &(name_pos[1]));
 		else
@@ -798,7 +798,7 @@ public:
 /***********************************************************************/
 /***********************************************************************/
 
-
+#if 0
 int main (int argc, const char **argv) {
 	if (argc < 4) {
 		printf("Usage: %s [solutionfile] [f_res1.xxx] [f_res2.xxx]\n",argv[0]);
@@ -839,3 +839,4 @@ int main (int argc, const char **argv) {
 
 
 
+#endif

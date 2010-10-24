@@ -9,26 +9,25 @@ AUTOMAKE_OPTIONS = foreign
 noinst_LTLIBRARIES = libCouenneSdpCuts.la
 
 # List all source files for this library, including headers
-libCouenneSdpCuts_la_SOURCES =
 
-# libCouenneSdpCuts_la_SOURCES = \
-# 	CutGen.cpp \
-# 	dsyevx_wrapper.cpp \
-# 	Heuristics.cpp \
-# 	linquad_cuts.cpp \
-# 	misc_util.cpp \
-# 	orthocut.cpp \
-# 	populate.cpp \
-# 	quadratic_cuts_check.cpp \
-# 	report2.cpp \
-# 	report.cpp \
-# 	sdpcuts.cpp \
-# 	sdpsol.cpp \
-# 	sedumi.cpp \
-# 	tracerreport.cpp
+libCouenneSdpCuts_la_SOURCES = \
+	CutGen.cpp \
+	dsyevx_wrapper.cpp \
+	Heuristics.cpp \
+	linquad_cuts.cpp \
+	misc_util.cpp \
+	orthocut.cpp \
+	populate.cpp \
+	quadratic_cuts_check.cpp \
+	report2.cpp \
+	report.cpp \
+	sdpcuts.cpp \
+	sdpsol.cpp \
+	sedumi.cpp \
+	tracerreport.cpp \
+	tracer.cpp 
 
 #	disjunctive_cuts.cpp 
-#	tracer.cpp 
 #	rlt_cuts.cpp 
 
 libCouenneSdpCuts_la_DEPENDENCIES = $(libCouenneSdpCuts_la_LIBADD)
@@ -54,8 +53,7 @@ AM_CPPFLAGS = \
 if COIN_HAS_COUENNE
   AM_CPPFLAGS += 
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
+	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/sdpcuts` \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
 endif
 

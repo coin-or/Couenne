@@ -463,16 +463,16 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
       int logAbtLev = problem_ -> logAbtLev ();
 
-      if (problem_ -> doABT () &&           // flag is checked, AND
+      if (problem_ -> doABT () &&             // flag is checked, AND
 	  ((logAbtLev != 0) ||                // (parameter is nonzero OR
 	   (info.level == 0)) &&              //  we are at root node), AND
-	  (info.pass == 0) &&               // at first round of cuts, AND 
+	  (info.pass == 0) &&                 // at first round of cuts, AND 
 	  ((logAbtLev < 0) ||                 // (logAbtLev = -1, OR
 	   (info.level <= logAbtLev) ||       //  depth is lower than COU_OBBT_CUTOFF_LEVEL, OR
 	   (CoinDrand48 () <                  //  probability inversely proportional to the level)
 	    pow (2., (double) logAbtLev - (info.level + 1))))) {
 
-	jnlst_ -> Printf(J_ITERSUMMARY, J_CONVEXIFYING,"  performing ABT\n");
+	jnlst_ -> Printf(J_VECTOR, J_BOUNDTIGHTENING,"  performing ABT\n");
 	if (! (problem_ -> aggressiveBT (nlp_, chg_bds, info, babInfo)))
 	  throw infeasible;
 

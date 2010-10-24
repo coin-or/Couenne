@@ -746,9 +746,9 @@ void CutGen::compareSparsify(const OsiSolverInterface &si,int n, int m, const do
 		nz2[i] = cut->row().getNumElements();
 	}
 	cpp_quicksort_dec(0,cs2.sizeRowCuts(), nz2,violations2);
-	int max_card = max(cs1.sizeRowCuts(),cs2.sizeRowCuts());
+	int max_card = CoinMax(cs1.sizeRowCuts(),cs2.sizeRowCuts());
 
-	int min_card = min(cs1.sizeRowCuts(),cs2.sizeRowCuts());
+	int min_card = CoinMin(cs1.sizeRowCuts(),cs2.sizeRowCuts());
 	int top_card = (int) (ceil(min_card * 0.20));
 	fprintf(out,"Top 20%% cuts statistics (cardinality=%d)\n",top_card);
 	double mean_viol1 = 0.0;
@@ -890,8 +890,8 @@ void CutGen::genSDPcut (const OsiSolverInterface &si,
 	if(nterms > 0) {
 #ifdef RAND_CUT_ADD
 		if ( cpp_genalea(seed_) <= RAND_CUT_ADD)
-		{
 #endif
+		{
 
 		if (!(checkduplicates)) {
 			globaltimer_->pause();
@@ -910,10 +910,8 @@ void CutGen::genSDPcut (const OsiSolverInterface &si,
 			globaltimer_->restore();
 		}
 
-#ifdef RAND_CUT_ADD
 		}
-#endif
-
+	}
 
 
 
@@ -922,10 +920,12 @@ void CutGen::genSDPcut (const OsiSolverInterface &si,
 	delete [] coeff;
 }
 
+
 /************************************************************************/
 void CutGen::updateSol() {
 	heuristics_->run();
 }
+
 /************************************************************************/
 // constructor
 CutGen::CutGen (const int n, 
@@ -1901,7 +1901,7 @@ void CutGen::sparsify(const int evidx, const double eigen_val,
 
 			} /* while(changed) */
 
-			if((loc_card_selected < np * SPARSYFY_OLD_NZ_THRESHOLD) || (*card_v_mat == 0)) {
+			if((loc_card_selected < np * SPARSIFY_OLD_NZ_THRESHOLD) || (*card_v_mat == 0)) {
 				
 				int new_selected = 0;
 				
@@ -2165,7 +2165,7 @@ min_delta = lhs * SPARSIFY_NEW_DELTA; // do not weaken the cut too much
 				}
 			} /* while(changed) */
 
-			if((loc_card_selected < np * SPARSYFY_NEW_NZ_THRESHOLD) || (*card_v_mat == 0)) {
+			if((loc_card_selected < np * SPARSIFY_NEW_NZ_THRESHOLD) || (*card_v_mat == 0)) {
 				
 				int new_selected = 0;
 				

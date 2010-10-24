@@ -6,6 +6,8 @@
 #include <sys/resource.h>
 #include <misc_util.hpp>
 
+#include "CoinHelperFunctions.hpp"
+
 #include <tracer.hpp>
 
 #define ABS_TOL_EIG 1e-15
@@ -17,30 +19,56 @@ void _dsyevx_value_range_wrapper (int n, double *A, int &m, double * &w, double 
 void _dsyevx_index_range_wrapper (int n, double *A, int &m, double * &w, double * &z, double tolerance, int firstidx,int lastidx);
 
 
+#if 0
 extern "C" {
 
 /* Lapack routine to compute orthonormal eigenvalues/eigenvectors (in Fortran) */
 void dsyevx_ (char   *,
-		char   *,
-		char   *,
-		int    *,
-		double *,
-		int    *,
-		double *,
-		double *,
-		int    *,
-		int    *,
-		double *,
-		int    *,
-		double *,
-		double *,
-		int    *,
-		double *,
-		int    *,
-		int    *,
-		int    *,
-		int    *);
+	      char   *,
+	      char   *,
+	      int    *,
+	      double *,
+	      int    *,
+	      double *,
+	      double *,
+	      int    *,
+	      int    *,
+	      double *,
+	      int    *,
+	      double *,
+	      double *,
+	      int    *,
+	      double *,
+	      int    *,
+	      int    *,
+	      int    *,
+	      int    *);
 }
+
+#else
+
+/* Lapack routine to compute orthonormal eigenvalues/eigenvectors (in Fortran) */
+void dsyevx_ (char   *,
+	      char   *,
+	      char   *,
+	      int    *,
+	      double *,
+	      int    *,
+	      double *,
+	      double *,
+	      int    *,
+	      int    *,
+	      double *,
+	      int    *,
+	      double *,
+	      double *,
+	      int    *,
+	      double *,
+	      int    *,
+	      int    *,
+	      int    *,
+	      int    *) {}
+#endif
 
 
 

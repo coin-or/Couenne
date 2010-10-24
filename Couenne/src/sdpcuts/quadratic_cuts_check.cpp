@@ -29,7 +29,7 @@ QuadraticCuts::QuadraticCuts(int n, const double *initial_sol, Tracer *tracer) {
 	checkQuadraticDiagonalCutsOnCurrentSolution();
 
 	computeEigenvectorsFromCurrentSolution();
-};
+}
 
 QuadraticCuts::~QuadraticCuts() {
 	delete [] L;
