@@ -1,4 +1,4 @@
-/* $Id:$
+/* $Id$
  *
  * Name:    BranchCore.cpp
  * Authors: Jim Ostrowski
@@ -75,16 +75,19 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
       }
 
       // BRANCHING RULE -------------------------------------------------------------------------
+
       solver -> setColUpper (indVar, integer ? floor (brpt) : brpt); // down branch, x [indVar] <= brpt
       if (chg_bds) chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
 
     } else {
 
-      // UP BRANCH: xi >= brpt
+      // UP BRANCH: xi >= brpt for all i in symmetry group
 
       jnlst_ -> Printf (J_ERROR, J_BRANCHING, "Branch Symm:");
 
       for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it)  {
+
+	assert (*it < problem_ -> nVars ());
 
 	if (*it >= problem_ -> nVars ()) 
 	  continue;
@@ -113,8 +116,11 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	}
 
 	// BRANCHING RULE -------------------------------------------------------------------------
-	solver -> setColLower (*it, integer ? ceil  (brpt) : brpt); // up branch, x [indVar] >= brpt
-	if (chg_bds) chg_bds [indVar].setLower (t_chg_bounds::CHANGED);
+	if (solver -> getColLower () [*it] > (integer ? ceil  (brpt) : brpt)) {
+
+	  solver -> setColLower (*it, integer ? ceil  (brpt) : brpt); // up branch, x [indVar] >= brpt
+	  if (chg_bds) chg_bds [*it].setLower (t_chg_bounds::CHANGED);
+	}
       }
 
       jnlst_ -> Printf (J_ERROR, J_BRANCHING, "\n");

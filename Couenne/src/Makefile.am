@@ -1,9 +1,8 @@
+## $Id:$
+#
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
-
-## $Id: Makefile.am 405 2006-07-10 18:52:52Z andreasw $
-
 # Authors:  Andreas Waechter           IBM    2006-04-13
 #           Pietro Belotti
 

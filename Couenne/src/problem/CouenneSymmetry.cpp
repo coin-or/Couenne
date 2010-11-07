@@ -346,12 +346,14 @@ void CouenneProblem::Print_Orbits(){
   int nNonTrivialOrbits = 0;
 
   for (unsigned int i = 0; i < new_orbits -> size(); i++) {
-    if ((*new_orbits)[i].size() > 1) nNonTrivialOrbits++;
-    int orbsize = (*new_orbits)[i].size();
-    //printf( "Orbit %d [size: %d] [", i, orbsize);
-    //copy((*new_orbits)[i].begin(), (*new_orbits)[i].end(),
-    //std::ostream_iterator<int>(std::cout, " "));
-    //printf("] \n");
+    if ((*new_orbits)[i].size() > 1) 
+      nNonTrivialOrbits++;
+    // else continue;
+    // int orbsize = (*new_orbits)[i].size();
+    // printf( "Orbit %d [size: %d] [", i, orbsize);
+    // copy((*new_orbits)[i].begin(), (*new_orbits)[i].end(),
+    // std::ostream_iterator<int>(std::cout, " "));
+    // printf("] \n");
   }
 
   printf ("%d non-trivial orbits\n", nNonTrivialOrbits);
