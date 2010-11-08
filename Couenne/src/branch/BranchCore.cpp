@@ -116,7 +116,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	}
 
 	// BRANCHING RULE -------------------------------------------------------------------------
-	if (solver -> getColLower () [*it] > (integer ? ceil  (brpt) : brpt)) {
+	if ((integer ? ceil  (brpt) : brpt) > solver -> getColLower () [*it]) {
 
 	  solver -> setColLower (*it, integer ? ceil  (brpt) : brpt); // up branch, x [indVar] >= brpt
 	  if (chg_bds) chg_bds [*it].setLower (t_chg_bounds::CHANGED);
