@@ -419,23 +419,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   int freq;
 
-  // Add two-inequalities based bound tightening ///////////////////////////////////////////////////////
-
-  options () -> GetIntegerValue ("two_implied_bt", freq, "couenne.");
-
-  if (freq != 0) {
-
-    CouenneTwoImplied * couenne2I = 
-      new CouenneTwoImplied (couenneProb_,
-			     journalist (),
-			     options    ());
-    CuttingMethod cg;
-    cg.frequency = freq;
-    cg.cgl = couenne2I;
-    cg.id = "Couenne two-implied cuts";
-    cutGenerators (). push_back(cg);
-  }
-
   // Setup Convexifier generators ////////////////////////////////////////////////
 
   options () -> GetIntegerValue ("convexification_cuts", freq, "couenne.");
@@ -461,6 +444,23 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     addMilpCutGenerators ();
 
   CouennePtr_ = couenneCg;
+
+  // Add two-inequalities based bound tightening ///////////////////////////////////////////////////////
+
+  options () -> GetIntegerValue ("two_implied_bt", freq, "couenne.");
+
+  if (freq != 0) {
+
+    CouenneTwoImplied * couenne2I = 
+      new CouenneTwoImplied (couenneProb_,
+			     journalist (),
+			     options    ());
+    CuttingMethod cg;
+    cg.frequency = freq;
+    cg.cgl = couenne2I;
+    cg.id = "Couenne two-implied cuts";
+    cutGenerators (). push_back(cg);
+  }
 
   // Setup Fix Point bound tightener /////////////////////////////////////////////
 

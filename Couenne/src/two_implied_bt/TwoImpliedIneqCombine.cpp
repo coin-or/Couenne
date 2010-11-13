@@ -2,7 +2,7 @@
  *
  * Name:    TwoImpliedCombine.cpp
  * Author:  Pietro Belotti
- * Purpose: generate cuts using two inequalities from the LP relaxation
+ * Purpose: Bound reduction using two inequalities from the LP relaxation
  * 
  * (C) Pietro Belotti, 2010.
  * This file is licensed under the Common Public License (CPL)
@@ -19,7 +19,7 @@
 
 #define MIN_DENOM 1.e-10
 
-using namespace Couenne;
+namespace Couenne {
 
 enum signum {NEG, POS, DN, UP};
 
@@ -39,8 +39,8 @@ typedef struct {
 
 // compare two threshold values ///////////////////////////////////
 
-int compthres (const void *t1, 
-	       const void *t2) {
+int compthres (register const void *t1, 
+	       register const void *t2) {
 
   register double
     a1 = (*(threshold **) t1) -> alpha,
@@ -78,7 +78,6 @@ int compPair (register const void *p1,
 //
 
 int combine (CouenneProblem *p,
-	     OsiCuts &cs, 
 	     int n1, 
 	     int n2, 
 	     const int *ind1c, // indices
@@ -92,7 +91,8 @@ int combine (CouenneProblem *p,
 	     double l1, // constraint bounds
 	     double l2,  
 	     double u1, 
-	     double u2, 
+	     double u2,
+	     bool *isInteger,
 	     int sign) { // invert second constraint? -1: yes, +1: no
 
   // first, sort ind1/a1 and ind2/a2 w.r.t. indices. They may not be
@@ -105,6 +105,10 @@ int combine (CouenneProblem *p,
   double 
     *a1 = new double [n1],
     *a2 = new double [n2];
+
+  CouNumber 
+    *Lb = p -> Lb (),
+    *Ub = p -> Ub ();
 
   struct indPosPair *pairs = new struct indPosPair [CoinMax (n1,n2)];
 
@@ -350,13 +354,17 @@ int combine (CouenneProblem *p,
 
     if        (a2i < 0.) {
 
-      if (cub1 >   COUENNE_INFINITY/10) {if (fabs (sa2 [indVar1]) == 0.) mInfs ++;} else minSum1 += a1i * cub1;
-      if (clb1 < - COUENNE_INFINITY/10) {if (fabs (sa2 [indVar1]) == 0.) pInfs ++;} else maxSum1 += a1i * clb1;
+      bool zeroA = (fabs (sa2 [indVar1]) == 0.);
+
+      if (cub1 >   COUENNE_INFINITY/10) {if (zeroA) mInfs ++;} else minSum1 += a1i * cub1;
+      if (clb1 < - COUENNE_INFINITY/10) {if (zeroA) pInfs ++;} else maxSum1 += a1i * clb1;
 				                                                         
     } else if (a2i > 0.) {	                                                         
 				                                                         
-      if (clb1 < - COUENNE_INFINITY/10) {if (fabs (sa2 [indVar1]) == 0.) mInfs ++;} else minSum1 += a1i * clb1;
-      if (cub1 >   COUENNE_INFINITY/10) {if (fabs (sa2 [indVar1]) == 0.) pInfs ++;} else maxSum1 += a1i * cub1;
+      bool zeroA = (fabs (sa2 [indVar1]) == 0.);
+
+      if (clb1 < - COUENNE_INFINITY/10) {if (zeroA) mInfs ++;} else minSum1 += a1i * clb1;
+      if (cub1 >   COUENNE_INFINITY/10) {if (zeroA) pInfs ++;} else maxSum1 += a1i * cub1;
     }
   }
 
@@ -415,6 +423,8 @@ int combine (CouenneProblem *p,
 
   for (int i = 0; i < incnt; i++) {
 
+    threshold *inalpha = inalphas [i];
+
 #ifdef DEBUG
     printf ("  looking at %d: (%d,%g,%s)\n", i,
 	    inalphas [i] -> indVar, 
@@ -432,7 +442,7 @@ int combine (CouenneProblem *p,
 
     // check for improved bounds at all variables
 
-    double alpha = inalphas [i] -> alpha;
+    double alpha = inalpha -> alpha;
 
     // enter next interval, update dynamic max/min sums for this
     // value of alpha
@@ -440,8 +450,8 @@ int combine (CouenneProblem *p,
     while (true) {
 
       int
-	signalpha = inalphas [i] -> sign,   // either UP or DN (not POS or NEG)
-	indVar    = inalphas [i] -> indVar; // the index of the variable whose a_i(alpha) changes sign
+	signalpha = inalpha -> sign,   // either UP or DN (not POS or NEG)
+	indVar    = inalpha -> indVar; // the index of the variable whose a_i(alpha) changes sign
 
       double
 	clbi = clb [indVar],
@@ -653,12 +663,6 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 	  newU       = tmp;
 	}
 
-	if (p -> Var (indVar) -> isInteger ()) {
-
-	  newL = ceil  (newL - COUENNE_EPS);
-	  newU = floor (newU + COUENNE_EPS);
-	}
-
 #ifdef DEBUG
 	printf ("    final: %g, %g\n", newL, newU);
 #endif
@@ -682,6 +686,7 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 	return -1;
       }
 
+#ifdef DEBUG
       if (p -> bestSol () &&
 	  ((p -> bestSol () [indVar] > newU + COUENNE_EPS) ||
 	   (p -> bestSol () [indVar] < newL - COUENNE_EPS)) &&
@@ -689,12 +694,16 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 	  (p -> bestSol () [indVar] <= cubi))
 
 	printf ("optimum violated: %g not in [%g,%g]\n", p -> bestSol () [indVar], newL, newU);
+#endif
 
-      if (newL > -COUENNE_INFINITY / 10 && newL > clbi + COUENNE_EPS) {
+      double 
+	&lbi = Lb [indVar],
+	&ubi = Ub [indVar];
+
+      if ((newL > lbi + COUENNE_EPS) && (newL > -COUENNE_INFINITY / 10)) {
 		   
 	ntightened++;
-
-	p -> Lb (indVar) = newL;
+	lbi = newL;
 	newLB. push_back (std::pair <int, double> (indVar, newL));
 
 #ifdef DEBUG
@@ -702,11 +711,10 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 #endif
       }
 
-      if (newU < COUENNE_INFINITY / 10 && newU < cubi - COUENNE_EPS) {
+      if ((newU < ubi - COUENNE_EPS) && (newU < COUENNE_INFINITY / 10)) {
 
 	ntightened++;
-
-	p -> Ub (indVar) = newU;
+	ubi = newU;
 	newUB. push_back (std::pair <int, double> (indVar, newU));
 
 #ifdef DEBUG
@@ -720,8 +728,21 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
   printf ("===================================\n");
 #endif
 
-  for (std::vector <std::pair <int, double> >::iterator i = newLB. begin (); i != newLB. end (); ++i) if (i -> second > clb [i -> first]) clb [i -> first] = i -> second;
-  for (std::vector <std::pair <int, double> >::iterator i = newUB. begin (); i != newUB. end (); ++i) if (i -> second < cub [i -> first]) cub [i -> first] = i -> second;
+  for (std::vector <std::pair <int, double> >::iterator i = newLB. begin (); i != newLB. end (); ++i) {
+
+    if (isInteger [i -> first]) i -> second = ceil (i -> second - COUENNE_EPS);
+
+    if (i -> second > clb [i -> first]) 
+      Lb [i -> first] = clb [i -> first] = i -> second;
+  }
+
+  for (std::vector <std::pair <int, double> >::iterator i = newUB. begin (); i != newUB. end (); ++i) {
+
+    if (isInteger [i -> first]) i -> second = floor (i -> second + COUENNE_EPS);
+
+    if (i -> second < cub [i -> first]) 
+      Ub [i -> first] = cub [i -> first] = i -> second;
+  }
 
   delete [] inalphas;
   delete [] alphas;
@@ -730,4 +751,6 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
   delete [] ind2;
 
   return ntightened;
+}
+
 }

@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    updateBranchInfo.cpp
  * Author:  Pietro Belotti
  * Purpose: get new bounds from parents' bounds + branching rules
@@ -25,7 +25,7 @@ void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p,
 
   if ((info.inTree) && (info.pass==0)) {
 
-    // we are anywhere in the B&B tree but at the root node. Check,
+    // We are anywhere in the B&B tree but at the root node. Check,
     // through the auxiliary information, which bounds have changed
     // from the parent node.
 
@@ -38,28 +38,32 @@ void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p,
     if (auxinfo && (auxinfo -> extraCharacteristics () & 2)) {
 
       // get previous bounds
-      const double * beforeLower = auxinfo -> beforeLower ();
-      const double * beforeUpper = auxinfo -> beforeUpper ();
+      const double 
+	*beforeLower = auxinfo -> beforeLower (),
+	*beforeUpper = auxinfo -> beforeUpper ();
 
       if (beforeLower || beforeUpper) {
 
-	// get currentbounds
-	const double * nowLower = si.getColLower ();
-	const double * nowUpper = si.getColUpper ();
+	// get current bounds
+	const double 
+	  *nowLower = p -> Lb (),
+	  *nowUpper = p -> Ub (); //si.getColUpper ();
 
 	if (beforeLower) {
 
 	  have_parent_lower = true;
+
 	  for (int i=0; i < ncols; i++)
-	    if (nowLower [i] >= beforeLower [i] + COUENNE_EPS)
+	    if (*nowLower++ >= *beforeLower++ + COUENNE_EPS)
 	      chg_bds [i].setLower (t_chg_bounds::CHANGED);
 	}
 
 	if (beforeUpper) {
 
 	  have_parent_upper = true;
+
 	  for (int i=0; i < ncols; i++)
-	    if (nowUpper [i] <= beforeUpper [i] - COUENNE_EPS)
+	    if (*nowUpper++ <= *beforeUpper++ - COUENNE_EPS)
 	      chg_bds [i].setUpper (t_chg_bounds::CHANGED);
 	}
       } 
@@ -85,8 +89,5 @@ void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p,
 	  chg_bds [i].setUpper (t_chg_bounds::CHANGED);
     }
   }
-
-  //p -> domain () -> pop ();
 }
-
 }

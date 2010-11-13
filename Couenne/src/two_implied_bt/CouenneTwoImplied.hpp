@@ -213,6 +213,9 @@ namespace Couenne {
 
     /// CPU time spent columning the row formulation
     mutable double totalInitTime_;
+
+    /// first call indicator
+    mutable bool firstCall_;
   };
 }
 

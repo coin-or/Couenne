@@ -25,7 +25,8 @@ CouenneTwoImplied::CouenneTwoImplied (CouenneProblem *p,
   problem_   (p),
   jnlst_     (jnlst),
   totalTime_ (0.),
-  totalInitTime_ (0.) {
+  totalInitTime_ (0.),
+  firstCall_ (true) {
 
   options -> GetIntegerValue ("two_implied_max_trials", nMaxTrials_, "couenne.");
 }
@@ -39,7 +40,8 @@ CouenneTwoImplied::CouenneTwoImplied (const CouenneTwoImplied &src):
   jnlst_          (src.jnlst_),
   nMaxTrials_     (src.nMaxTrials_),
   totalTime_      (src.totalTime_),
-  totalInitTime_      (src.totalInitTime_) {}
+  totalInitTime_  (src.totalInitTime_),
+  firstCall_      (src.firstCall_) {}
 
 /// destructor
 CouenneTwoImplied::~CouenneTwoImplied () {

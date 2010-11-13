@@ -282,7 +282,7 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 
   if (info.level <= 0 && !(info.inTree))  
     jnlst_ -> Printf (J_ERROR, J_COUENNE, 
-		      "%d cuts (total)\n", nrootcuts_);
+		      "%d cuts (total)\n", CoinMax (0, nrootcuts_));
 
   septime_ += (CoinCpuTime () - time);
 }

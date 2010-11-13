@@ -2,7 +2,7 @@
  *
  * Name:    TwoImpliedGenCuts.cpp
  * Author:  Pietro Belotti
- * Purpose: generate cuts using two inequalities from the LP relaxation
+ * Purpose: bound reduction using two inequalities from the LP relaxation
  * 
  * (C) Pietro Belotti, 2010.
  * This file is licensed under the Common Public License (CPL)
@@ -17,6 +17,7 @@
 #include "CglCutGenerator.hpp"
 #include "CoinTime.hpp"
 
+#include "CouenneTypes.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneTwoImplied.hpp"
 #include "CouenneExprVar.hpp"
@@ -24,12 +25,16 @@
 #include "CouenneProblem.hpp"
 #include "CouenneInfeasCut.hpp"
 
-using namespace Couenne;
+// necessary to make updateBranchInfo visible
+namespace Couenne {
+
+/// get new bounds from parents' bounds + branching rules
+void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p, 
+		       t_chg_bounds *chg, const CglTreeInfo &info);
 
 // do single pair of inequalities. Return < 0 if infeasible
 
 int combine (CouenneProblem *p,
-	     OsiCuts &cs, 
 	     int n1, int n2, 
 	     const int *ind1, // indices
 	     const int *ind2, 
@@ -43,6 +48,7 @@ int combine (CouenneProblem *p,
 	     double l2,  
 	     double u1, 
 	     double u2, 
+	     bool *isInteger,
 	     int sign); // invert second constraint? -1: yes, +1: no
 
 /// the main CglCutGenerator
@@ -50,46 +56,52 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 				      OsiCuts &cs, 
 				      const CglTreeInfo info) const {
 
+  // don't perform this is cs has been added an infeasible cut (a
+  // result of some bound tightening procedure returning an infeasible
+  // node)
+
   if (isWiped (cs))
     return;
 
   double now = CoinCpuTime ();
 
+  // Update CouenneProblem's bounds using si's getCol{Low,Upp}er() and
+  // cs's OsiColCuts
   problem_ -> domain () -> push (&si, &cs);
 
   static int nBadColMatWarnings = 0;
 
   std::set <std::pair <int, int> > pairs;
 
-#define USE_ROW
-
-  /// In principle, this should be sufficient:
-
-#ifndef USE_ROW
-  const CoinPackedMatrix *mat = si. getMatrixByCol ();
-#endif
-
+  /// In principle, "si. getMatrixByCol ()" should be sufficient.
   /// However, there seems to be a bug (not sure where... Osi? Clp?
   /// Or, most probably, Couenne?) that doesn't return good values
   /// from A (and triggers Valgrind errors and segfaults on ex3_1_1
   /// and others). While waiting for a fix, we'll use the row
   /// representation.
 
+  /// Update: we should probably stick to #defining USE_ROW even when
+  /// this is solved, as cuts from cs should also be added.
+
+#define USE_ROW
+
 #ifdef USE_ROW
+
   const CoinPackedMatrix *mat = si. getMatrixByRow ();
-#endif
+
+  int 
+    m = mat -> getMajorDim (), // # rows
+    n = mat -> getMinorDim (); // # cols
+
+#else
+
+  const CoinPackedMatrix *mat = si. getMatrixByCol ();
 
   int 
     n = mat -> getMajorDim (), // # cols
     m = mat -> getMinorDim (); // # rows
 
-#ifdef USE_ROW // swap n and m
-  {
-    int tmp = n;
-    n = m;
-    m = tmp;
-  }
-#endif  
+#endif
 
   const double
     *rlb = si.getRowLower (),
@@ -100,12 +112,23 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   /// These will be used
 
   int 
-     nnz = mat -> getNumElements (), // # nonzeros
-    *ind = new int [nnz],
-    *sta = new int [n+1];
+     nnz   = mat -> getNumElements (), // # nonzeros
+     nnzC  = 0,
+    *sta   = new int [n+1],
+     nCuts = cs.sizeRowCuts ();
 
-  double
-    *A   = new double [nnz];
+  // Count nonzeros in cs
+
+  for (int i=0, ii = cs. sizeRowCuts (); ii--; i++) {
+
+    const OsiRowCut        *cut     = cs. rowCutPtr (i);
+    const CoinPackedVector &rowCoe  = cut -> row ();
+
+    nnzC += rowCoe.getNumElements ();
+  }
+
+  int    *ind = new int    [nnz + nnzC];
+  double *A   = new double [nnz + nnzC];
 
   /// these are the row-format originals
   {
@@ -120,33 +143,93 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
     CoinFillN (sta, n+1, 0);
 
-    for (int i=0; i<nnz; i++)
-      sta [1 + *rInd++] ++;
+    /////////////////////////////////////////////////////////
+
+    // pre-fill starting positions with cardinalities of each column
+
+    for (int i=nnz; i--;)
+      ++ (sta [1 + *rInd++]);
+
+    // fill sta with nonzeros from cs's OsiRowCuts
+
+    for (int i=0, ii = cs. sizeRowCuts (); ii--; i++) {
+
+      const OsiRowCut        *cut     = cs. rowCutPtr (i);
+      const CoinPackedVector &rowCoe  = cut -> row ();
+      const int              *indices = rowCoe.getIndices     ();
+      int                     nnz     = rowCoe.getNumElements ();
+      // Note: nnz redeclared here (no scoping problems)
+
+      for (int i=nnz; i--;)
+	++ (sta [1 + *indices++]);
+    }
 
     rInd -= nnz;
 
+    ////////////////////////////////////////////////////////
+
+    // make sta cumulative
+
     for (int i=1; i<=n; i++)
       sta [i] += sta [i-1];
+
+    // use space marked by sta to fill appropriate
+    // indices/coefficients
 
     for (int i=0; i<m; i++) {
 
       // filling indices of row i
 
-      int 
-	rowStart = rSta [i],
-	nEl      = rSta [i+1] - rowStart;
+      int rowStart = rSta [i];
 
-      for (int j=rowStart, jj=nEl; jj--; j++) {
-	ind [sta [rInd [j]]]   = i;
-	A   [sta [rInd [j]]++] = rA [j];
+      //printf ("[ine] %4d [%g,%g]: ", i, rlb [i], rub [i]); 
+
+      for (int j = rowStart, jj = rSta [i+1] - rowStart; jj--; j++) {
+
+	//printf ("%+g x%d ", rA [j], rInd [j]); 
+
+	int &curSta = sta [rInd [j]];
+
+	ind [curSta]   = i;
+	A   [curSta++] = rA [j];
       }
+      
+      //printf ("\n");
+    }
+
+    // Add rowCuts from cs as well.
+
+    for (int i=0, ii = cs. sizeRowCuts (); ii--; i++) {
+
+      const OsiRowCut        *cut      = cs. rowCutPtr (i);
+      //printf ("[cut] %4d [%g,%g]: ", m+i, cut -> lb (), cut -> ub ()); 
+
+      const CoinPackedVector &rowCoe   = cut -> row ();
+      const int              *indices  = rowCoe.getIndices  ();
+      const double           *elements = rowCoe.getElements ();
+      int                     nnz      = rowCoe.getNumElements ();
+      // Note: nnz redeclared here (no scoping problems)
+
+      for (int j=nnz; j--;) {
+
+	//printf ("%+g x%d ", *elements, *indices); 
+
+	int &curSta = sta [*indices++];
+
+	ind [curSta]   = m+i;
+	A   [curSta++] = *elements++;
+      }
+      //printf ("\n");
     }
 
     for (int i=n; --i;)
       sta [i] = sta [i-1];
 
     sta [0] = 0;
+
+    //printf ("%d + %d = %d nonzeros\n", nnz, nnzC, nnz + nnzC);
   }
+
 #else
 
   const double
@@ -155,7 +238,31 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   const int
     *ind = mat -> getIndices      (),
     *sta = mat -> getVectorStarts ();
+
 #endif
+
+  /// prepare vector for integrality test. Since many checks are done
+  /// within combine(), it is worth to prepare one here
+
+  bool *isInteger = new bool [n];
+  for (int i=0, ii=n; ii--; i++)
+    *isInteger++ = problem_ -> Var (i) -> isInteger ();
+  isInteger -= n;
+
+  // print out 
+
+  if (0)
+  for (int i=0; i<n; i++) {
+
+    printf ("x%04d - %5d -> %5d, %5d elements:", i, sta [i], sta [i+1], sta [i+1] - sta [i]);
+    fflush (stdout);
+
+    for (int j=0; j<sta [i+1] - sta [i]; j++) {
+      printf ("(%d,%g) ", ind [sta [i] + j], A [sta [i] + j]);
+      fflush (stdout);
+    }
+    printf ("\n");
+  }
 
   // For every column i, compare pairs of rows j and k with nonzero
   // coefficients.
@@ -172,63 +279,82 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   CoinFillN (sa1, n, 0.);
   CoinFillN (sa2, n, 0.);
 
-  //printf ("looking at a problem with %d, %d\n", m, n);
-
-  // scan all columns
   for (int i=0; i<n; i++, sta++) {
 
-    int nEl = *(sta+1) - *sta;
-    //printf ("column %d: %d elements %d -> %d\n", i, nEl, *sta, *(sta+1));
+    //printf ("x%d:\n", i);
 
-    for   (int jj = nEl, j = *sta; jj--; j++)
-      for (int kk = jj,  k = j+1;  kk--; k++) {
+    for   (int jj = *(sta+1) - *sta, j = *sta; jj--; j++)
+      for (int kk = jj,              k = j+1;  kk--; k++) {
 
 	register int 
 	  indj = ind [j],
 	  indk = ind [k];
 
-	// should never happen, but if it does, just bail out
- 	if ((indj > m) || (indj < 0) ||
- 	    (indk > m) || (indk < 0)) {
+	//printf ("  checking pair %d, %d\n", indj, indk);
 
-	  if (nBadColMatWarnings++ <= 1)
-	    printf ("Couenne: warning, matrix by row has nonsense indices. Skipping\n");
+	// should never happen, but if it does, just bail out
+ 	if ((indj > m + nCuts) || (indj < 0) ||
+ 	    (indk > m + nCuts) || (indk < 0)) {
+
+	  if (nBadColMatWarnings++ < 1)
+	    printf ("Couenne: warning, matrix by row has nonsense indices.\n\
+This separator will now return without cuts.\n\
+NOTE: further such inconsistencies won't be reported.\n");
 
 	  delete [] sa1;
 	  delete [] sa2;
 
-	  totalTime_ += CoinCpuTime () - now;
+	  delete [] sta;
+	  delete [] ind;
+	  delete [] A;
 
 	  problem_ -> domain () -> pop ();
 
+	  totalTime_     += CoinCpuTime () - now;
 	  totalInitTime_ += CoinCpuTime () - now;
 
 	  return; 
 	}
 
-	double prod = A [j] * A [k];
+	double 
+	  prod = A [j] * A [k],
+	  rlbj, rubj, rlbk, rubk;
+
+	if (indj>=m) {
+	  OsiRowCut *cut = cs.rowCutPtr (indj-m);
+	  rlbj = cut -> lb ();
+	  rubj = cut -> ub ();
+	} else {
+	  rlbj = rlb [indj];
+	  rubj = rub [indj];
+	}
+
+	if (indk>=m) {
+	  OsiRowCut *cut = cs.rowCutPtr (indk-m);
+	  rlbk = cut -> lb ();
+	  rubk = cut -> ub ();
+	} else {
+	  rlbk = rlb [indk];
+	  rubk = rub [indk];
+	}
 
 	if (prod > 0.) { // same sign -- skip unless finite lb1/ub2 OR
 			 // finite ub1/lb2. This is to avoid a situation
 			 // in which all coefficients in this pair
 			 // have the same sign
 
-	  if (!(
-		((rlb [indj] > -COUENNE_INFINITY) && (rub [indk] <  COUENNE_INFINITY)) || 
-		((rub [indj] <  COUENNE_INFINITY) && (rlb [indk] > -COUENNE_INFINITY))
-		)
-	      )
+	  if (!(((rlbj > -COUENNE_INFINITY) && (rubk <  COUENNE_INFINITY)) || 
+		((rubj <  COUENNE_INFINITY) && (rlbk > -COUENNE_INFINITY))))
+
 	    continue;
 
 	} else
 
 	if ((prod < 0.) && // opposite sign -- multiply second
 			   // inequality by -1 and repeat
-	    !(
-	      ((rlb [indj] > -COUENNE_INFINITY) && (rlb [indk] > -COUENNE_INFINITY)) || 
-	      ((rub [indj] <  COUENNE_INFINITY) && (rub [indk] <  COUENNE_INFINITY))
-	     )
-	    )
+	    !(((rlbj > -COUENNE_INFINITY) && (rlbk > -COUENNE_INFINITY)) || 
+	      ((rubj <  COUENNE_INFINITY) && (rubk <  COUENNE_INFINITY))))
+
 	  continue;
 
 	pairs.insert (std::pair <int, int> (indj, indk));
@@ -237,7 +363,11 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
   // pairs (h,k) are done. Now for each pair set new bounds, if possible ///////////////////////////
 
+#ifdef USE_ROW
+  const CoinPackedMatrix *rowA = mat;
+#else
   const CoinPackedMatrix *rowA = si. getMatrixByRow ();
+#endif
 
   const double
     *rA  = rowA -> getElements ();
@@ -248,8 +378,9 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     *clb = CoinCopyOfArray (problem_ -> Lb (), n),
     *cub = CoinCopyOfArray (problem_ -> Ub (), n);
 
-  const int *rInd = rowA -> getIndices      (),
-            *rSta = rowA -> getVectorStarts ();
+  const int
+    *rInd = rowA -> getIndices      (),
+    *rSta = rowA -> getVectorStarts ();
 
   int 
     ntightened = 0,
@@ -260,20 +391,32 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
   Bonmin::BabInfo * babInfo = dynamic_cast <Bonmin::BabInfo *> (si.getAuxiliaryInfo ());
 
+  int result = 0;
+
   // data structure for FBBT
 
   t_chg_bounds *chg_bds = new t_chg_bounds [n];
 
-  for (int i=0; i < n; i++) 
-    if (problem_ -> Var (i) -> Multiplicity () <= 0) {
-      chg_bds [i].setLower (t_chg_bounds::UNCHANGED);
-      chg_bds [i].setUpper (t_chg_bounds::UNCHANGED);
-    }
+  // for (int i=0; i<n; i++) 
+  //   if (problem_ -> Var (i) -> Multiplicity () <= 0) {
+  //     chg_bds [i].setLower (t_chg_bounds::UNCHANGED);
+  //     chg_bds [i].setUpper (t_chg_bounds::UNCHANGED);
+  //   }
 
-  int result = 0;
+  // fills in chg_bds with changed bounds from previous BB node
 
-  // repeat the scan as long as there is tightening and the bounding
-  // box is nonempty
+  updateBranchInfo (si, problem_, chg_bds, info);
+
+  // Comparing all pairs of inequalities is overkill if the comparison
+  // has been done in a previous iteration: a pair of inequalities of
+  // the old LP relaxation should be skipped unless some bounds have
+  // been changed in at least one of the variables (of either
+  // inequality). Moreover, all pairs of inequalities should be
+  // considered where the first is from the LP relaxation and the
+  // second is from the cuts added so far.
+
+  // Repeat the scan as long as there is tightening and the bounding
+  // box is nonempty.
 
   do {
 
@@ -288,19 +431,91 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
       int 
 	h = p -> first,
-	k = p -> second;
+	k = p -> second,
+	n1, n2;
 
-      const double
-	l1 = rlb [h], u1 = rub [h],
-	l2 = rlb [k], u2 = rub [k],
-	*a1 = rA + rSta [h],
-	*a2 = rA + rSta [k];
+      double l1, u1, l2, u2;
 
-      const int
-	n1 = rSta [h+1] - rSta [h],
-	n2 = rSta [k+1] - rSta [k],
-	*ind1 = rInd + rSta [h],
-	*ind2 = rInd + rSta [k];
+      const double *a1, *a2;
+
+      const int	*ind1, *ind2;
+
+      // set indices/counters depending on whether h or k are cuts or
+      // inequalities
+
+      if (h>=m) {
+
+	const OsiRowCut *cut = cs.rowCutPtr (h-m);
+	const CoinPackedVector &rowCoe  = cut -> row ();
+
+	l1 = cut -> lb ();
+	u1 = cut -> ub ();
+	n1   = rowCoe. getNumElements ();
+	ind1 = rowCoe. getIndices     ();
+	a1   = rowCoe. getElements    ();
+
+      } else {
+
+	l1 = rlb [h];
+	u1 = rub [h];
+	n1 = rSta [h+1] - rSta [h];
+	ind1 = rInd + rSta [h];
+	a1 = rA + rSta [h];
+      }
+
+      ////////////////////////////////////////////////////////////////
+
+      if (k>=m) {
+
+	OsiRowCut *cut = cs.rowCutPtr (k-m);
+	const CoinPackedVector &rowCoe  = cut -> row ();
+
+	l2 = cut -> lb ();
+	u2 = cut -> ub ();
+	n2   = rowCoe. getNumElements ();
+	ind2 = rowCoe. getIndices     ();
+	a2   = rowCoe. getElements    ();
+
+      } else {
+
+	l2 = rlb [k];
+	u2 = rub [k];
+	n2 = rSta [k+1] - rSta [k];
+	ind2 = rInd + rSta [k];
+	a2 = rA + rSta [k];
+      }
+
+      // If both indices are from the LP relaxation, only check if
+      // there is at least one changed bound in the variables of one
+      // (or both) of them
+
+      if ((h < m) && (k < m) && !firstCall_) {
+
+	bool new_bound = false;
+
+	for (int i=n1; i--;) {
+
+	  t_chg_bounds &chg = chg_bds [ind1 [i]];
+
+	  if ((chg. lower () != t_chg_bounds::UNCHANGED) ||
+	      (chg. upper () != t_chg_bounds::UNCHANGED))
+
+	    new_bound = true;
+	}
+
+	if (!new_bound) 
+	  for (int i=n2; i--;) {
+
+	    t_chg_bounds &chg = chg_bds [ind2 [i]];
+
+	    if ((chg. lower () != t_chg_bounds::UNCHANGED) ||
+		(chg. upper () != t_chg_bounds::UNCHANGED))
+
+	      new_bound = true;
+	  }
+
+	if (!new_bound) continue;
+      }
 
       // fill in sa1 and sa2
 
@@ -316,7 +531,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
       if ((u1 <   COUENNE_INFINITY && u2 <   COUENNE_INFINITY) ||
 	  (l1 > - COUENNE_INFINITY && l2 > - COUENNE_INFINITY))
 
-	result = combine (problem_, cs, n1, n2, ind1, ind2, sa1, sa2, a1, a2, clb, cub, l1, l2, u1, u2, 1);
+	result = combine (problem_, n1, n2, ind1, ind2, sa1, sa2, a1, a2, clb, cub, l1, l2, u1, u2, isInteger, 1);
 
       if (result < 0)
 	break;
@@ -325,13 +540,14 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
       result = 0;
 
       // fill in sa2 with opposite values
-      for (int i=n2; i--;) sa2 [ind2 [i]] = - a2 [i];
+      for (int i=n2; i--;) 
+	sa2 [ind2 [i]] = - a2 [i];
 
       if ((u1 <   COUENNE_INFINITY && l2 > - COUENNE_INFINITY) ||
 	  (l1 > - COUENNE_INFINITY && u2 <   COUENNE_INFINITY))
 
 	// do NOT invert l2 and u2, this is done in combine
-	result = combine (problem_, cs, n1, n2, ind1, ind2, sa1, sa2, a1, a2, clb, cub, l1, l2, u1, u2, -1);
+	result = combine (problem_, n1, n2, ind1, ind2, sa1, sa2, a1, a2, clb, cub, l1, l2, u1, u2, isInteger, -1);
 
       if (result < 0)
 	break;
@@ -381,7 +597,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
       // change chg_bds for all new bounds stored in cs
 
-      for (int i = cs. sizeColCuts (); i--;) {
+      /*for (int i = cs. sizeColCuts (); i--;) {
 
 	const CoinPackedVector
 	  &lbs = cs. colCutPtr (i) -> lbs (),
@@ -401,7 +617,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	for (int j = ubs. getNumElements (); j--; indices++)
 	  chg_bds [*indices].setUpper (t_chg_bounds::CHANGED);
       }
-    
+      */
+
       if (!(problem_ -> btCore (chg_bds))) {
 
 	//problem infeasible, add IIS of size 2
@@ -450,11 +667,15 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     for (int i=0; i<n; i++) {
 
       if (clb [i] > oldLB [i]) {
+
+	//printf ("L %4d: %g -> %g\n", i, oldLB [i], clb [i]);
 	indLB [ntightenedL]   = i;
 	valLB [ntightenedL++] = clb [i];
       }
 
       if (cub [i] < oldUB [i]) {
+
+	//printf ("U %4d: %g -> %g\n", i, oldUB [i], cub [i]);
 	indUB [ntightenedU]   = i;
 	valUB [ntightenedU++] = cub [i];
       }
@@ -466,6 +687,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
       newBound.setLbs (ntightenedL, indLB, valLB);
       newBound.setUbs (ntightenedU, indUB, valUB);
+
+      //newBound.print ();
 
       cs.insert (newBound);
     }
@@ -495,5 +718,9 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   delete [] (sta-n);
 #endif
 
+  if (firstCall_)
+    firstCall_ = false;
+
   totalTime_ += CoinCpuTime () - now;
+}
 }
