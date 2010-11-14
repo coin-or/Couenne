@@ -23,7 +23,7 @@ namespace Couenne {
 
 enum signum {NEG, POS, DN, UP};
 
-//#define DEBUG
+  //#define DEBUG
 
 // type for alphas ////////////////////////////////////////////////
 
@@ -449,6 +449,8 @@ int combine (CouenneProblem *p,
 
     while (true) {
 
+      inalpha = inalphas [i];
+
       int
 	signalpha = inalpha -> sign,   // either UP or DN (not POS or NEG)
 	indVar    = inalpha -> indVar; // the index of the variable whose a_i(alpha) changes sign
@@ -658,9 +660,9 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 	  printf ("    swap'em: %g, %g\n", newL, newU);
 #endif
 
-	  double tmp = newL <= - COUENNE_INFINITY / 10 ?   COUENNE_INFINITY : newL;
-	  newL       = newU >=   COUENNE_INFINITY / 10 ? - COUENNE_INFINITY : newU;
-	  newU       = tmp;
+	  register double tmp = newL <= - COUENNE_INFINITY / 10 ?   COUENNE_INFINITY : newL;
+	  newL                = newU >=   COUENNE_INFINITY / 10 ? - COUENNE_INFINITY : newU;
+	  newU                = tmp;
 	}
 
 #ifdef DEBUG

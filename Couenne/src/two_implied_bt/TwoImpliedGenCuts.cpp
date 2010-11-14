@@ -293,8 +293,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	//printf ("  checking pair %d, %d\n", indj, indk);
 
 	// should never happen, but if it does, just bail out
- 	if ((indj > m + nCuts) || (indj < 0) ||
- 	    (indk > m + nCuts) || (indk < 0)) {
+ 	if ((indj >= m + nCuts) || (indj < 0) ||
+ 	    (indk >= m + nCuts) || (indk < 0)) {
 
 	  if (nBadColMatWarnings++ < 1)
 	    printf ("Couenne: warning, matrix by row has nonsense indices.\n\
@@ -343,8 +343,8 @@ NOTE: further such inconsistencies won't be reported.\n");
 			 // in which all coefficients in this pair
 			 // have the same sign
 
-	  if (!(((rlbj > -COUENNE_INFINITY) && (rubk <  COUENNE_INFINITY)) || 
-		((rubj <  COUENNE_INFINITY) && (rlbk > -COUENNE_INFINITY))))
+	  if (!(((rlbj > -COUENNE_INFINITY/10) && (rubk <  COUENNE_INFINITY/10)) || 
+		((rubj <  COUENNE_INFINITY/10) && (rlbk > -COUENNE_INFINITY/10))))
 
 	    continue;
 
@@ -352,8 +352,8 @@ NOTE: further such inconsistencies won't be reported.\n");
 
 	if ((prod < 0.) && // opposite sign -- multiply second
 			   // inequality by -1 and repeat
-	    !(((rlbj > -COUENNE_INFINITY) && (rlbk > -COUENNE_INFINITY)) || 
-	      ((rubj <  COUENNE_INFINITY) && (rubk <  COUENNE_INFINITY))))
+	    !(((rlbj > -COUENNE_INFINITY/10) && (rlbk > -COUENNE_INFINITY/10)) || 
+	      ((rubj <  COUENNE_INFINITY/10) && (rubk <  COUENNE_INFINITY/10))))
 
 	  continue;
 
