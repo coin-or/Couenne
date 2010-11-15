@@ -308,6 +308,8 @@ NOTE: further such inconsistencies won't be reported.\n");
 	  delete [] ind;
 	  delete [] A;
 
+	  delete [] isInteger;
+
 	  problem_ -> domain () -> pop ();
 
 	  totalTime_     += CoinCpuTime () - now;
@@ -709,6 +711,8 @@ NOTE: further such inconsistencies won't be reported.\n");
   delete [] sa1;
   delete [] sa2; 
   delete [] chg_bds;
+
+  delete [] isInteger;
 
   problem_ -> domain () -> pop ();
 
