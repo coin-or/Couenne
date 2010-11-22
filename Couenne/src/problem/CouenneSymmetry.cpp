@@ -348,7 +348,7 @@ void CouenneProblem::Print_Orbits(){
   for (unsigned int i = 0; i < new_orbits -> size(); i++) {
     if ((*new_orbits)[i].size() > 1) 
       nNonTrivialOrbits++;
-    // else continue;
+    else continue;
     // int orbsize = (*new_orbits)[i].size();
     // printf( "Orbit %d [size: %d] [", i, orbsize);
     // copy((*new_orbits)[i].begin(), (*new_orbits)[i].end(),

@@ -15,6 +15,7 @@
 #include "CouenneJournalist.hpp"
 
 #include "IpOptionsList.hpp"
+#include "IpJournalist.hpp"
 
 using namespace Couenne;
 
@@ -43,9 +44,12 @@ CouenneTwoImplied::CouenneTwoImplied (const CouenneTwoImplied &src):
   totalInitTime_  (src.totalInitTime_),
   firstCall_      (src.firstCall_) {}
 
+
 /// destructor
 CouenneTwoImplied::~CouenneTwoImplied () {
-  printf ("TwoImpliedCuts: %g seconds (%g init)\n", totalTime_, totalInitTime_);
+
+  if (totalTime_ > 1e-5)
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "TwoImpliedCuts: %g seconds (%g init)\n", totalTime_, totalInitTime_);
 }
 
 

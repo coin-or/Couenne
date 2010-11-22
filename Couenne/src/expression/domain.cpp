@@ -15,6 +15,7 @@
 #include "CouenneDomain.hpp"
 #include "CouennePrecisions.hpp"
 
+// a buffer against continuous reallocs
 #define EXTRA_STORAGE 1024
 
 using namespace Couenne;
@@ -33,9 +34,11 @@ DomainPoint::DomainPoint (int dim,
 
   if ((dimension_ > 0) && copied_) {
 
-    x_  = (CouNumber *) malloc (dim * sizeof (CouNumber)); 
-    lb_ = (CouNumber *) malloc (dim * sizeof (CouNumber)); 
-    ub_ = (CouNumber *) malloc (dim * sizeof (CouNumber)); 
+    int size = dim * sizeof (CouNumber);
+
+    x_  = (CouNumber *) malloc (size);
+    lb_ = (CouNumber *) malloc (size);
+    ub_ = (CouNumber *) malloc (size);
 
     if (x)  CoinCopyN (x,  dim, x_);  else CoinFillN (x_,  dim, 0.);
     if (lb) CoinCopyN (lb, dim, lb_); else CoinFillN (lb_, dim, -COUENNE_INFINITY);
@@ -208,18 +211,24 @@ void Domain::push (const OsiSolverInterface *si,
   if (cs)
     for (int i = cs -> sizeColCuts (); i--;) {
 
+      OsiColCut *cut = cs -> colCutPtr (i);
+
       const CoinPackedVector
-	&lbs = cs -> colCutPtr (i) -> lbs (),
-	&ubs = cs -> colCutPtr (i) -> ubs ();
+	&lbs = cut -> lbs (),
+	&ubs = cut -> ubs ();
+
+      register const int    *indices  = lbs. getIndices ();
+      register const double *elements = lbs. getElements ();
+
+      register CouNumber
+	*lb = point_ -> lb_,
+	*ub = point_ -> ub_;
 
       // copy lbs
 
-      const int    *indices  = lbs. getIndices ();
-      const double *elements = lbs. getElements ();
-
       for (int j = lbs. getNumElements (); j--; elements++, indices++)
-	if (*elements > lb (*indices))
-	  lb (*indices) = *elements;
+	if (*elements > lb [*indices])
+	  lb [*indices] = *elements;
 
       // copy ubs
 
@@ -227,8 +236,8 @@ void Domain::push (const OsiSolverInterface *si,
       elements = ubs. getElements ();
 
       for (int j = ubs. getNumElements (); j--; elements++, indices++)
-	if (*elements < ub (*indices))
-	  ub (*indices) = *elements;
+	if (*elements < ub [*indices])
+	  ub [*indices] = *elements;
     }
 }
 

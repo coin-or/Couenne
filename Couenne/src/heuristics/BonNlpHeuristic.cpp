@@ -104,10 +104,7 @@ NlpSolveHeuristic::setCouenneProblem(CouenneProblem * couenne)
 int
 NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
-  class Exception {
-  };
-
-  Exception noSolution;
+  int noSolution = 1, maxTime = 2;
 
   // do heuristic the usual way, but if for any reason (time is up, no
   // better solution found) there is no improvement, get the best
@@ -122,7 +119,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   try {
 
   if (CoinCpuTime () > couenne_ -> getMaxCpuTime ())
-    throw noSolution;
+    throw maxTime;
 
   OsiSolverInterface * solver = model_ -> solver();
 
@@ -147,7 +144,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   if (numberSolvePerLevel_ > -1) {
 
     if (numberSolvePerLevel_ == 0) 
-      throw noSolution;
+      throw maxTime;
 
     //if (CoinDrand48 () > pow (2., numberSolvePerLevel_ - depth))
     if (CoinDrand48 () > 1. / CoinMax 
@@ -155,11 +152,11 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
       too_deep = true;
   }
 
-  if (too_deep)
-    throw noSolution;
-
   if (depth <= 0)
     couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "NLP Heuristic: "); fflush (stdout);
+
+  if (too_deep)
+    throw maxTime;
 
   double *lower = new double [couenne_ -> nVars ()];
   double *upper = new double [couenne_ -> nVars ()];
@@ -385,10 +382,9 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   return foundSolution;
 
   }
-  catch (Exception &e) {
+  catch (int &e) {
 
     // no solution available? Use the one from the global cutoff
-
 
     if ((couenne_ -> getCutOff () < objectiveValue) &&
 	couenne_ -> getCutOffSol ()) {
@@ -403,7 +399,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
     } else {
 
-      if (nodeDepth <= 0)
+      if (nodeDepth <= 0 && e==noSolution)
 	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done (no solution).\n", objectiveValue);
       return 0;
     }

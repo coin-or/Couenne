@@ -29,6 +29,8 @@ namespace Couenne {
 
 class DomainPoint {
 
+  friend class Domain;
+
 protected:
 
   int dimension_; ///< dimension of point

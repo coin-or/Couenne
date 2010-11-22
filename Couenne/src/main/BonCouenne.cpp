@@ -107,14 +107,15 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
     jnlst -> Printf (J_ERROR, J_COUENNE, "\
 Loaded instance \"%s\"\n\
-Variables:       %8d (%d integer)\n\
 Constraints:     %8d\n\
-Auxiliaries:     %8d\n\n",
+Variables:       %8d (%d integer)\n\
+Auxiliaries:     %8d (%d integer)\n\n",
 		     prob -> problemName ().c_str (),
+		     prob -> nOrigCons (),
 		     prob -> nOrigVars (),
 		     prob -> nOrigIntVars (),
-		     prob -> nOrigCons (),
-		     prob -> nVars () - prob -> nOrigVars ());
+		     prob -> nVars    () - prob -> nOrigVars (),
+		     prob -> nIntVars () - prob -> nOrigIntVars ());
 
     double time_start = CoinCpuTime();
 

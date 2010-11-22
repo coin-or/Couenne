@@ -522,6 +522,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
       //    if (!firstcall_) // keep solution if called from extractLinearRelaxation()
       babInfo -> setHasNlpSolution (false); // reset it after use //AW HERE
+
     } else {
 
       if (jnlst_ -> ProduceOutput (J_VECTOR, J_CONVEXIFYING)) {
