@@ -43,6 +43,7 @@ libCouenneExpression_la_SOURCES = \
 	../convex/operators/conv-exprDiv.cpp \
 	../convex/operators/conv-exprMul.cpp \
 	../convex/operators/conv-exprMul-genCuts.cpp \
+	../convex/operators/conv-exprMul-reformulate.cpp \
 	../convex/operators/conv-exprTrilinear.cpp \
 	../convex/operators/conv-exprTrilinear-gencuts.cpp \
 	../convex/operators/unifiedProdCuts.cpp \

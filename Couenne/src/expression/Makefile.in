@@ -77,17 +77,18 @@ am_libCouenneExpression_la_OBJECTS = domain.lo expression.lo exprOp.lo \
 	compQuadFinBounds.lo exprBQuad.lo simplifiers.lo simplify.lo \
 	CouenneExprJac.lo CouenneExprHess.lo conv-exprAbs.lo \
 	conv-exprDiv.lo conv-exprMul.lo conv-exprMul-genCuts.lo \
-	conv-exprTrilinear.lo conv-exprTrilinear-gencuts.lo \
-	unifiedProdCuts.lo exprMul-upperHull.lo conv-exprOpp.lo \
-	conv-exprPow.lo conv-exprPow-getBounds.lo \
-	conv-exprPow-envelope.lo powNewton.lo conv-exprSub.lo \
-	conv-exprSum.lo conv-exprInv.lo conv-exprSinCos.lo \
-	conv-exprExp.lo conv-exprLog.lo conv-exprGroup.lo \
-	conv-exprQuad.lo trigNewton.lo alphaConvexify.lo quadCuts.lo \
-	branchExprAbs.lo branchExprExp.lo branchExprDiv.lo \
-	branchExprInv.lo branchExprLog.lo branchExprMul.lo \
-	branchExprTrilinear.lo branchExprPow.lo branchExprQuad.lo \
-	branchExprSinCos.lo minMaxDelta.lo computeMulBrDist.lo
+	conv-exprMul-reformulate.lo conv-exprTrilinear.lo \
+	conv-exprTrilinear-gencuts.lo unifiedProdCuts.lo \
+	exprMul-upperHull.lo conv-exprOpp.lo conv-exprPow.lo \
+	conv-exprPow-getBounds.lo conv-exprPow-envelope.lo \
+	powNewton.lo conv-exprSub.lo conv-exprSum.lo conv-exprInv.lo \
+	conv-exprSinCos.lo conv-exprExp.lo conv-exprLog.lo \
+	conv-exprGroup.lo conv-exprQuad.lo trigNewton.lo \
+	alphaConvexify.lo quadCuts.lo branchExprAbs.lo \
+	branchExprExp.lo branchExprDiv.lo branchExprInv.lo \
+	branchExprLog.lo branchExprMul.lo branchExprTrilinear.lo \
+	branchExprPow.lo branchExprQuad.lo branchExprSinCos.lo \
+	minMaxDelta.lo computeMulBrDist.lo
 libCouenneExpression_la_OBJECTS =  \
 	$(am_libCouenneExpression_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -353,6 +354,7 @@ libCouenneExpression_la_SOURCES = \
 	../convex/operators/conv-exprDiv.cpp \
 	../convex/operators/conv-exprMul.cpp \
 	../convex/operators/conv-exprMul-genCuts.cpp \
+	../convex/operators/conv-exprMul-reformulate.cpp \
 	../convex/operators/conv-exprTrilinear.cpp \
 	../convex/operators/conv-exprTrilinear-gencuts.cpp \
 	../convex/operators/unifiedProdCuts.cpp \
@@ -479,6 +481,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprInv.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprLog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprMul-genCuts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprMul-reformulate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprMul.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprOpp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprPow-envelope.Plo@am__quote@
@@ -724,6 +727,13 @@ conv-exprMul-genCuts.lo: ../convex/operators/conv-exprMul-genCuts.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprMul-genCuts.cpp' object='conv-exprMul-genCuts.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprMul-genCuts.lo `test -f '../convex/operators/conv-exprMul-genCuts.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprMul-genCuts.cpp
+
+conv-exprMul-reformulate.lo: ../convex/operators/conv-exprMul-reformulate.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprMul-reformulate.lo -MD -MP -MF "$(DEPDIR)/conv-exprMul-reformulate.Tpo" -c -o conv-exprMul-reformulate.lo `test -f '../convex/operators/conv-exprMul-reformulate.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprMul-reformulate.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprMul-reformulate.Tpo" "$(DEPDIR)/conv-exprMul-reformulate.Plo"; else rm -f "$(DEPDIR)/conv-exprMul-reformulate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprMul-reformulate.cpp' object='conv-exprMul-reformulate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprMul-reformulate.lo `test -f '../convex/operators/conv-exprMul-reformulate.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprMul-reformulate.cpp
 
 conv-exprTrilinear.lo: ../convex/operators/conv-exprTrilinear.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprTrilinear.lo -MD -MP -MF "$(DEPDIR)/conv-exprTrilinear.Tpo" -c -o conv-exprTrilinear.lo `test -f '../convex/operators/conv-exprTrilinear.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprTrilinear.cpp; \

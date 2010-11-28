@@ -95,6 +95,7 @@ Couenne/src/convex/operators/conv-exprGroup.cpp -text
 Couenne/src/convex/operators/conv-exprInv.cpp -text
 Couenne/src/convex/operators/conv-exprLog.cpp -text
 Couenne/src/convex/operators/conv-exprMul-genCuts.cpp -text
+Couenne/src/convex/operators/conv-exprMul-reformulate.cpp -text
 Couenne/src/convex/operators/conv-exprMul.cpp -text
 Couenne/src/convex/operators/conv-exprOpp.cpp -text
 Couenne/src/convex/operators/conv-exprPow-envelope.cpp -text
