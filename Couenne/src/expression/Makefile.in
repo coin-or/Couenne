@@ -72,11 +72,12 @@ libCouenneExpression_la_LIBADD =
 am_libCouenneExpression_la_OBJECTS = domain.lo expression.lo exprOp.lo \
 	exprUnary.lo exprVar.lo exprAux.lo CouExpr.lo exprAbs.lo \
 	exprDiv.lo exprExp.lo exprInv.lo exprLog.lo exprMul.lo \
-	exprOpp.lo exprPow.lo exprSin.lo exprCos.lo exprSub.lo \
-	exprSum.lo exprMinMax.lo exprGroup.lo exprQuad.lo \
+	exprTrilinear.lo exprOpp.lo exprPow.lo exprSin.lo exprCos.lo \
+	exprSub.lo exprSum.lo exprMinMax.lo exprGroup.lo exprQuad.lo \
 	compQuadFinBounds.lo exprBQuad.lo simplifiers.lo simplify.lo \
 	CouenneExprJac.lo CouenneExprHess.lo conv-exprAbs.lo \
 	conv-exprDiv.lo conv-exprMul.lo conv-exprMul-genCuts.lo \
+	conv-exprTrilinear.lo conv-exprTrilinear-gencuts.lo \
 	unifiedProdCuts.lo exprMul-upperHull.lo conv-exprOpp.lo \
 	conv-exprPow.lo conv-exprPow-getBounds.lo \
 	conv-exprPow-envelope.lo powNewton.lo conv-exprSub.lo \
@@ -85,8 +86,8 @@ am_libCouenneExpression_la_OBJECTS = domain.lo expression.lo exprOp.lo \
 	conv-exprQuad.lo trigNewton.lo alphaConvexify.lo quadCuts.lo \
 	branchExprAbs.lo branchExprExp.lo branchExprDiv.lo \
 	branchExprInv.lo branchExprLog.lo branchExprMul.lo \
-	branchExprPow.lo branchExprQuad.lo branchExprSinCos.lo \
-	minMaxDelta.lo computeMulBrDist.lo
+	branchExprTrilinear.lo branchExprPow.lo branchExprQuad.lo \
+	branchExprSinCos.lo minMaxDelta.lo computeMulBrDist.lo
 libCouenneExpression_la_OBJECTS =  \
 	$(am_libCouenneExpression_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/inc
@@ -332,6 +333,7 @@ libCouenneExpression_la_SOURCES = \
 	operators/exprInv.cpp \
 	operators/exprLog.cpp \
 	operators/exprMul.cpp \
+	operators/exprTrilinear.cpp \
 	operators/exprOpp.cpp \
 	operators/exprPow.cpp \
 	operators/exprSin.cpp \
@@ -351,6 +353,8 @@ libCouenneExpression_la_SOURCES = \
 	../convex/operators/conv-exprDiv.cpp \
 	../convex/operators/conv-exprMul.cpp \
 	../convex/operators/conv-exprMul-genCuts.cpp \
+	../convex/operators/conv-exprTrilinear.cpp \
+	../convex/operators/conv-exprTrilinear-gencuts.cpp \
 	../convex/operators/unifiedProdCuts.cpp \
 	../convex/operators/exprMul-upperHull.cpp \
 	../convex/operators/conv-exprOpp.cpp \
@@ -375,6 +379,7 @@ libCouenneExpression_la_SOURCES = \
 	../branch/operators/branchExprInv.cpp \
 	../branch/operators/branchExprLog.cpp \
 	../branch/operators/branchExprMul.cpp \
+	../branch/operators/branchExprTrilinear.cpp \
 	../branch/operators/branchExprPow.cpp \
 	../branch/operators/branchExprQuad.cpp \
 	../branch/operators/branchExprSinCos.cpp \
@@ -464,6 +469,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprPow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprQuad.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprSinCos.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/branchExprTrilinear.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/compQuadFinBounds.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/computeMulBrDist.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprAbs.Plo@am__quote@
@@ -482,6 +488,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprSinCos.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprSub.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprSum.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprTrilinear-gencuts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv-exprTrilinear.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domain.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprAbs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprAux.Plo@am__quote@
@@ -502,6 +510,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprSin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprSub.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprSum.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprTrilinear.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprUnary.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exprVar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/expression.Plo@am__quote@
@@ -575,6 +584,13 @@ exprMul.lo: operators/exprMul.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/exprMul.cpp' object='exprMul.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o exprMul.lo `test -f 'operators/exprMul.cpp' || echo '$(srcdir)/'`operators/exprMul.cpp
+
+exprTrilinear.lo: operators/exprTrilinear.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT exprTrilinear.lo -MD -MP -MF "$(DEPDIR)/exprTrilinear.Tpo" -c -o exprTrilinear.lo `test -f 'operators/exprTrilinear.cpp' || echo '$(srcdir)/'`operators/exprTrilinear.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/exprTrilinear.Tpo" "$(DEPDIR)/exprTrilinear.Plo"; else rm -f "$(DEPDIR)/exprTrilinear.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='operators/exprTrilinear.cpp' object='exprTrilinear.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o exprTrilinear.lo `test -f 'operators/exprTrilinear.cpp' || echo '$(srcdir)/'`operators/exprTrilinear.cpp
 
 exprOpp.lo: operators/exprOpp.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT exprOpp.lo -MD -MP -MF "$(DEPDIR)/exprOpp.Tpo" -c -o exprOpp.lo `test -f 'operators/exprOpp.cpp' || echo '$(srcdir)/'`operators/exprOpp.cpp; \
@@ -708,6 +724,20 @@ conv-exprMul-genCuts.lo: ../convex/operators/conv-exprMul-genCuts.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprMul-genCuts.cpp' object='conv-exprMul-genCuts.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprMul-genCuts.lo `test -f '../convex/operators/conv-exprMul-genCuts.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprMul-genCuts.cpp
+
+conv-exprTrilinear.lo: ../convex/operators/conv-exprTrilinear.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprTrilinear.lo -MD -MP -MF "$(DEPDIR)/conv-exprTrilinear.Tpo" -c -o conv-exprTrilinear.lo `test -f '../convex/operators/conv-exprTrilinear.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprTrilinear.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprTrilinear.Tpo" "$(DEPDIR)/conv-exprTrilinear.Plo"; else rm -f "$(DEPDIR)/conv-exprTrilinear.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprTrilinear.cpp' object='conv-exprTrilinear.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprTrilinear.lo `test -f '../convex/operators/conv-exprTrilinear.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprTrilinear.cpp
+
+conv-exprTrilinear-gencuts.lo: ../convex/operators/conv-exprTrilinear-gencuts.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT conv-exprTrilinear-gencuts.lo -MD -MP -MF "$(DEPDIR)/conv-exprTrilinear-gencuts.Tpo" -c -o conv-exprTrilinear-gencuts.lo `test -f '../convex/operators/conv-exprTrilinear-gencuts.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprTrilinear-gencuts.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/conv-exprTrilinear-gencuts.Tpo" "$(DEPDIR)/conv-exprTrilinear-gencuts.Plo"; else rm -f "$(DEPDIR)/conv-exprTrilinear-gencuts.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../convex/operators/conv-exprTrilinear-gencuts.cpp' object='conv-exprTrilinear-gencuts.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o conv-exprTrilinear-gencuts.lo `test -f '../convex/operators/conv-exprTrilinear-gencuts.cpp' || echo '$(srcdir)/'`../convex/operators/conv-exprTrilinear-gencuts.cpp
 
 unifiedProdCuts.lo: ../convex/operators/unifiedProdCuts.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT unifiedProdCuts.lo -MD -MP -MF "$(DEPDIR)/unifiedProdCuts.Tpo" -c -o unifiedProdCuts.lo `test -f '../convex/operators/unifiedProdCuts.cpp' || echo '$(srcdir)/'`../convex/operators/unifiedProdCuts.cpp; \
@@ -876,6 +906,13 @@ branchExprMul.lo: ../branch/operators/branchExprMul.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprMul.cpp' object='branchExprMul.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprMul.lo `test -f '../branch/operators/branchExprMul.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprMul.cpp
+
+branchExprTrilinear.lo: ../branch/operators/branchExprTrilinear.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprTrilinear.lo -MD -MP -MF "$(DEPDIR)/branchExprTrilinear.Tpo" -c -o branchExprTrilinear.lo `test -f '../branch/operators/branchExprTrilinear.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprTrilinear.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/branchExprTrilinear.Tpo" "$(DEPDIR)/branchExprTrilinear.Plo"; else rm -f "$(DEPDIR)/branchExprTrilinear.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../branch/operators/branchExprTrilinear.cpp' object='branchExprTrilinear.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o branchExprTrilinear.lo `test -f '../branch/operators/branchExprTrilinear.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprTrilinear.cpp
 
 branchExprPow.lo: ../branch/operators/branchExprPow.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT branchExprPow.lo -MD -MP -MF "$(DEPDIR)/branchExprPow.Tpo" -c -o branchExprPow.lo `test -f '../branch/operators/branchExprPow.cpp' || echo '$(srcdir)/'`../branch/operators/branchExprPow.cpp; \

@@ -25,6 +25,7 @@ libCouenneBoundTightening_la_SOURCES = \
 	operators/impliedBounds-exprSum.cpp \
 	operators/impliedBounds-exprDiv.cpp \
 	operators/impliedBounds-exprMul.cpp \
+	operators/impliedBounds-exprTrilinear.cpp \
 	operators/impliedBounds-exprQuad.cpp \
 	operators/impliedBounds-exprPow.cpp \
 	../main/BonCouenneInfo.cpp \

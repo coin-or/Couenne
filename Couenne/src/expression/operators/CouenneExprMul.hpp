@@ -30,7 +30,7 @@ class exprMul: public exprOp {
   exprMul (expression *, expression *);
 
   /// Cloning method
-  expression *clone (Domain *d = NULL) const
+  virtual expression *clone (Domain *d = NULL) const
   {return new exprMul (clonearglist (d), nargs_);}
 
   /// Print operator
@@ -41,7 +41,7 @@ class exprMul: public exprOp {
   inline CouNumber operator () ();
 
   /// return l-2 norm of gradient at given point
-  CouNumber gradientNorm (const double *x);
+  virtual CouNumber gradientNorm (const double *x);
 
   /// differentiation
   expression *differentiate (int index); 
@@ -63,18 +63,19 @@ class exprMul: public exprOp {
   virtual exprAux *standardize (CouenneProblem *p, bool addAux = true);
 
   /// generate equality between *this and *w
-  void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		     OsiCuts &cs, const CouenneCutGenerator *cg, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
-		     CouNumber =  COUENNE_INFINITY);
+  virtual void generateCuts (expression *w, //const OsiSolverInterface &si, 
+			     OsiCuts &cs, const CouenneCutGenerator *cg, 
+			     t_chg_bounds * = NULL, int = -1, 
+			     CouNumber = -COUENNE_INFINITY, 
+			     CouNumber =  COUENNE_INFINITY);
 
   /// code for comparison
   virtual enum expr_type code () 
   {return COU_EXPRMUL;}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum Couenne::expression::auxSign = Couenne::expression::AUX_EQ);
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, 
+			     enum Couenne::expression::auxSign = Couenne::expression::AUX_EQ);
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments

@@ -23,6 +23,7 @@ libCouenneExpression_la_SOURCES = \
 	operators/exprInv.cpp \
 	operators/exprLog.cpp \
 	operators/exprMul.cpp \
+	operators/exprTrilinear.cpp \
 	operators/exprOpp.cpp \
 	operators/exprPow.cpp \
 	operators/exprSin.cpp \
@@ -42,6 +43,8 @@ libCouenneExpression_la_SOURCES = \
 	../convex/operators/conv-exprDiv.cpp \
 	../convex/operators/conv-exprMul.cpp \
 	../convex/operators/conv-exprMul-genCuts.cpp \
+	../convex/operators/conv-exprTrilinear.cpp \
+	../convex/operators/conv-exprTrilinear-gencuts.cpp \
 	../convex/operators/unifiedProdCuts.cpp \
 	../convex/operators/exprMul-upperHull.cpp \
 	../convex/operators/conv-exprOpp.cpp \
@@ -66,6 +69,7 @@ libCouenneExpression_la_SOURCES = \
 	../branch/operators/branchExprInv.cpp \
 	../branch/operators/branchExprLog.cpp \
 	../branch/operators/branchExprMul.cpp \
+	../branch/operators/branchExprTrilinear.cpp \
 	../branch/operators/branchExprPow.cpp \
 	../branch/operators/branchExprQuad.cpp \
 	../branch/operators/branchExprSinCos.cpp \

@@ -487,4 +487,12 @@ If k>=0, apply with probability 2^(k - level), level being the current depth of 
      "yes",
      "no","Keep redundant variables, making the problem a bit larger",
      "yes","Eliminate redundant variables (the problem will be equivalent, only smaller)");
+
+  roptions -> AddStringOption3
+    ("quadrilinear_decomp",
+     "type of decomposition for quadrilinear terms (see work by Cafieri, Lee, Liberti)",
+     "rAI",
+     "rAI",     "Recursive decomposition in bilinear terms (as in Ryoo and Sahinidis): x5 = (x1 (x2 (x3 x4)))",
+     "tri+bi",  "Trilinear and bilinear term: x5 = (x1 (x2 x3 x4))",
+     "hier-bi", "Hierarchical decomposition: x5 = ((x1 x2) (x3 x4))");
 }

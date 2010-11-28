@@ -32,6 +32,7 @@ Couenne/src/bound_tightening/operators/impliedBounds-exprMul.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-exprPow.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-exprQuad.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-exprSum.cpp -text
+Couenne/src/bound_tightening/operators/impliedBounds-exprTrilinear.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-mul.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-sum.cpp -text
 Couenne/src/bound_tightening/tightenBounds.cpp -text
@@ -75,6 +76,7 @@ Couenne/src/branch/operators/branchExprMul.cpp -text
 Couenne/src/branch/operators/branchExprPow.cpp -text
 Couenne/src/branch/operators/branchExprQuad.cpp -text
 Couenne/src/branch/operators/branchExprSinCos.cpp -text
+Couenne/src/branch/operators/branchExprTrilinear.cpp -text
 Couenne/src/branch/operators/computeMulBrDist.cpp -text
 Couenne/src/branch/operators/minMaxDelta.cpp -text
 Couenne/src/branch/projections.cpp -text
@@ -102,6 +104,8 @@ Couenne/src/convex/operators/conv-exprQuad.cpp -text
 Couenne/src/convex/operators/conv-exprSinCos.cpp -text
 Couenne/src/convex/operators/conv-exprSub.cpp -text
 Couenne/src/convex/operators/conv-exprSum.cpp -text
+Couenne/src/convex/operators/conv-exprTrilinear-gencuts.cpp -text
+Couenne/src/convex/operators/conv-exprTrilinear.cpp -text
 Couenne/src/convex/operators/powNewton.cpp -text
 Couenne/src/convex/operators/quadCuts.cpp -text
 Couenne/src/convex/operators/trigNewton.cpp -text
@@ -140,6 +144,7 @@ Couenne/src/expression/exprUnary.cpp -text
 Couenne/src/expression/exprVar.cpp -text
 Couenne/src/expression/expression.cpp -text
 Couenne/src/expression/operators/CouenneExprAbs.hpp -text
+Couenne/src/expression/operators/CouenneExprBinProd.hpp -text
 Couenne/src/expression/operators/CouenneExprCos.hpp -text
 Couenne/src/expression/operators/CouenneExprDiv.hpp -text
 Couenne/src/expression/operators/CouenneExprExp.hpp -text
@@ -150,6 +155,7 @@ Couenne/src/expression/operators/CouenneExprLog.hpp -text
 Couenne/src/expression/operators/CouenneExprMax.hpp -text
 Couenne/src/expression/operators/CouenneExprMin.hpp -text
 Couenne/src/expression/operators/CouenneExprMul.hpp -text
+Couenne/src/expression/operators/CouenneExprMultiLin.hpp -text
 Couenne/src/expression/operators/CouenneExprNorm.hpp -text
 Couenne/src/expression/operators/CouenneExprOpp.hpp -text
 Couenne/src/expression/operators/CouenneExprPWLinear.hpp -text
@@ -158,6 +164,7 @@ Couenne/src/expression/operators/CouenneExprQuad.hpp -text
 Couenne/src/expression/operators/CouenneExprSin.hpp -text
 Couenne/src/expression/operators/CouenneExprSub.hpp -text
 Couenne/src/expression/operators/CouenneExprSum.hpp -text
+Couenne/src/expression/operators/CouenneExprTrilinear.hpp -text
 Couenne/src/expression/operators/bounds/CouenneExprBCos.hpp -text
 Couenne/src/expression/operators/bounds/CouenneExprBDiv.hpp -text
 Couenne/src/expression/operators/bounds/CouenneExprBMul.hpp -text
@@ -180,6 +187,7 @@ Couenne/src/expression/operators/exprQuad.cpp -text
 Couenne/src/expression/operators/exprSin.cpp -text
 Couenne/src/expression/operators/exprSub.cpp -text
 Couenne/src/expression/operators/exprSum.cpp -text
+Couenne/src/expression/operators/exprTrilinear.cpp -text
 Couenne/src/expression/simplify/simplifiers.cpp -text
 Couenne/src/expression/simplify/simplify.cpp -text
 Couenne/src/heuristics/BonInitHeuristic.cpp -text

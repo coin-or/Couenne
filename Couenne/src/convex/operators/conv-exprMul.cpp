@@ -8,8 +8,11 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include <queue>
+
 #include "CouenneTypes.hpp"
 #include "CouenneExprMul.hpp"
+#include "CouenneExprTrilinear.hpp"
 #include "CouenneExprBMul.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneExprPow.hpp"
@@ -70,19 +73,160 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
   }
 
-  //expression *aux = arglist_ [0]; // why not this one?
-  expression *aux = new exprClone (arglist_ [0]);
+  enum Couenne::TrilinDecompType type = p -> getTrilinDecompType ();
 
-  for (int i = 1; i < nargs_ - 1; i++)
-    aux = (areSameVariables (aux, arglist_ [i])) ? 
-      (p -> addAuxiliary (new exprPow (new exprClone (aux), new exprConst (2.)))) : 
-      (p -> addAuxiliary (new exprMul (new exprClone (aux), new exprClone (arglist_ [i]))));
+  if (nargs_ <= 2)
+    type = Couenne::rAI;
 
-  if (areSameVariables (aux, arglist_ [nargs_ - 1])) 
-    aux    = new exprPow (new exprClone (aux), new exprConst (2.));
-  else aux = new exprMul (new exprClone (aux), new exprClone (arglist_ [nargs_ - 1]));
+  switch (type) {
 
-  return (addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
+  case Couenne::treeDecomp: {
+
+    //printf ("trying treeDecomp on "); print (); printf ("\n");
+
+    // A more hierarchical decomposition. Example:
+    //
+    // (x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+    //
+    // becomes
+    //
+    // ((((x1 x2) (x3 x4)) ((x5 x6) (x7 x8))) (x9 x10))
+    //
+    // so that x1 .. x10 are the leaves of a binary tree whose
+    // non-leaf nodes are auxiliaries
+    //
+    // use a queue to parse the leaf level first (by pushing all
+    // original members) and push the newly added auxs into the queue
+    // while extracting _pairs_ of elements
+
+    std::queue <expression *> queue;
+
+    for (int i=0; i<nargs_; i++)
+      queue.push (arglist_ [i]);
+
+    expression *aux;
+
+    while (queue.size() > 1) {
+
+      expression *arg1 = queue.front (); queue.pop ();
+      expression *arg2 = queue.front (); queue.pop ();
+
+      //printf ("Coupling "); arg1 -> print (); 
+      //printf (" with "); arg2 -> print (); 
+
+      if (areSameVariables (arg1, arg2)) aux = new exprPow (new exprClone (arg1), new exprConst (2.));
+      else                               aux = new exprMul (new exprClone (arg1), new exprClone (arg2));
+
+      //printf (" --> "); aux -> print (); printf ("\n"); 
+
+      if (!(queue.empty ()))
+	aux = p -> addAuxiliary (aux);
+
+      queue.push (aux);
+    }
+
+    aux = queue.front (); queue.pop ();
+
+    return (addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
+  }
+
+  case Couenne::tri_bi: {
+
+    //printf ("trying tribi on "); print (); printf (": ");
+
+    // rAI-tre (ok, funny name, but you get the meaning): same as rAI,
+    // but with trilinear terms. A product
+    //
+    // x1 x2 x3... xk
+    //
+    // is decomposed as
+    //
+    // (...((x1 x2 x3) x4 x5) x6 x7) ... ) x[k-1] xk)
+
+    expression *aux = arglist_ [0];
+
+    for (int i = 1; i < nargs_;) {
+
+      if (i < nargs_ - 1) {
+
+	// there are at least two remaining arguments: can create trilinear
+	if (areSameVariables (aux, arglist_ [i])) {
+
+	  if (areSameVariables (aux, arglist_ [i+1]))  // this is a term (x_i x_i x_i)
+
+	    if (i == nargs_ - 2) aux =                    new exprPow (new exprClone (aux), new exprConst (3.));
+	    else                 aux = p -> addAuxiliary (new exprPow (new exprClone (aux), new exprConst (3.)));
+
+	  else {
+
+	    aux = p -> addAuxiliary (new exprPow (new exprClone (aux), new exprConst (2.)));
+	    //aux -> print (); printf (" := "); aux -> Image () -> print (); printf ("; "); 
+	    if (i == nargs_ - 2) aux =                    new exprMul (new exprClone (aux), new exprClone (arglist_ [i+1]));
+	    else                 aux = p -> addAuxiliary (new exprMul (new exprClone (aux), new exprClone (arglist_ [i+1])));
+	  }
+
+	} else 
+	  if (areSameVariables (aux, arglist_ [i+1])) {
+
+	    printf ("Couenne, exprTrilinear: bad ordering of factors in product, aborting\n");
+	    exit (-1);
+
+	  } else
+	    if (i == nargs_ - 2) 
+	      aux = new exprTrilinear (new exprClone (aux), 
+				       new exprClone (arglist_ [i]),
+				       new exprClone (arglist_ [i+1]));
+	    else
+	      aux = p -> addAuxiliary (new exprTrilinear (new exprClone (aux), 
+							  new exprClone (arglist_ [i]),
+							  new exprClone (arglist_ [i+1])));
+
+	//aux -> print (); printf (" := "); aux -> Image () -> print (); printf ("; "); 
+
+        i += 2; // covered two variables
+
+      } else {
+
+	if (areSameVariables (aux, arglist_ [i])) aux = new exprPow (new exprClone (aux), new exprConst (2.));
+	else                                      aux = new exprMul (new exprClone (aux), new exprClone (arglist_ [i]));
+
+	//aux -> print (); printf (" := "); aux -> Image () -> print (); printf ("; "); 
+
+	i++; // covered the last variable
+      }
+    }
+
+    //printf ("\n");
+
+    return (addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
+  }
+
+  case Couenne::rAI:
+  default:
+
+    //printf ("trying good ol' rAI on "); print (); printf ("\n");
+
+    // rAI (recursive Arithmetic Intervals (see Ryoo and Sahinidis,
+    // JOGO 19 (2001):403-424):
+    //
+    // All multilinear expressions are decomposed as 
+    //
+    // (x_1 (x_2 (x_3... (x_{k-1} x_k))...)
+
+    //expression *aux = arglist_ [0]; // why not this one?
+    expression *aux = new exprClone (arglist_ [0]);
+
+    for (int i = 1; i < nargs_ - 1; i++)
+      aux = (areSameVariables (aux, arglist_ [i])) ? 
+	(p -> addAuxiliary (new exprPow (new exprClone (aux), new exprConst (2.)))) : 
+	(p -> addAuxiliary (new exprMul (new exprClone (aux), new exprClone (arglist_ [i]))));
+
+    if (areSameVariables (aux, arglist_ [nargs_ - 1])) 
+      aux    = new exprPow (new exprClone (aux), new exprConst (2.));
+    else aux = new exprMul (new exprClone (aux), new exprClone (arglist_ [nargs_ - 1]));
+
+    return (addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
+  }
 }
 
 

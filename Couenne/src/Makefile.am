@@ -161,6 +161,7 @@ includecoin_HEADERS = \
 	expression/operators/CouenneExprExp.hpp \
 	expression/operators/CouenneExprInv.hpp \
 	expression/operators/CouenneExprMul.hpp \
+	expression/operators/CouenneExprTrilinear.hpp \
 	expression/operators/CouenneExprOpp.hpp \
 	expression/operators/CouenneExprLog.hpp \
 	expression/operators/CouenneExprDiv.hpp \

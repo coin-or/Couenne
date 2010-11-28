@@ -131,6 +131,8 @@ class Nauty;
 
 namespace Couenne {
 
+  enum TrilinDecompType {rAI, treeDecomp, tri_bi};
+
   class exprVar;
   class exprAux;
   class DepGraph;
@@ -313,6 +315,9 @@ class CouenneProblem {
   /// some manipulation on auxiliary variables is done before
   /// Branch-and-Bound
   bool checkAuxBounds_;
+
+  /// return type of decomposition of quadrilinear terms    
+  enum TrilinDecompType trilinDecompType_;
 
  public:
 
@@ -685,7 +690,10 @@ class CouenneProblem {
   /// whenever a solution is tested for MINLP feasibiliry
   bool checkAuxBounds () const
   {return checkAuxBounds_;}
-    
+
+  /// return type of decomposition of quadrilinear terms    
+  enum TrilinDecompType getTrilinDecompType ()
+  {return trilinDecompType_;}
 
 protected:
 

@@ -254,4 +254,10 @@ void CouenneProblem::initOptions(SmartPtr<OptionsList> options) {
 
   options -> GetStringValue ("use_semiaux", s, "couenne."); useSemiaux_ = (s == "yes");
   options -> GetStringValue ("orbital_branching", s, "couenne."); orbitalBranching_ = (s == "yes");
+
+  options -> GetStringValue ("quadrilinear_decomp",  s, "couenne."); 
+
+  if      (s == "rAI")     trilinDecompType_ = rAI;
+  else if (s == "tri+bi")  trilinDecompType_ = tri_bi;
+  else if (s == "hier-bi") trilinDecompType_ = treeDecomp;
 }
