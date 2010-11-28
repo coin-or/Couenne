@@ -1139,12 +1139,12 @@ void exprTrilinear::generateCuts (expression *w,
 	  if ((chs < cutLb [i] - COUENNE_EPS) ||
 	      (chs > cutUb [i] + COUENNE_EPS)) {
 
-	    printf ("cut %d violates optimum: ", i);
+	    printf ("cut %d violates optimum:\n", i);
 
 	    if (cutLb [i] > -COUENNE_INFINITY) printf ("%g <= ", cutLb [i]);
-	    for (unsigned int j=0; j<cutIndices[i].size(); j++) printf ("%+g x%d ", cutCoeff [i] [j],       cutIndices [i] [j]);  printf ("\n = \n");
-	    for (unsigned int j=0; j<cutIndices[i].size(); j++) printf ("%+g *%g ", cutCoeff [i] [j],  sol [cutIndices [i] [j]]); printf ("\n = \n");
-	    for (unsigned int j=0; j<cutIndices[i].size(); j++) printf ("%+g ",     cutCoeff [i] [j] * sol [cutIndices [i] [j]]); printf ("\n = %g", chs);
+	    for (unsigned int j=0; j<cutIndices[i].size(); j++) printf ("%+g x%d ", cutCoeff [i] [j],       cutIndices [i] [j]);  printf ("\n = ");
+	    for (unsigned int j=0; j<cutIndices[i].size(); j++) printf ("%+g *%g ", cutCoeff [i] [j],  sol [cutIndices [i] [j]]); printf ("\n = ");
+	    for (unsigned int j=0; j<cutIndices[i].size(); j++) printf ("%+g ",     cutCoeff [i] [j] * sol [cutIndices [i] [j]]); printf (" = %g", chs);
 	    if (cutUb [i] <  COUENNE_INFINITY) printf (" <= %g", cutUb [i]);
 	    printf ("\n");
 
