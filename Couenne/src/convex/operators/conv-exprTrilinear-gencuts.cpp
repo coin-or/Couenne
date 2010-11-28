@@ -1092,7 +1092,7 @@ void exprTrilinear::generateCuts (expression *w,
 
   //printf ("trilinear cuts:\n");
 
-  for (int i=(int)cutIndices.size (); i--;) {
+  for (int i = (int) cutIndices.size (); i--;) {
 
     int 
        size = (int) cutIndices [i].size (),
@@ -1105,6 +1105,53 @@ void exprTrilinear::generateCuts (expression *w,
 
     OsiRowCut cut (cutLb [i], cutUb [i], 4, 4, ind, coe);
     //cut.print ();
+
+    if (cg -> Problem () -> bestSol ()) {
+
+      // check validity of cuts by verifying they don't cut the
+      // optimum in the node
+
+      double *sol = cg -> Problem () -> bestSol ();
+      const double
+	*lb = cg -> Problem () -> Lb (), 
+	*ub = cg -> Problem () -> Ub ();
+
+      int nVars = cg -> Problem () -> nVars ();
+
+      bool optIn = true;
+
+      for (int i=0; i< nVars; i++)
+	if ((sol [i] < lb [i] - COUENNE_EPS) ||
+	    (sol [i] > ub [i] + COUENNE_EPS)) {
+	  optIn = false;
+	  break;
+	}
+
+      if (optIn) {
+
+	for (unsigned int i=0; i<cutIndices.size (); i++) {
+
+	  double chs = 0.;
+
+	  for (unsigned int j=0; j<cutIndices[i].size(); j++)
+	    chs += cutCoeff [i] [j] * sol [cutIndices [i] [j]];
+
+	  if ((chs < cutLb [i] - COUENNE_EPS) ||
+	      (chs > cutUb [i] + COUENNE_EPS)) {
+
+	    printf ("cut %d violates optimum: ", i);
+
+	    if (cutLb [i] > -COUENNE_INFINITY) printf ("%g <= ", cutLb [i]);
+	    for (unsigned int j=0; j<cutIndices[i].size(); j++) printf ("%+g x%d ", cutCoeff [i] [j],       cutIndices [i] [j]);  printf ("\n = \n");
+	    for (unsigned int j=0; j<cutIndices[i].size(); j++) printf ("%+g *%g ", cutCoeff [i] [j],  sol [cutIndices [i] [j]]); printf ("\n = \n");
+	    for (unsigned int j=0; j<cutIndices[i].size(); j++) printf ("%+g ",     cutCoeff [i] [j] * sol [cutIndices [i] [j]]); printf ("\n = %g", chs);
+	    if (cutUb [i] <  COUENNE_INFINITY) printf (" <= %g", cutUb [i]);
+	    printf ("\n");
+
+	  }
+	}
+      }
+    }
 
     cs.insert (cut);
   }

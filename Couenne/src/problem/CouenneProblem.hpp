@@ -131,7 +131,7 @@ class Nauty;
 
 namespace Couenne {
 
-  enum TrilinDecompType {rAI, treeDecomp, tri_bi};
+  enum TrilinDecompType {rAI, treeDecomp, bi_tri, tri_bi};
 
   class exprVar;
   class exprAux;

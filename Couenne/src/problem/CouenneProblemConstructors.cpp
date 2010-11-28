@@ -259,5 +259,6 @@ void CouenneProblem::initOptions(SmartPtr<OptionsList> options) {
 
   if      (s == "rAI")     trilinDecompType_ = rAI;
   else if (s == "tri+bi")  trilinDecompType_ = tri_bi;
+  else if (s == "bi+tri")  trilinDecompType_ = bi_tri;
   else if (s == "hier-bi") trilinDecompType_ = treeDecomp;
 }

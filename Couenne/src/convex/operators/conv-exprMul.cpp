@@ -130,9 +130,12 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
     return (addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
   }
 
-  case Couenne::tri_bi: {
+    // ----------------------------------------------------------------------------------------------
 
-    //printf ("trying tribi on "); print (); printf (": ");
+  case Couenne::tri_bi:
+  case Couenne::bi_tri: { // the two cases are very similar
+
+    printf ("trying %s on ", type==tri_bi ? "tri+bi" : "bi+tri"); print (); printf (": "); fflush (stdout);
 
     // rAI-tre (ok, funny name, but you get the meaning): same as rAI,
     // but with trilinear terms. A product
@@ -147,7 +150,7 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
     for (int i = 1; i < nargs_;) {
 
-      if (i < nargs_ - 1) {
+      if (i < nargs_ - 1 && ((type==tri_bi) || (i!=1))) { // this is the only point of departure between tri_bi and bi_tri
 
 	// there are at least two remaining arguments: can create trilinear
 	if (areSameVariables (aux, arglist_ [i])) {
@@ -160,7 +163,7 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 	  else {
 
 	    aux = p -> addAuxiliary (new exprPow (new exprClone (aux), new exprConst (2.)));
-	    //aux -> print (); printf (" := "); aux -> Image () -> print (); printf ("; "); 
+	    aux -> print (); printf (" (tri0) := "); fflush (stdout); aux -> Image () -> print (); printf ("; ");  fflush (stdout);
 	    if (i == nargs_ - 2) aux =                    new exprMul (new exprClone (aux), new exprClone (arglist_ [i+1]));
 	    else                 aux = p -> addAuxiliary (new exprMul (new exprClone (aux), new exprClone (arglist_ [i+1])));
 	  }
@@ -181,7 +184,7 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 							  new exprClone (arglist_ [i]),
 							  new exprClone (arglist_ [i+1])));
 
-	//aux -> print (); printf (" := "); aux -> Image () -> print (); printf ("; "); 
+	aux -> print (); if (i != nargs_ - 2) {printf (" (tri) := "); aux -> Image () -> print (); printf ("; "); fflush (stdout);}
 
         i += 2; // covered two variables
 
@@ -190,16 +193,23 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 	if (areSameVariables (aux, arglist_ [i])) aux = new exprPow (new exprClone (aux), new exprConst (2.));
 	else                                      aux = new exprMul (new exprClone (aux), new exprClone (arglist_ [i]));
 
-	//aux -> print (); printf (" := "); aux -> Image () -> print (); printf ("; "); 
+	if (i==1) // must be bi+tri
+	  aux = p -> addAuxiliary (aux); // necessary to introduce the auxiliary variable
+
+	aux -> print (); if (i==1) {printf (" (bi) := "); fflush (stdout); aux -> Image () -> print (); printf ("; "); fflush (stdout);}
 
 	i++; // covered the last variable
       }
     }
 
-    //printf ("\n");
+    printf ("\n");
 
     return (addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
   }
+
+    // ----------------------------------------------------------------------------------------------
+
+    // ----------------------------------------------------------------------------------------------
 
   case Couenne::rAI:
   default:
