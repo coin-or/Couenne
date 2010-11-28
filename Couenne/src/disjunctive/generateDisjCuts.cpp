@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: separation method for disjunctive cuts
  *
- * (C) Carnegie-Mellon University, 2008-09.
+ * (C) Carnegie-Mellon University, 2008-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -30,12 +30,7 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 
   if (isWiped (cs))
     return;
-
-  if (info.level <= 0 && !(info.inTree))  
-    jnlst_ -> Printf (J_ERROR, J_COUENNE, 
-		      "Disjunctive cuts (root node): ");
-  fflush (stdout);
-
+  
   if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) 
     printf ("--- generateDisjCuts: level = %d, pass = %d, intree = %d [%d]\n",
 	    info.level, info.pass, info.inTree, depthStopSeparate_);
@@ -44,9 +39,16 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
       (info.level > depthStopSeparate_))  // check if too deep for adding these cuts
     return;
 
+  if ((info.level <= 0) && !(info.inTree)) {
+
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, 
+		      "Disjunctive cuts (root node): ");
+    fflush (stdout);
+  }
+
   double time = CoinCpuTime ();
 
-  // use clone solver interface
+  // use clone of solver interface
   OsiSolverInterface *csi = si.clone ();
 
   int
@@ -122,6 +124,8 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
   couenneCG_ -> Problem () -> domain () -> push (&si, &cs, false);
 
   std::vector <std::pair <OsiCuts *, OsiCuts *> > disjunctions;
+
+  bool infeasNode = false;
 
   try {
 
@@ -216,10 +220,9 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 
     if (exception == exc_infeasible) { // add infeasible column cut 1 <= x_0 <= -1
 
-      if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS))
-	printf ("---   infeasible node!\n");
-
+      jnlst_ -> Printf (J_DETAILED, J_DISJCUTS, "--- Disjunctive Cut separator: infeasible node\n");
       WipeMakeInfeas (cs);
+      infeasNode = true;
     }
   }
 
@@ -233,56 +236,73 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 
   couenneCG_ -> Problem () -> domain () -> pop ();
 
-  // tighten bounds of si based on those tightened of csi
+  if (!infeasNode) {
 
-  CoinPackedVector 
-    tighterLower, 
-    tighterUpper;
+    // tighten bounds of si based on those tightened of csi
 
-  const double 
-    *oldLo = si. getColLower (),   *newLo = csi -> getColLower (), 
-    *oldUp = si. getColUpper (),   *newUp = csi -> getColUpper ();
+    CoinPackedVector 
+      tighterLower, 
+      tighterUpper;
 
-  int ncols = si.getNumCols ();
+    const double 
+      *oldLo = si. getColLower (),   *newLo = csi -> getColLower (), 
+      *oldUp = si. getColUpper (),   *newUp = csi -> getColUpper ();
 
-  bool tightened = false;
+    int ncols = si.getNumCols ();
 
-  for (int i=0; i<ncols; i++, newLo++, newUp++) {
+    bool tightened = false;
 
-    if (*newLo > *oldLo++ + COUENNE_EPS) {tighterLower.insert (i, *newLo); tightened = true;}
-    if (*newUp < *oldUp++ - COUENNE_EPS) {tighterUpper.insert (i, *newUp); tightened = true;}
-  }
+    for (int i=0; i<ncols; i++, newLo++, newUp++) {
 
-  if (tightened) {
-    OsiColCut tighter;
-    tighter.setLbs (tighterLower);
-    tighter.setUbs (tighterUpper);
-    if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) {
-      printf ("tightened bounds in disjunctive cuts:");
-      tighter.print ();
+      if (*newLo > *oldLo++ + COUENNE_EPS) {tighterLower.insert (i, *newLo); tightened = true;}
+      if (*newUp < *oldUp++ - COUENNE_EPS) {tighterUpper.insert (i, *newUp); tightened = true;}
     }
-    cs.insert (tighter);
+
+    if (tightened) {
+      OsiColCut tighter;
+      tighter.setLbs (tighterLower);
+      tighter.setUbs (tighterUpper);
+      if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) {
+	printf ("tightened bounds in disjunctive cuts:");
+	tighter.print ();
+      }
+      cs.insert (tighter);
+    }
+
+    int deltaNcuts = 
+      cs.sizeRowCuts () - initRowCuts + 
+      cs.sizeColCuts () - initColCuts;
+
+    if (info.level <= 0 && !(info.inTree)) 
+      nrootcuts_ += deltaNcuts;
+    ntotalcuts_ += deltaNcuts;
+
+    if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) {
+
+      if (cs.sizeRowCuts()>initRowCuts) printf ("added %d row cuts\n", cs.sizeRowCuts () - initRowCuts);
+      if (cs.sizeColCuts()>initColCuts) printf ("added %d col cuts\n", cs.sizeColCuts () - initColCuts);
+    }
+
+    if ((info.level <= 0) && !(info.inTree))
+      jnlst_ -> Printf (J_ERROR, J_COUENNE, 
+			"%d cuts (total)\n", CoinMax (0, nrootcuts_));
+    else if (deltaNcuts)
+      jnlst_ -> Printf (J_WARNING, J_COUENNE, 
+			"In-BB disjunctive cuts: %d row cuts, %d col cuts\n",
+			cs.sizeRowCuts () - initRowCuts,
+			cs.sizeColCuts () - initColCuts);
   }
+  // else {
+  //     jnlst_ -> Printf (J_STRONGWARNING, J_COUENNE, 
+  // 			"In-BB disjunctive cuts: %d row cuts, %d col cuts\n",
+  // 			cs.sizeRowCuts () - initRowCuts,
+  // 			cs.sizeColCuts () - initColCuts);
+  //   if ((info.level <= 0) && !(info.inTree))
+  //     jnlst_ -> Printf (J_ERROR, J_COUENNE, 
+  // 			"infeasible node\n");
+  // }
 
   delete csi;
-
-  int deltaNcuts = 
-    cs.sizeRowCuts () - initRowCuts + 
-    cs.sizeColCuts () - initColCuts;
-
-  if (info.level <= 0 && !(info.inTree)) 
-    nrootcuts_ += deltaNcuts;
-  ntotalcuts_ += deltaNcuts;
-
-  if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) {
-
-    if (cs.sizeRowCuts()>initRowCuts) printf ("added %d row cuts\n", cs.sizeRowCuts () - initRowCuts);
-    if (cs.sizeColCuts()>initColCuts) printf ("added %d col cuts\n", cs.sizeColCuts () - initColCuts);
-  }
-
-  if (info.level <= 0 && !(info.inTree))  
-    jnlst_ -> Printf (J_ERROR, J_COUENNE, 
-		      "%d cuts (total)\n", CoinMax (0, nrootcuts_));
 
   septime_ += (CoinCpuTime () - time);
 }

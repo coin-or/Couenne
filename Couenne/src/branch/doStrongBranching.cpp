@@ -316,7 +316,8 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
   CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
 
   if ((branch -> branch (thisSolver) > COUENNE_INFINITY) || // branch is infeasible
-      // Bound tightening if not a CouenneObject -- explicit 
+      // Bound tightening if not a CouenneObject -- explicit since
+      // FBBT is done at ::branch() for CouenneObjects
       (!CouObj && !BranchingFBBT (problem_, Object, thisSolver))) {
 
     status = 1;

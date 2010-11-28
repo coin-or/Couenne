@@ -34,7 +34,7 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
     ncols  = 0,
     nrcuts = cuts -> sizeRowCuts (),
     nccuts = cuts -> sizeColCuts (),
-    ncgrow = cglp -> getNumRows () - 1,
+    ncgrow = cglp -> getNumRows  () - 1,
     nnzR   = 0,
     ncC    = 0;
 
@@ -67,18 +67,19 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
      nnz     = 2 * (nnzR + 2*nrcuts + 3*ncC),
     *indices = new int [nnz],
     *start   = new int [nrcuts + ncC + 1],
-     curel   = 0;
+     curel   = 0,
+     nCuts   = 2*(nrcuts + ncC);
 
   double 
-    *elements = new double [nnz],               // for row cuts + col cuts
-    *collb    = new double [2*(nrcuts + ncC)],  // lower bounds for new columns
-    *colub    = new double [2*(nrcuts + ncC)],  // upper 
-    *obj      = new double [2*(nrcuts + ncC)];  // objective coefficient (zero)
+    *elements = new double [nnz],    // for row cuts + col cuts
+    *collb    = new double [nCuts],  // lower bounds for new columns
+    *colub    = new double [nCuts],  // upper 
+    *obj      = new double [nCuts];  // objective coefficient (zero)
 
   // trivial, lower/upper bounds and objective coefficients
-  CoinFillN (collb, 2*(nrcuts + ncC), 0.);
-  CoinFillN (colub, 2*(nrcuts + ncC), 1.);
-  CoinFillN (obj,   2*(nrcuts + ncC), 0.);
+  CoinFillN (collb, nCuts, 0.);
+  CoinFillN (colub, nCuts, 1.);
+  CoinFillN (obj,   nCuts, 0.);
 
   // scan OsiColCuts ////////////////////////////////////////
 
@@ -103,10 +104,10 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
 
       if (couenneCG_ -> Problem () -> Var (*lind) -> Multiplicity () > 0) {
 	*start++ = curel;
-	*elements++ = -1.;        *indices++ = displRow + *lind;
+	*elements++ = -1.;           *indices++ = displRow + *lind;
 	if (fabs (*lele) > COUENNE_EPS) 
 	  {*elements++ = -*lele;     *indices++ = displRhs; curel++;}
-	*elements++ =  1.;        *indices++ = ncgrow;
+	*elements++ =  1.;           *indices++ = ncgrow;
 	curel += 2;
       }
 
@@ -119,10 +120,10 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
     for (int j = nucc; j--; uind++, uele++)
       if (couenneCG_ -> Problem () -> Var (*uind) -> Multiplicity () > 0) {
 	*start++ = curel;
-	*elements++ =  1.;        *indices++ = displRow + *uind;
+	*elements++ =  1.;          *indices++ = displRow + *uind;
 	if (fabs (*uele) > COUENNE_EPS) 
 	  {*elements++ = *uele;     *indices++ = displRhs; curel++;}
-	*elements++ =  1.;        *indices++ = ncgrow;
+	*elements++ =  1.;          *indices++ = ncgrow;
 	curel += 2;
       }
 
@@ -137,7 +138,6 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
   start    -= ncols;
 
   start [ncols] = curel; // may go
-
 
   if (jnlst_ -> ProduceOutput (J_MATRIX, J_DISJCUTS)) {
     printf ("%d cuts, have %d cols and cur el is %d. Now for the %d row cuts\n",
@@ -217,7 +217,7 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
 
     default: printf ("Unknown type of cut:");
       cut -> print ();
-      printf ("Bailing out...\n");
+      printf ("Aborting.\n");
       exit (-1);
     }
   }
@@ -246,26 +246,29 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
     }
   }
 
-  /*{
+  if (jnlst_ -> ProduceOutput (J_MATRIX, J_DISJCUTS)) {
+
     const CoinPackedMatrix *m = cglp->getMatrixByCol();
+
     printf ("before: size_ = %d, start [%d] = %d\n", 
 	    m -> getNumElements (), 
 	    m -> getSizeVectorLengths(),
 	    m -> getVectorStarts () [m -> getSizeVectorLengths()]);
-	    }*/
+  }
 
   cglp -> addCols (ncols,    start,
 		   indices,  elements,
 		   collb,    colub,   
 		   obj);
 
-  /*{
+  if (jnlst_ -> ProduceOutput (J_MATRIX, J_DISJCUTS)) {
+
     const CoinPackedMatrix *m = cglp->getMatrixByCol();
     printf ("after: size_ = %d, start [%d] = %d\n", 
 	    m -> getNumElements (), 
 	    m -> getSizeVectorLengths(),
 	    m -> getVectorStarts () [m -> getSizeVectorLengths()]);
-	    }*/
+  }
 
   delete [] elements;
   delete [] collb;

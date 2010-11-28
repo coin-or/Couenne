@@ -162,7 +162,7 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
 
       // neglect it if variable has small bound interval (check
       // x84=x83/x5 in csched1.nl)
-       (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) : 1) *
+       (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) : 1.) *
       // to consider maximum, minimum, and sum/avg of the infeasibilities
       (weiSum * infsum + 
        weiAvg * (infsum / CoinMax (1., (CouNumber) dependence.size ())) + 

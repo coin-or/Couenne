@@ -46,14 +46,16 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
        cLW = cRW = cLY = true;
 
   if (!(cg -> isFirst ()) && chg) {
-    cLW = chg [wi].lower() != t_chg_bounds::UNCHANGED;
-    cRW = chg [wi].upper() != t_chg_bounds::UNCHANGED;
-    cLY = chg [yi].lower() != t_chg_bounds::UNCHANGED;
-    cRY = chg [yi].upper() != t_chg_bounds::UNCHANGED;
+    cLW = (chg [wi].lower() != t_chg_bounds::UNCHANGED);
+    cRW = (chg [wi].upper() != t_chg_bounds::UNCHANGED);
+    cLY = (chg [yi].lower() != t_chg_bounds::UNCHANGED);
+    cRY = (chg [yi].upper() != t_chg_bounds::UNCHANGED);
   }
 
-  if ((yl < -0.) && (yu > 0.)) return;   // no convexification
-
+  if ((yl < -0.) && (yu > 0.)) return;   // no convexification for
+					 // terms x/y where y=0 is
+					 // internal to the bounding
+					 // box
   CouNumber k;
 
   enum auxSign sign = cg -> Problem () -> Var (wi) -> sign ();
@@ -63,7 +65,7 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
   if ((fabs (yl-yu) < COUENNE_EPS) && 
       ((fabs (k = ((yl+yu) / 2)) > COUENNE_EPS))) {
     if (cLY || cRY)
-      cg -> createCut (cs, 0., sign, wi, -1, xi, 1/k);
+      cg -> createCut (cs, 0., sign, wi, -1., xi, 1./k);
     return;
   }
 
@@ -74,12 +76,19 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
   if (ubw < wu) wu = ubw;
 
   // special case #2: w is almost constant (nonzero) --> w = x/y = k. We
-  // only need a single plane x = y*k.
+  // only need a single plane x >/</= y*k.
 
   if ((fabs (wl-wu) < COUENNE_EPS) &&
-      ((k = fabs (wl+wu) / 2) > COUENNE_EPS)) {
-    if (cLW || cRW)
-      cg -> createCut (cs, 0., sign, yi, k, xi, -1.);
+      ((k = fabs (wl+wu) / 2) > COUENNE_EPS) &&
+      // extra condition: either y's bounds are both pos or both neg,
+      // or this is an equality
+      ((sign==expression::AUX_EQ) || (yl > 0.) || (yu < 0.))) { 
+
+    if (cLW || cRW) {
+      if (sign==expression::AUX_EQ || (yl > 0.)) cg -> createCut (cs, 0., sign, yi,  k, xi, -1.);
+      else                                       cg -> createCut (cs, 0., sign, yi, -k, xi,  1.);
+    }
+
     return;
   }
 

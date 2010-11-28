@@ -23,7 +23,9 @@ using namespace Couenne;
 #define THRESH_OBBT_AUX 50 // if more than this originals, don't do OBBT on auxs
 #define OBBT_EPS 1e-3
 #define MAX_OBBT_LP_ITERATION 100
-#define MAX_OBBT_ATTEMPTS 3 // number of OBBT iterations at root node
+#define MAX_OBBT_ATTEMPTS 1 // number of OBBT iterations at root node
+			    // -- fixed at one as for some instance it
+			    // doesn't seem to do anything after first run
 
 // minimum #bound changed in obbt to generate further cuts
 #define THRES_NBD_CHANGED 1
@@ -185,12 +187,6 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
   if (isWiped (cs) || info.pass >= MAX_OBBT_ATTEMPTS)
     return 0;
 
-  if (info.level <= 0 && !(info.inTree))  {
-    jnlst_ -> Printf (J_ERROR, J_COUENNE, "Optimality Based BT on %d variables attempt #%d: ", 
-		      nVars () > THRESH_OBBT_AUX ? nOrigVars_ : nVars (), info.pass); 
-    fflush (stdout);
-  }
-
   int nTotImproved = 0;
 
   // Do OBBT if:
@@ -202,6 +198,14 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
        (info.level <= logObbtLev_) ||     //  depth is lower than COU_OBBT_CUTOFF_LEVEL, OR
                                           //  probability inversely proportional to the level)
        (CoinDrand48 () < pow (2., (double) logObbtLev_ - (info.level + 1))))) {
+
+    if ((info.level <= 0 && !(info.inTree)) || 
+    	jnlst_ -> ProduceOutput (J_STRONGWARNING, J_COUENNE))  {
+
+      jnlst_ -> Printf (J_ERROR, J_COUENNE, "Optimality Based BT: "); 
+      //nVars () > THRESH_OBBT_AUX ? nOrigVars_ : nVars (), info.pass); 
+      fflush (stdout);
+    }
 
     jnlst_ -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "----- OBBT\n");
 
@@ -259,14 +263,15 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
     delete csi;
 
+    if ((info.level <= 0 && !(info.inTree)) ||
+    	jnlst_ -> ProduceOutput (J_STRONGWARNING, J_COUENNE))
+      jnlst_ -> Printf (J_ERROR, J_COUENNE, "%d bounds improved\n", nTotImproved);
+
     if (nImprov < 0) {
       jnlst_->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "  Couenne: infeasible node after OBBT\n");
       return -1;
     }
   }
-
-  if (info.level <= 0 && !(info.inTree))  
-    jnlst_ -> Printf (J_ERROR, J_COUENNE, "%d bounds improved\n", nTotImproved);
 
   return 0;
 }

@@ -453,7 +453,7 @@ bool CouenneProblem::standardize () {
 //       nmul++;
 //   }
 
-//   printf ("MULS: %d/%d\n", nmul, variables_.size());
+//   printf ("\nMULS: %d/%d\n", nmul, variables_.size());
 
 //   exit (-1);
 

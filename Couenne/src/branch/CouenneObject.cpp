@@ -495,6 +495,8 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
 
   int index = reference_ -> Index ();
 
+  bool isInteger = reference_ -> isInteger ();
+
   CouNumber 
     *up   = &upEstimate_,
     *down = &downEstimate_,
@@ -526,9 +528,14 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
     
     point = *brpoint;
 
-  // now move it away from the bounds
+  //printf ("point = %g [%s]\n", point, reference_ -> isInteger () ? "int" : "frac");
 
+  // now move it away from the bounds, unless this is an integer variable
+
+  //if (!isInteger)
   point = midInterval (point, lower, upper);
+
+  //printf ("point = %g\n", point);
 
   if ((lower > -COUENNE_INFINITY) &&
       (upper <  COUENNE_INFINITY)) {
@@ -554,8 +561,8 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   case INTERVAL_BR:
   case INTERVAL_BR_REV:
     assert (info);
-    *up   = CoinMin (max_pseudocost,         upper - point);
-    *down = CoinMin (max_pseudocost, point - lower);
+    *up   = CoinMin (max_pseudocost, upper - point);
+    *down = CoinMin (max_pseudocost,         point - lower);
     break;
 
   case PROJECTDIST: // taken care of in selectBranch procedure
@@ -573,7 +580,7 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
  	    upper,
  	    downEstimate_, upEstimate_);*/
 
-  if (reference_ -> isInteger ()) {
+  /*if (reference_ -> isInteger ()) {
 
     CouNumber 
       fracDn =       point  - floor (point),
@@ -581,8 +588,8 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
 
     if (downEstimate_ < fracDn) downEstimate_ = fracDn;
     if (upEstimate_   < fracUp)   upEstimate_ = fracUp;
-  }
+    }*/
 
-  assert (downEstimate_ >= 0. &&
-            upEstimate_ >= 0.);
+  assert (downEstimate_ > 0. &&
+          upEstimate_   > 0.);
 }

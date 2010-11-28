@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    getIntegerCandidate.cpp
  * Author:  Pietro Belotti
  * Purpose: generate integer NLP point Y starting from fractional 

@@ -15,7 +15,7 @@
 
 namespace Couenne {
 
-//#define DEBUG
+  //#define DEBUG
 
 /// Get changed bounds due to branching
 void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p, 

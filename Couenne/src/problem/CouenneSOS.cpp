@@ -37,8 +37,8 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
   for (std::vector <exprVar *>::const_iterator v = variables_.begin ();
        v != variables_.end (); ++v) 
 
-    if (((*v) -> Multiplicity     () >                   0) &&
-	((*v) -> Type             () ==                AUX) &&
+    if (((*v) -> Type             () ==                AUX) &&
+	((*v) -> Multiplicity     () >                   0) &&
 	((*v) -> sign             () == expression::AUX_EQ) &&
 	((*v) -> Image () -> code () ==      COU_EXPRGROUP)) {
 
@@ -52,24 +52,32 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
 
       int wind = (*v) -> Index ();
       CouNumber cterm = group -> getc0 ();
-      bool defVar = true;
+      bool 
+	defVar    = true, 
+	invertSOS = false;
 
       // now check if this is 
       //
-      // 1) an auxiliary fixed to one  ==> it's a SOS if its image is x1+x2+...+xk
-      // 2) an auxiliary fixed to zero ==> it's a SOS if its image is -x1-x2-...-xk+1
+      // defvar==true:
+      // 1)  an auxiliary fixed to one  ==> it's a SOS if its image is  x1+x2+...+xk
+      // 1a) an auxiliary fixed to -1   ==> it's a SOS if its image is -x1-x2-...-xk (see minlplib/csched2)
+      //
+      // defvar==false:
+      // 2)  an auxiliary fixed to zero ==> it's a SOS if its image is -x1-x2-...-xk+1
+      // 2a)                                        or if its image is  x1+x2+...+xk-1
 
-      if      (fabs (cterm - 1.) < COUENNE_EPS) defVar = false;
+      if      (fabs (cterm - 1.) < COUENNE_EPS) {defVar = false;}
+      else if (fabs (cterm + 1.) < COUENNE_EPS) {defVar = false; invertSOS = true;}
       else if (fabs (cterm)      > COUENNE_EPS) continue; // and defVar is true
 
-      if (defVar &&
-	  ((fabs (Lb (wind) - 1.) > COUENNE_EPS) ||
-	   (fabs (Ub (wind) - 1.) > COUENNE_EPS)))
-	continue;
+      if (defVar) {                                  // implies cterm == 0
+	if        ((fabs (Lb (wind) + 1.) < COUENNE_EPS) && (fabs (Ub (wind) + 1.) < COUENNE_EPS)) invertSOS = true;
+	else if (!((fabs (Lb (wind) - 1.) < COUENNE_EPS) && (fabs (Ub (wind) - 1.) < COUENNE_EPS))) continue;
+      } else
 
-      if (!defVar &&
-	  ((fabs (Lb (wind)) > COUENNE_EPS)))
-	continue;
+	if ((fabs (Lb (wind)) > COUENNE_EPS) ||
+	    (fabs (Ub (wind)) > COUENNE_EPS))
+	  continue;
 
       size_t lsz = group -> lcoeff (). size ();
 
@@ -79,8 +87,7 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
 
       // there are two possibilities:
       //
-      // 1) w is defined as w = 1 - \sum_{i=0}^n x_i  -- defvar = false
-      //
+      // 1) w is defined as w = 1 - \sum_{i=0}^n x_i         -- defvar = false
       // 2) w is defined as \sum_{i=0}^n x_i and w \in [1,1] -- defvar = true
 
       bool
@@ -91,20 +98,21 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
 			     // spotted by Cbc already
 
       exprGroup::lincoeff &lcoe = group -> lcoeff ();
+      exprGroup::lincoeff::iterator l = lcoe. begin (); 
 
-      for (exprGroup::lincoeff::iterator l = lcoe. begin (); 
-	   l != lcoe. end (); ++l) {
+      for (;l != lcoe. end (); ++l) {
 
-	if ((fabs (l -> second - (defVar ? 1. : -1.)) > COUENNE_EPS) || // wrong coefficient?
-	    (fabs (Lb (l -> first -> Index ()))       > COUENNE_EPS)) { // positive lower bound?
+	if ((fabs (l -> second - (invertSOS ? -1. : 1.)) > COUENNE_EPS) || // wrong coefficient?
+	    (fabs (Lb (l -> first -> Index ()))          > COUENNE_EPS)) { // positive lower bound?
 
 	  isSOS = false;
 	  break;
+
 	} else 
 	  if (!(l -> first -> isInteger ()))
 	    intSOS = false;
 
-	if (l -> first -> Index () > nOrigVars_) // 
+	if (l -> first -> Index () >= nOrigVars_) // 
 	  onlyOrigVars = false;
       }
 
@@ -143,7 +151,7 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
     }
 
   if (nSOS)
-    jnlst_->Printf (Ipopt::J_ERROR, J_COUENNE, "%d SOS constraints found\n", nSOS);
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "%d SOS constraints found\n", nSOS);
 
   return nSOS;
 }

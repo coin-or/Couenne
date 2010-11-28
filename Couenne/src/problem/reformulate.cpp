@@ -24,12 +24,19 @@
 #include "CouenneDepGraph.hpp"
 #include "CouenneLQelems.hpp"
 
+#define THRESHOLD_OUTPUT_REFORMULATE 1000
+
 using namespace Couenne;
 
 /// preprocess problem in order to extract linear relaxations etc.
 void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   
   double now = CoinCpuTime ();
+
+  if (nVars () > THRESHOLD_OUTPUT_REFORMULATE) {
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, "Reformulating problem: "); 
+    fflush (stdout);
+  }
 
   if (domain_.current () == NULL) {
 
@@ -69,8 +76,8 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   // reformulation
   if (!standardize ()) { // problem is infeasible if standardize returns false
 
-    jnlst_->Printf(Ipopt::J_ERROR, J_PROBLEM,
-		   "Couenne: problem infeasible after reformulation\n");
+    jnlst_->Printf(Ipopt::J_ERROR, J_COUENNE,
+		   "Problem infeasible after reformulation\n");
     // fake infeasible bounds for Couenne to bail out
     for (int i = nVars (); i--;)
       Ub (i) = - (Lb (i) = 1.);
@@ -150,6 +157,9 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   }
 
   createUnusedOriginals ();
+
+  if (nVars () > THRESHOLD_OUTPUT_REFORMULATE)
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, "%.1f seconds\n", CoinCpuTime () - now); 
 
   if (orbitalBranching_)
     setupSymmetry ();

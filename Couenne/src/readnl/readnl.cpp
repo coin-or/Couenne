@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: define a reader for .nl files. Adapted from ampl2ev3 by L. Liberti and S. Galli 
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-10. 
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -15,6 +15,7 @@
 #include "opcode.hd"
 
 #include "CoinHelperFunctions.hpp"
+#include "CoinTime.hpp"
 
 #include "CouenneProblem.hpp"
 
@@ -35,6 +36,8 @@
 #define VAR_E     ((const ASL_fg *) asl) -> I.var_e_
 #define CON_DE    ((const ASL_fg *) asl) -> I.con_de_
 #define OBJ_sense ((const ASL_fg *) asl) -> i.objtype_
+
+#define THRESHOLD_OUTPUT_READNL 10000
 
 //#define DEBUG
 
@@ -84,6 +87,13 @@ int CouenneProblem::readnl (const ASL *asl) {
 
   // add space for common expressions
   for (int i = ndefined_; i--;)                                  addVariable(false, &domain_);
+
+  double now = CoinCpuTime ();
+
+  if (nVars () > THRESHOLD_OUTPUT_READNL) {
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Reading problem: "); 
+    fflush(stdout);
+  }
 
   // common expressions (or defined variables) ///////////////////////////////////////
 
@@ -453,7 +463,7 @@ int CouenneProblem::readnl (const ASL *asl) {
     case COUENNE_GE:  addGEConstraint  (body, new exprConst (lb)); break;
     case COUENNE_RNG: addRNGConstraint (body, new exprConst (lb), 
 					      new exprConst (ub)); break;
-    default: printf ("could not recognize constraint\n"); return -1;
+    default: printf ("Could not recognize constraint\n"); return -1;
     }
 
     delete [] indexL [i];
@@ -532,6 +542,11 @@ int CouenneProblem::readnl (const ASL *asl) {
   }
 
   delete [] nterms;
+
+  if (nVars () > THRESHOLD_OUTPUT_READNL) {
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "%.1f seconds\n", CoinCpuTime () - now); 
+    fflush(stdout);
+  }
 
   return 0;
 }
