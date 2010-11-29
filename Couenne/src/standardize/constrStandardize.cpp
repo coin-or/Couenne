@@ -78,6 +78,8 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
     // split w from f(x)
     int wind = p -> splitAux (rhs, body_, rest, p -> Commuted (), aSign);
 
+    //printf ("REST [%d] [%g,%g]: ", wind, p -> Lb (wind), p -> Ub (wind)); rest -> print (); printf ("\n");
+
     if (wind >= 0) { // this IS the definition of an auxiliary variable w = f(x)
 
       // first, simplify expression (you never know)

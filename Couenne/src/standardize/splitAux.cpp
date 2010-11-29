@@ -499,9 +499,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
   }
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf (" ==> "); rest -> print ();
-    printf (" and "); fflush (stdout);
-    rest -> print (); printf ("\n");
+    printf (" ==> "); 
+    rest -> print ();
+    printf ("\n");
   }
 
   return auxInd;
