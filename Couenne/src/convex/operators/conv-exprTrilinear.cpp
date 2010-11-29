@@ -16,16 +16,6 @@
 
 using namespace Couenne;
 
-/// check if two arguments point to the same variable
-
-inline bool areSameVariables (expression *v1, expression *v2) {
-
-  register int t1 = v1 -> Type (), t2;
-  return (((t1 == VAR) || (t1 == AUX)) &&
-	  (((t2 = v2 -> Type ()) == VAR) || (t2 == AUX)) && 
-	  (v1 -> Index () == v2 -> Index ()));
-}
-
 /// get lower/upper bounds of product f(x) g(x) in expression form
 void exprTrilinear::getBounds (expression *&lb, expression *&ub) {
 
@@ -82,7 +72,10 @@ void exprTrilinear::getBounds (CouNumber &lb, CouNumber &ub) {
 	  (i1 ? ubA [1] : lbA [1]) *
 	  (i2 ? ubA [2] : lbA [2]);
 
-	if (lb > curbound) lb = curbound;
-	if (ub < curbound) ub = curbound;
+	if (curbound < lb) lb = curbound;
+	if (curbound > ub) ub = curbound;
       }
+
+  delete [] lbA;
+  delete [] ubA;
 }

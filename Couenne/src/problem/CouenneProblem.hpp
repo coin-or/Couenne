@@ -165,6 +165,8 @@ const CouNumber feas_tolerance_default = 1e-5;
 
 class CouenneProblem {
 
+  friend class exprMul;
+
   /// structure to record fixed, non-fixed, and continuous variables
   enum fixType {UNFIXED, FIXED, CONTINUOUS};
 

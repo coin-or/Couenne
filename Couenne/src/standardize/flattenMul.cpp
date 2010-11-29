@@ -136,7 +136,7 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
 	indices.insert (std::pair <int, CouNumber> (ind, 1));
       else ++ (where -> second);
 
-    } break;
+    }
     }
   }
 }

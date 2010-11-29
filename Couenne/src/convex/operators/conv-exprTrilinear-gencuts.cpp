@@ -1057,6 +1057,13 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       if (cf < 0) {cutLb[ii] =  bnd[ii];           cutUb[ii] = COUENNE_INFINITY;}
     }
   }
+
+  for (int i=0; i<6; i++)
+    delete [] ind [i];
+
+  delete [] ibnd;
+  delete [] bnd;
+  delete [] ind;
 }
 
 
@@ -1105,6 +1112,9 @@ void exprTrilinear::generateCuts (expression *w,
 
     OsiRowCut cut (cutLb [i], cutUb [i], 4, 4, ind, coe);
     //cut.print ();
+
+    delete [] ind;
+    delete [] coe;
 
     if (cg -> Problem () -> bestSol ()) {
 

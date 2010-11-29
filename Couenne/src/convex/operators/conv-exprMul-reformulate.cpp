@@ -37,7 +37,43 @@ inline bool areSameVariables (expression *v1, expression *v2) {
 
 exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
+  //printf ("standardizing %d ", addAux); print (); printf ("\n");
+
+  CouNumber coeff = 1.;
+  std::map <int, CouNumber> indCoe;
+
+  p -> flattenMul (this, coeff, indCoe);
+
+  int nArgs = 0;
+  expression **arglist = new expression * [indCoe.size ()];
+
+  for (std::map <int, CouNumber>::iterator i = indCoe.begin (); i != indCoe.end (); ++i)
+    if (i -> second == 1.) arglist [nArgs++] = new exprClone (p                -> Var (i -> first));
+    else                   arglist [nArgs++] = new exprPow   (new exprClone (p -> Var (i -> first)), new exprConst (i -> second));
+
+  while (nargs_--)
+    delete arglist_ [nargs_];
+
+  delete [] arglist_;
+
+  arglist_ = arglist;
+  nargs_ = indCoe.size();
+
+  //printf ("new mul [%d]: %g * ", nargs_, coeff); print (); printf ("\n");
+
   exprOp::standardize (p);
+
+  if (nargs_ == 1) {
+
+    if (coeff != 1.) {
+
+      // leak: arglist_ should be deleted
+
+      expression *simMul = new exprMul (new exprConst (coeff), new exprClone (arglist_ [0]));
+      return (addAux ? (p -> addAuxiliary (simMul)) : new exprAux (simMul, p -> domain ()));
+    }
+    else return NULL; 
+  }
 
   if (nargs_ == 1)  // TODO: what happens really?
     return NULL;
@@ -77,6 +113,8 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
   if (nargs_ <= 2)
     type = Couenne::rAI;
+
+  expression *retExpr;
 
   switch (type) {
 
@@ -127,10 +165,10 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
     aux = queue.front (); queue.pop ();
 
-    return (addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
-  }
+    retExpr = aux; //(addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
+  } break;
 
-    // ----------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------
 
   case Couenne::tri_bi:
   case Couenne::bi_tri: { // the two cases are very similar
@@ -174,15 +212,15 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 	    printf ("Couenne, exprTrilinear: bad ordering of factors in product, aborting\n");
 	    exit (-1);
 
-	  } else
-	    if (i == nargs_ - 2) 
-	      aux = new exprTrilinear (new exprClone (aux), 
-				       new exprClone (arglist_ [i]),
-				       new exprClone (arglist_ [i+1]));
-	    else
-	      aux = p -> addAuxiliary (new exprTrilinear (new exprClone (aux), 
-							  new exprClone (arglist_ [i]),
-							  new exprClone (arglist_ [i+1])));
+	  } else {
+
+	    aux = new exprTrilinear (new exprClone (aux), 
+				     new exprClone (arglist_ [i]),
+				     new exprClone (arglist_ [i+1]));
+
+	    if (i != nargs_ - 2) 
+	      aux = p -> addAuxiliary (aux);
+	  }
 
 	//aux -> print (); if (i != nargs_ - 2) {printf (" (tri) := "); aux -> Image () -> print (); printf ("; "); fflush (stdout);}
 
@@ -204,25 +242,24 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
     //printf ("\n");
 
-    return (addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
-  }
+    retExpr = aux; //(addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
+  } break;
 
-    // ----------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------
 
   case Couenne::rAI:
   default:
 
     //printf ("trying good ol' rAI on "); print (); printf ("\n");
 
-    // rAI (recursive Arithmetic Intervals (see Ryoo and Sahinidis,
+    // rAI -- recursive Arithmetic Intervals (see Ryoo and Sahinidis,
     // JOGO 19 (2001):403-424):
     //
     // All multilinear expressions are decomposed as 
     //
     // (x_1 (x_2 (x_3... (x_{k-1} x_k))...)
 
-    //expression *aux = arglist_ [0]; // why not this one?
-    expression *aux = new exprClone (arglist_ [0]);
+    expression *aux = arglist_ [0];
 
     for (int i = 1; i < nargs_ - 1; i++)
       aux = (areSameVariables (aux, arglist_ [i])) ? 
@@ -233,6 +270,14 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
       aux    = new exprPow (new exprClone (aux), new exprConst (2.));
     else aux = new exprMul (new exprClone (aux), new exprClone (arglist_ [nargs_ - 1]));
 
-    return (addAux ? (p -> addAuxiliary (aux)) : new exprAux (this, p -> domain ()));
+    retExpr = aux;
   }
+
+  if (coeff != 1.) {
+
+    retExpr = p -> addAuxiliary (retExpr);
+    retExpr = new exprMul (new exprConst (coeff), new exprClone (retExpr));
+  }
+
+  return (addAux ? (p -> addAuxiliary (retExpr)) : new exprAux (retExpr, p -> domain ()));
 }
