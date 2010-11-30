@@ -35,10 +35,16 @@ void exprSub::generateCuts (expression *w, //const OsiSolverInterface &si,
   int xi = x -> Index ();
   int yi = y -> Index ();
 
+  // If this aux is fixed, don't write 
+  //
+  // "- w + ax = -b" but just
+  // 
+  // "ax = -b+ w0" 
+  //
+  // with w0 its constant value
+
   CouNumber vlb, vub;
-
   w -> getBounds (vlb, vub);
-
   bool uselessAux = (vub < vlb + COUENNE_EPS); 
 
   // TODO: generalize to sign!= ::EQ

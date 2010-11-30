@@ -24,18 +24,6 @@ using namespace Couenne;
 
 /// Cut Generator for FBBT fixpoint
 
-void createRow (int,
-		int,
-		int,
-		OsiSolverInterface *,
-		const int    *,
-		const double *,
-		const double,
-		const int,
-		bool,
-		int,
-		int);
-
 void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 				    OsiCuts &cs,
 				    const CglTreeInfo treeInfo) const {
@@ -128,8 +116,9 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     *rub = si.  getRowUpper (),
     *coe = A -> getElements ();
 
-  for (int i=0; i<n; i++) 
-    printf ("----------- x_%d in [%g,%g]\n", i, lb [i], ub [i]);
+  if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_BOUNDTIGHTENING))
+    for (int i=0; i<n; i++) 
+      printf ("----------- x_%d in [%g,%g]\n", i, lb [i], ub [i]);
 
   // turn off logging
   fplp -> messageHandler () -> setLogLevel (0);
@@ -157,17 +146,20 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     int nEl = A -> getVectorSize (j); // # elements in each row
 
-    printf ("row %4d, %4d elements: ", j, nEl);
-
-    for (int i=0; i<nEl; i++) {
-      printf ("%+g x%d ", coe [i], ind [i]);
-      fflush (stdout);
-    }
-
-    printf ("\n");
-
     if (!nEl)
       continue;
+
+    if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_BOUNDTIGHTENING)) {
+
+      printf ("row %4d, %4d elements: ", j, nEl);
+
+      for (int i=0; i<nEl; i++) {
+	printf ("%+g x%d ", coe [i], ind [i]);
+	fflush (stdout);
+      }
+
+      printf ("\n");
+    }
 
     // create cuts for the xL and xU elements //////////////////////
 
@@ -206,7 +198,6 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     const double *coe = row.getElements ();
 
-
     if (extendedModel_) {
       fplp -> addCol (0, NULL, NULL, cut -> lb (),       COIN_DBL_MAX, 0.); // bL_j
       fplp -> addCol (0, NULL, NULL, -COIN_DBL_MAX, cut -> ub (),      0.); // bU_j
@@ -218,7 +209,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     if (extendedModel_ || cut -> ub () <  COUENNE_INFINITY) 
       for (int i=0; i<nEl; i++) 
-	createRow (+1, ind [i], n, fplp, ind, coe, cut -> lb (), nEl, extendedModel_, m + j, m + nCuts); // downward constraints -- on x_i
+	createRow (+1, ind [i], n, fplp, ind, coe, cut -> ub (), nEl, extendedModel_, m + j, m + nCuts); // downward constraints -- on x_i
 
     // create (at most 2) cuts for the bL and bU elements
 
@@ -249,8 +240,8 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   fplp -> setObjSense (-1.); // we want to maximize 
 
-  printf ("(writing lp)");
-  fplp -> writeLp ("fplp");
+  //printf ("(writing lp)");
+  //fplp -> writeLp ("fplp");
 
   fplp -> initialSolve ();
 
@@ -278,9 +269,10 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     for (int i=0; i<n; i++) {
 
-       printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
-	       oldLB [i], oldUB [i], 
-	       newLB [i], newUB [i]);
+      if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_BOUNDTIGHTENING))
+	printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
+		oldLB [i], oldUB [i], 
+		newLB [i], newUB [i]);
 
       if (newLB [i] > oldLB [i] + COUENNE_EPS) {
 
@@ -313,18 +305,17 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     delete [] indUB;
     delete [] valLB;
     delete [] valUB;
-  } else
-    printf (" FPLP infeasible or unbounded. ");
+
+    CPUtime_ += CoinCpuTime () - now;
+
+    problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "%d bounds tightened (%g seconds)\n", 
+				    nTightened_, CoinCpuTime () - now); 
+
+  } else problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP infeasible or unbounded.\n");
 
   delete fplp;
 
   problem_ -> domain () -> pop ();
-
-  CPUtime_ += CoinCpuTime () - now;
-
-  problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "%d bounds tightened (%g seconds)\n", 
-				  nTightened_, CoinCpuTime () - now); 
-  fflush (stdout);
 }
 
 
@@ -344,17 +335,17 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 // 10) indCon:   index of constraint being treated (and corresponding bL, bU)
 // 11) nCon:     number of constraints
 
-void createRow (int sign,
-		int indexVar,
-		int nVars,
-		OsiSolverInterface *p,
-		const int *indices,
-		const double *coe,
-		const double rhs,
-		const int nEl,
-		bool extMod,
-		int indCon,
-		int nCon) {
+void CouenneFixPoint::createRow (int sign,
+				 int indexVar,
+				 int nVars,
+				 OsiSolverInterface *p,
+				 const int *indices,
+				 const double *coe,
+				 const double rhs,
+				 const int nEl,
+				 bool extMod,
+				 int indCon,
+				 int nCon) const {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
   ///
@@ -458,10 +449,16 @@ void createRow (int sign,
   ///
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  printf ("creating constraint from: ");
-  for (int i=0; i<nEl; i++)
-    printf ("%+g x%d ", coe [i], indices [i]);
-  printf ("%c= %g for variable index %d: ", sign > 0 ? '<' : '>', rhs, indexVar);
+
+  if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_BOUNDTIGHTENING)) {
+
+    printf ("creating constraint from: ");
+
+    for (int i=0; i<nEl; i++)
+      printf ("%+g x%d ", coe [i], indices [i]);
+
+    printf ("%c= %g for variable index %d: ", sign > 0 ? '<' : '>', rhs, indexVar);
+  }
 
   int nTerms = nEl;
 
@@ -510,21 +507,20 @@ void createRow (int sign,
 
   p -> addRow (vec, lb, ub);
 
-  delete [] iInd;
-  delete [] elem;
-
   // Update time spent doing this
 
-  for (int i=0; i<nEl; i++)
-    printf ("%+g x%d ", elem [i], iInd [i]);
+  if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_BOUNDTIGHTENING)) {
 
-  printf ("in [%g,%g]\n", lb, ub);
+    for (int i=0; i<nEl; i++)
+      printf ("%+g x%d ", elem [i], iInd [i]);
 
-  // OsiRowCut *cut = new OsiRowCut (lb, ub,
-  // 				  nTerms, nTerms,
-  // 				  iInd, elem);
+    printf ("in [%g,%g]\n", lb, ub);
+  }
 
-  //cut -> print ();
-
+  // OsiRowCut *cut = new OsiRowCut (lb, ub, nTerms, nTerms, iInd, elem);
+  // cut -> print ();
   // delete cut;
+
+  delete [] iInd;
+  delete [] elem;
 }

@@ -69,6 +69,17 @@ namespace Couenne {
 
     /// Number of bounds tightened
     mutable int nTightened_;
+
+    /// Create a single cut
+    void createRow (int, int,
+		    int,
+		    OsiSolverInterface *,
+		    const int    *,
+		    const double *,
+		    const double,
+		    const int,
+		    bool,
+		    int, int) const;
   };
 }
 

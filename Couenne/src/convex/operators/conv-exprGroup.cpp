@@ -218,9 +218,7 @@ void exprGroup::generateCuts (expression *w,
   // with w0 its constant value
 
   CouNumber vlb, vub;
-
   w -> getBounds (vlb, vub);
-
   bool uselessAux = (vub < vlb + COUENNE_EPS);
 
   // TODO: generalize to sign!= ::EQ

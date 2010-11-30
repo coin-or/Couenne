@@ -36,13 +36,28 @@ void exprSum::generateCuts (expression *w, //const OsiSolverInterface &si,
 
   int nv = 0;
 
-  bool uselessAux = (ub < lb + COUENNE_EPS); 
+  // If this aux is fixed, don't write 
+  //
+  // "- w + ax = -b" but just
+  // 
+  // "ax = -b+ w0" 
+  //
+  // with w0 its constant value
+
+  CouNumber vlb, vub;
+  w -> getBounds (vlb, vub);
+  bool uselessAux = (vub < vlb + COUENNE_EPS); 
+
+  // TODO: generalize to sign!= ::EQ
 
   if (wind < 0 && !uselessAux) {
     coeff [0] = -1.; index [0] = w -> Index ();
     nv++;
     lb = ub = 0;
   }
+
+  if (uselessAux)
+    lb = ub = vlb;
 
   /// scan arglist for (aux) variables and constants
   for (int i=0; i<nargs_; i++) {
