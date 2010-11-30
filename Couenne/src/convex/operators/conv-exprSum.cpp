@@ -36,7 +36,9 @@ void exprSum::generateCuts (expression *w, //const OsiSolverInterface &si,
 
   int nv = 0;
 
-  if (wind < 0) {
+  bool uselessAux = (ub < lb + COUENNE_EPS); 
+
+  if (wind < 0 && !uselessAux) {
     coeff [0] = -1.; index [0] = w -> Index ();
     nv++;
     lb = ub = 0;

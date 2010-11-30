@@ -56,12 +56,16 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
     ind[i] = new int[6];
   }
      
-  int *ibnd; 
-  ibnd = new int[3];
-  ibnd[0] = varIndices[0]; ibnd[1] = varIndices[1]; ibnd[2] = varIndices[2];
- 
+  int ibnd [] = {varIndices [0],
+		 varIndices [1],
+		 varIndices [2]};
+
+  for (int i=0; i<4; i++) {
+    printf ("x%d [%g,%g] (ind %d)\n", varIndices [i], vlb [varIndices [i]], vub [varIndices [i]], i);
+  }
+
   // compute the 6 permutations of the 3 variables 
-  permutation3(ind,ibnd);
+  permutation3 (ind,ibnd);
 
   int i, flag=0, idx=0;
   i = 0;
@@ -1061,7 +1065,6 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
   for (int i=0; i<6; i++)
     delete [] ind [i];
 
-  delete [] ibnd;
   delete [] bnd;
   delete [] ind;
 }
@@ -1097,7 +1100,7 @@ void exprTrilinear::generateCuts (expression *w,
 	  cutIndices.size () == cutLb.size    () && 
 	  cutIndices.size () == cutUb.size    ());
 
-  //printf ("trilinear cuts:\n");
+  printf ("trilinear cuts:\n");
 
   for (int i = (int) cutIndices.size (); i--;) {
 
@@ -1111,7 +1114,7 @@ void exprTrilinear::generateCuts (expression *w,
     std::copy (cutCoeff   [i].begin (), cutCoeff   [i].end (), coe);
 
     OsiRowCut cut (cutLb [i], cutUb [i], 4, 4, ind, coe);
-    //cut.print ();
+    cut.print ();
 
     delete [] ind;
     delete [] coe;

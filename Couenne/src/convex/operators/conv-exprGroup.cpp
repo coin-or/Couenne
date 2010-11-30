@@ -209,17 +209,36 @@ void exprGroup::generateCuts (expression *w,
 
   OsiRowCut *cut = new OsiRowCut;
 
-  int displacement = (wind < 0) ? 1: 0;
+  // If this aux is fixed, don't write 
+  //
+  // "- w + ax = -b" but just
+  // 
+  // "ax = -b+ w0" 
+  //
+  // with w0 its constant value
+
+  CouNumber vlb, vub;
+
+  w -> getBounds (vlb, vub);
+
+  bool uselessAux = (vub < vlb + COUENNE_EPS);
+
+  // TODO: generalize to sign!= ::EQ
+
+  int displacement = (wind < 0 && !uselessAux) ? 1: 0;
 
   CouNumber *coeff = new CouNumber [nargs_ + nterms + displacement];
   int       *index = new int       [nargs_ + nterms + displacement];
 
-  if (wind < 0) {
+  if (wind < 0 && !uselessAux) {
     // first, make room for aux variable
     coeff [0] = -1.; 
     index [0] = w -> Index ();
     lb = ub = 0;
   }
+
+  if (uselessAux)
+    lb = ub = vlb;
 
   lb -= c0_;
   ub -= c0_;

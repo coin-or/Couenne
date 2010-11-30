@@ -35,7 +35,18 @@ void exprSub::generateCuts (expression *w, //const OsiSolverInterface &si,
   int xi = x -> Index ();
   int yi = y -> Index ();
 
-  if (wind >= 0) wi = -1; // do not insert w's index if specified as input
+  CouNumber vlb, vub;
+
+  w -> getBounds (vlb, vub);
+
+  bool uselessAux = (vub < vlb + COUENNE_EPS); 
+
+  // TODO: generalize to sign!= ::EQ
+
+  if ((wind >= 0) || uselessAux) {
+    wi = -1; // do not insert w's index if specified as input
+    lb = ub = vlb;
+  }
   else lb = ub = 0;
 
   if (xi < 0) {
@@ -50,7 +61,7 @@ void exprSub::generateCuts (expression *w, //const OsiSolverInterface &si,
     ub += y0;
   }
 
-  enum auxSign sign = cg -> Problem () -> Var (wi) -> sign ();
+  enum auxSign sign = cg -> Problem () -> Var (w -> Index ()) -> sign ();
 
   if      (sign == expression::AUX_GEQ) lb = -COIN_DBL_MAX;
   else if (sign == expression::AUX_LEQ) ub =  COIN_DBL_MAX;
