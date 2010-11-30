@@ -62,7 +62,7 @@ void CouenneFixPoint::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> AddStringOption2
     ("fixpoint_bt_model",
      "Choose whether to add an extended fixpoint LP model or a more compact one.",
-     "extended",
+     "compact",
      "extended", "",
      "compact", "",
      "");

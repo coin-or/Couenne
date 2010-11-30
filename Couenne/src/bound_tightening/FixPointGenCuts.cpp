@@ -58,6 +58,9 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   if (isWiped (cs))
     return;
 
+  problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Fixed Point FBBT: "); 
+  fflush (stdout);
+
   ++nRuns_;
 
   double now = CoinCpuTime ();
@@ -125,8 +128,8 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     *rub = si.  getRowUpper (),
     *coe = A -> getElements ();
 
-  // for (int i=0; i<n; i++) 
-  //   printf ("----------- x_%d in [%g,%g]\n", i, lb [i], ub [i]);
+  for (int i=0; i<n; i++) 
+    printf ("----------- x_%d in [%g,%g]\n", i, lb [i], ub [i]);
 
   // turn off logging
   fplp -> messageHandler () -> setLogLevel (0);
@@ -154,14 +157,14 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     int nEl = A -> getVectorSize (j); // # elements in each row
 
-    // printf ("row %4d, %4d elements: ", j, nEl);
+    printf ("row %4d, %4d elements: ", j, nEl);
 
-    // for (int i=0; i<nEl; i++) {
-    //   printf ("%+g x%d ", coe [i], ind [i]);
-    //   fflush (stdout);
-    // }
+    for (int i=0; i<nEl; i++) {
+      printf ("%+g x%d ", coe [i], ind [i]);
+      fflush (stdout);
+    }
 
-    // printf ("\n");
+    printf ("\n");
 
     if (!nEl)
       continue;
@@ -246,8 +249,8 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   fplp -> setObjSense (-1.); // we want to maximize 
 
-  // printf ("writing lp\n");
-  //  fplp -> writeLp ("fplp");
+  printf ("(writing lp)");
+  fplp -> writeLp ("fplp");
 
   fplp -> initialSolve ();
 
@@ -275,9 +278,9 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     for (int i=0; i<n; i++) {
 
-      // printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
-      // 	    oldLB [i], oldUB [i], 
-      // 	    newLB [i], newUB [i]);
+       printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
+	       oldLB [i], oldUB [i], 
+	       newLB [i], newUB [i]);
 
       if (newLB [i] > oldLB [i] + COUENNE_EPS) {
 
@@ -310,13 +313,18 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     delete [] indUB;
     delete [] valLB;
     delete [] valUB;
-  }
+  } else
+    printf (" FPLP infeasible or unbounded. ");
 
   delete fplp;
 
   problem_ -> domain () -> pop ();
 
   CPUtime_ += CoinCpuTime () - now;
+
+  problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "%d bounds tightened (%g seconds)\n", 
+				  nTightened_, CoinCpuTime () - now); 
+  fflush (stdout);
 }
 
 
@@ -450,10 +458,10 @@ void createRow (int sign,
   ///
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // printf ("creating constraint from: ");
-  // for (int i=0; i<nEl; i++)
-  //   printf ("%+g x%d ", coe [i], indices [i]);
-  // printf ("%c= %g for variable index %d: ", sign > 0 ? '<' : '>', rhs, indexVar);
+  printf ("creating constraint from: ");
+  for (int i=0; i<nEl; i++)
+    printf ("%+g x%d ", coe [i], indices [i]);
+  printf ("%c= %g for variable index %d: ", sign > 0 ? '<' : '>', rhs, indexVar);
 
   int nTerms = nEl;
 
@@ -507,16 +515,16 @@ void createRow (int sign,
 
   // Update time spent doing this
 
-  // for (int i=0; i<nEl; i++)
-  //   printf ("%+g x%d ", elem [i], iInd [i]);
+  for (int i=0; i<nEl; i++)
+    printf ("%+g x%d ", elem [i], iInd [i]);
 
-  // printf ("in [%g,%g]\n", lb, ub);
+  printf ("in [%g,%g]\n", lb, ub);
 
   // OsiRowCut *cut = new OsiRowCut (lb, ub,
   // 				  nTerms, nTerms,
   // 				  iInd, elem);
 
-  // cut -> print ();
+  //cut -> print ();
 
   // delete cut;
 }

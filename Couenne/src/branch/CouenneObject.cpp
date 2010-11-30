@@ -561,8 +561,8 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   case INTERVAL_BR:
   case INTERVAL_BR_REV:
     assert (info);
-    *up   = CoinMin (max_pseudocost, upper - point);
-    *down = CoinMin (max_pseudocost,         point - lower);
+    *up   = CoinMin (max_pseudocost, 1e-3 + fabs (upper - point));
+    *down = CoinMin (max_pseudocost, 1e-3 +         fabs (point - lower));
     break;
 
   case PROJECTDIST: // taken care of in selectBranch procedure
