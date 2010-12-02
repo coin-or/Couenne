@@ -18,6 +18,7 @@
 
 #include <vector>
 
+//#define DEBUG
 using namespace Couenne;
 
 //typedef CouNumber double;
@@ -56,16 +57,18 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
     ind[i] = new int[6];
   }
      
-  int ibnd [] = {varIndices [0],
-		 varIndices [1],
-		 varIndices [2]};
-
-  for (int i=0; i<4; i++) {
-    printf ("x%d [%g,%g] (ind %d)\n", varIndices [i], vlb [varIndices [i]], vub [varIndices [i]], i);
-  }
-
+  int *ibnd; 
+  ibnd = new int[3];
+  ibnd[0] = varIndices[0]; ibnd[1] = varIndices[1]; ibnd[2] = varIndices[2];
+#ifdef DEBUG
+std::cout << "ibnd[0] =" << ibnd[0] << "  ibnd[1] =" << ibnd[1] << "  ibnd[2] =" << ibnd[2] << std::endl;
+std::cout << "vlb[ibnd[0]] =" << vlb[ibnd[0]] << "  vub[ibnd[0]] =" << vub[ibnd[0]] << std::endl;
+std::cout << "vlb[ibnd[1]] =" << vlb[ibnd[1]] << "  vub[ibnd[1]] =" << vub[ibnd[1]] << std::endl;
+std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[2]] << std::endl;
+#endif
+ 
   // compute the 6 permutations of the 3 variables 
-  permutation3 (ind,ibnd);
+  permutation3(ind,ibnd);
 
   int i, flag=0, idx=0;
   i = 0;
@@ -195,7 +198,9 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
   // case 1
   if(flag == 1) {
-    //std::cout << " -- case 1 --" << std::endl;
+#ifdef DEBUG
+    std::cout << " -- case 1 --" << std::endl;
+#endif
 
     double theta  = xL1*xU2*xU3 - xU1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xU3; 
     double theta1 = xU1*xL2*xL3 - xU1*xU2*xU3 - xL1*xL2*xL3 + xL1*xU2*xL3; 
@@ -235,21 +240,13 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
   // case 2
   if(flag == 2) {
-    //std::cout << " -- case 2 --" << std::endl;
+#ifdef DEBUG
+    std::cout << " -- case 2 --" << std::endl;
+#endif
 
     defcons_size = 12;
 
     prepareVectors (defcons_size);
-
-    for(int ii = 0; ii < defcons_size; ii++) {
-
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
-
-      cutCoeff [ii][3] = 1.;
-    }
  
     // compute the 6 permutations of the 3 variables 
     ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
@@ -273,6 +270,15 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
     double xL1(cf*vlb[v1]); double xU1(cf*vub[v1]);
     double xL2(vlb[v2]); double xU2(vub[v2]);
     double xL3(vlb[v3]); double xU3(vub[v3]);
+
+    for(int ii = 0; ii < defcons_size; ii++) {
+
+      cutIndices [ii][0] = v1; 
+      cutIndices [ii][1] = v2; 
+      cutIndices [ii][2] = v3; 
+      cutIndices [ii][3] = v4;     
+      cutCoeff [ii][3] = 1.;
+    }
 
     double theta1 = xL1*xL2*xL3 - xU1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xU3;
     double theta2 = xU1*xL2*xU3 - xU1*xU2*xL3 - xL1*xL2*xU3 + xL1*xU2*xU3;
@@ -321,7 +327,9 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
   // case 3
   if(flag == 3) {
-    //std::cout << " -- case 3 --" << std::endl;
+#ifdef DEBUG
+    std::cout << " -- case 3 --" << std::endl;
+#endif
 
     int last;
 
@@ -362,6 +370,9 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
     } else if (vub[v1]*vub[v2]*vlb[v3] + vub[v1]*vlb[v2]*vub[v3] + vlb[v1]*vub[v2]*vub[v3] 
 	       >= vlb[v1]*vlb[v2]*vlb[v3] + 2.*vub[v1]*vub[v2]*vub[v3]) {
+#ifdef DEBUG
+std::cout << "else if " << std::endl;
+#endif
          
       double theta1 = xU1*xU2*xL3 - xL1*xL2*xL3 - xU1*xU2*xU3 + xU1*xL2*xU3;
       double theta2 = xU1*xL2*xU3 - xL1*xL2*xL3 - xU1*xU2*xU3 + xL1*xU2*xU3;
@@ -393,6 +404,9 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       last=5;
 
     } else {
+#ifdef DEBUG
+std::cout << "else " << std::endl;
+#endif
       // compute the 6 permutations of the 3 variables 
       ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
       permutation3(ind,ibnd);
@@ -400,19 +414,7 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       i = 0;
       while(i < 6 && flagg == 0) {
 	if (((vlb[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] 
-	     >= vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]] + 2.*vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]])     && 
-	    (vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]
-	     >= vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]] + 2.*vlb[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] &&
-	     vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
-	     >= vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + 2.*vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]] &&
-	     vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
-	     >= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + 2.*vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] &&
-	     vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
-	     >= vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] + 2.*vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]]))  || 
-	    (vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][2]]*vub[ind[i][2]]
-	     <= vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]] + 2.*vlb[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]])  ||
-	    (vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
-	     <= vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + 2.*vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]) )
+	     >= vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]] + 2.*vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]]) ))
 	  {
 	    idx = i;   // store the index of the permutation satisfying the condition
 	    flagg = 1;  // condition is satisfied
@@ -469,7 +471,10 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
        >= vlb[v1]*vub[v2]*vlb[v3] + 2.*vub[v1]*vlb[v2]*vub[v3] &&
        vub[v1]*vlb[v2]*vlb[v3] + vlb[v1]*vub[v2]*vlb[v3] + vub[v1]*vub[v2]*vub[v3]
        >= vlb[v1]*vlb[v2]*vub[v3] + 2.*vub[v1]*vub[v2]*vlb[v3] ) {
-
+   
+#ifdef DEBUG
+std::cout << "2 - if " << std::endl;
+#endif
       double theta3x = 0.5*(xU1*xL2*xL3 + xU1*xU2*xU3 - xL1*xL2*xU3 - xL1*xU2*xL3)/(xU1-xL1);
       double theta3y = 0.5*(xL1*xU2*xL3 + xU1*xU2*xU3 - xL1*xL2*xU3 - xU1*xL2*xL3)/(xU2-xL2);
       double theta3z = 0.5*(xL1*xL2*xU3 + xU1*xU2*xU3 - xL1*xU2*xL3 - xU1*xL2*xL3)/(xU3-xL3);
@@ -478,7 +483,11 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       prepareVectors (5);
 
       for(int ii = last+1; ii <= last+5; ii++) {
-	cutIndices [ii][0] = v1; cutIndices [ii][1] = v2; cutIndices [ii][2] = v3; cutIndices [ii][3] = v4;     
+
+	cutIndices [ii][0] = v1; 
+        cutIndices [ii][1] = v2; 
+        cutIndices [ii][2] = v3; 
+        cutIndices [ii][3] = v4;     
 	cutCoeff [ii][3] = 1.;
       }
 
@@ -492,6 +501,9 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
     } else if (vub[v1]*vlb[v2]*vlb[v3] + vlb[v1]*vub[v2]*vlb[v3] + vlb[v1]*vlb[v2]*vub[v3] 
 	       <= vub[v1]*vub[v2]*vub[v3] + 2.*vlb[v1]*vlb[v2]*vlb[v3]) {
+#ifdef DEBUG
+std::cout << "2 - else if" << std::endl;
+#endif
 
       double theta1 = xU1*xL2*xL3 - xU1*xU2*xU3 - xL1*xL2*xL3 + xL1*xU2*xL3;
       double theta2 = xL1*xL2*xU3 - xU1*xU2*xU3 - xL1*xL2*xL3 + xL1*xU2*xL3;
@@ -521,8 +533,35 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
       defcons_size = last+7;
 
-    } else if (vlb[v1]*vub[v2]*vlb[v3] + vlb[v1]*vlb[v2]*vub[v3] + vub[v1]*vub[v2]*vub[v3]
-	       <= vub[v1]*vlb[v2]*vlb[v3] + 2.*vlb[v1]*vub[v2]*vub[v3]) {
+    } else //if (vlb[v1]*vub[v2]*vlb[v3] + vlb[v1]*vlb[v2]*vub[v3] + vub[v1]*vub[v2]*vub[v3]
+	   //    <= vub[v1]*vlb[v2]*vlb[v3] + 2.*vlb[v1]*vub[v2]*vub[v3]) 
+      {
+#ifdef DEBUG
+std::cout << "2 - another else if" << std::endl;
+std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
+#endif
+      // compute the 6 permutations of the 3 variables 
+      //ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
+      permutation3(ind,ibnd);
+      int i, flagg=0, idx=0;
+      i = 0;
+      while(i < 6 && flagg == 0) {
+        if (vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
+               <= vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + 2.*vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]])
+	  {
+	    idx = i;   // store the index of the permutation satisfying the condition
+	    flagg = 1;  // condition is satisfied
+	  }
+	i++; 
+      }
+      if (flagg==0) {
+	std::cout << "ERROR!!!" << std::endl; exit(0);
+      }
+      v1 = ind[idx][0]; v2 = ind[idx][1]; v3 = ind[idx][2];
+
+      double xL1(cf*vlb[v1]); double xU1(cf*vub[v1]);
+      double xL2(vlb[v2]); double xU2(vub[v2]);
+      double xL3(vlb[v3]); double xU3(vub[v3]);
 
       double theta1 = xL1*xL2*xU3 - xU1*xL2*xL3 - xL1*xU2*xU3 + xL1*xU2*xL3;
       double theta2 = xU1*xU2*xU3 - xU1*xL2*xL3 - xL1*xU2*xU3 + xL1*xU2*xL3;
@@ -544,7 +583,7 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       cutCoeff [last+2][0] = -xU2*xL3; cutCoeff [last+2][1] = -xU1*xL3; cutCoeff [last+2][2] = -xU1*xU2;  bnd[last+2] = - 2.*xU1*xU2*xL3;
       cutCoeff [last+3][0] = -xL2*xU3; cutCoeff [last+3][1] = -xU1*xU3; cutCoeff [last+3][2] = -xU1*xL2;  bnd[last+3] = - 2.*xU1*xL2*xU3;
       cutCoeff [last+4][0] = -(theta1/(xL1-xU1)); cutCoeff [last+4][1] = -xL1*xU3; cutCoeff [last+4][2] = -xL1*xU2;  
-      bnd[last+4] = (-(theta1*xU3)/(xL3-xU3)) - xL1*xL2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3; 
+      bnd[last+4] = (-(theta1*xU1)/(xL1-xU1)) - xL1*xL2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3; 
       cutCoeff [last+5][0] = -xU2*xU3; cutCoeff [last+5][1] = -(theta2/(xU2-xL2)); cutCoeff [last+5][2] = -xL1*xU2;  
       bnd[last+5] = (-(theta2*xL2)/(xU2-xL2)) - xU1*xU2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3; 
       cutCoeff [last+6][0] = -xU2*xU3; cutCoeff [last+6][1] = -xL1*xU3; cutCoeff [last+6][2] = -(theta3/(xU3-xL3));  
@@ -559,7 +598,9 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
   // case 4
   if(flag == 4) {
-    //std::cout << " -- case 4 --" << std::endl;
+#ifdef DEBUG
+    std::cout << " -- case 4 --" << std::endl;
+#endif
 
     double theta  = xU1*xL2*xU3 - xU1*xU2*xL3 - xL1*xL2*xU3 + xL1*xL2*xL3;
     double theta1 = xL1*xU2*xL3 - xU1*xL2*xL3 - xL1*xU2*xU3 + xU1*xU2*xU3;
@@ -598,23 +639,21 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
   // case 5
   if(flag == 5) {
-    //std::cout << " -- case 5 --" << std::endl;
+#ifdef DEBUG
+    std::cout << " -- case 5 --" << std::endl;
+ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
+#endif
 
     defcons_size = 12;
-
     prepareVectors (defcons_size);
 
-    for(int ii = 0; ii < defcons_size; ii++) {
-      cutIndices [ii][0] = v1; cutIndices [ii][1] = v2; cutIndices [ii][2] = v3; cutIndices [ii][3] = v4;     
-      cutCoeff [ii][3] = 1.;
-    }
-
-    // compute the 6 permutations of the 3 variables 
+    // compute the permutations of the 3 variables 
     ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
-    permutation3(ind,ibnd);
+   ind[0][0] = ibnd[0]; ind[0][1] = ibnd[1]; ind[0][2] = ibnd[2];
+   ind[1][0] = ibnd[1]; ind[1][1] = ibnd[0]; ind[1][2] = ibnd[2];
     int i, flagg=0, idx=0;
     i = 0;
-    while(i < 6 && flagg == 0) {
+    while(i < 2 && flagg == 0) {
       if(vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
 	 >= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]) 
 	{
@@ -627,13 +666,28 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       std::cout << "ERROR!!!" << std::endl; exit(0);
     }
     v1 = ind[idx][0]; v2 = ind[idx][1]; v3 = ind[idx][2];
+#ifdef DEBUG
+ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
+#endif
 
-    double xL1(cf*vlb[v1]); double xU1(cf*vub[v1]);
-    double xL2(vlb[v2]); double xU2(vub[v2]);
-    double xL3(vlb[v3]); double xU3(vub[v3]);
+    double xL1 = cf*vlb[v1]; double xU1 = cf*vub[v1];
+    double xL2 = vlb[v2]; double xU2 = vub[v2];
+    double xL3 = vlb[v3]; double xU3 = vub[v3];
+
+    for(int ii = 0; ii < defcons_size; ii++) {
+
+      cutIndices [ii][0] = v1; 
+      cutIndices [ii][1] = v2; 
+      cutIndices [ii][2] = v3; 
+      cutIndices [ii][3] = v4;     
+      cutCoeff [ii][3] = 1.;
+    }
 
     if(vlb[v1]*vlb[v2]*vlb[v3] + vub[v1]*vub[v2]*vub[v3]
        <= vub[v1]*vub[v2]*vlb[v3] + vlb[v1]*vlb[v2]*vub[v3]) {
+#ifdef DEBUG
+    std::cout << " -- 5 if --" << std::endl;
+#endif
 
       double theta1 = xU1*xU2*xL3 - xL1*xL2*xL3 - xU1*xU2*xU3 + xU1*xL2*xU3;
       double theta2 = xU1*xU2*xL3 - xL1*xL2*xL3 - xU1*xU2*xU3 + xL1*xU2*xU3;
@@ -648,6 +702,9 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       bnd[5] = (-(theta2*xL2)/(xU2-xL2)) - xU1*xU2*xL3 - xL1*xU2*xU3 + xL1*xL2*xL3;
 
     } else {
+#ifdef DEBUG
+    std::cout << " -- 5 else --" << std::endl;
+#endif
       double theta1 = xL1*xL2*xL3 - xU1*xU2*xL3 - xL1*xL2*xU3 + xL1*xU2*xU3;
       double theta2 = xL1*xL2*xL3 - xU1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xU3;
 
@@ -661,9 +718,6 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       bnd[5] = (-(theta2*xU2)/(xL2-xU2)) - xL1*xL2*xL3 - xU1*xL2*xU3 + xU1*xU2*xL3;
     }
 
-    //if(vub[v1]*vlb[v2]*vlb[v3] + vlb[v1]*vub[v2]*vub[v3]
-    // >= vlb[v1]*vub[v2]*vlb[v3] + vub[v1]*vlb[v2]*vub[v3]) {
-
     double theta1c = xL1*xU2*xL3 - xU1*xL2*xL3 - xL1*xU2*xU3 + xL1*xL2*xU3;
     double theta2c = xU1*xU2*xU3 - xU1*xL2*xL3 - xL1*xU2*xU3 + xL1*xU2*xL3;
 
@@ -675,7 +729,6 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
     bnd[10] = (-(theta1c*xU1)/(xL1-xU1)) - xL1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xL3;
     cutCoeff [11][0] = -xU2*xU3; cutCoeff [11][1] = -(theta2c/(xU2-xL2)); cutCoeff [11][2] = -xL1*xU2;
     bnd[11] = (-(theta2c*xL2)/(xU2-xL2)) - xU1*xU2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3;
-    //}
 
   } // end if case 5
 
@@ -683,7 +736,9 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
   // case 6
   if(flag == 6) {
-    //std::cout << " -- case 6 --" << std::endl;
+#ifdef DEBUG
+    std::cout << " -- case 6 --" << std::endl;
+#endif
 
     double theta = xU1*xU2*xL3 - xL1*xL2*xL3 - xU1*xU2*xU3 + xU1*xL2*xU3;
     double theta1 = xL1*xU2*xL3 - xU1*xL2*xL3 - xL1*xU2*xU3 + xL1*xL2*xU3;
@@ -722,21 +777,13 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
   // case 7
   if(flag == 7) {
-    //std::cout << " -- case 7 --" << std::endl;
+#ifdef DEBUG
+    std::cout << " -- case 7 --" << std::endl;
+#endif
 
-    defcons_size = 12; // Added by Pietro -- seemed missing
-
+    defcons_size = 12;
     prepareVectors (defcons_size);
 
-    for(int ii = 0; ii < defcons_size; ii++) {
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
-
-      cutCoeff [ii][3] = 1.;
-    }
-    
     // compute the 6 permutations of the 3 variables 
     ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
     permutation3(ind,ibnd);
@@ -758,9 +805,9 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
     }
     v1 = ind[idx][0]; v2 = ind[idx][1]; v3 = ind[idx][2];
 
-    double xL1(cf*vlb[v1]); double xU1(cf*vub[v1]);
-    double xL2(vlb[v2]); double xU2(vub[v2]);
-    double xL3(vlb[v3]); double xU3(vub[v3]);
+    double xL1 = cf*vlb[v1]; double xU1 = cf*vub[v1];
+    double xL2 = vlb[v2]; double xU2 = vub[v2];
+    double xL3 = vlb[v3]; double xU3 = vub[v3];
 
     //if(vub[v1]*vlb[v2]*vlb[v3] + vlb[v1]*vub[v2]*vub[v3]
     // <= vlb[v1]*vub[v2]*vlb[v3] + vub[v1]*vlb[v2]*vub[v3] &&
@@ -770,6 +817,15 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
     double theta1 = xU1*xU2*xL3 - xL1*xU2*xU3 - xU1*xL2*xL3 + xU1*xL2*xU3;
     double theta2 = xL1*xL2*xU3 - xU1*xL2*xL3 - xL1*xU2*xU3 + xL1*xU2*xL3;
 
+    for(int ii = 0; ii < defcons_size; ii++) {
+      cutIndices [ii][0] = v1; 
+      cutIndices [ii][1] = v2; 
+      cutIndices [ii][2] = v3; 
+      cutIndices [ii][3] = v4;     
+
+      cutCoeff [ii][3] = 1.;
+    }
+    
     cutCoeff [0][0] = -xL2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xL2;  bnd[0] = - 2.*xL1*xL2*xL3; 
     cutCoeff [1][0] = -xU2*xU3; cutCoeff [1][1] = -xU1*xU3; cutCoeff [1][2] = -xU1*xU2;  bnd[1] = - 2.*xU1*xU2*xU3;
     cutCoeff [2][0] = -xL2*xU3; cutCoeff [2][1] = -xL1*xU3; cutCoeff [2][2] = -xU1*xL2;  bnd[2] = - xL1*xL2*xU3 - xU1*xL2*xU3;
@@ -791,22 +847,13 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       
   // case 8
   if(flag == 8) {
-    //std::cout << " -- case 8 --" << std::endl;
+#ifdef DEBUG
+    std::cout << " -- case 8 --" << std::endl;
+#endif
 
     defcons_size = 12;
     prepareVectors (defcons_size);
 
-    for(int ii = 0; ii < defcons_size; ii++) {
-
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
-
-      cutCoeff [ii][3] = 1.;
-    }
-    
-    // compute the 6 permutations of the 3 variables 
     // compute the 6 permutations of the 3 variables 
     ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
     permutation3(ind,ibnd);
@@ -835,6 +882,16 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
     double xL2(vlb[v2]); double xU2(vub[v2]);
     double xL3(vlb[v3]); double xU3(vub[v3]);
 
+    for(int ii = 0; ii < defcons_size; ii++) {
+
+      cutIndices [ii][0] = v1; 
+      cutIndices [ii][1] = v2; 
+      cutIndices [ii][2] = v3; 
+      cutIndices [ii][3] = v4;     
+      cutCoeff [ii][3] = 1.;
+    }
+    
+    // compute the 6 permutations of the 3 variables 
     //if(vub[v3]<=0) {
     cutCoeff [0][0] = -xU2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xL2;  bnd[0] = - xL1*xU2*xL3 - xL1*xL2*xL3; 
     cutCoeff [1][0] = -xU2*xL3; cutCoeff [1][1] = -xL1*xU3; cutCoeff [1][2] = -xL1*xU2;  bnd[1] = - xL1*xU2*xL3 - xL1*xU2*xU3; 
@@ -882,21 +939,13 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
   // case 9
   if(flag == 9) {
-    //std::cout << " -- case 9 --" << std::endl;
+#ifdef DEBUG
+    std::cout << " -- case 9 --" << std::endl;
+#endif
 
     defcons_size = 12;
     prepareVectors (defcons_size);
 
-    for (int ii = 0; ii < defcons_size; ii++) {
-
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
-
-      cutCoeff [ii][3] = 1.;
-    }
-    
     // compute the 6 permutations of the 3 variables 
     ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
     permutation3(ind,ibnd);
@@ -927,6 +976,15 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
     double xL2(vlb[v2]); double xU2(vub[v2]);
     double xL3(vlb[v3]); double xU3(vub[v3]);
 
+    for (int ii = 0; ii < defcons_size; ii++) {
+
+      cutIndices [ii][0] = v1; 
+      cutIndices [ii][1] = v2; 
+      cutIndices [ii][2] = v3; 
+      cutIndices [ii][3] = v4;     
+      cutCoeff [ii][3] = 1.;
+    }
+    
     //if(vlb[v1]>=0) {
     if(vlb[v1]*vlb[v2]*vlb[v3] + vub[v1]*vub[v2]*vub[v3]
        <= vub[v1]*vub[v2]*vlb[v3] + vlb[v1]*vlb[v2]*vub[v3] &&
@@ -976,22 +1034,13 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
 
   // case 10
   if(flag == 10) {
-    //std::cout << " -- case 10 --" << std::endl;
+#ifdef DEBUG
+    std::cout << " -- case 10 --" << std::endl;
+#endif
 
     defcons_size = 12;
     prepareVectors (defcons_size);
 
-    for(int ii = 0; ii < defcons_size; ii++) {
-
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
-
-      cutCoeff [ii][3] = 1.;
-    }
-    
-    // compute the 6 permutations of the 3 variables 
     ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
     permutation3(ind,ibnd);
     int i, flagg=0, idx=0;
@@ -1000,22 +1049,32 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       if(vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
 	 >= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] &&
 	 vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
-	 >= vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]) {
+	 >= vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]) 
 	{
 	  idx = i;   // store the index of the permutation satisfying the condition
 	  flagg = 1;  // condition is satisfied
 	}
-	i++; 
-      }
-      if (flagg==0) {
-	std::cout << "ERROR!!!" << std::endl; exit(0);
-      }
-      v1 = ind[idx][0]; v2 = ind[idx][1]; v3 = ind[idx][2];
+      i++; 
+    }
+    if (flagg==0) {
+       std::cout << "ERROR!!!" << std::endl; exit(0);
+    }
+    v1 = ind[idx][0]; v2 = ind[idx][1]; v3 = ind[idx][2];
 
       double xL1(cf*vlb[v1]); double xU1(cf*vub[v1]);
       double xL2(vlb[v2]); double xU2(vub[v2]);
       double xL3(vlb[v3]); double xU3(vub[v3]);
 
+      for(int ii = 0; ii < defcons_size; ii++) {
+ 
+        cutIndices [ii][0] = v1; 
+        cutIndices [ii][1] = v2; 
+        cutIndices [ii][2] = v3; 
+        cutIndices [ii][3] = v4;     
+        cutCoeff [ii][3] = 1.;
+      }
+    
+    // compute the 6 permutations of the 3 variables 
       cutCoeff [0][0] = -xL2*xL3; cutCoeff [0][1] = -xU1*xL3; cutCoeff [0][2] = -xU1*xU2;  bnd[0] = - xU1*xU2*xL3 - xU1*xL2*xL3;
       cutCoeff [1][0] = -xU2*xU3; cutCoeff [1][1] = -xL1*xL3; cutCoeff [1][2] = -xL1*xU2;  bnd[1] = - xL1*xU2*xU3 - xL1*xU2*xL3;
       cutCoeff [2][0] = -xU2*xL3; cutCoeff [2][1] = -xL1*xL3; cutCoeff [2][2] = -xU1*xU2;  bnd[2] = - xU1*xU2*xL3 - xL1*xU2*xL3;
@@ -1039,7 +1098,6 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       bnd[10] = (-(theta1c*xU1)/(xL1-xU1)) - xL1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xL3;
       cutCoeff [11][0] = -(theta2c/(xU1-xL1)); cutCoeff [11][1] = -xU1*xL3; cutCoeff [11][2] = -xU1*xL2;
       bnd[11] = (-(theta2c*xL1)/(xU1-xL1)) - xU1*xU2*xL3 - xU1*xL2*xU3 + xL1*xU2*xU3;
-    }
 
   } // end if case 10
 
@@ -1060,11 +1118,15 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
       if (cf > 0) {cutLb[ii] = -COUENNE_INFINITY;  cutUb[ii] = bnd[ii];}
       if (cf < 0) {cutLb[ii] =  bnd[ii];           cutUb[ii] = COUENNE_INFINITY;}
     }
+#ifdef DEBUG
+std::cout << ii << ") cutLb =" << cutLb[ii] << " " << "cutUb = " << cutUb[ii] << std::endl;
+#endif
   }
 
   for (int i=0; i<6; i++)
     delete [] ind [i];
 
+  delete [] ibnd;
   delete [] bnd;
   delete [] ind;
 }
@@ -1100,7 +1162,7 @@ void exprTrilinear::generateCuts (expression *w,
 	  cutIndices.size () == cutLb.size    () && 
 	  cutIndices.size () == cutUb.size    ());
 
-  printf ("trilinear cuts:\n");
+  //printf ("trilinear cuts:\n");
 
   for (int i = (int) cutIndices.size (); i--;) {
 
@@ -1114,7 +1176,7 @@ void exprTrilinear::generateCuts (expression *w,
     std::copy (cutCoeff   [i].begin (), cutCoeff   [i].end (), coe);
 
     OsiRowCut cut (cutLb [i], cutUb [i], 4, 4, ind, coe);
-    cut.print ();
+    //cut.print ();
 
     delete [] ind;
     delete [] coe;

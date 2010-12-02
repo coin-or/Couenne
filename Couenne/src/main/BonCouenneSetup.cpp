@@ -419,6 +419,19 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   int freq;
 
+  // Setup Fix Point bound tightener /////////////////////////////////////////////
+
+  options () -> GetIntegerValue ("fixpoint_bt", freq, "couenne.");
+
+  if (freq != 0) {
+
+    CuttingMethod cg;
+    cg.frequency = freq;
+    cg.cgl = new CouenneFixPoint (couenneProb_, options ());
+    cg.id = "Couenne fixed point FBBT";
+    cutGenerators (). push_back (cg);
+  }
+
   // Setup Convexifier generators ////////////////////////////////////////////////
 
   options () -> GetIntegerValue ("convexification_cuts", freq, "couenne.");
@@ -460,19 +473,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cg.cgl = couenne2I;
     cg.id = "Couenne two-implied cuts";
     cutGenerators (). push_back(cg);
-  }
-
-  // Setup Fix Point bound tightener /////////////////////////////////////////////
-
-  options () -> GetIntegerValue ("fixpoint_bt", freq, "couenne.");
-
-  if (freq != 0) {
-
-    CuttingMethod cg;
-    cg.frequency = freq;
-    cg.cgl = new CouenneFixPoint (couenneProb_, options ());
-    cg.id = "Couenne fixed point FBBT";
-    cutGenerators (). push_back (cg);
   }
 
   // check branch variable selection for disjunctive cuts

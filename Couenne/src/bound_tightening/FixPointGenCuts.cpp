@@ -46,6 +46,13 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   if (isWiped (cs))
     return;
 
+  if (treeInfo.inTree && 
+      treeInfo.level > 0 &&
+      treeInfo.pass > 1)
+    return;
+
+  int nInitTightened = nTightened_;
+
   problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Fixed Point FBBT: "); 
   fflush (stdout);
 
@@ -240,7 +247,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   fplp -> setObjSense (-1.); // we want to maximize 
 
-  //printf ("(writing lp)");
+  //printf ("(writing lp) ");
   //fplp -> writeLp ("fplp");
 
   fplp -> initialSolve ();
@@ -309,7 +316,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     CPUtime_ += CoinCpuTime () - now;
 
     problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "%d bounds tightened (%g seconds)\n", 
-				    nTightened_, CoinCpuTime () - now); 
+				    nTightened_ - nInitTightened, CoinCpuTime () - now); 
 
   } else problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP infeasible or unbounded.\n");
 
