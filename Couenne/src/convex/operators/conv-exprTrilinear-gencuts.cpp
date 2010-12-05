@@ -21,6 +21,8 @@
 //#define DEBUG
 using namespace Couenne;
 
+#define EPSILONT 1.e-6
+
 //typedef CouNumber double;
 
 //// permutations of 3 elements
@@ -784,6 +786,12 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     defcons_size = 12;
     prepareVectors (defcons_size);
 
+    if (vlb[v1]<=EPSILONT && vlb[v2]<=EPSILONT && vlb[v3]<=EPSILONT) {
+      int idx = 0;
+#ifdef DEBUG
+      std::cout << " -- epsilonT --" << std::endl;
+#endif
+    } else {
     // compute the 6 permutations of the 3 variables 
     ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
     permutation3(ind,ibnd);
@@ -802,6 +810,7 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     }
     if (flagg==0) {
       std::cout << "ERROR!!!" << std::endl; exit(0);
+    }
     }
     v1 = ind[idx][0]; v2 = ind[idx][1]; v3 = ind[idx][2];
 
