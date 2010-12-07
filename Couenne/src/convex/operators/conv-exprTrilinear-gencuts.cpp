@@ -18,7 +18,7 @@
 
 #include <vector>
 
-#define DEBUG
+//#define DEBUG
 using namespace Couenne;
 
 #define EPSILONT 1.e-6
