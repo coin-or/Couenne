@@ -35,6 +35,13 @@ const CouNumber estProdEps = 1e-6;
 
     b.options () -> GetStringValue ("estimate_select", s, "couenne.");
     estimateProduct_ = (s == "product");
+
+    b.options () -> GetStringValue ("trust_strong", s, "couenne.");
+
+    // trust solution from strong branching to provide right LB
+
+    setTrustStrongForSolution (s == "yes");
+    setTrustStrongForBound    (s == "yes");
   }
 
   /// copy constructor
@@ -378,6 +385,13 @@ const CouNumber estProdEps = 1e-6;
        "normal",
        "normal",   "as usual in literature",
        "product",  "use their product");
+
+    roptions -> AddStringOption2
+      ("trust_strong",
+       "Trust strong branching to provide right lower bound",
+       "yes",
+       "yes", "use value computed by strong branching",
+       "no",  "recalculate lower bound");
   }
 
 
