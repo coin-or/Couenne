@@ -388,10 +388,10 @@ const CouNumber estProdEps = 1e-6;
 
     roptions -> AddStringOption2
       ("trust_strong",
-       "Trust strong branching to provide right lower bound",
+       "Fathom strong branching LPs when their bound is above the cutoff",
        "yes",
-       "yes", "use value computed by strong branching",
-       "no",  "recalculate lower bound");
+       "yes", "",
+       "no",  "");
   }
 
 
