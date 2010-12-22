@@ -11,10 +11,7 @@
 
 // Ampl includes
 
-#ifdef COIN_HAS_ASL
-#include "asl.h"
-#include "getstub.h"
-#endif
+#include "CouenneConfig.h"
 
 #include "OsiClpSolverInterface.hpp"
 #ifdef COIN_HAS_CPX
@@ -60,6 +57,13 @@
 #include "BonCbcNode.hpp"
 #include "BonCbc.hpp"
 
+// ASL includes need to come behind OsiClp and Bonmin, because it defines "filename",
+// which is used as variablename in Clp
+// (similar bad as windows.h, which defines "small")
+#ifdef COIN_HAS_ASL
+#include "asl.h"
+#include "getstub.h"
+#endif
 
 using namespace Couenne;
   
