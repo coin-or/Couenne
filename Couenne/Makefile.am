@@ -2,7 +2,7 @@
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 
-## $Id: Makefile.am 18 2006-12-08 21:33:13Z pbonami $
+## $Id$
 
 # Author:  Andreas Waechter           IBM    2006-04-13
 

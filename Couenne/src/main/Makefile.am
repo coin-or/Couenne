@@ -2,7 +2,7 @@
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 
-## $Id: Makefile.am 105 2006-11-03 19:31:19Z pbonami $
+## $Id$
 
 # Author: Pietro Belotti, on a template by Pierre Bonami
 

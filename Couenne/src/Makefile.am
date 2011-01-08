@@ -2,7 +2,7 @@
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 #
-## $Id:$
+## $Id$
 #
 # Authors:  Andreas Waechter           IBM    2006-04-13
 #           Pietro Belotti

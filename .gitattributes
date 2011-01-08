@@ -11,7 +11,6 @@ Couenne/configure -text
 Couenne/configure.ac -text
 Couenne/couenne-uninstalled.pc.in -text
 Couenne/couenne.pc.in -text
-Couenne/couenne_addlibs.txt.in -text
 Couenne/depcomp -text
 Couenne/doc/couenne-user-manual.pdf -text
 Couenne/doc/mainpage.dox -text

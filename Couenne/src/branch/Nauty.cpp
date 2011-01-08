@@ -1,4 +1,4 @@
-/* $Id:$ 
+/* $Id$ 
  *
  * Name:    Nauty.cpp
  * Authors: Jim Ostrowski
