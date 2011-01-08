@@ -27,9 +27,7 @@
 #include "BonCouenneSetup.hpp"
 
 #include "BonCbc.hpp"
-#ifdef COIN_HAS_FILTERSQP
-#include "BonFilterSolver.hpp"
-#endif
+//#include "BonFilterSolver.hpp"
 
 #include "CbcCutGenerator.hpp"
 #include "CouenneProblem.hpp"

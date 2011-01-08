@@ -12,8 +12,7 @@ AUTOMAKE_OPTIONS = foreign
 #                          Subdirectories                              #
 ########################################################################
 
-SUBDIRS = \
-	  src/util \
+SUBDIRS = src/util \
 	  src/expression
 
 if COIN_HAS_ASL
@@ -66,20 +65,36 @@ clean-local:
 distclean-local:
 	if test -r test/Makefile; then cd test; $(MAKE) distclean; fi
 
+install-exec-local: install-doc
+
+uninstall-local: uninstall-doc
+
 .PHONY: test unitTest
 
 ########################################################################
 #                  Installation of the addlibs file                    #
 ########################################################################
 
-addlibsfile = couenne_addlibs.txt
-addlibsdir = $(prefix)/share/doc/coin/$(PACKAGE_NAME)/
+pkgconfiglibdir = $(libdir)/pkgconfig
+pkgconfiglib_DATA = couenne.pc
 
-install-exec-local: install-doc
-	$(install_sh_DATA) $(addlibsfile) $(DESTDIR)$(addlibsdir)/$(addlibsfile)
+addlibsdir = $(DESTDIR)$(datadir)/coin/doc/Couenne
 
-uninstall-local: uninstall-doc
-	rm -f $(DESTDIR)$(addlibsdir)/$(addlibsfile)
+install-data-hook:
+	@$(mkdir_p) "$(addlibsdir)"
+if COIN_HAS_PKGCONFIG
+	PKG_CONFIG_PATH=@COIN_PKG_CONFIG_PATH@ \
+	$(PKG_CONFIG) --libs couenne > $(addlibsdir)/couenne_addlibs.txt
+else
+if COIN_CXX_IS_CL
+	echo "/libpath:`$(CYGPATH_W) @abs_lib_dir@` libCouenne.lib @COUENNELIB_LIBS_INSTALLED@" > $(addlibsdir)/couenne_addlibs_cpp.txt
+else
+	echo -L@abs_lib_dir@ -lCouenne @COUENNELIB_LIBS_INSTALLED@ > $(addlibsdir)/couenne_addlibs.txt
+endif
+endif
+
+uninstall-hook:
+	rm -f $(addlibsdir)/couenne_addlibs.txt
 
 ########################################################################
 #                         Maintainer Stuff                             #
@@ -88,4 +103,4 @@ uninstall-local: uninstall-doc
 # Files that are generated and should be cleaned with make distclean
 DISTCLEANFILES =
 
-include ../BuildTools/Makemain.inc
+include BuildTools/Makemain.inc

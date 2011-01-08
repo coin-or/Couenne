@@ -1,0 +1,10 @@
+prefix=@prefix@
+libdir=@ABSBUILDDIR@/src
+
+Name: Couenne
+Description: Convex Over and Under Envelopes for Nonlinear Estimation
+URL: https://projects.coin-or.org/Couenne
+Version: @PACKAGE_VERSION@
+Libs: ${libdir}/libCouenne.la @COUENNELIB_PCLIBS@
+Cflags: -I@abs_source_dir@/src -I@ABSBUILDDIR@/inc
+Requires: @COUENNELIB_PCREQUIRES@

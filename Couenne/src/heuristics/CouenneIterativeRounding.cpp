@@ -9,8 +9,8 @@
 // Date : 07/25/2010
 
 #include "CouenneIterativeRounding.hpp"
-#include "QuadCuts/BonTMINLP2Quad.hpp"
-#include "QuadCuts/BonTMINLPLinObj.hpp"
+#include "BonTMINLP2Quad.hpp"
+#include "BonTMINLPLinObj.hpp"
 #ifdef COIN_HAS_CPX
 #include "OsiCpxSolverInterface.hpp"
 #include "cplex.h"

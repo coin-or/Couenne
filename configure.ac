@@ -41,24 +41,25 @@ AC_COIN_CREATE_LIBTOOL
 #             Check which ThirdParty sources are available                  #
 #############################################################################
 
-AC_COIN_THIRDPARTY_SUBDIRS([Blas],[ThirdParty/Blas],[daxpy.f])
-AC_COIN_THIRDPARTY_SUBDIRS([Lapack],[ThirdParty/Lapack],[LAPACK/SRC/dlarf.f])
-AC_COIN_THIRDPARTY_SUBDIRS([HSL],[ThirdParty/HSL],[ma27ad.f])
-AC_COIN_THIRDPARTY_SUBDIRS([ASL],[ThirdParty/ASL],[solvers/asl.h])
-AC_COIN_THIRDPARTY_SUBDIRS([Mumps],[ThirdParty/Mumps],[MUMPS/src/dmumps_part1.F])
+AC_COIN_MAIN_PACKAGEDIR(ASL,   ThirdParty,[solvers/asl.h],           coinasl)
+AC_COIN_MAIN_PACKAGEDIR(Blas,  ThirdParty,[daxpy.f],                 coinblas)
+AC_COIN_MAIN_PACKAGEDIR(Lapack,ThirdParty,[LAPACK/SRC/dlarf.f],      coinlapack)
+AC_COIN_MAIN_PACKAGEDIR(HSL,   ThirdParty,[configure.ac],            coinhsl)
+AC_COIN_MAIN_PACKAGEDIR(Metis, ThirdParty,[metis-4.0/Lib/balance.c], coinmetis)
+AC_COIN_MAIN_PACKAGEDIR(Mumps, ThirdParty,[MUMPS/src/dmumps_part1.F],coinmumps)
 
 #############################################################################
 #                  Check which subprojects are there                        #
 #############################################################################
 
-AC_COIN_MAIN_SUBDIRS(CoinUtils)
-AC_COIN_MAIN_SUBDIRS(Clp)
-AC_COIN_MAIN_SUBDIRS(Osi)
-AC_COIN_MAIN_SUBDIRS(Cgl)
-AC_COIN_MAIN_SUBDIRS(Cbc)
-AC_COIN_MAIN_SUBDIRS(Ipopt)
-AC_COIN_MAIN_SUBDIRS(Bonmin)
-AC_COIN_MAIN_SUBDIRS(Couenne)
+AC_COIN_MAIN_PACKAGEDIR(CoinUtils)
+AC_COIN_MAIN_PACKAGEDIR(Osi)
+AC_COIN_MAIN_PACKAGEDIR(Clp)
+AC_COIN_MAIN_PACKAGEDIR(Cgl)
+AC_COIN_MAIN_PACKAGEDIR(Cbc)
+AC_COIN_MAIN_PACKAGEDIR(Ipopt)
+AC_COIN_MAIN_PACKAGEDIR(Bonmin)
+AC_COIN_MAIN_PACKAGEDIR(Couenne)
 
 ##############################################################################
 #                   Finishing up by writing all the output                   #
