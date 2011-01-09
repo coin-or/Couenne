@@ -10,35 +10,30 @@ AUTOMAKE_OPTIONS = foreign
 
 # what is built at this level
 
-if COIN_HAS_ASL
-  bin_PROGRAMS = couenne couenne2
-endif
-
 lib_LTLIBRARIES = libBonCouenne.la
 
 libBonCouenne_la_SOURCES = \
 	BonCouenneSetup.cpp \
 	SmartAslDestr.cpp
 
+if COIN_HAS_ASL
+  bin_PROGRAMS = couenne 
+  #couenne2
+endif
+
+couenne_SOURCES = BonCouenne.cpp
 couenne_LDADD         = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS)         $(ASL_LIBS)
 couenne_DEPENDENCIES  = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
 
-couenne_SOURCES = BonCouenne.cpp
-
-couenne2_LDADD         = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS)         $(ASL_LIBS)
-couenne2_DEPENDENCIES  = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
-
-couenne2_SOURCES = \
-	Couenne.cpp \
-	CouenneOSInterface.cpp
-
-#	../readnl/readnl.cpp 
+#couenne2_SOURCES = Couenne.cpp CouenneOSInterface.cpp
+#couenne2_LDADD         = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS)         $(ASL_LIBS)
+#couenne2_DEPENDENCIES  = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
 
 # Finally, the -rpath flag is used by libtool to make sure that the shared
 # library is found (in the lib install directory) when we are using dynamic
 # libraries.
 couenne_LDFLAGS = -rpath $(libdir)
-couenne2_LDFLAGS = -rpath $(libdir)
+#couenne2_LDFLAGS = -rpath $(libdir)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows

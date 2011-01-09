@@ -20,6 +20,7 @@ libCouenneCrossConv_la_LDFLAGS = $(LT_LDFLAGS)
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
 AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
+	-I`$(CYGPATH_W) $(srcdir)/..` \
 	-I`$(CYGPATH_W) $(srcdir)/../convex` \
 	-I`$(CYGPATH_W) $(srcdir)/../heuristics` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression` \

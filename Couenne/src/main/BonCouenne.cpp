@@ -20,6 +20,8 @@
 
 #include <stdlib.h>
 
+#include "CouenneConfig.h"
+
 #include "CoinTime.hpp"
 #include "CoinError.hpp"
 #include "BonCouenneInterface.hpp"
@@ -46,19 +48,16 @@ using namespace Couenne;
 #include "CouenneProblem.hpp"
 #include "CouenneJournalist.hpp"
 
-#include "config_couenne.h"
-
 int main (int argc, char *argv[]) {
 
     printf ("Couenne %s --  an Open-Source exact solver for MINLP\n", 
-	    strcmp (PACKAGE_VERSION, "trunk") ? PACKAGE_VERSION : "");
+	    strcmp (COUENNE_VERSION, "trunk") ? COUENNE_VERSION : "");
 
     printf ("\
-Mailing list: %s\n\
-Instructions: http://www.coin-or.org/Couenne\n",
-	    PACKAGE_BUGREPORT);
+Mailing list: couenne@list.coin-or.org\n\
+Instructions: http://www.coin-or.org/Couenne\n");
 
-  //WindowsErrorPopupBlocker();
+  WindowsErrorPopupBlocker();
   using namespace Ipopt;
 
   char * pbName = NULL;

@@ -9,12 +9,12 @@
 
 #include <vector>
 
+#include "CouenneConfig.h"
+
 #include "CoinHelperFunctions.hpp"
 #include "CoinTime.hpp"
 
 #include "BonBabSetupBase.hpp"
-
-#include "config_couenne.h"
 
 #include "CouenneTypes.hpp"
 

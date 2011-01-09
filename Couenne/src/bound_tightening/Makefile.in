@@ -148,6 +148,7 @@ COUENNELIB_PCREQUIRES = @COUENNELIB_PCREQUIRES@
 COUENNE_SVN_REV = @COUENNE_SVN_REV@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CPXINCDIR = @CPXINCDIR@
 CPX_CFLAGS = @CPX_CFLAGS@
 CPX_CFLAGS_INSTALLED = @CPX_CFLAGS_INSTALLED@
 CPX_DATA = @CPX_DATA@
@@ -330,6 +331,7 @@ libCouenneBoundTightening_la_LDFLAGS = $(LT_LDFLAGS)
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
 AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
+	-I`$(CYGPATH_W) $(srcdir)/..` \
 	-I`$(CYGPATH_W) $(srcdir)/../problem` \
 	-I`$(CYGPATH_W) $(srcdir)/../convex` \
 	-I`$(CYGPATH_W) $(srcdir)/../heuristics` \

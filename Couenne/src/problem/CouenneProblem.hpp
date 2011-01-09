@@ -15,24 +15,13 @@
 #include <vector>
 #include <map>
 
+#include "CouenneConfig.h"
+
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
 
 #include "CouenneJournalist.hpp"
 #include "CouenneDomain.hpp"
-
-// this is temporary and is aimed at overriding all definitions from
-// Ipopt with those of Couenne
-
-#undef PACKAGE
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_VERSION
-#undef PACKAGE_TARNAME
-#undef PACKAGE_NAME
-#undef PACKAGE_STRING
-#undef VERSION
-
-#include "config_couenne.h"
 
 namespace Ipopt {
   template <class T> class SmartPtr;

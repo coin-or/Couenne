@@ -70,7 +70,8 @@ fi
 #############################################################################
 
 # Bonmin AMPL interface
-AC_COIN_CHECK_PACKAGE(ASL, [bonminamplinterface])
+# bad bad: if AMPL stuff is available, then libCouenne will depend on it, so we add it to CouenneLib
+AC_COIN_CHECK_PACKAGE(ASL, [bonminamplinterface], [CouenneLib])
 
 # Nauty library (for symmetry detection)
 AC_LANG_PUSH(C)
@@ -82,6 +83,7 @@ AC_COIN_CHECK_PACKAGE(Cpx, [osi-cplex], [CouenneLib])
 AC_ARG_WITH([cplex-incdir],
   [AS_HELP_STRING([cplex-incdir], [specify the header file directory for library cplex])],
   [CPXINCDIR=`cd $withval; pwd`])
+AC_SUBST(CPXINCDIR)
 
 # other LP solvers
 AC_COIN_CHECK_PACKAGE(Grb, [osi-gurobi], [CouenneLib])  # Osi/Gurobi
