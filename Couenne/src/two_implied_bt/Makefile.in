@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am 478 2011-01-08 23:10:13Z stefan $
+# $Id: Makefile.am 480 2011-01-09 16:05:55Z stefan $
 #
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
