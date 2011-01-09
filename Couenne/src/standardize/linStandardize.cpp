@@ -127,8 +127,9 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf ("\nlinstand (addaux = %d) ==> ", addAux); 
-    ret -> print (); printf ("\n"); 
-    //  ret -> Image () -> print (); printf ("\n");
+    ret -> print (); printf ("\n");
+    //printf (": "); fflush (stdout); 
+    //ret -> Image () -> print ();     
   }
 
   //if (ret -> Type () == AUX)

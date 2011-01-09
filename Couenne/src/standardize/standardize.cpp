@@ -29,7 +29,7 @@ using namespace Couenne;
 bool CouenneProblem::standardize () {
 
   if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-    printf ("START: current point: %d vars -------------------\n", 
+    printf ("Reformulation. current point: %d vars -------------------\n", 
 	    domain_.current () -> Dimension ());
     for (int i=0; i<domain_.current () -> Dimension (); i++)
       printf ("%3d %20g [%20g %20g]\n", i, domain_.x (i), domain_.lb (i), domain_.ub (i));
@@ -150,9 +150,9 @@ bool CouenneProblem::standardize () {
        i != constraints_.end (); ++i) {
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("############# problem status now:\n"); 
-      print (); 
-      printf ("############# Constraint "); 
+      //printf ("############# problem status now:\n"); 
+      //print (); 
+      printf ("\nReformulating constraint: "); 
       (*i) -> print ();
     }
 
@@ -203,6 +203,10 @@ bool CouenneProblem::standardize () {
       // in the DAG stands at the maximum level -- no other variable
       // depends on it as it is the lhs of a constraint.
       aux -> top_level () = true;
+
+
+      // this constraint f(x)<=b is therefore replaced by w<=b, where
+      // w is the top-level auxiliary associated with f(x)
 
       //printf ("delete %x: ", ((*i) -> Body ())); ((*i) -> Body ()) -> print ();
       //printf ("\n"); 

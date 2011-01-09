@@ -20,8 +20,7 @@ using namespace Couenne;
 CouenneCrossConv::CouenneCrossConv (CouenneProblem *p,
 				    JnlstPtr,
 				    const Ipopt::SmartPtr <Ipopt::OptionsList>) {
-
-  setup (p);
+  setup ();
 }
 
 /// copy constructor

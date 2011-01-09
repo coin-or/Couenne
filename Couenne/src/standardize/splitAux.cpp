@@ -18,6 +18,7 @@
 #include "CouenneExprClone.hpp"
 #include "CouenneExprSum.hpp"
 #include "CouenneExprMul.hpp"
+#include "CouenneExprOpp.hpp"
 #include "CouenneExprGroup.hpp"
 #include "CouenneLQelems.hpp"
 
@@ -41,7 +42,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
   expression **alist = body -> ArgList ();
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf ("|||||||||| Splitting "); body -> print (); printf ("\n");
+    printf ("  Splitting expression: "); body -> print (); printf ("\n");
   }
 
   switch (code) { // constraint h(x) = 0 may be in different forms:
@@ -58,12 +59,14 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
     auxInd = (*alist) -> Index ();
 
-    if (auxInd < 0)
+    if (auxInd < 0) // first argument is not a variable
       elementBreak (*alist, auxInd, coeff); // check first element 
 
-    if ((auxInd < 0) || 
-	wentAux [auxInd] || 
+    if ((auxInd < 0) ||       // first argument is not a variable
+	wentAux [auxInd] ||   // it was, and it already became an auxiliary
 	(alist [1] -> dependsOn (auxInd, TAG_AND_RECURSIVE) >= 1)) {
+                              // it is not an auxiliary, but the remaining 
+                              // expression depends on it 
 
       auxInd = (alist [1]) -> Index ();
 
@@ -85,12 +88,13 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     // what remains is the "independent" expression
     expression *clone = alist [1 - pos] -> clone (&domain_); 
 
-    expression *auxdef = 
-      (fabs (coeff - 1) < COUENNE_EPS) ?          // if coefficient is 1
-      (clone) :                                   //     do nothing
-      new exprMul (new exprConst (coeff), clone); //     else multiply it by coefficient
+    expression *auxdef;
 
-    rest = (fabs (rhs) < COUENNE_EPS) ?                              // no extra constant?
+    if      (coeff ==  1.) auxdef =                                     clone;  // if coefficient is  1, do nothing      
+    else if (coeff == -1.) auxdef = new exprOpp                        (clone); // if coefficient is -1, return -f(x)
+    else                   auxdef = new exprMul (new exprConst (coeff), clone); // else multiply it by coefficient
+
+    rest = (rhs == 0.) ?                                             // no extra constant?
       (auxdef) :                                                     // just put other argument
       (new exprSum (auxdef, new exprConst ((pos==1) ? -rhs : rhs))); // otherwise sum it with \pm rhs
 
@@ -118,7 +122,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     CouNumber c0 = 0., auxcoe = 1;
     bool which_was_set = false;
 
-    // check indices of linear part /////////////////////////////////
+    // check indices of linear/quadratic part /////////////////////////////////
 
     if (code != COU_EXPRSUM) {
 
@@ -260,6 +264,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
       exprGroup *egBody = dynamic_cast <exprGroup *> (body -> isaCopy () ? 
 						      body -> Copy () : 
 						      body);
+
       exprGroup::lincoeff &lcoe = egBody -> lcoeff ();
 
       int mid = (which >= 0) ? nlin : - which - 1;
@@ -414,9 +419,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	delete [] newarglist;
       } else auxDef = new exprSum (newarglist, nargs);
 
-      if (fabs (auxcoe + 1) < COUENNE_EPS)
+      if (auxcoe == -1.)
 	rest = auxDef;
-      else if ((fabs (auxcoe - 1) < COUENNE_EPS) && 
+      else if ((auxcoe == 1.) && 
 	       (auxDef -> code () == COU_EXPROPP))
 	rest = auxDef -> Argument ();
       else
@@ -434,6 +439,8 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	    auxcoe = -auxcoe;
 	  }
 
+	  // TODO: if it's a c*(ax+b) return new exprGroup with (c*a, c*b)
+
 	  rest = new exprMul (new exprConst (-1./auxcoe), 
 			      ((auxDef -> Type () == AUX) ||
 			       (auxDef -> Type () == VAR)) ? new exprClone (auxDef) : auxDef);
@@ -446,7 +453,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     }
 
     if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-      printf ("generated "); rest -> print (); printf ("\n");
+      printf ("  Generated "); rest -> print (); printf ("\n");
     }
 
     auxInd = maxindex;
@@ -459,7 +466,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
   } break;
 
   default: break;
-  } // end switch () ////////////////////////////////////////////////////////
+  }
 
   if ((auxInd < 0) || (wentAux [auxInd]))
     return -1;
@@ -470,9 +477,8 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
   // standardize remaining of the expression
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf ("standardize rest (2nd level) "); fflush (stdout);
-    rest -> print (); printf (" [body = ");
-    body -> print (); printf ("]");
+    printf   ("  Standardize rest (2nd level). Rest: "); fflush (stdout); rest -> print (); 
+    printf ("\n                                Body: "); fflush (stdout); body -> print (); printf ("]\n");
   }
 
   // second argument is set to false so as to instruct standardize not
@@ -481,19 +487,17 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
   exprAux *aux = rest -> standardize (this, false);
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf (" {body = "); body -> print (); printf ("} ");
+
     if (aux) {
-      printf (" --- aux = "); 
-      aux -> print ();
-      printf (" := ");
-      aux -> Image () -> print ();
+      printf ("  Aux: "); aux -> print ();
+      printf (" := ");    aux -> Image () -> print ();
     }
   }
 
   if (aux) {
     //delete rest;
     //rest = aux -> Image () -> clone (&domain_);
-    rest = aux -> Image ();// -> clone (&domain_);
+    rest = aux -> Image (); // -> clone (&domain_);
     aux -> Image (NULL);
     delete aux;
   }

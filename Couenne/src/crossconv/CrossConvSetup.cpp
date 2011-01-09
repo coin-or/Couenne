@@ -13,6 +13,6 @@
 using namespace Couenne;
 
 /// the main CglCutGenerator
-void CouenneCrossConv::setup (CouenneProblem *p) {
+void CouenneCrossConv::setup () {
 
 }

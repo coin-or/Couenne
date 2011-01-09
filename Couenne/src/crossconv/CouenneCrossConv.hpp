@@ -165,7 +165,7 @@ namespace Couenne {
     static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions);
 
     /// Set up data structure to detect redundancies
-    void setup (CouenneProblem *p);
+    void setup ();
 
   protected:
 

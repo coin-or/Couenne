@@ -136,7 +136,7 @@ exprAux *CouenneProblem::addAuxiliary (expression *symbolic) {
 
   } else {  // otherwise, just return the entry's pointer
 
-    w->Image(NULL); // otherwise "delete w" will also delete user given expression "symbolic"
+    w -> Image(NULL); // otherwise "delete w" will also delete user given expression "symbolic"
     delete w;
     w = *i;
     (*i) -> increaseMult ();
