@@ -81,7 +81,7 @@ AC_LANG_POP(C)
 # CPLEX: check for OsiCplex, and check for cplex include dir, so we can include cplex.h
 AC_COIN_CHECK_PACKAGE(Cpx, [osi-cplex], [CouenneLib])
 AC_ARG_WITH([cplex-incdir],
-  [AS_HELP_STRING([cplex-incdir], [specify the header file directory for library cplex])],
+  [AS_HELP_STRING([--with-cplex-incdir], [specify the header file directory for library cplex])],
   [CPXINCDIR=`cd $withval; pwd`])
 AC_SUBST(CPXINCDIR)
 

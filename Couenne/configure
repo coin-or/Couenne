@@ -1129,7 +1129,7 @@ Optional Packages:
   --with-cpx-lib linker flags for using package Cpx
   --with-cpx-incdir directory with header files for using package Cpx
   --with-cpx-datadir directory with data files for using package Cpx
-  cplex-incdir            specify the header file directory for library cplex
+  --with-cplex-incdir     specify the header file directory for library cplex
   --with-grb-lib linker flags for using package Grb
   --with-grb-incdir directory with header files for using package Grb
   --with-grb-datadir directory with data files for using package Grb
