@@ -5,7 +5,7 @@
  *          Pietro Belotti, Lehigh University
  * Purpose: Object for orbital branching
  *
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 /*
 #ifndef COUENNEORBITOBJ_HPP

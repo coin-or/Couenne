@@ -1,7 +1,7 @@
 // (C) Copyright International Business Machines Corporation 2010
 // and others.
 // All Rights Reserved.
-// This code is published under the Common Public License.
+// This code is published under the Eclipse Public License (EPL).
 //
 // Authors :
 // Giacomo Nannicini, Tepper School of Business, Carnegie Mellon University

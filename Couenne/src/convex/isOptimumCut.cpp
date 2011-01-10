@@ -6,7 +6,7 @@
  *          erroneously cut by the row/col cuts we've added
  *
  * (C) Carnegie-Mellon University, 2009.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CglCutGenerator.hpp"

@@ -5,7 +5,7 @@
  * Purpose: a generator of disjunctive cuts for MINLP problems
  *
  * (C) Carnegie-Mellon University, 2008. 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNE_DISJUNCTIVE_CUTS_HPP

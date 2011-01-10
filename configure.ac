@@ -1,6 +1,6 @@
 # Copyright (C) 2008 Pietro Belotti
 # All Rights Reserved.
-# This file is distributed under the Common Public License.
+# This file is distributed under the Eclipse Public License.
 
 # Author:  Pietro Belotti
 # Template by Andreas Waechter
@@ -17,7 +17,7 @@ AC_COPYRIGHT([
 Copyright 2008 Pietro Belotti
 All Rights Reserved.
 This file is part of the open source package Coin-OR which is distributed
-under the Common Public License.])
+under the Eclipse Public License.])
 
 AC_REVISION(0.0)
 

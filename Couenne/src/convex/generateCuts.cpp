@@ -5,7 +5,7 @@
  * Purpose: the generateCuts() method of the convexification class CouenneCutGenerator
  *
  * (C) Carnegie-Mellon University, 2006-10.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "BonBabInfos.hpp"

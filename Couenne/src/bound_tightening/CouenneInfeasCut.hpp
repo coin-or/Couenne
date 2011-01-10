@@ -5,7 +5,7 @@
  * Purpose: An infeasible cut to tell the node solver this node is infeasible
  *
  * (C) Pietro Belotti, 2010.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNEINFEASCUT_HPP

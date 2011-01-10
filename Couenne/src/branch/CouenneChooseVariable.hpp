@@ -6,7 +6,7 @@
  * Purpose: Branching object for choosing branching auxiliary variable
  *
  * (C) Carnegie-Mellon University, 2006.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNECHOOSEVARIABLE_HPP

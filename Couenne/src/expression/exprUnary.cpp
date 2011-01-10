@@ -5,7 +5,7 @@
  * Purpose: methods of the unary expression class
  *
  * (C) Carnegie-Mellon University, 2006-2009.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CouenneProblem.hpp"

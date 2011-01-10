@@ -5,7 +5,7 @@
  * Purpose: A bound tightener based on fixpoint computation
  *
  * (C) Pietro Belotti, 2010.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNEFIXPOINT_HPP

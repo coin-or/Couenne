@@ -6,7 +6,7 @@
  *          quadratic = constant + linear + [nonlinear] + quadratic)
  *
  * (C) Carnegie-Mellon University, 2006-10.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNE_EXPRQUAD_H

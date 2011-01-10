@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: convexify trilinear terms
  *
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CouenneTypes.hpp"

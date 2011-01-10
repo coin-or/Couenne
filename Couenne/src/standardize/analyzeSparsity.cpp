@@ -6,7 +6,7 @@
  *          original one
  *
  * (C) Carnegie-Mellon University, 2007-10.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include <stdio.h>

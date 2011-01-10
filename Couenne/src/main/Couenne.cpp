@@ -2,7 +2,7 @@
 //
 // (C) Copyright International Business Machines Corporation and Carnegie Mellon University 2006, 2007
 // All Rights Reserved.
-// This code is published under the Common Public License.
+// This code is published under the Eclipse Public License (EPL).
 //
 // Authors :
 // Pietro Belotti, Lehigh University

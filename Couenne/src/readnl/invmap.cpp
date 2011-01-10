@@ -6,7 +6,7 @@
  *          inversely map e->op fields into constant operators
  *
  * (C) Carnegie-Mellon University, 2006-09.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include <stdlib.h>

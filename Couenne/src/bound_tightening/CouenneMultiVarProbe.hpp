@@ -5,7 +5,7 @@
  * Purpose: Bound tightening using more than one variable
  *
  * (C) Pietro Belotti, 2010.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNEMULTIVARPROBE_HPP

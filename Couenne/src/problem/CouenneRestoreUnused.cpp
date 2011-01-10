@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Restore a consistent value of duplicate variables 
  *
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CouenneProblem.hpp"

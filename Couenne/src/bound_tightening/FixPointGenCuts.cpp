@@ -5,7 +5,7 @@
  * Purpose: Fix point bound tightener -- separator
  *
  * (C) Pietro Belotti, 2010.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CoinHelperFunctions.hpp"

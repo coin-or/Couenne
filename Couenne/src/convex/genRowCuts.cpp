@@ -5,7 +5,7 @@
  * Purpose: generate Row Cuts for current convexification
  *
  * (C) Carnegie-Mellon University, 2006-09. 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CglCutGenerator.hpp"

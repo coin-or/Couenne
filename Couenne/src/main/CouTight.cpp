@@ -6,7 +6,7 @@
  * Purpose: Just applies bound tightening to a problem and saves new bounds as AMPL suffixed fields
  *
  * (C) Carnegie-Mellon University, 2008.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 

@@ -5,7 +5,7 @@
  * Purpose: Branching step with symmetry
  * Date:    October 13, 2010
  *
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CouenneObject.hpp"

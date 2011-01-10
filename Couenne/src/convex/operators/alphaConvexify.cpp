@@ -5,7 +5,7 @@
  * Purpose: create alpha-convexification of a quadratic expression
  *
  * (C) Carnegie-Mellon University, 2007-09.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 

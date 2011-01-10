@@ -6,7 +6,7 @@
  * Purpose: a cutoff that replicates itself, implementation
  *
  * (C) Carnegie-Mellon University, 2010.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CoinFinite.hpp"

@@ -5,7 +5,7 @@
  * Purpose: Convexification cuts on redundant relationships between auxiliaries
  *
  * (C) Pietro Belotti, 2010.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "BonRegisteredOptions.hpp"

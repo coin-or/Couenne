@@ -5,7 +5,7 @@
  * Purpose: based on upper and lower convexification, add cuts to convexify
  *
  * (C) International Business Machines 2007-10.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CoinHelperFunctions.hpp"

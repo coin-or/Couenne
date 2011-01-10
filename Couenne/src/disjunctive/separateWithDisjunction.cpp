@@ -5,7 +5,7 @@
  * Purpose: generate cuts of disjunction
  *
  * (C) Carnegie-Mellon University, 2008. 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CouennePrecisions.hpp"

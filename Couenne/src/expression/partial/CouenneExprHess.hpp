@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Hessian of the Lagrangian, definition
  * 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef CouenneExprHess_HPP

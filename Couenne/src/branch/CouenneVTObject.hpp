@@ -5,7 +5,7 @@
  * Purpose: Object for branching on variables using violation transfer
  *
  * (C) Carnegie-Mellon University, 2008-10.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNEVTOBJECT_HPP

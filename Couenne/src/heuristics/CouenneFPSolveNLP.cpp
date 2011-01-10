@@ -5,7 +5,7 @@
  *          Timo Berthold, ZIB Berlin
  * Purpose: Implement the NLP solution method for the Feasibility Pump 
  * 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CbcModel.hpp"

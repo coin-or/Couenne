@@ -5,7 +5,7 @@
  * Purpose: definition of the exprNorm class implementing $l_k$ norms
  *
  * (C) Carnegie-Mellon University, 2007. 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef EXPRNORM_HPP

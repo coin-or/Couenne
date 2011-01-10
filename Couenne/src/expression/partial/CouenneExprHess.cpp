@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Hessian of the Lagrangian, implementation
  * 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include <stdio.h> // ! must go

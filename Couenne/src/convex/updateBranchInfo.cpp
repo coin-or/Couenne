@@ -5,7 +5,7 @@
  * Purpose: get new bounds from parents' bounds + branching rules
  *
  * (C) Carnegie-Mellon University, 2006. 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CglCutGenerator.hpp"

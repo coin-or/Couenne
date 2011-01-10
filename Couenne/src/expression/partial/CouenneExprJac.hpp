@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Jacobian expression
  * 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef CouenneExprJac_HPP

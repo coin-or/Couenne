@@ -5,7 +5,7 @@
  * Purpose: method to get lower and upper bounds of a power x^y
  *
  * (C) Carnegie-Mellon University, 2006-09.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include <math.h>

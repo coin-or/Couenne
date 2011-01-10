@@ -14,11 +14,11 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am 441 2010-10-23 14:01:38Z pbelotti $
+# $Id: Makefile.am 487 2011-01-10 16:18:44Z pbelotti $
 #
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
-# This file is distributed under the Common Public License.
+# This file is distributed under the Eclipse Public License.
 
 # Author: Pietro Belotti, from a template by Pierre Bonami
 

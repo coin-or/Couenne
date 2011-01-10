@@ -5,7 +5,7 @@
  * Purpose: definition of $\f(x_{\argmax_{i\in I} y_i})$ 
  *
  * (C) Carnegie-Mellon University, 2006-09.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNE_EXPRMAX_H

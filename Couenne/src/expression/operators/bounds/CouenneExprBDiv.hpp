@@ -5,7 +5,7 @@
  * Purpose: definition of operators to compute lower/upper bounds of divisions
  *
  * (C) Carnegie-Mellon University, 2006. 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNE_EXPRBDIV_H

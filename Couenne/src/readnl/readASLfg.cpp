@@ -5,7 +5,7 @@
  * Purpose: re-read .nl file into a simpler ASL structure
  *
  * (C) Carnegie-Mellon University, 2006. 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "asl.h"

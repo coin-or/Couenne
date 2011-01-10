@@ -5,7 +5,7 @@
  * Purpose: A bound tightener based on aggressive probing
  *
  * (C) Giacomo Nannicini, 2010.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNEAGGRPROBING_HPP

@@ -5,7 +5,7 @@
  * Purpose: definition of divisions
  *
  * (C) Carnegie-Mellon University, 2006-08. 
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "assert.h"

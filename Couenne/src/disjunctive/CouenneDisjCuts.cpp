@@ -5,7 +5,7 @@
  * Purpose: methods for the disjunctive cuts
  *
  * (C) Carnegie-Mellon University, 2008-09.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CouenneCutGenerator.hpp"

@@ -5,7 +5,7 @@
  * Purpose: numerically find tangents to power functions
  *
  * (C) Carnegie-Mellon University, 2006-07.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include <math.h>

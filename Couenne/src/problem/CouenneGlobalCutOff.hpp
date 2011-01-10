@@ -6,7 +6,7 @@
  * Purpose: a cutoff that replicates itself
  *
  * (C) Carnegie-Mellon University, 2010.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNE_GLOBAL_CUTOFF_HPP

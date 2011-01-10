@@ -5,7 +5,7 @@
  * Purpose: tighten bounds prior to convexification cuts
  *
  * (C) Carnegie-Mellon University, 2006-10.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #include "CouenneCutGenerator.hpp"

@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2007 International Business Machines and others.
 // All Rights Reserved.
-// This code is published under the Common Public License.
+// This code is published under the Eclipse Public License (EPL).
 //
 // Author:  Andreas Waechter           IBM    2007-12-04
 

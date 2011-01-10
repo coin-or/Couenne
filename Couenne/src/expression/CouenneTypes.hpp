@@ -5,7 +5,7 @@
  * Purpose: define number types used throughout the code
  *
  * (C) Carnegie-Mellon University, 2006-07
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNE_TYPES_H

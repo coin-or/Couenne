@@ -5,7 +5,7 @@
  * Purpose: find roots of polynomial Q^k(x) (see Liberti and Pantelides, 2003)
  *
  * (C) Carnegie-Mellon University, 2006-10.
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef CouenneRootQ_hpp

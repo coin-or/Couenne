@@ -5,7 +5,7 @@
  *          Pietro Belotti, Lehigh University
  * Purpose: Branching object for auxiliary variables
  *
- * This file is licensed under the Common Public License (CPL)
+ * This file is licensed under the Eclipse Public License (EPL) (EPL)
  */
 
 #ifndef COUENNEORBITBRANCHINGOBJ_HPP
