@@ -1,4 +1,4 @@
-// $Id: Couenne.cpp 154 2009-06-16 18:52:53Z pbelotti $
+// $Id$
 //
 // (C) Copyright International Business Machines Corporation and Carnegie Mellon University 2006, 2007
 // All Rights Reserved.

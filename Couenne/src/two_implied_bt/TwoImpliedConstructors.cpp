@@ -8,6 +8,7 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
+#include "OsiCuts.hpp"
 #include "BonRegisteredOptions.hpp"
 #include "CouenneTwoImplied.hpp"
 

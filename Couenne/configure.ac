@@ -39,7 +39,7 @@ AC_PREFIX_DEFAULT([`pwd`])
 AC_CANONICAL_BUILD
 
 # Initialization specifically for project main directories
-AC_COIN_PROJECTDIR_INIT
+AC_COIN_PROJECTDIR_INIT(Couenne)
 
 # Check if user wants to produce debugging code
 AC_COIN_DEBUG_COMPILE(Couenne)
@@ -57,47 +57,39 @@ AC_COIN_INIT_AUTO_TOOLS
 AC_COIN_CHECK_CXX_CHEADER(stdint)
 
 #############################################################################
-#                              COIN components                              #
+#                            COIN-OR components                             #
 #############################################################################
 
-AC_COIN_HAS_PROJECT(ThirdParty)
-AC_COIN_HAS_PROJECT(CoinUtils)
-AC_COIN_HAS_PROJECT(Clp)
-AC_COIN_HAS_PROJECT(Bonmin)
-AC_COIN_HAS_PROJECT(Ipopt)
-AC_COIN_HAS_PROJECT(Cbc)
-AC_COIN_HAS_PROJECT(Osi)
-AC_COIN_HAS_PROJECT(Cgl)
-AC_COIN_HAS_PROJECT(Couenne)
+AC_COIN_CHECK_PACKAGE(Bonmin, [bonmin], [CouenneLib])
+if test $coin_has_bonmin != yes ; then
+  AC_MSG_ERROR([Required package Bonmin not available.])
+fi
 
 #############################################################################
 #                       Other third party software                          #
 #############################################################################
 
-# Ampl Solver library
-AC_COIN_HAS_ASL
+# Bonmin AMPL interface
+# bad bad: if AMPL stuff is available, then libCouenne will depend on it, so we add it to CouenneLib
+AC_COIN_CHECK_PACKAGE(ASL, [bonminamplinterface], [CouenneLib])
 
 # Nauty library (for symmetry detection)
 AC_LANG_PUSH(C)
-AC_COIN_HAS_USER_LIBRARY([Nauty],[NTY],[nauty.h],[nauty])
+AC_COIN_CHECK_USER_LIBRARY([Nauty],[NTY],[nauty.h],[nauty],,[CouenneLib])
 AC_LANG_POP(C)
 
-AC_COIN_HAS_USER_LIBRARY([Cplex],[CPX],[cplex.h],[CPXgetstat])         # Cplex library
-AC_COIN_HAS_USER_LIBRARY([Gurobi],[GRB],[gurobi_c.h],[GRBgetattrinfo]) # Gurobi library
-AC_COIN_HAS_USER_LIBRARY([Mosek],[MSK],[mosek.h],[MSK_openmosek])      # Mosek
-AC_COIN_HAS_USER_LIBRARY([Osl],[OSL],[ekk_c_api.h],[ekk_simplex])      # OSL
-AC_COIN_HAS_USER_LIBRARY([Soplex],[SPX],[spxsolver.h])                 # Soplex library
-AC_COIN_HAS_USER_LIBRARY([Xpress],[XPR],[xprs.h],[XPRSsetintcontrol])  # XpressMP
+# CPLEX: check for OsiCplex, and check for cplex include dir, so we can include cplex.h
+AC_COIN_CHECK_PACKAGE(Cpx, [osi-cplex], [CouenneLib])
+AC_ARG_WITH([cplex-incdir],
+  [AS_HELP_STRING([--with-cplex-incdir], [specify the header file directory for library cplex])],
+  [CPXINCDIR=`cd $withval; pwd`])
+AC_SUBST(CPXINCDIR)
 
-##############################################################################
-#                   VPATH links for example input files                      #
-##############################################################################
-
-# In case this is a VPATH configuration we need to make sure that the
-# input files for the examples are available in the VPATH directory.
-
-#AC_COIN_VPATH_LINK(examples/hello.mps)
-#AC_COIN_VPATH_LINK(examples/input.130)
+# other LP solvers
+AC_COIN_CHECK_PACKAGE(Grb, [osi-gurobi], [CouenneLib])  # Osi/Gurobi
+AC_COIN_CHECK_PACKAGE(Msk, [osi-mosek],  [CouenneLib])  # Osi/Mosek
+AC_COIN_CHECK_PACKAGE(Spx, [osi-soplex], [CouenneLib])  # Osi/Soplex
+AC_COIN_CHECK_PACKAGE(Xpr, [osi-xpress], [CouenneLib])  # Osi/XpressMP
 
 ##############################################################################
 #                   Finishing up by writing all the output                   #
@@ -125,7 +117,7 @@ AC_CONFIG_FILES([Makefile
                  src/two_implied_bt/Makefile
                  src/Makefile
 		 test/grandTest.sh
-		 couenne_addlibs.txt])
+		 couenne.pc couenne-uninstalled.pc])
 
 # Here put the location and name of the configuration header file
 AC_CONFIG_HEADER([inc/config_couenne.h])

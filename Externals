@@ -1,4 +1,4 @@
-BuildTools  https://projects.coin-or.org/svn/BuildTools/releases/0.5.30
+BuildTools  https://projects.coin-or.org/svn/BuildTools/stable/0.7
 CoinUtils  https://projects.coin-or.org/svn/CoinUtils/releases/2.6.4/CoinUtils
 ThirdParty/ASL  https://projects.coin-or.org/svn/BuildTools/ThirdParty/ASL/releases/1.0.17
 ThirdParty/Blas  https://projects.coin-or.org/svn/BuildTools/ThirdParty/Blas/releases/1.0.14

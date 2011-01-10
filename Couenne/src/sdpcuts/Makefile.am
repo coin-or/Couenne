@@ -30,34 +30,20 @@ libCouenneSdpCuts_la_SOURCES = \
 #	disjunctive_cuts.cpp 
 #	rlt_cuts.cpp 
 
-libCouenneSdpCuts_la_DEPENDENCIES = $(libCouenneSdpCuts_la_LIBADD)
-
-# This is for libtool (on Windows)
+# This is for libtool
 libCouenneSdpCuts_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(COINUTILSOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Interfaces` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/LinAlg` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` \
-	-I`$(CYGPATH_W) $(CLPSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CLPOBJDIR)/inc` 
+AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
+	-I`$(CYGPATH_W) $(srcdir)/..` \
+	-I`$(CYGPATH_W) $(srcdir)/../convex` \
+	-I`$(CYGPATH_W) $(srcdir)/../problem`
 
-if COIN_HAS_COUENNE
-  AM_CPPFLAGS += 
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/sdpcuts` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem`
+if COIN_HAS_CPX
+AM_CPPFLAGS += -I`$(CYGPATH_W) $(CPXINCDIR)`
 endif
 
-if COIN_HAS_NTY
-  AM_CPPFLAGS += \
-	-I`$(CYGPATH_W) $(NTYINCDIR)`
-endif
+# This line is necessary to allow VPATH compilation with MS compilers
+# on Cygwin
+DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc

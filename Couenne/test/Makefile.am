@@ -2,7 +2,7 @@
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 
-## $Id: Makefile.am 41 2006-12-22 00:43:42Z pbelotti $
+## $Id$
 
 # Author:  Andreas Waechter           IBM    2006-04-13
 

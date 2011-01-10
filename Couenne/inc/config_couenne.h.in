@@ -6,56 +6,35 @@
 /* Define to the debug verbosity level (0 is no output) */
 #undef COIN_COUENNE_VERBOSITY
 
-/* If defined, the Ampl Solver Library is available. */
+/* Define to 1 if the ASL package is available */
 #undef COIN_HAS_ASL
 
-/* Define to 1 if the Bonmin package is used */
+/* Define to 1 if the Bonmin package is available */
 #undef COIN_HAS_BONMIN
 
-/* Define to 1 if the Cbc package is used */
-#undef COIN_HAS_CBC
-
-/* Define to 1 if the Cgl package is used */
-#undef COIN_HAS_CGL
-
-/* Define to 1 if the Clp package is used */
-#undef COIN_HAS_CLP
-
-/* Define to 1 if the CoinUtils package is used */
-#undef COIN_HAS_COINUTILS
-
-/* Define to 1 if the Couenne package is used */
-#undef COIN_HAS_COUENNE
-
-/* Define to 1 if the Cplex package is available */
+/* Define to 1 if the Cpx package is available */
 #undef COIN_HAS_CPX
 
-/* Define to 1 if the Gurobi package is available */
+/* Define to 1 if the Grb package is available */
 #undef COIN_HAS_GRB
 
-/* Define to 1 if the Ipopt package is used */
-#undef COIN_HAS_IPOPT
-
-/* Define to 1 if the Mosek package is available */
+/* Define to 1 if the Msk package is available */
 #undef COIN_HAS_MSK
 
 /* Define to 1 if the Nauty package is available */
 #undef COIN_HAS_NTY
 
-/* Define to 1 if the Osi package is used */
-#undef COIN_HAS_OSI
-
-/* Define to 1 if the Osl package is available */
-#undef COIN_HAS_OSL
-
-/* Define to 1 if the Soplex package is available */
+/* Define to 1 if the Spx package is available */
 #undef COIN_HAS_SPX
 
-/* Define to 1 if the ThirdParty package is used */
-#undef COIN_HAS_THIRDPARTY
-
-/* Define to 1 if the Xpress package is available */
+/* Define to 1 if the Xpr package is available */
 #undef COIN_HAS_XPR
+
+/* SVN revision number of project */
+#undef COUENNE_SVN_REV
+
+/* Version number of project */
+#undef COUENNE_VERSION
 
 /* Define to 1 if you have the <cstdint> header file. */
 #undef HAVE_CSTDINT

@@ -1,4 +1,4 @@
-/* $Id: Nauty.h,v 1.3 2008-09-16 23:37:42 jao204 Exp $ 
+/* $Id$ 
  *
  * Name:    Nauty.cpp
  * Authors: Jim Ostrowski

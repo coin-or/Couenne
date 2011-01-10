@@ -14,49 +14,20 @@ libCouenneInterfaces_la_SOURCES = \
 	CouenneTNLP.cpp \
 	CouenneMINLPInterface.cpp
 
-libCouenneInterfaces_la_LIBADD = \
-	../../../Bonmin/src/Interfaces/Ampl/BonAmplInterface.lo
-
-libCouenneInterfaces_la_DEPENDENCIES = $(libCouenneInterfaces_la_LIBADD)
-
-# This is for libtool (on Windows)
+# This is for libtool
 libCouenneInterfaces_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ampl` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/CbcBonmin` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Interfaces` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src` \
-	-I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` \
-	-I`$(CYGPATH_W) $(COINUTILSOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/LinAlg` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/OaGenerators` \
-	-I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms` \
-	-I`$(CYGPATH_W) $(CBCSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` \
-	-I`$(CYGPATH_W) $(CLPSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CBCOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(CLPOBJDIR)/inc` 
+AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) \
+	-I`$(CYGPATH_W) $(srcdir)/..` \
+	-I`$(CYGPATH_W) $(srcdir)/../convex` \
+	-I`$(CYGPATH_W) $(srcdir)/../expression` \
+	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
+	-I`$(CYGPATH_W) $(srcdir)/../expression/partial` \
+	-I`$(CYGPATH_W) $(srcdir)/../branch`\
+	-I`$(CYGPATH_W) $(srcdir)/../problem`
 
-if COIN_HAS_COUENNE
-  AM_CPPFLAGS += \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/partial` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/interfaces`
-endif
-
-if COIN_HAS_NTY
-  AM_CPPFLAGS += \
-	-I`$(CYGPATH_W) $(NTYINCDIR)`
-endif
+# This line is necessary to allow VPATH compilation with MS compilers
+# on Cygwin
+DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc

@@ -17,6 +17,15 @@
 #ifdef COIN_HAS_CPX
 #include "OsiCpxSolverInterface.hpp"
 #endif
+#ifdef COIN_HAS_GRB
+#include "OsiGrbSolverInterface.hpp"
+#endif
+#ifdef COIN_HAS_SPX
+#include "OsiSpxSolverInterface.hpp"
+#endif
+#ifdef COIN_HAS_XPR
+#include "OsiXprSolverInterface.hpp"
+#endif
 
 // MILP cuts
 #include "CglGomory.hpp"

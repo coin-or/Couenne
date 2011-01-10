@@ -1,4 +1,4 @@
-/* $Id: impliedBounds-exprTrilinear.cpp 427 2010-10-19 05:48:12Z pbelotti $
+/* $Id$
  *
  * Name:    impliedBounds-exprTrilinear.cpp
  * Author:  Pietro Belotti

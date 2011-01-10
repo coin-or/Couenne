@@ -1,8 +1,9 @@
-## $Id:$
-#
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
+#
+## $Id$
+#
 # Authors:  Andreas Waechter           IBM    2006-04-13
 #           Pietro Belotti
 
@@ -38,7 +39,7 @@ libCouenne_la_LIBADD = \
 
 libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
 
-# This is for libtool (on Windows)
+# This is for libtool
 libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 ########################################################################
@@ -47,74 +48,22 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
-AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(BONMINOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/Branching` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/OaGenerators` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Algorithms/Ampl` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ipopt` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Ampl` \
-	-I`$(CYGPATH_W) $(BONMINSRCDIR)/src/CbcBonmin` \
-	-I`$(CYGPATH_W) $(IPOPTOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Common` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Interfaces` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/LinAlg` \
-	-I`$(CYGPATH_W) $(IPOPTSRCDIR)/src/Apps/AmplSolver` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CBCSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CBCOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(COINUTILSSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(COINUTILSOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(CLPOBJDIR)/inc` \
-	-I`$(CYGPATH_W) $(CLPSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiClp` \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCbc`\
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding2` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglLandP` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglRedSplit` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglGomory` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglProbing` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglOddHole` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglClique` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglFlowCover` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglMixedIntegerRounding` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglTwomir` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglKnapsackCover` \
-	-I`$(CYGPATH_W) $(CGLSRCDIR)/src/CglPreProcess`
 
-if COIN_HAS_CPX
-  AM_CPPFLAGS += \
-	-I`$(CYGPATH_W) $(OSISRCDIR)/src/OsiCpx` \
-	-I`$(CYGPATH_W) $(CPXINCDIR)`
-endif
-
-if COIN_HAS_NTY
-  AM_CPPFLAGS += \
-	-I`$(CYGPATH_W) $(NTYINCDIR)`
-endif
-
-#if COIN_HAS_FILTERSQP
-#  AM_CPPFLAGS += -I`$(CYGPATH_W) $(BONMINSRCDIR)/src/Interfaces/Filter` 
-#endif
-
-AM_CPPFLAGS += \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/interfaces` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/heuristics` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/expression/operators` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/disjunctive` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/sdpcuts` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/main` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/problem` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/branch` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/sdpcuts` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/ellipcuts` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/crossconv` \
-	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/two_implied_bt`
+AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
+	-I`$(CYGPATH_W) $(srcdir)/convex` \
+	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
+	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
+	-I`$(CYGPATH_W) $(srcdir)/expression` \
+	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
+	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
+	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
+	-I`$(CYGPATH_W) $(srcdir)/main` \
+	-I`$(CYGPATH_W) $(srcdir)/problem` \
+	-I`$(CYGPATH_W) $(srcdir)/branch` \
+	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
+	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` \
+	-I`$(CYGPATH_W) $(srcdir)/crossconv` \
+	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
@@ -125,7 +74,7 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
 ########################################################################
 
 # Here list all the header files that are required by a user of the library,
-# and that therefore should be installed in 'install/coin'
+# and that therefore should be installed in 'include/coin'
 includecoindir = $(includedir)/coin
 includecoin_HEADERS = \
 	../inc/config_couenne.h \
@@ -224,8 +173,7 @@ includecoin_HEADERS = \
 	sdpcuts/tracer.hpp 
 
 if COIN_HAS_NTY
-includecoin_HEADERS += \
-	branch/Nauty.h
+includecoin_HEADERS += branch/Nauty.h
 endif
 
 #############################################################################
