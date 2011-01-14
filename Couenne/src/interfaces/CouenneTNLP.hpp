@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Definition of an NLP interface with gradient/Jacobian/etc
  * 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #ifndef COUENNETNLP_HPP

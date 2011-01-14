@@ -6,7 +6,7 @@
  * Purpose: Implementation of the OsiSolverInterface::resolve () method 
  *
  * (C) Carnegie-Mellon University, 2006-09.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "OsiSolverInterface.hpp"

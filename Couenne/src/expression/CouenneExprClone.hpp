@@ -6,7 +6,7 @@
  *          that evaluation is propagated)
  *
  * (C) Carnegie-Mellon University, 2006. 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #ifndef COUENNE_EXPRCLONE_HPP

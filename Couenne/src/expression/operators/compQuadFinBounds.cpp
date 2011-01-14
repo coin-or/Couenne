@@ -5,7 +5,7 @@
  * Purpose: compute bounds on quadratic form without the contribution of a single variable
  *
  * (C) Carnegie-Mellon University, 2006. 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CouenneExprQuad.hpp"

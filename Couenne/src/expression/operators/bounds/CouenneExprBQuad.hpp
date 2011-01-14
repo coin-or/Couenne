@@ -5,7 +5,7 @@
  * Purpose: definition of operators to compute lower/upper bounds of quadratic forms
  *
  * (C) Carnegie-Mellon University, 2006. 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #ifndef COUENNE_EXPRBQUAD_H

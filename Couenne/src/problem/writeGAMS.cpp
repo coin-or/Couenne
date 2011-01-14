@@ -5,7 +5,7 @@
  * Purpose: save a problem in GAMS format
  *
  * (C) Carnegie-Mellon University, 2006. 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include <fstream>

@@ -5,7 +5,7 @@
  * Purpose: definition of the class exprVar for variables 
  *
  * (C) Carnegie-Mellon University, 2006-10.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #ifndef COUENNE_EXPRVAR_HPP

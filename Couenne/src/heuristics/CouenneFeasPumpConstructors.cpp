@@ -5,7 +5,7 @@
  *          Timo Berthold, ZIB Berlin
  * Purpose: Implement the Feasibility Pump heuristic class
  *
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include <string>

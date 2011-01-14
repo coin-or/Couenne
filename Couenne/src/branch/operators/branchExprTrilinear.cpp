@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: return branch data for trilinear terms
  *
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CouennePrecisions.hpp"

@@ -6,7 +6,7 @@
  * Purpose: Branching object for choosing branching auxiliary variable
  *
  * (C) Carnegie-Mellon University, 2006-10.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "OsiSolverInterface.hpp"

@@ -5,7 +5,7 @@
  * Purpose: generate Column Cuts for improved bounds
  *
  * (C) Carnegie-Mellon University, 2006-07.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CglCutGenerator.hpp"

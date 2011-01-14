@@ -5,7 +5,7 @@
  * Purpose: turn OsiSolverInterface objects into coefficient matrix and rhs vector
  *
  * (C) Carnegie-Mellon University, 2008. 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CouenneDisjCuts.hpp"

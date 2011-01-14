@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: implied bounds for trilinear terms
  *
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CouenneExprMul.hpp"

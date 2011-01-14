@@ -5,7 +5,7 @@
  * Purpose: bound tightening for current linear relaxation
  *
  * (C) Carnegie-Mellon University, 2006-10.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CglCutGenerator.hpp"

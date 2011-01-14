@@ -5,7 +5,7 @@
  * Purpose: Bound Tightening using pairs of linear inequalities or equations
  *
  * (C) Pietro Belotti, 2010.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #ifndef COUENNETWOIMPLIED_HPP

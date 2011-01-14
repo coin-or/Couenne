@@ -5,7 +5,7 @@
  *          Timo Berthold, ZIB Berlin
  * Purpose: Find solution by looping through MILP solvers/heuristics
  * 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CbcModel.hpp"

@@ -5,7 +5,7 @@
  * Purpose: OsiSolverInterface with a pointer to a CouenneCutGenerator object
  *
  * (C) Carnegie-Mellon University, 2007-09.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #ifndef COUENNESOLVERINTERFACE_HPP

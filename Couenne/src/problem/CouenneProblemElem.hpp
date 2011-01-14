@@ -5,7 +5,7 @@
  * Purpose: define the classes used by class CouenneProblem
  *
  * (C) Carnegie-Mellon University, 2006-08. 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #ifndef COUENNE_PROBLEM_ELEM_HPP

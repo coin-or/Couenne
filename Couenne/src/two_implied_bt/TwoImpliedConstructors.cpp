@@ -5,7 +5,7 @@
  * Purpose: Bound Tightening on pairs of linear constraints -- constructors
  *
  * (C) Pietro Belotti, 2010.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "OsiCuts.hpp"

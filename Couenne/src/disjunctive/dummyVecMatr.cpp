@@ -5,7 +5,7 @@
  * Purpose: fill in empty or single valued vectors and matrices
  *
  * (C) Carnegie-Mellon University, 2008. 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "OsiSolverInterface.hpp"

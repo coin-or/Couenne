@@ -5,7 +5,7 @@
  * Purpose: check if expr{Group,Sum,Sub} contains a lot of quadratic/bilinear terms
  *
  * (C) Carnegie-Mellon University, 2007-10.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include <stdio.h>

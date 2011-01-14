@@ -5,7 +5,7 @@
  * Purpose: decompose element of sum if it is of the form cx or x
  *
  * (C) Carnegie-Mellon University, 2007. 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CouenneExpression.hpp"

@@ -5,7 +5,7 @@
  *          Timo Berthold, ZIB Berlin
  * Purpose: Solve the MILP within the Feasibility Pump 
  * 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CbcModel.hpp"

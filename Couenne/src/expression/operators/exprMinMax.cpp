@@ -5,7 +5,7 @@
  * Purpose: definition of min and max operators
  *
  * (C) Carnegie-Mellon University, 2006. 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "OsiSolverInterface.hpp"

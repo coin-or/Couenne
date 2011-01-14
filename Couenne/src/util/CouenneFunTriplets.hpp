@@ -5,7 +5,7 @@
  * Purpose: class for representing a function and its first- and second-order derivative
  *
  * (C) Carnegie-Mellon University, 2007-10
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #ifndef Funtriplets_hpp

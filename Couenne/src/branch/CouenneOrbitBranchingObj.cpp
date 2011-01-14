@@ -6,7 +6,7 @@
  *          
  * Purpose: Branching object for auxiliary variables
  *
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CoinHelperFunctions.hpp"

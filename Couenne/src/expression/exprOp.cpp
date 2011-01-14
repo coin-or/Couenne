@@ -5,7 +5,7 @@
  * Purpose: methods for multivariate function class
  *
  * (C) Carnegie-Mellon University, 2006-08.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CouenneExpression.hpp"

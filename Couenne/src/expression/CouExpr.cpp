@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: Container class for expressions
  *
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CouExpr.hpp"

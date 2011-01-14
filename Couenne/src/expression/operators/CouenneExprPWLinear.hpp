@@ -5,7 +5,7 @@
  * Purpose: definition of the exprPWLinear class implementing piecewise linear functions
  *
  * (C) Carnegie-Mellon University, 2007. 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #ifndef EXPRPWLINEAR_HPP

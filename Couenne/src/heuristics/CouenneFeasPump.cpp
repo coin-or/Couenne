@@ -6,7 +6,7 @@
  * Purpose: Implement the Feasibility Pump heuristic class
  * Created: August 5, 2009
  * 
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CbcModel.hpp"

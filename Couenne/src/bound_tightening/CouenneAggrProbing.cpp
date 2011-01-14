@@ -5,7 +5,7 @@
  * Purpose: Aggressive probing
  *
  * (C) Giacomo Nannicini, 2010.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "CouenneAggrProbing.hpp"

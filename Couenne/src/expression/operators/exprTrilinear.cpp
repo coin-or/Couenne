@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of trilinear terms
  *
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include <stdlib.h>

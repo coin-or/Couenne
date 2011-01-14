@@ -5,7 +5,7 @@
  * Purpose: An infeasible cut to tell the node solver this node is infeasible -- implementation
  *
  * (C) Pietro Belotti, 2010.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include "OsiCuts.hpp"

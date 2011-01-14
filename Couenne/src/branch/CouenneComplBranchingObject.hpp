@@ -5,7 +5,7 @@
  * Purpose: Branching object for complementarity constraints
  *
  * (C) Carnegie-Mellon University, 2008-09.
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #ifndef COUENNECOMPLBRANCHINGOBJECT_HPP

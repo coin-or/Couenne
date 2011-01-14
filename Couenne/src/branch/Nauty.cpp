@@ -5,7 +5,7 @@
  * Purpose: Branching with symmetry -- implementation of the Nauty object
  * Date:    October 13, 2010
  *
- * This file is licensed under the Eclipse Public License (EPL) (EPL)
+ * This file is licensed under the Eclipse Public License (EPL)
  */
 
 #include <cassert>
