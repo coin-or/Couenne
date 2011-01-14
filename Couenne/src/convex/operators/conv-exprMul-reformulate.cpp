@@ -51,10 +51,10 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
     if (i -> second == 1.) arglist [nArgs++] = new exprClone (p                -> Var (i -> first));
     else                   arglist [nArgs++] = new exprPow   (new exprClone (p -> Var (i -> first)), new exprConst (i -> second));
 
-  while (nargs_--)
-    delete arglist_ [nargs_];
+  //while (nargs_--)
+  //delete arglist_ [nargs_];
 
-  delete [] arglist_;
+  //delete [] arglist_;
 
   arglist_ = arglist;
   nargs_ = indCoe.size();
