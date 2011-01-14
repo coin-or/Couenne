@@ -4,7 +4,7 @@ ThirdParty/ASL https://projects.coin-or.org/svn/BuildTools/ThirdParty/ASL/stable
 ThirdParty/Blas https://projects.coin-or.org/svn/BuildTools/ThirdParty/Blas/stable/1.2
 ThirdParty/HSL https://projects.coin-or.org/svn/BuildTools/ThirdParty/HSL/stable/1.3
 ThirdParty/Lapack https://projects.coin-or.org/svn/BuildTools/ThirdParty/Lapack/stable/1.3
-ThirdParty/Mumps https://projects.coin-or.org/svn/BuildTools/ThirdParty/Mumps/stable/1.4
+ThirdParty/Mumps https://projects.coin-or.org/svn/BuildTools/ThirdParty/Mumps/stable/1.1
 ThirdParty/Metis https://projects.coin-or.org/svn/BuildTools/ThirdParty/Metis/stable/1.2
 Cbc            https://projects.coin-or.org/svn/Cbc/stable/2.7/Cbc
 Cgl            https://projects.coin-or.org/svn/Cgl/stable/0.57/Cgl
