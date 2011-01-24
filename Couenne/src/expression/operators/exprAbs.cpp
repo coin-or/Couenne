@@ -58,7 +58,7 @@ void exprAbs::getBounds (CouNumber &lb, CouNumber &ub) {
     ub = -lba;
   } else {
     lb = 0;
-    ub = CoinMax (-lb, ub);
+    ub = CoinMax (-lba, uba);
   }
 }
 
