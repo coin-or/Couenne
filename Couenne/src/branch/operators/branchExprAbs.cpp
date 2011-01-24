@@ -49,7 +49,7 @@ CouNumber exprAbs::selectBranch (const CouenneObject *obj,
 
   brDist = (double *) realloc (brDist, 2 * sizeof (double));
 
-  assert ((y0 >= x0) && (y0 >= -x0));
+  assert ((y0 >= x0 - COUENNE_EPS) && (y0 >= -x0 - COUENNE_EPS));
 
   brDist [0] = (x0 + y0) / sqrt_2;
   brDist [1] = (y0 - x0) / sqrt_2;
