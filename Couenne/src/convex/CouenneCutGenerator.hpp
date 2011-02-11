@@ -66,7 +66,7 @@ class CouenneCutGenerator: public CglCutGenerator {
   mutable double objValue_;
 
   /// nonlinear solver interface as used within Bonmin (used at first
-  /// Couenne pass of each b&b node
+  /// Couenne pass of each b&b node)
   Bonmin::OsiTMINLPInterface *nlp_;
 
   /// pointer to the Bab object (used to retrieve the current primal
@@ -236,6 +236,11 @@ class CouenneCutGenerator: public CglCutGenerator {
   /// returns value of enable_lp_implied_bounds_
   bool enableLpImpliedBounds () const
   {return enable_lp_implied_bounds_;}
+
+  /// nonlinear solver interface as used within Bonmin (used at first
+  /// Couenne pass of each b&b node)
+  Bonmin::OsiTMINLPInterface *Nlp () const
+  {return nlp_;}
 };
 
 
