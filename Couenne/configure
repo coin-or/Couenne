@@ -22101,9 +22101,9 @@ COIN_PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
 # best would actually to use ${libdir}, since .pc files get installed into ${libdir}/pkgconfig,
 # unfortunately, ${libdir} expands to ${exec_prefix}/lib and ${exec_prefix} to ${prefix}...
 if test "x${prefix}" = xNONE ; then
-  COIN_PKG_CONFIG_PATH="${ac_default_prefix}/lib/pkgconfig:${COIN_PKG_CONFIG_PATH}"
+  COIN_PKG_CONFIG_PATH="${ac_default_prefix}/lib/pkgconfig:${ac_default_prefix}/share/pkgconfig:${COIN_PKG_CONFIG_PATH}"
 else
-  COIN_PKG_CONFIG_PATH="${prefix}/lib/pkgconfig:${COIN_PKG_CONFIG_PATH}"
+  COIN_PKG_CONFIG_PATH="${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig:${COIN_PKG_CONFIG_PATH}"
 fi
 
 
@@ -22115,7 +22115,7 @@ if test "${with_coin_instdir+set}" = set; then
 echo "$as_me: error: argument for --with-coin-instdir not a directory" >&2;}
    { (exit 1); exit 1; }; }
    fi
-   COIN_PKG_CONFIG_PATH="$withval/lib/pkgconfig:${COIN_PKG_CONFIG_PATH}"
+   COIN_PKG_CONFIG_PATH="$withval/lib/pkgconfig:$withval/share/pkgconfig:${COIN_PKG_CONFIG_PATH}"
 
 fi;
 
@@ -22204,6 +22204,11 @@ if test "${with_bonmin_lib+set}" = set; then
          COUENNELIB_PCLIBS="$withval $COUENNELIB_PCLIBS"
          COUENNELIB_LIBS="$withval $COUENNELIB_LIBS"
 
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         BONMIN_LIBS_INSTALLED="$withval"
+         COUENNELIB_LIBS_INSTALLED="$withval $COUENNELIB_LIBS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -22219,7 +22224,12 @@ if test "${with_bonmin_incdir+set}" = set; then
      else
        coin_has_bonmin=yes
        BONMIN_CFLAGS="-I`${CYGPATH_W} $withval`"
-       COUENNELIB_CFLAGS="$withval $COUENNELIB_CFLAGS"
+       COUENNELIB_CFLAGS="-I`${CYGPATH_W} $withval` $COUENNELIB_CFLAGS"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         BONMIN_CFLAGS_INSTALLED="$BONMIN_CFLAGS"
+         COUENNELIB_CFLAGS_INSTALLED="$BONMIN_CFLAGS $COUENNELIB_CFLAGS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -22235,6 +22245,10 @@ if test "${with_bonmin_datadir+set}" = set; then
      else
        coin_has_bonmin=yes
        BONMIN_DATA="$withval"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         BONMIN_DATA_INSTALLED="$withval"
+       fi
      fi
 
 fi;
@@ -22682,6 +22696,11 @@ if test "${with_asl_lib+set}" = set; then
          COUENNELIB_PCLIBS="$withval $COUENNELIB_PCLIBS"
          COUENNELIB_LIBS="$withval $COUENNELIB_LIBS"
 
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         ASL_LIBS_INSTALLED="$withval"
+         COUENNELIB_LIBS_INSTALLED="$withval $COUENNELIB_LIBS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -22697,7 +22716,12 @@ if test "${with_asl_incdir+set}" = set; then
      else
        coin_has_asl=yes
        ASL_CFLAGS="-I`${CYGPATH_W} $withval`"
-       COUENNELIB_CFLAGS="$withval $COUENNELIB_CFLAGS"
+       COUENNELIB_CFLAGS="-I`${CYGPATH_W} $withval` $COUENNELIB_CFLAGS"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         ASL_CFLAGS_INSTALLED="$ASL_CFLAGS"
+         COUENNELIB_CFLAGS_INSTALLED="$ASL_CFLAGS $COUENNELIB_CFLAGS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -22713,6 +22737,10 @@ if test "${with_asl_datadir+set}" = set; then
      else
        coin_has_asl=yes
        ASL_DATA="$withval"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         ASL_DATA_INSTALLED="$withval"
+       fi
      fi
 
 fi;
@@ -23351,6 +23379,11 @@ if test "${with_cpx_lib+set}" = set; then
          COUENNELIB_PCLIBS="$withval $COUENNELIB_PCLIBS"
          COUENNELIB_LIBS="$withval $COUENNELIB_LIBS"
 
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         CPX_LIBS_INSTALLED="$withval"
+         COUENNELIB_LIBS_INSTALLED="$withval $COUENNELIB_LIBS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -23366,7 +23399,12 @@ if test "${with_cpx_incdir+set}" = set; then
      else
        coin_has_cpx=yes
        CPX_CFLAGS="-I`${CYGPATH_W} $withval`"
-       COUENNELIB_CFLAGS="$withval $COUENNELIB_CFLAGS"
+       COUENNELIB_CFLAGS="-I`${CYGPATH_W} $withval` $COUENNELIB_CFLAGS"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         CPX_CFLAGS_INSTALLED="$CPX_CFLAGS"
+         COUENNELIB_CFLAGS_INSTALLED="$CPX_CFLAGS $COUENNELIB_CFLAGS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -23382,6 +23420,10 @@ if test "${with_cpx_datadir+set}" = set; then
      else
        coin_has_cpx=yes
        CPX_DATA="$withval"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         CPX_DATA_INSTALLED="$withval"
+       fi
      fi
 
 fi;
@@ -23826,6 +23868,11 @@ if test "${with_grb_lib+set}" = set; then
          COUENNELIB_PCLIBS="$withval $COUENNELIB_PCLIBS"
          COUENNELIB_LIBS="$withval $COUENNELIB_LIBS"
 
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         GRB_LIBS_INSTALLED="$withval"
+         COUENNELIB_LIBS_INSTALLED="$withval $COUENNELIB_LIBS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -23841,7 +23888,12 @@ if test "${with_grb_incdir+set}" = set; then
      else
        coin_has_grb=yes
        GRB_CFLAGS="-I`${CYGPATH_W} $withval`"
-       COUENNELIB_CFLAGS="$withval $COUENNELIB_CFLAGS"
+       COUENNELIB_CFLAGS="-I`${CYGPATH_W} $withval` $COUENNELIB_CFLAGS"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         GRB_CFLAGS_INSTALLED="$GRB_CFLAGS"
+         COUENNELIB_CFLAGS_INSTALLED="$GRB_CFLAGS $COUENNELIB_CFLAGS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -23857,6 +23909,10 @@ if test "${with_grb_datadir+set}" = set; then
      else
        coin_has_grb=yes
        GRB_DATA="$withval"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         GRB_DATA_INSTALLED="$withval"
+       fi
      fi
 
 fi;
@@ -24292,6 +24348,11 @@ if test "${with_msk_lib+set}" = set; then
          COUENNELIB_PCLIBS="$withval $COUENNELIB_PCLIBS"
          COUENNELIB_LIBS="$withval $COUENNELIB_LIBS"
 
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         MSK_LIBS_INSTALLED="$withval"
+         COUENNELIB_LIBS_INSTALLED="$withval $COUENNELIB_LIBS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -24307,7 +24368,12 @@ if test "${with_msk_incdir+set}" = set; then
      else
        coin_has_msk=yes
        MSK_CFLAGS="-I`${CYGPATH_W} $withval`"
-       COUENNELIB_CFLAGS="$withval $COUENNELIB_CFLAGS"
+       COUENNELIB_CFLAGS="-I`${CYGPATH_W} $withval` $COUENNELIB_CFLAGS"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         MSK_CFLAGS_INSTALLED="$MSK_CFLAGS"
+         COUENNELIB_CFLAGS_INSTALLED="$MSK_CFLAGS $COUENNELIB_CFLAGS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -24323,6 +24389,10 @@ if test "${with_msk_datadir+set}" = set; then
      else
        coin_has_msk=yes
        MSK_DATA="$withval"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         MSK_DATA_INSTALLED="$withval"
+       fi
      fi
 
 fi;
@@ -24758,6 +24828,11 @@ if test "${with_spx_lib+set}" = set; then
          COUENNELIB_PCLIBS="$withval $COUENNELIB_PCLIBS"
          COUENNELIB_LIBS="$withval $COUENNELIB_LIBS"
 
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         SPX_LIBS_INSTALLED="$withval"
+         COUENNELIB_LIBS_INSTALLED="$withval $COUENNELIB_LIBS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -24773,7 +24848,12 @@ if test "${with_spx_incdir+set}" = set; then
      else
        coin_has_spx=yes
        SPX_CFLAGS="-I`${CYGPATH_W} $withval`"
-       COUENNELIB_CFLAGS="$withval $COUENNELIB_CFLAGS"
+       COUENNELIB_CFLAGS="-I`${CYGPATH_W} $withval` $COUENNELIB_CFLAGS"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         SPX_CFLAGS_INSTALLED="$SPX_CFLAGS"
+         COUENNELIB_CFLAGS_INSTALLED="$SPX_CFLAGS $COUENNELIB_CFLAGS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -24789,6 +24869,10 @@ if test "${with_spx_datadir+set}" = set; then
      else
        coin_has_spx=yes
        SPX_DATA="$withval"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         SPX_DATA_INSTALLED="$withval"
+       fi
      fi
 
 fi;
@@ -25224,6 +25308,11 @@ if test "${with_xpr_lib+set}" = set; then
          COUENNELIB_PCLIBS="$withval $COUENNELIB_PCLIBS"
          COUENNELIB_LIBS="$withval $COUENNELIB_LIBS"
 
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         XPR_LIBS_INSTALLED="$withval"
+         COUENNELIB_LIBS_INSTALLED="$withval $COUENNELIB_LIBS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -25239,7 +25328,12 @@ if test "${with_xpr_incdir+set}" = set; then
      else
        coin_has_xpr=yes
        XPR_CFLAGS="-I`${CYGPATH_W} $withval`"
-       COUENNELIB_CFLAGS="$withval $COUENNELIB_CFLAGS"
+       COUENNELIB_CFLAGS="-I`${CYGPATH_W} $withval` $COUENNELIB_CFLAGS"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         XPR_CFLAGS_INSTALLED="$XPR_CFLAGS"
+         COUENNELIB_CFLAGS_INSTALLED="$XPR_CFLAGS $COUENNELIB_CFLAGS_INSTALLED"
+       fi
      fi
 
 fi;
@@ -25255,6 +25349,10 @@ if test "${with_xpr_datadir+set}" = set; then
      else
        coin_has_xpr=yes
        XPR_DATA="$withval"
+       # if project flags are given by user and we build without pkg-config, then we need to setup the _INSTALLED variables
+       if test -z "$PKG_CONFIG" ; then
+         XPR_DATA_INSTALLED="$withval"
+       fi
      fi
 
 fi;

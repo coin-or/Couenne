@@ -117,6 +117,17 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
     u      = solver -> getColUpper () [index],
     brpt   = value_;
 
+  // If brpt is integer and the variable is constrained to be integer,
+  // there will be a valid but weak branching. Modify brpt depending
+  // on way and on the bounds on the variable, so that the usual
+  // integer branching will be performed.
+
+  if (integer && 
+      (::isInteger (brpt)) &&
+      (way==!firstBranch_))
+
+    brpt += 1.;
+
   if (way) {
     if      (value_ < l)             
       jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "Nonsense up-br: [ %.8f ,(%.8f)] -> %.8f\n",l,u,value_);

@@ -37,7 +37,7 @@ inline bool areSameVariables (expression *v1, expression *v2) {
 
 exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
-  //printf ("standardizing %d ", addAux); print (); printf ("\n");
+  //printf ("standardizing exprMul (addaux=%d) ", addAux); fflush (stdout); print (); printf ("\n");
 
   CouNumber coeff = 1.;
   std::map <int, CouNumber> indCoe;
@@ -59,9 +59,11 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
   arglist_ = arglist;
   nargs_ = indCoe.size();
 
-  //printf ("new mul [%d]: %g * ", nargs_, coeff); print (); printf ("\n");
+  //printf ("new mul [%d]: %g * ", nargs_, coeff); fflush (stdout); print (); printf (" -- ");
 
   exprOp::standardize (p);
+
+  //printf ("standardized: "); fflush (stdout); print (); printf ("\n");
 
   if (nargs_ == 1) {
 
@@ -72,6 +74,7 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
       expression *simMul = new exprMul (new exprConst (coeff), new exprClone (arglist_ [0]));
       return (addAux ? (p -> addAuxiliary (simMul)) : new exprAux (simMul, p -> domain ()));
     }
+
     else return NULL; 
   }
 
@@ -83,6 +86,9 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
      return aux;
      } */
 
+  // enable this when binary products are available
+
+#if 0
   // check if it is a product of binary variables
   bool isBinProd = true;
   for (int i=nargs_; i--;) {
@@ -92,8 +98,8 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
       CouNumber lb, ub;
       arg -> getBounds (lb, ub);
-      if ((fabs (lb)      > 0.) ||
-	  (fabs (ub - 1.) > 0.)) { // if not all conditions hold, 
+      if ((fabs (ceil  (lb - COUENNE_EPS))      > 0.) ||
+	  (fabs (floor (ub + COUENNE_EPS) - 1.) > 0.)) { // if not all conditions hold, 
 	isBinProd = false;
 	break;
       }
@@ -104,10 +110,9 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
   }
 
   if (isBinProd) {
-
     //printf ("found a BinProd!\n");
-
   }
+#endif
 
   enum Couenne::TrilinDecompType type = p -> getTrilinDecompType ();
 

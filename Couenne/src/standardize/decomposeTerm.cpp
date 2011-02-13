@@ -129,7 +129,7 @@ void CouenneProblem::decomposeTerm (expression *term,
       c0 += coe;
       break;
 
-    case 1: { // only one term (may be with !=1 exponent)
+    case 1: { // only one term (may be with exponent != 1)
 
       std::map <int, CouNumber>::iterator one = indices.begin ();
       int       index = one -> first;

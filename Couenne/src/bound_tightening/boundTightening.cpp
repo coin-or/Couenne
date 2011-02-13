@@ -97,10 +97,10 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
       for (int i=0; i<nVars (); i++)
 	if ((optimum_[i] < Lb(i) - COUENNE_EPS * (1. + CoinMin (fabs(optimum_ [i]), fabs (Lb(i))))) ||
 	    (optimum_[i] > Ub(i) + COUENNE_EPS * (1. + CoinMin (fabs(optimum_ [i]), fabs (Ub(i)))))) {
-	  printf ("bound tightening FAIL: %d [%e,%e] (%e) -- %e\n", 
+	  printf ("bound tightening CUTS optimum: x%d [%e,%e] val = %e, violation = %e\n", 
 		  i, Lb (i), Ub (i), optimum_ [i],
 		  CoinMax (- optimum_ [i] + Lb (i),
-			   optimum_ [i] - Ub (i)));
+		  	     optimum_ [i] - Ub (i)));
 	  contains_optimum = false;
 	}
     }

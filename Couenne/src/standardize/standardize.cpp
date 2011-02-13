@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: standardize all expressions in a problem
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -49,18 +49,17 @@ bool CouenneProblem::standardize () {
 
   int initVar = variables_ . size () - commonexprs_ . size ();
 
-  // DEFINED VARIABLES /////////////////////////////////////////////////////////////////////////////
+  // DEFINED VARIABLES -----------------------------------------------------------------------
 
   // standardize initial aux variables (aka defined variables, aka
   // common expression)
 
-  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-    if (commonexprs_.size ()) printf ("%d common exprs, initVar = %d = %d - %d\n", 
-				      commonexprs_.size (), 
-				      initVar, 
-				      variables_ . size (), 
-				      commonexprs_ . size ());
-  }
+  if (commonexprs_.size ()) jnlst_ -> Printf (J_ALL, J_REFORMULATE,
+					      "%d common exprs, initVar = %d = %d - %d\n", 
+					      commonexprs_ . size (), 
+					      initVar, 
+					      variables_   . size (), 
+					      commonexprs_ . size ());
 
   for (std::vector <expression *>::iterator i = commonexprs_ . begin ();
        i != commonexprs_ . end (); ++i) {
@@ -81,7 +80,7 @@ bool CouenneProblem::standardize () {
     exprAux *newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
     //img -> isInteger () ? exprAux::Integer : exprAux::Continuous);
 
-    auxiliarize (newvar); // takes care of putting newvar at right position in variables_
+    auxiliarize (newvar); // puts newvar at right position in variables_
 
     graph_ -> insert (newvar);
     graph_ -> erase (naux);
@@ -105,7 +104,7 @@ bool CouenneProblem::standardize () {
     initVar++;
   }
 
-  // OBJECTIVES //////////////////////////////////////////////////////////////////////////////
+  // OBJECTIVES ------------------------------------------------------------------------------
 
   for (std::vector <CouenneObjective *>::iterator i = objectives_.begin ();
        i != objectives_.end (); ++i) {
@@ -132,26 +131,27 @@ bool CouenneProblem::standardize () {
     }
   }
 
+  // Constraints ----------------------------------------------------------------------------
+
   // commuted_ is an array with a flag for each original variable,
   // which is true at position i if initially original variable x_i
-  // became auxiliary
+  // became auxiliary (because of constraint 
+  // 
+  // x_{k+1} + f(x_1,x_2...,x_k} <=/=/>= 0
+  //
+  // becoming
+  //
+  // x_{k+1} <=/=/>= - f(x_1,x_2...,x_k}
 
   commuted_ = new bool [nVars ()];
-  for (int i = nVars (); i--;)
-    *commuted_++ = false;
-  commuted_ -= nVars ();
+  CoinFillN (commuted_, nVars (), false);
 
-  //  std::vector <CouenneConstraint *> con2;
   std::vector <std::vector <CouenneConstraint *>::iterator> iters2erase;
-
-  // CONSTRAINTS /////////////////////////////////////////////////////////////////////////////
 
   for (std::vector <CouenneConstraint *>::iterator i = constraints_.begin (); 
        i != constraints_.end (); ++i) {
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      //printf ("############# problem status now:\n"); 
-      //print (); 
       printf ("\nReformulating constraint: "); 
       (*i) -> print ();
     }
@@ -193,7 +193,7 @@ bool CouenneProblem::standardize () {
     exprAux *aux = (*i) -> standardize (this);
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf (" reformulated: aux w[%d] ", aux ? (aux -> Index ()) : -1); 
+      printf (" reformulated: aux w[%d] ", aux ? (aux -> Index ()) : -2); 
       (*i) -> print ();
     }
 
@@ -202,8 +202,8 @@ bool CouenneProblem::standardize () {
       // this is a top level auxiliary, i.e., an auxiliary whose node
       // in the DAG stands at the maximum level -- no other variable
       // depends on it as it is the lhs of a constraint.
-      aux -> top_level () = true;
 
+      aux -> top_level () = true;
 
       // this constraint f(x)<=b is therefore replaced by w<=b, where
       // w is the top-level auxiliary associated with f(x)
@@ -211,7 +211,9 @@ bool CouenneProblem::standardize () {
       //printf ("delete %x: ", ((*i) -> Body ())); ((*i) -> Body ()) -> print ();
       //printf ("\n"); 
       //delete ((*i) -> Body ());
+
       (*i) -> Body (new exprClone (aux));
+
       //      con2.push_back (*i);
     }
     else {
@@ -219,33 +221,39 @@ bool CouenneProblem::standardize () {
       // left-hand side not reformulated, therefore this is probably
       // an affine expression
 
-      CouNumber lb, ub;
+      //CouNumber lb, ub;
 
-      (*i) -> Body () -> getBounds (lb, ub);
+      //printf ("let's see what's left of the body: "); fflush (stdout);
+      //(*i) -> Body () -> print (); printf ("\n");
 
-      if ((((*((*i) -> Lb ())) ()) > ub + COUENNE_EPS) ||
-	  (((*((*i) -> Ub ())) ()) < lb - COUENNE_EPS)) {
+      // (*i) -> Body () -> getBounds (lb, ub);
 
-	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, "found infeasible constraint [%g,%g] vs [%g,%g]\n", 
-			  lb, ub,
-			  ((*((*i) -> Lb ())) ()),
-			  ((*((*i) -> Ub ())) ()));
+      // if ((((*((*i) -> Lb ())) ()) > ub + COUENNE_EPS) ||
+      // 	  (((*((*i) -> Ub ())) ()) < lb - COUENNE_EPS)) {
 
-	if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE))
-	  (*i) -> print ();
+      // 	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, "found infeasible constraint [%g,%g] vs [%g,%g]\n", 
+      // 			  lb, ub,
+      // 			  ((*((*i) -> Lb ())) ()),
+      // 			  ((*((*i) -> Ub ())) ()));
 
-	retval = false;
-      }
+      // 	if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE))
+      // 	  (*i) -> print ();
+
+      // 	retval = false;
+      // }
+
+      // delete constraint as no aux associated with it. It is a
+      // linear constraint now (after reformulation), so it will be
+      // inserted as a linearization of the aux's definition (an
+      // affine function).
+
       iters2erase.push_back (i);
     }
 
     //(*i) -> Body () -> realign (this);
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf (" --> ");
-      (*i) -> print ();
-      printf ("..............................................................\n");
-      //print ();
+      printf (" --> "); (*i) -> print (); printf ("\n\n");
     }
 
     /*printf ("=== "); fflush (stdout); 
