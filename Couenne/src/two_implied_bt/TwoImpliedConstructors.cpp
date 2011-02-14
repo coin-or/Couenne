@@ -30,20 +30,24 @@ CouenneTwoImplied::CouenneTwoImplied (CouenneProblem *p,
   totalInitTime_ (0.),
   firstCall_ (true) {
 
-  options -> GetIntegerValue ("two_implied_max_trials", nMaxTrials_, "couenne.");
+  options -> GetIntegerValue ("two_implied_max_trials", nMaxTrials_,        "couenne.");
+  options -> GetIntegerValue ("twoimpl_depth_level",    depthLevelling_,    "couenne.");
+  options -> GetIntegerValue ("twoimpl_depth_stop",     depthStopSeparate_, "couenne.");
 }
 
 
 /// copy constructor
 CouenneTwoImplied::CouenneTwoImplied (const CouenneTwoImplied &src):
 
-  CglCutGenerator (src),
-  problem_        (src.problem_),
-  jnlst_          (src.jnlst_),
-  nMaxTrials_     (src.nMaxTrials_),
-  totalTime_      (src.totalTime_),
-  totalInitTime_  (src.totalInitTime_),
-  firstCall_      (src.firstCall_) {}
+  CglCutGenerator    (src),
+  problem_           (src.problem_),
+  jnlst_             (src.jnlst_),
+  nMaxTrials_        (src.nMaxTrials_),
+  totalTime_         (src.totalTime_),
+  totalInitTime_     (src.totalInitTime_),
+  firstCall_         (src.firstCall_),
+  depthLevelling_    (src.depthLevelling_),
+  depthStopSeparate_ (src.depthStopSeparate_) {}
 
 
 /// destructor
@@ -70,6 +74,17 @@ successful it can be repeated at every n nodes, otherwise it is stopped altogeth
   roptions -> AddLowerBoundedIntegerOption
     ("two_implied_max_trials",
      "The number of iteration at each call to the cut generator.",
-     1, 3,
+     1, 2,
      "");
+
+  roptions -> AddLowerBoundedIntegerOption
+    ("twoimpl_depth_level",
+     "Depth of the B&B tree when to start decreasing the chance of running this algorithm.",
+     -1, 5, "This has a similar behavior as log_num_obbt_per_level. "
+     "A value of -1 means that generation can be done at all nodes.");
+
+  roptions -> AddLowerBoundedIntegerOption
+    ("twoimpl_depth_stop",
+     "Depth of the B&B tree where separation is stopped.",
+     -1, 20, "A value of -1 means that generation can be done at all nodes");
 }

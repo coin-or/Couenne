@@ -24,7 +24,7 @@ libCouenneTwoImplied_la_LDFLAGS = $(LT_LDFLAGS)
 AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/..` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch`\
+	-I`$(CYGPATH_W) $(srcdir)/../branch` \
 	-I`$(CYGPATH_W) $(srcdir)/../problem` \
 	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening`
 

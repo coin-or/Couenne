@@ -114,7 +114,9 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   // Although this should be handled by Cbc, very often this doesn't
   // happen.
 
-  int nodeDepth = -1;
+  //  int nodeDepth = -1;
+
+  const int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
 
   try {
 
@@ -136,9 +138,6 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   // if too deep in the BB tree, only run NLP heuristic if
   // feasibility is low
   bool too_deep = false;
-
-  const int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
-  nodeDepth = depth;
 
   // check depth
   if (numberSolvePerLevel_ > -1) {
@@ -374,7 +373,8 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   delete [] lower;
   delete [] upper;
 
-  if (nodeDepth <= 0) {
+  if (depth <= 0) {
+
     if (foundSolution) couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done. Solution: %g\n", objectiveValue);
     else               couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done (no solution).\n");
   }
@@ -392,14 +392,14 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
       objectiveValue = couenne_ -> getCutOff    ();
       CoinCopyN       (couenne_ -> getCutOffSol (), couenne_ -> nVars (), newSolution);
 
-      if (nodeDepth <= 0)
+      if (depth <= 0)
 	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done. Solution: %g\n", objectiveValue);
 
       return 1;
 
     } else {
 
-      if (nodeDepth <= 0 && e==noSolution)
+      if (depth <= 0 && e==noSolution)
 	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done (no solution).\n", objectiveValue);
       return 0;
     }

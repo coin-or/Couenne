@@ -13,6 +13,7 @@
 
 #include "BonCbc.hpp"
 #include "BonBabInfos.hpp"
+#include "CoinHelperFunctions.hpp"
 #include "CoinPackedMatrix.hpp"
 #include "CglCutGenerator.hpp"
 #include "CoinTime.hpp"
@@ -24,6 +25,7 @@
 #include "CouennePrecisions.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneInfeasCut.hpp"
+#include "CouenneJournalist.hpp"
 
 // necessary to make updateBranchInfo visible
 namespace Couenne {
@@ -57,13 +59,30 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 				      const CglTreeInfo info) const {
 
   // don't perform this is cs has been added an infeasible cut (a
-  // result of some bound tightening procedure returning an infeasible
-  // node)
+  // result of some bound tightening procedure discovering an
+  // infeasible node)
 
   if (isWiped (cs))
     return;
 
   double now = CoinCpuTime ();
+
+  // a more elaborate scheme to avoid heavy use of this heavy procedure
+
+  if ((depthStopSeparate_ >= 0 &&           // if -1, there is no limit on depth
+       info.level > depthStopSeparate_)     // otherwise, check if too deep for adding these cuts
+      ||
+      (depthLevelling_ >= 0 &&              // chance to run this procedure
+       info.level >= depthLevelling_ &&
+       CoinDrand48 () > 1. / (2. + info.level - depthLevelling_)))
+    return;
+
+  // printf ("probexecute = %g. Level = %d, depthlevelling = %d, depthStop = %d, cond = %d\n", 
+  // 	  1. / (2. + info.level - depthLevelling_),
+  // 	  info.level,
+  // 	  depthLevelling_, 
+  // 	  depthStopSeparate_,
+  // 	  (depthLevelling_ < 0 || info.level < depthLevelling_));
 
   // Update CouenneProblem's bounds using si's getCol{Low,Upp}er() and
   // cs's OsiColCuts
@@ -141,7 +160,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
     // copy rA, rInd, rSta into A, ind, sta
 
-    CoinFillN (sta, n+1, 0);
+    CoinZeroN (sta, n+1);
 
     /////////////////////////////////////////////////////////
 
@@ -182,11 +201,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
       int rowStart = rSta [i];
 
-      //printf ("[ine] %4d [%g,%g]: ", i, rlb [i], rub [i]); 
-
       for (int j = rowStart, jj = rSta [i+1] - rowStart; jj--; j++) {
-
-	//printf ("%+g x%d ", rA [j], rInd [j]); 
 
 	int &curSta = sta [rInd [j]];
 
@@ -241,7 +256,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
 #endif
 
-  /// prepare vector for integrality test. Since many checks are done
+  /// Prepare vector for integrality test. Since many checks are done
   /// within combine(), it is worth to prepare one here
 
   bool *isInteger = new bool [n];
@@ -251,18 +266,17 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
   // print out 
 
-  if (0)
-  for (int i=0; i<n; i++) {
+  // for (int i=0; i<n; i++) {
 
-    printf ("x%04d - %5d -> %5d, %5d elements:", i, sta [i], sta [i+1], sta [i+1] - sta [i]);
-    fflush (stdout);
+  //   printf ("x%04d - %5d -> %5d, %5d elements:", i, sta [i], sta [i+1], sta [i+1] - sta [i]);
+  //   fflush (stdout);
 
-    for (int j=0; j<sta [i+1] - sta [i]; j++) {
-      printf ("(%d,%g) ", ind [sta [i] + j], A [sta [i] + j]);
-      fflush (stdout);
-    }
-    printf ("\n");
-  }
+  //   for (int j=0; j<sta [i+1] - sta [i]; j++) {
+  //     printf ("(%d,%g) ", ind [sta [i] + j], A [sta [i] + j]);
+  //     fflush (stdout);
+  //   }
+  //   printf ("\n");
+  // }
 
   // For every column i, compare pairs of rows j and k with nonzero
   // coefficients.
@@ -286,6 +300,9 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     for   (int jj = *(sta+1) - *sta, j = *sta; jj--; j++)
       for (int kk = jj,              k = j+1;  kk--; k++) {
 
+	if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
+	  break;
+
 	register int 
 	  indj = ind [j],
 	  indk = ind [k];
@@ -297,9 +314,11 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
  	    (indk >= m + nCuts) || (indk < 0)) {
 
 	  if (nBadColMatWarnings++ < 1)
-	    printf ("Couenne: warning, matrix by row has nonsense indices.\n\
-This separator will now return without cuts.\n\
-NOTE: further such inconsistencies won't be reported.\n");
+	    //	    jnlst_ -> Printf (J_STRONGWARNING, J_BOUNDTIGHTENING, " 
+	    printf ("\
+  Couenne: warning, matrix by row has nonsense indices.\n\
+  This separator will now return without (column) cuts.\n\
+  NOTE: further such inconsistencies won't be reported.\n");
 
 	  delete [] sa1;
 	  delete [] sa2;
@@ -428,6 +447,9 @@ NOTE: further such inconsistencies won't be reported.\n");
     // can give a better (combined) implied bound
 
     for (std::set <std::pair <int, int> >:: iterator p = pairs.begin (); p != pairs.end (); ++p) {
+
+      if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
+	break;
 
       // indices of the two inequalities
 
@@ -628,7 +650,7 @@ NOTE: further such inconsistencies won't be reported.\n");
 	result = -1;
 	break;
 
-      } else{
+      } else {
 
 	// update tightened bounds from problem to clb
 

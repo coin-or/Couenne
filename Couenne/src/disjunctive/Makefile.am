@@ -31,7 +31,7 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/../heuristics` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression` \
 	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch`\
+	-I`$(CYGPATH_W) $(srcdir)/../branch` \
 	-I`$(CYGPATH_W) $(srcdir)/../problem`
 
 # This line is necessary to allow VPATH compilation with MS compilers

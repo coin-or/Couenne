@@ -88,7 +88,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 					OsiCuts &cs, 
 					const CglTreeInfo info) const {
 
-  if (isWiped (cs))
+  if (isWiped (cs) || 
+     (CoinCpuTime () > problem_ -> getMaxCpuTime ()))
     return;
 
   const int infeasible = 1;
@@ -191,6 +192,9 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     int nnlc = problem_ -> nCons ();
 
     for (int i=0; i<nnlc; i++) {
+
+      if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
+	break;
 
       // for each constraint
       CouenneConstraint *con = problem_ -> Con (i);
@@ -313,7 +317,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	 (con -> Body () -> Type () == VAR))) {
 
       // if there exists violation, add constraint
-      CouNumber l = con -> Lb () -> Value (),	
+      CouNumber 
+	l = con -> Lb () -> Value (),	
 	u = con -> Ub () -> Value ();
 
       // tighten bounds in Couenne's problem representation

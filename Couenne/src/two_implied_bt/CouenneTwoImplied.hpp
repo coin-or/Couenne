@@ -216,6 +216,12 @@ namespace Couenne {
 
     /// first call indicator
     mutable bool firstCall_;
+
+    /// Depth of the BB tree where to start decreasing chance of running this
+    int depthLevelling_;
+
+    /// Depth of the BB tree where stop separation
+    int depthStopSeparate_;
   };
 }
 

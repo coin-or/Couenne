@@ -38,10 +38,10 @@ CouenneDisjCuts::CouenneDisjCuts (Bonmin::OsiTMINLPInterface *minlp,
 
   options -> GetNumericValue ("time_limit", cpuTime_,  "couenne.");
 
-  options -> GetNumericValue ("disj_init_perc",   initDisjPercentage_,  "couenne.");
-  options -> GetIntegerValue ("disj_init_number", initDisjNumber_,      "couenne.");
-  options -> GetIntegerValue ("disj_depth_level", depthLevelling_,      "couenne.");
-  options -> GetIntegerValue ("disj_depth_stop",  depthStopSeparate_,   "couenne.");
+  options -> GetNumericValue ("disj_init_perc",   initDisjPercentage_, "couenne.");
+  options -> GetIntegerValue ("disj_init_number", initDisjNumber_,     "couenne.");
+  options -> GetIntegerValue ("disj_depth_level", depthLevelling_,     "couenne.");
+  options -> GetIntegerValue ("disj_depth_stop",  depthStopSeparate_,  "couenne.");
 
   std::string s;
   options -> GetStringValue ("disj_active_rows", s, "couenne."); activeRows_     = (s == "yes");

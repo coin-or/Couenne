@@ -155,6 +155,11 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
       for (std::vector <std::pair <OsiCuts *, OsiCuts *> >::iterator disjI = disjunctions.begin ();
 	   disjI != disjunctions.end (); ++disjI) {
 
+	if (CoinCpuTime () > couenneCG_ -> Problem () -> getMaxCpuTime ()) {
+	  start_over = false;
+	  break;
+	}
+
 	// separate on single disjunction
 
 	// left
@@ -292,6 +297,7 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 			cs.sizeRowCuts () - initRowCuts,
 			cs.sizeColCuts () - initColCuts);
   }
+
   // else {
   //     jnlst_ -> Printf (J_STRONGWARNING, J_COUENNE, 
   // 			"In-BB disjunctive cuts: %d row cuts, %d col cuts\n",
