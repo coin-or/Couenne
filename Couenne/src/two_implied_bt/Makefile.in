@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am 488 2011-01-10 17:06:41Z pbelotti $
+# $Id: Makefile.am 501 2011-02-14 17:43:46Z pbelotti $
 #
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
@@ -311,7 +311,7 @@ libCouenneTwoImplied_la_LDFLAGS = $(LT_LDFLAGS)
 AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/..` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch`\
+	-I`$(CYGPATH_W) $(srcdir)/../branch` \
 	-I`$(CYGPATH_W) $(srcdir)/../problem` \
 	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening`
 
