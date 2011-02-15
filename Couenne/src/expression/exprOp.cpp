@@ -19,9 +19,10 @@
 
 using namespace Couenne;
 
+namespace Couenne {
 class CouenneProblem;
 class Domain;
-
+}
 
 // General N-ary function destructor
 exprOp::~exprOp () {

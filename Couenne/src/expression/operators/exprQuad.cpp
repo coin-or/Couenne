@@ -19,7 +19,9 @@
 
 using namespace Couenne;
 
+namespace Couenne {
 class Domain;
+}
 
 //#define DEBUG
 

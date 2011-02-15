@@ -18,8 +18,10 @@
 
 using namespace Couenne;
 
+namespace Couenne {
 class CouenneCutGenerator;
 class Domain;
+}
 
 //#define DEBUG
 

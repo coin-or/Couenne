@@ -18,7 +18,9 @@
 
 using namespace Couenne;
 
+namespace Couenne {
 class Domain;
+}
 
 // eliminates elements with zero coefficients
 void cleanZeros (std::vector <std::pair <exprVar *, CouNumber> > &lcoeff) {

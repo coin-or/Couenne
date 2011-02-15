@@ -20,7 +20,9 @@
 
 using namespace Couenne;
 
+namespace Couenne {
 class CouenneCutGenerator;
+}
 
 // translate changed bound sparse array into a dense one
 void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchanged);
