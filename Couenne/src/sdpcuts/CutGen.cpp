@@ -1695,7 +1695,7 @@ void CutGen::sparsify(const int evidx, const double eigen_val,
 			 int *card_v_mat, double *work_ev,bool wise,int *evdec_num) const {
 
 	int i, j, np = n+1, nchanged = 0;
-	double sq_np = sqrt(np);
+	double sq_np = sqrt((double)np);
 
 	double min_delta;
 	double is_zero = 1/(10 * sq_np);
@@ -1965,7 +1965,7 @@ void CutGen::sparsify_new(const int evidx, const double eigen_val,
 			 int *card_v_mat, double *work_ev, bool wise, int *evdec_num) const {
 
 	int i, j, np = n+1, nchanged = 0;
-	double sq_np = sqrt(np);
+	double sq_np = sqrt((double)np);
 
 	double min_delta;
 	double is_zero = 1/(10 * sq_np);
