@@ -536,7 +536,7 @@ namespace Couenne{
 	CoinCopyN (xtilde, n, tmpSolution);
 	for (int i = 0; i < nNlp; ++i){
 	  if (model_->isInteger(i)){
-	    tmpSolution[i] = rint(tmpSolution[i]);
+	    tmpSolution[i] = floor(tmpSolution[i]+0.5);
 	    cinlp_->setColLower(i, tmpSolution[i]);
 	    cinlp_->setColUpper(i, tmpSolution[i]);
 	  }
@@ -838,7 +838,7 @@ namespace Couenne{
       CoinCopyN (xtilde, n, tmpSolution);
       for (int i = 0; i < nNlp; ++i){
 	if (model_->isInteger(i)){
-	  tmpSolution[i] = rint(tmpSolution[i]);
+	  tmpSolution[i] = floor(tmpSolution[i]+0.5);
 	  cinlp_->setColLower(i, tmpSolution[i]);
 	  cinlp_->setColUpper(i, tmpSolution[i]);
 	}
