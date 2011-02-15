@@ -1,9 +1,17 @@
+/* $Id$
+ *
+ * Name:    misc_util.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: utilities for sdpcuts
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #ifndef MISCUTIL_HPP
 #define MISCUTIL_HPP
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/resource.h>
 #include "OsiXxxSolverInterface.hpp"
 #include "OsiSolverInterface.hpp"
 
@@ -48,7 +56,6 @@ class Timer {
 	private:
 		double _starttime;
 		Timer *_pausetimer;
-		struct rusage _use;
 		bool _pause;
 		double starttime();
 };
