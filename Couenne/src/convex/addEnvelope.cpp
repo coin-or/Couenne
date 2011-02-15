@@ -8,7 +8,7 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-
+#include "CoinFinite.hpp"
 #include "OsiRowCut.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneTypes.hpp"
@@ -58,7 +58,7 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
   // Add tangent in any case
 
   if (((!firstcall_) || ((x >= l) && (x <= u)))
-      && !isnan (opp_slope) 
+      && !CoinIsnan (opp_slope) 
       && (fabs (opp_slope) < COUENNE_INFINITY)) {
 
     if (!(problem_ -> Var (x_ind) -> isInteger ()))
@@ -107,8 +107,8 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
       y2 = ft -> F (x2);
 
       if ((x2 > u)   ||
-	  isnan (y1) || isnan (y2) || 
-	  isinf (y1) || isinf (y2)) // fall back to non-integer cut
+	  CoinIsnan (y1) || CoinIsnan (y2) || 
+	  !CoinFinite (y1) || !CoinFinite (y2)) // fall back to non-integer cut
 
 	createCut (cs, ft -> F (x) + opp_slope * x, sign, w_ind, 1., 
 		   x_ind, opp_slope, -1, 0., is_global);
@@ -177,8 +177,8 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
 	    y2 = ft -> F (x2);
 
 	    if ((x2 > u)   ||
-		isnan (y1) || isnan (y2) || 
-		isinf (y1) || isinf (y2)) // fall back to non-integer cut
+		CoinIsnan (y1) || CoinIsnan (y2) || 
+		!CoinFinite (y1) || !CoinFinite (y2)) // fall back to non-integer cut
 
 	      createCut (cs, ft -> F (sample) + opp_slope * sample, sign, w_ind, 1., 
 			 x_ind, opp_slope, -1, 0., is_global);
