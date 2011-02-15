@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    disjunctive_cuts.cpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include <disjunctive_cuts.hpp>
 
 #include <CoinPackedVector.hpp>

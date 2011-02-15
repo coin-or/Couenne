@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    populate.cpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <OsiCuts.hpp>
@@ -11,7 +20,6 @@
 int getFirstIdx(const char *colName);
 int getSecondIdx(const char *colName);
 double _mul(double a, double b, double infinity);
-
 
 
 int populateProblem (

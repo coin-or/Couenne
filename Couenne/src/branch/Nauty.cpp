@@ -15,8 +15,7 @@
 #include <algorithm>
 #include <map>
 #include <set>
-#include <sys/time.h>
-#include <sys/resource.h>
+#include "CoinTime.hpp"
 //#include "OrbitalOptions.h"
 //extern OrbitalOptions *options;
 
@@ -137,10 +136,7 @@ Nauty::computeAuto()
 
   //  if (autoComputed_) return;
 
-  struct rusage usage;
-  getrusage(RUSAGE_SELF, &usage);
-  struct timeval t = usage.ru_utime;
-  double startCPU = (double) t.tv_sec + ((double)t.tv_usec * 1e-6); 
+  double startCPU = CoinCpuTime ();
 
   options_->defaultptn = FALSE;
 
@@ -176,9 +172,7 @@ Nauty::computeAuto()
         stats_, workspace_, worksize_, m_, n_, canonG_);
   autoComputed_ = true;
 
-  getrusage(RUSAGE_SELF, &usage);
-  t = usage.ru_utime;
-  double endCPU = (double) t.tv_sec + ((double)t.tv_usec * 1e-6);
+  double endCPU = CoinCpuTime ();
 
   nautyCalls_++;
   nautyTime_ += endCPU - startCPU;
@@ -254,15 +248,6 @@ Nauty::getVstat(double *v, int nv)
   assert(nv == n_);
   memcpy(v, vstat_, nv * sizeof(VarStatus));
 }
-
-    
-
-
-
-
-
-
-
 
 /*
 bool

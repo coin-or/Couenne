@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    tracer.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #ifndef TRACER_HPP
 #define TRACER_HPP
 #include <misc_util.hpp>

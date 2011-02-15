@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    disjunctive_cuts.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #ifndef DISJUNCTIVE_CUTS_HPP
 #define DISJUNCTIVE_CUTS_HPP
 

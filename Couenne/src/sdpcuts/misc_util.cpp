@@ -91,8 +91,6 @@ Timer::Timer() { _pause = false; _starttime = -99999999;}
 Timer::~Timer() { if (_pause) delete _pausetimer; }
 void Timer::start() {
   _starttime = CoinCpuTime ();
-  //	getrusage (RUSAGE_SELF, &_use);
-  //	_starttime = _use.ru_utime.tv_sec + 1e-6 * _use.ru_utime.tv_usec;
 }
 
 double Timer::time() {
@@ -101,8 +99,7 @@ double Timer::time() {
 	if (_pause) {
 		return fabs( _pausetimer->starttime() - _starttime );
 	}
-	//	getrusage (RUSAGE_SELF, &_use);
-	//	return fabs( (_use.ru_utime.tv_sec + 1e-6 * _use.ru_utime.tv_usec) - _starttime );
+
 	return (fabs (CoinCpuTime () - _starttime));
 }
 

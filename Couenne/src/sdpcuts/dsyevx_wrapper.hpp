@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    dsyevx_wrapper.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #ifndef DSYEVX_HPP
 #define DSYEVX_HPP
 

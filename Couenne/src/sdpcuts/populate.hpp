@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    populate.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #ifndef POPULATE_HPP
 #define POPULATE_HPP
 
@@ -11,7 +20,9 @@ int createCut (OsiCuts &,
 	       int=-1, double=0,
 	       int=-1, double=0, bool=false);
 
-int populateProblem (const char *filename,int *nptr, int *tptr, int *consptr, double **bptr, double **cptr, double ***Qptr, double *constantptr, double ***origmatptr, double **origrhsptr, char **origsenseptr, double **xlbptr,double **xubptr,double **ylbptr, double **yubptr,OsiSolverInterface *si);
-
+int populateProblem (const char *filename,int *nptr, int *tptr, int *consptr, double **bptr, 
+		     double **cptr, double ***Qptr, double *constantptr, double ***origmatptr, 
+		     double **origrhsptr, char **origsenseptr, double **xlbptr,double **xubptr,
+		     double **ylbptr, double **yubptr,OsiSolverInterface *si);
 
 #endif

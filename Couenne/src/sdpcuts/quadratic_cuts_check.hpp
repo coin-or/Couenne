@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    quadratic_cuts_check.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #ifndef QUADRATIC_CUTS_CHECK_HPP
 #define QUADRATIC_CUTS_CHECK_HPP
 
@@ -36,7 +45,6 @@ private:
 	void checkQuadraticDiagonalCutsOnCurrentSolution();
 	void checkPreviousQuadraticEVCutsOnCurrentSolution();
 };
-
 
 #endif
 

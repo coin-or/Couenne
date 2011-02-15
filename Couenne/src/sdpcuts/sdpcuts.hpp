@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    sdpcuts.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #ifndef SDPCUTS_HPP
 #define SDPCUTS_HPP
 

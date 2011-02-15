@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    OsiXxxSolverInterface.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #ifndef OSIXXXSOLVERINTERFACE_HPP
 #define OSIXXXSOLVERINTERFACE_HPP
 

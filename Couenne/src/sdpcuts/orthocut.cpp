@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    orthocut.cpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include <orthocut.hpp>
 #include <CglCutGenerator.hpp>
 #include <OsiSolverInterface.hpp>

@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    CutGen.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: utilities for sdpcuts
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #ifndef SDPCUTGEN2_HPP
 #define SDPCUTGEN2_HPP
 

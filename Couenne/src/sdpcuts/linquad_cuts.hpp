@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    linquad_cuts.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #ifndef LINQUAD_CUTS_HPP
 #define LINQUAD_CUTS_HPP
 

@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    report.cpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

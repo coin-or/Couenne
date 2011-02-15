@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    linquad_cuts.cpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include <linquad_cuts.hpp>
 #include <stdio.h>
 #include <math.h>

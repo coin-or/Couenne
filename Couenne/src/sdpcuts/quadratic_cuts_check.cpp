@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    quadratic_cuts_check.cpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include <quadratic_cuts_check.hpp>
 #include <stdio.h>
 #include <dsyevx_wrapper.hpp>

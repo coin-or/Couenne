@@ -1,8 +1,16 @@
+/* $Id$
+ *
+ * Name:    CutGen.cpp
+ * Author:  Andrea Qualizza
+ * Purpose: Generation of all cust
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include "stdlib.h"
 #include "stdio.h"
 #include "math.h"
-#include "sys/time.h"
-#include "sys/resource.h"
+#include "CoinTime.hpp"
 
 #include "CutGen.hpp"
 #include "misc_util.hpp"
@@ -402,7 +410,6 @@ void CutGen::compareSparsify(const OsiSolverInterface &si,int n, int m, const do
 	double **sparse_v_mat2 = new double*[SPARSIFY_MAX_CARD];
 	for (int i=0; i<SPARSIFY_MAX_CARD; i++)
 		sparse_v_mat2[i] = new double[np];
-	struct rusage use;
 
 	OsiSolverInterface *sirlt = si.clone(true);
 	sirlt->unmarkHotStart();
@@ -436,8 +443,9 @@ void CutGen::compareSparsify(const OsiSolverInterface &si,int n, int m, const do
 	}
 	double time1 = 0,starttime1 = 0;
 
-	getrusage (RUSAGE_SELF, &use);
-	starttime1 = use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec;
+	starttime1 = CoinCpuTime ();
+
+
 	int gencuts1 = 0;
 	OsiCuts cs1;
 	double *workevs1 = new double[m];
@@ -460,32 +468,27 @@ void CutGen::compareSparsify(const OsiSolverInterface &si,int n, int m, const do
 				}
 		}
 	}
-	getrusage (RUSAGE_SELF, &use);
 
 	int decomposition_counter1 = decomposition_counter;
 
-	time1 = fabs(use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec - starttime1);
+	time1 = CoinCpuTime () - starttime1;
 	double time_per_cut1 = time1 / gencuts1;
 	int dupcuts1 = gencuts1 - cs1.sizeRowCuts();
 	double dupcuts_perc1 = (100.0 * ((double) dupcuts1)) / ((double)gencuts1);
 
 	OsiSolverInterface *si1_lp = si.clone(true);
-	getrusage (RUSAGE_SELF, &use);
-	double starttime1_lp = use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec;
+	double starttime1_lp = CoinCpuTime ();
 	si1_lp->applyCuts (cs1);
 	si1_lp->resolve();
-	getrusage (RUSAGE_SELF, &use);
-	double time1_lp = fabs(use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec - starttime1_lp);
+	double time1_lp = CoinCpuTime () - starttime1_lp;
 	double obj1 = si1_lp->getObjValue() + objConst_;
 
 	OsiSolverInterface *si1_lporigcuts = si.clone(true);
-	getrusage (RUSAGE_SELF, &use);
-	double starttime1_lporigcuts = use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec;
+	double starttime1_lporigcuts = CoinCpuTime ();
 	si1_lporigcuts->applyCuts(cs_origev);
 	si1_lporigcuts->applyCuts(cs1);
 	si1_lporigcuts->resolve();
-	getrusage (RUSAGE_SELF, &use);
-	double time1_lporigcuts = fabs(use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec - starttime1_lporigcuts);
+	double time1_lporigcuts = CoinCpuTime () - starttime1_lporigcuts;
 	double obj1_withorigev = si1_lporigcuts->getObjValue() + objConst_;
 
 
@@ -524,8 +527,7 @@ void CutGen::compareSparsify(const OsiSolverInterface &si,int n, int m, const do
 	}
 	double time2 = 0,starttime2 = 0;
 
-	getrusage (RUSAGE_SELF, &use);
-	starttime2 = use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec;
+	starttime2 = CoinCpuTime ();
 	int gencuts2 = 0;
 	OsiCuts cs2;
 	double *workevs2 = new double[m];
@@ -548,30 +550,25 @@ void CutGen::compareSparsify(const OsiSolverInterface &si,int n, int m, const do
 				}
 		}
 	}
-	getrusage (RUSAGE_SELF, &use);
 
 	int decomposition_counter2 = decomposition_counter;
 
-	time2 = fabs(use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec - starttime2);
+	time2 = CoinCpuTime () - starttime2;
 	double time_per_cut2 = time2 / gencuts2;
 	int dupcuts2 = gencuts2 - cs2.sizeRowCuts();
 	double dupcuts_perc2 = (100.0 * ((double) dupcuts2)) / ((double)gencuts2);
 	OsiSolverInterface *si2_lp = si.clone(true);
-	getrusage (RUSAGE_SELF, &use);
-	double starttime2_lp = use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec;
+	double starttime2_lp = CoinCpuTime ();
 	si2_lp->applyCuts (cs2);
 	si2_lp->resolve();
-	getrusage (RUSAGE_SELF, &use);
-	double time2_lp = fabs(use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec - starttime2_lp);
+	double time2_lp = CoinCpuTime () - starttime2_lp;
 	double obj2 = si2_lp->getObjValue() + objConst_;
 	OsiSolverInterface *si2_lporigcuts = si.clone(true);
-	getrusage (RUSAGE_SELF, &use);
-	double starttime2_lporigcuts = use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec;
+	double starttime2_lporigcuts = CoinCpuTime ();
 	si2_lporigcuts->applyCuts(cs_origev);
 	si2_lporigcuts->applyCuts (cs2);
 	si2_lporigcuts->resolve();
-	getrusage (RUSAGE_SELF, &use);
-	double time2_lporigcuts = fabs(use.ru_utime.tv_sec + 1e-6 * use.ru_utime.tv_usec - starttime2_lporigcuts);
+	double time2_lporigcuts = CoinCpuTime () - starttime2_lporigcuts;
 	double obj2_withorigev = si2_lporigcuts->getObjValue() + objConst_;
 
 	double nz_mean2 = 0.0;

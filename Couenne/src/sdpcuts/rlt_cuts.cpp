@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    rlt_cuts.hpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <OsiCuts.hpp>

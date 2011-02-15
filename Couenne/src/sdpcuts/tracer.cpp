@@ -1,3 +1,12 @@
+/* $Id$
+ *
+ * Name:    tracer.cpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include <sdpcuts.hpp>
 #include <tracer.hpp>
 #include <misc_util.hpp>

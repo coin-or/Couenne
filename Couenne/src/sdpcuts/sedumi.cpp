@@ -1,5 +1,12 @@
-#include <sys/time.h>
-#include <sys/resource.h>
+/* $Id$
+ *
+ * Name:    sedumi.cpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 

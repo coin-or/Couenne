@@ -1,9 +1,16 @@
+/* $Id$
+ *
+ * Name:    dsyevx_rapper.cpp
+ * Author:  Andrea Qualizza
+ * Purpose: 
+ *
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
-#include <sys/time.h>
-#include <sys/resource.h>
 #include <misc_util.hpp>
 
 #include "CoinHelperFunctions.hpp"
