@@ -13,6 +13,7 @@
 
 #include "CglCutGenerator.hpp"
 #include "CouenneJournalist.hpp"
+#include "IpOptionsList.hpp"
 
 using namespace Couenne;
 
