@@ -20,6 +20,8 @@ const CouNumber default_alpha  = 0.2;
 const CouNumber default_clamp  = 0.2;
 const CouNumber max_pseudocost = 1000.;
 
+const CouNumber couenne_small_est = 1e-3;
+
 /// Empty constructor
 CouenneObject::CouenneObject ():
 
@@ -545,8 +547,16 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   case INTERVAL_BR:
   case INTERVAL_BR_REV:
     assert (info);
-    *up   = CoinMin (max_pseudocost,         upper - point);
-    *down = CoinMin (max_pseudocost, point - lower);
+
+    // merged from trunk -- attempt at more redundant estimate. For
+    // several reasons (numerical, infeasibilities spanning more
+    // expressions for a single variable, etc.) this can be set to
+    // zero even though we are branching on it, and it triggers an assert later
+    *up   = CoinMin (max_pseudocost, couenne_small_est + fabs (upper - point)); 
+    *down = CoinMin (max_pseudocost, couenne_small_est + fabs (lower - point));
+
+    //    *up   = CoinMin (max_pseudocost,         upper - point);
+    //    *down = CoinMin (max_pseudocost, point - lower);
     break;
 
   case PROJECTDIST: // taken care of in selectBranch procedure
@@ -574,6 +584,6 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
     if (upEstimate_   < fracUp)   upEstimate_ = fracUp;
   }
 
-  assert (downEstimate_ >= 0. &&
-            upEstimate_ >= 0.);
+  assert (downEstimate_ > 0. &&
+            upEstimate_ > 0.);
 }
