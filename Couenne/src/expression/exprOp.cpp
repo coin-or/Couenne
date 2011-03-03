@@ -75,10 +75,12 @@ int exprOp::compare (exprOp &e1) {
   if (nargs_ < e1.nargs_) return -1;
   if (nargs_ > e1.nargs_) return  1;
 
+  expression **alist2 = e1. ArgList ();
+
   // not an exprGroup, compare arguments
   for (register int i = nargs_; i--;) {
 
-    int res = arglist_ [i] -> compare (*(e1. ArgList () [i]));
+    int res = arglist_ [i] -> compare (*(alist2 [i]));
     if (res) return res;
   }
 

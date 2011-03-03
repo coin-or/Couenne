@@ -45,8 +45,8 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   int intk; // integer (or integer inverse of) exponent
 
   bool 
-    isint    =           (fabs (k    - (intk = COUENNE_round (k)))    < COUENNE_EPS), // k   integer
-    isinvint = !isint && (fabs (1./k - (intk = COUENNE_round (1./k))) < COUENNE_EPS); // 1/k integer
+    isint    =           (          (fabs (k    - (intk = COUENNE_round (k)))    < COUENNE_EPS)), // k   integer
+    isinvint = !isint && (k != 0 && (fabs (1./k - (intk = COUENNE_round (1./k))) < COUENNE_EPS)); // 1/k integer
 
   CouNumber wl = l [wind], // lower w
             wu = u [wind]; // upper w

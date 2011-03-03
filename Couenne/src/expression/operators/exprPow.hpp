@@ -146,8 +146,8 @@ inline CouNumber safe_pow (CouNumber base,
     }
     else retval = (lexponent < 0.) ? 0. : COUENNE_INFINITY;
   }
-
-  retval = (pow (lbase, lexponent));
+  else
+    retval = (pow (lbase, lexponent));
 
   return (CouNumber) (retval);
 }

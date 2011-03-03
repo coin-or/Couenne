@@ -166,9 +166,9 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
   if (   (isInt || isInvInt)
       && (intk % 2) 
-      && (k >   COUENNE_EPS) 
-      && (l < - COUENNE_EPS) 
-      && (u >   COUENNE_EPS)) {
+      && (k >   COUENNE_EPS)) {
+	 //      && (l < - COUENNE_EPS) 
+	 //      && (u >   COUENNE_EPS)) {
 
     // 1) k (or its inverse) is positive, integer, and odd, and 0 is
     //    an internal point of the interval [l,u].
@@ -178,7 +178,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
     // numerical procedures to find the (unique) root of a polynomial
     // Q(x) (see Liberti and Pantelides, 2003).
 
-    CouNumber q = 1;
+    CouNumber q = 0.;
 
     if ((l<0) && (u>0)) {
 
@@ -209,7 +209,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     // lower envelope
     if (l > -powThres) {
-      if (l>0) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k,   l, u, sign); // 0<l<u, tangents only
+      if (l>=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k,   l, u, sign); // 0<l<u, tangents only
       else if (u > q * l) { // upper x is after "turning point", add lower envelope
 	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, q*l, u, sign);
 	cg      -> addSegment     (cs, w_ind, x_ind, l, safe_pow (l,k), q*l, safe_pow (q*l,k), sign);
@@ -218,7 +218,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     // upper envelope
     if (u < powThres) {
-      if (u<0) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l,   u, -sign);  // l<u<0, tangents only
+      if (u<=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l,   u, -sign);  // l<u<0, tangents only
       else if (l < q * u) { // lower x is before "turning point", add upper envelope
 	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, l, q*u, -sign);
 	cg      -> addSegment     (cs, w_ind, x_ind, q*u, safe_pow (q*u,k), u, safe_pow (u,k), -sign);
@@ -273,7 +273,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
     // lower envelope for k negative even
     if ((k <  COUENNE_EPS) &&
 	isInt && !(intk % 2) &&
-	(l < -COUENNE_EPS) &&       // bounds do not contain 0
+	(l < -COUENNE_EPS) &&       // bounds contain 0
 	(u >  COUENNE_EPS) &&
 	(l > - powThres) &&         // and are finite
 	(u <   powThres)) 

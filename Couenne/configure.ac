@@ -78,7 +78,7 @@ AC_COIN_HAS_ASL
 
 # CPLEX library
 AC_LANG_PUSH(C)
-AC_COIN_HAS_USER_LIBRARY([Cplex],[CPX],[cplex.h],[CPXgetstat])
+AC_COIN_HAS_USER_LIBRARY([Cplex],[CPX],[cplex.h],[CPXversion])
 AC_LANG_POP(C)
 
 ##############################################################################

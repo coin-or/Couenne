@@ -68,18 +68,27 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
   // TODO: consider branching value that maximizes distance from
   // current point (how?)
 
+  CouNumber lb, ub;
+  var -> getBounds (lb, ub);
+
   value_ = (*variable_) ();
 
   if (fabs (brpoint) < COUENNE_INFINITY) 
     value_ = brpoint;
 
-  CouNumber lb, ub;
-  var -> getBounds (lb, ub);
+  // bounds may have tightened and may exclude value_ now, update it
+
+  if      (value_ < lb) value_ = lb;
+  else if (value_ > ub) value_ = ub;
 
   // do not branch too close to bounds
-  if ((lb > -COUENNE_INFINITY) && (ub < COUENNE_INFINITY)) {
-    if      ((value_ - lb) / (ub-lb) < closeToBounds) value_ = lb + (ub-lb) * closeToBounds;
-    else if ((ub - value_) / (ub-lb) < closeToBounds) value_ = ub + (lb-ub) * closeToBounds;
+  if ((lb > -COUENNE_INFINITY) && 
+      (ub <  COUENNE_INFINITY)) {
+
+    CouNumber margin = (ub-lb) * closeToBounds;
+
+    if      (value_ - lb < margin) value_ = lb + margin;
+    else if (ub - value_ < margin) value_ = ub - margin;
   }
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 

@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    branchExprMul.cpp
  * Author:  Pietro Belotti
  * Purpose: return branch data for multiplications
@@ -85,8 +85,8 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
 
   // Unbounded x and/or y /////////////////////////////////////////////////////////
 
-  if (((var = arglist_ [0]) -> Index() >= 0) && (xl < -COUENNE_INFINITY) && (xu > COUENNE_INFINITY) ||
-      ((var = arglist_ [1]) -> Index() >= 0) && (yl < -COUENNE_INFINITY) && (yu > COUENNE_INFINITY)) {
+  if ((((var = arglist_ [0]) -> Index() >= 0) && (xl < -COUENNE_INFINITY) && (xu > COUENNE_INFINITY)) ||
+      (((var = arglist_ [1]) -> Index() >= 0) && (yl < -COUENNE_INFINITY) && (yu > COUENNE_INFINITY))) {
 
     *brpts = 0.;
     brDist = computeMulBrDist (info, xi, yi, wi, var -> Index (), brpts);
@@ -128,7 +128,8 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
       lb = info -> lower_     [ind],
       ub = info -> upper_     [ind];
 
-    if ((lb < -COUENNE_EPS) && (ub > COUENNE_EPS) && 
+    if ((lb < -COUENNE_EPS) && 
+	(ub >  COUENNE_EPS) && 
 	(-lb/ub >= THRES_ZERO_SYMM) &&
 	(-ub/lb >= THRES_ZERO_SYMM))
       // interval is fairly symmetric around 0, branch on it
@@ -245,7 +246,6 @@ CouNumber exprMul::balancedMul (const OsiBranchingInformation *info, int index, 
   // t_opt = m z_opt + q
   //
   // and the branching point is xl + t_opt (xu-xl)
-  //
 
   powertriplet ft (2);
 

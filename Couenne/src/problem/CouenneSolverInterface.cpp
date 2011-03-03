@@ -12,10 +12,6 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
-#ifdef COIN_HAS_CPX
-#include "OsiCpxSolverInterface.hpp"
-#endif
-
 /// constructor
 template <class T> 
 CouenneSolverInterface<T>::CouenneSolverInterface 

@@ -22610,7 +22610,7 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-	   for fnm in CPXgetstat ; do
+	   for fnm in CPXversion ; do
 	     echo "$as_me:$LINENO: checking whether symbol $fnm is available with CPX" >&5
 echo $ECHO_N "checking whether symbol $fnm is available with CPX... $ECHO_C" >&6
 	     cat >conftest.$ac_ext <<_ACEOF
@@ -22673,8 +22673,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 	   if test x"$coin_CPX_link" = xyes ; then
 	     LIBS="$coin_save_LIBS"
 	   else
-	     { { echo "$as_me:$LINENO: error: Cannot find symbol(s) CPXgetstat with CPX" >&5
-echo "$as_me: error: Cannot find symbol(s) CPXgetstat with CPX" >&2;}
+	     { { echo "$as_me:$LINENO: error: Cannot find symbol(s) CPXversion with CPX" >&5
+echo "$as_me: error: Cannot find symbol(s) CPXversion with CPX" >&2;}
    { (exit 1); exit 1; }; }
 	   fi
 	 fi
