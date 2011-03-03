@@ -69,7 +69,10 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
   // current point (how?)
 
   CouNumber lb, ub;
-  var -> getBounds (lb, ub);
+
+  // a little ambiguous: var should be variable_ in both CouenneObjects and CouenneVarObjects. 
+  // var -> getBounds (lb, ub);
+  variable_ -> getBounds (lb, ub);
 
   value_ = (*variable_) ();
 
