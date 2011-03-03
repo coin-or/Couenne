@@ -91,6 +91,11 @@ public:
   /// return or set color of a node
   enum dep_color &color () 
   {return color_;}
+
+  /// index nodes on which this one depends (forward star in
+  /// dependence graph)
+  std::set <DepNode *, compNode> *depList()
+  {return depList_;}
 };
 
 
@@ -116,7 +121,7 @@ protected:
 public:
 
   /// constructor
-  DepGraph  (): counter_ (0) {}
+  DepGraph (): counter_ (0) {}
 
   /// destructor
   ~DepGraph () {

@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of powers
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -148,8 +148,8 @@ inline CouNumber safe_pow (CouNumber base,
     }
     else retval = (lexponent < 0.) ? 0. : COUENNE_INFINITY;
   }
-
-  retval = (pow (lbase, lexponent));
+  else
+    retval = (pow (lbase, lexponent));
 
   return (CouNumber) (retval);
 }

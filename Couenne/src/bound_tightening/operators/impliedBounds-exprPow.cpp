@@ -46,11 +46,12 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   int intk; // integer (or integer inverse of) exponent
 
   bool 
-    isint    =           (fabs (k    - (intk = COUENNE_round (k)))    < COUENNE_EPS), // k   integer
-    isinvint = !isint && (fabs (1./k - (intk = COUENNE_round (1./k))) < COUENNE_EPS); // 1/k integer
+    isint    =           (            fabs (k    - (intk = COUENNE_round (k)))    < COUENNE_EPS),  // k   integer
+    isinvint = !isint && (k != 0. && (fabs (1./k - (intk = COUENNE_round (1./k))) < COUENNE_EPS)); // 1/k integer
 
-  CouNumber wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind], // lower w
-            wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind]; // upper w
+  CouNumber 
+    wl = ((sign == expression::AUX_GEQ) ? -COIN_DBL_MAX : l [wind]), // lower w
+    wu = ((sign == expression::AUX_LEQ) ?  COIN_DBL_MAX : u [wind]); // upper w
 
   if ((isint || isinvint) && (intk % 2)) { 
 

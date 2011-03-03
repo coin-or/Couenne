@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods to convexify an expression x^k, k constant
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -172,8 +172,9 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
   if (   (isInt || isInvInt)
       && (intk % 2) 
       && (k >   COUENNE_EPS) 
-      && (l < - COUENNE_EPS) 
-      && (u >   COUENNE_EPS)) {
+	 //      && (l < - COUENNE_EPS) 
+	 //      && (u >   COUENNE_EPS)
+	 ) {
 
     // 1) k (or its inverse) is positive, integer, and odd, and 0 is
     //    an internal point of the interval [l,u].
@@ -183,9 +184,9 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
     // numerical procedures to find the (unique) root of a polynomial
     // Q(x) (see Liberti and Pantelides, 2003).
 
-    CouNumber q = 1;
+    CouNumber q = 0.;
 
-    if ((l<0) && (u>0)) {
+    if ((l<0.) && (u>0.)) {
 
       Qroot qmap;
       q = qmap (intk);
@@ -195,7 +196,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     if (isInvInt) {
       if (cg -> isFirst ()) {
-	w = (l>0) ? 1 : (u<0) ? -1 : 0;
+	w = (l>0.) ? 1. : (u<0.) ? -1. : 0.;
 	x = 0;
       }
       q = safe_pow (q, k);
@@ -214,20 +215,24 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     // lower envelope
     if ((aSign != expression::AUX_LEQ) && (l > -powThres)) {
-      if (l>0) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k,   l, u, sign); // 0<l<u, tangents only
+      if (l>=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k,   l, u, sign); // 0<l<u, tangents only
       else if (u > q * l) { // upper x is after "turning point", add lower envelope
 	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, q*l, u, sign);
 	cg      -> addSegment     (cs, w_ind, x_ind, l, safe_pow (l,k), q*l, safe_pow (q*l,k), sign);
-      } else cg -> addSegment     (cs, w_ind, x_ind, l, safe_pow (l,k), u,   safe_pow (u,  k), sign);
+      } else {
+	cg -> addSegment     (cs, w_ind, x_ind, l, safe_pow (l,k), u,   safe_pow (u,  k), sign);
+      }
     }
 
     // upper envelope
     if ((aSign != expression::AUX_GEQ) && (u < powThres)) {
-      if (u<0) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l,   u, -sign);  // l<u<0, tangents only
+      if (u<=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l,   u, -sign);  // l<u<0, tangents only
       else if (l < q * u) { // lower x is before "turning point", add upper envelope
 	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, l, q*u, -sign);
 	cg      -> addSegment     (cs, w_ind, x_ind, q*u, safe_pow (q*u,k), u, safe_pow (u,k), -sign);
-      } else cg -> addSegment     (cs, w_ind, x_ind, l,   safe_pow (l,k),   u, safe_pow (u,k), -sign);
+      } else {
+	cg -> addSegment     (cs, w_ind, x_ind, l,   safe_pow (l,k),   u, safe_pow (u,k), -sign);
+      }
     }
   }
   else {
@@ -268,7 +273,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     // invert sign if 
     if (   ((l < - COUENNE_EPS) && (intk % 2) && (k < -COUENNE_EPS)) // k<0 odd, l<0
-	|| ((u < - COUENNE_EPS) && (intk % 2) && (k >  COUENNE_EPS)) // k>0 odd, u<0
+	|| ((u <= 0.)           && (intk % 2) && (k >  COUENNE_EPS)) // k>0 odd, u<0
 	|| (fabs (k-0.5) < 0.5 - COUENNE_EPS))                       // k in [0,1]
       sign = -1;
 
@@ -287,16 +292,15 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
       cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l, k), u, safe_pow (u, k), 1);
 
-
     // upper envelope
-    if ((  (k > COUENNE_EPS)        // when k negative, add only if
-	|| (l > COUENNE_EPS)        // bounds do not contain 0
-	|| (u < - COUENNE_EPS)) &&
+    if ((   (k > COUENNE_EPS)        // when k negative, add only if
+	 || (l > COUENNE_EPS)        // bounds do not contain 0
+	 || (u < - COUENNE_EPS)) &&
 	(l > - powThres) &&         // and are finite
 	(u <   powThres) &&
 	(fabs (l+u) > COUENNE_EPS) &&
-	aSign != expression::AUX_GEQ) // bounds are not opposite (otherwise it's a variable bound)
-
+	(aSign != expression::AUX_GEQ)) // bounds are not opposite (otherwise it's a variable bound)
+      
       cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l, k), u, safe_pow (u, k), -sign);
 
     // similarly, pay attention not to add infinite slopes

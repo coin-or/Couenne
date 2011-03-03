@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: find roots of polynomial Q^k(x) (see Liberti and Pantelides, 2003)
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -20,12 +20,9 @@ namespace Couenne {
 
 CouNumber Q (register int k, CouNumber x) {
 
-  register CouNumber xp, Q;
+  register CouNumber xp = x, Q = 1.;
 
   k *= 2;
-
-  xp = x;
-  Q = 1;
 
   for (register int i=2; i<=k; i++) {
 
@@ -44,13 +41,15 @@ CouNumber Q (register int k, CouNumber x) {
 
 CouNumber rootQ (int k) {
 
-  if (k==1) return - 0.5;
+  if (k==1) return - 0.5; // for x^3, solution is -1/2
   else {
 
-    register CouNumber l  = - 1.0 + 0.5 / k, 
-                       u  = - 0.5,
-                       Ql = Q (k, l), Qu = Q (k, u), Qm,
-                       midpoint;
+    register CouNumber 
+      l  = - 1.0 + 0.5 / k, 
+      u  = - 0.5,
+      /* Ql = Q (k, l), Qu = Q (k, u), */
+      Qm,
+      midpoint;
     do {
 
       midpoint = 0.5 * (l+u); /* (- Ql * u + Qu * l) / (Qu - Ql); */
@@ -58,8 +57,8 @@ CouNumber rootQ (int k) {
 
       /*      printf ("[%.4f, %.4f] --> %.4f: %.24f\n", l, u, midpoint, Qm); */
 
-      if (Qm<0) {l = midpoint; Ql = Qm; Qm = - Qm;}
-      else      {u = midpoint; Qu = Qm;}
+      if (Qm<0) {l = midpoint; /* Ql = Qm; */ Qm = - Qm;} // invert sign to avoid fabs() in termination check
+      else      {u = midpoint; /* Qu = Qm; */}
 
     } while (Qm > 1e-15);
 

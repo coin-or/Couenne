@@ -130,7 +130,7 @@ void DepGraph::insert (exprAux *aux) {
 
   if (i == vertices_ . end ()) {
     vertices_.insert (el);
-    aux      -> Image () -> fillDepSet (el -> DepList (), this);
+    aux -> Image () -> fillDepSet (el -> DepList (), this);
   } else {
     aux -> Image () -> fillDepSet ((*i) -> DepList (), this);
     delete el;

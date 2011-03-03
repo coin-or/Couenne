@@ -48,14 +48,17 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
      info -> upper_,
      false);
 
-  const std::set <int> &dependence = problem_ -> Dependence () [index];
-
   //////////////////////////////////////////////
+
   CouNumber retval = checkInfeasibility (info);
+
   //////////////////////////////////////////////
 
   if (//(retval > CoinMin (COUENNE_EPS, feas_tolerance_)) &&
       (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING))) {
+
+    const std::set <int> &dependence = problem_ -> Dependence () [index];
+
     printf ("infeasVar x%d %-10g [", reference_ -> Index (), retval);
     reference_             -> print (); 
     if ((dependence.size () == 0) && (reference_ -> Image ())) { // if no list, print image
