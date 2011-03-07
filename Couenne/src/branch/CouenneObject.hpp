@@ -5,7 +5,7 @@
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 

@@ -68,7 +68,8 @@ public:
 protected:
 
   /// branching scheme used. Experimental: still figuring out why
-  /// plain LP branching doesn't work with strong/reliability branching
+  /// plain LP branching doesn't work with strong/reliability
+  /// branching
   int varSelection_;
 
   /// Method computing the branching point

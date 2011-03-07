@@ -489,7 +489,10 @@ void CouenneObject::setParameters (Bonmin::BabSetupBase *base) {
       else if (brtype == "no-branch")   strategy_ = NO_BRANCH;
       else if (brtype == "mid-point") {
 	strategy_ = MID_INTERVAL;
-	//base -> options () -> GetNumericValue ("branch_midpoint_alpha", alpha_, "couenne.");
+	double alpha_fun = default_alpha;
+	base -> options () -> GetNumericValue ("branch_midpoint_alpha", alpha_fun, "couenne.");
+	if (alpha_fun != default_alpha)
+	  alpha_ = alpha_fun;
       }
     }
   }

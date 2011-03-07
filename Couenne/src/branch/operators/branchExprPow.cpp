@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: return branch gain and branch object for powers
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -294,7 +294,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     if (((l < - COUENNE_INFINITY) && (u > COUENNE_INFINITY)) || // ]-inf,+inf[
 	((l < - COUENNE_INFINITY) && (y0 < pow0))            ||
-	((u >   COUENNE_INFINITY) && (y0 > pow0))){ 
+	((u >   COUENNE_INFINITY) && (y0 > pow0))) { 
 
       if (((x0 > 0.) && (y0 > pow0)) ||  
 	  ((x0 < 0.) && (y0 < pow0))) { // in orthant with curve (first or third)
@@ -389,11 +389,6 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     if (y0 < pow0) { // on the bad side, below
 
-      // printf ("concave side: x=%g [%g,%g], y=%g [%g,%g]\n", 
-      // 	      x0, l, u, y0,
-      // 	      info -> lower_    [wi],
-      // 	      info -> upper_    [wi]);
-
       // same rule of thumb as above, take the x coordinate of the
       // midpoint of horizontal segment between current point and
       // curve
@@ -419,11 +414,6 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 	CoinMin (projL, projectSeg (x0, y0, *brpts, powbpt, u, pow (u,k), +1)));
 
     } else { // on the convex side. We don't care if u is infinite
-
-      // printf ("convex side: x=%g [%g,%g], y=%g [%g,%g]\n", 
-      // 	      x0, l, u, y0,
-      // 	      info -> lower_    [wi],
-      // 	      info -> upper_    [wi]);
 
       powertriplet pt (k);
       *brpts = powNewton (x0, y0, &pt);

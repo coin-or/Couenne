@@ -130,7 +130,8 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
       ub = info -> upper_     [ind],
       margin = obj -> lp_clamp () * (ub - lb);
 
-    if ((lb < -COUENNE_EPS) && (ub > COUENNE_EPS) && 
+    if ((lb < -COUENNE_EPS) && 
+	(ub >  COUENNE_EPS) && 
 	(-lb/ub >= THRES_ZERO_SYMM) &&
 	(-ub/lb >= THRES_ZERO_SYMM))
       // interval is fairly symmetric around 0, branch on it
