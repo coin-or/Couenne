@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for branching on variables
  *
- * (C) Carnegie-Mellon University, 2008-10.
+ * (C) Carnegie-Mellon University, 2008-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -28,11 +28,13 @@ public:
 		    CouenneProblem *p, 
 		    exprVar *ref, 
 		    Bonmin::BabSetupBase *base, 
-		    JnlstPtr jnlst);
+		    JnlstPtr jnlst,
+		    int varSelection); //< either OSI_SIMPLE or OSI_STRONG
 
   /// Copy constructor
   CouenneVarObject (const CouenneVarObject &src):
-  CouenneObject (src) {}
+    CouenneObject (src),
+    varSelection_ (src.varSelection_) {}
 
   /// Destructor
   ~CouenneVarObject () {}
@@ -64,6 +66,10 @@ public:
   virtual bool isCuttable () const;
 
 protected:
+
+  /// branching scheme used. Experimental: still figuring out why
+  /// plain LP branching doesn't work with strong/reliability branching
+  int varSelection_;
 
   /// Method computing the branching point
   CouNumber computeBranchingPoint (const OsiBranchingInformation *info, 

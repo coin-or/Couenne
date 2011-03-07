@@ -27,7 +27,7 @@ public:
 		   Bonmin::BabSetupBase *base, 
 		   JnlstPtr jnlst):
 
-    CouenneVarObject (c, p, ref, base, jnlst) {}
+    CouenneVarObject (c, p, ref, base, jnlst, Bonmin::BabSetupBase::OSI_SIMPLE) {}
 
   /// Copy constructor
   CouenneVTObject (const CouenneVTObject &src):

@@ -280,7 +280,7 @@ CouNumber CouenneObject::getBrPoint (funtriplet *ft, CouNumber x0, CouNumber l, 
       (u >  COUENNE_EPS) && 
       (-l/u >= THRES_ZERO_SYMM) &&
       (-u/l >= THRES_ZERO_SYMM))
-    return 0.;
+    return 0.; // this happens when [l,u] is quite symmetrical w.r.t. 0
 
   CouNumber width = lp_clamp_ * (u-l);
 
@@ -432,6 +432,10 @@ void CouenneObject::setParameters (Bonmin::BabSetupBase *base) {
     base -> options () -> GetNumericValue ("branch_midpoint_alpha", alpha_, "couenne.");
   }
 
+  if (strategy_ == LP_CLAMPED || 
+      strategy_ == LP_CENTRAL)
+    base -> options () -> GetNumericValue ("branch_lp_clamp", lp_clamp_, "couenne.");
+
   // accept options for branching rules specific to each operator
   if (reference_ && reference_ -> Type () == AUX) {
 
@@ -469,10 +473,14 @@ void CouenneObject::setParameters (Bonmin::BabSetupBase *base) {
     if (br_operator != "") {
       // read option
       char select [40], sel_clamp [40];
+      double lp_clamp_fun = default_clamp;
       sprintf (select,    "branch_pt_select_%s", br_operator.c_str ());
       sprintf (sel_clamp, "branch_lp_clamp_%s",  br_operator.c_str ());
       base -> options () -> GetStringValue (select, brtype, "couenne.");
-      base -> options () -> GetNumericValue (sel_clamp, lp_clamp_, "couenne.");
+      base -> options () -> GetNumericValue (sel_clamp, lp_clamp_fun, "couenne.");
+
+      if (lp_clamp_fun != default_clamp)
+	lp_clamp_ = lp_clamp_fun;
 
       if      (brtype == "balanced")    strategy_ = BALANCED;
       else if (brtype == "lp-clamped")  strategy_ = LP_CLAMPED;
@@ -481,7 +489,7 @@ void CouenneObject::setParameters (Bonmin::BabSetupBase *base) {
       else if (brtype == "no-branch")   strategy_ = NO_BRANCH;
       else if (brtype == "mid-point") {
 	strategy_ = MID_INTERVAL;
-	base -> options () -> GetNumericValue ("branch_midpoint_alpha", alpha_, "couenne.");
+	//base -> options () -> GetNumericValue ("branch_midpoint_alpha", alpha_, "couenne.");
       }
     }
   }
@@ -495,7 +503,7 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
 
   int index = reference_ -> Index ();
 
-  bool isInteger = reference_ -> isInteger ();
+  //bool isInteger = reference_ -> isInteger ();
 
   CouNumber 
     *up   = &upEstimate_,

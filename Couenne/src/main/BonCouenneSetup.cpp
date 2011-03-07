@@ -142,10 +142,14 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   /// trying to avoid repetitions here...
 
-#define addJournalist(optname,jlevel) {					\
-    options    () -> GetIntegerValue ((optname), i, "couenne.");	\
+  // FIXME: doesn't work if suppress_all_output is true (gives
+  // segfault on options(), but checking options()!=NULL won't work as
+  // options() is a SmartPtr
+
+#define addJournalist(optname,jlevel) {				\
+    options    () -> GetIntegerValue ((optname), i, "couenne."); \
     journalist () -> GetJournal      ("console") -> SetPrintLevel ((jlevel), (EJournalLevel) i); \
-  }
+}
 
   addJournalist ("output_level",                J_COUENNE);
   addJournalist ("boundtightening_print_level", J_BOUNDTIGHTENING);
@@ -208,9 +212,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   } else if (s == "soplex") {
 
 #ifdef COIN_HAS_SPX
-    CouenneSolverInterface <OsiSpxSolverInterface> *CSI 
-      = new CouenneSolverInterface <OsiSpxSolverInterface>;
-
+    CouenneSolverInterface <OsiSpxSolverInterface> *CSI = new CouenneSolverInterface <OsiSpxSolverInterface>;
     continuousSolver_ = CSI;
     CSI -> setCutGenPtr (couenneCg);
 #else
@@ -342,6 +344,12 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   options () -> GetIntegerValue ("cont_var_priority", contObjPriority, "couenne.");
   options () -> GetIntegerValue ( "int_var_priority",  intObjPriority, "couenne.");
 
+  int varSelection;
+  if (!options_ -> GetEnumValue ("variable_selection", varSelection, "couenne.")) {
+    // change the default for Couenne
+    varSelection = Bonmin::BabSetupBase::OSI_SIMPLE;
+  }
+
   for (int i = 0; i < nVars; i++) { // for each variable
 
     exprVar *var = couenneProb_ -> Var (i);
@@ -385,7 +393,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 	//|| ((var -> Type () == AUX) &&                                  // or, aux 
 	//    (var -> Image () -> Linearity () > LINEAR))) {              // of nonlinear
 
-	objects [nobj] = new CouenneVarObject (couenneCg, couenneProb_, var, this, journalist ());
+	objects [nobj] = new CouenneVarObject (couenneCg, couenneProb_, var, this, journalist (), varSelection);
 	objects [nobj++] -> setPriority (var -> isInteger () ? intObjPriority : contObjPriority);
 	//objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
       }
@@ -489,13 +497,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   }
 
   // check branch variable selection for disjunctive cuts
-
-  int varSelection;
-  if (!options_->GetEnumValue("variable_selection", varSelection, "couenne.")) {
-    // change the default for Couenne
-    varSelection = OSI_SIMPLE;
-  }
-
 
   // Setup heuristic to solve nlp problems. /////////////////////////////////
 

@@ -53,7 +53,7 @@ CouNumber maxHeight   (funtriplet *ft, CouNumber lb, CouNumber ub);
 public:
 
   /// type of up/down estimate to return for pseudocosts
-  enum pseudocostMult {INFEASIBILITY, 
+    enum pseudocostMult {INFEASIBILITY, 
 		       INTERVAL_LP, INTERVAL_LP_REV,
 		       INTERVAL_BR, INTERVAL_BR_REV,
 		       PROJECTDIST};
@@ -160,6 +160,10 @@ public:
   /// integer infeasibility: min {value - floor(value), ceil(value) - value}
   virtual double intInfeasibility (double value) const
   {return CoinMin (value - floor (value + COUENNE_EPS), ceil (value - COUENNE_EPS) - value);}
+
+  /// Defines safe interval percentage for using LP point as a branching point
+  CouNumber lp_clamp () const
+  {return lp_clamp_;}
 
 protected:
 

@@ -127,7 +127,8 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
     CouNumber 
       pt = info -> solution_  [ind],
       lb = info -> lower_     [ind],
-      ub = info -> upper_     [ind];
+      ub = info -> upper_     [ind],
+      margin = obj -> lp_clamp () * (ub - lb);
 
     if ((lb < -COUENNE_EPS) && (ub > COUENNE_EPS) && 
 	(-lb/ub >= THRES_ZERO_SYMM) &&
@@ -136,9 +137,16 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
       *brpts = 0.;
 
     else switch (obj -> Strategy ()) {
+      case CouenneObject::LP_CENTRAL:   *brpts = pt; if ((pt < lb + margin) || 
+							 (pt > ub - margin)) 
+						       pt = .5 * (lb+ub);                     break;
+      case CouenneObject::LP_CLAMPED:   *brpts = CoinMax (lb + margin, 
+				 	         CoinMin (ub - margin, pt));                  break;
       case CouenneObject::MID_INTERVAL: *brpts = obj -> midInterval (pt, lb, ub);             break;
       case CouenneObject::BALANCED:     *brpts = balancedMul (info, (ind == xi) ? 0 : 1, wi); break;
-      case CouenneObject::MIN_AREA:
+      case CouenneObject::MIN_AREA: // in products, the minimum volume
+				    // subdivision is at the middle of
+				    // the interval
       default:                          *brpts = (0.5 * (lb+ub));                             break;
     }
 

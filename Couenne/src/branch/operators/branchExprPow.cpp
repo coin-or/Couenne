@@ -82,8 +82,8 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
   int intk = 0;
 
-  bool isInt    =            fabs (k    - (double) (intk = COUENNE_round (k)))    < COUENNE_EPS,
-       isInvInt = !isInt && (fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS);
+  bool isInt    =                        fabs (k    - (double) (intk = COUENNE_round (k)))    < COUENNE_EPS,
+       isInvInt = !isInt && (k != 0.) && fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS;
 
   // case 2: k is positive and even /////////////////////////////////////////////////////////
 
@@ -366,7 +366,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
       // horizontal segment between current point and curve
 
       if (obj -> Strategy () == CouenneObject::MID_INTERVAL)
-	*brpts = 0.5 * (x0 + pow (x0, 1. / k));
+	*brpts = 0.5 * (x0 + pow (y0, 1. / k));
       else {
 	powertriplet pt (k);
 	*brpts = obj -> getBrPoint (&pt, x0, l, u);
@@ -389,12 +389,17 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     if (y0 < pow0) { // on the bad side, below
 
+      // printf ("concave side: x=%g [%g,%g], y=%g [%g,%g]\n", 
+      // 	      x0, l, u, y0,
+      // 	      info -> lower_    [wi],
+      // 	      info -> upper_    [wi]);
+
       // same rule of thumb as above, take the x coordinate of the
       // midpoint of horizontal segment between current point and
       // curve
 
       if (obj -> Strategy () == CouenneObject::MID_INTERVAL)
-	*brpts = 0.5 * (x0 + pow (x0, 1. / k));
+	*brpts = 0.5 * (x0 + pow (y0, 1. / k));
       else {
 	powertriplet pt (k);
 	*brpts = obj -> getBrPoint (&pt, x0, l, u);
@@ -414,6 +419,11 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 	CoinMin (projL, projectSeg (x0, y0, *brpts, powbpt, u, pow (u,k), +1)));
 
     } else { // on the convex side. We don't care if u is infinite
+
+      // printf ("convex side: x=%g [%g,%g], y=%g [%g,%g]\n", 
+      // 	      x0, l, u, y0,
+      // 	      info -> lower_    [wi],
+      // 	      info -> upper_    [wi]);
 
       powertriplet pt (k);
       *brpts = powNewton (x0, y0, &pt);
