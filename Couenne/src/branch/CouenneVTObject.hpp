@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for branching on variables using violation transfer
  *
- * (C) Carnegie-Mellon University, 2008-09.
+ * (C) Carnegie-Mellon University, 2008-11.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -25,7 +25,7 @@ public:
 		   Bonmin::BabSetupBase *base, 
 		   JnlstPtr jnlst):
 
-    CouenneVarObject (c, p, ref, base, jnlst) {}
+    CouenneVarObject (c, p, ref, base, jnlst, Bonmin::BabSetupBase::OSI_SIMPLE) {}
 
   /// Copy constructor
   CouenneVTObject (const CouenneVTObject &src):

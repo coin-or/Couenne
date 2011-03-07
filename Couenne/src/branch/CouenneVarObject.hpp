@@ -26,11 +26,13 @@ public:
 		    CouenneProblem *p, 
 		    exprVar *ref, 
 		    Bonmin::BabSetupBase *base, 
-		    JnlstPtr jnlst);
+		    JnlstPtr jnlst,
+		    int varSelection);
 
   /// Copy constructor
   CouenneVarObject (const CouenneVarObject &src):
-  CouenneObject (src) {}
+  CouenneObject (src),
+  varSelection_ (src.varSelection_) {}
 
   /// Destructor
   ~CouenneVarObject () {}
@@ -62,6 +64,11 @@ public:
   virtual bool isCuttable () const;
 
 protected:
+
+  /// branching scheme used. Experimental: still figuring out why
+  /// plain LP branching doesn't work with strong/reliability
+  /// branching
+  int varSelection_;
 
   /// Method computing the branching point
   CouNumber computeBranchingPoint (const OsiBranchingInformation *info, 

@@ -462,10 +462,14 @@ void CouenneObject::setParameters (Bonmin::BabSetupBase *base) {
     if (br_operator != "") {
       // read option
       char select [40], sel_clamp [40];
+      double lp_clamp_fun = default_clamp;
       sprintf (select,    "branch_pt_select_%s", br_operator.c_str ());
       sprintf (sel_clamp, "branch_lp_clamp_%s",  br_operator.c_str ());
       base -> options () -> GetStringValue (select, brtype, "couenne.");
-      base -> options () -> GetNumericValue (sel_clamp, lp_clamp_, "couenne.");
+      base -> options () -> GetNumericValue (sel_clamp, lp_clamp_fun, "couenne.");
+
+      if (lp_clamp_fun != default_clamp)
+	lp_clamp_ = lp_clamp_fun;
 
       if      (brtype == "balanced")    strategy_ = BALANCED;
       else if (brtype == "lp-clamped")  strategy_ = LP_CLAMPED;
@@ -474,7 +478,10 @@ void CouenneObject::setParameters (Bonmin::BabSetupBase *base) {
       else if (brtype == "no-branch")   strategy_ = NO_BRANCH;
       else if (brtype == "mid-point") {
 	strategy_ = MID_INTERVAL;
-	base -> options () -> GetNumericValue ("branch_midpoint_alpha", alpha_, "couenne.");
+	double alpha_fun = default_alpha;
+	base -> options () -> GetNumericValue ("branch_midpoint_alpha", alpha_fun, "couenne.");
+	if (alpha_fun != default_alpha)
+	  alpha_ = alpha_fun;
       }
     }
   }

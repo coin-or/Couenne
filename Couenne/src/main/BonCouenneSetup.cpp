@@ -320,6 +320,12 @@ namespace Bonmin{
 
     options () -> GetIntegerValue ("cont_var_priority", contObjPriority, "bonmin.");
 
+    int varSelection;
+    if (!options_->GetEnumValue("variable_selection",varSelection,"bonmin.")) {
+      // change the default for Couenne
+      varSelection = Bonmin::BabSetupBase::OSI_SIMPLE;
+    }
+
     for (int i = 0; i < nVars; i++) { // for each variable
 
       exprVar *var = couenneProb_ -> Var (i);
@@ -363,7 +369,7 @@ namespace Bonmin{
 	   //|| ((var -> Type () == AUX) &&                                  // or, aux 
 	   //    (var -> Image () -> Linearity () > LINEAR))) {              // of nonlinear
 
-	  objects [nobj] = new CouenneVarObject (couenneCg, couenneProb_, var, this, journalist ());
+	  objects [nobj] = new CouenneVarObject (couenneCg, couenneProb_, var, this, journalist (), varSelection);
 	  objects [nobj++] -> setPriority (contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
 	}
@@ -458,12 +464,6 @@ namespace Bonmin{
     }
 
     // Add Branching rules ///////////////////////////////////////////////////////
-
-    int varSelection;
-    if (!options_->GetEnumValue("variable_selection",varSelection,"bonmin.")) {
-      // change the default for Couenne
-      varSelection = OSI_SIMPLE;
-    }
 
     switch (varSelection) {
 

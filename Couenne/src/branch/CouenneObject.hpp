@@ -5,7 +5,7 @@
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Object for auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -158,6 +158,10 @@ public:
   /// integer infeasibility: min {value - floor(value), ceil(value) - value}
   virtual double intInfeasibility (double value) const
   {return CoinMin (value - floor (value + COUENNE_EPS), ceil (value - COUENNE_EPS) - value);}
+
+  /// Defines safe interval percentage for using LP point as a branching point
+  CouNumber lp_clamp () const
+  {return lp_clamp_;}
 
 protected:
 

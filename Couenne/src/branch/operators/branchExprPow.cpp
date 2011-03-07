@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: return branch gain and branch object for powers
  *
- * (C) Carnegie-Mellon University, 2006-07. 
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -81,8 +81,8 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
   int intk = 0;
 
-  bool isInt    =            fabs (k    - (double) (intk = COUENNE_round (k)))    < COUENNE_EPS,
-       isInvInt = !isInt && (fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS);
+  bool isInt    =                        fabs (k    - (double) (intk = COUENNE_round (k)))    < COUENNE_EPS,
+       isInvInt = !isInt && (k != 0) && (fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS);
 
   // case 2: k is positive and even /////////////////////////////////////////////////////////
 
@@ -230,24 +230,24 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     way = (x0 > 0.) ? TWO_RIGHT : TWO_LEFT;
 
-    if ((l < - COUENNE_INFINITY) && (u > COUENNE_INFINITY) || // [-inf,+inf[
-	(l < - COUENNE_INFINITY) && (y0 < pow0)            ||
-	(u >   COUENNE_INFINITY) && (y0 > pow0)){ 
+    if (((l < - COUENNE_INFINITY) && (u > COUENNE_INFINITY)) || // [-inf,+inf[
+	((l < - COUENNE_INFINITY) && (y0 < pow0))            ||
+	((u >   COUENNE_INFINITY) && (y0 > pow0))) { 
 
-	if ((y0 > 0) && (y0 < pow0) ||  
-	    (y0 < 0) && (y0 > pow0)) {
+      if (((y0 > 0) && (y0 < pow0)) ||  
+	  ((y0 < 0) && (y0 > pow0))) {
 
-	  *brpts = 0;
-	  return (brDist [0] = brDist [1] = fabs (pow0 - y0));
+	*brpts = 0;
+	return (brDist [0] = brDist [1] = fabs (pow0 - y0));
 
-	} else {
+      } else {
 
-	  *brpts = pow (y0, 1./k);
+	*brpts = pow (y0, 1./k);
 
-	  return (brDist [0] = brDist [1] = (y0 > 0) ? // approx distance
-	    projectSeg (x0, y0, x0, CoinMax (pow0, 0.), *brpts, y0, 0) :
-	    projectSeg (x0, y0, x0, CoinMin (pow0, 0.), *brpts, y0, 0));
-	}
+	return (brDist [0] = brDist [1] = (y0 > 0) ? // approx distance
+		projectSeg (x0, y0, x0, CoinMax (pow0, 0.), *brpts, y0, 0) :
+		projectSeg (x0, y0, x0, CoinMin (pow0, 0.), *brpts, y0, 0));
+      }
     }
 
     // otherwise, on the side of the current point the convexification
@@ -291,12 +291,12 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     way = (x0 > 0.) ? TWO_RIGHT : TWO_LEFT;
 
-    if ((l < - COUENNE_INFINITY) && (u > COUENNE_INFINITY) || // ]-inf,+inf[
-	(l < - COUENNE_INFINITY) && (y0 < pow0)            ||
-	(u >   COUENNE_INFINITY) && (y0 > pow0)){ 
+    if (((l < - COUENNE_INFINITY) && (u > COUENNE_INFINITY)) || // ]-inf,+inf[
+	((l < - COUENNE_INFINITY) && (y0 < pow0))            ||
+	((u >   COUENNE_INFINITY) && (y0 > pow0))) { 
 
-      if ((x0 > 0.) && (y0 > pow0) ||  
-	  (x0 < 0.) && (y0 < pow0)) { // in orthant with curve (first or third)
+      if (((x0 > 0.) && (y0 > pow0)) ||  
+	  ((x0 < 0.) && (y0 < pow0))) { // in orthant with curve (first or third)
 
 	*brpts = 0.;
 	return (brDist [0] = brDist [1] = fabs (pow0 - y0));
@@ -365,7 +365,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
       // horizontal segment between current point and curve
 
       if (obj -> Strategy () == CouenneObject::MID_INTERVAL)
-	*brpts = 0.5 * (x0 + pow (x0, 1. / k));
+	*brpts = 0.5 * (x0 + pow (y0, 1. / k));
       else {
 	powertriplet pt (k);
 	*brpts = obj -> getBrPoint (&pt, x0, l, u);
@@ -393,7 +393,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
       // curve
 
       if (obj -> Strategy () == CouenneObject::MID_INTERVAL)
-	*brpts = 0.5 * (x0 + pow (x0, 1. / k));
+	*brpts = 0.5 * (x0 + pow (y0, 1. / k));
       else {
 	powertriplet pt (k);
 	*brpts = obj -> getBrPoint (&pt, x0, l, u);
