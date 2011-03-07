@@ -425,6 +425,10 @@ void CouenneObject::setParameters (Bonmin::BabSetupBase *base) {
     base -> options () -> GetNumericValue ("branch_midpoint_alpha", alpha_, "couenne.");
   }
 
+  if (strategy_ == LP_CLAMPED || 
+      strategy_ == LP_CENTRAL)
+    base -> options () -> GetNumericValue ("branch_lp_clamp", lp_clamp_, "couenne.");
+
   // accept options for branching rules specific to each operator
   if (reference_ && reference_ -> Type () == AUX) {
 
