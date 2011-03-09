@@ -74,10 +74,7 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
   // var -> getBounds (lb, ub);
   variable_ -> getBounds (lb, ub);
 
-  value_ = (*variable_) ();
-
-  if (fabs (brpoint) < COUENNE_INFINITY) 
-    value_ = brpoint;
+  value_ = (fabs (brpoint) < COUENNE_INFINITY) ? (*variable_) () : brpoint;
 
   // bounds may have tightened and may exclude value_ now, update it
 

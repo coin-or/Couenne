@@ -27,6 +27,9 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
   // and should be efficient
   for (register int i=0; i < nOrigVars_; i++) {
 
+    if (variables_ [i] -> Multiplicity () <= 0) 
+      continue;
+
     CouNumber val = solution [i];
 
     // check (original and auxiliary) variables' integrality
@@ -59,7 +62,6 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
   // install NL solution candidate in evaluation structure
   domain_.push (nVars (), sol, domain_.lb (), domain_.ub (), false);
-
 
   if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
     printf ("checknlp: %d vars -------------------\n", domain_.current () -> Dimension ());
@@ -147,6 +149,9 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
     // check ALL auxs
 
     for (int i=0; i < nVars (); i++) {
+
+      if (variables_ [i] -> Multiplicity () <= 0) 
+	continue;
 
       if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
 	if (variables_ [i] -> Type () == AUX) {
