@@ -31,6 +31,9 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
   // and should be efficient
   for (register int i=0; i < nOrigVars_; i++) {
 
+    if (variables_ [i] -> Multiplicity () <= 0) 
+      continue;
+
     CouNumber val = solution [i];
 
     // check (original and auxiliary) variables' integrality
@@ -153,6 +156,9 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
     // check ALL auxs
 
     for (int i=0; i < nVars (); i++) {
+
+      if (variables_ [i] -> Multiplicity () <= 0) 
+	continue;
 
       exprVar *v = variables_ [i];
 
