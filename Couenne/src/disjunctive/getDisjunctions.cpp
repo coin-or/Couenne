@@ -174,7 +174,7 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
   if (retval != COUENNE_INFEASIBLE) {
 
     if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS))
-      printf ("have %d disjunctions\n", disjs.size ());
+      printf ("have %d disjunctions\n", (int) (disjs.size ()));
 
     // sanity check: for each disjunction, check if left and right
     // part are feasible with (possibly improved) bounds of si --

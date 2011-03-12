@@ -10,7 +10,7 @@
 //
 // Date : 07/06/2009
 
-#include "CouenneConfig.h"
+//#include "CouenneConfig.h"
 
 #include <cstdlib>
 

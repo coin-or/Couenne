@@ -120,9 +120,11 @@ int CouenneChooseStrong::doStrongBranching (OsiSolverInterface *solver,
 
   int returnCode = 0, iDo = 0;
 
+  Bonmin::HotInfo * results = results_ ();
+
   for (;iDo < numberToDo; iDo++) {
 
-    Bonmin::HotInfo * result = results_ () + iDo; // retrieve i-th object to test
+    Bonmin::HotInfo * result = results + iDo; // retrieve i-th object to test
 
     OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
 

@@ -13,7 +13,7 @@
 #ifndef COUENNEUSERINTERFACE_HPP_
 #define COUENNEUSERINTERFACE_HPP_
 
-#include "CouenneConfig.h"
+//#include "CouenneConfig.h"
 #include "IpOptionsList.hpp"
 #include "IpJournalist.hpp"
 

@@ -21,7 +21,7 @@
 
 #include "CoinTime.hpp"
 #include "CoinError.hpp"
-#include "BonminConfig.h"
+//#include "BonminConfig.h"
 #include "BonCouenneInterface.hpp"
 #include "BonIpoptSolver.hpp"
 

@@ -61,6 +61,14 @@ void CouenneSolverInterface<T>::initialSolve () {
 
   T::initialSolve ();
 
+  // printf ("init solution: (");
+  // for (int i=0; i< T::getNumCols (); i++)
+  //   printf ("%g [%g,%g] ", 
+  // 	    T::getColSolution () [i],
+  // 	    T::getColLower    () [i],
+  // 	    T::getColUpper    () [i]);
+  // printf (")\n");
+
   if (T::getObjValue () <= - Couenne_large_bound)
     knowDualInfeasible_ = true;
 
@@ -121,6 +129,11 @@ void CouenneSolverInterface<T>::resolve () {
 
   // re-solve problem
   T::resolve ();
+
+  // printf ("solution: (");
+  // for (int i=0; i< T::getNumCols (); i++)
+  //   printf ("%g ", T::getColSolution () [i]);
+  // printf (")\n");
 
   if (T::getObjValue () <= - Couenne_large_bound)
     knowDualInfeasible_ = true;

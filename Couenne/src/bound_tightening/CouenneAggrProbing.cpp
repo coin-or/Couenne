@@ -440,7 +440,7 @@ double CouenneAggrProbing::probeVariable2(int index, bool probeLower){
   double* newLpObj = new double[numCols_];
   memset(newLpObj, 0, numCols_*sizeof(double));
 
-  expression* exprObj = NULL;
+  //expression* exprObj = NULL; // PB: unused
   expression* extraVar = NULL;
 
   lp->writeLp("before");

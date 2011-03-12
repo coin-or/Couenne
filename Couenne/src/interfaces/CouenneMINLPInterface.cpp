@@ -27,7 +27,7 @@ CouNumber CouenneMINLPInterface::solve (CouNumber *solution) {
 
 
 #if 0
-#include "BonminConfig.h"
+//#include "BonminConfig.h"
 
 //#include "BonOsiTMINLPInterface.hpp"
 #include "CoinTime.hpp"
@@ -38,6 +38,7 @@ CouNumber CouenneMINLPInterface::solve (CouNumber *solution) {
 
 #include "Ipopt/BonIpoptSolver.hpp"
 #include "Ipopt/BonIpoptWarmStart.hpp"
+
 #ifdef COIN_HAS_FILTERSQP
 #include "Filter/BonFilterSolver.hpp"
 #include "Filter/BonFilterWarmStart.hpp"

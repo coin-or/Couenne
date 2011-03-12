@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 
-#include "CouenneConfig.h"
+//#include "CouenneConfig.h"
 
 #include "CoinTime.hpp"
 #include "CoinError.hpp"
@@ -50,12 +50,10 @@ using namespace Couenne;
 
 int main (int argc, char *argv[]) {
 
-    printf ("Couenne %s --  an Open-Source exact solver for MINLP\n", 
-	    strcmp (COUENNE_VERSION, "trunk") ? COUENNE_VERSION : "");
-
-    printf ("\
+    printf ("Couenne %s --  an Open-Source exact solver for Mixed Integer Nonlinear Optimization\n\
 Mailing list: couenne@list.coin-or.org\n\
-Instructions: http://www.coin-or.org/Couenne\n");
+Instructions: http://www.coin-or.org/Couenne\n", 
+	    strcmp (COUENNE_VERSION, "trunk") ? COUENNE_VERSION : "");
 
   WindowsErrorPopupBlocker();
   using namespace Ipopt;
