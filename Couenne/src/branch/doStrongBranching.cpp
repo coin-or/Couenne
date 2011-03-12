@@ -50,252 +50,252 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 }
 
 
-  /**  This is a utility function which does strong branching on
-       a list of objects and stores the results in OsiHotInfo.objects.
-       On entry the object sequence is stored in the OsiHotInfo object
-       and maybe more.
-       It returns -
+/**  This is a utility function which does strong branching on
+     a list of objects and stores the results in OsiHotInfo.objects.
+     On entry the object sequence is stored in the OsiHotInfo object
+     and maybe more.
+     It returns -
 
-      -1 - one branch was infeasible both ways
-       0 - all inspected - nothing can be fixed
-       1 - all inspected - some can be fixed (returnCriterion==0)
-       2 - may be returning early - one can be fixed (last one done) (returnCriterion==1) 
-       3 - returning because max time
-  */
-  int CouenneChooseStrong::doStrongBranching (OsiSolverInterface *solver, 
-					      OsiBranchingInformation *info,
-					      int numberToDo, int returnCriterion) {
+     -1 - one branch was infeasible both ways
+     0 - all inspected - nothing can be fixed
+     1 - all inspected - some can be fixed (returnCriterion==0)
+     2 - may be returning early - one can be fixed (last one done) (returnCriterion==1) 
+     3 - returning because max time
+*/
+int CouenneChooseStrong::doStrongBranching (OsiSolverInterface *solver, 
+					    OsiBranchingInformation *info,
+					    int numberToDo, int returnCriterion) {
 
-    // // print info at the beginning
-    // printf ("beginning of doSB\n");
-    // for (int i=0; i< problem_ -> nVars (); i++) {
-    //   printf ("x_%-3d @%6g[%6g,%5g] ", i,
-    // 	      info -> solution_ [i],
-    // 	      info -> lower_ [i],
-    // 	      info -> upper_ [i]);
-    //   if (i && !(i%5)) printf ("\n");
-    // }
+  // // print info at the beginning
+  // printf ("beginning of doSB\n");
+  // for (int i=0; i< problem_ -> nVars (); i++) {
+  //   printf ("x_%-3d @%6g[%6g,%5g] ", i,
+  // 	      info -> solution_ [i],
+  // 	      info -> lower_ [i],
+  // 	      info -> upper_ [i]);
+  //   if (i && !(i%5)) printf ("\n");
+  // }
 
-    jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
-		      "\n-\n------- CCS: trying %d objects:\n", numberToDo);
+  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
+		    "\n-\n------- CCS: trying %d objects:\n", numberToDo);
 
-    //solver -> doingResolve () = false; // turns off setCutoff and restoreUnused
+  //solver -> doingResolve () = false; // turns off setCutoff and restoreUnused
 
-    int numberColumns = solver -> getNumCols ();
+  int numberColumns = solver -> getNumCols ();
 
-    solver -> markHotStart (); // save current LP point
+  solver -> markHotStart (); // save current LP point
 
-    const double
-      *lower = info -> lower_,
-      *upper = info -> upper_;
+  const double
+    *lower = info -> lower_,
+    *upper = info -> upper_;
 
-    double 
-      *saveLower = CoinCopyOfArray (info -> lower_, numberColumns),
-      *saveUpper = CoinCopyOfArray (info -> upper_, numberColumns),
+  double 
+    *saveLower = CoinCopyOfArray (info -> lower_, numberColumns),
+    *saveUpper = CoinCopyOfArray (info -> upper_, numberColumns),
 
-      *Lower0 = NULL,
-      *Upper0 = NULL,
+    *Lower0 = NULL,
+    *Upper0 = NULL,
 
-      *oldLower  = new double [numberColumns],
-      *oldUpper  = new double [numberColumns],
+    *oldLower  = new double [numberColumns],
+    *oldUpper  = new double [numberColumns],
 
-      *lpSol     = NULL, 
-       timeStart = CoinCpuTime ();
+    *lpSol     = NULL, 
+    timeStart = CoinCpuTime ();
 
-    if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
-      Lower0 = CoinCopyOfArray (info -> lower_, numberColumns); // delete afterwards
-      Upper0 = CoinCopyOfArray (info -> upper_, numberColumns);
+  if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
+    Lower0 = CoinCopyOfArray (info -> lower_, numberColumns); // delete afterwards
+    Upper0 = CoinCopyOfArray (info -> upper_, numberColumns);
+  }
+
+  // LP solution for distance
+  if (pseudoUpdateLP_) 
+    lpSol = CoinCopyOfArray (info -> solution_, numberColumns);
+
+  // provide Couenne problem with point/bounds contained in info
+  problem_ -> domain () -> push
+    (problem_ -> nVars (),
+     info -> solution_,
+     info -> lower_,
+     info -> upper_);
+
+  int returnCode = 0, iDo = 0;
+
+  for (;iDo < numberToDo; iDo++) {
+
+    Bonmin::HotInfo * result = results_ () + iDo; // retrieve i-th object to test
+
+    OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
+
+    // TODO: apply isCuttable ()
+
+    // TODO: set a cutoff for dual bound in dual simplex
+    //       do the same for primal based on SB's alpha
+
+    // For now just 2 way
+    OsiBranchingObject * branch = result -> branchingObject ();
+    assert (branch->numberBranches()==2);
+
+    CouenneBranchingObject *cb = dynamic_cast <CouenneBranchingObject *> (branch);
+    if (cb) cb -> setSimulate (true);
+
+    int 
+      status0 = -1, 
+      status1 = -1;
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    /* Try the first direction.  Each subsequent call to branch()
+       performs the specified branch and advances the branch object
+       state to the next branch alternative. */
+
+    status0 = simulateBranch (Object, info, branch, solver, result, -1);
+
+    // save current bounds as tightened by the down branch; will be
+    // used below to update global bounding box in solver
+    CoinCopyN (problem_ -> Lb (), numberColumns, oldLower);
+    CoinCopyN (problem_ -> Ub (), numberColumns, oldUpper);
+
+    // Restore pre-left-branch bounds in solver
+    for (int j=0; j<numberColumns; j++) {
+
+      if (saveLower [j] != lower [j]) solver -> setColLower (j, saveLower [j]);
+      if (saveUpper [j] != upper [j]) solver -> setColUpper (j, saveUpper [j]);
     }
 
-    // LP solution for distance
-    if (pseudoUpdateLP_) 
-      lpSol = CoinCopyOfArray (info -> solution_, numberColumns);
+    status1 = simulateBranch (Object, info, branch, solver, result, +1);
 
-    // provide Couenne problem with point/bounds contained in info
-    problem_ -> domain () -> push
-      (problem_ -> nVars (),
-       info -> solution_,
-       info -> lower_,
-       info -> upper_);
+    ///////////////////////////////////////////////////////////////////////////
 
-    int returnCode = 0, iDo = 0;
+    if (cb) cb -> setSimulate (false);
 
-    for (;iDo < numberToDo; iDo++) {
+    /////////////////////////////////////////////////////////////////////////////
 
-      Bonmin::HotInfo * result = results_ () + iDo; // retrieve i-th object to test
+    bool tightened = false;
 
-      OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
+    t_chg_bounds *chg_bds = new t_chg_bounds [numberColumns];
 
-      // TODO: apply isCuttable ()
+    // extend problem_'s bounding box to include downbranch's tightened
+    for (int j=0; j<numberColumns; j++) {
 
-      // TODO: set a cutoff for dual bound in dual simplex
-      //       do the same for primal based on SB's alpha
+      if (oldLower [j] < problem_ -> Lb (j)) problem_ -> Lb (j) = oldLower [j];
+      if (oldUpper [j] > problem_ -> Ub (j)) problem_ -> Ub (j) = oldUpper [j];
 
-      // For now just 2 way
-      OsiBranchingObject * branch = result -> branchingObject ();
-      assert (branch->numberBranches()==2);
-
-      CouenneBranchingObject *cb = dynamic_cast <CouenneBranchingObject *> (branch);
-      if (cb) cb -> setSimulate (true);
-
-      int 
-	status0 = -1, 
-	status1 = -1;
-
-      ///////////////////////////////////////////////////////////////////////////
-
-      /* Try the first direction.  Each subsequent call to branch()
-	 performs the specified branch and advances the branch object
-	 state to the next branch alternative. */
-
-      status0 = simulateBranch (Object, info, branch, solver, result, -1);
-
-      // save current bounds as tightened by the down branch; will be
-      // used below to update global bounding box in solver
-      CoinCopyN (problem_ -> Lb (), numberColumns, oldLower);
-      CoinCopyN (problem_ -> Ub (), numberColumns, oldUpper);
-
-      // Restore pre-left-branch bounds in solver
-      for (int j=0; j<numberColumns; j++) {
-
-        if (saveLower [j] != lower [j]) solver -> setColLower (j, saveLower [j]);
-        if (saveUpper [j] != upper [j]) solver -> setColUpper (j, saveUpper [j]);
+      if (problem_ -> Lb (j) > lower [j] + COUENNE_EPS) {
+	chg_bds [j].setLower (t_chg_bounds::CHANGED);
+	tightened = true;
       }
 
-      status1 = simulateBranch (Object, info, branch, solver, result, +1);
-
-      ///////////////////////////////////////////////////////////////////////////
-
-      if (cb) cb -> setSimulate (false);
-
-      /////////////////////////////////////////////////////////////////////////////
-
-      bool tightened = false;
-
-      t_chg_bounds *chg_bds = new t_chg_bounds [numberColumns];
-
-      // extend problem_'s bounding box to include downbranch's tightened
-      for (int j=0; j<numberColumns; j++) {
-
-        if (oldLower [j] < problem_ -> Lb (j)) problem_ -> Lb (j) = oldLower [j];
-        if (oldUpper [j] > problem_ -> Ub (j)) problem_ -> Ub (j) = oldUpper [j];
-
-	if (problem_ -> Lb (j) > lower [j] + COUENNE_EPS) {
-	  chg_bds [j].setLower (t_chg_bounds::CHANGED);
-	  tightened = true;
-	}
-
-	if (problem_ -> Ub (j) < upper [j] - COUENNE_EPS) {
-	  chg_bds [j].setUpper (t_chg_bounds::CHANGED);
-	  tightened = true;
-	}
+      if (problem_ -> Ub (j) < upper [j] - COUENNE_EPS) {
+	chg_bds [j].setUpper (t_chg_bounds::CHANGED);
+	tightened = true;
       }
+    }
 
-      if (tightened &&                     // have tighter bounds
-	  (problem_ -> doFBBT ()) &&       // selected FBBT
-	  !(problem_ -> btCore (chg_bds))) // tighten again on root
+    if (tightened &&                     // have tighter bounds
+	(problem_ -> doFBBT ()) &&       // selected FBBT
+	!(problem_ -> btCore (chg_bds))) // tighten again on root
 
-	status0 = status1 = 1;	           // if returns false, problem is infeasible
+      status0 = status1 = 1;	           // if returns false, problem is infeasible
 
-      delete [] chg_bds;
+    delete [] chg_bds;
 
-      // create union of bounding box from both branching directions
-      for (int j=0; j<numberColumns; j++) {
+    // create union of bounding box from both branching directions
+    for (int j=0; j<numberColumns; j++) {
 
-        if (oldLower [j] < problem_ -> Lb (j)) problem_ -> Lb (j) = oldLower [j];
-        if (oldUpper [j] > problem_ -> Ub (j)) problem_ -> Ub (j) = oldUpper [j];
+      if (oldLower [j] < problem_ -> Lb (j)) problem_ -> Lb (j) = oldLower [j];
+      if (oldUpper [j] > problem_ -> Ub (j)) problem_ -> Ub (j) = oldUpper [j];
+    }
+
+    // set new bounding box as the possibly tightened one (a subset
+    // of the initial)
+    for (int j=0; j<numberColumns; j++) {
+      solver -> setColLower (j, saveLower [j] = problem_ -> Lb (j));
+      solver -> setColUpper (j, saveUpper [j] = problem_ -> Ub (j));
+    }
+
+    /*
+      End of evaluation for this candidate object. Possibilities are:
+
+      * Both sides below cutoff; this variable is a candidate for
+      branching.
+
+      * Both sides infeasible or above the objective cutoff: no
+      further action here. Break from the evaluation loop and
+      assume the node will be purged by the caller.
+
+      * One side feasible and below cutoff: Install the branch
+      (i.e., fix the variable). Possibly break from the evaluation
+      loop and assume the node will be reoptimised by the caller.
+    */
+
+    if (status0 == 1 && 
+	status1 == 1) { // infeasible
+      returnCode=-1;
+      break; // exit loop
+    } else if (status0==1 || status1==1) {
+      numberStrongFixed_++;
+      if (!returnCriterion) {
+	returnCode=1;
+      } else {
+	returnCode=2;
+	break;
       }
+    }
 
-      // set new bounding box as the possibly tightened one (a subset
-      // of the initial)
-      for (int j=0; j<numberColumns; j++) {
-        solver -> setColLower (j, saveLower [j] = problem_ -> Lb (j));
-        solver -> setColUpper (j, saveUpper [j] = problem_ -> Ub (j));
-      }
-
-      /*
-        End of evaluation for this candidate object. Possibilities are:
-
-        * Both sides below cutoff; this variable is a candidate for
-          branching.
-
-        * Both sides infeasible or above the objective cutoff: no
-          further action here. Break from the evaluation loop and
-          assume the node will be purged by the caller.
-
-        * One side feasible and below cutoff: Install the branch
-          (i.e., fix the variable). Possibly break from the evaluation
-          loop and assume the node will be reoptimised by the caller.
-      */
-
-      if (status0 == 1 && 
-	  status1 == 1) { // infeasible
-        returnCode=-1;
-        break; // exit loop
-      } else if (status0==1 || status1==1) {
-        numberStrongFixed_++;
-        if (!returnCriterion) {
-	  returnCode=1;
-        } else {
-	  returnCode=2;
-	  break;
-        }
-      }
-
-      bool hitMaxTime = ( CoinCpuTime()-timeStart > info->timeRemaining_);
-      if (hitMaxTime) {
-        returnCode=3;
-        break;
-      }
-    } // end loop /***********************************/
+    bool hitMaxTime = ( CoinCpuTime()-timeStart > info->timeRemaining_);
+    if (hitMaxTime) {
+      returnCode=3;
+      break;
+    }
+  } // end loop /***********************************/
   
 
-    if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
-      printf ("tightened bounds: ");
-      // create union of bounding box from both branching directions
-      for (int j=0; j<numberColumns; j++) {
+  if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
+    printf ("tightened bounds: ");
+    // create union of bounding box from both branching directions
+    for (int j=0; j<numberColumns; j++) {
       
-	if (problem_ -> Lb (j) > Lower0 [j]) printf ("l%d (%g-->%g) ", j,Lower0[j], problem_->Lb (j));
-	if (problem_ -> Ub (j) < Upper0 [j]) printf ("u%d (%g-->%g) ", j,Upper0[j], problem_->Ub (j));
-      }
-
-      delete [] Lower0;
-      delete [] Upper0;
+      if (problem_ -> Lb (j) > Lower0 [j]) printf ("l%d (%g-->%g) ", j,Lower0[j], problem_->Lb (j));
+      if (problem_ -> Ub (j) < Upper0 [j]) printf ("u%d (%g-->%g) ", j,Upper0[j], problem_->Ub (j));
     }
 
-    problem_ -> domain () -> pop (); // discard current point/bounds from problem
-
-    delete [] lpSol;
-
-    jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "----------------------done\n\n\n");
-
-    if (iDo < numberToDo) iDo++; // exited due to infeasibility
-    assert (iDo <= (int) results_.size());
-    results_.resize (iDo);
-
-    delete [] oldLower;
-    delete [] oldUpper;
-
-    delete [] saveLower;
-    delete [] saveUpper;
-
-    solver -> unmarkHotStart ();     // Delete the snapshot
-
-    //solver -> doingResolve () = true;
-    branchtime_ += CoinCpuTime () - timeStart;
-
-    // // print info at the beginning
-    // printf ("end of doSB\n");
-    // for (int i=0; i< problem_ -> nVars (); i++) {
-    //   printf ("x_%-3d @%5g[%5g,%5g] ", i,
-    // 	      info -> solution_ [i],
-    // 	      info -> lower_ [i],
-    // 	      info -> upper_ [i]);
-    //   if (i && !(i%5)) printf ("\n");
-    // }
-
-    return returnCode;
+    delete [] Lower0;
+    delete [] Upper0;
   }
+
+  problem_ -> domain () -> pop (); // discard current point/bounds from problem
+
+  delete [] lpSol;
+
+  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "----------------------done\n\n\n");
+
+  if (iDo < numberToDo) iDo++; // exited due to infeasibility
+  assert (iDo <= (int) results_.size());
+  results_.resize (iDo);
+
+  delete [] oldLower;
+  delete [] oldUpper;
+
+  delete [] saveLower;
+  delete [] saveUpper;
+
+  solver -> unmarkHotStart ();     // Delete the snapshot
+
+  //solver -> doingResolve () = true;
+  branchtime_ += CoinCpuTime () - timeStart;
+
+  // // print info at the beginning
+  // printf ("end of doSB\n");
+  // for (int i=0; i< problem_ -> nVars (); i++) {
+  //   printf ("x_%-3d @%5g[%5g,%5g] ", i,
+  // 	      info -> solution_ [i],
+  // 	      info -> lower_ [i],
+  // 	      info -> upper_ [i]);
+  //   if (i && !(i%5)) printf ("\n");
+  // }
+
+  return returnCode;
+}
 
 
 // Do one side of strong branching
