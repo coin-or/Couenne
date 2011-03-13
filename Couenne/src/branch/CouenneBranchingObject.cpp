@@ -80,22 +80,35 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
   // var -> getBounds (lb, ub);
   variable_ -> getBounds (lb, ub);
 
-  value_ = (fabs (brpoint) < COUENNE_INFINITY) ? (*variable_) () : brpoint;
-
   // bounds may have tightened and may exclude value_ now, update it
 
-  if      (value_ < lb) value_ = lb;
-  else if (value_ > ub) value_ = ub;
+  value_ = (fabs (brpoint) < COUENNE_INFINITY) ? brpoint : (*variable_) ();
 
-  // do not branch too close to bounds
-  if ((lb > -COUENNE_INFINITY) && 
-      (ub <  COUENNE_INFINITY)) {
+  if   (lb < -COUENNE_INFINITY / 10)
+    if (ub >  COUENNE_INFINITY / 10) ;                                                              // ]-inf,+inf[
+    else                             value_ = ((value_ < -COUENNE_EPS) ? (AGGR_MUL * (-1+value_)) : // ]-inf,u]
+				 	       (value_ >  COUENNE_EPS) ? 0. : -AGGR_MUL);
+  else
+    if (ub >  COUENNE_INFINITY / 10) value_ = ((value_ >  COUENNE_EPS) ? (AGGR_MUL *  (1+value_)) : // [l,+inf[
+					       (value_ < -COUENNE_EPS) ? 0. :  AGGR_MUL);
+    else {                                                                                          // [l,u]
+      double margin = fabs (ub-lb) * closeToBounds;
+      if      (value_ < lb + margin) value_ = lb + margin;
+      else if (value_ > ub - margin) value_ = ub - margin;
+    }
 
-    CouNumber margin = (ub-lb) * closeToBounds;
+  // if      (value_ < lb) value_ = lb;
+  // else if (value_ > ub) value_ = ub;
 
-    if      (value_ - lb < margin) value_ = lb + margin;
-    else if (ub - value_ < margin) value_ = ub - margin;
-  }
+  // // do not branch too close to bounds
+  // if ((lb > -COUENNE_INFINITY) && 
+  //     (ub <  COUENNE_INFINITY)) {
+
+  //   CouNumber margin = (ub-lb) * closeToBounds;
+
+  //   if      (value_ - lb < margin) value_ = lb + margin;
+  //   else if (ub - value_ < margin) value_ = ub - margin;
+  // }
 
   // value_ = (*variable_) ();
 

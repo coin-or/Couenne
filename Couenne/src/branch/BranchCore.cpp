@@ -93,7 +93,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	  continue;
 
 	if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
-	  printf (" x%d >= %g; ", 
+	  printf (" x%d >= %g [%g,%g]; ", 
 		  *it, 
 		  integer ? ceil (brpt) : brpt,
 		  solver -> getColLower () [*it], 

@@ -45,8 +45,8 @@ static bool obbt_updateBound (OsiSolverInterface *csi, /// interface to use as a
     double opt = csi -> getObjValue ();
 
     if (sense > 0) 
-         {if (opt       >bound+OBBT_EPS) {bound=(isint ? ceil (opt-COUENNE_EPS) : opt); return true;}}
-    else {if ((opt=-opt)<bound-OBBT_EPS) {bound=(isint ? floor(opt+COUENNE_EPS) : opt); return true;}}
+         {if (opt        > bound + OBBT_EPS) {bound = (isint ? ceil  (opt - COUENNE_EPS) : opt); return true;}}
+    else {if ((opt=-opt) < bound - OBBT_EPS) {bound = (isint ? floor (opt + COUENNE_EPS) : opt); return true;}}
   }
 
   return false;
@@ -71,6 +71,26 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
   // non-decreasing or non-increasing
 
   //static int iter = 0;
+
+  // exclude checking known optimal solution if initial bounding box
+  // already excludes it
+
+  CouNumber *knownOptimum = optimum_;
+
+  if (optimum_) {
+
+    for (int i=nVars(); i--; knownOptimum++)
+
+      if (*knownOptimum < Lb (i) || 
+	  *knownOptimum > Ub (i)) {
+
+	knownOptimum = NULL;
+	break;
+      }
+
+    if (knownOptimum) 
+      knownOptimum -= nVars ();
+  }
 
   std::set <int> deplist;
   int deplistsize;
@@ -222,19 +242,17 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 
     if (obbt_updateBound (csi, sense, bound, isInt)) {
 
-      if (bestSol ()) {
+      if (knownOptimum) {
 	if (sense == 1) {
-	  if ((Lb (index) < bestSol () [index]) && 
-	      (bound       > COUENNE_EPS + bestSol () [index]))
+	  if (bound       > COUENNE_EPS + knownOptimum [index])
 	    Jnlst()->Printf(J_STRONGWARNING, J_BOUNDTIGHTENING,
-			    "#### OBBT error on x%d: lb = %g, opt = %g, new lb = %g\n", 
-			    index, Lb (index), bestSol () [index], bound);
+			    "#### OBBT cuts optimum at x%d: lb = %g, opt = %g, new lb = %g\n", 
+			    index, Lb (index), knownOptimum [index], bound);
 	} else {
-	  if ((Ub (index) > bestSol () [index]) && 
-	      (bound       < -COUENNE_EPS + bestSol () [index]))
+	  if (bound       < -COUENNE_EPS + knownOptimum [index])
 	    Jnlst()->Printf(J_STRONGWARNING, J_BOUNDTIGHTENING,
-			    "#### OBBT error on x%d: ub = %g, opt = %g, new ub = %g\n", 
-			    index, Ub (index), bestSol () [index], bound);
+			    "#### OBBT cuts optimum at x%d: ub = %g, opt = %g, new ub = %g\n", 
+			    index, Ub (index), knownOptimum [index], bound);
 	}
       }
 

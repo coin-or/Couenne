@@ -21,6 +21,23 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 
   int nchg = 0; //< number of bounds changed for propagation
 
+  CouNumber *knownOptimum = optimum_;
+
+  if (optimum_) {
+
+    for (int i=nVars(); i--; knownOptimum++)
+
+      if (*knownOptimum < Lb (i) || 
+	  *knownOptimum > Ub (i)) {
+
+	knownOptimum = NULL;
+	break;
+      }
+
+    if (knownOptimum) 
+      knownOptimum -= nVars ();
+  }
+
   if (Jnlst()->ProduceOutput(Ipopt::J_DETAILED, J_BOUNDTIGHTENING)) {  
     Jnlst()->Printf(Ipopt::J_DETAILED, J_BOUNDTIGHTENING,"  backward =====================\n  ");
     int j=0;
@@ -93,14 +110,14 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 	  Jnlst()->Printf(Ipopt::J_VECTOR, J_BOUNDTIGHTENING,"\n");
 	}
 
-	if (optimum_ && 
-	    ((optimum_ [i] < Lb (i) - COUENNE_EPS) ||
-	     (optimum_ [i] > Ub (i) + COUENNE_EPS)))
+	if (knownOptimum && 
+	    ((knownOptimum [i] < Lb (i) - COUENNE_EPS) ||
+	     (knownOptimum [i] > Ub (i) + COUENNE_EPS)))
 
 	  Jnlst () -> Printf (Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
 			      "#### implied b_%d [%g,%g] cuts optimum %g\n",
 			      i, Lb (i), Ub (i), 
-			      optimum_ [i]);
+			      knownOptimum [i]);
 
 	//printf ("impli %2d ", nvar+i);
 

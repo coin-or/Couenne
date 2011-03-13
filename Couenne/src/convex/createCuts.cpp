@@ -109,12 +109,12 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
 
     if (lhs > ub + COUENNE_EPS)
       jnlst_->Printf(J_STRONGWARNING, J_CONVEXIFYING,
-		     "### cut (%d,%d,%d) (%g,%g,%g) violates optimum: %g >= %g [%g]\n", 
+		     "### cut (%d,%d,%d) (%g,%g,%g) cuts optimum: %g >= %g [%g]\n", 
 		     i1,i2,i3, c1,c2,c3, lhs, ub, lhs - ub); 
 
     if (lhs < lb - COUENNE_EPS)
       jnlst_->Printf(J_STRONGWARNING, J_CONVEXIFYING,
-		     "### cut (%d,%d,%d) (%g,%g,%g) violates optimum: %g <= %g [%g]\n", 
+		     "### cut (%d,%d,%d) (%g,%g,%g) cuts optimum: %g <= %g [%g]\n", 
 		     i1,i2,i3, c1,c2,c3, lhs, lb, lb - lhs);
   }
 

@@ -285,7 +285,6 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 	}*/
   }
 
-
   // case 4: k positive, in ]0,1[ and 1/k is integer and odd ////////////////////////
 
   if (isInvInt && (intk % 2)) {
@@ -297,14 +296,18 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 	((u >   COUENNE_INFINITY) && (y0 > pow0))) { 
 
       if (((x0 > 0.) && (y0 > pow0)) ||  
-	  ((x0 < 0.) && (y0 < pow0))) { // in orthant with curve (first or third)
+	  ((x0 < 0.) && (y0 < pow0))) { // in the same orthant as the
+					// curve (i.e. first or third
+					// orthant)
 
 	*brpts = 0.;
 	return (brDist [0] = brDist [1] = fabs (pow0 - y0));
 
       } else {
 
-	*brpts = x0;
+	*brpts = x0; // safe for  any x0 as (l != x0 != u)
+
+	//*brpts = obj -> midInterval (x0, l, u);
 
 	return (brDist [0] = brDist [1] = (x0 > 0) ? // approx distance
 	  projectSeg (x0,y0,x0, pow0, CoinMax (0., pow (y0, 1./k)), y0, 0) :
@@ -321,11 +324,8 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
     // in min-area and balanced strategy, point returned is
     // positive. Put the right sign
 
-    if (y0 > pow0)
-      *brpts = -*brpts;
-
-    if (y0 < pow0)
-      *brpts = -*brpts;
+    if      (y0 > pow0) *brpts = -*brpts;
+    else if (y0 < pow0) *brpts = -*brpts;
 
     if (*brpts > x0) {
 
@@ -337,6 +337,8 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
       brDist [1] = y0 - safe_pow (*brpts, k);
       brDist [0] = sqrt (brDist [1] * brDist [1] + (x0 - *brpts) * (x0 - *brpts));
     }
+
+    return CoinMax (brDist [0], brDist [1]);
 
     /*if (u > l + COUENNE_EPS) {
       *brpts = safe_pow ((safe_pow (u, k) - safe_pow (l,k)) / (k* (u-l)), 1./(k-1.));
