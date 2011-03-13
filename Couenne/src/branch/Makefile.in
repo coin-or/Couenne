@@ -43,6 +43,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @COIN_HAS_NTY_TRUE@am__append_1 = Nauty.cpp
+@COIN_HAS_NTY_TRUE@am__append_2 = \
+@COIN_HAS_NTY_TRUE@	-I`$(CYGPATH_W) $(NTYINCDIR)/`
+
 subdir = src/branch
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -336,15 +339,12 @@ libCouenneBranch_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../convex` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem` \
-	-I`$(CYGPATH_W) $(srcdir)/../util` \
-	-I`$(CYGPATH_W) $(srcdir)/../standardize`
-
+AM_CPPFLAGS = $(COUENNELIB_CFLAGS) -I`$(CYGPATH_W) $(srcdir)/..` \
+	-I`$(CYGPATH_W) $(srcdir)/../convex` -I`$(CYGPATH_W) \
+	$(srcdir)/../expression` -I`$(CYGPATH_W) \
+	$(srcdir)/../expression/operators` -I`$(CYGPATH_W) \
+	$(srcdir)/../problem` -I`$(CYGPATH_W) $(srcdir)/../util` \
+	-I`$(CYGPATH_W) $(srcdir)/../standardize` $(am__append_2)
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin

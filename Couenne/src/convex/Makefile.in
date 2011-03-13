@@ -42,6 +42,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@COIN_HAS_NTY_TRUE@am__append_1 = \
+@COIN_HAS_NTY_TRUE@	-I`$(CYGPATH_W) $(NTYINCDIR)/`
+
 subdir = src/convex
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -333,16 +336,13 @@ libCouenneConvex_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression/operators/bounds` \
-	-I`$(CYGPATH_W) $(srcdir)/../util` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch`\
-	-I`$(CYGPATH_W) $(srcdir)/../problem`
-
+AM_CPPFLAGS = $(COUENNELIB_CFLAGS) -I`$(CYGPATH_W) $(srcdir)/..` \
+	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` -I`$(CYGPATH_W) \
+	$(srcdir)/../expression` -I`$(CYGPATH_W) \
+	$(srcdir)/../expression/operators` -I`$(CYGPATH_W) \
+	$(srcdir)/../expression/operators/bounds` -I`$(CYGPATH_W) \
+	$(srcdir)/../util` -I`$(CYGPATH_W) $(srcdir)/../branch` \
+	-I`$(CYGPATH_W) $(srcdir)/../problem` $(am__append_1)
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin

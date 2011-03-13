@@ -58,6 +58,9 @@ host_triplet = @host@
 @COIN_HAS_ASL_TRUE@	../readnl/invmap.cpp \
 @COIN_HAS_ASL_TRUE@	../readnl/readASLfg.cpp
 
+@COIN_HAS_NTY_TRUE@am__append_2 = \
+@COIN_HAS_NTY_TRUE@	-I`$(CYGPATH_W) $(NTYINCDIR)/`
+
 subdir = src/problem
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -339,16 +342,13 @@ libCouenneProblem_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../convex` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/../standardize` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch`\
-	-I`$(CYGPATH_W) $(srcdir)/../problem` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem/depGraph`
-
+AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) -I`$(CYGPATH_W) \
+	$(srcdir)/..` -I`$(CYGPATH_W) $(srcdir)/../convex` \
+	-I`$(CYGPATH_W) $(srcdir)/../expression` -I`$(CYGPATH_W) \
+	$(srcdir)/../expression/operators` -I`$(CYGPATH_W) \
+	$(srcdir)/../standardize` -I`$(CYGPATH_W) $(srcdir)/../branch` \
+	-I`$(CYGPATH_W) $(srcdir)/../problem` -I`$(CYGPATH_W) \
+	$(srcdir)/../problem/depGraph` $(am__append_2)
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
