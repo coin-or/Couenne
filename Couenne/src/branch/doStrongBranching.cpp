@@ -103,13 +103,63 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
        info -> lower_,
        info -> upper_);
 
+    // Indices of branching variables. Used in preliminary loop below to
+    // detect pairs (cbcObj, couObj) of objects that share the same
+    // variable. As suggested by F. Margot, it's useless to evaluate
+    // these variables twice for branching. This does not need to be
+    // merged into trunk or stable/0.4 since they unify variable
+    // treatment and get rid of cbcObjects (and possibly of reduced cost
+    // branching).
+
+    Bonmin::HotInfo * results = results_ ();
+
+    int *brVarIndices = new int [problem_ -> nVars ()];
+    CoinZeroN (brVarIndices, problem_ -> nVars ());
+
     int returnCode = 0, iDo = 0;
+
+    for (;iDo < numberToDo; iDo++) {
+
+      Bonmin::HotInfo * result = results + iDo; // retrieve i-th object to test
+      OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
+      CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
+
+      if (CouObj) { // this is a couenne object for branching on a continuous variable
+
+	expression *var = CouObj -> Reference ();
+	if (var && var -> Index () >= 0)
+	  ++ (brVarIndices [var -> Index ()]);
+
+      } else { // this is most probably a cbcobject
+
+	int varInd = Object -> columnNumber ();
+
+	if (varInd >= 0)
+	  ++ (brVarIndices [varInd]);
+      }
+    }
 
     for (;iDo < numberToDo; iDo++) {
 
       Bonmin::HotInfo * result = results_ () + iDo; // retrieve i-th object to test
 
       OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
+
+      CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
+
+      if (!CouObj) { // this is a couenne object for branching on a continuous variable
+
+	int varInd = Object -> columnNumber ();
+
+	// if this object's variable is evaluated twice (once by a cbc
+	// object for integrality and a second time by couenne as a
+	// variable in a nonlinear expression) skip the cbc evaluation
+
+	if (brVarIndices [varInd] >= 2) {
+	  //printf ("branching on x%d [%g] skipped\n", varInd, solver -> getColSolution () [varInd]);
+	  continue;
+	}
+      }
 
       //  _______    ____    _____      ____          
       // |__   __|  / __ \  |  __ \    / __ \         
@@ -255,6 +305,8 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       delete [] Lower0;
       delete [] Upper0;
     }
+
+    delete [] brVarIndices;
 
     problem_ -> domain () -> pop (); // discard current point/bounds from problem
 

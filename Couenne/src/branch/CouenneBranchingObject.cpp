@@ -70,26 +70,22 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
 
   CouNumber lb, ub;
 
-  // a little ambiguous: var should be variable_ in both CouenneObjects and CouenneVarObjects. 
-  // var -> getBounds (lb, ub);
   variable_ -> getBounds (lb, ub);
 
-  value_ = (fabs (brpoint) < COUENNE_INFINITY) ? (*variable_) () : brpoint;
+  value_ = (fabs (brpoint) < COUENNE_INFINITY) ? brpoint : (*variable_) ();
 
-  // bounds may have tightened and may exclude value_ now, update it
-
-  if      (value_ < lb) value_ = lb;
-  else if (value_ > ub) value_ = ub;
-
-  // do not branch too close to bounds
-  if ((lb > -COUENNE_INFINITY) && 
-      (ub <  COUENNE_INFINITY)) {
-
-    CouNumber margin = (ub-lb) * closeToBounds;
-
-    if      (value_ - lb < margin) value_ = lb + margin;
-    else if (ub - value_ < margin) value_ = ub - margin;
-  }
+  if   (lb < -COUENNE_INFINITY / 10)
+    if (ub >  COUENNE_INFINITY / 10) ;                                                              // ]-inf,+inf[
+    else                             value_ = ((value_ < -COUENNE_EPS) ? (AGGR_MUL * (-1+value_)) : // ]-inf,u]
+				 	       (value_ >  COUENNE_EPS) ? 0. : -AGGR_MUL);
+  else
+    if (ub >  COUENNE_INFINITY / 10) value_ = ((value_ >  COUENNE_EPS) ? (AGGR_MUL *  (1+value_)) : // [l,+inf[
+					       (value_ < -COUENNE_EPS) ? 0. :  AGGR_MUL);
+    else {                                                                                          // [l,u]
+      double margin = fabs (ub-lb) * closeToBounds;
+      if      (value_ < lb + margin) value_ = lb + margin;
+      else if (value_ > ub - margin) value_ = ub - margin;
+    }
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		    "Branch: x%-3d will branch on %g (cur. %g) [%g,%g]; firstBranch_ = %d\n", 
@@ -153,8 +149,13 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 		    solver -> getColUpper () [index]);
   */
 
-  if (!way) solver -> setColUpper (index, integer ? floor (brpt) : brpt); // down branch
-  else      solver -> setColLower (index, integer ? ceil  (brpt) : brpt); // up   branch
+  // move branching point up if x_i is integer, x_i^LP is integer, and
+  // this is an up branching
+  if (integer && way && (fabs (floor (brpt + .5) - brpt) < COUENNE_EPS_INT))
+    brpt += 1. - COUENNE_EPS_INT;
+
+  if (!way) solver -> setColUpper (index, integer ? floor (brpt + COUENNE_EPS_INT) : brpt); // down branch
+  else      solver -> setColLower (index, integer ? ceil  (brpt - COUENNE_EPS_INT) : brpt); // up   branch
 
   //CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
   //CouenneProblem *p = cutGen_ -> Problem ();
