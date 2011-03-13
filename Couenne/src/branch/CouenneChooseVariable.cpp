@@ -59,6 +59,19 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
      info -> lower_, 
      info -> upper_);
 
+#ifdef COIN_HAS_NTY
+
+  if (problem_ -> orbitalBranching ()) {
+
+    problem_ -> ChangeBounds (info -> lower_,
+			      info -> upper_, 
+			      problem_ -> nVars ());
+    
+    problem_ -> Compute_Symmetry();
+  }
+
+#endif
+
   jnlst_ -> Printf (Ipopt::J_ITERSUMMARY, J_BRANCHING, "----------------- setup list\n");
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_DETAILED, J_BRANCHING)) {

@@ -12,6 +12,8 @@
 #include "CouenneBranchingObject.hpp"
 #include "CouenneProblem.hpp"
 
+extern int nOrbBr;
+
 using namespace Couenne;
 
 /** \brief Execute the core of the branch --- need to separate code
@@ -31,14 +33,9 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
     chg_bds = new t_chg_bounds [problem_ -> nVars ()];
 
 #ifdef COIN_HAS_NTY
+
   if (problem_ -> orbitalBranching ()) {
 
-    problem_ -> ChangeBounds (solver -> getColLower (),  
-			      solver -> getColUpper (), 
-			      solver -> getNumCols  ());
-
-    problem_ -> Compute_Symmetry();
-  
     std::vector< int > *branch_orbit = problem_ -> Find_Orbit (indVar);
 
     // if(branch_orbit -> size() >= 2){
@@ -83,14 +80,17 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
       // UP BRANCH: xi >= brpt for all i in symmetry group
 
-      jnlst_ -> Printf (J_ERROR, J_BRANCHING, "Branch Symm:");
+      jnlst_ -> Printf (J_ERROR, J_BRANCHING, "Branch Symm (%d vars):", branch_orbit -> size ());
+
+      if (branch_orbit -> size () > 1)
+	nOrbBr ++;
 
       for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it)  {
 
 	assert (*it < problem_ -> nVars ());
 
-	if (*it >= problem_ -> nVars ()) 
-	  continue;
+	//if (*it >= problem_ -> nVars ()) 
+	//continue;
 
 	if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
 	  printf (" x%d >= %g [%g,%g]; ", 

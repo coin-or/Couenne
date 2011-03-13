@@ -329,11 +329,13 @@ void CouenneProblem::Compute_Symmetry() const{
     }
   }
 
+  //Print_Orbits ();
+
   nauty_info -> computeAuto();
 }
 
   
-void CouenneProblem::Print_Orbits(){
+void CouenneProblem::Print_Orbits () const {
 
   //printf ("num gens = %d, num orbits = %d \n", nauty_info -> getNumGenerators(), nauty_info -> getNumOrbits() );
 
@@ -349,19 +351,34 @@ void CouenneProblem::Print_Orbits(){
     if ((*new_orbits)[i].size() > 1) 
       nNonTrivialOrbits++;
     else continue;
+
     // int orbsize = (*new_orbits)[i].size();
     // printf( "Orbit %d [size: %d] [", i, orbsize);
-    // copy((*new_orbits)[i].begin(), (*new_orbits)[i].end(),
-    // std::ostream_iterator<int>(std::cout, " "));
+    // copy ((*new_orbits)[i].begin(), (*new_orbits)[i].end(),
+    // 	  std::ostream_iterator<int>(std::cout, " "));
     // printf("] \n");
   }
 
   printf ("%d non-trivial orbits\n", nNonTrivialOrbits);
 
+  // if (nNonTrivialOrbits)
+  //   for (int i=0; i< nVars (); i++) {
+
+  //     std::vector< int > *branch_orbit = Find_Orbit (i);
+
+  //     if (branch_orbit -> size () > 1) {
+  // 	printf ("x%04d: ", i);
+
+  // 	for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it) 
+  // 	  printf ("%d ", *it);
+  // 	printf ("\n");
+  //     }
+  //   }
+
   delete new_orbits;
 }
 
-std::vector<int> *CouenneProblem::Find_Orbit(int index){
+std::vector<int> *CouenneProblem::Find_Orbit(int index) const{
 
   std::vector<int> *orbit = new std::vector <int>;
   int which_orbit = -1;

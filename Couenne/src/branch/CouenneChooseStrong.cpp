@@ -333,6 +333,19 @@ const CouNumber estProdEps = 1e-6;
        info -> lower_, 
        info -> upper_); // have to alloc+copy
 
+#ifdef COIN_HAS_NTY
+
+    if (problem_ -> orbitalBranching ()) {
+
+      problem_ -> ChangeBounds (info -> lower_,
+				info -> upper_, 
+				problem_ -> nVars ());
+    
+      problem_ -> Compute_Symmetry();
+    }
+
+#endif
+
     jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		      "----------------- (strong) setup list\n");
 

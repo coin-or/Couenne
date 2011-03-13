@@ -340,7 +340,7 @@ class CouenneProblem {
   // Symmetry Info
 
 #ifdef COIN_HAS_NTY
-  std::vector<int>  *Find_Orbit(int);
+  std::vector<int>  *Find_Orbit(int) const;
   mutable std::vector<Node> node_info;
   mutable Nauty *nauty_info;
 
@@ -349,7 +349,7 @@ class CouenneProblem {
 
   void sym_setup();
   void Compute_Symmetry() const;
-  void Print_Orbits();
+  void Print_Orbits() const;
   void ChangeBounds (const double * , const double *, int ) const;
   bool compare (  Node a, Node b) const;
   Nauty *getNtyInfo () {return nauty_info;}

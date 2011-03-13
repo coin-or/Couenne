@@ -48,6 +48,10 @@ using namespace Couenne;
 #include "CouenneProblem.hpp"
 #include "CouenneJournalist.hpp"
 
+#ifdef COIN_HAS_NTY
+int nOrbBr = 0;
+#endif
+
 int main (int argc, char *argv[]) {
 
     printf ("Couenne %s --  an Open-Source exact solver for Mixed Integer Nonlinear Optimization\n\
@@ -130,6 +134,11 @@ Auxiliaries:     %8d (%d integer)\n\n",
     //////////////////////////////////
 
     bb (couenne); // do branch and bound
+
+#ifdef COIN_HAS_NTY
+    if (nOrbBr)
+      printf ("%d orbital nontrivial branchings\n", nOrbBr);
+#endif
 
     //////////////////////////////////
 
