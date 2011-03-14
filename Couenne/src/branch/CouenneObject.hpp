@@ -163,6 +163,10 @@ public:
   CouNumber lp_clamp () const
   {return lp_clamp_;}
 
+  // Column number if single column object, -1 otherwise.
+  virtual int columnNumber () const
+  {return ((reference_) ? reference_ -> Index () : -1);}
+
 protected:
 
   /// pointer to cut generator (not necessary, can be NULL)

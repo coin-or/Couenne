@@ -16,7 +16,6 @@
 
 const CouNumber estProdEps = 1e-6;
 
-
   /// constructor
   CouenneChooseStrong::CouenneChooseStrong (Bonmin::BabSetupBase &b, CouenneProblem* p, JnlstPtr jnlst) :
 
@@ -167,7 +166,9 @@ const CouNumber estProdEps = 1e-6;
           }
         }
       }
+
       int numberFixed=0;
+
       if (results_.size() > 0) {
 
 	// do strong branching //////////////////////////////////////////////////
@@ -185,13 +186,24 @@ const CouNumber estProdEps = 1e-6;
             <<stat_msg[up_status+1]<< up_change<< CoinMessageEol;
           }
         }
+
         if (returnCode >= 0 && 
 	    returnCode <= 2) {
+
           if (returnCode)
             returnCode = (bestObjectIndex_>=0) ? 3 : 4;
-          for (unsigned int i=0;i < results_.size();i++) {
+
+          for (unsigned int i=0;i < results_.size (); i++) {
+
+	    if((results_[i].upStatus() < 0) || (results_[i].downStatus() < 0))
+	      continue;
+
             int iObject = results_[i].whichObject();
+
+	    ///////////////////////////////////////////////////////////////////
+
             double upEstimate;
+
             if (results_[i].upStatus()!=1) {
               assert (results_[i].upStatus()>=0);
               upEstimate = results_[i].upChange();
@@ -207,15 +219,22 @@ const CouNumber estProdEps = 1e-6;
                 firstForcedObjectIndex_ = iObject;
                 firstForcedWhichWay_ =0;
               }
+
               numberFixed++;
+
               if (fixVariables) {
-                const OsiObject * obj = solver->object(iObject);
-                OsiBranchingObject * branch = obj->createBranch(solver,info,0);
-                branch->branch(solver);
-                delete branch;
+
+                const OsiObject * obj = solver -> object (iObject);
+		OsiBranchingObject * branch = obj -> createBranch (solver, info, 0);
+		branch -> branch (solver);
+		delete branch;
               }
             }
+
+	    ///////////////////////////////////////////////////////////////////
+
             double downEstimate;
+
             if (results_[i].downStatus()!=1) {
               assert (results_[i].downStatus()>=0);
               downEstimate = results_[i].downChange();
@@ -232,15 +251,16 @@ const CouNumber estProdEps = 1e-6;
               }
               numberFixed++;
               if (fixVariables) {
-                const OsiObject * obj = solver->object(iObject);
-                OsiBranchingObject * branch = obj->createBranch(solver,info,1);
-                branch->branch(solver);
-                delete branch;
+
+                const OsiObject * obj = solver -> object (iObject);
+		OsiBranchingObject * branch = obj -> createBranch (solver, info, 1);
+		branch -> branch (solver);
+		delete branch;
               }
             }
 
             double
-	      MAXMIN_CRITERION = maxminCrit(info),	      
+	      MAXMIN_CRITERION = maxminCrit (info),
 	      minVal, maxVal, value;
 
 	    if (downEstimate < upEstimate) {

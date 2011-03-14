@@ -72,7 +72,6 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(CLPOBJDIR)/inc` \
 	-I`$(CYGPATH_W) $(CBCOBJDIR)/inc` 
 
-
 if COIN_HAS_COUENNE
   AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(COUENNESRCDIR)/src/convex` \

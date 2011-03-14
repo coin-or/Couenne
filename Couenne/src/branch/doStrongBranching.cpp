@@ -116,9 +116,9 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
     int *brVarIndices = new int [problem_ -> nVars ()];
     CoinZeroN (brVarIndices, problem_ -> nVars ());
 
-    int returnCode = 0, iDo = 0;
+    int returnCode = 0, iDo;
 
-    for (;iDo < numberToDo; iDo++) {
+    for (iDo = 0; iDo < numberToDo; iDo++) {
 
       Bonmin::HotInfo * result = results + iDo; // retrieve i-th object to test
       OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
@@ -139,7 +139,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       }
     }
 
-    for (;iDo < numberToDo; iDo++) {
+    for (iDo = 0; iDo < numberToDo; iDo++) {
 
       Bonmin::HotInfo * result = results_ () + iDo; // retrieve i-th object to test
 
@@ -155,10 +155,8 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 	// object for integrality and a second time by couenne as a
 	// variable in a nonlinear expression) skip the cbc evaluation
 
-	if (brVarIndices [varInd] >= 2) {
-	  //printf ("branching on x%d [%g] skipped\n", varInd, solver -> getColSolution () [varInd]);
+	if (brVarIndices [varInd] >= 2)
 	  continue;
-	}
       }
 
       //  _______    ____    _____      ____          
@@ -208,7 +206,8 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "-------\n");
 
-      if (cb) cb -> setSimulate (false);
+      if (cb) 
+	cb -> setSimulate (false);
 
       /////////////////////////////////////////////////////////////////////////////
 
