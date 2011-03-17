@@ -228,10 +228,13 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       CoinCopyN (problem_ -> Ub (), numberColumns, oldUpper);
 
       // Restore pre-left-branch bounds in solver
-      for (int j=0; j<numberColumns; j++) {
+      for (int j=0; j < numberColumns; j++) {
 
         if (saveLower [j] != lower [j]) solver -> setColLower (j, saveLower [j]);
         if (saveUpper [j] != upper [j]) solver -> setColUpper (j, saveUpper [j]);
+
+	problem_ -> Lb (j) = saveLower [j];
+	problem_ -> Ub (j) = saveUpper [j];
       }
 
       // UP DIRECTION ///////////////////////////////////////////////////////
