@@ -184,6 +184,9 @@ namespace Bonmin {
 
         if (saveLower [j] != lower [j]) solver -> setColLower (j, saveLower [j]);
         if (saveUpper [j] != upper [j]) solver -> setColUpper (j, saveUpper [j]);
+
+	problem_ -> Lb (j) = saveLower [j];
+	problem_ -> Ub (j) = saveUpper [j];
       }
 
       // UP DIRECTION ///////////////////////////////////////////////////////
