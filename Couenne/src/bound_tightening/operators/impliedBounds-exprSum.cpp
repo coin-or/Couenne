@@ -131,7 +131,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   // realloc to save some memory
 
-  /*printf ("  a0 = %g\n", a0);
+  /*printf ("  a0 = %g, w in [%g, %g]\n", a0, wl, wu);
   printf ("  pos: "); for (int i=0; i<ipos; i++) printf ("%g x%d [%g,%g] ", C1 [i], I1 [i], l [I1 [i]], u [I1 [i]]); printf ("\n");
   printf ("  neg: "); for (int i=0; i<ineg; i++) printf ("%g x%d [%g,%g] ", C2 [i], I2 [i], l [I2 [i]], u [I2 [i]]); printf ("\n");*/
 

@@ -85,6 +85,10 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
       if (branch_orbit -> size () > 1)
 	nOrbBr ++;
 
+      bool 
+	brExclude   = false, 
+	nodeExclude = false;
+
       for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it)  {
 
 	assert (*it < problem_ -> nVars ());
@@ -93,7 +97,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	//continue;
 
 	if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
-	  printf (" x%d >= %g [%g,%g]; ", 
+	  printf (" x%d>%g [%g,%g]", 
 		  *it, 
 		  integer ? ceil (brpt) : brpt,
 		  solver -> getColLower () [*it], 
@@ -101,17 +105,20 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
 	  if (problem_ -> bestSol () &&
 	      (solver  -> getColLower () [*it] < problem_ -> bestSol () [*it]) &&
-	      (brpt                            > problem_ -> bestSol () [*it]))
-	    printf ("Branching EXCLUDES optimal solution\n");
+	      (brpt                            > problem_ -> bestSol () [*it]) && !brExclude)
+
+	    brExclude = true;
 
 	  if (problem_ -> bestSol ()) {
 
 	    for (int i=0; i<problem_ -> nVars (); i++)
 
-	      if ((solver -> getColLower () [indVar] > problem_ -> bestSol () [indVar] + COUENNE_EPS) ||
-		  (solver -> getColUpper () [indVar] < problem_ -> bestSol () [indVar] - COUENNE_EPS))
+	      if (((solver -> getColLower () [indVar] > problem_ -> bestSol () [indVar] + COUENNE_EPS) ||
+		   (solver -> getColUpper () [indVar] < problem_ -> bestSol () [indVar] - COUENNE_EPS))) {
 
-		{printf ("This node EXCLUDES optimal solution\n"); break;}
+		nodeExclude = true;
+		break;
+	      }
 	  }
 	}
 
@@ -123,7 +130,11 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	}
       }
 
-      jnlst_ -> Printf (J_ERROR, J_BRANCHING, "\n");
+      if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
+	if (brExclude)   printf (" (Branching EXCLUDES optimal solution)");
+	if (nodeExclude) printf (" (This node EXCLUDES optimal solution)");
+	printf ("\n");
+      }
     }
 
     return;

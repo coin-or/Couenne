@@ -162,6 +162,9 @@ int CouenneChooseStrong::doStrongBranching (OsiSolverInterface *solver,
 
       if (saveLower [j] != lower [j]) solver -> setColLower (j, saveLower [j]);
       if (saveUpper [j] != upper [j]) solver -> setColUpper (j, saveUpper [j]);
+
+      problem_ -> Lb (j) = saveLower [j];
+      problem_ -> Ub (j) = saveUpper [j];
     }
 
     status1 = simulateBranch (Object, info, branch, solver, result, +1);
@@ -377,8 +380,6 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
 bool BranchingFBBT (CouenneProblem *problem,
 		    OsiObject *Object,
 		    OsiSolverInterface *solver) {
-
-  // do not perform this if object is not a variable object
 
   bool feasible = true;
 
