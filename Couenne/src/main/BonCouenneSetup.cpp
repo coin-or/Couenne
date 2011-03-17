@@ -316,9 +316,12 @@ namespace Bonmin{
     if (!objects)
       objects = new OsiObject* [nVars];
 
-    int contObjPriority = 2000; // default object priority -- it is 1000 for integers and 10 for SOS
+    int 
+      contObjPriority = 2000, // default object priority -- it is 1000 for integers and 10 for SOS
+      intObjPriority  = 1000;
 
     options () -> GetIntegerValue ("cont_var_priority", contObjPriority, "bonmin.");
+    options () -> GetIntegerValue ("int_var_priority",  intObjPriority,  "bonmin.");
 
     int varSelection;
     if (!options_->GetEnumValue("variable_selection",varSelection,"bonmin.")) {
@@ -370,7 +373,7 @@ namespace Bonmin{
 	   //    (var -> Image () -> Linearity () > LINEAR))) {              // of nonlinear
 
 	  objects [nobj] = new CouenneVarObject (couenneCg, couenneProb_, var, this, journalist (), varSelection);
-	  objects [nobj++] -> setPriority (contObjPriority);
+	  objects [nobj++] -> setPriority (var -> isInteger () ? intObjPriority : contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
 	}
 
@@ -387,7 +390,7 @@ namespace Bonmin{
 	  //(var -> Image () -> Linearity () > LINEAR))) { // of nonlinear
 
 	  objects [nobj] = new CouenneVTObject (couenneCg, couenneProb_, var, this, journalist ());
-	  objects [nobj++] -> setPriority (contObjPriority);
+	  objects [nobj++] -> setPriority (var -> isInteger () ? intObjPriority : contObjPriority);
 	  //objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
 	}
 
