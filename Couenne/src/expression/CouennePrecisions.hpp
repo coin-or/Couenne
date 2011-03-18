@@ -1,10 +1,10 @@
-/* $Id: CouennePrecisions.hpp 141 2009-06-03 04:19:19Z pbelotti $ */
-/*
+/* $Id: CouennePrecisions.hpp 141 2009-06-03 04:19:19Z pbelotti $
+ *
  * Name:    CouennePrecisions.hpp
  * Author:  Pietro Belotti
  * Purpose: constants for evaluation procedures
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -25,7 +25,7 @@
 // for bounds
 #define COUENNE_INFINITY      1.e+50
 
-// for cuts, ensures stability and scaling
+// for cuts, ensures stability and scaling for Clp
 #define COU_MAX_COEFF     1.e+9
 
 // for cuts, ditto
