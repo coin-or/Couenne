@@ -274,11 +274,8 @@ namespace Bonmin{
 
       nonlinearSolver () -> addObjects (nSOS, objects);
 
-      //printf ("==================== found %d SOS\n", nSOS);
-      //nonlinearSolver () -> addObjects (nSOS, objects);
+      //nonlinearSolver  () -> addObjects (nSOS, objects);
       //continuousSolver () -> addObjects (nSOS, objects);
-
-      //printf ("found %d SOS!\n", nSOS);
 
       /*for (int i=0; i<nSOS; i++)
 	delete objects [i];
