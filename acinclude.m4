@@ -6399,7 +6399,7 @@ AC_MSG_RESULT([$SED])
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 #
-## $Id: coin.m4 1272 2009-04-24 16:33:02Z andreasw $
+## $Id: coin.m4 1591 2010-07-04 23:43:59Z lou $
 #
 # Author: Andreas Wachter    IBM      2006-04-14
 
@@ -6690,6 +6690,10 @@ AC_DEFUN([AC_COIN_PROJECTDIR_INIT],
 ADDLIBS="-lm $LIBS"
 AC_SUBST(ADDLIBS)
 
+# As backup, we make sure we don't loose an FLIBS if it has been set
+# by the user
+save_FLIBS="$FLIBS"
+
 # Initialize the FADDLIBS variable (which is to be used with a fortran
 # compiler and will not include FLIBS)
 FADDLIBS="$LIBS"
@@ -6701,6 +6705,19 @@ AM_CONDITIONAL(ALWAYS_FALSE, false)
 # We set the following variable so that we know later in AC_COIN_FINALIZE
 # that we are in a project main directory
 coin_projectdir=yes
+
+# Set the project's version number. Use m4_ifval here to avoid defining
+# _VERSION when the user has not supplied a parameter.
+m4_ifval([$1],
+  [ # temporary hack to avoid breaking lapack 1.0.20;
+    # do not propagate to BuildTools trunk!  --lh, 100615--
+    if expr "$1" : '.*:.*' >/dev/null 2>&1 ; then
+      coin_libversion="$1"
+    else
+      AC_DEFINE_UNQUOTED(m4_toupper($1_VERSION), ["$PACKAGE_VERSION"],
+			 [Version number of project])
+    fi
+  ],[])
 ]) # AC_COIN_PROJECTDIR_INIT
 
 ###########################################################################
@@ -7755,10 +7772,9 @@ AC_BEFORE([AC_PROG_F77],[$0])dnl
 
 AC_LANG_PUSH([Fortran 77])
 
-save_FLIBS="$FLIBS"
-
 AC_F77_WRAPPERS
 
+# If FLIBS has been set by the user, we just restore its value here
 if test x"$save_FLIBS" != x; then
   FLIBS="$save_FLIBS"
 else
@@ -7768,6 +7784,7 @@ else
     for flag in $FLIBS; do
       case $flag in
         -lcrt*.o) ;;
+        -lcygwin) ;;
                *) my_flibs="$my_flibs $flag" ;;
       esac
     done
@@ -9715,6 +9732,8 @@ if test x"$use_thirdpartyglpk" = xtry ; then
 	      [Define to 1 if $1 package is available])
     m4_tolower(coin_has_$1)=true
     m4_tolower($1_libcheck)=no
+    m4_toupper($1OBJDIR)=`cd $coin_glpkobjdir; pwd`
+    AC_SUBST(m4_toupper($1OBJDIR))
     AC_MSG_NOTICE([Using $1 in ThirdParty/Glpk])
   fi
 fi

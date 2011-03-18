@@ -198,6 +198,11 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
      "Priority of continuous variable branching",
      1, 2000, "Default value is 2000 (it is 1000 for integers and 10 for SOS).");
 
+  roptions -> AddLowerBoundedIntegerOption
+    ("int_var_priority",
+     "Priority of integer variable branching",
+     1, 1000, "Default value is 1000 (it is 2000 for continuous and 10 for SOS).");
+
   roptions -> AddStringOption2
     ("red_cost_branching",
      "Apply Reduced Cost Branching (instead of the Violation Transfer) -- MUST have vt_obj enabled",
