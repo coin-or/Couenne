@@ -11,6 +11,7 @@
 
 #include "CouenneProblem.hpp"
 #include "exprClone.hpp"
+#include "depGraph.hpp"
 
 //#define DEBUG
 
@@ -19,6 +20,9 @@
 /// gone auxiliary
 
 void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
+
+  if (graph_ && subst && aux -> Index () != subst -> Index ())
+    graph_ -> replaceIndex (aux -> Index (), subst -> Index ());
 
 #ifdef DEBUG
   printf ("replacing  "); if (aux)   aux   -> print (); 

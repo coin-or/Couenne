@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    depGraph.cpp
  * Author:  Pietro Belotti
  * Purpose: methods for manipulating dependencies between variables
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-11.
  * This file is licensed under the Common Public License (CPL)
  */
 
@@ -96,6 +96,23 @@ void DepNode::print (int indent, bool descend) const {
   }
 }
 
+/// replace the index of a variable with another in the entire
+/// graph. Used when redundant constraints w := x are discovered
+void DepNode::replaceIndex (DepNode *oldVarNode, DepNode *newVarNode) {
+
+  for (std::set <DepNode *, compNode>::iterator i = depList_ -> begin();
+       i != depList_ -> end (); ++i)
+
+    if ((*i) -> Index () == oldVarNode -> Index ()) {
+
+      depList_ -> erase (i);
+
+      if (depList_ -> find (newVarNode) == depList_ -> end ())
+	depList_ -> insert (newVarNode);
+
+      break;
+    }
+}
 
 // Methods of the class DepGraph ////////////////////////////////////////////////////////////
 
@@ -187,4 +204,25 @@ DepNode *DepGraph::lookup (int index) {
 
   delete el;
   return ret;
+}
+
+/// replace, throughout the whole graph, the index of a variable with
+/// another in the entire graph. Used when redundant constraints w :=
+/// x are discovered
+void DepGraph::replaceIndex (int oldVar, int newVar) {
+
+  DepNode
+    *copyOld = new DepNode (oldVar),
+    *copyNew = new DepNode (newVar);
+
+  std::set <DepNode *, compNode>::iterator 
+    oldNode = vertices_.find (copyOld),
+    newNode = vertices_.find (copyNew);
+
+  for (std::set <DepNode *, compNode>::iterator i = vertices_. begin();
+       i != vertices_. end (); ++i)
+    (*i) -> replaceIndex (*oldNode, *newNode);
+
+  delete copyOld;
+  delete copyNew;
 }

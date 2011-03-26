@@ -77,6 +77,10 @@ public:
 
   /// debugging procedure
   void print (int = 0, bool descend = false) const;
+
+  /// replace the index of a variable with another in the entire
+  /// graph. Used when redundant constraints w := x are discovered
+  void replaceIndex (DepNode *oldVarNode, DepNode *newVarNode);
 };
 
 
@@ -142,6 +146,11 @@ public:
 
   /// check for dependence cycles in graph
   bool checkCycles ();
+
+  /// replace, throughout the whole graph, the index of a variable
+  /// with another in the entire graph. Used when redundant
+  /// constraints w := x are discovered
+  void replaceIndex (int oldVar, int newVar);
 };
 
 #endif

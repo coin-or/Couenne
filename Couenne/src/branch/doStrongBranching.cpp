@@ -245,16 +245,6 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       delete [] chg_bds;
 
-      // create union of bounding box from both branching directions
-      //
-      // Actually, this is done above already
-      //
-      // for (int j=0; j<numberColumns; j++) {
-
-      //   if (oldLower [j] < problem_ -> Lb (j)) problem_ -> Lb (j) = oldLower [j];
-      //   if (oldUpper [j] > problem_ -> Ub (j)) problem_ -> Ub (j) = oldUpper [j];
-      // }
-
       // set new bounding box as the possibly tightened one (a subset
       // of the initial)
       for (int j=0; j<numberColumns; j++) {
