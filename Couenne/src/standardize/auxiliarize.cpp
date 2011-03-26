@@ -15,6 +15,7 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprAux.hpp"
 #include "CouenneExprClone.hpp"
+#include "CouenneDepGraph.hpp"
 
 using namespace Couenne;
 
@@ -23,6 +24,9 @@ using namespace Couenne;
 /// gone auxiliary
 
 void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
+
+  if (graph_ && subst && aux -> Index () != subst -> Index ())
+    graph_ -> replaceIndex (aux -> Index (), subst -> Index ());
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf ("replacing  "); if (aux)   aux   -> print (); 

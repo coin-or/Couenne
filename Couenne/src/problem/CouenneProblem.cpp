@@ -195,6 +195,7 @@ void CouenneProblem::fillIntegerRank () const {
 
     bool isInt = Var (index) -> isDefinedInteger ();
 
+    // sets all originals to either 0 (fractional) or 1 (integer)
     integerRank_ [index] = (isInt) ? 1 : 0;
 
     if (Var (index) -> Type () == AUX) {

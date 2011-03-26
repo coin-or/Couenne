@@ -296,6 +296,8 @@ bool CouenneProblem::standardize () {
 
   //////////////////////////////////////////////////////////////////////////////
 
+  // do initial bound propagation
+
   for (int i = 0; i < nVars (); i++) {
 
     int ord = numbering_ [i];
@@ -346,12 +348,12 @@ bool CouenneProblem::standardize () {
 
   // TODO: resolve duplicate index in exprQuad before restoring this
 
+  // remove duplicates
+
   std::string delete_redund;
 
-  if (bonBase_)
-    bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne."); 
-  else
-    delete_redund = "yes";
+  if (bonBase_) bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne."); 
+  else  delete_redund = "yes";
 
   if (delete_redund == "yes")
 

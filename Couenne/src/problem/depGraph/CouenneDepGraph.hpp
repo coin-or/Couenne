@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: class for manipulating dependencies between variables
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -96,6 +96,10 @@ public:
   /// dependence graph)
   std::set <DepNode *, compNode> *depList()
   {return depList_;}
+
+  /// replace the index of a variable with another in the entire
+  /// graph. Used when redundant constraints w := x are discovered
+  void replaceIndex (DepNode *oldVarNode, DepNode *newVarNode);
 };
 
 
@@ -161,6 +165,11 @@ public:
 
   /// check for dependence cycles in graph
   bool checkCycles ();
+
+  /// replace, throughout the whole graph, the index of a variable
+  /// with another in the entire graph. Used when redundant
+  /// constraints w := x are discovered
+  void replaceIndex (int oldVar, int newVar);
 };
 
 }

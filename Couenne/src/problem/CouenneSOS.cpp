@@ -151,7 +151,7 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
     }
 
   if (nSOS)
-    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "%d SOS constraints found\n", nSOS);
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "%d SOS constraint%s found\n", nSOS, nSOS == 1 ? "" : "s");
 
   return nSOS;
 }
