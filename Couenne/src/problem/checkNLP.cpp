@@ -157,47 +157,63 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
     for (int i=0; i < nVars (); i++) {
 
-      if (variables_ [i] -> Multiplicity () <= 0) 
-	continue;
-
       exprVar *v = variables_ [i];
 
-      if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
-	if (v -> Type () == AUX) {
-	  printf ("    "); v -> print (); 
-	  CouNumber
-	    val = (*(v)) (), 
-	    img = (*(v -> Image ())) (), 
-	    diff = fabs (val - img);
-	  printf (": val = %15g; img = %-15g ", val, img);
-	  if (diff > 1e-9)
-	    printf ("[diff %12e] ", diff);
-	  //for (int j=0; j<nVars (); j++) printf ("%.12e ", (*(variables_ [j])) ());
-	  v -> Image () -> print (); 
-	  printf ("\n");
-	}
-      }
+      if ((v -> Type         () != AUX) ||
+	  (v -> Multiplicity () <= 0))
+	continue;
 
+      if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
+	printf ("    "); v -> print (); 
+	CouNumber
+	  val = (*(v)) (), 
+	  img = (*(v -> Image ())) (), 
+	  diff = fabs (val - img);
+	printf (": val = %15g; img = %-15g ", val, img);
+	if (diff > 1e-9)
+	  printf ("[diff %12e] ", diff);
+	//for (int j=0; j<nVars (); j++) printf ("%.12e ", (*(variables_ [j])) ());
+	v -> Image () -> print (); 
+	printf ("\n");
+      }
+      
       // check if auxiliary has zero infeasibility
 
-      if (v -> Type () == AUX) {
+      // same as in CouenneObject::checkInfeasibility -- main difference is use of gradientNorm()
 
-	CouNumber
-	  varVal = (*v) (),
-	  imgVal = (*(v -> Image ())) (),
-	  delta  = 
-	  ((v -> sign () == expression::AUX_GEQ) && (varVal >= imgVal)) ? 0. :
-	  ((v -> sign () == expression::AUX_LEQ) && (varVal <= imgVal)) ? 0. : (varVal - imgVal),
-	  normz  = fabs (delta) / (1 + 0.5 * (fabs (varVal) + fabs (imgVal)));
+      double 
+	vval = (*v) (),
+	fval = (*(v -> Image ())) (),
+	denom  = CoinMax (1., v -> Image () -> gradientNorm (X ()));
 
-	if (normz > feas_tolerance_) {
+      // check if fval is a number (happens with e.g. w13 = w12/w5 and w5=0, see test/harker.nl)
+      if (CoinIsnan (fval)) {
+	fval = vval + 1.;
+	denom = 1.;
+      }
 
-	  Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM,
-			      "  checkNLP: auxiliary %d violates tolerance %g by %g\n", 
-			      i, feas_tolerance_, delta);
+      if (fabs (fval) > COUENNE_INFINITY)
+	fval = COUENNE_INFINITY;
 
-	  throw infeasible;
-	}
+      double
+	delta = 
+	((v -> sign () == expression::AUX_GEQ) && (vval >= fval)) ? 0. : 
+	((v -> sign () == expression::AUX_LEQ) && (vval <= fval)) ? 0. : fabs (vval - fval),
+
+	ratio = (CoinMax (1., fabs (vval)) / 
+		 CoinMax (1., fabs (fval)));
+
+      //printf ("checkinf --> v=%e f=%e den=%e ret=%e ratio=%e\n", vval, fval, denom, retval, ratio);
+
+      if (!((ratio < 2)  && 
+	    (ratio > .5) &&
+	    ((delta /= denom) < CoinMin (COUENNE_EPS, feas_tolerance_)))) {
+
+	Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM,
+			    "  checkNLP: auxiliary %d violates tolerance %g by %g\n", 
+			    i, feas_tolerance_, delta);
+
+	throw infeasible;
       }
     }
 

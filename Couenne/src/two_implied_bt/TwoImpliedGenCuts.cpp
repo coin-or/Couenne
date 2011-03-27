@@ -27,6 +27,8 @@
 #include "CouenneInfeasCut.hpp"
 #include "CouenneJournalist.hpp"
 
+using namespace Ipopt;
+
 // necessary to make updateBranchInfo visible
 namespace Couenne {
 
@@ -76,6 +78,9 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
        info.level >= depthLevelling_ &&
        CoinDrand48 () > 1. / (2. + info.level - depthLevelling_)))
     return;
+
+  if (info.level <= 0)
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, "TwoImpl-BT: "); fflush (stdout);
 
   // printf ("probexecute = %g. Level = %d, depthlevelling = %d, depthStop = %d, cond = %d\n", 
   // 	  1. / (2. + info.level - depthLevelling_),
@@ -748,5 +753,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
     firstCall_ = false;
 
   totalTime_ += CoinCpuTime () - now;
+
+  if (info.level <= 0)
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, "%d bounds reduced\n", ntightened);
 }
 }

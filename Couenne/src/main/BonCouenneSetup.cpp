@@ -498,7 +498,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   // check branch variable selection for disjunctive cuts
 
-  // Setup heuristic to solve nlp problems. /////////////////////////////////
+  // Setup heuristic to solve MINLP problems. /////////////////////////////////
+
+  // TODO: add Cbc heuristics
 
   int doHeuristic = 0;
 

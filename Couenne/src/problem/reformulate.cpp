@@ -158,7 +158,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
   createUnusedOriginals ();
 
-  if (nVars () > THRESHOLD_OUTPUT_REFORMULATE)
+  if (nOrigVars () > THRESHOLD_OUTPUT_REFORMULATE)
     jnlst_ -> Printf (J_ERROR, J_COUENNE, "%.1f seconds\n", CoinCpuTime () - now); 
 
   if (orbitalBranching_)

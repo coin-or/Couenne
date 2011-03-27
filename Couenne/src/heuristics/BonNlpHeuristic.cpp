@@ -118,6 +118,9 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
   const int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
 
+  if (depth <= 0)
+    couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "NLP Heuristic: "); fflush (stdout);
+
   try {
 
   if (CoinCpuTime () > couenne_ -> getMaxCpuTime ())
@@ -150,9 +153,6 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 	(1., (double) ((depth - numberSolvePerLevel_) * (depth - numberSolvePerLevel_))))
       too_deep = true;
   }
-
-  if (depth <= 0)
-    couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "NLP Heuristic: "); fflush (stdout);
 
   if (too_deep)
     throw maxTime;
@@ -401,6 +401,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
       if (depth <= 0 && e==noSolution)
 	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done (no solution).\n", objectiveValue);
+
       return 0;
     }
   }
