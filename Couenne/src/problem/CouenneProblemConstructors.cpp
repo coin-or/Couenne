@@ -85,7 +85,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   auxSet_ = new std::set <exprAux *, compExpr>;
 
   if (base)
-  	initOptions(base -> options());
+    initOptions(base -> options());
 }
 
 

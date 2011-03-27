@@ -150,35 +150,54 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
     for (int i=0; i < nVars (); i++) {
 
-      if (variables_ [i] -> Multiplicity () <= 0) 
+      exprVar *v = variables_ [i];
+
+      if ((v -> Type         () != AUX) || 
+	  (v -> Multiplicity () <= 0)) 
 	continue;
 
       if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
-	if (variables_ [i] -> Type () == AUX) {
-	  printf ("checking aux ");
-	  variables_ [i] -> print (); printf (" := ");
-	  variables_ [i] -> Image () -> print (); 
-	  printf (" --- %.12e = %.12e [%.12e]; {", 
-		  (*(variables_ [i])) (), 
-		  (*(variables_ [i] -> Image ())) (),
-		  (*(variables_ [i])) () -
-		  (*(variables_ [i] -> Image ())) ());
-	  //for (int j=0; j<nVars (); j++)
-	  //printf ("%.12e ", (*(variables_ [j])) ());
-	  printf ("}\n");
-	}
+	printf ("checking aux ");
+	variables_ [i] -> print (); printf (" := ");
+	variables_ [i] -> Image () -> print (); 
+	printf (" --- %.12e = %.12e [%.12e]; {", 
+		(*(variables_ [i])) (), 
+		(*(variables_ [i] -> Image ())) (),
+		(*(variables_ [i])) () -
+		(*(variables_ [i] -> Image ())) ());
+	//for (int j=0; j<nVars (); j++)
+	//printf ("%.12e ", (*(variables_ [j])) ());
+	printf ("}\n");
       }
 
-      CouNumber delta;
+      double 
+	vval = (*v) (),
+	fval = (*(v -> Image ())) (),
+	denom  = CoinMax (1., v -> Image () -> gradientNorm (X ()));
 
-      // check if auxiliary has zero infeasibility
+      // check if fval is a number (happens with e.g. w13 = w12/w5 and w5=0, see test/harker.nl)
+      if (CoinIsnan (fval)) {
+	fval = vval + 1.;
+	denom = 1.;
+      }
 
-      if ((variables_ [i] -> Type () == AUX) && 
-	  (fabs (delta = (*(variables_ [i])) () - 
-		 (*(variables_ [i] -> Image ())) ()) > feas_tolerance_)) {
+      if (fabs (fval) > COUENNE_INFINITY)
+	fval = COUENNE_INFINITY;
 
-	Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_PROBLEM,
-			"checkNLP: auxiliarized %d violated (%g)\n", i, delta);
+      double
+	delta = fabs (vval - fval),
+	ratio = (CoinMax (1., fabs (vval)) / 
+		 CoinMax (1., fabs (fval)));
+
+      //printf ("checkinf --> v=%e f=%e den=%e ret=%e ratio=%e\n", vval, fval, denom, retval, ratio);
+
+      if (!((ratio < 2)  && 
+	    (ratio > .5) &&
+	    ((delta /= denom) < CoinMin (COUENNE_EPS, feas_tolerance_)))) {
+
+	Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM,
+			    "  checkNLP: auxiliary %d violates tolerance %g by %g\n", 
+			    i, feas_tolerance_, delta);
 
 	throw infeasible;
       }
