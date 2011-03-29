@@ -527,7 +527,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   if (doHeuristic) {
     CouenneIterativeRounding * nlpHeuristic = new CouenneIterativeRounding(nonlinearSolver_, ci, couenneProb_, options());
     HeuristicMethod h;
-    h.id = "Couenne Iteartive Rounding";
+    h.id = "Couenne Iterative Rounding";
     h.heuristic = nlpHeuristic;
     heuristics_.push_back(h);
   }
