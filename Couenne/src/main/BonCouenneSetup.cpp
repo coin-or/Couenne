@@ -42,6 +42,7 @@
 
 #include "BonCouenneSetup.hpp"
 #include "CouenneFeasPump.hpp"
+#include "CouenneIterativeRounding.hpp"
 #include "BonCouenneInterface.hpp"
 #include "BonInitHeuristic.hpp"
 #include "BonNlpHeuristic.hpp"
@@ -521,24 +522,15 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     heuristics_.push_back(h);
   }
 
-  //     // Giacomo will commit code on this sooner or later
-  //
-  //     options () -> GetEnumValue ("local_branching_heuristic", doHeuristic, "couenne.");
-  //
-  //     if (doHeuristic) {
-  //       int numSolve;
-  //       options()->GetIntegerValue("log_num_local_optimization_per_level", numSolve, "couenne.");
-  //       Couenne:LocBraHeur * nlpHeuristic = new Couenne::LocBraHeur;
-  //       nlpHeuristic->setNlp(*ci,false);
-  //       nlpHeuristic->setCouenneProblem(couenneProb_);
-  //       //nlpHeuristic->setMaxNlpInf(1e-4);
-  //       nlpHeuristic->setMaxNlpInf(maxNlpInf_0);
-  //       nlpHeuristic->setNumberSolvePerLevel(numSolve);
-  //       HeuristicMethod h;
-  //       h.id = "Couenne Local Branching";
-  //       h.heuristic = nlpHeuristic;
-  //       heuristics_.push_back(h);
-  //     }
+  options () -> GetEnumValue ("iterative_rounding_heuristic", doHeuristic, "couenne.");
+  
+  if (doHeuristic) {
+    CouenneIterativeRounding * nlpHeuristic = new CouenneIterativeRounding(nonlinearSolver_, ci, couenneProb_, options());
+    HeuristicMethod h;
+    h.id = "Couenne Iteartive Rounding";
+    h.heuristic = nlpHeuristic;
+    heuristics_.push_back(h);
+  }
 
   options () -> GetEnumValue ("feas_pump_heuristic", doHeuristic, "couenne.");
 
@@ -675,16 +667,17 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   BabSetupBase        ::registerAllOptions (roptions);
   Bonmin::BonCbcFullNodeInfo  ::registerOptions (roptions);
 
-  CouenneProblem        ::registerOptions (roptions);
-  CouenneCutGenerator   ::registerOptions (roptions);
-  CouenneChooseStrong   ::registerOptions (roptions);
-  CouenneChooseVariable ::registerOptions (roptions);
-  CouenneFixPoint       ::registerOptions (roptions);
-  CouenneDisjCuts       ::registerOptions (roptions);
-  CouenneCrossConv      ::registerOptions (roptions);
-  CouenneTwoImplied     ::registerOptions (roptions);
-  NlpSolveHeuristic     ::registerOptions (roptions);
-  CouenneFeasPump       ::registerOptions (roptions);
+  CouenneProblem          ::registerOptions (roptions);
+  CouenneCutGenerator     ::registerOptions (roptions);
+  CouenneChooseStrong     ::registerOptions (roptions);
+  CouenneChooseVariable   ::registerOptions (roptions);
+  CouenneFixPoint         ::registerOptions (roptions);
+  CouenneDisjCuts         ::registerOptions (roptions);
+  CouenneCrossConv        ::registerOptions (roptions);
+  CouenneTwoImplied       ::registerOptions (roptions);
+  NlpSolveHeuristic       ::registerOptions (roptions);
+  CouenneFeasPump         ::registerOptions (roptions);
+  CouenneIterativeRounding::registerOptions (roptions);
 
   /// TODO: move later!
   roptions -> AddStringOption2

@@ -10,6 +10,7 @@
 #ifndef COUENNEITERATIVEROUNDING_HPP
 #define COUENNEITERATIVEROUNDING_HPP
 
+#include "CouenneConfig.h"
 #include "CbcHeuristic.hpp"
 #include "BonOsiTMINLPInterface.hpp"
 

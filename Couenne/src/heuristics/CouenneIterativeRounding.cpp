@@ -1091,7 +1091,7 @@ namespace Couenne{
   void 
   CouenneIterativeRounding::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions){
     roptions -> AddStringOption2
-      ("iterative_rounding",
+      ("iterative_rounding_heuristic",
        "Do we use the Iterative Rounding heuristic",
        "no",
        "no","",
