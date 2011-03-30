@@ -45,6 +45,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+
+#	ellipcuts/CouenneEllipCuts.hpp 
 @COIN_HAS_NTY_TRUE@am__append_1 = branch/Nauty.h
 subdir = src
 DIST_COMMON = $(am__includecoin_HEADERS_DIST) $(srcdir)/Makefile.am \
@@ -137,8 +139,7 @@ am__includecoin_HEADERS_DIST = ../inc/config_couenne.h \
 	problem/CouenneSolverInterface.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
 	expression/CouenneTypes.hpp disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp ellipcuts/CouenneEllipCuts.hpp \
-	crossconv/CouenneCrossConv.hpp \
+	convex/CouenneCutGenerator.hpp crossconv/CouenneCrossConv.hpp \
 	two_implied_bt/CouenneTwoImplied.hpp \
 	sdpcuts/CouenneSdpCuts.hpp sdpcuts/CutGen.hpp \
 	sdpcuts/disjunctive_cuts.hpp sdpcuts/dsyevx_wrapper.hpp \
@@ -392,11 +393,11 @@ libCouenne_la_LIBADD = \
 	./util/libCouenneUtil.la \
 	./disjunctive/libCouenneDisjunctive.la \
 	./sdpcuts/libCouenneSdpCuts.la \
-	./ellipcuts/libCouenneEllipCuts.la \
 	./crossconv/libCouenneCrossConv.la \
 	./two_implied_bt/libCouenneTwoImplied.la
 
 
+#	./ellipcuts/libCouenneEllipCuts.la 
 #	./readnl/libCouenneReadnl.la 
 libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
 
@@ -421,10 +422,11 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/problem` \
 	-I`$(CYGPATH_W) $(srcdir)/branch` \
 	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
-	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` \
 	-I`$(CYGPATH_W) $(srcdir)/crossconv` \
 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
 
+
+#	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
@@ -496,8 +498,7 @@ includecoin_HEADERS = ../inc/config_couenne.h util/CouenneRootQ.hpp \
 	problem/CouenneSolverInterface.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
 	expression/CouenneTypes.hpp disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp ellipcuts/CouenneEllipCuts.hpp \
-	crossconv/CouenneCrossConv.hpp \
+	convex/CouenneCutGenerator.hpp crossconv/CouenneCrossConv.hpp \
 	two_implied_bt/CouenneTwoImplied.hpp \
 	sdpcuts/CouenneSdpCuts.hpp sdpcuts/CutGen.hpp \
 	sdpcuts/disjunctive_cuts.hpp sdpcuts/dsyevx_wrapper.hpp \
@@ -657,7 +658,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/../inc $(distdir)/bound_tightening $(distdir)/branch $(distdir)/convex $(distdir)/crossconv $(distdir)/disjunctive $(distdir)/ellipcuts $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/sdpcuts $(distdir)/standardize $(distdir)/two_implied_bt $(distdir)/util
+	$(mkdir_p) $(distdir)/../inc $(distdir)/bound_tightening $(distdir)/branch $(distdir)/convex $(distdir)/crossconv $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/sdpcuts $(distdir)/standardize $(distdir)/two_implied_bt $(distdir)/util
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

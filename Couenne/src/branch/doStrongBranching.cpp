@@ -112,11 +112,11 @@ int CouenneChooseStrong::doStrongBranching (OsiSolverInterface *solver,
     lpSol = CoinCopyOfArray (info -> solution_, numberColumns);
 
   // provide Couenne problem with point/bounds contained in info
-  problem_ -> domain () -> push
-    (problem_ -> nVars (),
-     info -> solution_,
-     info -> lower_,
-     info -> upper_);
+  // problem_ -> domain () -> push
+  //   (problem_ -> nVars (),
+  //    info -> solution_,
+  //    info -> lower_,
+  //    info -> upper_);
 
   int returnCode = 0, iDo = 0;
 
@@ -196,6 +196,10 @@ int CouenneChooseStrong::doStrongBranching (OsiSolverInterface *solver,
       }
     }
 
+    // at this point, problem_'s bounds are a tightening of the union
+    // of the two nodes and should be kept for the caller,
+    // CouenneChooseStrong::chooseVariable()
+
     if (tightened &&                     // have tighter bounds
 	(problem_ -> doFBBT ()) &&       // selected FBBT
 	!(problem_ -> btCore (chg_bds))) // tighten again on root
@@ -261,7 +265,7 @@ int CouenneChooseStrong::doStrongBranching (OsiSolverInterface *solver,
     delete [] Upper0;
   }
 
-  problem_ -> domain () -> pop (); // discard current point/bounds from problem
+  //problem_ -> domain () -> pop (); // discard current point/bounds from problem
 
   delete [] lpSol;
 

@@ -87,6 +87,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 				      Ipopt::SmartPtr<Bonmin::TMINLP> tminlp,
 				      CouenneInterface *ci,
 				      Bonmin::Bab *bb) {
+
   std::string s;
 
   if (couenneProb) {

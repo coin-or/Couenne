@@ -54,6 +54,8 @@ build_triplet = @build@
 host_triplet = @host@
 @COIN_HAS_ASL_TRUE@am__append_1 = src/readnl
 
+#	  src/ellipcuts
+
 # We don't want to compile the test subdirectory, unless the test target is
 # specified.  But we need to list it as subdirectory to make sure that it is
 # included in the tarball
@@ -98,9 +100,8 @@ ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = src/util src/expression src/readnl src/standardize \
 	src/problem src/bound_tightening src/convex src/branch \
-	src/disjunctive src/sdpcuts src/ellipcuts src/interfaces \
-	src/heuristics src/crossconv src/two_implied_bt src src/main \
-	test
+	src/disjunctive src/sdpcuts src/interfaces src/heuristics \
+	src/crossconv src/two_implied_bt src src/main test
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -337,9 +338,8 @@ AUTOMAKE_OPTIONS = foreign
 ########################################################################
 SUBDIRS = src/util src/expression $(am__append_1) src/standardize \
 	src/problem src/bound_tightening src/convex src/branch \
-	src/disjunctive src/sdpcuts src/ellipcuts src/interfaces \
-	src/heuristics src/crossconv src/two_implied_bt src src/main \
-	$(am__append_2)
+	src/disjunctive src/sdpcuts src/interfaces src/heuristics \
+	src/crossconv src/two_implied_bt src src/main $(am__append_2)
 
 ########################################################################
 #             Additional files to be included in tarball               #

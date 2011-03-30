@@ -31,10 +31,10 @@ libCouenne_la_LIBADD = \
 	./util/libCouenneUtil.la \
 	./disjunctive/libCouenneDisjunctive.la \
 	./sdpcuts/libCouenneSdpCuts.la \
-	./ellipcuts/libCouenneEllipCuts.la \
 	./crossconv/libCouenneCrossConv.la \
 	./two_implied_bt/libCouenneTwoImplied.la
 
+#	./ellipcuts/libCouenneEllipCuts.la 
 #	./readnl/libCouenneReadnl.la 
 
 libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
@@ -61,9 +61,10 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/problem` \
 	-I`$(CYGPATH_W) $(srcdir)/branch` \
 	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
-	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` \
 	-I`$(CYGPATH_W) $(srcdir)/crossconv` \
 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
+
+#	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
@@ -154,7 +155,6 @@ includecoin_HEADERS = \
 	expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp \
 	convex/CouenneCutGenerator.hpp \
-	ellipcuts/CouenneEllipCuts.hpp \
 	crossconv/CouenneCrossConv.hpp \
 	two_implied_bt/CouenneTwoImplied.hpp \
 	sdpcuts/CouenneSdpCuts.hpp \
@@ -171,6 +171,8 @@ includecoin_HEADERS = \
 	sdpcuts/rlt_cuts.hpp \
 	sdpcuts/sdpcuts.hpp \
 	sdpcuts/tracer.hpp 
+
+#	ellipcuts/CouenneEllipCuts.hpp 
 
 if COIN_HAS_NTY
 includecoin_HEADERS += branch/Nauty.h

@@ -26,13 +26,14 @@ SUBDIRS += src/standardize \
 	  src/branch \
 	  src/disjunctive \
 	  src/sdpcuts \
-	  src/ellipcuts \
 	  src/interfaces \
 	  src/heuristics \
 	  src/crossconv \
 	  src/two_implied_bt \
 	  src \
 	  src/main 
+
+#	  src/ellipcuts
 
 # We don't want to compile the test subdirectory, unless the test target is
 # specified.  But we need to list it as subdirectory to make sure that it is
