@@ -240,6 +240,8 @@ Couenne/src/problem/fillQuadIndices.cpp -text
 Couenne/src/problem/getIntegerCandidate.cpp -text
 Couenne/src/problem/problem.cpp -text
 Couenne/src/problem/problemIO.cpp -text
+Couenne/src/problem/recordBestSol.cpp -text
+Couenne/src/problem/recordBestSol.hpp -text
 Couenne/src/problem/testIntFix.cpp -text
 Couenne/src/problem/writeAMPL.cpp -text
 Couenne/src/problem/writeGAMS.cpp -text
