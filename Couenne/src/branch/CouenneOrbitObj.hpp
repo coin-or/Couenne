@@ -12,7 +12,6 @@
 #define COUENNEORBITOBJ_HPP
 
 #include "BonBabSetupBase.hpp"
-#include "CoinFinite.hpp"
 
 #include "CouenneExprVar.hpp"
 #include "CouenneJournalist.hpp"

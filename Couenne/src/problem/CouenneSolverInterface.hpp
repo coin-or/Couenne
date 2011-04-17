@@ -11,8 +11,6 @@
 #ifndef COUENNESOLVERINTERFACE_HPP
 #define COUENNESOLVERINTERFACE_HPP
 
-#include "CoinFinite.hpp"
-
 class OsiSolverInterface;
 
 namespace Couenne {

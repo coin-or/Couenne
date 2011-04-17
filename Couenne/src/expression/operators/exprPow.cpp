@@ -11,8 +11,6 @@
 #include <math.h>
 #include <assert.h>
 
-#include "CoinHelperFunctions.hpp"
-
 #include "CouennePrecisions.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneExprSum.hpp"
@@ -22,6 +20,10 @@
 //#include "CouenneExprOpp.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneProblem.hpp"
+
+#include "CouenneConfig.h"
+#include "CoinHelperFunctions.hpp"
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

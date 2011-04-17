@@ -8,14 +8,15 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include "CoinHelperFunctions.hpp"
-
 #include "OsiRowCut.hpp"
 
 //#include "CouenneSolverInterface.hpp"
 #include "CouenneSOSObject.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
+
+#include "CoinHelperFunctions.hpp"
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

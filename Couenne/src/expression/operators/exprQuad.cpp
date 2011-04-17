@@ -8,7 +8,6 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include "CoinHelperFunctions.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneExprQuad.hpp"
@@ -16,6 +15,9 @@
 #include "CouenneExprMul.hpp"
 #include "CouenneDepGraph.hpp"
 #include "CouenneLQelems.hpp"
+
+#include "CoinHelperFunctions.hpp"
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

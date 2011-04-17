@@ -11,12 +11,15 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "CoinHelperFunctions.hpp"
 #include "CouenneExprMul.hpp"
 #include "CouenneExprSum.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouennePrecisions.hpp"
+
+#include "CouenneConfig.h"
+#include "CoinHelperFunctions.hpp"
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

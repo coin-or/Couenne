@@ -10,8 +10,6 @@
 
 #include <stdio.h> // ! must go
 
-#include "CoinFinite.hpp"
-
 #include "CouenneExprInv.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneExprMul.hpp"
@@ -20,6 +18,8 @@
 #include "CouenneExprPow.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneExpression.hpp"
+
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

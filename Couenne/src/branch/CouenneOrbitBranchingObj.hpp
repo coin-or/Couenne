@@ -11,7 +11,6 @@
 #ifndef COUENNEORBITBRANCHINGOBJ_HPP
 #define COUENNEORBITBRANCHINGOBJ_HPP
 
-#include "CoinFinite.hpp"
 #include "CouenneExprAux.hpp"
 #include "CouenneJournalist.hpp"
 #include "OsiBranchingObject.hpp"

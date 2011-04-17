@@ -8,7 +8,6 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include "CoinFinite.hpp"
 #include "OsiRowCut.hpp"
 #include "CouennePrecisions.hpp"
 #include "CouenneTypes.hpp"
@@ -16,6 +15,7 @@
 #include "CouenneFunTriplets.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneExprVar.hpp"
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

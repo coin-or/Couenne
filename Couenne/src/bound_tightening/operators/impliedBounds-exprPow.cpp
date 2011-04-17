@@ -10,6 +10,8 @@
 
 #include "CouenneExprPow.hpp"
 #include "CouenneExpression.hpp"
+#include "CouenneConfig.h"
+#include "CoinFinite.hpp"
 #include "CoinHelperFunctions.hpp"
 
 using namespace Couenne;

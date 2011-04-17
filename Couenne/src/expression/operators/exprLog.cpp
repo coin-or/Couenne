@@ -10,8 +10,6 @@
 
 #include <math.h>
 
-#include "CoinHelperFunctions.hpp"
-
 #include "CouenneExprLog.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneExprClone.hpp"
@@ -19,6 +17,9 @@
 #include "CouenneExprMin.hpp"
 #include "CouenneExprDiv.hpp"
 #include "CouenneProblem.hpp"
+
+#include "CoinHelperFunctions.hpp"
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

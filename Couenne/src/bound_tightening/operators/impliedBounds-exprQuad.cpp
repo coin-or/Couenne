@@ -11,8 +11,10 @@
 
 #include <set>
 
-#include "CoinHelperFunctions.hpp"
 #include "CouenneExprQuad.hpp"
+#include "CouenneConfig.h"
+#include "CoinFinite.hpp"
+#include "CoinHelperFunctions.hpp"
 
 using namespace Couenne;
 

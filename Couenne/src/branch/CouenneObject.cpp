@@ -9,12 +9,12 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include "CoinHelperFunctions.hpp"
-#include "CoinFinite.hpp"
-
 #include "CouenneProblem.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
+
+#include "CoinHelperFunctions.hpp"
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

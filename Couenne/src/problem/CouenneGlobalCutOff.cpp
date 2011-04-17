@@ -9,10 +9,10 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
+#include "CouenneGlobalCutOff.hpp"
+
 #include "CoinFinite.hpp"
 #include "CoinHelperFunctions.hpp"
-
-#include "CouenneGlobalCutOff.hpp"
 
 using namespace Couenne;
 

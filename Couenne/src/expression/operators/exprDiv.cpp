@@ -10,8 +10,6 @@
 
 #include "assert.h"
 
-#include "CoinFinite.hpp"
-
 #include "CouenneExprDiv.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneExprClone.hpp"
@@ -21,6 +19,8 @@
 #include "CouenneExprBDiv.hpp"
 
 #include "CouennePrecisions.hpp"
+
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

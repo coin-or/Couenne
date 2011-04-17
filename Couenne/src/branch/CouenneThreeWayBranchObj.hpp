@@ -12,7 +12,6 @@
 #ifndef COUENNETHREEWAYBRANCHOBJ_HPP
 #define COUENNETHREEWAYBRANCHOBJ_HPP
 
-#include "CoinFinite.hpp"
 #include "OsiBranchingObject.hpp"
 
 #include "CouenneExprAux.hpp"

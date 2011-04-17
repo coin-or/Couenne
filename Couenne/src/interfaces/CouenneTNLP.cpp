@@ -10,8 +10,6 @@
 #include "IpTNLP.hpp"
 #include "IpIpoptApplication.hpp"
 
-#include "CoinHelperFunctions.hpp"
-
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprVar.hpp"
@@ -20,6 +18,9 @@
 #include "CouenneTNLP.hpp"
 
 #include <stdio.h>
+
+#include "CoinHelperFunctions.hpp"
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

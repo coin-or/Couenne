@@ -12,7 +12,9 @@
 #define COUENNE_EXPRBMUL_H
 
 #include "CouenneExprOp.hpp"
+#include "CouenneConfig.h"
 #include "CoinHelperFunctions.hpp"
+#include "CoinFinite.hpp"
 
 namespace Couenne {
 

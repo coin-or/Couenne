@@ -10,7 +10,6 @@
 #include "CouenneExprMul.hpp"
 #include "CouenneExprTrilinear.hpp"
 #include "CouennePrecisions.hpp"
-#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

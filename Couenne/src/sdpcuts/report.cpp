@@ -7,12 +7,13 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
 
-#include <OsiSolverInterface.hpp> //defines DBL_MAX
-
+#include "CouenneConfig.h"
+#include "CoinFinite.hpp" //defines COIN_DBL_MAX
 
 #define MAX_INSTANCES 1000
 #define SOLUTIONS_DOUBLE_FIELDS 8
@@ -203,7 +204,7 @@ public:
 				_f_res_int_data[i][k] = 
 					(int*) malloc(sizeof(int)*F_RES_INT_FIELDS);
 				for (int j=0;j<F_RES_DOUBLE_FIELDS;j++) {
-					_f_res_double_data[i][k][j] = -DBL_MAX;
+					_f_res_double_data[i][k][j] = -COIN_DBL_MAX;
 				}
 			}
 			_f_res_iter[i] = -1;
@@ -264,12 +265,12 @@ public:
 					,getDoubleField(i,k,F_RES_TIME)
 					,getIntField(i,k,F_RES_TOTCONS)
 					,getIntField(i,k,F_RES_ITERGENCONS));
-				if (getDoubleField(i,k,F_RES_CURRHEUR) <= -DBL_MAX)
+				if (getDoubleField(i,k,F_RES_CURRHEUR) <= -COIN_DBL_MAX)
 					fprintf(out,"\t%10s","N/A");
 				else
 					fprintf(out,"\t%10.2f",getDoubleField(i,k,F_RES_CURRHEUR));
 
-				if (getDoubleField(i,k,F_RES_BESTHEUR) <= -DBL_MAX)
+				if (getDoubleField(i,k,F_RES_BESTHEUR) <= -COIN_DBL_MAX)
 					fprintf(out,"\t%10s","N/A");
 				else
 					fprintf(out,"\t%10.2f",getDoubleField(i,k,F_RES_BESTHEUR));
@@ -286,7 +287,7 @@ public:
 					,_sol->getDoubleField(inst,SOLUTIONS_OPT)));
 		else {
 			printf("boundClosedGapF_res1:: ERROR\n");
-			return -DBL_MAX;
+			return -COIN_DBL_MAX;
 		}
 	}
 /***********************************************************************/
@@ -396,7 +397,7 @@ private:
 											atof(curr);
 				else
 					_f_res_double_data[curr_instance][curr_iter][F_RES_CURRHEUR] =
-											-DBL_MAX;
+											-COIN_DBL_MAX;
 
 				curr = strtok ( NULL, " \t" );
 				if (curr == NULL) {
@@ -409,7 +410,7 @@ private:
 											atof(curr);
 				else
 					_f_res_double_data[curr_instance][curr_iter][F_RES_CURRHEUR] =
-											-DBL_MAX;
+											-COIN_DBL_MAX;
 
 				curr_iter++;
 				_f_res_iter[curr_instance]++;
@@ -558,7 +559,7 @@ private:
 				,getF_res(1)->getDoubleField(instance,f_res1_iter,F_RES_UBOUND)*F_RES_MULTIPLIER
 				,getF_res(1)->boundClosedGap(instance,f_res1_iter));
 
-			if (getF_res(1)->getDoubleField(instance,f_res1_iter,F_RES_BESTHEUR) <= -DBL_MAX)
+			if (getF_res(1)->getDoubleField(instance,f_res1_iter,F_RES_BESTHEUR) <= -COIN_DBL_MAX)
 				fprintf(out,"\t%10s","N/A ");
 			else
 				fprintf(out,"\t%10.2f "
@@ -586,7 +587,7 @@ private:
 				,getF_res(2)->getDoubleField(instance,f_res2_iter,F_RES_UBOUND)*F_RES_MULTIPLIER
 				,getF_res(2)->boundClosedGap(instance,f_res2_iter));
 
-			if (getF_res(2)->getDoubleField(instance,f_res2_iter,F_RES_BESTHEUR) <= -DBL_MAX)
+			if (getF_res(2)->getDoubleField(instance,f_res2_iter,F_RES_BESTHEUR) <= -COIN_DBL_MAX)
 				fprintf(out,"\t%10s","N/A ");
 			else
 				fprintf(out,"\t%10.2f "
@@ -685,7 +686,7 @@ public:
 				f_res1_iter = getF_res(1)->getIter(i)-1;
 				bound1_at_iter = getF_res(1)->getDoubleField(i,f_res1_iter,F_RES_UBOUND);
 			} else	if (getF_res(1)->getIter(i) < 0) {
-					bound1_at_iter = -DBL_MAX;
+					bound1_at_iter = -COIN_DBL_MAX;
 					f_res1_iter = -1;
 			} else {
 				bound1_at_iter = getF_res(1)->getDoubleField(i,f_res1_iter,F_RES_UBOUND);
@@ -765,7 +766,7 @@ public:
 				f_res1_iter = getF_res(1)->getIter(i)-1;
 				bound1_at_iter = getF_res(1)->getDoubleField(i,f_res1_iter,F_RES_UBOUND);
 			} else	if (getF_res(1)->getIter(i) < 0) {
-					bound1_at_iter = -DBL_MAX;
+					bound1_at_iter = -COIN_DBL_MAX;
 					f_res1_iter = -1;
 			} else {
 				bound1_at_iter = getF_res(1)->getDoubleField(i,f_res1_iter,F_RES_UBOUND);

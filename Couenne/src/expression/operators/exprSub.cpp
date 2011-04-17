@@ -8,12 +8,12 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include "CoinFinite.hpp"
-
 #include "CouenneExprSub.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneExprOpp.hpp"
 #include "CouennePrecisions.hpp"
+
+#include "CoinFinite.hpp"
 
 using namespace Couenne;
 

@@ -91,6 +91,14 @@ AC_COIN_CHECK_PACKAGE(Msk, [osi-mosek],  [CouenneLib])  # Osi/Mosek
 AC_COIN_CHECK_PACKAGE(Spx, [osi-soplex], [CouenneLib])  # Osi/Soplex
 AC_COIN_CHECK_PACKAGE(Xpr, [osi-xpress], [CouenneLib])  # Osi/XpressMP
 
+#############################################################################
+#                               System header                               #
+#############################################################################
+
+AC_COIN_CHECK_CXX_CHEADER(math)
+AC_COIN_CHECK_CXX_CHEADER(float)
+AC_COIN_CHECK_CXX_CHEADER(ieeefp)
+
 ##############################################################################
 #                   Finishing up by writing all the output                   #
 ##############################################################################
