@@ -325,6 +325,8 @@ const CouNumber estProdEps = 1e-6;
   // Returns number of infeasibilities.
   int CouenneChooseStrong::setupList (OsiBranchingInformation *info, bool initialize) {
 
+    static bool warned = false;
+
     initialize = true; // to avoid failed assert in BonChooseVariable::setupList()
 
     problem_ -> domain () -> push 
@@ -357,6 +359,20 @@ const CouNumber estProdEps = 1e-6;
 
     // call Bonmin's setuplist
     int retval = Bonmin::BonChooseVariable::setupList (info, initialize);
+
+    if (!retval) { // No branching is possible
+
+      double ckObj = info->objectiveValue_;
+
+      if (!(problem_ -> checkNLP (info -> solution_, ckObj, true))) {
+
+	if (!warned) {
+          printf ("CouenneChooseStrong::setupList() -- Warning: checkNLP returns infeasible, no branching object selected\n");
+          warned = true;
+        }
+	//exit (1);
+      }
+    }
 
     jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		      "----------------- (strong) setup list done - %d infeasibilities\n", retval);

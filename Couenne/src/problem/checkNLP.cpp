@@ -206,13 +206,13 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
       //printf ("checkinf --> v=%e f=%e den=%e ret=%e ratio=%e\n", vval, fval, denom, retval, ratio);
 
-      if (!((ratio < 2)  && 
-	    (ratio > .5) &&
-	    ((delta /= denom) < CoinMin (COUENNE_EPS, feas_tolerance_)))) {
+      if (delta > 0. && ((ratio > 2.)  ||  // check delta > 0 to take into account semi-auxs
+			 (ratio <  .5)) &&
+	  ((delta /= denom) > CoinMin (COUENNE_EPS, feas_tolerance_))) {
 
 	Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM,
-			    "  checkNLP: auxiliary %d violates tolerance %g by %g\n", 
-			    i, feas_tolerance_, delta);
+			    "  checkNLP: auxiliary %d violates tolerance %g by %g/%g = %g\n", 
+			    i, CoinMin (COUENNE_EPS, feas_tolerance_), delta*denom, denom, delta);
 
 	throw infeasible;
       }
@@ -229,12 +229,10 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 	lhs  = (*(c -> Lb   ())) (),
 	rhs  = (*(c -> Ub   ())) ();
 
-      if (((rhs < COUENNE_INFINITY) &&
-	   (body > rhs + feas_tolerance_ * (1 + CoinMax (fabs (body), fabs (rhs))))) || 
-	  ((lhs > -COUENNE_INFINITY) &&
-	   (body < lhs - feas_tolerance_ * (1 + CoinMax (fabs (body), fabs (lhs)))))) {
+      if (((rhs <  COUENNE_INFINITY) && (body > rhs + feas_tolerance_ * (1. + CoinMax (fabs (body), fabs (rhs))))) || 
+	  ((lhs > -COUENNE_INFINITY) && (body < lhs - feas_tolerance_ * (1. + CoinMax (fabs (body), fabs (lhs)))))) {
 
-	if (Jnlst()->ProduceOutput(Ipopt::J_MOREVECTOR, J_PROBLEM)) {
+	if (Jnlst () -> ProduceOutput (Ipopt::J_MOREVECTOR, J_PROBLEM)) {
 
 	  printf ("  checkNLP: constraint %d violated (lhs=%+e body=%+e rhs=%+e, violation %g): ",
 		  i, lhs, body, rhs, CoinMax (lhs-body, body-rhs));

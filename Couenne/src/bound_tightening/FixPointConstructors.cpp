@@ -42,7 +42,7 @@ CouenneFixPoint::CouenneFixPoint (const CouenneFixPoint &rhs):
 CouenneFixPoint::~CouenneFixPoint () {
 
   if (!firstCall_)
-    printf ("Fixed point BT: CPU time %g, %d runs, %d tighened\n", 
+    printf ("Fixed point BT: CPU time %g, %d runs, %d tightened\n", 
 	    CPUtime_, nRuns_, nTightened_);
 }
 
