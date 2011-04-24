@@ -51,7 +51,8 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
     expression *arg = al [i];
 
     if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-      printf ("  flatten arg %d ---> ", arg -> code ()); arg -> print ();
+      printf ("  flatten arg %d ---> ", arg -> code ()); 
+      arg -> print ();
       printf ("\n");
     }
 
@@ -90,28 +91,29 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
 
       if (arg -> code () == COU_EXPRPOW) { // re-check as it could come from above
 
-      expression *base     = arg -> ArgList () [0],
-	         *exponent = arg -> ArgList () [1];
+	expression 
+	  *base     = arg -> ArgList () [0],
+	  *exponent = arg -> ArgList () [1];
 
-      if (exponent -> Type () == CONST) { // could be of the form k x^2
+	if (exponent -> Type () == CONST) { // could be of the form k x^2
 
-	double expnum = exponent -> Value ();
+	  double expnum = exponent -> Value ();
 
-	expression *aux = base -> standardize (this);
+	  expression *aux = base -> standardize (this);
 
-	if (!aux)
-	  aux = base;
+	  if (!aux)
+	    aux = base;
 
-	std::map <int, CouNumber>::iterator 
-	  where = indices.find (aux -> Index ());
+	  std::map <int, CouNumber>::iterator 
+	    where = indices.find (aux -> Index ());
 
-	if (where == indices.end ())
-	  indices.insert (std::pair <int, CouNumber> (aux -> Index (), expnum));
-	else (where -> second += expnum);
+	  if (where == indices.end ())
+	    indices.insert (std::pair <int, CouNumber> (aux -> Index (), expnum));
+	  else (where -> second += expnum);
 
-	break;
-      }  // otherwise, revert to default
-    }
+	  break;
+	}  // otherwise, revert to default
+      }
 
     case COU_EXPRSUM: // well, only if there is one element
 

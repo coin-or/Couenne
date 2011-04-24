@@ -45,6 +45,7 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
   p -> flattenMul (this, coeff, indCoe);
 
   int nArgs = 0;
+
   expression **arglist = new expression * [indCoe.size ()];
 
   for (std::map <int, CouNumber>::iterator i = indCoe.begin (); i != indCoe.end (); ++i)
@@ -73,13 +74,20 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
       expression *simMul = new exprMul (new exprConst (coeff), new exprClone (arglist_ [0]));
       return (addAux ? (p -> addAuxiliary (simMul)) : new exprAux (simMul, p -> domain ()));
-    }
 
-    else return NULL; 
+    } else {
+
+      // quick fix for nvs08: expression x_0^.5 * x_0^3 is quite
+      // unusual and is translated into an exprMul with a single
+      // argument.
+
+      exprAux *var = dynamic_cast <exprAux *> (arglist_ [0] -> Copy ());
+      return var;
+    }
   }
 
-  if (nargs_ == 1)  // TODO: what happens really?
-    return NULL;
+  //if (nargs_ == 1)  // TODO: what happens really?
+      //return NULL;
   /* {
      exprAux *aux = arglist_ [0];
      arglist_ [0] = NULL;
