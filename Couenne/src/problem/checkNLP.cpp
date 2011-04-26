@@ -204,10 +204,17 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 	ratio = (CoinMax (1., fabs (vval)) / 
 		 CoinMax (1., fabs (fval)));
 
-      //printf ("checkinf --> v=%e f=%e den=%e ret=%e ratio=%e\n", vval, fval, denom, retval, ratio);
+      // printf ("checkinf --> v=%e f=%e den=%e ret=%d ratio=%e delta=%e, delta/denom=%e, thres=%e [", 
+      // 	      vval, fval, denom, retval, ratio, delta, delta/denom, CoinMin (COUENNE_EPS, feas_tolerance_));
+      // v -> print ();
+      // printf (" %c= ", v -> sign () == expression::AUX_LEQ ? '<' : 
+      // 	               v -> sign () == expression::AUX_GEQ ? '>' : ':');
+      // v -> Image () -> print ();
+      // printf ("]\n");
 
-      if (delta > 0. && ((ratio > 2.)  ||  // check delta > 0 to take into account semi-auxs
-			 (ratio <  .5)) &&
+      if ((delta > 0.) &&
+	  ((ratio > 2.)  ||  // check delta > 0 to take into account semi-auxs
+	   (ratio <  .5)) ||
 	  ((delta /= denom) > CoinMin (COUENNE_EPS, feas_tolerance_))) {
 
 	Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM,

@@ -555,7 +555,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     if (realOpt && // this is a good time to check if we have cut the optimal solution
 	isOptimumCut (realOpt, cs, problem_))
       jnlst_->Printf(J_ITERSUMMARY, J_CONVEXIFYING,
-		     "\n\n CUT OPTIMUM\n\n");
+		     "Warning: Optimal solution was cut\n");
   }
 
   catch (int exception) {

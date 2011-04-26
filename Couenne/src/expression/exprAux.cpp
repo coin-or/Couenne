@@ -249,7 +249,10 @@ void exprAux::generateCuts (//const OsiSolverInterface &si,
 	(ncc < cs.sizeColCuts ()))
       {
 	printf ("---------------- ConvCut:  "); 
-	print (std::cout);  printf (" := ");
+	print (std::cout);  
+	printf (" %c= ", 
+		sign () == expression::AUX_EQ  ? ':' : 
+		sign () == expression::AUX_LEQ ? '<' : '>');
 	image_ -> print (std::cout); 
 
 	printf (" [%.7e,%.7e] <--- ", 
