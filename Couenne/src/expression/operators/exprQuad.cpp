@@ -107,7 +107,7 @@ exprQuad::exprQuad (CouNumber c0,
     // insert first element in bound map
     if (bounds_.find (row -> first) == bounds_.end ()) {
 
-      std::pair <CouNumber, CouNumber> newbound (-DBL_MAX, DBL_MAX);
+      std::pair <CouNumber, CouNumber> newbound (-COIN_DBL_MAX, COIN_DBL_MAX);
       std::pair <exprVar *, std::pair <CouNumber, CouNumber> > newvar (row -> first, newbound);
       bounds_.insert (newvar);
     }
@@ -119,7 +119,7 @@ exprQuad::exprQuad (CouNumber c0,
       // insert second element in bound map
       if (bounds_.find (cell -> first) == bounds_.end ()) {
 
-	std::pair <CouNumber, CouNumber> newbound (-DBL_MAX, DBL_MAX);
+	std::pair <CouNumber, CouNumber> newbound (-COIN_DBL_MAX, COIN_DBL_MAX);
 	std::pair <exprVar *, std::pair <CouNumber, CouNumber> > newvar (cell -> first, newbound);
 	bounds_.insert (newvar);
       }
