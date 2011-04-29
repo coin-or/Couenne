@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
+#include <cmath>
 
 #include "CouenneConfig.h"
 #include "CoinFinite.hpp" //defines COIN_DBL_MAX
