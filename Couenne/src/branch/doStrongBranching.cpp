@@ -97,11 +97,11 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       lpSol = CoinCopyOfArray (info -> solution_, numberColumns);
 
     // provide Couenne problem with point/bounds contained in info
-    problem_ -> domain () -> push
-      (problem_ -> nVars (),
-       info -> solution_,
-       info -> lower_,
-       info -> upper_);
+    // problem_ -> domain () -> push
+    //   (problem_ -> nVars (),
+    //    info -> solution_,
+    //    info -> lower_,
+    //    info -> upper_);
 
     // Indices of branching variables. Used in preliminary loop below to
     // detect pairs (cbcObj, couObj) of objects that share the same
@@ -305,7 +305,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
     delete [] brVarIndices;
 
-    problem_ -> domain () -> pop (); // discard current point/bounds from problem
+    //problem_ -> domain () -> pop (); // discard current point/bounds from problem
 
     delete [] lpSol;
 
