@@ -191,9 +191,10 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
       //printf ("checkinf --> v=%e f=%e den=%e ret=%e ratio=%e\n", vval, fval, denom, retval, ratio);
 
-      if (!((ratio < 2)  && 
-	    (ratio > .5) &&
-	    ((delta /= denom) < CoinMin (COUENNE_EPS, feas_tolerance_)))) {
+      if ((delta > 0.) &&
+	  ((ratio > 2.)  ||  // check delta > 0 to take into account semi-auxs
+	   (ratio <  .5)) ||
+	  ((delta /= denom) > CoinMin (COUENNE_EPS, feas_tolerance_))) {
 
 	Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM,
 			    "  checkNLP: auxiliary %d violates tolerance %g by %g\n", 

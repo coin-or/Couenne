@@ -113,31 +113,38 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
     Bonmin::HotInfo * results = results_ ();
 
-    int *brVarIndices = new int [problem_ -> nVars ()];
-    CoinZeroN (brVarIndices, problem_ -> nVars ());
-
     int returnCode = 0, iDo;
 
-    for (iDo = 0; iDo < numberToDo; iDo++) {
+    // REMOVING the code below for problems with Cbc's selection of
+    // first infeasible object upon lack of time for full strong
+    // branching. Re-write setupList()?
 
-      Bonmin::HotInfo * result = results + iDo; // retrieve i-th object to test
-      OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
-      CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
+    // int *brVarIndices = new int [problem_ -> nVars ()];
+    // CoinZeroN (brVarIndices, problem_ -> nVars ());
 
-      if (CouObj) { // this is a couenne object for branching on a continuous variable
+    // -------------------------------------------
+    // for (iDo = 0; iDo < numberToDo; iDo++) {
 
-	expression *var = CouObj -> Reference ();
-	if (var && var -> Index () >= 0)
-	  ++ (brVarIndices [var -> Index ()]);
+    //   Bonmin::HotInfo * result = results + iDo; // retrieve i-th object to test
+    //   OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
+    //   CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
 
-      } else { // this is most probably a cbcobject
+    //   if (CouObj) { // this is a couenne object for branching on a continuous variable
 
-	int varInd = Object -> columnNumber ();
+    // 	expression *var = CouObj -> Reference ();
+    // 	if (var && var -> Index () >= 0)
+    // 	  ++ (brVarIndices [var -> Index ()]);
 
-	if (varInd >= 0)
-	  ++ (brVarIndices [varInd]);
-      }
-    }
+    //   } else { // this is most probably a cbcobject
+
+    // 	int varInd = Object -> columnNumber ();
+
+    // 	if (varInd >= 0)
+    // 	  ++ (brVarIndices [varInd]);
+    //   }
+    // }
+    // -------------------------------------------
+
 
     for (iDo = 0; iDo < numberToDo; iDo++) {
 
@@ -145,26 +152,26 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
 
-      CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
 
-      if (!CouObj) { // this is a couenne object for branching on a continuous variable
+      // REMOVING code for reasons pointed out above
 
-	int varInd = Object -> columnNumber ();
+      // ------------------------------------------
+      // CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
 
-	// if this object's variable is evaluated twice (once by a cbc
-	// object for integrality and a second time by couenne as a
-	// variable in a nonlinear expression) skip the cbc evaluation
+      // if (!CouObj) { // this is a couenne object for branching on a continuous variable
 
-	if (brVarIndices [varInd] >= 2)
-	  continue;
-      }
+      // 	int varInd = Object -> columnNumber ();
 
-      //  _______    ____    _____      ____          
-      // |__   __|  / __ \  |  __ \    / __ \         
-      //    | |    | |  | | | |  | |  | |  | |        
-      //    | |    | |  | | | |  | |  | |  | |   : apply isCuttable()     
-      //    | |    | |__| | | |__| |  | |__| |        
-      //    |_|     \____/  |_____/    \____/         
+      // 	// if this object's variable is evaluated twice (once by a cbc
+      // 	// object for integrality and a second time by couenne as a
+      // 	// variable in a nonlinear expression) skip the cbc evaluation
+
+      // 	if (brVarIndices [varInd] >= 2)
+      // 	  continue;
+      // }
+      // ------------------------------------------
+
+      // to do: apply isCuttable()     
 
       // todo: set a cutoff for dual bound in dual simplex
       //       do the same for primal based on SB's alpha
@@ -303,7 +310,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       delete [] Upper0;
     }
 
-    delete [] brVarIndices;
+    //delete [] brVarIndices;
 
     //problem_ -> domain () -> pop (); // discard current point/bounds from problem
 
