@@ -10,6 +10,7 @@
 
 #include "BonInitHeuristic.hpp"
 #include "CoinHelperFunctions.hpp"
+#include "CouenneRecordBestSol.hpp"
 
 using namespace Couenne;
  
@@ -24,15 +25,25 @@ InitHeuristic::InitHeuristic (double objValue, const double* sol,
   setHeuristicName("InitHeuristic");
   nVars_ = cp.nVars();
 
-  if (cp.checkNLP (sol, objValue, true)) { // true for recomputing objValue
+  if 
+#ifdef FM_CHECKNLP2
+    (cp.checkNLP2(sol, 0, false, true, true, cp.getFeasTol()))
+#else
+    (cp.checkNLP (sol, objValue, true)) // true for recomputing objValue 
+#endif
+      { 	
+	sol_ = new double [nVars_];
 
-    objValue_ = objValue;
-
-    sol_ = new double [nVars_];
-
-    CoinCopyN (sol, cp.nOrigVars (), sol_);
-    cp.getAuxs(sol_);
-  }
+#ifdef FM_CHECKNLP2
+      CouenneRecordBestSol *rs = cp.getRecordBestSol();
+      objValue_ = rs->getModSolVal();
+      CoinCopyN (rs->getModSol(nVars_), nVars_, sol_);
+#else
+      objValue_ = objValue;
+      CoinCopyN (sol, cp.nOrigVars (), sol_);
+      cp.getAuxs(sol_);
+#endif	
+      }
 }
 
 InitHeuristic::InitHeuristic(const InitHeuristic & other)

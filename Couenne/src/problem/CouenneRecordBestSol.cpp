@@ -21,7 +21,7 @@ using namespace Couenne;
 
 /*************************************************************/
   /** Default constructor. */
-recordBestSol::recordBestSol() {
+CouenneRecordBestSol::CouenneRecordBestSol() {
 
   cardInitDom = -1;
   initIsInt = NULL;
@@ -41,7 +41,7 @@ recordBestSol::recordBestSol() {
 }
 /*************************************************************/
 // copy constructor
-recordBestSol::recordBestSol(const recordBestSol &other) {
+CouenneRecordBestSol::CouenneRecordBestSol(const CouenneRecordBestSol &other) {
 
   cardInitDom = other.cardInitDom;
   if(cardInitDom > -1) {
@@ -89,7 +89,7 @@ recordBestSol::recordBestSol(const recordBestSol &other) {
 
 /*************************************************************/
 /** Destructor. */
-recordBestSol::~recordBestSol(){
+CouenneRecordBestSol::~CouenneRecordBestSol(){
 
   if(cardInitDom > -1) {
     delete[] initIsInt;
@@ -107,7 +107,7 @@ recordBestSol::~recordBestSol(){
 }
 
 /*****************************************************************************/
-void recordBestSol::setInitIsInt(const bool *givenIsInt,
+void CouenneRecordBestSol::setInitIsInt(const bool *givenIsInt,
 				 const int givenCard) {
 
   if(initIsInt == NULL) {
@@ -115,14 +115,14 @@ void recordBestSol::setInitIsInt(const bool *givenIsInt,
       cardInitDom = givenCard;
     }
     if(givenCard != cardInitDom) {
-      printf("### ERROR: recordBestSol::setInitIsInt(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
+      printf("### ERROR: CouenneRecordBestSol::setInitIsInt(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
       exit(1);
     }
     initIsInt = new bool[givenCard];
   }
   else {
     if(givenCard != cardInitDom) {
-      printf("### ERROR: recordBestSol::setInitIsInt(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
+      printf("### ERROR: CouenneRecordBestSol::setInitIsInt(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
       exit(1);
     }
   }
@@ -137,21 +137,21 @@ void recordBestSol::setInitIsInt(const bool *givenIsInt,
 } /* setInitIsInt */
 
 /*****************************************************************************/
-void recordBestSol::setInitDomLb(const CouNumber *givenLb, 
+void CouenneRecordBestSol::setInitDomLb(const CouNumber *givenLb, 
 				 const int givenCard) {
   if(initDomLb == NULL) {
     if(cardInitDom == -1) {
       cardInitDom = givenCard;
     }
     if(givenCard != cardInitDom) {
-      printf("### ERROR: recordBestSol::setInitDomLb(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
+      printf("### ERROR: CouenneRecordBestSol::setInitDomLb(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
       exit(1);
     }
     initDomLb = new CouNumber[givenCard];
   }
   else {
     if(givenCard != cardInitDom) {
-      printf("### ERROR: recordBestSol::setInitDomLb(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
+      printf("### ERROR: CouenneRecordBestSol::setInitDomLb(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
       exit(1);
     }
   }
@@ -159,21 +159,21 @@ void recordBestSol::setInitDomLb(const CouNumber *givenLb,
 } /* setInitDomLb */
 
 /*****************************************************************************/
-void recordBestSol::setInitDomUb(const CouNumber *givenUb, 
+void CouenneRecordBestSol::setInitDomUb(const CouNumber *givenUb, 
 				 const int givenCard) {
   if(initDomUb == NULL) {
     if(cardInitDom == -1) {
       cardInitDom = givenCard;
     }
     if(givenCard != cardInitDom) {
-      printf("### ERROR: recordBestSol::setInitDomUb(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
+      printf("### ERROR: CouenneRecordBestSol::setInitDomUb(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
       exit(1);
     }
     initDomUb = new CouNumber[givenCard];
   }
   else {
     if(givenCard != cardInitDom) {
-      printf("### ERROR: recordBestSol::setInitDomUb(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
+      printf("### ERROR: CouenneRecordBestSol::setInitDomUb(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
       exit(1);
     }
   }
@@ -181,17 +181,17 @@ void recordBestSol::setInitDomUb(const CouNumber *givenUb,
 } /* setInitDomUb */
 
 /*****************************************************************************/
-void recordBestSol::setHasSol(const bool givenHasSol) {
+void CouenneRecordBestSol::setHasSol(const bool givenHasSol) {
   hasSol = givenHasSol;
 }
 
 /*****************************************************************************/
-void recordBestSol::setCardSol(const int givenCard) {
+void CouenneRecordBestSol::setCardSol(const int givenCard) {
   cardSol = givenCard;
 }
 
 /*****************************************************************************/
-void recordBestSol::setSol(const double *givenSol, const int givenCard,
+void CouenneRecordBestSol::setSol(const double *givenSol, const int givenCard,
 			   const double givenMaxViol) {
   if(!hasSol) {
     hasSol = true;
@@ -203,7 +203,7 @@ void recordBestSol::setSol(const double *givenSol, const int givenCard,
   }
   else {
     if(givenCard != cardSol) {
-      printf("recordBestSol::setSol(): ### ERROR: givenCard: %d  cardSol: %d", givenCard, cardSol);
+      printf("CouenneRecordBestSol::setSol(): ### ERROR: givenCard: %d  cardSol: %d", givenCard, cardSol);
       exit(1);
     }
   }
@@ -211,23 +211,23 @@ void recordBestSol::setSol(const double *givenSol, const int givenCard,
   maxViol = givenMaxViol;
 
 #ifdef TRACE
-  printf("recordBestSol::setSol(): New solution set\n");
+  printf("CouenneRecordBestSol::setSol(): New solution set\n");
 #endif
 
 } /* setSol */
 
 /*****************************************************************************/
-void recordBestSol::setVal(const double givenVal) {
+void CouenneRecordBestSol::setVal(const double givenVal) {
 
 #ifdef TRACE
-  printf("recordBestSol::setVal(): set to %10.6f\n", givenVal);
+  printf("CouenneRecordBestSol::setVal(): set to %10.6f\n", givenVal);
 #endif
 
   val = givenVal;
 }
 
 /*****************************************************************************/
-void recordBestSol::update(const double *givenSol, const int givenCard, 
+void CouenneRecordBestSol::update(const double *givenSol, const int givenCard, 
 			   const double givenVal, const double givenMaxViol) {
   if((!hasSol) || ((hasSol) && (givenVal < val))) {
     setSol(givenSol, givenCard, givenMaxViol);
@@ -236,16 +236,16 @@ void recordBestSol::update(const double *givenSol, const int givenCard,
 } /* update */
 
 /*****************************************************************************/
-void recordBestSol::update() {
+void CouenneRecordBestSol::update() {
   if(modSol == NULL) {
-    printf(" recordBestSol::update(): ### ERROR: modSol == NULL\n");
+    printf(" CouenneRecordBestSol::update(): ### ERROR: modSol == NULL\n");
     exit(1);
   }
   update(modSol, cardModSol, modSolVal, modSolMaxViol);
 } /* update */
 
 /*****************************************************************************/
-int recordBestSol::compareAndSave(const double *solA, const double solAVal,
+int CouenneRecordBestSol::compareAndSave(const double *solA, const double solAVal,
 				  const double solAMaxViol, 
 				  const bool solAIsFeas,
 				  const double *solB, const double solBVal,
@@ -300,7 +300,7 @@ int recordBestSol::compareAndSave(const double *solA, const double solAVal,
     case 0: update(solA, cardSol, solAVal, solAMaxViol); break;
     case 1: update(solB, cardSol, solBVal, solBMaxViol); break;
     case -1: break;
-    default: printf("recordBestSol::compareAndSave(): ### ERROR: retval: %d\n",
+    default: printf("CouenneRecordBestSol::compareAndSave(): ### ERROR: retval: %d\n",
 		    retval); break;
   }
 
@@ -308,14 +308,14 @@ int recordBestSol::compareAndSave(const double *solA, const double solAVal,
 } /* compareAndSave */ 
 
 /*****************************************************************************/
-double * recordBestSol::getModSol(const int expectedCard) { 
+double * CouenneRecordBestSol::getModSol(const int expectedCard) { 
   if(modSol == NULL) {
     cardModSol = expectedCard;
     modSol = new double[expectedCard];
   }
   else {
     if(expectedCard != cardModSol) {
-      printf("recordBestSol::getModSol(): ### ERROR: expectedCard: %d  cardModSol: %d", expectedCard, cardModSol);
+      printf("CouenneRecordBestSol::getModSol(): ### ERROR: expectedCard: %d  cardModSol: %d", expectedCard, cardModSol);
       exit(1);
     }
   }
@@ -323,7 +323,7 @@ double * recordBestSol::getModSol(const int expectedCard) {
 } /* getModSol */
 
 /*****************************************************************************/
-void recordBestSol::setModSol(const double *givenModSol, 
+void CouenneRecordBestSol::setModSol(const double *givenModSol, 
 			      const int givenModCard, 
 			      const double givenModVal, 
 			      const double givenModMaxViol) {
@@ -335,7 +335,7 @@ void recordBestSol::setModSol(const double *givenModSol,
     }
     else {
       if(givenModCard != cardModSol) {
-	printf("recordBestSol::setModSol(): ### ERROR: givenModCard: %d  cardModSol: %d", givenModCard, cardModSol);
+	printf("CouenneRecordBestSol::setModSol(): ### ERROR: givenModCard: %d  cardModSol: %d", givenModCard, cardModSol);
 	exit(1);
       }
     }
@@ -346,7 +346,7 @@ void recordBestSol::setModSol(const double *givenModSol,
 } /* setModSol */
 
 /*****************************************************************************/
-void recordBestSol::printSol(FILE *fsol) const {
+void CouenneRecordBestSol::printSol(FILE *fsol) const {
 
   if(hasSol) {
     fprintf(fsol, "%d\n", cardSol);

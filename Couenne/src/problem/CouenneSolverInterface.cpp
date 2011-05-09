@@ -15,6 +15,8 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+#include "CouenneRecordBestSol.hpp"                         
+
 namespace Couenne {
 
 /// constructor
@@ -144,6 +146,38 @@ void CouenneSolverInterface<T>::resolve () {
     objvalGlob = T::getColSolution () [cutgen_ -> Problem () -> Obj (0) -> Body () -> Index ()];  
 
   // check if resolve found new integer solution
+  bool isChecked = false;                                                       
+#ifdef FM_CHECKNLP2                                                             
+  double curBestVal = 1e50;                                                     
+  if(cutgen_->Problem()->getRecordBestSol()->getHasSol()) {                     
+    curBestVal =  cutgen_->Problem()->getRecordBestSol()->getVal();             
+  }                                                                             
+  curBestVal = (curBestVal < curCutoff ? curBestVal : curCutoff);               
+  if(isProvenOptimal()) {                                                       
+    isChecked = cutgen_->Problem()->checkNLP2(T::getColSolution(),              
+                                              curBestVal, false,                
+                                              true, // stopAtFirstViol          
+                                              true, // checkALL                 
+					      cutgen_->Problem()->getFeasTol());         
+    if(isChecked) {                                                             
+      objvalGlob = cutgen_->Problem()->getRecordBestSol()->getModSolVal();      
+                                                                                
+      if(!(objvalGlob < curBestVal - COUENNE_EPS)) {                            
+        isChecked = false;                                                      
+      }                                                                         
+    }                                                                           
+  }                                                                             
+#else                                                                           
+  if(isProvenOptimal () &&                                                      
+     (objvalGlob < curCutoff - COUENNE_EPS)) {                                  
+    isChecked = cutgen_->Problem()->checkNLP(T::getColSolution (),              
+                                             objvalGlob, true);                 
+  }                                                                             
+                                                                                
+#endif
+
+
+
   if (//doingResolve () &&                 // this is not called from strong branching
       isProvenOptimal () &&
       (objvalGlob < curCutoff - COUENNE_EPS) &&

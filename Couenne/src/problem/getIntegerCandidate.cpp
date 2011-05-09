@@ -16,6 +16,8 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprVar.hpp"
 
+#include "CouenneRecordBestSol.hpp"
+
 using namespace Couenne;
 
 // lose patience after this many iterations of non-improving valid
@@ -347,11 +349,28 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       const CouNumber *x = X ();
       CouNumber xp = x [objind];
 
-      if (checkNLP (x, xp, true)) { // true for recomputing xp
-	setCutOff (xp, x);
-	jnlst_ -> Printf (Ipopt::J_DETAILED, J_NLPHEURISTIC, 
-			  "new cutoff from getIntCand: %g\n", xp);
-      }
+      if 
+#ifdef FM_CHECKNLP2
+	(checkNLP2(x, 0, false, true, true, feas_tolerance_)) 
+	// false for not caring about objective value, 
+	// true for stopping at first violation and true for checkAll
+#else
+	(checkNLP (x, xp, true)) // true for recomputing xp
+#endif	 
+	  { 
+	    
+#ifdef FM_TRACE_OPTSOL
+#ifdef FM_CHECKNLP2
+	    recBSol->update();
+	    xp = recBSol->getVal();
+#else
+	    recBSol->update(x, nVars(), xp, feas_tolerance_);
+#endif
+#endif
+	    setCutOff (xp, x);
+	    jnlst_ -> Printf (Ipopt::J_DETAILED, J_NLPHEURISTIC, 
+			      "new cutoff from getIntCand: %g\n", xp);
+	  }
     }
   } // try
 

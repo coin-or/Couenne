@@ -15,6 +15,10 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneBranchingObject.hpp"
 
+#include "CouenneRecordBestSol.hpp"
+
+//#define TRACE_STRONG
+
 using namespace Couenne;
 
 const CouNumber estProdEps = 1e-6;
@@ -145,11 +149,20 @@ const CouNumber estProdEps = 1e-6;
                           downNumber[iObject]<numberBeforeTrusted ))||
               ( isRoot && (!upNumber[iObject] && !downNumber[iObject])) ) {
          
+#ifdef TRACE_STRONG
+	  printf("Push object %d for strong branch\n", iObject);
+#endif
+
 	  results_.push_back(Bonmin::HotInfo(solver, info,
                                 solver->objects(), iObject));
         }
         else {
           const OsiObject * obj = solver->object(iObject);
+
+#ifdef TRACE_STRONG
+	  printf("Use pseudo cost for object %d\n", iObject);
+#endif
+
           double
 	    upEstimate       = (upTotalChange[iObject]*obj->upEstimate())/upNumber[iObject],
 	    downEstimate     = (downTotalChange[iObject]*obj->downEstimate())/downNumber[iObject],
@@ -315,6 +328,53 @@ const CouNumber estProdEps = 1e-6;
 
     // COPY of Bonmin ends here //////////////////////////////////////////////
 
+    if(retval == 0) { // No branching is possible
+      double ckObj = 0;
+
+#ifdef FM_CHECKNLP2
+      if(!(problem_->checkNLP2(info->solution_, 
+			       info->objectiveValue_, true, // care about obj
+			       false, // do not stop at first viol 
+			       true, // checkAll
+			       problem_->getFeasTol()))) {
+                                // false for NOT stopping at first violation
+	printf("CouenneChooseStrong::setupList(): ### WARNING: checkNLP2() returns infeasible, no branching object selected\n");
+      }
+#else /* not FM_CHECKNLP2 */
+      if(!(problem_->checkNLP(info->solution_, ckObj, true))) {
+	printf("CouenneChooseStrong::setupList(): ### WARNING: checkNLP() returns infeasible, no branching object selected\n");
+      }
+#endif /* not FM_CHECKNLP2 */
+    	
+#ifdef FM_TRACE_OPTSOL
+#ifdef FM_CHECKNLP2
+      problem_->getRecordBestSol()->update();
+#else /* not FM_CHECKNLP2 */
+      problem_->getRecordBestSol()->update(info->solution_, problem_->nVars(),
+					   ckObj, problem_->getFeasTol());
+#endif /* not FM_CHECKNLP2 */
+#endif
+    }
+
+#ifdef TRACE_STRONG
+    printf("Strong list: (obj_ind var_ind priority useful)\n");
+    printf("numberStrong: %d  numberStrongRoot: %d  retval: %d\n", 
+	   numberStrong_, numberStrongRoot_, retval);
+    for(int i=0; i<retval; i++) {
+      CouenneObject *co =  dynamic_cast <CouenneObject *>(object[list_[i]]);
+      int objectInd = -1;
+      if(co) {
+	objectInd = co->Reference()->Index();
+      }
+      else {
+	objectInd = object[list_[i]]->columnNumber();
+      }
+      printf(" (%d %d %d %6.4f)", list_[i], objectInd, 
+	     object[list_[i]]->priority(), useful_[i]);
+    }
+    printf("\n");
+#endif
+
     problem_ -> domain () -> pop ();
 
     return retval;
@@ -431,6 +491,13 @@ const CouNumber estProdEps = 1e-6;
 					      const OsiObject ** objects) {
 
     double obj = solution [problem_ -> Obj (0) -> Body () -> Index ()];
+
+#ifdef FM_CHECKNLP2
+    bool isFeas = problem_->checkNLP2(solution, 0, false, true, true, 
+				      problem_->getFeasTol());
+    return isFeas;
+#else
     return problem_ -> checkNLP (solution, obj);
+#endif
   }
 //}

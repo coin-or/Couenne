@@ -44,6 +44,10 @@ class CbcModel;
 class OsiObject;
 class CoinWarmStart;
 
+namespace Couenne {
+  struct CouenneRecordBestSol;
+}
+
 #ifdef COIN_HAS_NTY
 
 class Nauty;
@@ -284,6 +288,9 @@ class CouenneProblem {
 
   /// number of unused originals
   int nUnusedOriginals_;
+
+  // to record best solution found
+  struct Couenne::CouenneRecordBestSol *recBSol;
 
   /// Type of Multilinear separation
   enum multiSep multilinSep_;
@@ -537,7 +544,7 @@ class CouenneProblem {
   /// as argument
   void auxiliarize (exprVar *, exprVar * = NULL);
 
-  /// Set cutoff
+  /// Set cutoff 
   void setCutOff (CouNumber cutoff, const CouNumber *sol = NULL) const;
 
   /// Reset cutoff
@@ -753,6 +760,69 @@ protected:
 		  CouNumber *dualL, CouNumber *dualR,
 		  CouNumber *olb,   CouNumber *oub,
 		  bool patient) const;
+
+public:
+  inline CouenneRecordBestSol *getRecordBestSol() const {return recBSol;};
+
+  double getFeasTol() {return feas_tolerance_;};
+
+  // Recompute objective value for sol
+  double checkObj(const CouNumber *sol, const double &precision) const;
+
+  // check integrality of vars in sol with index between from and upto 
+  // (original vars only if origVarOnly == true); 
+  // return true if all integer vars are within precision of an integer value
+  bool checkInt(const CouNumber *sol,
+		const int from, const int upto, 
+		const std::vector<int> listInt,
+		const bool origVarOnly, 
+		const bool stopAtFirstViol,
+		const double precision, double &maxViol) const;
+
+  // Check bounds; returns true iff feasible for given precision
+  bool checkBounds(const CouNumber *sol,
+		   const bool stopAtFirstViol,
+		   const double precision, double &maxViol) const;
+
+  // returns true iff value of all auxilliaries are within bounds
+  bool checkAux(const CouNumber *sol,
+		const bool stopAtFirstViol,
+		const double precision, double &maxViol) const;
+
+  // returns true iff value of all auxilliaries are within bounds
+  bool checkCons(const CouNumber *sol,
+		 const bool stopAtFirstViol,
+		 const double precision, double &maxViol) const;
+
+  // Return true if either solution or recomputed_solution obtained
+  // using getAuxs() from the original variables in solution is feasible
+  // within precision (the solution with minimum violation is then stored
+  // in recBSol->modSol, as well as its value and violation); 
+  // return false otherwise.
+  // If stopAtFirstViol == true, recBSol->modSol is meaningless upon return.
+  // If stopAtFirstViol == false, recBSol->modSol contains the solution
+  // with minimum violation, although this violation might be larger than 
+  // precision.
+  // This is useful for cases where the current solution must be considered
+  // valid (e.g., because Cbc is going to accept it anyway), although it 
+  // violates precision requirements.
+
+  // Value of obj matters only if careAboutObj == true;
+  // the code then tries to balance violation of constraints and
+  // value of objective.
+
+  // if checkAll = false, check only integrality/bounds for 
+  // original vars and constraints; consider only recomputed_sol
+  // if checkAll == true, check also integrality/bounds on auxs;
+  // consider both recomputed_sol and solution
+
+  // if careAboutObj is set to true, then stopAtFirstViol must be set to 
+  // false too.
+  bool checkNLP2(const double *solution,
+		 const double obj, const bool careAboutObj,
+		 const bool stopAtFirstViol,
+		 const bool checkAll,
+		 const double precision) const;
 };
 
 }

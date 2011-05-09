@@ -21,6 +21,7 @@
 #include "BonOsiTMINLPInterface.hpp"
 #include "BonNlpHeuristic.hpp"
 //#include "CouenneProblem.hpp"
+#include "CouenneRecordBestSol.hpp"
 
 using namespace Couenne;
 
@@ -331,6 +332,24 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
       if (couenne)
 	couenne_ -> getAuxs (tmpSolution);
+
+#ifdef FM_CHECKNLP2
+      if(!couenne_->checkNLP2(tmpSolution, 
+			      0, false, // do not care about obj
+			      true, // stopAtFirstViol 
+			      false, // checkAll
+			      couenne_->getFeasTol())) {
+#ifdef FM_USE_REL_VIOL_CONS
+	printf("NlpSolveHeuristic::solution(): ### ERROR: checkNLP(): returns true,  checkNLP2() returns false\n");
+	exit(1);
+#endif
+      }
+      obj = couenne_->getRecordBestSol()->getModSolVal(); 
+      couenne_->getRecordBestSol()->update();
+#else
+      couenne_->getRecordBestSol()->update(tmpSolution, nVars,
+					   obj, couenne_->getFeasTol());
+#endif
 
       if (babInfo){
 	babInfo->setNlpSolution (tmpSolution, nVars, obj);

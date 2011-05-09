@@ -16,6 +16,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprVar.hpp"
+#include "CouenneRecordBestSol.hpp"
 
 using namespace Couenne;
 
@@ -257,22 +258,50 @@ CouenneInterface::extractLinearRelaxation
       // re-check optimality in case resolve () was called
       if (isProvenOptimal () && 
 	  (obj < p -> getCutOff ())           && // check #1 (before re-computing)
+
+#ifdef FM_CHECKNLP2
+	  (p->checkNLP2(solution, 0, false, true, true, p->getFeasTol())) &&
+	  (p->getRecordBestSol()->getModSolVal() < p->getCutOff())
+#else
 	  p -> checkNLP (solution, obj, true) && // true for recomputing obj
-	  (obj < p -> getCutOff ())) {           // check #2 (real object might be different)
+	  (obj < p -> getCutOff ())
+#endif
+	  ) {           // check #2 (real object might be different)
 
 	// tell caller there is an initial solution to be fed to the initHeuristic
 	have_nlp_solution_ = true;
 
 	// set cutoff to take advantage of bound tightening
+
+#ifdef FM_CHECKNLP2
+	obj = p->getRecordBestSol()->getModSolVal();
+#endif
+
 	p -> setCutOff (obj, solution);
 
 	OsiAuxInfo * auxInfo = si.getAuxiliaryInfo ();
 	Bonmin::BabInfo * babInfo = dynamic_cast <Bonmin::BabInfo *> (auxInfo);
 
 	if (babInfo) {
+
+#ifdef FM_CHECKNLP2
+	  babInfo -> setNlpSolution (p->getRecordBestSol()->modSol, 
+				     getNumCols(), obj);
+#else
 	  babInfo -> setNlpSolution (solution, getNumCols (), obj);
+#endif
 	  babInfo -> setHasNlpSolution (true);
 	}
+
+#ifdef FM_TRACE_OPTSOL
+#ifdef FM_CHECKNLP2
+	p->getRecordBestSol()->update();
+#else
+	p->getRecordBestSol()->update(solution, getNumCols(), 
+				      obj, p->getFeasTol());
+#endif
+#endif
+
       }
     }
   }

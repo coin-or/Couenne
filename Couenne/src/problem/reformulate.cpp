@@ -24,6 +24,8 @@
 #include "CouenneDepGraph.hpp"
 #include "CouenneLQelems.hpp"
 
+#include "CouenneRecordBestSol.hpp"
+
 #define THRESHOLD_OUTPUT_REFORMULATE 1000
 
 using namespace Couenne;
@@ -91,6 +93,20 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   // give a value to all auxiliary variables. Do it now to be able to
   // recognize complementarity constraints in fillDependence()
   initAuxs ();
+
+  bool *isInt = new bool[nVars()];
+  for(int i=0; i<nVars(); i++) {
+    if(variables_[i]->isInteger()) {
+      isInt[i] = true;
+    }
+    else {
+      isInt[i] = false;
+    }
+  }
+  recBSol->setInitIsInt(isInt, nVars());
+  recBSol->setInitDomLb(domain()->lb(), nVars());
+  recBSol->setInitDomUb(domain()->ub(), nVars());
+  delete[] isInt;
 
   CouNumber cutoff;
   // check for initial solution given to Couenne. If feasible, set cutoff

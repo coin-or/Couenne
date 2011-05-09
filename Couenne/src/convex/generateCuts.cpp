@@ -17,6 +17,8 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneInfeasCut.hpp"
 
+#include "CouenneRecordBestSol.hpp"
+
 #ifdef COIN_HAS_NTY
 #include "Nauty.h"
 #endif
@@ -91,6 +93,24 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
   if (isWiped (cs) || 
      (CoinCpuTime () > problem_ -> getMaxCpuTime ()))
     return;
+
+#ifdef FM_TRACE_OPTSOL
+  double currCutOff = problem_->getCutOff();
+  double bestVal = 1e50;
+  CouenneRecordBestSol *rs = problem_->getRecordBestSol();
+  if(rs->getHasSol()) {
+    bestVal = rs->getVal(); 
+  }
+  if(currCutOff > bestVal) {
+    problem_->setCutOff(bestVal - 1e-6);
+    OsiColCut *objCut = new OsiColCut;
+    int indObj = problem_->Obj(0)->Body()->Index();
+    objCut->setUbs(1, &indObj, &bestVal);
+    cs.insert(objCut);
+    delete objCut;
+  }
+#endif
+
 
   const int infeasible = 1;
 

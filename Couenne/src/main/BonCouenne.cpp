@@ -32,6 +32,8 @@
 #include "CouenneProblem.hpp"
 #include "CouenneCutGenerator.hpp"
 
+#include "CouenneRecordBestSol.hpp"
+
 using namespace Couenne;
 
 // the maximum difference between a printed optimum and a CouNumber
@@ -182,6 +184,104 @@ Auxiliaries:     %8d (%d integer)\n\n",
     else printf ("Warning, could not get pointer to CouenneCutGenerator\n");
 
     CouenneProblem *cp = cg ? cg -> Problem () : NULL;
+
+    double cbcLb = bb.model ().getBestPossibleObjValue();
+    double printObj = 0;
+    bool foundSol = false;
+
+#ifdef FM_TRACE_OPTSOL
+
+    FILE *fSol = fopen("bidon.sol", "w");
+    if(fSol == NULL) {
+      printf("### ERROR: can not open bidon.sol\n");
+      exit(1);
+    }
+
+    if(cp != NULL) {
+      double cbcObjVal = bb.model().getObjValue();
+      int modelNvars = bb.model().getNumCols();
+
+      CouenneRecordBestSol *rs = cp->getRecordBestSol(); 
+      const double *cbcSol = bb.model().getColSolution();
+      double *modCbcSol = new double[modelNvars];
+      double modCbcSolVal= 1e100, modCbcSolMaxViol = 0;
+      bool cbcSolIsFeas = false;
+
+      if(modelNvars != cp->nVars()) {
+	printf("### ERROR: modelNvars: %d nVars: %d\n", 
+	       modelNvars, cp->nVars());
+	exit(1);
+      }
+
+      if(cbcObjVal < 1e49) {
+
+#ifdef FM_CHECKNLP2
+	int cMS = rs->getCardModSol();
+	cbcSolIsFeas = cp->checkNLP2(cbcSol, 0, false, // do not care about obj
+				     false, // do not stop at first viol 
+				     true, // checkAll 
+				     cp->getFeasTol());
+	CoinCopyN(rs->getModSol(cMS), cMS, modCbcSol);
+	modCbcSolVal = rs->getModSolVal();
+	modCbcSolMaxViol = rs->getModSolMaxViol();
+#else /* not FM_CHECKNLP2 */
+	int cMS = cp->nVars();
+	cbcSolIsFeas = cp->checkNLP(cbcSol, modCbcSolVal, true);
+	CoinCopyN(cbcSol, cMS, modCbcSol);
+	modCbcSolMaxViol = cp->getFeasTol();
+#endif /* not FM_CHECKNLP2 */
+	foundSol = true;
+      }
+
+      const double *couenneSol = rs->getSol();
+      double *modCouenneSol = new double[modelNvars];
+      double modCouenneSolVal= 1e100, modCouenneSolMaxViol = 0;
+      bool couenneSolIsFeas = false;
+
+      if(rs->getHasSol()) {
+#ifdef FM_CHECKNLP2
+	couenneSolIsFeas = cp->checkNLP2(couenneSol, 0, false, 
+					 false, true, 
+					 cp->getFeasTol());
+	int cMS = rs->getCardModSol();
+	CoinCopyN(rs->getModSol(cMS), cMS, modCouenneSol);
+	modCouenneSolVal = rs->getModSolVal();
+	modCouenneSolMaxViol = rs->getModSolMaxViol();
+#else /* not FM_CHECKNLP2 */
+	couenneSolIsFeas = cp->checkNLP(couenneSol, modCouenneSolVal, true);
+	int cMS = cp->nVars();
+	CoinCopyN(couenneSol, cMS, modCouenneSol);
+	modCouenneSolMaxViol = cp->getFeasTol();
+#endif /* not FM_CHECKNLP2 */
+	foundSol = true;
+      }
+
+      int retcomp = rs->compareAndSave(modCbcSol, modCbcSolVal, 
+				       modCbcSolMaxViol, cbcSolIsFeas,
+				       modCouenneSol, modCouenneSolVal, 
+				       modCouenneSolMaxViol, couenneSolIsFeas, 
+				       modelNvars, cp->getFeasTol());
+      switch (retcomp) {
+      case -1: printf("No solution found\n"); break;
+      case 0: printf("Best solution found by Cbc\n"); break;
+      case 1: printf("Best solution found by Couenne\n"); break;
+      default: break; // never happens
+      }
+
+      if(rs->getHasSol()) {
+	if(cbcLb > rs->getVal()) { // Best sol found by Couenne and not
+	                           // transmitted to Cbc
+	  cbcLb = rs->getVal();
+	}
+	printObj = rs->getVal();
+	rs->printSol(fSol);
+      }
+      delete[] modCbcSol;
+      delete[] modCouenneSol;
+    }
+    fclose(fSol);
+#endif /* FM_TRACE_OPTSOL */
+
 
     // retrieve test value to check
     double global_opt;

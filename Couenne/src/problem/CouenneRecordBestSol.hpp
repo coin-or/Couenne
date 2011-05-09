@@ -12,12 +12,13 @@
 
 #include "CouenneTypes.hpp"
 
-class CouenneProblem;
 
 namespace Couenne {
 
+struct CouenneProblem;
+
 // class to record best found feasible solution
-class recordBestSol {
+class CouenneRecordBestSol {
 
 public:
 
@@ -51,13 +52,13 @@ public:
 
 public:
   /// Constructor
-  recordBestSol();
+  CouenneRecordBestSol();
 
   /// Copy constructor
-  recordBestSol(const recordBestSol &other);
+  CouenneRecordBestSol(const CouenneRecordBestSol &other);
 
   /// Destructor
-  ~recordBestSol();
+  ~CouenneRecordBestSol();
 
   inline int getCardInitDom() const {return cardInitDom;};
   inline bool *getInitIsInt() const {return initIsInt;};

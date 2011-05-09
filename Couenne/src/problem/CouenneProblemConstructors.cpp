@@ -33,6 +33,8 @@
 
 #include "CouenneObject.hpp"
 
+#include "CouenneRecordBestSol.hpp"
+
 using namespace Couenne;
 
 #define MAX_FBBT_ITER 3
@@ -100,6 +102,9 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
 
   if (base)
     initOptions (base -> options());
+
+  recBSol = new struct Couenne::CouenneRecordBestSol();
+
 }
 
 
@@ -183,6 +188,8 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
     unusedOriginalsIndices_ = (int *) malloc (nUnusedOriginals_ * sizeof (int));
     CoinCopyN (p.unusedOriginalsIndices_, nUnusedOriginals_, unusedOriginalsIndices_);
   }
+
+  recBSol = new CouenneRecordBestSol(*(p.recBSol));
 }
 
 
@@ -224,6 +231,8 @@ CouenneProblem::~CouenneProblem () {
   for (std::vector <CouenneObject *>::iterator i = objects_.begin ();
        i != objects_.end (); ++i)
     delete (*i);
+
+  delete recBSol;
 }
 
 
