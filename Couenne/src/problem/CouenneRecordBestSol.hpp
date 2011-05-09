@@ -1,8 +1,6 @@
-// $Id$
-//
 // (C) Copyright Francois Margot and Carnegie Mellon University 2011
 // All Rights Reserved.
-// This code is published under the Common Public License.
+// This code is published under the Eclipse Public License (EPL).
 //
 // Authors :
 // Francois Margot, Tepper School of Business, Carnegie Mellon University,
@@ -21,6 +19,10 @@ public:
 
   // size of initial domain
   int cardInitDom;
+  // vector of length cardInitDom indicating if a variable is integer or not;
+  bool *initIsInt;
+  // vector of indices of integer variables
+  std::vector<int> listInt;
   // copy of initial domain lower bounds
   CouNumber *initDomLb;
   // copy of initial domain upper bounds
@@ -54,6 +56,10 @@ public:
   ~recordBestSol();
 
   inline int getCardInitDom() const {return cardInitDom;};
+  inline bool *getInitIsInt() const {return initIsInt;};
+  inline std::vector<int> getListInt() const {return listInt;};
+  // set both initIsInt and listInt from the given vector givenIsInt
+  void setInitIsInt(const bool *givenIsInt, const int givenCard);
   inline CouNumber *getInitDomLb() const {return initDomLb;};
   void setInitDomLb(const CouNumber *givenLb, const int givenCard);
   inline CouNumber *getInitDomUb() const {return initDomUb;};
@@ -70,7 +76,7 @@ public:
   void setVal(const double givenVal);
   inline double getVal() {return val;};
 
-  // record givenSol has best solution if givenVal is smaller
+  // record givenSol as best solution if givenVal is smaller
   // than val (or if no solution was recorded previously)
   void update(const double *givenSol, const int givenCard, 
 	      const double givenVal, const double givenMaxViol);
@@ -79,6 +85,18 @@ public:
   // modSolVal is smaller than val (or if no solution was recorded previously)
   void update();
 
+  // compare given two solutions and set sol, solVal, and maxViol to
+  // the best of the two with finite value (< 1e49); return -1 if both have
+  // infinite value, return 0 if solA is saved, return 1 if solB is saved  
+  int compareAndSave(const double *solA, const double solAVal,
+		     const double solAMaxViol, 
+		     const bool solAIsFeas,
+		     const double *solB, const double solBVal,
+		     const double solBMaxViol, 
+		     const bool solBIsFeas,
+		     const int cardSol,
+		     const double precision);
+
   inline int getCardModSol() const {return cardModSol;};
   double *getModSol(const int expectedCard);
   inline double getModSolVal() const {return modSolVal;};
@@ -86,9 +104,11 @@ public:
 
   // set modSol, modSolVal, and modSolMaxViol to given values; if
   // givenModSol == NULL, only the other two are set
-  void setModSol(const double *givenModSol, int givenModCard, 
-		 double givenModVal, double givenModMaxViol);
+  void setModSol(const double *givenModSol, const int givenModCard, 
+		 const double givenModVal, const double givenModMaxViol);
 
+  // print sol, solVal, and maxViol
+  void printSol(FILE *fsol) const;
 };
 
 #endif

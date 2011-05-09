@@ -1,8 +1,6 @@
-// $Id$
-//
 // (C) Copyright Francois Margot and Carnegie Mellon University 2011
 // All Rights Reserved.
-// This code is published under the Common Public License.
+// This code is published under the Eclipse Public License (EPL).
 //
 // Authors :
 // Francois Margot, Tepper School of Business, Carnegie Mellon University,
@@ -22,6 +20,7 @@
 recordBestSol::recordBestSol() {
 
   cardInitDom = -1;
+  initIsInt = NULL;
   initDomLb = NULL;
   initDomUb = NULL;
 
@@ -42,15 +41,22 @@ recordBestSol::recordBestSol(const recordBestSol &other) {
 
   cardInitDom = other.cardInitDom;
   if(cardInitDom > -1) {
+    initIsInt = new bool[other.cardInitDom];
     initDomLb = new CouNumber[other.cardInitDom];
     initDomUb = new CouNumber[other.cardInitDom];
 
+    CoinCopyN(other.initIsInt, cardInitDom, initIsInt);
     CoinCopyN(other.initDomLb, cardInitDom, initDomLb);
     CoinCopyN(other.initDomUb, cardInitDom, initDomUb);
   }
   else {
+    initIsInt = NULL;
     initDomLb = NULL;
     initDomUb = NULL;
+  }
+
+  for(unsigned int i=0; i<other.listInt.size(); i++) {
+    listInt.push_back(other.listInt[i]);
   }
 
   hasSol = other.hasSol;
@@ -81,8 +87,11 @@ recordBestSol::recordBestSol(const recordBestSol &other) {
 /** Destructor. */
 recordBestSol::~recordBestSol(){
 
-  delete[] initDomLb;
-  delete[] initDomUb;
+  if(cardInitDom > -1) {
+    delete[] initIsInt;
+    delete[] initDomLb;
+    delete[] initDomUb;
+  }
 
   if(sol != NULL) {
     delete[] sol;
@@ -94,10 +103,46 @@ recordBestSol::~recordBestSol(){
 }
 
 /*****************************************************************************/
+void recordBestSol::setInitIsInt(const bool *givenIsInt,
+				 const int givenCard) {
+
+  if(initIsInt == NULL) {
+    if(cardInitDom == -1) {
+      cardInitDom = givenCard;
+    }
+    if(givenCard != cardInitDom) {
+      printf("### ERROR: recordBestSol::setInitIsInt(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
+      exit(1);
+    }
+    initIsInt = new bool[givenCard];
+  }
+  else {
+    if(givenCard != cardInitDom) {
+      printf("### ERROR: recordBestSol::setInitIsInt(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
+      exit(1);
+    }
+  }
+  CoinCopyN(givenIsInt, givenCard, initIsInt);
+
+  listInt.empty();
+  for(int i=0; i<givenCard; i++) {
+    if(initIsInt[i]) {
+      listInt.push_back(i);
+    }
+  }
+} /* setInitIsInt */
+
+/*****************************************************************************/
 void recordBestSol::setInitDomLb(const CouNumber *givenLb, 
 				 const int givenCard) {
   if(initDomLb == NULL) {
-    cardInitDom = givenCard;
+    if(cardInitDom == -1) {
+      cardInitDom = givenCard;
+    }
+    if(givenCard != cardInitDom) {
+      printf("### ERROR: recordBestSol::setInitDomLb(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
+      exit(1);
+    }
     initDomLb = new CouNumber[givenCard];
   }
   else {
@@ -113,7 +158,13 @@ void recordBestSol::setInitDomLb(const CouNumber *givenLb,
 void recordBestSol::setInitDomUb(const CouNumber *givenUb, 
 				 const int givenCard) {
   if(initDomUb == NULL) {
-    cardInitDom = givenCard;
+    if(cardInitDom == -1) {
+      cardInitDom = givenCard;
+    }
+    if(givenCard != cardInitDom) {
+      printf("### ERROR: recordBestSol::setInitDomUb(): cardInitDom: %d  givenCard: %d\n", cardInitDom, givenCard);
+      exit(1);
+    }
     initDomUb = new CouNumber[givenCard];
   }
   else {
@@ -123,7 +174,7 @@ void recordBestSol::setInitDomUb(const CouNumber *givenUb,
     }
   }
   CoinCopyN(givenUb, givenCard, initDomUb);
-} /* setInitDomLb */
+} /* setInitDomUb */
 
 /*****************************************************************************/
 void recordBestSol::setHasSol(const bool givenHasSol) {
@@ -154,13 +205,18 @@ void recordBestSol::setSol(const double *givenSol, const int givenCard,
   }
   CoinCopyN(givenSol, givenCard, sol);
   maxViol = givenMaxViol;
+
+#ifdef TRACE
+  printf("recordBestSol::setSol(): New solution set\n");
+#endif
+
 } /* setSol */
 
 /*****************************************************************************/
 void recordBestSol::setVal(const double givenVal) {
 
 #ifdef TRACE
-  printf("recordBestSol::setVal(): set to %g\n", givenVal);
+  printf("recordBestSol::setVal(): set to %10.6f\n", givenVal);
 #endif
 
   val = givenVal;
@@ -183,6 +239,69 @@ void recordBestSol::update() {
   }
   update(modSol, cardModSol, modSolVal, modSolMaxViol);
 } /* update */
+
+/*****************************************************************************/
+int recordBestSol::compareAndSave(const double *solA, const double solAVal,
+				  const double solAMaxViol, 
+				  const bool solAIsFeas,
+				  const double *solB, const double solBVal,
+				  const double solBMaxViol, 
+				  const bool solBIsFeas,
+				  const int cardSol,
+				  const double precision) {
+  int retval = -2;
+  if(solBIsFeas) {
+    if(solAIsFeas) {
+      if(solAVal < solBVal - precision) {
+	retval = 0;
+      }
+      else {
+	retval = 1;
+      }
+    }
+    else {
+      retval = 1;
+    }
+  }
+  else {
+    if(solAIsFeas) {
+      retval = 0;
+    }
+    else { // both solutions are infeasible; select the one with min viol.
+      if(solAVal < 1e49) {
+	if(solBVal < 1e49) {
+	  if(solAMaxViol < solBMaxViol) {
+	    retval = 0;
+	  }
+	  else {
+	    retval = 1;
+	  }
+	}
+	else {
+	  retval = 0;
+	}
+      }
+      else {
+	if(solBVal < 1e49) {
+	  retval = 1;
+	}
+	else {
+	  retval = -1;
+	}
+      }
+    }
+  }
+  
+  switch (retval) {
+    case 0: update(solA, cardSol, solAVal, solAMaxViol); break;
+    case 1: update(solB, cardSol, solBVal, solBMaxViol); break;
+    case -1: break;
+    default: printf("recordBestSol::compareAndSave(): ### ERROR: retval: %d\n",
+		    retval); break;
+  }
+
+  return(retval);
+} /* compareAndSave */ 
 
 /*****************************************************************************/
 double * recordBestSol::getModSol(const int expectedCard) { 
@@ -221,3 +340,22 @@ void recordBestSol::setModSol(const double *givenModSol,
   modSolVal = givenModVal;
   modSolMaxViol = givenModMaxViol;
 } /* setModSol */
+
+/*****************************************************************************/
+void recordBestSol::printSol(FILE *fsol) const {
+
+  if(hasSol) {
+    fprintf(fsol, "%d\n", cardSol);
+    for(int i=0; i<cardSol; i++) {
+      fprintf(fsol, " %12.8f", sol[i]);
+      if(i % 10 == 9) {
+	fprintf(fsol, "\n");
+      }
+    }
+    if(cardSol % 10 != 0) {
+      fprintf(fsol, "\n");	
+    }
+    fprintf(fsol, "Value: %16.14g\n", val);
+    fprintf(fsol, "Tolerance: %16.14g\n", maxViol);
+  }
+} /* printSol */ 
