@@ -138,8 +138,9 @@ am__includecoin_HEADERS_DIST = ../inc/config_couenne.h \
 	problem/CouenneProblemElem.hpp problem/CouenneProblem.hpp \
 	problem/CouenneSolverInterface.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
-	expression/CouenneTypes.hpp disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp crossconv/CouenneCrossConv.hpp \
+	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
+	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
+	crossconv/CouenneCrossConv.hpp \
 	two_implied_bt/CouenneTwoImplied.hpp \
 	sdpcuts/CouenneSdpCuts.hpp sdpcuts/CutGen.hpp \
 	sdpcuts/disjunctive_cuts.hpp sdpcuts/dsyevx_wrapper.hpp \
@@ -497,8 +498,9 @@ includecoin_HEADERS = ../inc/config_couenne.h util/CouenneRootQ.hpp \
 	problem/CouenneProblemElem.hpp problem/CouenneProblem.hpp \
 	problem/CouenneSolverInterface.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
-	expression/CouenneTypes.hpp disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp crossconv/CouenneCrossConv.hpp \
+	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
+	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
+	crossconv/CouenneCrossConv.hpp \
 	two_implied_bt/CouenneTwoImplied.hpp \
 	sdpcuts/CouenneSdpCuts.hpp sdpcuts/CutGen.hpp \
 	sdpcuts/disjunctive_cuts.hpp sdpcuts/dsyevx_wrapper.hpp \

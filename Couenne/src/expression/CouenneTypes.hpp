@@ -48,7 +48,8 @@ enum expr_type {/*COU_EXPRAUX,  COU_EXPRCLONE, COU_EXPRCOPY, */
 		COU_EXPRUNARY,  /***** unary operators *******************/
 		COU_EXPRCOS,  COU_EXPRABS,
 		COU_EXPREXP,  COU_EXPRINV,   COU_EXPRLOG,    
-		COU_EXPROPP,   COU_EXPRSIN, MAX_COU_EXPR_CODE
+		COU_EXPROPP,   COU_EXPRSIN, COU_EXPRFLOOR, 
+		COU_EXPRCEIL, MAX_COU_EXPR_CODE
 		};
 
 /** convexity type of an expression */

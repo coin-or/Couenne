@@ -107,9 +107,9 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   // quadratic handling
   fillQuadIndices ();
 
-  if ((now = (CoinCpuTime () - now)) > 10.)
-    jnlst_->Printf(Ipopt::J_ERROR, J_PROBLEM,
-    "Couenne: reformulation time %.3fs\n", now);
+  // if ((now = (CoinCpuTime () - now)) > 10.)
+  //   jnlst_->Printf(Ipopt::J_ERROR, J_PROBLEM,
+  //   "reformulation time %.3fs\n", now);
 
   jnlst_->Printf (Ipopt::J_WARNING, J_PROBLEM, "Initializing auxiliaries\n");
 

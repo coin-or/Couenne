@@ -20,8 +20,6 @@
 
 #include <stdlib.h>
 
-//#include "CouenneConfig.h"
-
 #include "CoinTime.hpp"
 #include "CoinError.hpp"
 #include "BonCouenneInterface.hpp"
@@ -29,7 +27,6 @@
 #include "BonCouenneSetup.hpp"
 
 #include "BonCbc.hpp"
-//#include "BonFilterSolver.hpp"
 
 #include "CbcCutGenerator.hpp"
 #include "CouenneProblem.hpp"
@@ -52,7 +49,25 @@ using namespace Couenne;
 int nOrbBr = 0;
 #endif
 
+#include "CoinSignal.hpp"
+
+extern "C" {
+
+  static int nInterrupts = 0;
+  static void signal_handler (int sig) {
+
+    if (!nInterrupts) {
+      std::cerr << "[BREAK]" << std::endl;
+      abort ();
+    }
+    return;
+  }
+}
+
 int main (int argc, char *argv[]) {
+
+  //CoinSighandler_t saveSignal = SIG_DFL;
+  //saveSignal = signal (SIGINT, signal_handler);
 
     printf ("Couenne %s --  an Open-Source exact solver for Mixed Integer Nonlinear Optimization\n\
 Mailing list: couenne@list.coin-or.org\n\
@@ -182,7 +197,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
     jnlst -> Printf (J_ERROR, J_COUENNE, "\n\
 Linearization cuts added at root node:   %8d\n\
-Linearization cuts added in total        %8d  (separation time: %gs)\n\
+Linearization cuts added in total:       %8d  (separation time: %gs)\n\
 Total solving time:                      %8gs (%gs in branch-and-bound)\n\
 Lower bound:                           %10g\n\
 Upper bound:                           %10g  (gap: %s)\n\

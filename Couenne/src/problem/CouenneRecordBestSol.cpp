@@ -12,8 +12,12 @@
 #include<cstring>
 #include<cmath>
 
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneProblem.hpp"
-#include "recordBestSol.hpp"
+#include "CouenneRecordBestSol.hpp"
+
+using namespace Couenne;
 
 /*************************************************************/
   /** Default constructor. */

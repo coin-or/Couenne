@@ -27,6 +27,7 @@ libCouenneProblem_la_SOURCES = \
 	reformulate.cpp \
 	CouenneGlobalCutOff.cpp \
 	CouenneSymmetry.cpp \
+	CouenneRecordBestSol.cpp \
 	depGraph/depGraph.cpp \
 	depGraph/checkCycles.cpp 
 
