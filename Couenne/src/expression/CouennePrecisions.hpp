@@ -14,7 +14,7 @@
 #include <math.h>
 
 // must be >= 1e-7
-#define COUENNE_EPS           1.e-08
+#define COUENNE_EPS           1.e-07
 
 // to be used in bounds tightening to avoid node pruning due to strict COUENNE_EPS tolerance
 #define COUENNE_BOUND_PREC 1.e-5

@@ -75,24 +75,33 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
   if (pseudoMultType_ != PROJECTDIST)
     setEstimates (info, &retval, &brkPt);
 
-  if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
-    printf("index = %d up = %e down = %e bounds [%e,%e] brpt = %e\n", 
-	   index, upEstimate_, downEstimate_, 
-	   info -> lower_ [index],
-	   info -> upper_ [index], brkPt);
-  }
+  jnlst_ -> Printf (J_DETAILED, J_BRANCHING,
+		    "index = %d up = %e down = %e bounds [%e,%e] brpt = %e\n", 
+		    index, upEstimate_, downEstimate_, 
+		    info -> lower_ [index],
+		    info -> upper_ [index], brkPt);
 
   problem_ -> domain () -> pop (); // domain not used below
 
-  retval = ((retval < CoinMin (COUENNE_EPS, feas_tolerance_)) ? 0. : retval);
+  if (reference_ -> isInteger ()) {
+    CouNumber intinfeas = intInfeasibility (info -> solution_ [reference_ -> Index ()]);
+    if (intinfeas > retval) 
+      retval = intinfeas;
+  }
 
-  //printf ("infVar x%d ==> returning %g\n", reference_ -> Index (), (reference_ -> isInteger ()) ? 
-  //CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
-  //retval);
+  if (retval < CoinMin (COUENNE_EPS, feas_tolerance_)) 
+    retval = 0.;
 
-  return (reference_ -> isInteger ()) ? 
-    CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
-    retval;
+  jnlst_ -> Printf (J_DETAILED, J_BRANCHING, 
+  		    "infVar x%d ==> returning %e\n", reference_ -> Index (), (reference_ -> isInteger ()) ? 
+  		    CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
+  		    retval);
+
+  return retval;
+
+  // (reference_ -> isInteger ()) ? 
+  //   CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
+  //   retval;
 }
 
 

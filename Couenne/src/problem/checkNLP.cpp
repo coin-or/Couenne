@@ -42,8 +42,10 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 	(fabs (val - COUENNE_round (val)) > feas_tolerance_)) {
 
       Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_PROBLEM,
-		      "checkNLP: integrality %d violated: %.6f [%g,%g]\n", 
-		      i, val, domain_.lb (i), domain_.ub (i));
+		      "checkNLP: integrality %d violated: %.6f [%g,%g]: integer distance %e > %e (by %e)\n", 
+		      i, val, domain_.lb (i), domain_.ub (i), 
+		      fabs (val - COUENNE_round (val)),  feas_tolerance_, 
+		      fabs (val - COUENNE_round (val)) - feas_tolerance_);
 
       return false;
     }

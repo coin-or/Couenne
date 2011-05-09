@@ -276,24 +276,24 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
     brPts  = (double *) realloc (brPts, sizeof (double));
     *brPts = bestPt;
 
-      if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
-	printf ("  ::: failsafe:  %g [%g,%g] for ", 
+    if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
+      printf ("  ::: failsafe:  %g [%g,%g] for ", 
+	      bestPt, info -> lower_ [index], info -> upper_ [index]); 
+      reference_ -> print ();
+      printf ("\n");
+    }
+
+  } else {
+
+    if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
+      if (CoinMin (fabs (bestPt - info -> lower_ [index]), 
+		   fabs (bestPt - info -> upper_ [index])) < 1e-3) {
+	printf ("  computed %g [%g,%g] for ", 
 		bestPt, info -> lower_ [index], info -> upper_ [index]); 
 	reference_ -> print ();
 	printf ("\n");
       }
-
-  } else {
-
-      if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
-	if (CoinMin (fabs (bestPt - info -> lower_ [index]), 
-		     fabs (bestPt - info -> upper_ [index])) < 1e-3) {
-	  printf ("  computed %g [%g,%g] for ", 
-		  bestPt, info -> lower_ [index], info -> upper_ [index]); 
-	  reference_ -> print ();
-	  printf ("\n");
-	}
-      }
+    }
   }
 
   if (pseudoMultType_ == PROJECTDIST) {
