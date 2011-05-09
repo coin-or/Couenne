@@ -10,7 +10,11 @@
 #ifndef RECBESTSOL_H
 #define RECBESTSOL_H
 
+#include "CouenneTypes.hpp"
+
 class CouenneProblem;
+
+namespace Couenne {
 
 // class to record best found feasible solution
 class recordBestSol {
@@ -110,5 +114,7 @@ public:
   // print sol, solVal, and maxViol
   void printSol(FILE *fsol) const;
 };
+
+}
 
 #endif
