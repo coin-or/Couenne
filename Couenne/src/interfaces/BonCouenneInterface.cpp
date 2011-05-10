@@ -260,7 +260,7 @@ CouenneInterface::extractLinearRelaxation
 	  (obj < p -> getCutOff ())           && // check #1 (before re-computing)
 
 #ifdef FM_CHECKNLP2
-	  (p->checkNLP2(solution, 0, false, true, true, p->getFeasTol())) &&
+	  (p->checkNLP2(solution, 0, false, true, false, p->getFeasTol())) &&
 	  (p->getRecordBestSol()->getModSolVal() < p->getCutOff())
 #else
 	  p -> checkNLP (solution, obj, true) && // true for recomputing obj

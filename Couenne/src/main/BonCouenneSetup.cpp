@@ -878,4 +878,16 @@ void CouenneSetup::addMilpCutGenerators () {
       break;
     }
   }
+
+#ifdef FM_UP_BND
+  double givenAllowFGap2 = 0.0;
+  options_->GetNumericValue(std::string("allowable_fraction_gap"), 
+			    givenAllowFGap2, "bonmin.");
+  double upval = 1e50;
+  printf("CutOff value:\n");
+  scanf("%lf", &upval);
+  couenneProb_->setCutOff((1-givenAllowFGap2) * upval);
+  printf("CutOff set to %f\n", (1-givenAllowFGap2) * upval);
+#endif
+
 }

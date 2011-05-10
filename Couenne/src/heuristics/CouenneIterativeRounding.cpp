@@ -16,6 +16,8 @@
 #include "cplex.h"
 #endif
 
+#include "CouenneRecordBestSol.hpp"
+
 #define MILPTIME 5
 #define CBCMILPTIME 20
 
@@ -550,24 +552,58 @@ namespace Couenne{
 	       nNlp*sizeof(double));
 	// check solution of the NLP;
 	// if we have a new incumbent we are done, otherwise we iterate
+
+	bool isChecked = false;
+#ifdef FM_CHECKNLP2
+	isChecked = couenne_->checkNLP2(tmpSolution, 0, false, // do not care about obj
+					true, // stopAtFirstViol
+					false, // checkALL
+					couenne_->getFeasTol());
+	if(isChecked) {
+	  obj = couenne_->getRecordBestSol()->getModSolVal();
+	}
+#else /* not FM_CHECKNLP2 */
+	isChecked = couenne_->checkNLP(tmpSolution, obj, true);
+#endif  /* not FM_CHECKNLP2 */
+	
 	if (cinlp_->isProvenOptimal () &&
-	    couenne_->checkNLP (tmpSolution, obj, true) &&
+	    isChecked &&
 	    (obj < couenne_->getCutOff())) {
+	  
+#ifdef FM_CHECKNLP2
+#ifdef FM_TRACE_OPTSOL
+	  couenne_->getRecordBestSol()->update();
+	  CoinCopyN (couenne_->getRecordBestSol()->getSol(), n, tmpSolution);
+	  obj = couenne_->getRecordBestSol()->getVal();
+#else /* not FM_TRACE_OPTSOL */
+	  CoinCopyN (couenne_->getRecordBestSol()->getModSol(), n, tmpSolution);
+#endif /* not FM_TRACE_OPTSOL */
+#else /* not FM_CHECKNLP2 */
+	  
 	  //Get correct values for all auxiliary variables
 	  couenne_ -> getAuxs (tmpSolution);
+	  
+#ifdef FM_TRACE_OPTSOL
+	  couenne_->getRecordBestSol()->update(tmpSolution, n,
+					       obj, couenne_->getFeasTol());
+	  CoinCopyN (couenne_->getRecordBestSol()->getSol(), n, tmpSolution);
+	  obj = couenne_->getRecordBestSol()->getVal();
+#endif /* FM_TRACE_OPTSOL */
+#endif /* not FM_CHECKNLP2 */
+	  
 	  if (babInfo){
 	    babInfo->setNlpSolution (tmpSolution, n, obj);
 	    babInfo->setHasNlpSolution (true);
 	  }
-
+	  
 	  std::cout << "Final Nlp solution with objective " << obj << " :" << std::endl;
-
+	  
 	  if (obj < objectiveValue - COUENNE_EPS) { // found better solution?
 	    std::cout << "New incumbent found" << std::endl;
 	    const CouNumber 
 	      *lb = solver -> getColLower (),
 	      *ub = solver -> getColUpper ();
-
+	    
 	    // check bounds once more after getAux. This avoids false
 	    // asserts in CbcModel.cpp:8305 on integerTolerance violated
 	    for (int i=0; i < n; ++i, ++lb, ++ub) {
@@ -852,11 +888,45 @@ namespace Couenne{
 	     nNlp*sizeof(double));
       // check solution of the NLP;
       // if we have a new incumbent we are done, otherwise we iterate
+
+      bool isChecked = false;
+#ifdef FM_CHECKNLP2
+      isChecked = couenne_->checkNLP2(tmpSolution, 0, false, // do not care about obj
+				      true, // stopAtFirstViol
+				      false, // checkALL
+				      couenne_->getFeasTol());
+      if(isChecked) {
+	obj = couenne_->getRecordBestSol()->getModSolVal();
+      }
+#else /* not FM_CHECKNLP2 */
+      isChecked = couenne_->checkNLP(tmpSolution, obj, true);
+#endif  /* not FM_CHECKNLP2 */
+      
       if (cinlp_->isProvenOptimal () &&
-	  couenne_->checkNLP (tmpSolution, obj, true) &&
+	  isChecked &&
 	  (obj < couenne_->getCutOff())) {
+	
+#ifdef FM_CHECKNLP2
+#ifdef FM_TRACE_OPTSOL
+	couenne_->getRecordBestSol()->update();
+	CoinCopyN (couenne_->getRecordBestSol()->getSol(), n, tmpSolution);
+	obj = couenne_->getRecordBestSol()->getVal();
+#else /* not FM_TRACE_OPTSOL */
+	CoinCopyN (couenne_->getRecordBestSol()->getModSol(), n, tmpSolution);
+#endif /* not FM_TRACE_OPTSOL */
+#else /* not FM_CHECKNLP2 */
+	
 	//Get correct values for all auxiliary variables
 	couenne_ -> getAuxs (tmpSolution);
+	
+#ifdef FM_TRACE_OPTSOL
+	couenne_->getRecordBestSol()->update(tmpSolution, n,
+					     obj, couenne_->getFeasTol());
+	CoinCopyN (couenne_->getRecordBestSol()->getSol(), n, tmpSolution);
+	obj = couenne_->getRecordBestSol()->getVal();
+#endif /* FM_TRACE_OPTSOL */
+#endif /* not FM_CHECKNLP2 */
+	
 	if (babInfo){
 	  babInfo->setNlpSolution (tmpSolution, n, obj);
 	  babInfo->setHasNlpSolution (true);

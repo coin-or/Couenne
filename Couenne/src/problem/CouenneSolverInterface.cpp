@@ -146,50 +146,47 @@ void CouenneSolverInterface<T>::resolve () {
     objvalGlob = T::getColSolution () [cutgen_ -> Problem () -> Obj (0) -> Body () -> Index ()];  
 
   // check if resolve found new integer solution
-  bool isChecked = false;                                                       
-#ifdef FM_CHECKNLP2                                                             
-  double curBestVal = 1e50;                                                     
-  if(cutgen_->Problem()->getRecordBestSol()->getHasSol()) {                     
-    curBestVal =  cutgen_->Problem()->getRecordBestSol()->getVal();             
-  }                                                                             
-  curBestVal = (curBestVal < curCutoff ? curBestVal : curCutoff);               
-  if(isProvenOptimal()) {                                                       
-    isChecked = cutgen_->Problem()->checkNLP2(T::getColSolution(),              
-                                              curBestVal, false,                
-                                              true, // stopAtFirstViol          
-                                              true, // checkALL                 
-					      cutgen_->Problem()->getFeasTol());         
-    if(isChecked) {                                                             
-      objvalGlob = cutgen_->Problem()->getRecordBestSol()->getModSolVal();      
-                                                                                
-      if(!(objvalGlob < curBestVal - COUENNE_EPS)) {                            
-        isChecked = false;                                                      
-      }                                                                         
-    }                                                                           
-  }                                                                             
-#else                                                                           
-  if(isProvenOptimal () &&                                                      
-     (objvalGlob < curCutoff - COUENNE_EPS)) {                                  
-    isChecked = cutgen_->Problem()->checkNLP(T::getColSolution (),              
-                                             objvalGlob, true);                 
-  }                                                                             
-                                                                                
-#endif
+  bool isChecked = false;  
+#ifdef FM_CHECKNLP2
+  double curBestVal = 1e50;                                                    
+  if(cutgen_->Problem()->getRecordBestSol()->getHasSol()) { 
+    curBestVal =  cutgen_->Problem()->getRecordBestSol()->getVal(); 
+  }
+  curBestVal = (curBestVal < curCutoff ? curBestVal : curCutoff);
+  if(isProvenOptimal()) {
+    isChecked = cutgen_->Problem()->checkNLP2(T::getColSolution(), 
+					      curBestVal, false,
+                                              true, // stopAtFirstViol
+                                              true, // checkALL
+					      cutgen_->Problem()->getFeasTol());
+    if(isChecked) {
+      objvalGlob = cutgen_->Problem()->getRecordBestSol()->getModSolVal();
+      if(!(objvalGlob < curBestVal - COUENNE_EPS)) {
+        isChecked = false; 
+      }
+    }
+  }
+#else /* not FM_CHECKNLP2 */
+  if(isProvenOptimal () &&
+     (objvalGlob < curCutoff - COUENNE_EPS)) {
+    isChecked = cutgen_->Problem()->checkNLP(T::getColSolution (),
+                                             objvalGlob, true);
+  }
+#endif /* not FM_CHECKNLP2 */
 
-
-
-  if (//doingResolve () &&                 // this is not called from strong branching
-      isProvenOptimal () &&
-      (objvalGlob < curCutoff - COUENNE_EPS) &&
-      (cutgen_ -> Problem () -> checkNLP (T::getColSolution (), objvalGlob, true)) &&
-      //      (objvalGlo < curCutoff - COUENNE_EPS) && // check again as it may have changed
+  if (//doingResolve () &&    // this is not called from strong branching
+      isChecked &&
       (objvalGlob > -COUENNE_INFINITY/2)) {    // check if it makes sense
 
     // also save the solution so that cbcModel::setBestSolution saves it too
 
     //printf ("new cutoff from CSI: %g\n", objval);
-    cutgen_ -> Problem () -> setCutOff (objvalGlob, T::getColSolution ());
-  }
+    cutgen_ -> Problem () -> setCutOff (objvalGlob);
+
+#ifdef FM_TRACE_OPTSOL
+#ifdef FM_CHECKNLP2
+    cutgen_->Problem()->getRecordBestSol()->update();
+#else /* not FM_CHECKNLP2 */
 
   // some originals may be unused due to their zero multiplicity (that
   // happens when they are duplicates), restore their value
@@ -199,6 +196,15 @@ void CouenneSolverInterface<T>::resolve () {
     cutgen_ -> Problem () -> restoreUnusedOriginals (x);
     T::setColSolution (x);
     delete [] x;
+  }
+
+  cutgen_->Problem()->getRecordBestSol()->update(T::getColSolution(), 
+						 cutgen_->Problem()->nVars(),
+						 objvalGlob,
+						 cutgen_->Problem()->getFeasTol());
+#endif  /* not FM_CHECKNLP2 */
+#endif /* FM_TRACE_OPTSOL */
+
   }
 
   // check LP independently

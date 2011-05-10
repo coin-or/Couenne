@@ -115,6 +115,19 @@ Instructions: http://www.coin-or.org/Couenne\n",
     if (!couenne.InitializeCouenne (argv, p, NULL, ci, &bb))
       throw infeasible;
 
+#ifdef FM_PRINT_INFO
+    // This assumes that first cut generator is CouenneCutGenerator
+    CouenneCutGenerator *ccg = dynamic_cast<CouenneCutGenerator *> 
+      (couenne.cutGenerators().begin()->cgl);
+    if(ccg) {
+      ccg->setBabPtr(&bb);
+    }
+    else {
+      printf("main(): ### ERROR: Can not get CouenneCutGenerator\n");
+      exit(1);
+    }
+#endif
+
     // initial printout
 
     ConstJnlstPtr jnlst = couenne. couennePtr () -> Jnlst ();

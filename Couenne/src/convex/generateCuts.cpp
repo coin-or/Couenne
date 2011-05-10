@@ -8,6 +8,7 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
+#include "BonCbc.hpp"
 #include "BonBabInfos.hpp"
 #include "CglCutGenerator.hpp"
 
@@ -111,6 +112,13 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
   }
 #endif
 
+#ifdef FM_PRINT_INFO
+  if((BabPtr_ != NULL) && (info.level >= 0) && (info.pass == 0) && 
+     (BabPtr_->model().getNodeCount() > lastPrintLine)) {
+    printLineInfo();
+    lastPrintLine += 1;
+  }
+#endif
 
   const int infeasible = 1;
 

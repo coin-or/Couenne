@@ -122,6 +122,9 @@ class CouenneCutGenerator: public CglCutGenerator {
   /// to have caused some problems some time ago
   bool enable_lp_implied_bounds_;
 
+  /// Running count of printed info lines
+  mutable int lastPrintLine;
+
  public:
 
   /// constructor
@@ -249,6 +252,9 @@ class CouenneCutGenerator: public CglCutGenerator {
 
   /// Add list of options to be read from file
   static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions);
+
+  /// print node, depth, LB/UB/LP info
+  void printLineInfo() const;
 
   /// Provide Journalist
   inline ConstJnlstPtr Jnlst() const 
