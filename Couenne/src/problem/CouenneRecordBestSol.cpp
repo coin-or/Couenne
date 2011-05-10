@@ -68,7 +68,7 @@ CouenneRecordBestSol::CouenneRecordBestSol(const CouenneRecordBestSol &other) {
   val = other.val;
   maxViol = other.maxViol;
 
-  if(hasSol) {
+  if(other.sol != NULL) {
     sol = new double[other.cardSol];
     CoinCopyN(other.sol, cardSol, sol);
   }
@@ -193,8 +193,7 @@ void CouenneRecordBestSol::setCardSol(const int givenCard) {
 /*****************************************************************************/
 void CouenneRecordBestSol::setSol(const double *givenSol, const int givenCard,
 			   const double givenMaxViol) {
-  if(!hasSol) {
-    hasSol = true;
+  if(sol == NULL) {
     cardSol = givenCard;
     sol = new double[givenCard];
     if(modSol == NULL) {
@@ -224,6 +223,7 @@ void CouenneRecordBestSol::setVal(const double givenVal) {
 #endif
 
   val = givenVal;
+  hasSol = true;
 }
 
 /*****************************************************************************/
@@ -348,7 +348,7 @@ void CouenneRecordBestSol::setModSol(const double *givenModSol,
 /*****************************************************************************/
 void CouenneRecordBestSol::printSol(FILE *fsol) const {
 
-  if(hasSol) {
+  if(sol != NULL) {
     fprintf(fsol, "%d\n", cardSol);
     for(int i=0; i<cardSol; i++) {
       fprintf(fsol, " %12.8f", sol[i]);

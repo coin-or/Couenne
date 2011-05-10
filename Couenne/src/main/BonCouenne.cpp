@@ -251,7 +251,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
       double modCouenneSolVal= 1e100, modCouenneSolMaxViol = 0;
       bool couenneSolIsFeas = false;
 
-      if(rs->getHasSol()) {
+      if(couenneSol != NULL) {
 #ifdef FM_CHECKNLP2
 	couenneSolIsFeas = cp->checkNLP2(couenneSol, 0, false, 
 					 false, true, 

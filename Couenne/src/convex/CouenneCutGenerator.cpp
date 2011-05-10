@@ -70,6 +70,8 @@ CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
     enable_lp_implied_bounds_ = false;
   }
 
+  lastPrintLine = -1;
+
   //if (asl) // deal with problems not originating from AMPL
   //problem_ = new CouenneProblem (asl, base, jnlst_);
 }
@@ -100,7 +102,8 @@ CouenneCutGenerator::CouenneCutGenerator (const CouenneCutGenerator &src):
   jnlst_       (src. jnlst_),
   rootTime_    (src. rootTime_),
   check_lp_    (src. check_lp_),
-  enable_lp_implied_bounds_ (src.enable_lp_implied_bounds_)
+  enable_lp_implied_bounds_ (src.enable_lp_implied_bounds_),
+  lastPrintLine(src.lastPrintLine)
 {}
 
 

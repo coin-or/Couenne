@@ -20,7 +20,6 @@
 #include "CoinHelperFunctions.hpp"
 #include "BonOsiTMINLPInterface.hpp"
 #include "BonNlpHeuristic.hpp"
-//#include "CouenneProblem.hpp"
 #include "CouenneRecordBestSol.hpp"
 
 using namespace Couenne;

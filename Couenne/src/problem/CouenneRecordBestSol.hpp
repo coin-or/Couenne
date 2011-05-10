@@ -33,11 +33,11 @@ public:
   // copy of initial domain upper bounds
   CouNumber *initDomUb;
 
-  // true if a solution has been recorded, false otherwise
+  // true if a solution value has been recorded, false otherwise
   bool hasSol;
   // size of vector sol
   int cardSol;
-  // recorded solution
+  // if not NULL, recorded solution
   double *sol;
   // recorded value
   double val;

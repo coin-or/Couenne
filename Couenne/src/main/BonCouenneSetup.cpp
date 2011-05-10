@@ -886,8 +886,17 @@ void CouenneSetup::addMilpCutGenerators () {
   double upval = 1e50;
   printf("CutOff value:\n");
   scanf("%lf", &upval);
-  couenneProb_->setCutOff((1-givenAllowFGap2) * upval);
-  printf("CutOff set to %f\n", (1-givenAllowFGap2) * upval);
+  double newCO = (1-givenAllowFGap2) * upval;
+  couenneProb_->setCutOff(newCO);
+  printf("CutOff set to %f\n", newCO);
+
+#ifdef FM_TRACE_OPTSOL
+  if(couenneProb_->getRecordBestSol()->getHasSol()) {
+    if(newCO < couenneProb_->getRecordBestSol()->getVal()) {
+      couenneProb_->getRecordBestSol()->setVal(newCO);
+    }
+  }
 #endif
+#endif /* FM_UP_BND */
 
 }

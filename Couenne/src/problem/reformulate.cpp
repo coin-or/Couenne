@@ -124,20 +124,36 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
 #ifdef FM_TRACE_OPTSOL
     getRecordBestSol()->update();
-#endif
+    setCutOff(getRecordBestSol()->getVal());
+#else /* not FM_TRACE_OPTSOL */
 
-    setCutOff(getRecordBestSol()->getVal(), getRecordBestSol()->getSol());    
+#ifdef FM_UP_BND
+    setCutOff(getRecordBestSol()->getModSolVal());
+#else
+    setCutOff(getRecordBestSol()->getModSolVal(), 
+	      getRecordBestSol()->getModSol());
+#endif
+#endif /* not FM_TRACE_OPTSOL */
+
   }
 #else /* not FM_CHECKNLP2 */
   if (checkNLP (X (), cutoff = X (objectives_ [0] -> Body () -> Index ()), true)) {
     jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM,
 		      "Couenne: initial solution (value %g) is MINLP feasible\n",
 		      cutoff);
-    setCutOff (cutoff, X ());    
 
 #ifdef FM_TRACE_OPTSOL
     getRecordBestSol()->update(X(), nVars(), cutoff, getFeasTol());
+    setCutOff(getRecordBestSol()->getVal());
+#else /* not FM_TRACE_OPTSOL */
+
+#ifdef FM_UP_BND
+    setCutOff (cutoff);
+#else
+    setCutOff (cutoff, X ());    
 #endif
+#endif /* not FM_TRACE_OPTSOL */
+
   }
 #endif /* not FM_CHECKNLP2 */
  

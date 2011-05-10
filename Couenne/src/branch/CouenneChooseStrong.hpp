@@ -76,7 +76,10 @@ private:
 
   /** Default Constructor, forbidden for some reason.*/
   CouenneChooseStrong ();
-    
+  
+  // print object violations
+  void printObjViol(OsiBranchingInformation *info);
+  
 protected:
 
   /// does one side of the branching
