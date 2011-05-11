@@ -16,6 +16,7 @@
 #include "CouenneChooseStrong.hpp"
 #include "CouenneChooseVariable.hpp"
 
+#include "CbcTree.hpp"
 #include "BonCbc.hpp"
 #include "CouenneRecordBestSol.hpp"
 
@@ -208,16 +209,17 @@ void CouenneCutGenerator::printLineInfo() const {
   double cbcLb = BabPtr_->model().getBestPossibleObjValue();
   double lpVal = BabPtr_->model().solver()->getObjValue();
   int nbNodes = BabPtr_->model().getNodeCount();
+  int nbNodesRem = BabPtr_->model().tree()->size();
   int depth = BabPtr_->model().currentDepth();
   CouenneRecordBestSol *rs = problem_->getRecordBestSol();
 
   if(rs->getHasSol()) {
     double bestSolVal = rs->getVal(); 
-    printf("%10d  %10d  %10.6f  %10.6f  %10.6f\n", 
-	   nbNodes, depth, cbcLb, lpVal, bestSolVal);
+    printf("%10d  %8d  %6d  %10.6f  %10.6f  %10.6f\n", 
+	   nbNodes, nbNodesRem, depth, cbcLb, lpVal, bestSolVal);
   }
   else {
-    printf("%10d  %10d  %10.6f  %10.6f   ----------\n", 
-	   nbNodes, depth, cbcLb, lpVal);
+    printf("%10d  %8d  %6d  %10.6f  %10.6f   ----------\n", 
+	   nbNodes, nbNodesRem, depth, cbcLb, lpVal);
   }
 } /* printLineInfo */

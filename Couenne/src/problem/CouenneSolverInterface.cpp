@@ -17,6 +17,8 @@
 
 #include "CouenneRecordBestSol.hpp"                         
 
+//#define FM_CHECK
+
 namespace Couenne {
 
 /// constructor
@@ -166,6 +168,24 @@ void CouenneSolverInterface<T>::resolve () {
       }
     }
   }
+
+#ifdef FM_CHECK
+  bool ckIsChecked = false;
+  double ckObj = objvalGlob;
+  if(isProvenOptimal () &&
+     (objvalGlob < curCutoff - COUENNE_EPS)) {
+    ckIsChecked = cutgen_->Problem()->checkNLP(T::getColSolution (),
+					       ckObj, true);
+  }
+  if(!isChecked && ckIsChecked) {
+    printf("CouenneSolverInterface::resolve(): ### ERROR: isChecked: false  ckIsChecked: true\n");
+    exit(1);
+  }
+  else {
+    printf("CouenneSolverInterface::resolve(): isChecked == ckIsChecked\n");
+  }
+#endif
+
 #else /* not FM_CHECKNLP2 */
   if(isProvenOptimal () &&
      (objvalGlob < curCutoff - COUENNE_EPS)) {

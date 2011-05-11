@@ -466,8 +466,12 @@ bool CouenneProblem::checkAux(const CouNumber *sol,
     if (fabs (fval) > COUENNE_INFINITY)
       fval = COUENNE_INFINITY;
     
+
     double
-      delta = fabs (vval - fval),
+      delta = 
+      ((v -> sign () == expression::AUX_GEQ) && (vval >= fval)) ? 0. : 
+      ((v -> sign () == expression::AUX_LEQ) && (vval <= fval)) ? 0. : fabs (vval - fval),
+      
       ratio = (CoinMax (1., fabs (vval)) / 
 	       CoinMax (1., fabs (fval)));
     
