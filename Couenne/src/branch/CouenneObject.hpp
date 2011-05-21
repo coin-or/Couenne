@@ -165,7 +165,9 @@ public:
 
   // Column number if single column object, -1 otherwise.
   virtual int columnNumber () const
-  {return ((reference_) ? reference_ -> Index () : -1);}
+  {//printf ("calling columnNumber(), returning %d\n",
+   //((reference_) ? reference_ -> Index () : -1)); 
+    return ((reference_) ? reference_ -> Index () : -1);}
 
 protected:
 
