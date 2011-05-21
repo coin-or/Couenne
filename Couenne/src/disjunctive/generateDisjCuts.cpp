@@ -39,6 +39,8 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
       (info.level > depthStopSeparate_))  // check if too deep for adding these cuts
     return;
 
+  int nInitCuts = nrootcuts_;
+
   if ((info.level <= 0) && !(info.inTree)) {
 
     jnlst_ -> Printf (J_ERROR, J_COUENNE, 
@@ -290,7 +292,7 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 
     if ((info.level <= 0) && !(info.inTree))
       jnlst_ -> Printf (J_ERROR, J_COUENNE, 
-			"%d cuts (total)\n", CoinMax (0, nrootcuts_));
+			"%d cuts\n", CoinMax (0, nrootcuts_ - nInitCuts));
     else if (deltaNcuts)
       jnlst_ -> Printf (J_WARNING, J_COUENNE, 
 			"In-BB disjunctive cuts: %d row cuts, %d col cuts\n",

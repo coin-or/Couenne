@@ -161,10 +161,33 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
   // integer branching will be performed.
 
   if (integer && 
-      (::isInteger (brpt)) &&
-      (way==!firstBranch_))
+      ::isInteger (brpt)) {
 
-    brpt += 1.;
+    // Careful here. We should look at all possible cases (l,u are
+    // bounds, b is the branching point. l,u,b all integer):
+    //
+    // 1) l <  b <  u: first branch on b +/- 1 depending on branch
+    // direction, right branch on b;
+    //
+    // 2) l <= b <  u: LEFT branch on b, RIGHT branch on b+1
+    // 
+    // 3) l <  b <= u: LEFT branch on b-1, RIGHT branch on b
+
+    assert ((brpt - l > .5) || 
+	    (u - brpt > .5));
+
+    if ((brpt - l > .5) &&
+	(u - brpt > .5)) { // brpt is integer interior point of [l,u]
+
+      if (firstBranch_) {
+	if (!way) brpt -= 1.;
+	else      brpt += 1.;
+      }
+      
+    } 
+    else if (u - brpt > .5) {if  (way) brpt += 1.;} 
+    else if (brpt - l > .5) {if (!way) brpt -= 1.;}
+  }
 
   if (way) {
     if      (value_ < l)             

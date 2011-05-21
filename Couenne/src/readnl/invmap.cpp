@@ -1,11 +1,11 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    invmap.cpp
  * Author:  Pietro Belotti
  * Purpose: create a bijection between ASL's efunc and integer to
  *          inversely map e->op fields into constant operators
  *
- * (C) Carnegie-Mellon University, 2006-09.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -32,8 +32,8 @@ static int pair_compare (const void *p1, const void *p2) {
 
   /* FIX! weak cast for 64 bit machines */
 
-  register int f1 = Intcast (((AslCouPair *) p1) -> fp); 
-  register int f2 = Intcast (((AslCouPair *) p2) -> fp); 
+  register size_t f1 = Intcast (((AslCouPair *) p1) -> fp); 
+  register size_t f2 = Intcast (((AslCouPair *) p2) -> fp); 
 
   if      (f1 < f2) return -1;
   else if (f1 > f2) return  1;
@@ -48,12 +48,12 @@ AslCouPair opmap [N_OPS];
 
 /* binary search to get operator number from its efunc2* (the type of e->op) */
 
-int getOperator (efunc *f) {
+size_t getOperator (efunc *f) {
 
   static char first_call = 1;
   AslCouPair key, *res;
 
-  /* FIX cast fo 64 bit machines */
+  /* FIX cast for 64 bit machines */
 
   if ((Intcast f <  N_OPS) && 
       (Intcast f > -N_OPS))

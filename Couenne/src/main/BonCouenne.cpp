@@ -71,7 +71,7 @@ int main (int argc, char *argv[]) {
   //CoinSighandler_t saveSignal = SIG_DFL;
   //saveSignal = signal (SIGINT, signal_handler);
 
-    printf ("Couenne %s --  an Open-Source exact solver for Mixed Integer Nonlinear Optimization\n\
+    printf ("Couenne %s --  an Open-Source solver for Mixed Integer Nonlinear Optimization\n\
 Mailing list: couenne@list.coin-or.org\n\
 Instructions: http://www.coin-or.org/Couenne\n", 
 	    strcmp (COUENNE_VERSION, "trunk") ? COUENNE_VERSION : "");

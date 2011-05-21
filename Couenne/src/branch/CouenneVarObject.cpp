@@ -83,6 +83,16 @@ OsiBranchingObject *CouenneVarObject::createBranch (OsiSolverInterface *si,
     // can be detrimental for bound tightening and convexification
     // cuts, for instance.
 
+    // Actually, even smaller values (such as 1e10) can trigger bad BB
+    // tree development (see wall in test files, not globallib/wall)
+
+#define LARGE_VALUE 1e8
+
+    if ((l < - LARGE_VALUE) && 
+	(u >   LARGE_VALUE) &&
+	(fabs (brpt) > LARGE_VALUE / 10))
+      brpt = 0;
+
     if (l < - COUENNE_INFINITY) l = - 2 * fabs (brpt);
     if (u >   COUENNE_INFINITY) u =   2 * fabs (brpt);
 

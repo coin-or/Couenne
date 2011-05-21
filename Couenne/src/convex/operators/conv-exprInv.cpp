@@ -76,6 +76,10 @@ void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int wind, 
 			    CouNumber lbw, CouNumber ubw) {
+
+  // TODO: if a<=w<=b, c<=x<=d, there is a diamond enclosing the whole
+  // convexification
+
   CouNumber l, u;
   argument_ -> getBounds (l, u);
 

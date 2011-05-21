@@ -110,7 +110,7 @@ namespace Couenne {
   private:
 
     //
-    // essential tools for the FP: a problem pointer and one for the
+    // Essential tools for the FP: a problem pointer and one for the
     // linearization cut generator
     //
 
@@ -121,7 +121,7 @@ namespace Couenne {
     CouenneCutGenerator *couenneCG_;
 
     //
-    // Persistent objects -- not necessary to identify FP, but it's
+    // PERSISTENT OBJECTS -- not necessary to identify FP, but it's
     // useful to keep them between calls
     //
 
@@ -138,6 +138,26 @@ namespace Couenne {
 
     /// Pool of solutions
     std::priority_queue <std::pair <CouNumber *, CouNumber> > pool_;
+
+    /// These methods can be used to solve the MILP, from the most
+    /// expensive, exact method to a cheap, inexact one:
+    ///
+    /// 1. Solve a MILP relaxation with Manhattan distance as objective
+    /// 2. Apply RENS on 1
+    /// 3. Use Objective FP 2.0 for MILPs
+    /// 4. round-and-propagate
+    /// 5. choose from pool, see 4
+    /// 6. random pertubation
+
+    enum Methods {SOLVE_MILP,       APPLY_RENS,  USE_FP_2, ROUND_N_PROPAGATE, 
+		  CHOOSE_FROM_POOL, RND_PERTURB, NUM_METHODS};
+
+    /// array of NUM_METHODS elements containing a number indicating
+    /// the recent successes of the corresponding algorithm (see enum
+    /// right above). The larger method_success_ [i], the more often
+    /// the i-th method should be used.
+
+    int *method_success_;
 
     //
     // PARAMETERS
@@ -160,6 +180,7 @@ namespace Couenne {
 
     /// maximum iterations per call
     int maxIter_;
+
   };
 }
 

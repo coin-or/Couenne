@@ -32,7 +32,6 @@ void CouenneFeasPump::findSolution () {
   /// 5. choose from pool, see 4
   /// 6. random pertubation
 
-
   // what order should we use? I suggest we use priorities, assigned
   // at the beginning but changeable in the event of multiple failures
   // (or successes) of a given method.

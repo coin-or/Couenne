@@ -697,12 +697,32 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
       if (clb [i] > oldLB [i]) {
 
+	if (problem_ -> bestSol () &&
+	    problem_ -> bestSol () [i] > oldLB [i] &&
+	    problem_ -> bestSol () [i] < clb   [i]) {
+
+	  jnlst_ -> Printf (J_ERROR, J_COUENNE, 
+			    "Warning, twoImplBounds new LB cuts optimal solution: LB x_%d = %g --> %g, opt %g\n",
+			    i, oldLB [i], clb [i], problem_ -> bestSol () [i]);
+
+	}
+
 	//printf ("L %4d: %g -> %g\n", i, oldLB [i], clb [i]);
 	indLB [ntightenedL]   = i;
 	valLB [ntightenedL++] = clb [i];
       }
 
       if (cub [i] < oldUB [i]) {
+
+	if (problem_ -> bestSol () &&
+	    problem_ -> bestSol () [i] > oldUB [i] &&
+	    problem_ -> bestSol () [i] < cub   [i]) {
+
+	  jnlst_ -> Printf (J_ERROR, J_COUENNE, 
+			    "Warning, twoImplBounds new UB cuts optimal solution: UB x_%d = %g --> %g, opt %g\n",
+			    i, oldUB [i], cub [i], problem_ -> bestSol () [i]);
+
+	}
 
 	//printf ("U %4d: %g -> %g\n", i, oldUB [i], cub [i]);
 	indUB [ntightenedU]   = i;

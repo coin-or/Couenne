@@ -60,14 +60,14 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	  if ((solver  -> getColUpper () [indVar] > problem_ -> bestSol () [indVar]) &&
 	      (brpt                               < problem_ -> bestSol () [indVar]))
 
-	    printf ("Branching EXCLUDES optimal solution\n");
+	    printf ("Branching rule EXCLUDES optimal solution\n");
 	  else
 	    for (int i=0; i<problem_ -> nVars (); i++)
 
 	      if ((solver -> getColLower () [indVar] > problem_ -> bestSol () [indVar] + COUENNE_EPS) ||
 		  (solver -> getColUpper () [indVar] < problem_ -> bestSol () [indVar] - COUENNE_EPS))
 
-		{printf ("This node EXCLUDES optimal solution\n"); break;}
+		{printf ("This node does not include optimal solution\n"); break;}
 	}
       }
 
@@ -132,7 +132,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
       if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
 	if (brExclude)   printf (" (Branching EXCLUDES optimal solution)");
-	if (nodeExclude) printf (" (This node EXCLUDES optimal solution)");
+	if (nodeExclude) printf (" (This node does not contain optimal solution)");
 	printf ("\n");
       }
     }
@@ -165,7 +165,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	    if ((solver -> getColLower () [i] > problem_ -> bestSol () [i] + COUENNE_EPS) ||
 		(solver -> getColUpper () [i] < problem_ -> bestSol () [i] - COUENNE_EPS))
 
-	      {printf ("This node EXCLUDES optimal solution\n"); break;}
+	      {printf ("This node does not contain optimal solution\n"); break;}
       }
     }
 
@@ -196,7 +196,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	    if ((solver -> getColLower () [indVar] > problem_ -> bestSol () [indVar] + COUENNE_EPS) ||
 		(solver -> getColUpper () [indVar] < problem_ -> bestSol () [indVar] - COUENNE_EPS))
 
-	      {printf ("This node EXCLUDES optimal solution\n"); break;}
+	      {printf ("This node does not contain optimal solution\n"); break;}
       }
     }
 

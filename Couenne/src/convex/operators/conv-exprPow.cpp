@@ -229,7 +229,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
       if (u<=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l,   u, -sign);  // l<u<0, tangents only
       else if (l < q * u) { // lower x is before "turning point", add upper envelope
 	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, l, q*u, -sign);
-	cg      -> addSegment     (cs, w_ind, x_ind, q*u, safe_pow (q*u,k), u, safe_pow (u,k), -sign);
+	cg -> addSegment     (cs, w_ind, x_ind, q*u, safe_pow (q*u,k), u, safe_pow (u,k), -sign);
       } else {
 	cg -> addSegment     (cs, w_ind, x_ind, l,   safe_pow (l,k),   u, safe_pow (u,k), -sign);
       }
@@ -261,6 +261,10 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
       if (!(intk % 2))
 	cg -> addSegment (cs, w_ind, arglist_ [0] -> Index (), 
 			  l, safe_pow (l,k), u, safe_pow (u,k), +1);
+
+      // TODO: if a<=w<=b, c<=x<=d, there is a diamond enclosing the
+      // whole convexification
+
       return;
     }
 

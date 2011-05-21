@@ -535,7 +535,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   options () -> GetEnumValue ("feas_pump_heuristic", doHeuristic, "couenne.");
 
-  if (false && doHeuristic) {
+  if (doHeuristic) {
 
     int numSolve;
     options () -> GetIntegerValue ("feas_pump_level", numSolve, "couenne.");

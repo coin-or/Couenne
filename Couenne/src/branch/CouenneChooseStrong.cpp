@@ -18,7 +18,7 @@
 
 #include "CouenneRecordBestSol.hpp"
 
-#define TRACE_STRONG
+//#define TRACE_STRONG
 
 using namespace Couenne;
 

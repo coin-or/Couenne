@@ -120,7 +120,7 @@ namespace Couenne {
       U_i \f$ in the following.
   
      0) if  \f$ c_j = c_i \f$  then 
-     - compute VL =  \f$ \lim_{c_j \to \alpha} L_i (\alpha) \f$ 
+     - compute \f$ VL =  \lim_{c_j \to \alpha} L_i (\alpha) \f$ 
      - if  \f$ =  +\infty  \f$ , infeasible 
      else compute derivative DL (should be   \f$ +\infty \f$  )
   
@@ -136,7 +136,7 @@ namespace Couenne {
   
      2) if  \f$ c_{j+1} = c_i \f$  then 
 
-     - compute VR =  \f$ \lim_{\alpha \to c_{j+1}} L_i (\alpha) \f$ 
+     - compute \f$ VR = \lim_{\alpha \to c_{j+1}} L_i (\alpha) \f$ 
 
      - if =  \f$ +\infty  \f$  , infeasible else compute derivative DR (should be
        \f$ -\infty \f$  )
