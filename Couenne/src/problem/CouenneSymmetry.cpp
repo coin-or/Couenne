@@ -317,7 +317,7 @@ void CouenneProblem::Compute_Symmetry() const{
       (*i).color_vertex(color);
       //printf ("Graph vertex %d is given color %d\n", (*i).get_index(), color);
       nauty_info -> color_node((*i).get_index(), color);
-      for (std::vector <Node>:: iterator j = i+1; j <= node_info. end (); ++j)
+      for (std::vector <Node>:: iterator j = i+1; j != node_info. end (); ++j)
 	if( compare( (*i) , (*j) ) ==1){
 	  (*j).color_vertex(color);
 	  nauty_info -> color_node((*j).get_index(),color);

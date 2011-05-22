@@ -42,6 +42,9 @@ void CouenneProblem::setBase (Bonmin::BabSetupBase *base) {
 // tricky... smaller values cut the optimum in OS unitTest
 const CouNumber SafeCutoff = 1e-4; 
 
+// absolute difference
+const CouNumber SafeDelta = 1e-2; 
+
 /// initialize auxiliary variables from original variables in the
 /// nonlinear problem
 
@@ -348,7 +351,7 @@ void CouenneProblem::installCutOff () const {
 
   cutoff = (Var (indobj) -> isInteger ()) ?
     floor (cutoff + COUENNE_EPS) :
-    (cutoff + SafeCutoff * (1. + fabs(cutoff)));  // tolerance needed to retain feasibility
+    (cutoff + CoinMin (SafeDelta, SafeCutoff * (1. + fabs (cutoff))));  // tolerance needed to retain feasibility
 
   if (cutoff < Ub (indobj))
     Ub (indobj) = cutoff;
