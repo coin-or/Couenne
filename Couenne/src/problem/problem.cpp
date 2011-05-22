@@ -28,6 +28,9 @@
 // tricky... smaller values cut the optimum in OS unitTest
 const CouNumber SafeCutoff = 1e-4; 
 
+// absolute difference
+const CouNumber SafeDelta = 1e-2; 
+
 /// initialize auxiliary variables from original variables in the
 /// nonlinear problem
 
@@ -272,7 +275,8 @@ void CouenneProblem::setCutOff (CouNumber cutoff) const {
 
     if (Var (indobj) -> isInteger ())
       pcutoff_    -> setCutOff (floor (cutoff + COUENNE_EPS));
-    else pcutoff_ -> setCutOff (cutoff + SafeCutoff * (1. + fabs(cutoff)));
+    else pcutoff_ -> setCutOff 
+	   (cutoff + CoinMin (SafeDelta, SafeCutoff * (1. + fabs (cutoff))));  // tolerance needed to retain feasibility
   }
 } // tolerance needed to retain feasibility
 
