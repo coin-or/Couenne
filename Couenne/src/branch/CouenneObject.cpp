@@ -133,6 +133,20 @@ CouenneObject::CouenneObject (const CouenneObject &src):
   pseudoMultType_ (src.pseudoMultType_) {}
 
 
+/// integer infeasibility: min {value - floor(value), ceil(value) -
+/// value}. Handle special cases so that Cbc and Couenne agree. Also,
+/// check out-of-bounds values.
+
+double CouenneObject::intInfeasibility (double value, double lb, double ub) const {
+
+  if      (value < lb) value = lb;
+  else if (value > ub) value = ub;
+
+  return CoinMin (value - floor (value + COUENNE_EPS), 
+		          ceil  (value - COUENNE_EPS) - value);
+}
+
+
 /// apply the branching rule
 OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
 						 const OsiBranchingInformation *info,
@@ -313,15 +327,19 @@ double CouenneObject::infeasibility (const OsiBranchingInformation *info, int &w
 
   problem_ -> domain () -> pop ();
 
+  int refInd = reference_ -> Index ();
+  double point = info -> solution_ [refInd];
+
   if (pseudoMultType_ == INFEASIBILITY) {
 
-    double point = info -> solution_ [reference_ -> Index ()];
-
     if (reference_ -> isInteger ()) {
-      if (retval < intInfeasibility (point)) {
+
+      CouNumber intInfeas = intInfeasibility (point, info -> lower_ [refInd], info -> upper_ [refInd]);
+
+      if (retval < intInfeas) {
 	if (downEstimate_ <       point  - floor (point)) downEstimate_ =       point  - floor (point);
 	if (upEstimate_   < ceil (point) -        point)  upEstimate_   = ceil (point) -        point;
-	retval = intInfeasibility (point);
+	retval = intInfeas;
       }
     }
     else upEstimate_ = downEstimate_ = retval;
@@ -329,7 +347,7 @@ double CouenneObject::infeasibility (const OsiBranchingInformation *info, int &w
   else setEstimates (info, &retval, NULL);
 
   return (reference_ -> isInteger ()) ? 
-    CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
+    CoinMax (retval, intInfeasibility (point, info -> lower_ [refInd], info -> upper_ [refInd])) :
     retval;
 }
 
@@ -339,9 +357,13 @@ double CouenneObject::infeasibility (const OsiBranchingInformation *info, int &w
 /// CouenneVarObject::infeasibility()
 double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) const {
 
+  int refInd = reference_ -> Index ();  
+
   if (reference_ -> Type () == VAR)
     return (reference_ -> isInteger ()) ? 
-      intInfeasibility (info -> solution_ [reference_ -> Index ()]) : 0.;
+      intInfeasibility (info -> solution_ [refInd],
+			info -> lower_    [refInd],
+			info -> upper_    [refInd]) : 0.;
 
   double 
     vval = info -> solution_ [reference_ -> Index ()],
@@ -386,7 +408,9 @@ double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) c
     retval = 1.e20;
 
   return (reference_ -> isInteger ()) ? 
-    CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
+    CoinMax (retval, intInfeasibility (info -> solution_ [refInd],
+				       info -> lower_    [refInd],
+				       info -> upper_    [refInd])) :
     retval;
 }
 
