@@ -157,8 +157,7 @@ public:
   }
 
   /// integer infeasibility: min {value - floor(value), ceil(value) - value}
-  virtual double intInfeasibility (double value) const
-  {return CoinMin (value - floor (value + COUENNE_EPS), ceil (value - COUENNE_EPS) - value);}
+  virtual double intInfeasibility (double value, double lb, double ub) const;
 
   /// Defines safe interval percentage for using LP point as a branching point
   CouNumber lp_clamp () const

@@ -92,13 +92,32 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
 
   retval = ((retval <= CoinMin (COUENNE_EPS, feas_tolerance_)) ? 0. : retval);
 
+  int refInd = reference_ -> Index ();  
+
+  if (reference_ -> isInteger ()) {
+    CouNumber intinfeas = intInfeasibility (info -> solution_ [refInd],
+					    info -> lower_    [refInd],
+					    info -> upper_    [refInd]);
+    if (intinfeas > retval) 
+      retval = intinfeas;
+  }
+
   //printf ("infVar x%d ==> returning %g\n", reference_ -> Index (), (reference_ -> isInteger ()) ? 
   //CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
   //retval);
 
-  return (reference_ -> isInteger ()) ? 
-    CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
-    retval;
+  jnlst_ -> Printf (J_DETAILED, J_BRANCHING, 
+  		    "infVar x%d ==> returning %e\n", reference_ -> Index (), (reference_ -> isInteger ()) ? 
+  		    CoinMax (retval, intInfeasibility (info -> solution_ [refInd],
+						       info -> lower_    [refInd],
+						       info -> upper_    [refInd])) :
+  		    retval);
+
+  return retval;
+
+  // (reference_ -> isInteger ()) ? 
+  //   CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
+  //   retval;
 }
 
 

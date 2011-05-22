@@ -32,7 +32,9 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
       double point = info -> solution_ [reference_ -> Index ()];
       if (downEstimate_ <       point  - floor (point)) downEstimate_ =       point  - floor (point);
       if (upEstimate_   < ceil (point) -        point)  upEstimate_   = ceil (point) -        point;
-      return intInfeasibility (point);
+      return intInfeasibility (point,
+			       info -> lower_ [indexVar],
+			       info -> upper_ [indexVar]);
     } else return (upEstimate_ = downEstimate_ = 0.);
   }
 
@@ -260,6 +262,8 @@ double CouenneVTObject::infeasibility (const OsiBranchingInformation *info, int 
 	  (retval > ALMOST_ZERO && upEstimate_ > ALMOST_ZERO && downEstimate_ > ALMOST_ZERO));
 
   return (reference_ -> isInteger ()) ? 
-    CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
+    CoinMax (retval, intInfeasibility (info -> solution_ [indexVar],
+				       info -> lower_    [indexVar],
+				       info -> upper_    [indexVar])) :
     retval;
 }
