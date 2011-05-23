@@ -98,7 +98,8 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
     CouNumber intinfeas = intInfeasibility (info -> solution_ [refInd],
 					    info -> lower_    [refInd],
 					    info -> upper_    [refInd]);
-    if (intinfeas > retval) 
+    if ((intinfeas > retval) && 
+	(intinfeas > info -> integerTolerance_)) 
       retval = intinfeas;
   }
 
