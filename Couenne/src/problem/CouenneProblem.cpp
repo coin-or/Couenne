@@ -250,3 +250,7 @@ CouNumber *CouenneProblem::getCutOffSol () const
 ConstJnlstPtr CouenneProblem::Jnlst () const 
 {return ConstPtr (jnlst_);}
 
+// set lastPrioSort_
+void CouenneProblem::setLastPrioSort(int givenLastPS) {
+  lastPrioSort_ = givenLastPS;
+}

@@ -66,6 +66,8 @@ extern "C" {
   }
 }
 
+//#define FM_FRES
+
 int main (int argc, char *argv[]) {
 
   //CoinSighandler_t saveSignal = SIG_DFL;
@@ -276,8 +278,8 @@ Auxiliaries:     %8d (%d integer)\n\n",
 				       modelNvars, cp->getFeasTol());
       switch (retcomp) {
       case -1: printf("No solution found\n"); break;
-      case 0: printf("Best solution found by Cbc\n"); break;
-      case 1: printf("Best solution found by Couenne\n"); break;
+      case 0: printf("Best solution found by Cbc  Value: %10.4f  Tolerance: %10g\n", modCbcSolVal, modCbcSolMaxViol); break;
+      case 1: printf("Best solution found by Couenne  Value: %10.4f  Tolerance: %10g\n", modCouenneSolVal, modCouenneSolMaxViol); break;
       default: break; // never happens
       }
 
@@ -295,6 +297,32 @@ Auxiliaries:     %8d (%d integer)\n\n",
     fclose(fSol);
 #endif /* FM_TRACE_OPTSOL */
 
+#ifdef FM_FRES
+    if(cp != NULL) {
+      FILE *f_res = fopen("fres.xxx", "a");
+      char *pbName, shortName[256];  
+      
+      pbName = strdup(cp -> problemName ().c_str ());
+      char *f_name_pos = strrchr(pbName, '/');
+      if(f_name_pos != NULL) {
+	strcpy(shortName, &(f_name_pos[1]));
+      }
+      else {
+	strcpy(shortName, pbName);
+      }
+      
+      fprintf(f_res, "%20s %10.4f", shortName, cbcLb);
+      if(foundSol) {
+	fprintf(f_res, " %10.4f", printObj);
+      }
+      else {
+	fprintf(f_res, "         *");
+      }
+      fprintf(f_res, " %10d %10.4f\n", bb.numNodes (),
+	      CoinCpuTime () - time_start);
+      fclose(f_res);
+    }
+#endif
 
     // retrieve test value to check
     double global_opt;

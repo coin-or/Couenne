@@ -289,6 +289,9 @@ class CouenneProblem {
   /// number of unused originals
   int nUnusedOriginals_;
 
+  // to speedup sorting operations in strong branching
+  int lastPrioSort_;
+
   // to record best solution found
   struct Couenne::CouenneRecordBestSol *recBSol;
 
@@ -762,6 +765,10 @@ protected:
 		  bool patient) const;
 
 public:
+
+  inline int getLastPrioSort() const {return lastPrioSort_;};
+  void setLastPrioSort(int givenLastPS);
+
   inline CouenneRecordBestSol *getRecordBestSol() const {return recBSol;};
 
   double getFeasTol() {return feas_tolerance_;};

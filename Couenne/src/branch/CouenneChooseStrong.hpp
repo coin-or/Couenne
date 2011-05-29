@@ -43,6 +43,9 @@ public:
   /// Returns number of infeasibilities.
   virtual int setupList (OsiBranchingInformation *info, bool initialize);
 
+  // actually setting up the list
+  int gutsOfSetupList(OsiBranchingInformation *info, bool initialize);
+
   /**  This is a utility function which does strong branching on a
        list of objects and stores the results in OsiHotInfo.objects.
        On entry the object sequence is stored in the OsiHotInfo
@@ -114,6 +117,9 @@ protected:
 
   /// total time spent in strong branching
   double branchtime_;
+
+  // For debugging
+  int minDepthPrint_;
 };
 
 }

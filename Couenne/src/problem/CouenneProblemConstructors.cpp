@@ -104,7 +104,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
     initOptions (base -> options());
 
   recBSol = new struct Couenne::CouenneRecordBestSol();
-
+  lastPrioSort_ = 1000000;
 }
 
 
@@ -190,6 +190,7 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   }
 
   recBSol = new CouenneRecordBestSol(*(p.recBSol));
+  lastPrioSort_ = p.lastPrioSort_;
 }
 
 
