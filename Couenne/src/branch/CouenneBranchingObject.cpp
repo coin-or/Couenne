@@ -24,7 +24,7 @@
 using namespace Couenne;
 
 namespace Couenne {
-class CouenneCutGenerator;
+  class CouenneCutGenerator;
 }
 
 // translate changed bound sparse array into a dense one
@@ -163,8 +163,8 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
   if (integer && 
       ::isInteger (brpt)) {
 
-    // Careful here. We should look at all possible cases (l,u are
-    // bounds, b is the branching point. l,u,b all integer):
+    // Look at all possible cases (l,u are bounds, b is the branching
+    // point. l,u,b all integer):
     //
     // 1) l <  b <  u: first branch on b +/- 1 depending on branch
     // direction, right branch on b;
@@ -221,6 +221,8 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
   */
 
   t_chg_bounds *chg_bds = NULL;
+
+  // Apply core branching decision (usually new variable bound)
 
   branchCore (solver, index, way, integer, brpt, chg_bds);
 

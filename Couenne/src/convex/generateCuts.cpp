@@ -91,6 +91,10 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 					OsiCuts &cs, 
 					const CglTreeInfo info) const {
 
+  // check if out of time or if an infeasibility cut (iis of type 0)
+  // was added as a result of, e.g., pruning on BT. If so, no need to
+  // run this.
+
   if (isWiped (cs) || 
      (CoinCpuTime () > problem_ -> getMaxCpuTime ()))
     return;
@@ -103,7 +107,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     bestVal = rs->getVal(); 
   }
   if(currCutOff > bestVal) {
-    problem_->setCutOff(bestVal - 1e-6);
+    //problem_ -> setCutOff (bestVal - 1e-6); // FIXME: don't add numerical constants
+    problem_ -> setCutOff (bestVal);
     OsiColCut *objCut = new OsiColCut;
     int indObj = problem_->Obj(0)->Body()->Index();
     objCut->setUbs(1, &indObj, &bestVal);

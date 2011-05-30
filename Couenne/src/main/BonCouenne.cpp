@@ -10,11 +10,11 @@
 //
 // Date : 12/19/2006
 
-
 #if defined(_MSC_VER)
 // Turn off compiler warning about long names
 #  pragma warning(disable:4786)
 #endif
+
 #include <iomanip>
 #include <fstream>
 
@@ -48,7 +48,7 @@ using namespace Couenne;
 #include "CouenneJournalist.hpp"
 
 #ifdef COIN_HAS_NTY
-int nOrbBr = 0;
+int nOrbBr = 0; // FIXME: horrible global variable. Brrr.
 #endif
 
 #include "CoinSignal.hpp"
@@ -117,18 +117,34 @@ Instructions: http://www.coin-or.org/Couenne\n",
     if (!couenne.InitializeCouenne (argv, p, NULL, ci, &bb))
       throw infeasible;
 
-#ifdef FM_PRINT_INFO
+    //////////////////////////////
+    CouenneCutGenerator *cg = NULL;
+
+    // there is only one CouenneCutGenerator object; scan array until
+    // dynamic_cast returns non-NULL
+
+    if (couenne. cutGenerators () . size () > 0) {
+
+      for (std::list <Bonmin::BabSetupBase::CuttingMethod>::iterator 
+	           i  = couenne.cutGenerators () . begin ();
+	   !cg && (i != couenne.cutGenerators () . end ()); 
+	   ++i) 
+
+	cg = dynamic_cast <CouenneCutGenerator *> (i -> cgl);
+    }
+
     // This assumes that first cut generator is CouenneCutGenerator
-    CouenneCutGenerator *ccg = dynamic_cast<CouenneCutGenerator *> 
-      (couenne.cutGenerators().begin()->cgl);
-    if(ccg) {
-      ccg->setBabPtr(&bb);
-    }
+    // CouenneCutGenerator *cg = dynamic_cast<CouenneCutGenerator *> 
+    //   (couenne.cutGenerators().begin()->cgl);
+
+    if (cg)
+
+      cg -> setBabPtr (&bb);
+
     else {
-      printf("main(): ### ERROR: Can not get CouenneCutGenerator\n");
-      exit(1);
+      printf ("main(): ### ERROR: Can not get CouenneCutGenerator\n");
+      exit (1);
     }
-#endif
 
     // initial printout
 
@@ -176,21 +192,6 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
     std::cout.precision (10);
 
-    //////////////////////////////
-    CouenneCutGenerator *cg = NULL;
-
-    // there is only one cut generator, so scan array until
-    // dynamic_cast returns non-NULL
-
-    if (bb.model (). cutGenerators ()) {
-
-      int nGen = bb.model (). numberCutGenerators ();
-      
-      for (int i=0; !cg && i < nGen; i++)
-	cg = dynamic_cast <CouenneCutGenerator *> 
-	  (bb.model (). cutGenerators () [i] -> generator ());
-    }
-
     ////////////////////////////////
     int nr=-1, nt=-1;
     double st=-1;
@@ -200,13 +201,16 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
     CouenneProblem *cp = cg ? cg -> Problem () : NULL;
 
+#if defined (FM_TRACE_OPTSOL) || defined (FM_FRES)
     double cbcLb = bb.model ().getBestPossibleObjValue();
     double printObj = 0;
     bool foundSol = false;
+#endif
 
 #ifdef FM_TRACE_OPTSOL
 
-    FILE *fSol = fopen("bidon.sol", "w");
+    FILE *fSol = fopen ("bidon.sol", "w");
+
     if(fSol == NULL) {
       printf("### ERROR: can not open bidon.sol\n");
       exit(1);
@@ -368,8 +372,6 @@ Branch-and-bound nodes:                  %8d\n\n",
     } else // good old statistics
 
     if (couenne.displayStats ()) { // print statistics
-
-      // CAUTION: assuming first cut generator is our CouenneCutGenerator
 
       if (cg && !cp) printf ("Warning, could not get pointer to problem\n");
       else

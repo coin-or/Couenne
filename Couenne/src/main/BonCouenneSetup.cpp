@@ -465,7 +465,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cg.frequency = freq;
     cg.cgl = couenneCg;
     cg.id = "Couenne convexifier cuts";
-    cutGenerators().push_back(cg);
+    cutGenerators().push_back (cg);
 
     // set cut gen pointer
     //dynamic_cast <CouenneSolverInterface <OsiClpSolverInterface> *> 
@@ -884,8 +884,12 @@ void CouenneSetup::addMilpCutGenerators () {
   options_->GetNumericValue(std::string("allowable_fraction_gap"), 
 			    givenAllowFGap2, "bonmin.");
   double upval = 1e50;
-  printf("CutOff value:\n");
-  scanf("%lf", &upval);
+  //printf("CutOff value:\n");
+  //scanf("%lf", &upval);
+
+  options_->GetNumericValue(std::string("art_cutoff"), 
+			    upval, "bonmin.");
+
   double newCO = (1-givenAllowFGap2) * upval;
   couenneProb_->setCutOff(newCO);
   printf("CutOff set to %f\n", newCO);
