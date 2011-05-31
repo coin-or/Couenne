@@ -303,7 +303,16 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
 #ifdef FM_FRES
     if(cp != NULL) {
-      FILE *f_res = fopen("fres.xxx", "a");
+      FILE *f_res = NULL;
+      f_res = fopen("fres.xxx", "r");
+      if(f_res == NULL) {
+	f_res = fopen("fres.xxx", "w");
+	fprintf(f_res, "END_OF_HEADER\n");
+      }
+      else {
+	fclose(f_res);
+	f_res = fopen("fres.xxx", "a");
+      }
       char *pbName, shortName[256];  
       
       pbName = strdup(cp -> problemName ().c_str ());

@@ -1251,7 +1251,7 @@ const CouNumber estProdEps = 1e-6;
 	  sortUpTo = card_vPriority;
 	}
 	if(card_vPriority > 0) {
-	  numberOnList_ = card_vPriority;
+	  numberOnList_ = (card_vPriority < maximumStrong ? card_vPriority : maximumStrong);
 	  bool alwaysSort = false;
 	  if(alwaysSort) {
 	    sortFrom = 0;
@@ -1299,6 +1299,46 @@ const CouNumber estProdEps = 1e-6;
 	    CoinSort_2(useful_+from, useful_+upto, list_+from);
 	  }
 	}
+
+#ifdef FM_CHECK
+	// priority of last selected object
+	double ckPrio = (card_vPriority < numberUnsatisfied_ ?
+			 vPriority[card_vPriority] : 100000);
+	double ckUse = (card_vPriority < numberUnsatisfied_ ?
+		      useful_[card_vPriority] : 100000);
+	for(i=0; i<card_vPriority; i++) {
+	  int indObj = list_[i];
+	  if(object[indObj]->priority() > ckPrio + 1e-3) {
+	    printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->priority(): %d  > ckPrio: %d\n", 
+		   indObj, object[indObj]->priority(), ckPrio);
+	    exit(1);
+	  }
+	  if(fabs(object[indObj]->priority() - ckPrio) < 1e-3) {
+	    if(useful_[i] > ckUse + 1e-3) {
+	      printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->useful: %f  > ckUse: %d\n", 
+		   indObj, useful_[i], ckUse);
+	      exit(1);
+	    }
+	  }
+	}
+	for(i=card_vPriority; i<numberUnsatisfied_; i++) {
+	  int indObj = list_[i];
+	  if(object[indObj]->priority() < ckPrio - 1e-3) {
+	    printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->priority(): %d  < ckPrio: %d\n", 
+		   indObj, object[indObj]->priority(), ckPrio);
+	    exit(1);
+	  }
+	  if(fabs(object[indObj]->priority() - ckPrio) < 1e-3) {
+	    if(useful_[i] < ckUse - 1e-3) {
+	      printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->useful: %f  < ckUse: %d\n", 
+		   indObj, useful_[i], ckUse);
+	      exit(1);
+	    }
+	  }
+	}
+#endif
+	
+
       }
       else {
 	numberUnsatisfied_ = -1;
@@ -1415,7 +1455,12 @@ const CouNumber estProdEps = 1e-6;
         <<CoinMessageEol;
       }
     }
-    return numberUnsatisfied_;
+    // return -1 if infeasible to differentiate with numberOnList_==0
+    // when feasible
+    if(numberUnsatisfied_ == -1) {
+      return(-1);
+    }
+    return numberOnList_;
   }
 
 /****************************************************************************/
