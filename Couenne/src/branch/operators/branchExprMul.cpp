@@ -116,7 +116,7 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
 
   else { // both are bounded
 
-    //way = TWO_RAND;
+    // Check if, though bounded, they are a bit too large
 
     CouNumber delta = (yu-yl) - (xu-xl);
 
@@ -135,6 +135,13 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
 	(-lb/ub >= THRES_ZERO_SYMM) &&
 	(-ub/lb >= THRES_ZERO_SYMM))
       // interval is fairly symmetric around 0, branch on it
+      *brpts = 0.;
+
+#define LARGE_VALUE 1e8
+
+    else if ((lb < - LARGE_VALUE) && 
+	     (ub >   LARGE_VALUE) &&
+	     (fabs (pt) > LARGE_VALUE / 10))
       *brpts = 0.;
 
     else switch (obj -> Strategy ()) {

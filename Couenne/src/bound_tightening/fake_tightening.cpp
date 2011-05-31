@@ -32,25 +32,44 @@ CouNumber fictBounds (char direction,
 		      CouNumber  lb,   
 		      CouNumber  ub) {
 
-  if   (lb < -COUENNE_INFINITY / 10) {
-    if (ub >  COUENNE_INFINITY / 10) { // ]-inf,+inf[
+#define LARGE_BOUND 1e10
 
-      if (fabs (x) < COUENNE_EPS) return (direction ? AGGR_MUL : - AGGR_MUL);
-      else                        return (direction ? AGGR_MUL : - AGGR_MUL) * fabs (x);
+  if   (lb < -LARGE_BOUND) {
+    if (ub >  LARGE_BOUND) { // ]-inf,+inf[
+
+      return (!direction ? -sqrt (-lb) : sqrt (ub));
+
+      //if (fabs (x) < COUENNE_EPS) return (direction ? AGGR_MUL : - AGGR_MUL);
+      //else                        return (direction ? AGGR_MUL : - AGGR_MUL) * fabs (x);
 
     } else { // ]-inf,u]
 
-      if      (x < -COUENNE_EPS) return (direction ? CoinMin (0., (x+ub)/2) : AGGR_MUL * x);
-      else if (x >  COUENNE_EPS) return (direction ? (x + (ub-x)/AGGR_DIV) : 0);
-      else                       return (direction ? (ub/AGGR_DIV) : -AGGR_MUL);
+      if (!direction)
+	return -sqrt (-lb); // try to tighten interval from a very large value
+
+      if      (x < -COUENNE_EPS) return (CoinMin (0., (x+ub)/2));
+      else if (x >  COUENNE_EPS) return ((x + (ub-x)/AGGR_DIV));
+      else                       return ((ub/AGGR_DIV));
+
+      // if      (x < -COUENNE_EPS) return (direction ? CoinMin (0., (x+ub)/2) : AGGR_MUL * x);
+      // else if (x >  COUENNE_EPS) return (direction ? (x + (ub-x)/AGGR_DIV) : 0);
+      // else                       return (direction ? (ub/AGGR_DIV) : -AGGR_MUL);
     }
   }
   else {
-    if (ub >  COUENNE_INFINITY / 10) { // [l,+inf[
+    if (ub >  LARGE_BOUND) { // [l,+inf[
 
-      if      (x < -COUENNE_EPS) return (direction ? 0 : (x - (x-lb) / AGGR_DIV));
-      else if (x >  COUENNE_EPS) return (direction ? (AGGR_MUL * x) : CoinMax (0.,(x+lb)/2));
-      else                       return (direction ? AGGR_MUL : lb/AGGR_DIV);
+      if (direction)
+	return sqrt (ub);
+
+      if      (x < -COUENNE_EPS) return ((x - (x-lb) / AGGR_DIV));
+      else if (x >  COUENNE_EPS) return (CoinMax (0.,(x+lb)/2));
+      else                       return (lb/AGGR_DIV);
+
+      // if      (x < -COUENNE_EPS) return (direction ? 0 : (x - (x-lb) / AGGR_DIV));
+      // else if (x >  COUENNE_EPS) return (direction ? (AGGR_MUL * x) : CoinMax (0.,(x+lb)/2));
+      // else                       return (direction ? AGGR_MUL : lb/AGGR_DIV);
+
     } else // [l,u]
       return (direction ? (x + (ub-x) / AGGR_DIV) : x - (x-lb) / AGGR_DIV);
   }

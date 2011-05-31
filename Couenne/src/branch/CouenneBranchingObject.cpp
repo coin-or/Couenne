@@ -13,7 +13,6 @@
 
 #include "OsiRowCut.hpp"
 
-//#include "CouenneSolverInterface.hpp"
 #include "CouenneCutGenerator.hpp"
 
 #include "CouenneProblem.hpp"

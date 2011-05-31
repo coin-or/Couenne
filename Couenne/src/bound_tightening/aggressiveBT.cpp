@@ -29,7 +29,7 @@ namespace Bonmin {
   class TNLPSolver;
 }
 
-#define MAX_ABT_ITER           1  // max # aggressive BT iterations
+#define MAX_ABT_ITER           4  // max # aggressive BT iterations
 #define THRES_ABT_IMPROVED     0  // only continue ABT if at least these bounds have improved
 #define THRES_ABT_ORIG       100  // only do ABT on auxiliaries if they are less originals than this 
 
@@ -62,7 +62,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 				   const CglTreeInfo &info,
 				   Bonmin::BabInfo * babInfo) const {
 
-  Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "Aggressive FBBT\n");
+  Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "Probing\n");
 
   if (info.level <= 0 && !(info.inTree))  {
     jnlst_ -> Printf (J_ERROR, J_COUENNE, "Probing: ");
@@ -88,21 +88,26 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
   SmartPtr<const CouenneInfo::NlpSolution> closestSol;
   double dist = 1e50;
 
-  const std::list<SmartPtr<const CouenneInfo::NlpSolution> >& solList =
-    couInfo->NlpSolutions();
+  if (couInfo) {
 
-  for (std::list<SmartPtr<const CouenneInfo::NlpSolution> >::const_iterator 
-	 i = solList.begin();
-       i != solList.end(); i++) {
-    assert(nOrigVars_ == (*i)->nVars());
-    const double thisDist = distanceToBound(nOrigVars_, (*i)->solution(), olb, oub);
-    if (thisDist < dist) {
-      closestSol = *i;
-      dist = thisDist;
+    const std::list<SmartPtr<const CouenneInfo::NlpSolution> >& solList =
+      couInfo->NlpSolutions();
+
+    for (std::list<SmartPtr<const CouenneInfo::NlpSolution> >::const_iterator 
+	   i = solList.begin();
+	 i != solList.end(); i++) {
+      assert(nOrigVars_ == (*i)->nVars());
+      const double thisDist = distanceToBound(nOrigVars_, (*i)->solution(), olb, oub);
+      if (thisDist < dist) {
+	closestSol = *i;
+	dist = thisDist;
+      }
     }
   }
 
   jnlst_ -> Printf (J_VECTOR, J_BOUNDTIGHTENING, "best dist = %e\n", dist);
+
+  bool haveNLPsol = false;
 
   // If this solution is not sufficiently inside the bounds, we solve the NLP now
   if (dist > 0.1) { // TODO: Find tolerance
@@ -149,10 +154,14 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
       delete [] upper;
 
       if (nlp->isProvenOptimal()) {
-	closestSol = new CouenneInfo::NlpSolution 
-	  (nOrigVars_, nlp->getColSolution(), nlp->getObjValue());
-	couInfo->addSolution(closestSol);
-	dist = 0.;
+
+	if (couInfo) {
+	  closestSol = new CouenneInfo::NlpSolution 
+	    (nOrigVars_, nlp->getColSolution(), nlp->getObjValue());
+	  couInfo->addSolution(closestSol);
+	  dist = 0.;
+	  haveNLPsol = true;      
+	}
       }
       else {
 	jnlst_ -> Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "TODO: NLP solve in ABT failed\n");
@@ -163,17 +172,25 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
   int nTotImproved = 0;
 
-  if (!retval && (dist < 1e10)) {
+  // Probing can also run on an LP point.
 
+  //if (true || (retval && (dist < 1e10))) {
+
+  {
     retval = true;
 
     // X is now the NLP solution, but in a low-dimensional space. We
     // have to get the corresponding point in higher dimensional space
     // through getAuxs()
 
-    double *X = new double [ncols];
-    CoinCopyN (closestSol->solution(), nOrigVars_, X);
-    getAuxs (X);
+    double *X = NULL;
+
+    if (haveNLPsol) {
+
+      X = new double [ncols];
+      CoinCopyN (closestSol -> solution(), nOrigVars_, X);
+      getAuxs (X);
+    } else X = domain () -> x ();
 
     // create a new, fictitious, bound bookkeeping structure
     t_chg_bounds *f_chg = new t_chg_bounds [ncols];
@@ -299,13 +316,14 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	  printf ("   w%02d [%+20g %+20g]  | %+20g\n", i, Lb (i), Ub (i), X [i]);
     }
 
-    delete [] X;
+    if (haveNLPsol)
+      delete [] X;
     delete [] f_chg;
     
-  } else
+  } // else
 
-    if ((dist > 1e10) && !retval)
-      jnlst_ -> Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "TODO: Don't have point for ABT\n");
+    // if ((dist > 1e10) && !retval)
+    //   jnlst_ -> Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "TODO: Don't have point for ABT\n");
 
   delete [] olb;
   delete [] oub;

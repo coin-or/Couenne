@@ -491,11 +491,14 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
     sparse2dense (ncols, chg_bds, changed, nchanged);
 
-    double *nlpSol;
+    double *nlpSol = NULL;
 
     //--------------------------------------------
 
-    if (babInfo && ((nlpSol = const_cast <double *> (babInfo -> nlpSolution ())))) {
+    if (true) {
+
+      if (babInfo) 
+	nlpSol = const_cast <double *> (babInfo -> nlpSolution ());
 
       // Aggressive Bound Tightening ////////////////////////////////
 
@@ -535,10 +538,12 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	 problem_ -> domain () -> ub (), false);
 
       // fill originals with nlp values
-      CoinCopyN (nlpSol, problem_ -> nOrigVars (), problem_ -> domain () -> x ());
+      if (nlpSol) {
+	CoinCopyN (nlpSol, problem_ -> nOrigVars (), problem_ -> domain () -> x ());
       //problem_ -> initAuxs ();
 
       problem_ -> getAuxs (problem_ -> domain () -> x ());
+      }
 
       if (jnlst_ -> ProduceOutput (J_VECTOR, J_CONVEXIFYING)) {
 	jnlst_ -> Printf(J_VECTOR, J_CONVEXIFYING,"== genrowcuts on NLP =============\n");
@@ -559,7 +564,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       addviolated_ = save_av;     // restore previous value
 
       //    if (!firstcall_) // keep solution if called from extractLinearRelaxation()
-      babInfo -> setHasNlpSolution (false); // reset it after use //AW HERE
+      if (babInfo) 
+	babInfo -> setHasNlpSolution (false); // reset it after use //AW HERE
 
     } else {
 
