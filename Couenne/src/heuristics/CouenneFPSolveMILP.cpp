@@ -1,7 +1,7 @@
 /* $Id$
  *
  * Name:    CouenneFPSolveMILP.cpp
- * Authors: Pietro Belotti, Lehigh University
+ * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
  * Purpose: Solve the MILP within the Feasibility Pump 
  * 
@@ -20,11 +20,11 @@
 using namespace Couenne;
 
 /// find integer (possibly NLP-infeasible) point isol closest
-/// (according to the l-1 norm of the hessian) to the current
+/// (according to the l-1 norm of the Hessian) to the current
 /// NLP-feasible (but fractional) solution nsol
 CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
-  printf ("FP:solveMILP\n");
+  printf ("FP: solveMILP\n");
 
   // The problem is of the form
   //
@@ -68,9 +68,9 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
   CoinPackedMatrix P;
 
-  bool firstCall = false ; // true if this is the first call to
-  	                   // solveMILP; initialization will be
-  	                   // necessary
+  bool firstCall = false; // true if this is the first call to
+  	                  // solveMILP; initialization will be
+  	                  // necessary
 
   if (!milp_) {
 
@@ -79,11 +79,9 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
     milp_ = model_ -> solver () -> clone ();
 
     // copy bounding box and current solution to the problem (better
-    // linearization cuts)
-    problem_ -> domain () -> push (milp_ -> getNumCols (),
-				   milp_ -> getColSolution (),
-				   milp_ -> getColLower (),
-				   milp_ -> getColUpper ());
+    // linearization cuts). Note that this push is pop()'d at the end
+    // of the main routine
+    problem_ -> domain () -> push (milp_);
 
     // no data is available so far, retrieve it from the MILP solver
     // used as the linearization
@@ -147,7 +145,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
     milp_ -> deleteRows (nDeleted, deleted);
 
-    printf ("FP:deleting last lines\n");
+    printf ("FP: deleting last lines\n");
     milp_ -> writeLp ("fp-milp-del"); // !!
 
     delete [] deleted;
@@ -158,7 +156,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
   // Add 2q inequalities
 
-  for (int i=0, j=problem_ -> nVars (); i<problem_ -> nVars (); i++)
+  for (int i=0, j=problem_ -> nVars (), k = problem_ -> nVars (); k--; i++)
 
     if (!compDistInt_ || milp_ -> isInteger (i)) {
 

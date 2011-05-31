@@ -1,7 +1,7 @@
 /* $Id$
  *
  * Name:    CouenneFeasPump.cpp
- * Authors: Pietro Belotti, Lehigh University
+ * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
  * Purpose: Implement the Feasibility Pump heuristic class
  * Created: August 5, 2009
@@ -26,7 +26,7 @@ using namespace Couenne;
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
-  printf ("FP\n");
+  printf ("FP ====================================\n");
 
   if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
     return 0;
@@ -37,22 +37,23 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   //
   // repeat {
   //
-  //   1) compute MILP solution(s) xI that is H_1-closest to xN
+  //   1) compute MILP solution(s) {xI} H_1-closest to xN
   //   2) insert them in pool
-  //   3) consider the most promising one in the whole pool
+  //   3) consider the most promising one xI in the whole pool
   //
-  //   if it is MINLP-feasible (hack incumbent callback)
+  //   if xI is MINLP-feasible (hack incumbent callback)
   //     update cutoff with min obj among MINLP-feasible
   //     run BT
-  //   else
-  //     apply linearization cuts to MILP
+  //   [else // a little out of the FP scheme
+  //     apply linearization cuts to MILP]
   //
   //   select subset of variables (cont or integer), fix them
   //
   //   compute NLP solution xN that is H_2-closest to xI
   //
-  //   if MINLP-feasible
-  //     update cutoff
+  //   if MINLP feasible
+  //     update cutoff with min obj among MINLP-feasible
+  //     run BT
   //
   // } until exit condition satisfied
   //
@@ -80,9 +81,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   expression *origObj = problem_ -> Obj (0) -> Body ();
 
+  int objInd = problem_ -> Obj (0) -> Body () -> Index ();
+
   do {
 
-    printf ("FP:main loop\n");
+    printf ("FP: main loop\n");
 
     // INTEGER PART /////////////////////////////////////////////////////////
 
@@ -106,10 +109,15 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     if (isChecked) {
 
+      printf ("FP: solution found is MINLP-feasible! Comparing now %g with cutoff %g\n", 
+	      z, problem_ -> getCutOff ());
+
       // solution is MINLP feasible! 
-      // Save and get out of the loop
+      // Save 
 
       if (z < problem_ -> getCutOff ()) {
+
+	printf ("FP: (and it is better than the cutoff)\n");
 
 	retval = 1;
 	objVal = z;
@@ -137,11 +145,26 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	problem_ -> setCutOff (objVal);
 
+	t_chg_bounds *chg_bds = NULL;
+
+	if (objInd >= 0) {
+	
+	  chg_bds = new t_chg_bounds [problem_ -> nVars ()];
+	  chg_bds [objInd].setUpper (t_chg_bounds::CHANGED); 
+	}
+
 	// if bound tightening clears the whole feasible set, stop
-	if (!(problem_ -> btCore (NULL)))
+	bool is_still_feas = problem_ -> btCore (chg_bds);
+
+	if (chg_bds) 
+	  delete [] chg_bds;
+
+	if (!is_still_feas)
 	  break;
       }
     } else {
+
+      printf ("FP: MINLP-infeasible, try some cuts\n");
 
       // solution non MINLP feasible, it might get cut by
       // linearization cuts. If so, add a round of cuts and repeat.
@@ -152,6 +175,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       if (cs.sizeRowCuts ()) { 
 
+	printf ("FP: found cuts\n");
+    
 	// the (integer, NLP infeasible) solution could be separated
 
 	milp_ -> applyCuts (cs);
@@ -163,7 +188,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     // NONLINEAR PART ///////////////////////////////////////////////////////
 
-    // solve the NLP to find a NLP (possibly non-MIP) feasible solution
+    // fix some variables and solve the NLP to find a NLP (possibly
+    // non-MIP) feasible solution
+
     z = solveNLP (iSol, nSol); 
 
     // check if newly found NLP solution is also integer
@@ -181,7 +208,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     isChecked = problem_ -> checkNLP (nSol, z, true);
 #endif  /* not FM_CHECKNLP2 */
 
-     if (isChecked &&
+    if (isChecked &&
 	(z < problem_ -> getCutOff ())) {
 
       retval = 1;
@@ -208,9 +235,22 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 #endif /* not FM_CHECKNLP2 */
       
       problem_ -> setCutOff (objVal);
-      
+
+      t_chg_bounds *chg_bds = NULL;
+
+      if (objInd >= 0) {
+	
+	chg_bds = new t_chg_bounds [problem_ -> nVars ()];
+	chg_bds [objInd].setUpper (t_chg_bounds::CHANGED); 
+      }
+
       // if bound tightening clears the whole feasible set, stop
-      if (!(problem_ -> btCore (NULL)))
+      bool is_still_feas = problem_ -> btCore (chg_bds);
+
+      if (chg_bds) 
+	delete [] chg_bds;
+
+      if (!is_still_feas)
 	break;
      }	
 
@@ -244,10 +284,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     SmartPtr <IpoptApplication> app = IpoptApplicationFactory ();
 
     ApplicationReturnStatus status = app -> Initialize ();
-    if (status != Solve_Succeeded) printf ("Error in initialization\n");
+    if (status != Solve_Succeeded) printf ("FP: error in initialization\n");
 
     status = app -> OptimizeTNLP (nlp_);
-    if (status != Solve_Succeeded) printf ("Error solving problem\n");
+    if (status != Solve_Succeeded) printf ("FP: error solving problem\n");
 
     ////////////////////////////////////////////////////////////////
 
@@ -304,7 +344,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   delete [] nSol; // best is either iSol or nSol, so don't delete [] it
 
   // release bounding box
-  problem_ -> domain () -> pop ();
+  problem_ -> domain () -> pop (); // pushed in first call to solveMILP
 
   // milp is deleted at every call since it changes not only in terms
   // of variable bounds but also in terms of linearization cuts added

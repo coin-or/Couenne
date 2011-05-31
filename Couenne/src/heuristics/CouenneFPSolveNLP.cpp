@@ -26,7 +26,7 @@ using namespace Couenne;
 /// obtain continuous (if fractional) solution
 CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
 
-  printf ("FP:solveNLP\n");
+  printf ("FP: solveNLP\n");
 
   // Solve the continuous nonlinear programming problem
   //
@@ -84,7 +84,7 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   ApplicationReturnStatus status = app -> Initialize ();
 
   if (status != Solve_Succeeded)
-    printf ("Error in initialization\n");
+    printf ("FP: Error in initialization\n");
 
   printf ("FP: optimize\n");
 
@@ -95,7 +95,7 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   problem_ -> domain () -> pop ();
 
   if (status != Solve_Succeeded)
-    printf ("Error solving problem\n");
+    printf ("FP: Error solving problem\n");
 
   /////////////////////////////////////////////////////////
 

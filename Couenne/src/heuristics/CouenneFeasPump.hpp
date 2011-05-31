@@ -1,7 +1,7 @@
 /* $Id$
  *
  * Name:    CouenneFeasPump.hpp
- * Authors: Pietro Belotti, Lehigh University
+ * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
  * Purpose: Define the Feasibility Pump heuristic class
  * Created: August 5, 2009
@@ -163,7 +163,7 @@ namespace Couenne {
     // PARAMETERS
     //
 
-    /// Number of nlp's solved for each given level of the tree
+    /// Number of NLPs solved for each given level of the tree
     int numberSolvePerLevel_;
 
     /// weight of the Hessian in computing the objective functions of NLP
@@ -180,7 +180,6 @@ namespace Couenne {
 
     /// maximum iterations per call
     int maxIter_;
-
   };
 }
 
