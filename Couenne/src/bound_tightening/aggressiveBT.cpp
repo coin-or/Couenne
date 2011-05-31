@@ -52,10 +52,10 @@ static double distanceToBound (int n, const double* xOrig,
 }
 
 
-// Aggressive Bound Tightening: for each variable, fake new bounds
-// [l,b] or [b,u] and apply bound tightening. If the interval is
-// fathomed on bounds or on infeasibility, the complementary bound
-// interval is a valid tightening.
+// Probing: for each variable, fake new bounds [l,b] or [b,u], with
+// given b, and apply bound tightening. If the interval is fathomed on
+// bounds or on infeasibility, the complementary bound interval is a
+// valid tightening.
 
 bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 				   t_chg_bounds *chg_bds, 
@@ -202,13 +202,17 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
     do {
 
+      bool maxTimeReached = false;
+
       improved = 0;
 
       // scan all variables
       for (int i=0; i<ncols; i++) {
 
-	if (CoinCpuTime () > maxCpuTime_)
+	if (CoinCpuTime () > maxCpuTime_) {
+	  maxTimeReached = true; // avoids getrusage...
 	  break;
+	}
 
 	int index = evalOrder (i);
 
@@ -262,6 +266,10 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	  nTotImproved += improved;
 	}
       }
+
+      if (maxTimeReached)
+	break;
+
     } while (retval && (improved > THRES_ABT_IMPROVED) && (iter++ < MAX_ABT_ITER));
 
     // store new valid bounds, or restore old ones if none changed

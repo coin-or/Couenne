@@ -129,7 +129,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
     //    info -> lower_,
     //    info -> upper_);
 
-    Bonmin::HotInfo * results = results_ ();
+    //Bonmin::HotInfo * results = results_ ();
 
     int returnCode = 0, iDo = 0;
 
@@ -359,7 +359,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
     } // end loop /***********************************/
 
     if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
-      printf ("tightened bounds: ");
+      printf ("strong branching: tightened bounds. ");
       // create union of bounding box from both branching directions
       for (int j=0; j<numberColumns; j++) {
       
@@ -490,6 +490,8 @@ bool BranchingFBBT (CouenneProblem *problem,
 
   if (problem -> doFBBT ()) {
 
+    problem -> domain () -> push (solver);
+
     int 
       indVar = Object  -> columnNumber (),
       nvars  = problem -> nVars ();
@@ -498,24 +500,32 @@ bool BranchingFBBT (CouenneProblem *problem,
 
     if (indVar >= 0) {
 
+      // Tell Couenne one bound has changed
+
       t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
       chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
+      chg_bds [indVar].setLower (t_chg_bounds::CHANGED);
+
       problem -> installCutOff ();
 
       if ((feasible = problem -> btCore (chg_bds))) {
 
 	const double
-	  *lb = solver -> getColLower (),
-	  *ub = solver -> getColUpper ();
-	  
+	  *lb  = solver -> getColLower (),
+	  *ub  = solver -> getColUpper (),
+	  *nLB = problem -> Lb (),
+	  *nUB = problem -> Ub ();
+
 	for (int i=0; i<nvars; i++) {
-	  if (problem -> Lb (i) > lb [i]) solver -> setColLower (i, problem -> Lb (i));
-	  if (problem -> Ub (i) < ub [i]) solver -> setColUpper (i, problem -> Ub (i));
+	  if (nLB [i] > lb [i]) solver -> setColLower (i, nLB [i]);
+	  if (nUB [i] < ub [i]) solver -> setColUpper (i, nUB [i]);
 	}
       }
 
       delete [] chg_bds;
     }
+
+    problem -> domain () -> pop ();
   }
 
   return feasible;
