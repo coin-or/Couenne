@@ -18,6 +18,13 @@
 #include "CbcHeuristic.hpp"
 #include "IpOptionsList.hpp"
 
+#ifdef COIN_HAS_SCIP
+/* general SCIP includes */
+#include "scip/scip.h"
+#include "scip/cons_linear.h"
+#include "scip/scipdefplugins.h"
+#endif
+
 namespace Osi {
   class OsiSolverInterface;
 }
@@ -79,6 +86,11 @@ namespace Couenne {
     /// set number of nlp's solved for each given level of the tree
     void setNumberSolvePerLevel (int value)
     {numberSolvePerLevel_ = value;}
+
+
+#ifdef COIN_HAS_SCIP
+     void checkInfinity(SCIP *scip, SCIP_Real val, double infinity);
+#endif
 
     /// find integer (possibly NLP-infeasible) point isol closest
     /// (according to the l-1 norm of the hessian) to the current
@@ -180,6 +192,12 @@ namespace Couenne {
 
     /// maximum iterations per call
     int maxIter_;
+
+#ifdef COIN_HAS_SCIP
+    /// use SCIP instead of Cbc for solving MILPs
+    bool useSCIP_;
+#endif
+
   };
 }
 

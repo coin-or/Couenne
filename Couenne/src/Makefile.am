@@ -66,6 +66,10 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
 
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
 
+if COIN_HAS_SCIP
+AM_CPPFLAGS += "-I/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/src" # ????????????????
+endif
+
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc

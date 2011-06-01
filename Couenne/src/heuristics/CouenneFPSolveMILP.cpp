@@ -19,6 +19,13 @@
 
 using namespace Couenne;
 
+#ifdef COIN_HAS_SCIP
+void CouenneFeasPump::checkInfinity(SCIP *scip, SCIP_Real val, double infinity){
+   if( SCIPisInfinity(scip, val) && val < infinity)
+      printf("Warning: %g will be considered to be Infinity by SCIP\n", val);
+}
+#endif
+
 /// find integer (possibly NLP-infeasible) point isol closest
 /// (according to the l-1 norm of the Hessian) to the current
 /// NLP-feasible (but fractional) solution nsol
@@ -72,7 +79,121 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
   	                            // solveMILP; initialization will be
   	                            // necessary
 
-  if (!milp_) {
+#ifdef COIN_HAS_SCIP
+  if (useSCIP_) {
+     SCIP* scip;
+
+     SCIP_VAR** vars;
+     const SCIP_Real* lbs;
+     const SCIP_Real* ubs;
+     const SCIP_Real* objs;
+     const char* vartypes;
+     const CoinPackedMatrix * matrix;
+     const CoinBigIndex* rowstarts;
+     const int* rowlengths;
+     const SCIP_Real* coeffs;
+     const SCIP_Real* lhss;
+     const SCIP_Real* rhss;
+     const int* indices;
+
+     double infinity;
+     int nvars;
+     int nconss;
+     
+     // COUENNE_INFINITY , getInfinity()
+
+     // get problem data
+     nvars    = model_ -> solver() -> getNumCols ();
+     nconss   = model_ -> solver() -> getNumRows ();
+     infinity = model_ -> solver() -> getInfinity ();
+
+     // get variable data
+     lbs =      model_ -> solver() -> getColLower ();
+     ubs =      model_ -> solver() -> getColUpper ();
+     objs =     model_ -> solver() -> getObjCoefficients ();
+     vartypes = model_ -> solver() -> getColType ();
+
+     // get row data
+     lhss = model_ -> solver() -> getRowLower ();
+     rhss = model_ -> solver() -> getRowUpper ();
+
+     // get matrix data
+     matrix     = model_ -> solver() -> getMatrixByRow();
+     rowstarts  = matrix -> getVectorStarts();
+     rowlengths = matrix -> getVectorLengths();
+     coeffs     = matrix -> getElements();
+     indices    = matrix -> getIndices();
+     
+     // initialize SCIP
+     SCIP_CALL( SCIPcreate(&scip) );
+     assert(scip != NULL);
+     
+     // include default SCIP plugins
+     SCIP_CALL( SCIPincludeDefaultPlugins(scip) );
+
+     // one variable for objective !!!!!!!!!
+
+     // create variables 
+     for (int i=0; i<nvars; i++) {
+        char varname[SCIP_MAXSTRLEN];  
+
+        // check that all data is in valid ranges
+        assert( 0 <= vartypes[i] && vartypes[i] <= 2);
+        checkInfinity(scip, lbs[i], infinity);
+        checkInfinity(scip, ubs[i], infinity);
+
+        // all variables are named x_i
+        (void) SCIPsnprintf(varname, SCIP_MAXSTRLEN, "x_%d", i);
+        SCIP_CALL( SCIPcreateVar(scip, &vars[i], varname, lbs[i], ubs[i], objs[i], 
+              vartypes[i] == 0 ? SCIP_VARTYPE_CONTINUOUS : (vartypes[i] == 1 ? SCIP_VARTYPE_BINARY : SCIP_VARTYPE_INTEGER),
+              TRUE, FALSE, NULL, NULL, NULL, NULL, NULL) );
+
+        // add the variable to SCIP
+        SCIP_CALL( SCIPaddVar(scip, vars[i]) );
+        
+        // because the variable was added to the problem, it is captured by SCIP and we can safely release it right now
+        SCIP_CALL( SCIPreleaseVar(scip, &vars[i]) );
+     }
+
+     // create constraints
+     for (int i=0; i<nconss; i++) {
+        SCIP_CONS* cons;
+        
+        char consname[SCIP_MAXSTRLEN];  
+        (void) SCIPsnprintf(consname, SCIP_MAXSTRLEN, "row_%d", i);
+
+        // check that all data is in valid ranges
+        checkInfinity(scip, lhss[i], infinity);
+        checkInfinity(scip, rhss[i], infinity);
+        
+        SCIP_CALL( SCIPcreateConsLinear(scip, &cons, consname, 0, NULL, NULL, lhss[i], rhss[i], 
+              TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE) );
+        
+        // add variables to constraint
+        for(int j=rowstarts[i]; j<rowstarts[i]+rowlengths[i]; j++)        
+        {
+           checkInfinity(scip, coeffs[j], infinity);
+           SCIP_CALL( SCIPaddCoefLinear(scip, cons, vars[indices[j]], coeffs[j]) );
+        }
+
+        SCIP_CALL( SCIPaddCons(scip, cons) );
+        SCIP_CALL( SCIPreleaseCons(scip, &cons) );        
+     }
+     
+     // solve the MILP
+     SCIP_CALL( SCIPsolve(scip) );
+
+     // free memory
+     SCIP_CALL( SCIPfree(&scip) );
+   
+     BMScheckEmptyMemory();
+  } 
+   else
+#endif
+ {
+      if (!milp_) {
+
+    firstCall = true;
 
     milp_ = model_ -> solver () -> clone ();
 
@@ -199,4 +320,6 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
   delete [] deleted;
 
   return milp_ -> getObjValue ();
+   }
+
 }

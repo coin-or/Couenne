@@ -33,7 +33,7 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/../interfaces` \
 	-I`$(CYGPATH_W) $(srcdir)/../branch`\
 	-I`$(CYGPATH_W) $(srcdir)/../problem`
-	
+
 if COIN_HAS_CPX
 AM_CPPFLAGS += -I`$(CYGPATH_W) $(CPXINCDIR)`
 endif
