@@ -879,29 +879,29 @@ void CouenneSetup::addMilpCutGenerators () {
     }
   }
 
-#ifdef FM_UP_BND
   double givenAllowFGap2 = 0.0;
   options_->GetNumericValue(std::string("allowable_fraction_gap"), 
 			    givenAllowFGap2, "bonmin.");
   double upval = 1e50;
 
-  //options_->GetNumericValue(std::string("art_cutoff"), 
-  //			    upval, "bonmin.");
-
+#ifdef FM_UP_BND
   printf("CutOff value:\n");
   scanf("%lf", &upval);
-
-  double newCO = (1-givenAllowFGap2) * upval;
-  couenneProb_->setCutOff(newCO);
-  printf("CutOff set to %f\n", newCO);
-
-#ifdef FM_TRACE_OPTSOL
-  if(couenneProb_->getRecordBestSol()->getHasSol()) {
-    if(newCO < couenneProb_->getRecordBestSol()->getVal()) {
-      couenneProb_->getRecordBestSol()->setVal(newCO);
-    }
-  }
-#endif
+#else /* not FM_UP_BND */
+  options_->GetNumericValue(std::string("art_cutoff"), upval, "bonmin.");
 #endif /* FM_UP_BND */
 
+  if(upval < 1e50) {
+    double newCO = (1-givenAllowFGap2) * upval;
+    couenneProb_->setCutOff(newCO);
+    printf("CutOff set to %f\n", newCO);
+
+#ifdef FM_TRACE_OPTSOL
+    if(couenneProb_->getRecordBestSol()->getHasSol()) {
+      if(newCO < couenneProb_->getRecordBestSol()->getVal()) {
+	couenneProb_->getRecordBestSol()->setVal(newCO);
+      }
+    }
+#endif
+  }
 }

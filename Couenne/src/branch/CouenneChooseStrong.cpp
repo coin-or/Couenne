@@ -22,6 +22,7 @@
 //#define TRACE_STRONG2
 //#define FM_MOD
 //#define FM_SORT_STRONG
+//#define FM_ALWAYS_SORT
 //#define OLD_STYLE
 
 using namespace Couenne;
@@ -409,7 +410,7 @@ const CouNumber estProdEps = 1e-6;
 	double bestTrusted2 = -COIN_DBL_MAX;
 	
 	for(int ips=0; ips<cardIndForPseudo; ips++) {
-	  int iObject = list_[ips];
+	  int iObject = indForPseudo[ips];
 	  const OsiObject * obj = object[iObject];
 	  double
 	    upEstimate       = (upTotalChange[iObject]*obj->upEstimate())/upNumber[iObject],
@@ -1252,7 +1253,12 @@ const CouNumber estProdEps = 1e-6;
 	}
 	if(card_vPriority > 0) {
 	  numberOnList_ = (card_vPriority < maximumStrong ? card_vPriority : maximumStrong);
+
+#ifdef FM_ALWAYS_SORT
+	  bool alwaysSort = true;
+#else	  
 	  bool alwaysSort = false;
+#endif
 	  if(alwaysSort) {
 	    sortFrom = 0;
 	    sortUpTo = card_vPriority;
