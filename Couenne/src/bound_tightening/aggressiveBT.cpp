@@ -2,11 +2,11 @@
  *
  * Name:    aggressiveBT.cpp
  * Author:  Pietro Belotti
- * Purpose: aggressive bound tightening -- fake bounds in variables to
- *          exclude parts of the solution space through fathoming on
+ * Purpose: probing -- fake bounds in variables to exclude parts of
+ *          the solution space through fathoming on
  *          bounds/infeasibility
  *
- * (C) Carnegie-Mellon University, 2007-10.
+ * (C) Carnegie-Mellon University, 2007-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -260,6 +260,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
 	    // tighten on left
 	    if ((improved = fake_tighten (0, index, X, olb, oub, chg_bds, f_chg)) < 0) {
+
 	      retval = false;
 	      break;
 	    }
@@ -318,12 +319,11 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
     if (haveNLPsol)
       delete [] X;
-    delete [] f_chg;
-    
-  } // else
-
-    // if ((dist > 1e10) && !retval)
-    //   jnlst_ -> Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "TODO: Don't have point for ABT\n");
+    delete [] f_chg;    
+  }
+  // else
+  // if ((dist > 1e10) && !retval)
+  //   jnlst_ -> Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "TODO: Don't have point for ABT\n");
 
   delete [] olb;
   delete [] oub;
@@ -333,6 +333,6 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     else         jnlst_ -> Printf (J_ERROR, J_COUENNE, "done (%d improved bounds)\n", nTotImproved);
   }
 
-  return retval;// && btCore (psi, cs, chg_bds, babInfo, true); // !!!
+  return retval; // && btCore (psi, cs, chg_bds, babInfo, true); // !!!
   //return retval && btCore (psi, cs, chg_bds, babInfo, true);
 }

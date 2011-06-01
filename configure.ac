@@ -14,7 +14,7 @@ AC_PREREQ(2.59)
 AC_INIT([Couenne],[trunk],[couenne@list.coin-or.org])
 
 AC_COPYRIGHT([
-Copyright 2008 Pietro Belotti
+Copyright 2011 Pietro Belotti
 All Rights Reserved.
 This file is part of the open source package Coin-OR which is distributed
 under the Eclipse Public License.])

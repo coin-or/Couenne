@@ -153,9 +153,11 @@ Couenne/src/expression/exprVar.cpp -text
 Couenne/src/expression/expression.cpp -text
 Couenne/src/expression/operators/CouenneExprAbs.hpp -text
 Couenne/src/expression/operators/CouenneExprBinProd.hpp -text
+Couenne/src/expression/operators/CouenneExprCeil.hpp -text
 Couenne/src/expression/operators/CouenneExprCos.hpp -text
 Couenne/src/expression/operators/CouenneExprDiv.hpp -text
 Couenne/src/expression/operators/CouenneExprExp.hpp -text
+Couenne/src/expression/operators/CouenneExprFloor.hpp -text
 Couenne/src/expression/operators/CouenneExprGroup.hpp -text
 Couenne/src/expression/operators/CouenneExprIf.hpp -text
 Couenne/src/expression/operators/CouenneExprInv.hpp -text

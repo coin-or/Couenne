@@ -1,7 +1,7 @@
 /* $Id$
  *
  * Name:    CouenneFPSolveNLP.cpp
- * Authors: Pietro Belotti, Lehigh University
+ * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
  * Purpose: Implement the NLP solution method for the Feasibility Pump 
  * 
@@ -42,9 +42,10 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   // 4) sum {i in I}    (P^i (x - x^0))^2
   //
   // where is x^0 is the optimal solution of a MILP problem. P should
-  // be a PSD matrix, but the Hessian is, in general, indefinite. A
-  // cheap convexification consists of computing the minimum
-  // eigenvalue lambda_min of H and, if lambda_min < 0, replace H with
+  // be a PSD matrix, but the Hessian is, in general, indefinite at
+  // the IP point we are starting from. A cheap convexification
+  // consists of computing the minimum eigenvalue lambda_min of H and,
+  // if lambda_min < 0, replace H with
   //
   // H - lambda_min I
   //

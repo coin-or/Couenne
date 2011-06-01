@@ -78,6 +78,11 @@ AC_LANG_PUSH(C)
 AC_COIN_CHECK_USER_LIBRARY([Nauty],[NTY],[nauty.h],[nauty],,[CouenneLib])
 AC_LANG_POP(C)
 
+# SCIP (for use in Feasibility Pump)
+AC_LANG_PUSH(C)
+AC_COIN_CHECK_USER_LIBRARY([SCIP],[SCP],[scip.h],[SCIPcreate],,[CouenneLib])
+AC_LANG_POP(C)
+
 # CPLEX: check for OsiCplex, and check for cplex include dir, so we can include cplex.h
 AC_COIN_CHECK_PACKAGE(Cpx, [osi-cplex], [CouenneLib])
 AC_ARG_WITH([cplex-incdir],

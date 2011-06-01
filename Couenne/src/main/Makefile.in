@@ -44,6 +44,15 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @COIN_HAS_ASL_TRUE@bin_PROGRAMS = couenne$(EXEEXT)
+@COIN_HAS_SCP_TRUE@am__append_1 = \
+@COIN_HAS_SCP_TRUE@	$(SCPLIBDIR)/libscip-2.0.1.linux.x86_64.gnu.opt-shared.so \
+@COIN_HAS_SCP_TRUE@	$(SCPLIBDIR)/liblpispx-2.0.1.linux.x86_64.gnu.opt-shared.so \
+@COIN_HAS_SCP_TRUE@	$(SCPLIBDIR)/libnlpi-2.0.1.linux.x86_64.gnu.opt-shared.so \
+@COIN_HAS_SCP_TRUE@	$(SCPLIBDIR)/libobjscip-2.0.1.linux.x86_64.gnu.opt-shared.so
+
+@COIN_HAS_SPX_TRUE@am__append_2 = \
+@COIN_HAS_SPX_TRUE@	$(SPXLIBDIR)/libsoplex-1.5.0.linux.x86_64.gnu.opt-shared.so
+
 subdir = src/main
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -71,6 +80,11 @@ PROGRAMS = $(bin_PROGRAMS)
 am_couenne_OBJECTS = BonCouenne.$(OBJEXT)
 couenne_OBJECTS = $(am_couenne_OBJECTS)
 am__DEPENDENCIES_1 =
+@COIN_HAS_SCP_TRUE@am__DEPENDENCIES_2 = $(SCPLIBDIR)/libscip-2.0.1.linux.x86_64.gnu.opt-shared.so \
+@COIN_HAS_SCP_TRUE@	$(SCPLIBDIR)/liblpispx-2.0.1.linux.x86_64.gnu.opt-shared.so \
+@COIN_HAS_SCP_TRUE@	$(SCPLIBDIR)/libnlpi-2.0.1.linux.x86_64.gnu.opt-shared.so \
+@COIN_HAS_SCP_TRUE@	$(SCPLIBDIR)/libobjscip-2.0.1.linux.x86_64.gnu.opt-shared.so
+@COIN_HAS_SPX_TRUE@am__DEPENDENCIES_3 = $(SPXLIBDIR)/libsoplex-1.5.0.linux.x86_64.gnu.opt-shared.so
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -138,6 +152,8 @@ COIN_HAS_NTY_FALSE = @COIN_HAS_NTY_FALSE@
 COIN_HAS_NTY_TRUE = @COIN_HAS_NTY_TRUE@
 COIN_HAS_PKGCONFIG_FALSE = @COIN_HAS_PKGCONFIG_FALSE@
 COIN_HAS_PKGCONFIG_TRUE = @COIN_HAS_PKGCONFIG_TRUE@
+COIN_HAS_SCP_FALSE = @COIN_HAS_SCP_FALSE@
+COIN_HAS_SCP_TRUE = @COIN_HAS_SCP_TRUE@
 COIN_HAS_SPX_FALSE = @COIN_HAS_SPX_FALSE@
 COIN_HAS_SPX_TRUE = @COIN_HAS_SPX_TRUE@
 COIN_HAS_XPR_FALSE = @COIN_HAS_XPR_FALSE@
@@ -230,6 +246,8 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@
 RPATH_FLAGS = @RPATH_FLAGS@
+SCPINCDIR = @SCPINCDIR@
+SCPLIB = @SCPLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SPX_CFLAGS = @SPX_CFLAGS@
@@ -313,24 +331,15 @@ libBonCouenne_la_SOURCES = \
 	SmartAslDestr.cpp
 
 couenne_SOURCES = BonCouenne.cpp
-couenne_LDADD = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS)         $(ASL_LIBS) \
-	/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/lib/libscip-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/lib/liblpispx-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/lib/libnlpi-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/lib/libobjscip-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/soplex-1.5.0/lib/libsoplex-1.5.0.linux.x86_64.gnu.opt-shared.so # ?????????????????
-
+couenne_LDADD = libBonCouenne.la ../libCouenne.la \
+	../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS) $(ASL_LIBS) \
+	$(am__append_1) $(am__append_2)
 couenne_DEPENDENCIES = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
-
-#couenne2_SOURCES = Couenne.cpp CouenneOSInterface.cpp
-#couenne2_LDADD         = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS)         $(ASL_LIBS)
-#couenne2_DEPENDENCIES  = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
 
 # Finally, the -rpath flag is used by libtool to make sure that the shared
 # library is found (in the lib install directory) when we are using dynamic
 # libraries.
 couenne_LDFLAGS = -rpath $(libdir)
-#couenne2_LDFLAGS = -rpath $(libdir)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
@@ -662,7 +671,6 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am \
 	uninstall-am uninstall-binPROGRAMS uninstall-info-am \
 	uninstall-libLTLIBRARIES
 
-@COIN_HAS_ASL_TRUE@  #couenne2
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

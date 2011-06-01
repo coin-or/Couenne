@@ -33,8 +33,8 @@ libCouenneProblem_la_SOURCES = \
 
 # Note: the files below are #included in CouenneSolverInterface.hpp
 # (it's the only way to make templates work -- see also discussions on
-# the "export" keyword that, as of 2009, hasn't been implemented on
-# most compilers)
+# C++'s "export" keyword that, as of 2009, hasn't been implemented on
+# most compilers).
 #
 # 	CouenneSolverInterface.cpp \
 # 	CouenneLPtightenBounds.cpp \

@@ -1,21 +1,21 @@
 /* $Id$
  *
- * Name:    CouenneFPfindSolution.cpp
- * Authors: Pietro Belotti, Lehigh University
+ * Name:    CouenneFPFindSolution.cpp
+ * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
  * Purpose: Find solution by looping through MILP solvers/heuristics
  * 
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include "CbcModel.hpp"
-#include "CoinTime.hpp"
-#include "CoinHelperFunctions.hpp"
+//#include "CbcModel.hpp"
+//#include "CoinTime.hpp"
+//#include "CoinHelperFunctions.hpp"
 
 #include "CouenneFeasPump.hpp"
-#include "CouenneMINLPInterface.hpp"
-#include "CouenneProblem.hpp"
-#include "CouenneProblemElem.hpp"
+//#include "CouenneMINLPInterface.hpp"
+//#include "CouenneProblem.hpp"
+//#include "CouenneProblemElem.hpp"
 
 using namespace Couenne;
 

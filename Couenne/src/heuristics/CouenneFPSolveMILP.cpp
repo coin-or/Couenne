@@ -19,7 +19,7 @@
 
 using namespace Couenne;
 
-#ifdef COIN_HAS_SCIP
+#ifdef COIN_HAS_SCP
 void CouenneFeasPump::checkInfinity(SCIP *scip, SCIP_Real val, double infinity){
    if( SCIPisInfinity(scip, val) && val < infinity)
       printf("Warning: %g will be considered to be Infinity by SCIP\n", val);
@@ -79,7 +79,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
   	                            // solveMILP; initialization will be
   	                            // necessary
 
-#ifdef COIN_HAS_SCIP
+#ifdef COIN_HAS_SCP
   if (useSCIP_) {
      SCIP* scip;
 

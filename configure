@@ -10,7 +10,7 @@
 # gives unlimited permission to copy, distribute and modify it.
 #
 #
-# Copyright 2008 Pietro Belotti
+# Copyright 2011 Pietro Belotti
 # All Rights Reserved.
 # This file is part of the open source package Coin-OR which is distributed
 # under the Eclipse Public License.
@@ -1326,7 +1326,7 @@ This configure script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it.
 
 
-Copyright 2008 Pietro Belotti
+Copyright 2011 Pietro Belotti
 All Rights Reserved.
 This file is part of the open source package Coin-OR which is distributed
 under the Eclipse Public License.

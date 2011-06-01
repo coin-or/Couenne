@@ -1,7 +1,7 @@
 /* $Id$
  *
  * Name:    CouenneFeasPump.cpp
- * Authors: Pietro Belotti, Lehigh University
+ * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
  * Purpose: Implement the Feasibility Pump heuristic class
  *
@@ -155,7 +155,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 void CouenneFeasPump::fixIntVariables (double *sol) {
 
   problem_ -> domain () -> push (problem_ -> nVars (),
-				 problem_ -> domain () -> x (),
+				 problem_ -> domain () -> x  (),
 				 problem_ -> domain () -> lb (),
 				 problem_ -> domain () -> ub ());
 

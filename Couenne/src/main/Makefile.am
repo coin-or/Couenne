@@ -18,33 +18,30 @@ libBonCouenne_la_SOURCES = \
 
 if COIN_HAS_ASL
   bin_PROGRAMS = couenne 
-  #couenne2
 endif
 
 couenne_SOURCES = BonCouenne.cpp
-couenne_LDADD         = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS)         $(ASL_LIBS) 
+couenne_LDADD   = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS) $(ASL_LIBS) 
 
-if COIN_HAS_SCIP
-couenne_LDADD +=
-	/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/lib/libscip-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/lib/liblpispx-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/lib/libnlpi-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/lib/libobjscip-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/soplex-1.5.0/lib/libsoplex-1.5.0.linux.x86_64.gnu.opt-shared.so
+if COIN_HAS_SCP
+couenne_LDADD += \
+	$(SCPLIBDIR)/libscip-2.0.1.linux.x86_64.gnu.opt-shared.so \
+	$(SCPLIBDIR)/liblpispx-2.0.1.linux.x86_64.gnu.opt-shared.so \
+	$(SCPLIBDIR)/libnlpi-2.0.1.linux.x86_64.gnu.opt-shared.so \
+	$(SCPLIBDIR)/libobjscip-2.0.1.linux.x86_64.gnu.opt-shared.so
 endif
 
+if COIN_HAS_SPX
+couenne_LDADD += \
+	$(SPXLIBDIR)/libsoplex-1.5.0.linux.x86_64.gnu.opt-shared.so
+endif
 
 couenne_DEPENDENCIES  = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
-
-#couenne2_SOURCES = Couenne.cpp CouenneOSInterface.cpp
-#couenne2_LDADD         = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS)         $(ASL_LIBS)
-#couenne2_DEPENDENCIES  = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
 
 # Finally, the -rpath flag is used by libtool to make sure that the shared
 # library is found (in the lib install directory) when we are using dynamic
 # libraries.
 couenne_LDFLAGS = -rpath $(libdir)
-#couenne2_LDFLAGS = -rpath $(libdir)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows

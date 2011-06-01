@@ -18,7 +18,7 @@
 #include "CbcHeuristic.hpp"
 #include "IpOptionsList.hpp"
 
-#ifdef COIN_HAS_SCIP
+#ifdef COIN_HAS_SCP
 /* general SCIP includes */
 #include "scip/scip.h"
 #include "scip/cons_linear.h"
@@ -88,7 +88,7 @@ namespace Couenne {
     {numberSolvePerLevel_ = value;}
 
 
-#ifdef COIN_HAS_SCIP
+#ifdef COIN_HAS_SCP
      void checkInfinity(SCIP *scip, SCIP_Real val, double infinity);
 #endif
 
@@ -193,7 +193,7 @@ namespace Couenne {
     /// maximum iterations per call
     int maxIter_;
 
-#ifdef COIN_HAS_SCIP
+#ifdef COIN_HAS_SCP
     /// use SCIP instead of Cbc for solving MILPs
     bool useSCIP_;
 #endif
