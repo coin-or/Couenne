@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: check NLP feasibility of incumbent integer solution
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -54,7 +54,7 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 		      "checkNLP: integrality %d violated: %.6f [%g,%g]\n", 
 		      i, val, domain_.lb (i), domain_.ub (i));
 
-      Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM, "Done: (0)\n");
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "Done: (0)\n");
 
       return false;
     }
@@ -274,7 +274,7 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
   delete [] sol;
   domain_.pop ();
 
-  Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM, "Done: %d\n", retval);
+  Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "Done: %d\n", retval);
 
   return retval;
 }

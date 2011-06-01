@@ -52,21 +52,11 @@ void CouenneCutGenerator::genRowCuts (const OsiSolverInterface &si,
       if ((var -> Multiplicity () > 0) && 
 	  (var -> Type () == AUX)) {
 
-	var -> generateCuts (/*si,*/ cs, this, chg);
+	var -> generateCuts (cs, this, chg);
       }
     }
   else { // chg_bds contains the indices of the variables whose bounds
 	 // have changed (a -1 follows the last element)
-
-    /*
-    printf ("# # # # pass = %d, have_NLP = %d. nchanged = %d: {", info.pass, have_NLP, nchanged);
-
-    if (changed)
-      for (int i=0; (i<nchanged) && (changed [i] >= 0); i++)
-	printf ("%d ", changed [i]);
-
-    printf ("}\n");
-    */
 
     for (int i = 0, j = problem_ -> nVars (); j--; i++) {
 
@@ -100,7 +90,7 @@ void CouenneCutGenerator::genRowCuts (const OsiSolverInterface &si,
 	if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
 	  break;
 
-	var -> generateCuts (/*si,*/ cs, this, chg);
+	var -> generateCuts (cs, this, chg);
       }
     }
   }

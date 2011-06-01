@@ -20,7 +20,7 @@
 using namespace Couenne;
 
 /*************************************************************/
-  /** Default constructor. */
+/** Default constructor. */
 CouenneRecordBestSol::CouenneRecordBestSol() {
 
   cardInitDom = -1;
@@ -76,7 +76,7 @@ CouenneRecordBestSol::CouenneRecordBestSol(const CouenneRecordBestSol &other) {
     sol = NULL;
   }
 
-  if(modSol != NULL) {
+  if (other.modSol != NULL) {
     modSol = new double[other.cardSol];
   }
   else {

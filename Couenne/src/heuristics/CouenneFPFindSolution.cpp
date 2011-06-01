@@ -23,16 +23,16 @@ using namespace Couenne;
 void CouenneFeasPump::findSolution () {
 
   /// as found on the notes, these methods can be used, from the most
-  /// expensive, exact method to a cheap, inexact one:
+  /// expensive and accurate (exact) method to a cheap, inexact one:
   ///
   /// 1. Solve a MILP relaxation with Manhattan distance as objective
-  /// 2. Apply RENS on 1
+  /// 2. Apply RENS to 1
   /// 3. Use Objective FP 2.0 for MILPs
   /// 4. round-and-propagate
   /// 5. choose from pool, see 4
-  /// 6. random pertubation
+  /// 6. random perturbation
 
-  // what order should we use? I suggest we use priorities, assigned
+  // What order should we use? I suggest we use priorities, assigned
   // at the beginning but changeable in the event of multiple failures
   // (or successes) of a given method.
   //
@@ -48,9 +48,6 @@ void CouenneFeasPump::findSolution () {
   //    necessarily new best feasible), --p[i]
   //
   // 4) if H consecutive failutes, ++p[i]
-
-  /// save milp for debugging purposes
-  milp_ -> writeLp ("fp-milp"); // !!
 
   /// solve MILP 
   milp_ -> branchAndBound ();

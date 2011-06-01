@@ -23,6 +23,10 @@
 
 using namespace Couenne;
 
+/// When the current IP (non-NLP) point is not MINLP feasible, linear
+/// cuts are added and the IP is re-solved not more than this times
+const int numConsCutPasses = 5;
+
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
@@ -81,17 +85,22 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   expression *origObj = problem_ -> Obj (0) -> Body ();
 
-  int objInd = problem_ -> Obj (0) -> Body () -> Index ();
+  int 
+    objInd = problem_ -> Obj (0) -> Body () -> Index (),
+    nSep;
 
   do {
 
-    printf ("FP: main loop\n");
+    printf ("FP: main loop ------------ \n");
+
+    CouNumber curcutoff = problem_ -> getCutOff ();
 
     // INTEGER PART /////////////////////////////////////////////////////////
 
     // Solve IP using nSol as the initial point to minimize weighted
     // l-1 distance from. If nSol==NULL, the MILP is created using the
     // original milp's LP solution.
+
     double z = solveMILP (nSol, iSol);
 
     bool isChecked = false;
@@ -109,15 +118,12 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     if (isChecked) {
 
-      printf ("FP: solution found is MINLP-feasible! Comparing now %g with cutoff %g\n", 
-	      z, problem_ -> getCutOff ());
+      printf ("FP: MINLP-feasible solution (%g vs. %g)\n", 
+	      z, curcutoff);
 
-      // solution is MINLP feasible! 
-      // Save 
+      // solution is MINLP feasible! Save it.
 
       if (z < problem_ -> getCutOff ()) {
-
-	printf ("FP: (and it is better than the cutoff)\n");
 
 	retval = 1;
 	objVal = z;
@@ -164,27 +170,29 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       }
     } else {
 
-      printf ("FP: MINLP-infeasible, try some cuts\n");
-
       // solution non MINLP feasible, it might get cut by
       // linearization cuts. If so, add a round of cuts and repeat.
 
       OsiCuts cs;
+
+      problem_ -> domain () -> push (milp_);
       // remaining three arguments at NULL by default
       couenneCG_ -> genRowCuts (*milp_, cs, 0, NULL); 
+      problem_ -> domain () -> pop ();
 
       if (cs.sizeRowCuts ()) { 
 
-	printf ("FP: found cuts\n");
-    
 	// the (integer, NLP infeasible) solution could be separated
 
 	milp_ -> applyCuts (cs);
 
-	if (milpCuttingPlane_)
-	  continue; // found linearization cut, now re-solve MILP (not quite a FP)
+	// found linearization cut, now re-solve MILP (not quite a FP)
+	if (milpCuttingPlane_ && (nSep++ < numConsCutPasses))
+	  continue;
       }
     }
+
+    nSep = 0;
 
     // NONLINEAR PART ///////////////////////////////////////////////////////
 
@@ -341,14 +349,16 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     CoinCopyN (best, problem_ -> nVars (), newSolution);
 
   delete [] iSol;
-  delete [] nSol; // best is either iSol or nSol, so don't delete [] it
+  delete [] nSol;
 
   // release bounding box
   problem_ -> domain () -> pop (); // pushed in first call to solveMILP
 
-  // milp is deleted at every call since it changes not only in terms
-  // of variable bounds but also in terms of linearization cuts added
+  // deleted at every call from Cbc, since it changes not only in
+  // terms of variable bounds but also in of linearization cuts added
+
   delete milp_;
+  milp_ = NULL;
 
   return retval;
 }

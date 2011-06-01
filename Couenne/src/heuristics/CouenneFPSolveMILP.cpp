@@ -64,17 +64,15 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
   // 
   // P = beta I + (1-beta) (H + alpha g g')
   //
-  // so that we can balance the hessian and the distance.
+  // so that we can balance the Hessian and the distance.
 
   CoinPackedMatrix P;
 
-  bool firstCall = false; // true if this is the first call to
-  	                  // solveMILP; initialization will be
-  	                  // necessary
+  bool firstCall = (milp_ != NULL); // true if this is the first call to
+  	                            // solveMILP; initialization will be
+  	                            // necessary
 
   if (!milp_) {
-
-    firstCall = true;
 
     milp_ = model_ -> solver () -> clone ();
 
@@ -129,32 +127,26 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
     // in the objective)
 
     milp_ -> setObjCoeff (problem_ -> Obj (0) -> Body () -> Index (), 0.);
-
-  } else {
-
-    // delete last rows and add them from scratch (common block below)
-
-    int 
-       nDeleted = compDistInt_ ? milp_ -> getNumIntegers () : 
-                                 problem_ -> nVars (),
-      *deleted  = new int [2*nDeleted],
-       nCurRow  = milp_ -> getNumRows ();
-
-    for (int i=2*nDeleted; i--;)
-      deleted [i] = --nCurRow;
-
-    milp_ -> deleteRows (nDeleted, deleted);
-
-    printf ("FP: deleting last lines\n");
-    milp_ -> writeLp ("fp-milp-del"); // !!
-
-    delete [] deleted;
   }
 
-  printf ("FP: add MILP ineq\n");
-  milp_ -> writeLp ("fp-milp0");
-
   // Add 2q inequalities
+
+  int nInitRows = milp_ -> getNumRows ();
+
+  CouNumber * nlpSolExp;
+
+  if (nSol0) {
+
+    nlpSolExp = new CouNumber [problem_ -> nVars ()];
+
+    CoinCopyN (nSol0, problem_ -> nOrigVars (), nlpSolExp);
+    problem_ -> getAuxs (nlpSolExp);
+
+  } else 
+    nlpSolExp = CoinCopyOfArray (milp_ -> getColSolution (), 
+				 problem_ -> nVars ());
+
+  CoinPackedVector x0 (problem_ -> nVars (), nlpSolExp);
 
   for (int i=0, j=problem_ -> nVars (), k = problem_ -> nVars (); k--; i++)
 
@@ -169,8 +161,6 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
       }
 
-      CoinPackedVector x0 (problem_ -> nVars (), milp_ -> getColSolution ());
-
       // right-hand side equals <P^i,x^0>
       double PiX0 = sparseDotProduct (vec, x0); 
 
@@ -180,18 +170,33 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
       ++j; // index of variable within problem (plus nVars_)
     }
 
+  int nFinalRows = milp_ -> getNumRows ();
+
   // The MILP is complete. We have several ways of solving it, or
   // better, to find feasible solutions to it. We have to interface
   // with each of them once at the very beginning, and later we loop
-  // through them in order to find a feasible solution
+  // through them in order to find a feasible solution.
 
   if (firstCall)
     init_MILP ();
 
   findSolution ();
-
   iSol = CoinCopyOfArray (milp_ -> getColSolution (), 
 			  problem_ -> nVars ());
+
+  // delete last rows and add them from scratch (common block below)
+
+  int 
+     nDeleted = nFinalRows - nInitRows,
+    *deleted  = new int [nDeleted],
+     nCurRow  = nInitRows;
+
+  for (int i = nDeleted; i--;)
+    deleted [i] = nCurRow++;
+
+  milp_ -> deleteRows (nDeleted, deleted);
+
+  delete [] deleted;
 
   return milp_ -> getObjValue ();
 }

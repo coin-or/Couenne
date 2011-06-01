@@ -190,8 +190,7 @@ expression *exprAux::simplify () {
 
 // generate cuts for expression associated with this auxiliary
 
-void exprAux::generateCuts (//const OsiSolverInterface &si, 
-			    OsiCuts &cs, const CouenneCutGenerator *cg, 
+void exprAux::generateCuts (OsiCuts &cs, const CouenneCutGenerator *cg, 
 			    t_chg_bounds *chg, int,
 			    CouNumber, CouNumber) {
   //#ifdef DEBUG
@@ -255,20 +254,23 @@ void exprAux::generateCuts (//const OsiSolverInterface &si,
 		sign () == expression::AUX_LEQ ? '<' : '>');
 	image_ -> print (std::cout); 
 
-	printf (" [%.7e,%.7e] <--- ", 
+	printf (" %g [%g,%g]. ", 
+		domain_ -> x  (varIndex_), 
 		domain_ -> lb (varIndex_), 
 		domain_ -> ub (varIndex_));
 
 	int index;
 	if ((image_ -> Argument ()) && 
 	    ((index = image_ -> Argument () -> Index ()) >= 0))
-	  printf ("[%.7e,%.7e] ",
+	  printf ("%g [%g,%g] ",
+		  domain_ -> x  (index),
 		  domain_ -> lb (index),
 		  domain_ -> ub (index));
 	else if (image_ -> ArgList ())
 	  for (int i=0; i<image_ -> nArgs (); i++)
 	    if ((index = image_ -> ArgList () [i] -> Index ()) >= 0)
-	      printf ("[%.7e,%.7e] ", 
+	      printf ("%g [%g,%g] ", 
+		      domain_ -> x  (index),
 		      domain_ -> lb (index), 
 		      domain_ -> ub (index));
 	printf ("\n");

@@ -48,8 +48,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 				  CouenneCutGenerator *cg,
 				  Ipopt::SmartPtr<Ipopt::OptionsList> options):
 
-  CbcHeuristic         (), //(model),
-  problem_             (couenne -> clone ()),
+  CbcHeuristic         (),
+  problem_             (couenne),
   couenneCG_           (cg),
   nlp_                 (NULL),
   milp_                (NULL),
@@ -78,7 +78,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
 
   CbcHeuristic         (other),
-  problem_             (other. problem_ -> clone ()),
+  problem_             (other. problem_),
   couenneCG_           (other. couenneCG_),
   nlp_                 (other. nlp_),
   milp_                (other. milp_),
@@ -103,7 +103,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
 
     CbcHeuristic::operator= (rhs);
 
-    problem_             = rhs. problem_ -> clone ();
+    problem_             = rhs. problem_;
     couenneCG_           = rhs. couenneCG_;
     nlp_                 = rhs. nlp_;
     milp_                = rhs. milp_;
@@ -121,11 +121,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
 
 
 // Destructor /////////////////////////////////////////////////// 
-CouenneFeasPump::~CouenneFeasPump () {
-
-  if (problem_)
-    delete problem_;
-}
+CouenneFeasPump::~CouenneFeasPump () {}
 
 
 /// Set new expression as the NLP objective function using
