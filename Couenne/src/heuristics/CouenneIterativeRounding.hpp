@@ -27,20 +27,21 @@
 #include "CouenneProblem.hpp"
 
 namespace Couenne{
+
   /** An iterative rounding heuristic, tailored for nonconvex
       MINLPs. It solves a sequence of MILPs and NLPs for a given
       number of iterations, or until a better solution is found.
   */
-  using namespace Bonmin;
+
   using Couenne::CouenneProblem;
 
   class CouenneIterativeRounding : public CbcHeuristic{
 
-public:
+  public:
     /** Default constructor.*/
     CouenneIterativeRounding();
     /** Constructor with model and Couenne problems.*/
-    CouenneIterativeRounding(OsiTMINLPInterface* nlp, 
+    CouenneIterativeRounding(Bonmin::OsiTMINLPInterface* nlp, 
 			     OsiSolverInterface* cinlp,
 			     CouenneProblem* couenne,
 			     Ipopt::SmartPtr<Ipopt::OptionsList> options);
@@ -57,7 +58,7 @@ public:
     CouenneIterativeRounding & operator=(const CouenneIterativeRounding &rhs);
     
     /** Set the minlp solver.*/
-    void setNlp(OsiTMINLPInterface* nlp, OsiSolverInterface* cinlp);
+    void setNlp (Bonmin::OsiTMINLPInterface* nlp, OsiSolverInterface* cinlp);
 
     /** Set the couenne problem to use.*/
     void setCouenneProblem(CouenneProblem* couenne){
@@ -129,7 +130,7 @@ public:
 
 private:
     /** Pointer to a dynamic nlp solver interface.*/
-    OsiTMINLPInterface * nlp_;
+    Bonmin::OsiTMINLPInterface * nlp_;
     /** Pointer to the original NLP solver interface*/
     OsiSolverInterface * cinlp_;
     /** Pointer to a milp solver interface.*/

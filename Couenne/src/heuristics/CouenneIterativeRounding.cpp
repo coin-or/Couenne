@@ -36,7 +36,7 @@ namespace Couenne{
     setHeuristicName("CouenneIterativeRounding");
   }
  
-  CouenneIterativeRounding::CouenneIterativeRounding(OsiTMINLPInterface* nlp, 
+  CouenneIterativeRounding::CouenneIterativeRounding(Bonmin::OsiTMINLPInterface* nlp, 
 						     OsiSolverInterface* cinlp,
 						     CouenneProblem* couenne,
 						     Ipopt::SmartPtr<Ipopt::OptionsList> options):
@@ -92,7 +92,7 @@ namespace Couenne{
     couenne_(other.couenne_)
   {
     if(nlp_ != NULL){
-      nlp_ = dynamic_cast<OsiTMINLPInterface*>(other.nlp_->clone());
+      nlp_ = dynamic_cast<Bonmin::OsiTMINLPInterface*>(other.nlp_->clone());
     }
     if(milp_ != NULL)
 #ifdef COIN_HAS_CPX
@@ -139,7 +139,7 @@ namespace Couenne{
         delete nlp_;
       
       if(rhs.nlp_ != NULL){
-	nlp_ = dynamic_cast<OsiTMINLPInterface*>(rhs.nlp_->clone());
+	nlp_ = dynamic_cast<Bonmin::OsiTMINLPInterface*>(rhs.nlp_->clone());
       }
       cinlp_ = rhs.cinlp_;
       maxRoundingIter_ = rhs.maxRoundingIter_;
@@ -196,14 +196,14 @@ namespace Couenne{
   }
   
   void
-  CouenneIterativeRounding::setNlp(OsiTMINLPInterface* nlp, 
+  CouenneIterativeRounding::setNlp(Bonmin::OsiTMINLPInterface* nlp, 
 				   OsiSolverInterface * cinlp){
     // Create a dynamic NLP (i.e. one that can be used to add/remove
     // linear inequalities) from the initial one
     if(nlp_ != NULL)
       delete nlp_;
-    nlp_ = new OsiTMINLPInterface;
-    Ipopt::SmartPtr<TMINLP> tminlp = nlp->model();
+    nlp_ = new Bonmin::OsiTMINLPInterface;
+    Ipopt::SmartPtr<Bonmin::TMINLP> tminlp = nlp->model();
     if (tminlp->hasLinearObjective()){
       Ipopt::SmartPtr<Bonmin::TMINLPLinObj> linObj =
 	new Bonmin::TMINLPLinObj;
@@ -411,7 +411,7 @@ namespace Couenne{
     OsiSolverInterface * solver = model_->solver();
 
     OsiAuxInfo * auxInfo = solver->getAuxiliaryInfo();
-    BabInfo * babInfo = dynamic_cast<BabInfo *> (auxInfo);
+    Bonmin::BabInfo * babInfo = dynamic_cast<Bonmin::BabInfo *> (auxInfo);
 
     if(babInfo){
       babInfo->setHasNlpSolution(false);
@@ -656,7 +656,7 @@ namespace Couenne{
       if (h <= outerLoop -2){
 	// Compute a NLP-feasible point by solving a log-barrier problem
 	// with a given minimum value for the log-barrier parameter mu
-	OsiTMINLPInterface * nlp = dynamic_cast<OsiTMINLPInterface *> (nlp_);
+	Bonmin::OsiTMINLPInterface * nlp = dynamic_cast<Bonmin::OsiTMINLPInterface *> (nlp_);
 	Ipopt::SmartPtr< Ipopt::OptionsList > opt = nlp->solver()->options();
 	nlp->messageHandler()->setLogLevel(10);
 	double mu_target;
@@ -710,7 +710,7 @@ namespace Couenne{
     OsiSolverInterface * solver = model_->solver();
 
     OsiAuxInfo * auxInfo = solver->getAuxiliaryInfo();
-    BabInfo * babInfo = dynamic_cast<BabInfo *> (auxInfo);
+    Bonmin::BabInfo * babInfo = dynamic_cast<Bonmin::BabInfo *> (auxInfo);
 
     if(babInfo){
       babInfo->setHasNlpSolution(false);
