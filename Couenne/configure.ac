@@ -85,6 +85,8 @@ AC_LANG_PUSH(C)
 AC_COIN_CHECK_USER_LIBRARY([SCIP],[SCP],[scip/scip.h],[],,[CouenneLib])
 AC_LANG_POP(C)
 
+AC_COIN_CHECK_PACKAGE(SCIP, [coinscip], [CouenneLib])
+
 # CPLEX: check for OsiCplex, and check for cplex include dir, so we can include cplex.h
 AC_COIN_CHECK_PACKAGE(Cpx, [osi-cplex], [CouenneLib])
 AC_ARG_WITH([cplex-incdir],

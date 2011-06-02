@@ -25,6 +25,9 @@
 #undef COIN_HAS_NTY
 
 /* Define to 1 if the SCIP package is available */
+#undef COIN_HAS_SCIP
+
+/* Define to 1 if the SCIP package is available */
 #undef COIN_HAS_SCP
 
 /* Define to 1 if the Spx package is available */

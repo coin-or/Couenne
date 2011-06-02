@@ -23,14 +23,6 @@ endif
 couenne_SOURCES = BonCouenne.cpp
 couenne_LDADD   = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS) $(ASL_LIBS) 
 
-if COIN_HAS_SCP
-couenne_LDADD += \
-	$(SCPLIBDIR)/libscip-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	$(SCPLIBDIR)/liblpispx-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	$(SCPLIBDIR)/libnlpi-2.0.1.linux.x86_64.gnu.opt-shared.so \
-	$(SCPLIBDIR)/libobjscip-2.0.1.linux.x86_64.gnu.opt-shared.so
-endif
-
 if COIN_HAS_SPX
 couenne_LDADD += \
 	$(SPXLIBDIR)/libsoplex-1.5.0.linux.x86_64.gnu.opt-shared.so

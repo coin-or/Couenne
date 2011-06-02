@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: the generateCuts() method of the convexification class CouenneCutGenerator
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -446,8 +446,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       for (int i=0, ii = problem_ -> getNtyInfo () -> getNumOrbits (); ii--; i++){
 
 	CouNumber
-	  ll = -COUENNE_INFINITY,
-	  uu =  COUENNE_INFINITY; 
+	  ll = -COUENNE_INFINITY;
+	  //uu =  COUENNE_INFINITY; 
 
 	std::vector <int> orbit = (*new_orbits)[i];
 
@@ -469,16 +469,16 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	  if (orbit [j] < problem_ -> nVars ()) {
 
 	    if (lb [orbit [j]] > ll) ll = lb [orbit [j]];
-	    if (ub [orbit [j]] < uu) uu = ub [orbit [j]];
+	    //if (ub [orbit [j]] < uu) uu = ub [orbit [j]];
 	  }
 
 	jnlst_ -> Printf (J_VECTOR, J_BOUNDTIGHTENING, 
-			  " --> new common bounds: [%g,%g]\n", ll, uu);
+			  " --> new common lower bounds: [%g,--]\n", ll);
 
 	for(int j = 0; j < orbit.size (); j++) 
 	  if (orbit [j] < problem_ -> nVars ()){
 	    lb [orbit [j]] = ll;
-	    ub [orbit [j]] = uu;
+	    //ub [orbit [j]] = uu;
 	  }
       }
 
