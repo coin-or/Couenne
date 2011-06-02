@@ -38,7 +38,7 @@ AC_PREFIX_DEFAULT([`pwd`])
 AC_COIN_CREATE_LIBTOOL
 
 #############################################################################
-#             Check which ThirdParty sources are available                  #
+#                  Check which subprojects are there                        #
 #############################################################################
 
 AC_COIN_MAIN_PACKAGEDIR(ASL,   ThirdParty,[solvers/asl.h])
@@ -47,17 +47,14 @@ AC_COIN_MAIN_PACKAGEDIR(Lapack,ThirdParty,[LAPACK/SRC/dlarf.f])
 AC_COIN_MAIN_PACKAGEDIR(HSL,   ThirdParty)
 AC_COIN_MAIN_PACKAGEDIR(Metis, ThirdParty,[metis-4.0/Lib/balance.c])
 AC_COIN_MAIN_PACKAGEDIR(Mumps, ThirdParty,[MUMPS/src/dmumps_part1.F])
-
-#############################################################################
-#                  Check which subprojects are there                        #
-#############################################################################
-
+AC_COIN_MAIN_PACKAGEDIR(SoPlex,ThirdParty,[soplex/src/soplex.h])
 AC_COIN_MAIN_PACKAGEDIR(CoinUtils)
 AC_COIN_MAIN_PACKAGEDIR(Osi)
 AC_COIN_MAIN_PACKAGEDIR(Clp)
 AC_COIN_MAIN_PACKAGEDIR(Cgl)
 AC_COIN_MAIN_PACKAGEDIR(Cbc)
 AC_COIN_MAIN_PACKAGEDIR(Ipopt)
+AC_COIN_MAIN_PACKAGEDIR(SCIP,  ThirdParty,[scip/src/scip/scip.h])  # should be after Ipopt and Clp
 AC_COIN_MAIN_PACKAGEDIR(Bonmin)
 AC_COIN_MAIN_PACKAGEDIR(Couenne)
 
