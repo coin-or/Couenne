@@ -23,10 +23,10 @@ endif
 couenne_SOURCES = BonCouenne.cpp
 couenne_LDADD   = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS) $(ASL_LIBS) 
 
-if COIN_HAS_SPX
-couenne_LDADD += \
-	$(SPXLIBDIR)/libsoplex-1.5.0.linux.x86_64.gnu.opt-shared.so
-endif
+#if COIN_HAS_SPX
+#couenne_LDADD += \
+#	$(SPXLIBDIR)/libsoplex-1.5.0.linux.x86_64.gnu.opt-shared.so
+#endif
 
 couenne_DEPENDENCIES  = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
 
