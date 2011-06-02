@@ -14,6 +14,7 @@
 #include "CouenneConfig.h"
 
 #include "OsiClpSolverInterface.hpp"
+
 #ifdef COIN_HAS_CPX
 #include "OsiCpxSolverInterface.hpp"
 #endif

@@ -1,4 +1,4 @@
-# Copyright (C) 2008 Pietro Belotti
+# Copyright (C) 2011 Pietro Belotti
 # All Rights Reserved.
 # This file is distributed under the Eclipse Public License.
 

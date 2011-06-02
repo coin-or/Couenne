@@ -788,7 +788,6 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 
     if ((vlb[v1]<=EPSILONT && vlb[v2]<=EPSILONT && vlb[v3]<=EPSILONT) ||
         (vlb[v1]==vlb[v2] && vlb[v1]==vlb[v3] && vub[v1]==vub[v2] && vub[v1]==vub[v3])) {
-      int idx = 0;
 #ifdef DEBUG
       std::cout << " -- epsilonT --" << std::endl; 
 #endif

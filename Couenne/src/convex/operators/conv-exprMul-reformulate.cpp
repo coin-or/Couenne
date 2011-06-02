@@ -58,7 +58,7 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
   //delete [] arglist_;
 
   arglist_ = arglist;
-  nargs_ = indCoe.size();
+  nargs_ = (int) indCoe.size();
 
   //printf ("new mul [%d]: %g * ", nargs_, coeff); fflush (stdout); print (); printf (" -- ");
 

@@ -46,11 +46,27 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 
+# AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
+# 	-I`$(CYGPATH_W) $(srcdir)/convex` \
+# 	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
+# 	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
+# 	-I`$(CYGPATH_W) $(srcdir)/expression` \
+# 	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
+# 	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
+# 	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
+# 	-I`$(CYGPATH_W) $(srcdir)/main` \
+# 	-I`$(CYGPATH_W) $(srcdir)/problem` \
+# 	-I`$(CYGPATH_W) $(srcdir)/branch` \
+# 	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
+# 	-I`$(CYGPATH_W) $(srcdir)/crossconv` \
+# 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
+
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
-@COIN_HAS_SCP_TRUE@am__append_1 = "-I/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/src"
+@COIN_HAS_SCP_TRUE@am__append_1 = $(SCPINCDIR)
+@COIN_HAS_SPX_TRUE@am__append_2 = $(SPXINCDIR)
 
 #	ellipcuts/CouenneEllipCuts.hpp 
-@COIN_HAS_NTY_TRUE@am__append_2 = branch/Nauty.h
+@COIN_HAS_NTY_TRUE@am__append_3 = branch/Nauty.h
 subdir = src
 DIST_COMMON = $(am__includecoin_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -418,16 +434,7 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
-AM_CPPFLAGS = $(COUENNELIB_CFLAGS) -I`$(CYGPATH_W) $(srcdir)/convex` \
-	-I`$(CYGPATH_W) $(srcdir)/interfaces` -I`$(CYGPATH_W) \
-	$(srcdir)/heuristics` -I`$(CYGPATH_W) $(srcdir)/expression` \
-	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/disjunctive` -I`$(CYGPATH_W) \
-	$(srcdir)/sdpcuts` -I`$(CYGPATH_W) $(srcdir)/main` \
-	-I`$(CYGPATH_W) $(srcdir)/problem` -I`$(CYGPATH_W) \
-	$(srcdir)/branch` -I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
-	-I`$(CYGPATH_W) $(srcdir)/crossconv` -I`$(CYGPATH_W) \
-	$(srcdir)/two_implied_bt` $(am__append_1)
+AM_CPPFLAGS = $(am__append_1) $(am__append_2)
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
@@ -508,7 +515,7 @@ includecoin_HEADERS = ../inc/config_couenne.h util/CouenneRootQ.hpp \
 	sdpcuts/misc_util.hpp sdpcuts/orthocut.hpp \
 	sdpcuts/OsiXxxSolverInterface.hpp sdpcuts/populate.hpp \
 	sdpcuts/quadratic_cuts_check.hpp sdpcuts/rlt_cuts.hpp \
-	sdpcuts/sdpcuts.hpp sdpcuts/tracer.hpp $(am__append_2)
+	sdpcuts/sdpcuts.hpp sdpcuts/tracer.hpp $(am__append_3)
 
 #############################################################################
 # Create the Config.h file that always defines HAVE_CONFIG_H and install it #

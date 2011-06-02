@@ -126,7 +126,7 @@ exprQuad::exprQuad (CouNumber c0,
     }
 
     matrix_.push_back (std::pair <exprVar *, sparseQcol> (row -> first, line));
-    nqterms_ += line.size ();
+    nqterms_ += (int) (line.size ());
   }
 }
 
@@ -186,7 +186,7 @@ void exprQuad::print (std::ostream &out, bool descend) const {
 
   int noperands = 0;
 
-  for (int n = matrix_.size (), i=0; n--; i++) {
+  for (size_t n = matrix_.size (), i=0; n--; i++) {
     //sparseQ::iterator row = matrix_.begin (); row != matrix_.end (); ++row) {
 
     int xind = matrix_ [i].first -> Index ();

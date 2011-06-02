@@ -18,6 +18,8 @@
 #include "CbcHeuristic.hpp"
 #include "IpOptionsList.hpp"
 
+#include "config_couenne.h"
+
 #ifdef COIN_HAS_SCP
 /* general SCIP includes */
 #include "scip/scip.h"
@@ -87,9 +89,9 @@ namespace Couenne {
     void setNumberSolvePerLevel (int value)
     {numberSolvePerLevel_ = value;}
 
-
 #ifdef COIN_HAS_SCP
-     void checkInfinity(SCIP *scip, SCIP_Real val, double infinity);
+    /// checks if val is above a threshold for finiteness
+    void checkInfinity (SCIP *scip, SCIP_Real val, double infinity);
 #endif
 
     /// find integer (possibly NLP-infeasible) point isol closest
@@ -197,7 +199,6 @@ namespace Couenne {
     /// use SCIP instead of Cbc for solving MILPs
     bool useSCIP_;
 #endif
-
   };
 }
 

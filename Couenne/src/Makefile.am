@@ -49,25 +49,31 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
 
-AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
-	-I`$(CYGPATH_W) $(srcdir)/convex` \
-	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
-	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
-	-I`$(CYGPATH_W) $(srcdir)/expression` \
-	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
-	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
-	-I`$(CYGPATH_W) $(srcdir)/main` \
-	-I`$(CYGPATH_W) $(srcdir)/problem` \
-	-I`$(CYGPATH_W) $(srcdir)/branch` \
-	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
-	-I`$(CYGPATH_W) $(srcdir)/crossconv` \
-	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
+AM_CPPFLAGS =
+
+# AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
+# 	-I`$(CYGPATH_W) $(srcdir)/convex` \
+# 	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
+# 	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
+# 	-I`$(CYGPATH_W) $(srcdir)/expression` \
+# 	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
+# 	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
+# 	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
+# 	-I`$(CYGPATH_W) $(srcdir)/main` \
+# 	-I`$(CYGPATH_W) $(srcdir)/problem` \
+# 	-I`$(CYGPATH_W) $(srcdir)/branch` \
+# 	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
+# 	-I`$(CYGPATH_W) $(srcdir)/crossconv` \
+# 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
 
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
 
 if COIN_HAS_SCP
-AM_CPPFLAGS += "-I/nfs/optimi/kombadon/bzfberth/projects/ziboptsuite-2.0.1/scip-2.0.1/src"
+AM_CPPFLAGS += $(SCPINCDIR)
+endif
+
+if COIN_HAS_SPX
+AM_CPPFLAGS += $(SPXINCDIR)
 endif
 
 # This line is necessary to allow VPATH compilation with MS compilers

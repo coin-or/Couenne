@@ -27,9 +27,8 @@ void cleanZeros (std::vector <std::pair <exprVar *, CouNumber> > &lcoeff) {
 
   std::vector <std::pair <exprVar *, CouNumber> >::iterator i = lcoeff.begin ();
 
-  int 
-    ind  = 0,
-    size = lcoeff.size ();
+  int    ind  = 0;
+  size_t size = lcoeff.size ();
   
   while (size-- > 0) {
     if ((i -> second ==  0.) || 
@@ -51,7 +50,7 @@ expression *exprGroup::genExprGroup (CouNumber c0,
 				     std::vector <std::pair <exprVar *, CouNumber> > &lcoeff, 
 				     expression **al, 
 				     int n) {
-  int nl = lcoeff.size ();
+  size_t nl = lcoeff.size ();
   expression *ret = NULL;
 
   cleanZeros (lcoeff);
@@ -127,7 +126,7 @@ void exprGroup::print (std::ostream &out, bool descend) const {
   if      (c0_ >   0.) {if (nzNL) out << '+'; out << c0_;}
   else if (c0_ < - 0.)                        out << c0_;
 
-  for (int n = lcoeff_.size (), i=0; n--; i++) {
+  for (size_t n = lcoeff_.size (), i=0; n--; i++) {
 
     CouNumber coeff = lcoeff_ [i]. second;
 

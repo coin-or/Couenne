@@ -87,7 +87,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   int 
     objInd = problem_ -> Obj (0) -> Body () -> Index (),
-    nSep;
+    nSep = 0;
 
   do {
 
