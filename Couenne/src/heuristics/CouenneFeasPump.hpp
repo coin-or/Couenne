@@ -20,7 +20,7 @@
 
 #include "config_couenne.h"
 
-#ifdef COIN_HAS_SCP
+#ifdef COIN_HAS_SCIP
 /* general SCIP includes */
 #include "scip/scip.h"
 #include "scip/cons_linear.h"
@@ -89,7 +89,7 @@ namespace Couenne {
     void setNumberSolvePerLevel (int value)
     {numberSolvePerLevel_ = value;}
 
-#ifdef COIN_HAS_SCP
+#ifdef COIN_HAS_SCIP
     /// checks if val is above a threshold for finiteness
     void checkInfinity (SCIP *scip, SCIP_Real val, double infinity);
 #endif
@@ -195,7 +195,7 @@ namespace Couenne {
     /// maximum iterations per call
     int maxIter_;
 
-#ifdef COIN_HAS_SCP
+#ifdef COIN_HAS_SCIP
     /// use SCIP instead of Cbc for solving MILPs
     bool useSCIP_;
 #endif

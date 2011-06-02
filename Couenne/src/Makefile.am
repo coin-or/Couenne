@@ -68,10 +68,6 @@ AM_CPPFLAGS =
 
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
 
-if COIN_HAS_SCP
-AM_CPPFLAGS += $(SCPINCDIR)
-endif
-
 if COIN_HAS_SPX
 AM_CPPFLAGS += $(SPXINCDIR)
 endif

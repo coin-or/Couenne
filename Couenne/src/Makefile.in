@@ -62,11 +62,10 @@ host_triplet = @host@
 # 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
 
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
-@COIN_HAS_SCP_TRUE@am__append_1 = $(SCPINCDIR)
-@COIN_HAS_SPX_TRUE@am__append_2 = $(SPXINCDIR)
+@COIN_HAS_SPX_TRUE@am__append_1 = $(SPXINCDIR)
 
 #	ellipcuts/CouenneEllipCuts.hpp 
-@COIN_HAS_NTY_TRUE@am__append_3 = branch/Nauty.h
+@COIN_HAS_NTY_TRUE@am__append_2 = branch/Nauty.h
 subdir = src
 DIST_COMMON = $(am__includecoin_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -227,8 +226,6 @@ COIN_HAS_PKGCONFIG_FALSE = @COIN_HAS_PKGCONFIG_FALSE@
 COIN_HAS_PKGCONFIG_TRUE = @COIN_HAS_PKGCONFIG_TRUE@
 COIN_HAS_SCIP_FALSE = @COIN_HAS_SCIP_FALSE@
 COIN_HAS_SCIP_TRUE = @COIN_HAS_SCIP_TRUE@
-COIN_HAS_SCP_FALSE = @COIN_HAS_SCP_FALSE@
-COIN_HAS_SCP_TRUE = @COIN_HAS_SCP_TRUE@
 COIN_HAS_SPX_FALSE = @COIN_HAS_SPX_FALSE@
 COIN_HAS_SPX_TRUE = @COIN_HAS_SPX_TRUE@
 COIN_HAS_XPR_FALSE = @COIN_HAS_XPR_FALSE@
@@ -328,8 +325,6 @@ SCIP_DATA_INSTALLED = @SCIP_DATA_INSTALLED@
 SCIP_DEPENDENCIES = @SCIP_DEPENDENCIES@
 SCIP_LIBS = @SCIP_LIBS@
 SCIP_LIBS_INSTALLED = @SCIP_LIBS_INSTALLED@
-SCPINCDIR = @SCPINCDIR@
-SCPLIB = @SCPLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SPX_CFLAGS = @SPX_CFLAGS@
@@ -443,7 +438,7 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
-AM_CPPFLAGS = $(am__append_1) $(am__append_2)
+AM_CPPFLAGS = $(am__append_1)
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
@@ -524,7 +519,7 @@ includecoin_HEADERS = ../inc/config_couenne.h util/CouenneRootQ.hpp \
 	sdpcuts/misc_util.hpp sdpcuts/orthocut.hpp \
 	sdpcuts/OsiXxxSolverInterface.hpp sdpcuts/populate.hpp \
 	sdpcuts/quadratic_cuts_check.hpp sdpcuts/rlt_cuts.hpp \
-	sdpcuts/sdpcuts.hpp sdpcuts/tracer.hpp $(am__append_3)
+	sdpcuts/sdpcuts.hpp sdpcuts/tracer.hpp $(am__append_2)
 
 #############################################################################
 # Create the Config.h file that always defines HAVE_CONFIG_H and install it #
