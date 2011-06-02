@@ -136,6 +136,13 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
       // interval is fairly symmetric around 0, branch on it
       *brpts = 0.;
 
+#define LARGE_VALUE 1e8
+
+    else if ((lb < - LARGE_VALUE) && 
+	     (ub >   LARGE_VALUE) &&
+	     (fabs (pt) > LARGE_VALUE / 10))
+      *brpts = 0.;
+
     else switch (obj -> Strategy ()) {
       case CouenneObject::LP_CENTRAL:   *brpts = pt; if ((pt < lb + margin) || 
 							 (pt > ub - margin)) 

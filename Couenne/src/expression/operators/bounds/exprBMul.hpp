@@ -15,7 +15,7 @@
 #include "CoinHelperFunctions.hpp"
 
 #define MUL_ZERO 1e-20
-#define MUL_INF  1e+20
+#define MUL_INF  sqrt (COIN_DBL_MAX)
 
 /// product that avoids NaN's 
 inline CouNumber safeProd (register CouNumber a, register CouNumber b) {

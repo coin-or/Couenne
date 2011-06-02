@@ -13,7 +13,6 @@
 
 #include "OsiRowCut.hpp"
 
-//#include "CouenneSolverInterface.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
@@ -24,6 +23,8 @@ class CouenneCutGenerator;
 // translate changed bound sparse array into a dense one
 void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchanged);
 
+/// if |branching point| > this, change it 
+static const double large_bound = 1e9;
 
 /** \brief Constructor. 
  *
@@ -42,6 +43,7 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
 						bool doFBBT, bool doConvCuts):
 
   OsiTwoWayBranchingObject (solver, originalObject, way, brpoint),
+
   cutGen_       (cutGen),
   problem_      (problem),
   variable_     (var),
@@ -72,20 +74,37 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
 
   variable_ -> getBounds (lb, ub);
 
-  value_ = (fabs (brpoint) < COUENNE_INFINITY) ? brpoint : (*variable_) ();
+  // bounds may have tightened and may exclude value_ now, update it
 
-  if   (lb < -COUENNE_INFINITY / 10)
-    if (ub >  COUENNE_INFINITY / 10) ;                                                              // ]-inf,+inf[
-    else                             value_ = ((value_ < -COUENNE_EPS) ? (AGGR_MUL * (-1+value_)) : // ]-inf,u]
-				 	       (value_ >  COUENNE_EPS) ? 0. : -AGGR_MUL);
+  value_ = (fabs (brpoint) < large_bound) ? brpoint : (*variable_) ();
+
+  if   (lb < -large_bound)
+    if (ub >  large_bound) value_ = 0.;                                                   // ]-inf,+inf[
+    else                   value_ = ((value_ < -COUENNE_EPS) ? (AGGR_MUL * (-1+value_)) : // ]-inf,u]
+				     (value_ >  COUENNE_EPS) ? 0. : -AGGR_MUL);
   else
-    if (ub >  COUENNE_INFINITY / 10) value_ = ((value_ >  COUENNE_EPS) ? (AGGR_MUL *  (1+value_)) : // [l,+inf[
-					       (value_ < -COUENNE_EPS) ? 0. :  AGGR_MUL);
-    else {                                                                                          // [l,u]
+    if (ub >  large_bound) value_ = ((value_ >  COUENNE_EPS) ? (AGGR_MUL *  (1+value_)) : // [l,+inf[
+				     (value_ < -COUENNE_EPS) ? 0. :  AGGR_MUL);
+    else {                                                                                // [l,u]
       double margin = fabs (ub-lb) * closeToBounds;
       if      (value_ < lb + margin) value_ = lb + margin;
       else if (value_ > ub - margin) value_ = ub - margin;
     }
+
+  // value_ = (fabs (brpoint) < COUENNE_INFINITY) ? brpoint : (*variable_) ();
+
+  // if   (lb < -COUENNE_INFINITY / 10)
+  //   if (ub >  COUENNE_INFINITY / 10) ;                                                              // ]-inf,+inf[
+  //   else                             value_ = ((value_ < -COUENNE_EPS) ? (AGGR_MUL * (-1+value_)) : // ]-inf,u]
+  // 				 	       (value_ >  COUENNE_EPS) ? 0. : -AGGR_MUL);
+  // else
+  //   if (ub >  COUENNE_INFINITY / 10) value_ = ((value_ >  COUENNE_EPS) ? (AGGR_MUL *  (1+value_)) : // [l,+inf[
+  // 					       (value_ < -COUENNE_EPS) ? 0. :  AGGR_MUL);
+  //   else {                                                                                          // [l,u]
+  //     double margin = fabs (ub-lb) * closeToBounds;
+  //     if      (value_ < lb + margin) value_ = lb + margin;
+  //     else if (value_ > ub - margin) value_ = ub - margin;
+  //   }
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		    "Branch: x%-3d will branch on %g (cur. %g) [%g,%g]; firstBranch_ = %d\n", 

@@ -236,8 +236,15 @@ bool BranchingFBBT (CouenneProblem *problem,
       indVar = Object   -> columnNumber (),
       nvars  = problem -> nVars ();
 
+    problem -> domain () -> push (nvars, 
+				  solver -> getColSolution (), 
+				  solver -> getColLower (), 
+				  solver -> getColUpper ());
+
     t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
     chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
+    chg_bds [indVar].setLower (t_chg_bounds::CHANGED);
+
     problem -> installCutOff ();
 
     if ((feasible = problem -> btCore (chg_bds))) {
@@ -253,6 +260,8 @@ bool BranchingFBBT (CouenneProblem *problem,
     }
 
     delete [] chg_bds;
+
+    problem -> domain () -> pop ();
   }
 
   return feasible;

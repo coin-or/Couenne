@@ -92,7 +92,7 @@ OsiBranchingObject *CouenneVarObject::createBranch (OsiSolverInterface *si,
     if ((l < - LARGE_VALUE) && 
 	(u >   LARGE_VALUE) &&
 	(fabs (brpt) > LARGE_VALUE / 10))
-      brpt = 0;
+      brpt = 0.;
 
     if (l < - COUENNE_INFINITY) l = - 2 * fabs (brpt);
     if (u >   COUENNE_INFINITY) u =   2 * fabs (brpt);
@@ -285,6 +285,27 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
       }
       break;
     }
+
+#define LARGE_VALUE 1e8
+
+    if ((l < - LARGE_VALUE) && 
+	(u >   LARGE_VALUE) &&
+	(fabs (bestPt) > LARGE_VALUE / 10))
+      bestPt = 0.;
+
+    else
+      if (((l < - LARGE_VALUE) || 
+	   (u >   LARGE_VALUE)) &&
+	  (fabs (bestPt) > LARGE_VALUE / 10)) {
+
+	CouNumber padding = CoinMin (fabs (l), fabs (u));
+
+	if (padding < COUENNE_EPS)
+	  padding = 1.;
+
+	if (padding <= u-l) // meaning this is not [-M, -P] or [M, P]
+	  bestPt = CoinMax (l + padding, CoinMin (0., u - padding));
+      }
 
     brPts  = (double *) realloc (brPts, sizeof (double));
     *brPts = bestPt;
