@@ -186,8 +186,8 @@ fake_tighten (char direction,  // 0: left, 1: right
 
       // case 2: tightening valid, apply and move outer in
 
-#ifdef DEBUG
-      printf (" --> %cbound [x_%d]: %g --> %g",direction?'U':'L',index,(direction?oub:olb)[index],fb);
+      //printf (" --> %cbound [x_%d]: %g --> %g",direction?'U':'L',index,(direction?oub:olb)[index],fb);
+
       if (optimum_ && 
 	  ((!direction &&
 	    (optimum_ [index] >= olb [index]) && 
@@ -195,10 +195,11 @@ fake_tighten (char direction,  // 0: left, 1: right
 	   (direction &&
 	    (optimum_ [index] <= oub [index]) && 
 	    (optimum_ [index] >= Ub (index) + COUENNE_EPS)))) {
-	printf ("fake tightening cuts out optimum: x%d=%g in [%g,%g] but not in [%g,%g]\n",
-		index, olb [index], oub [index], Lb (index), Ub (index));
+
+	jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING, 
+			  "fake tightening CUTS optimum: x%d=%g in [%g,%g] but not in [%g,%g]\n",
+			  index, olb [index], oub [index], Lb (index), Ub (index));
       }
-#endif
 
       /*bool do_not_tighten = false;
 
@@ -223,8 +224,9 @@ fake_tighten (char direction,  // 0: left, 1: right
 
       //if (!do_not_tighten) {
 
-	// apply bound
+      // apply bound
       if (direction) {
+
 	oub [index] = Ub (index) = intvar ? floor (fb) : fb; 
 	chg_bds [index]. setUpper (t_chg_bounds::CHANGED);
       }

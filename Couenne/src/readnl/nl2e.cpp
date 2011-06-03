@@ -32,7 +32,7 @@
 using namespace Couenne;
 
 // get ASL op. code relative to function pointer passed as parameter 
-int getOperator (efunc *);
+size_t getOperator (efunc *);
 
 
 // warning for non-implemented functions -- return 0 constant expression

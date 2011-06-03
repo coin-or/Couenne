@@ -5,7 +5,7 @@
  *          Pietro Belotti, Carnegie Mellon University
  * Purpose: Branching object for auxiliary variables
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -22,13 +22,11 @@
 
 using namespace Couenne;
 
-namespace Couenne {
-  class CouenneCutGenerator;
-}
-
 // translate changed bound sparse array into a dense one
 void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchanged);
 
+/// if |branching point| > this, change it 
+static const double large_bound = 1e9;
 
 /** \brief Constructor. 
  *
@@ -47,6 +45,7 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
 						bool doFBBT, bool doConvCuts):
 
   OsiTwoWayBranchingObject (solver, originalObject, way, brpoint),
+
   cutGen_       (cutGen),
   problem_      (problem),
   variable_     (var),
@@ -75,53 +74,24 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
 
   CouNumber lb, ub;
 
-  // a little ambiguous: var should be variable_ in both CouenneObjects and CouenneVarObjects. 
-  // var -> getBounds (lb, ub);
   variable_ -> getBounds (lb, ub);
 
   // bounds may have tightened and may exclude value_ now, update it
 
-  value_ = (fabs (brpoint) < COUENNE_INFINITY) ? brpoint : (*variable_) ();
+  value_ = (fabs (brpoint) < large_bound) ? brpoint : (*variable_) ();
 
-  if   (lb < -COUENNE_INFINITY / 10)
-    if (ub >  COUENNE_INFINITY / 10) ;                                                              // ]-inf,+inf[
-    else                             value_ = ((value_ < -COUENNE_EPS) ? (AGGR_MUL * (-1+value_)) : // ]-inf,u]
-				 	       (value_ >  COUENNE_EPS) ? 0. : -AGGR_MUL);
+  if   (lb < -large_bound)
+    if (ub >  large_bound) value_ = 0.;                                                   // ]-inf,+inf[
+    else                   value_ = ((value_ < -COUENNE_EPS) ? (AGGR_MUL * (-1+value_)) : // ]-inf,u]
+				     (value_ >  COUENNE_EPS) ? 0. : -AGGR_MUL);
   else
-    if (ub >  COUENNE_INFINITY / 10) value_ = ((value_ >  COUENNE_EPS) ? (AGGR_MUL *  (1+value_)) : // [l,+inf[
-					       (value_ < -COUENNE_EPS) ? 0. :  AGGR_MUL);
-    else {                                                                                          // [l,u]
+    if (ub >  large_bound) value_ = ((value_ >  COUENNE_EPS) ? (AGGR_MUL *  (1+value_)) : // [l,+inf[
+				     (value_ < -COUENNE_EPS) ? 0. :  AGGR_MUL);
+    else {                                                                                // [l,u]
       double margin = fabs (ub-lb) * closeToBounds;
       if      (value_ < lb + margin) value_ = lb + margin;
       else if (value_ > ub - margin) value_ = ub - margin;
     }
-
-  // if      (value_ < lb) value_ = lb;
-  // else if (value_ > ub) value_ = ub;
-
-  // // do not branch too close to bounds
-  // if ((lb > -COUENNE_INFINITY) && 
-  //     (ub <  COUENNE_INFINITY)) {
-
-  //   CouNumber margin = (ub-lb) * closeToBounds;
-
-  //   if      (value_ - lb < margin) value_ = lb + margin;
-  //   else if (ub - value_ < margin) value_ = ub - margin;
-  // }
-
-  // value_ = (*variable_) ();
-
-  // if (fabs (brpoint) < COUENNE_INFINITY) 
-  //   value_ = brpoint;
-
-  // CouNumber lb, ub;
-  // var -> getBounds (lb, ub);
-
-  // // do not branch too close to bounds
-  // if ((lb > -COUENNE_INFINITY) && (ub < COUENNE_INFINITY)) {
-  //   if      ((value_ - lb) / (ub-lb) < closeToBounds) value_ = lb + (ub-lb) * closeToBounds;
-  //   else if ((ub - value_) / (ub-lb) < closeToBounds) value_ = ub + (lb-ub) * closeToBounds;
-  // }
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		    "Branch: x%-3d will branch on %g (cur. %g) [%g,%g]; firstBranch_ = %d\n", 

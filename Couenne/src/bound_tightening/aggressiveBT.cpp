@@ -144,6 +144,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
       nlp -> setColSolution (Y);
 
       try {
+
 	nlp -> options () -> SetNumericValue ("max_cpu_time", CoinMax (0., getMaxCpuTime () - CoinCpuTime ()));
 	nlp -> initialSolve ();
       }
@@ -153,7 +154,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
       delete [] lower;
       delete [] upper;
 
-      if (nlp->isProvenOptimal()) {
+      if (nlp -> isProvenOptimal ()) {
 
 	if (couInfo) {
 	  closestSol = new CouenneInfo::NlpSolution 
@@ -179,9 +180,9 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
   {
     retval = true;
 
-    // X is now the NLP solution, but in a low-dimensional space. We
-    // have to get the corresponding point in higher dimensional space
-    // through getAuxs()
+    // if the NLP solver succeeded, X is now the NLP solution, but in
+    // a low-dimensional space. We have to get the corresponding point
+    // in higher dimensional space through getAuxs()
 
     double *X = NULL;
 
@@ -256,7 +257,8 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	      (X [index] >= Lb (index) + COUENNE_EPS)) {
 
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-			    "------------- tighten left x%d\n", index);
+			    "------------- tighten left x%d @%g [%g,%g]\n", 
+			    index, X [index], olb [index], oub [index]);
 
 	    // tighten on left
 	    if ((improved = fake_tighten (0, index, X, olb, oub, chg_bds, f_chg)) < 0) {
@@ -271,7 +273,8 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	  if (retval && (variables_ [index] -> sign () != expression::AUX_LEQ) &&
 	      (X [index] <= Ub (index) - COUENNE_EPS)) {
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-			    "------------- tighten right x%d\n", index);
+			    "------------- tighten right x%d @%g [%g,%g]\n", 
+			    index, X [index], olb [index], oub [index]);
 
 	    // tighten on right
 	    if ((second = fake_tighten (1, index, X, olb, oub, chg_bds, f_chg) < 0)) {
