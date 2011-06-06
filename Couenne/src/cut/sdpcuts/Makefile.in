@@ -18,7 +18,7 @@
 # All Rights Reserved.
 # This file is distributed under the Eclipse Public License.
 
-# Author: Pietro Belotti, from a template by Pierre Bonami
+# Author: Pietro Belotti
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -26,7 +26,7 @@ VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-top_builddir = ../..
+top_builddir = ../../..
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = @INSTALL@
 install_sh_DATA = $(install_sh) -c -m 644
@@ -42,7 +42,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/crossconv
+@COIN_HAS_CPX_TRUE@am__append_1 = -I`$(CYGPATH_W) $(CPXINCDIR)`
+subdir = src/cut/sdpcuts
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
@@ -53,10 +54,12 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
-libCouenneCrossConv_la_LIBADD =
-am_libCouenneCrossConv_la_OBJECTS = CrossConvConstructors.lo \
-	CrossConvGenCuts.lo CrossConvSetup.lo
-libCouenneCrossConv_la_OBJECTS = $(am_libCouenneCrossConv_la_OBJECTS)
+libCouenneSdpCuts_la_LIBADD =
+am_libCouenneSdpCuts_la_OBJECTS = CutGen.lo dsyevx_wrapper.lo \
+	Heuristics.lo linquad_cuts.lo misc_util.lo orthocut.lo \
+	populate.lo quadratic_cuts_check.lo report2.lo report.lo \
+	sdpcuts.lo sdpsol.lo sedumi.lo tracerreport.lo tracer.lo
+libCouenneSdpCuts_la_OBJECTS = $(am_libCouenneSdpCuts_la_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -67,8 +70,8 @@ LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libCouenneCrossConv_la_SOURCES)
-DIST_SOURCES = $(libCouenneCrossConv_la_SOURCES)
+SOURCES = $(libCouenneSdpCuts_la_SOURCES)
+DIST_SOURCES = $(libCouenneSdpCuts_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -300,30 +303,38 @@ sol_cc_compiler = @sol_cc_compiler@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
-noinst_LTLIBRARIES = libCouenneCrossConv.la
+noinst_LTLIBRARIES = libCouenneSdpCuts.la
 
 # List all source files for this library, including headers
-libCouenneCrossConv_la_SOURCES = \
-	CrossConvConstructors.cpp \
-	CrossConvGenCuts.cpp \
-	CrossConvSetup.cpp
+libCouenneSdpCuts_la_SOURCES = \
+	CutGen.cpp \
+	dsyevx_wrapper.cpp \
+	Heuristics.cpp \
+	linquad_cuts.cpp \
+	misc_util.cpp \
+	orthocut.cpp \
+	populate.cpp \
+	quadratic_cuts_check.cpp \
+	report2.cpp \
+	report.cpp \
+	sdpcuts.cpp \
+	sdpsol.cpp \
+	sedumi.cpp \
+	tracerreport.cpp \
+	tracer.cpp 
 
+
+#	disjunctive_cuts.cpp 
+#	rlt_cuts.cpp 
 
 # This is for libtool
-libCouenneCrossConv_la_LDFLAGS = $(LT_LDFLAGS)
+libCouenneSdpCuts_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../convex` \
-	-I`$(CYGPATH_W) $(srcdir)/../heuristics` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/../main` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch`\
-	-I`$(CYGPATH_W) $(srcdir)/../problem`
-
+AM_CPPFLAGS = $(COUENNELIB_CFLAGS) -I`$(CYGPATH_W) $(srcdir)/../..` \
+	-I`$(CYGPATH_W) $(srcdir)/../../convex` -I`$(CYGPATH_W) \
+	$(srcdir)/../../problem` $(am__append_1)
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin
@@ -341,9 +352,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/crossconv/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/cut/sdpcuts/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  src/crossconv/Makefile
+	  $(AUTOMAKE) --foreign  src/cut/sdpcuts/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -370,8 +381,8 @@ clean-noinstLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libCouenneCrossConv.la: $(libCouenneCrossConv_la_OBJECTS) $(libCouenneCrossConv_la_DEPENDENCIES) 
-	$(CXXLINK)  $(libCouenneCrossConv_la_LDFLAGS) $(libCouenneCrossConv_la_OBJECTS) $(libCouenneCrossConv_la_LIBADD) $(LIBS)
+libCouenneSdpCuts.la: $(libCouenneSdpCuts_la_OBJECTS) $(libCouenneSdpCuts_la_DEPENDENCIES) 
+	$(CXXLINK)  $(libCouenneSdpCuts_la_LDFLAGS) $(libCouenneSdpCuts_la_OBJECTS) $(libCouenneSdpCuts_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -379,9 +390,21 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CrossConvConstructors.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CrossConvGenCuts.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CrossConvSetup.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CutGen.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Heuristics.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dsyevx_wrapper.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/linquad_cuts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/misc_util.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orthocut.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/populate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quadratic_cuts_check.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/report.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/report2.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdpcuts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdpsol.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sedumi.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracerreport.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

@@ -21,13 +21,13 @@ libCouenneCrossConv_la_LDFLAGS = $(LT_LDFLAGS)
 # "cygpath" stuff is necessary to compile with native compilers on Windows
 AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../convex` \
-	-I`$(CYGPATH_W) $(srcdir)/../heuristics` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/../main` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch`\
-	-I`$(CYGPATH_W) $(srcdir)/../problem`
+	-I`$(CYGPATH_W) $(srcdir)/../../convex` \
+	-I`$(CYGPATH_W) $(srcdir)/../../heuristics` \
+	-I`$(CYGPATH_W) $(srcdir)/../../expression` \
+	-I`$(CYGPATH_W) $(srcdir)/../../expression/operators` \
+	-I`$(CYGPATH_W) $(srcdir)/../../main` \
+	-I`$(CYGPATH_W) $(srcdir)/../../branch`\
+	-I`$(CYGPATH_W) $(srcdir)/../../problem`
 
 # This line is necessary to allow VPATH compilation with MS compilers
 # on Cygwin

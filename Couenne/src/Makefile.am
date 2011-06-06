@@ -30,8 +30,8 @@ libCouenne_la_LIBADD = \
 	./bound_tightening/libCouenneBoundTightening.la \
 	./util/libCouenneUtil.la \
 	./disjunctive/libCouenneDisjunctive.la \
-	./sdpcuts/libCouenneSdpCuts.la \
-	./crossconv/libCouenneCrossConv.la \
+	./cut/sdpcuts/libCouenneSdpCuts.la \
+	./cut/crossconv/libCouenneCrossConv.la \
 	./two_implied_bt/libCouenneTwoImplied.la
 
 #	./ellipcuts/libCouenneEllipCuts.la 
@@ -58,12 +58,11 @@ AM_CPPFLAGS =
 # 	-I`$(CYGPATH_W) $(srcdir)/expression` \
 # 	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
 # 	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
-# 	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
 # 	-I`$(CYGPATH_W) $(srcdir)/main` \
 # 	-I`$(CYGPATH_W) $(srcdir)/problem` \
 # 	-I`$(CYGPATH_W) $(srcdir)/branch` \
-# 	-I`$(CYGPATH_W) $(srcdir)/sdpcuts` \
-# 	-I`$(CYGPATH_W) $(srcdir)/crossconv` \
+# 	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
+# 	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
 # 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
 
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
@@ -162,22 +161,22 @@ includecoin_HEADERS = \
 	expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp \
 	convex/CouenneCutGenerator.hpp \
-	crossconv/CouenneCrossConv.hpp \
+	cut/crossconv/CouenneCrossConv.hpp \
 	two_implied_bt/CouenneTwoImplied.hpp \
-	sdpcuts/CouenneSdpCuts.hpp \
-	sdpcuts/CutGen.hpp \
-	sdpcuts/disjunctive_cuts.hpp \
-	sdpcuts/dsyevx_wrapper.hpp \
-	sdpcuts/Heuristics.hpp \
-	sdpcuts/linquad_cuts.hpp \
-	sdpcuts/misc_util.hpp \
-	sdpcuts/orthocut.hpp \
-	sdpcuts/OsiXxxSolverInterface.hpp \
-	sdpcuts/populate.hpp \
-	sdpcuts/quadratic_cuts_check.hpp \
-	sdpcuts/rlt_cuts.hpp \
-	sdpcuts/sdpcuts.hpp \
-	sdpcuts/tracer.hpp 
+	cut/sdpcuts/CouenneSdpCuts.hpp \
+	cut/sdpcuts/CutGen.hpp \
+	cut/sdpcuts/disjunctive_cuts.hpp \
+	cut/sdpcuts/dsyevx_wrapper.hpp \
+	cut/sdpcuts/Heuristics.hpp \
+	cut/sdpcuts/linquad_cuts.hpp \
+	cut/sdpcuts/misc_util.hpp \
+	cut/sdpcuts/orthocut.hpp \
+	cut/sdpcuts/OsiXxxSolverInterface.hpp \
+	cut/sdpcuts/populate.hpp \
+	cut/sdpcuts/quadratic_cuts_check.hpp \
+	cut/sdpcuts/rlt_cuts.hpp \
+	cut/sdpcuts/sdpcuts.hpp \
+	cut/sdpcuts/tracer.hpp 
 
 #	ellipcuts/CouenneEllipCuts.hpp 
 

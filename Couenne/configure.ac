@@ -1,8 +1,8 @@
+## $Id$
+#
 # Copyright (C) 2006 International Business Machines.
 # All Rights Reserved.
 # This file is distributed under the Eclipse Public License.
-
-## $Id$
 
 # Authors:  Andreas Waechter            IBM    2006-12-06
 #           Pietro Belotti
@@ -119,18 +119,19 @@ AC_CONFIG_FILES([Makefile
                  src/interfaces/Makefile
                  src/heuristics/Makefile
                  src/disjunctive/Makefile
-                 src/sdpcuts/Makefile
-                 src/ellipcuts/Makefile
+                 src/cut/sdpcuts/Makefile
+                 src/cut/crossconv/Makefile
                  src/expression/Makefile
                  src/problem/Makefile
                  src/standardize/Makefile
                  src/readnl/Makefile
                  src/util/Makefile
-                 src/crossconv/Makefile
                  src/two_implied_bt/Makefile
                  src/Makefile
 		 test/grandTest.sh
 		 couenne.pc couenne-uninstalled.pc])
+
+#                 src/cut/ellipcuts/Makefile
 
 # Here put the location and name of the configuration header file
 AC_CONFIG_HEADER([inc/config_couenne.h])

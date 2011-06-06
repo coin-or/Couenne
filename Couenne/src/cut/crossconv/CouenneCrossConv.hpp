@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: Convexification cuts on redundant relationships between auxiliaries
  *
- * (C) Pietro Belotti, 2010.
+ * (C) Pietro Belotti, 2010-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -13,10 +13,8 @@
 
 #include "BonRegisteredOptions.hpp"
 
-//#include "BonOaDecBase.hpp"
 #include "CglCutGenerator.hpp"
 #include "OsiRowCut.hpp"
-//#include "OsiSolverInterface.hpp"
 #include "CouenneJournalist.hpp"
 
 namespace Ipopt {
@@ -51,7 +49,7 @@ namespace Couenne {
   ///
   /// and generates a cut 
   ///
-  /// x_3 + x_4 in [log l, log u].
+  /// x_3 + x_4 in [max {0, log l}, max {0, log u}].
   ///
   /// This has to be repeatedly generated, even when l=u (l and/or u
   /// could change in other nodes).
@@ -150,14 +148,14 @@ namespace Couenne {
     CouenneCrossConv  (const CouenneCrossConv &);
 
     /// destructor
-    ~CouenneCrossConv ();
+    virtual ~CouenneCrossConv ();
 
     /// clone method (necessary for the abstract CglCutGenerator class)
-    CouenneCrossConv *clone () const
+    virtual CouenneCrossConv *clone () const
     {return new CouenneCrossConv (*this);}
 
     /// the main CglCutGenerator
-    void generateCuts (const OsiSolverInterface &, 
+    virtual void generateCuts (const OsiSolverInterface &, 
 		       OsiCuts &, 
 		       const CglTreeInfo = CglTreeInfo ()) const;
 
@@ -165,7 +163,7 @@ namespace Couenne {
     static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions);
 
     /// Set up data structure to detect redundancies
-    void setup ();
+    virtual void setup ();
 
   protected:
 
