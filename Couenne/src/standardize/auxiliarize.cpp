@@ -9,13 +9,14 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include <stdio.h>
-
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprAux.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneDepGraph.hpp"
+
+#include <cstdio>
+#include <cassert>
 
 using namespace Couenne;
 

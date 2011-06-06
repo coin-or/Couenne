@@ -16,6 +16,8 @@
 #include "CouenneDepGraph.hpp"
 #include "CouenneProblem.hpp"
 
+#include <cassert>
+
 using namespace Couenne;
 
 namespace Couenne {

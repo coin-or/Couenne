@@ -103,6 +103,7 @@ AC_COIN_CHECK_PACKAGE(Xpr, [osi-xpress], [CouenneLib])  # Osi/XpressMP
 AC_COIN_CHECK_CXX_CHEADER(math)
 AC_COIN_CHECK_CXX_CHEADER(float)
 AC_COIN_CHECK_CXX_CHEADER(ieeefp)
+AC_COIN_CHECK_CXX_CHEADER(stdint)
 
 ##############################################################################
 #                   Finishing up by writing all the output                   #

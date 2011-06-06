@@ -10,6 +10,7 @@
 
 #include <fstream>
 #include <iomanip> // to use the setprecision manipulator
+#include <cassert>
 
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"

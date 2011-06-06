@@ -10,7 +10,7 @@
 //
 // Date : 07/18/2009
 
-
+#include "CouenneConfig.h"
 #include "CouenneAmplInterface.hpp"
 #include "CoinPragma.hpp"
 
