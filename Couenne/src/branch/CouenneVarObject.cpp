@@ -156,9 +156,9 @@ OsiBranchingObject *CouenneVarObject::createBranch (OsiSolverInterface *si,
 
 
 /// compute branching point (used in createBranch ())
-CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation *info,
-						  int& bestWay,
-						  const CouenneObject *&criticalObject) const {
+CouNumber CouenneVarObject::computeBranchingPoint (const OsiBranchingInformation *info,
+						   int& bestWay,
+						   const CouenneObject *&criticalObject) const {
   criticalObject = NULL;
 
   if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
@@ -177,13 +177,15 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
     bestPt   = 0.,
    *brPts    = NULL, // branching point(s)
    *brDist   = NULL, // distances from LP point to each new convexification
-    maxdist = - COIN_DBL_MAX;
+    maxdist  = - COIN_DBL_MAX;
 
   bool chosen = false;
 
   bestWay = TWO_LEFT;
-  int whichWay = TWO_LEFT,
-    index = reference_ -> Index ();
+
+  int 
+    whichWay = TWO_LEFT,
+    index    = reference_ -> Index ();
 
   std::set <int> deplist = problem_ -> Dependence () [index];
 
@@ -196,7 +198,7 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
     assert (obj -> Reference ());
 
     if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
-      printf ("  ** "); 
+      printf ("  dependence: "); 
       obj -> Reference () -> print (); 
       if (reference_ -> Image ()) {printf (" := "); obj -> Reference () -> Image () -> print ();}
       printf ("\n");
@@ -204,12 +206,14 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
 
     if (obj -> Reference ()) {
       if (obj -> Reference () -> Image ())
+
 	improv = obj -> Reference () -> Image ()
-	  -> selectBranch (obj, info,                      // input parameters
+	  -> selectBranch (obj, info,                       // input parameters
 			   brVar, brPts, brDist, whichWay); // result: who, where, distances, direction
       else {
+
 	brVar = obj -> Reference ();
-	brPts  = (double *) realloc (brPts, sizeof (double)); 
+	brPts  = (double *) realloc (brPts,      sizeof (double)); 
 	brDist = (double *) realloc (brDist, 2 * sizeof (double)); 
 
 	double point = info -> solution_ [obj -> Reference () -> Index ()];
@@ -226,7 +230,7 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
     }
 
     if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
-      printf ("  --> "); 
+      printf ("  --> Branching on "); 
       if (brVar) {
 	brVar -> print (); 
 	if (brPts) 
@@ -269,11 +273,14 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
     case CouenneObject::LP_CLAMPED:
       bestPt = CoinMax (l + width, CoinMin (bestPt, u - width));
       break;
+
     case CouenneObject::LP_CENTRAL: 
       if ((bestPt < l + width) || (bestPt > u - width))
 	bestPt = (l+u)/2;
       break;
+
     case CouenneObject::MID_INTERVAL: 
+
     default: 
       // all other cases (balanced, min-area)
       bestPt = midInterval (bestPt, l, u);
@@ -284,13 +291,13 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
 	  reference_ -> print (); printf ("\n");
 	}
       }
+
       break;
     }
 
-#define LARGE_VALUE 1e8
-    if ((l < - LARGE_VALUE) && 
-	(u >   LARGE_VALUE) &&
-	(fabs (bestPt) > LARGE_VALUE / 10))
+    if ((l < - large_bound) && 
+	(u >   large_bound) &&
+	(fabs (bestPt) > large_bound))
       bestPt = 0.;
 
     brPts  = (double *) realloc (brPts, sizeof (double));
@@ -305,15 +312,15 @@ CouNumber CouenneVarObject::computeBranchingPoint(const OsiBranchingInformation 
 
   } else {
 
-      if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
-	if (CoinMin (fabs (bestPt - info -> lower_ [index]), 
-		     fabs (bestPt - info -> upper_ [index])) < 1e-3) {
-	  printf ("  computed %g [%g,%g] for ", 
-		  bestPt, info -> lower_ [index], info -> upper_ [index]); 
-	  reference_ -> print ();
-	  printf ("\n");
-	}
+    if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
+      if (CoinMin (fabs (bestPt - info -> lower_ [index]), 
+		   fabs (bestPt - info -> upper_ [index])) < 1e-3) {
+	printf ("  computed %g [%g,%g] for ", 
+		bestPt, info -> lower_ [index], info -> upper_ [index]); 
+	reference_ -> print ();
+	printf ("\n");
       }
+    }
   }
 
   if (pseudoMultType_ == PROJECTDIST) {

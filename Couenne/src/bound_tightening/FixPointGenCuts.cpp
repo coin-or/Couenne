@@ -53,8 +53,12 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   int nInitTightened = nTightened_;
 
-  problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Fixed Point FBBT: "); 
-  fflush (stdout);
+  if (treeInfo.inTree && 
+      treeInfo.level <= 0) {
+
+    problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Fixed Point FBBT: "); 
+    fflush (stdout);
+  }
 
   ++nRuns_;
 
@@ -315,10 +319,17 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     CPUtime_ += CoinCpuTime () - now;
 
-    problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "%d bounds tightened (%g seconds)\n", 
-				    nTightened_ - nInitTightened, CoinCpuTime () - now); 
+    if (treeInfo.inTree && 
+	treeInfo.level <= 0) {
 
-  } else problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP infeasible or unbounded.\n");
+      problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "%d bounds tightened (%g seconds)\n", 
+				      nTightened_ - nInitTightened, CoinCpuTime () - now); 
+    }
+
+  } else
+    if (treeInfo.inTree && 
+	treeInfo.level <= 0)
+      problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP infeasible or unbounded.\n");
 
   delete fplp;
 

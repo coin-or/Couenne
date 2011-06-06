@@ -76,9 +76,11 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 
     // early test to avoid a loop
 
-    if ((lower_i > upper_i + COUENNE_BOUND_PREC * (1 + CoinMin (fabs (lower_i), fabs (upper_i)))) || 
-	(upper_i < - MAX_BOUND) ||
-	(lower_i >   MAX_BOUND)) {
+    if ((fabs (upper_i) < COIN_DBL_MAX / 10) &&
+	(fabs (lower_i) < COIN_DBL_MAX / 10) &&
+	(lower_i > upper_i + COUENNE_BOUND_PREC * (1 + CoinMin (fabs (lower_i), fabs (upper_i))))) {
+	// (upper_i < - MAX_BOUND) ||
+	// (lower_i >   MAX_BOUND)) {
 
       if (Jnlst()->ProduceOutput(J_ITERSUMMARY, J_BOUNDTIGHTENING)) {
 
@@ -86,8 +88,9 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 			"pre-check: w_%d has infeasible bounds [%.10e,%.10e]. ", i, lower_i, upper_i);
 
 	if (dbgOutput) {
+
 	  var -> Lb () -> print (std::cout);
-	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");
+	  Jnlst () -> Printf (J_DETAILED, J_BOUNDTIGHTENING," --- ");
 	  var -> Ub () -> print (std::cout);
 	}
 

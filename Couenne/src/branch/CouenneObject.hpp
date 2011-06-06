@@ -20,6 +20,13 @@
 
 namespace Couenne {
 
+const CouNumber default_alpha  = 0.2;
+const CouNumber default_clamp  = 0.2;
+const CouNumber max_pseudocost = 1000.;
+
+/// if |branching point| > this, change it 
+const double large_bound = 1e9;
+
 #define AGGR_MUL 2
 #define THRES_ZERO_SYMM 0.8
 

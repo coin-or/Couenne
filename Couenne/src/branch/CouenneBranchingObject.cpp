@@ -25,9 +25,6 @@ using namespace Couenne;
 // translate changed bound sparse array into a dense one
 void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchanged);
 
-/// if |branching point| > this, change it 
-static const double large_bound = 1e9;
-
 /** \brief Constructor. 
  *
  * Get a variable as an argument and set value_ through a call to
@@ -124,6 +121,9 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
     u      = solver -> getColUpper () [index],
     brpt   = value_;
 
+  if      (brpt < l) brpt = l;
+  else if (brpt > u) brpt = u;
+
   // If brpt is integer and the variable is constrained to be integer,
   // there will be a valid but weak branching. Modify brpt depending
   // on way and on the bounds on the variable, so that the usual
@@ -148,34 +148,40 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
     if ((brpt - l > .5) &&
 	(u - brpt > .5)) { // brpt is integer interior point of [l,u]
 
-      if (firstBranch_) {
-	if (!way) brpt -= 1.;
-	else      brpt += 1.;
+      if (!branchIndex_) { // if this is the first branch operation
+	if (!way) brpt -= (1. - COUENNE_EPS);
+	else      brpt += (1. - COUENNE_EPS);
       }
-      
     } 
-    else if (u - brpt > .5) {if  (way) brpt += 1.;} 
-    else if (brpt - l > .5) {if (!way) brpt -= 1.;}
+
+    else if (u - brpt > .5) {if  (way) brpt += (1. - COUENNE_EPS);} 
+    else if (brpt - l > .5) {if (!way) brpt -= (1. - COUENNE_EPS);}
   }
 
-  if (way) {
-    if      (value_ < l)             
-      jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "Nonsense up-br: [ %.8f ,(%.8f)] -> %.8f\n",l,u,value_);
-    else if (value_ < l+COUENNE_EPS) 
-      jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "## WEAK  up-br: [ %.8f ,(%.8f)] -> %.8f\n",l,u,value_);
-  } else {
-    if      (value_ > u)             
-      jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "Nonsense dn-br: [(%.8f), %.8f ] -> %.8f\n",l,u,value_);
-    else if (value_ > u+COUENNE_EPS) 
-      jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "## WEAK  dn-br: [(%.8f), %.8f ] -> %.8f\n",l,u,value_);
-  }
-
-  if ((brpt < l) || (brpt > u))
-    brpt = 0.5 * (l+u);
+  if   (l <  -large_bound)
+    if (u <=  large_bound) // ]-inf,u]
+      brpt =  ((brpt < -COUENNE_EPS) ? (AGGR_MUL * (-1. + brpt)) : 
+	       (brpt >  COUENNE_EPS) ? 0.                        : -AGGR_MUL);
+  else
+    if (u >  large_bound) // [l,+inf[
+      brpt = ((brpt >  COUENNE_EPS) ? (AGGR_MUL *  ( 1. + brpt)) : 
+	      (brpt < -COUENNE_EPS) ? 0.                         :  AGGR_MUL);
+    else {                // [l,u] (finite)
+      CouNumber point = default_alpha * brpt + (1. - default_alpha) * (l + u) / 2.;
+      if      ((point-l) / (u-l) < closeToBounds) brpt = l + (u-l) * closeToBounds;
+      else if ((u-point) / (u-l) < closeToBounds) brpt = u + (l-u) * closeToBounds;
+    }
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "Branching: x%-3d %c= %g\n", 
-		    //printf ("Branching: x%-3d %c= %g\n", 
 		    index, way ? '>' : '<', integer ? (way ? ceil (brpt) : floor (brpt)) : brpt);
+
+  if (way) {
+    if      (brpt < l)             jnlst_->Printf (J_STRONGWARNING, J_BRANCHING, "Nonsense up-br: [ %.8f ,(%.8f)] -> %.8f\n",l,u,value_);
+    else if (brpt < l+COUENNE_EPS) jnlst_->Printf (J_STRONGWARNING, J_BRANCHING, "## WEAK  up-br: [ %.8f ,(%.8f)] -> %.8f\n",l,u,value_);
+  } else {
+    if      (brpt > u)             jnlst_->Printf (J_STRONGWARNING, J_BRANCHING, "Nonsense dn-br: [(%.8f), %.8f ] -> %.8f\n",l,u,value_);
+    else if (brpt > u-COUENNE_EPS) jnlst_->Printf (J_STRONGWARNING, J_BRANCHING, "## WEAK  dn-br: [(%.8f), %.8f ] -> %.8f\n",l,u,value_);
+  }
 
   /*
   double time = CoinCpuTime ();
@@ -217,7 +223,8 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
       problem_ -> installCutOff ();
 
       if (!problem_ -> btCore (chg_bds)) // done FBBT and this branch is infeasible
-	infeasible = true;        // ==> report it
+	infeasible = true;               // ==> report it
+
       else {
 
 	const double
@@ -226,9 +233,6 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 
 	//CouNumber newEst = problem_ -> Lb (objind) - lb [objind];
 	estimate = CoinMax (0., problem_ -> Lb (objind) - lb [objind]);
-
-	//if (newEst > estimate) 
-	//estimate = newEst;
 
 	for (int i=0; i<nvars; i++) {
 	  if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));

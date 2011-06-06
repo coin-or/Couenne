@@ -18,10 +18,6 @@
 
 using namespace Couenne;
 
-const CouNumber default_alpha  = 0.2;
-const CouNumber default_clamp  = 0.2;
-const CouNumber max_pseudocost = 1000.;
-
 /// Empty constructor
 CouenneObject::CouenneObject ():
 
@@ -271,14 +267,14 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u) con
   if      (x<l) x = l;
   else if (x>u) x = u;
 
-  if   (l < -COUENNE_INFINITY / 10)
-    if (u >  COUENNE_INFINITY / 10) return x; // 0.                                    // ]-inf,+inf[
-    else                            return ((x < -COUENNE_EPS) ? (AGGR_MUL * (-1+x)) : // ]-inf,u]
-					    (x >  COUENNE_EPS) ? 0. : -AGGR_MUL);
+  if   (l < -large_bound)
+    if (u >  COUENNE_EPS) return 0.;                     // ]-inf,+inf[
+    else                  return CoinMax ((l+u)/2, (AGGR_MUL * (-1. + u))); // ]-inf,u]
   else
-    if (u >  COUENNE_INFINITY / 10) return ((x >  COUENNE_EPS) ? (AGGR_MUL *  (1+x)) : // [l,+inf[
-					    (x < -COUENNE_EPS) ? 0. :  AGGR_MUL);
-    else {                                                                             // [l,u]
+    if (u >  large_bound)                                // [l,+inf[
+      if (l < - COUENNE_EPS) return 0.;
+      else                   return CoinMin ((l+u)/2, (AGGR_MUL * (1. + l)));
+    else {                                               // [l,u]
       CouNumber point = alpha_ * x + (1. - alpha_) * (l + u) / 2.;
       if      ((point-l) / (u-l) < closeToBounds) point = l + (u-l) * closeToBounds;
       else if ((u-point) / (u-l) < closeToBounds) point = u + (l-u) * closeToBounds;

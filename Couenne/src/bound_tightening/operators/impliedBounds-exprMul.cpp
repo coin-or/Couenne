@@ -46,22 +46,15 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     if (ind==-1) // should not happen, it is a product of constants
       return false;
 
-    if (c > COUENNE_EPS) {
+    if        (c >   COUENNE_EPS) {
 
-      resL = (wl > - COUENNE_INFINITY) && 
-	updateBound (-1, l + ind, argInt ? ceil  (wl / c - COUENNE_EPS) : (wl / c));
-      resU = (wu <   COUENNE_INFINITY) && 
-	updateBound ( 1, u + ind, argInt ? floor (wu / c + COUENNE_EPS) : (wu / c));
-    } 
-    else if (c < - COUENNE_EPS) {
+      resL = (wl > - COUENNE_INFINITY) && updateBound (-1, l + ind, argInt ? ceil  (wl / c - COUENNE_EPS) : (wl / c));
+      resU = (wu <   COUENNE_INFINITY) && updateBound ( 1, u + ind, argInt ? floor (wu / c + COUENNE_EPS) : (wu / c));
 
-      //      printf ("w_%d [%g,%g] = %g x_%d [%g,%g]\n", 
-      //	      wind, l [wind], u [wind], c, ind, l [ind], u [ind]);
+    } else if (c < - COUENNE_EPS) {
 
-      resL = (wu <   COUENNE_INFINITY) && 
-	updateBound (-1, l + ind, argInt ? ceil  (wu / c - COUENNE_EPS) : (wu / c));
-      resU = (wl > - COUENNE_INFINITY) && 
-	updateBound ( 1, u + ind, argInt ? floor (wl / c + COUENNE_EPS) : (wl / c));
+      resL = (wu <   COUENNE_INFINITY) && updateBound (-1, l + ind, argInt ? ceil  (wu / c - COUENNE_EPS) : (wu / c));
+      resU = (wl > - COUENNE_INFINITY) && updateBound ( 1, u + ind, argInt ? floor (wl / c + COUENNE_EPS) : (wl / c));
     } 
 
     if (resL) chg [ind].setLower(t_chg_bounds::CHANGED);

@@ -40,7 +40,6 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
     x0 = info -> solution_  [xi], y0 = info -> solution_  [yi],
     xl = info -> lower_     [xi], yl = info -> lower_     [yi],
     xu = info -> upper_     [xi], yu = info -> upper_     [yi];
-  //w0 = info -> solution_  [wi];
 
 #ifdef DEBUG
   printf ("    branch MUL: %g [%g,%g] %g [%g,%g]\n", 
@@ -102,17 +101,17 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
 
   int ind = -1;
 
-  if      (xl < -COUENNE_INFINITY)                              // x unbounded below
+  if      (xl < -large_bound)                              // x unbounded below
     {ind = xi; *brpts = obj -> midInterval (((x0 < 0.) ? 2 : 0.5) * x0, xl, xu); way = TWO_RIGHT;}
 
-  else if (xu >  COUENNE_INFINITY)                              // x unbounded above
+  else if (xu >  large_bound)                              // x unbounded above
     {ind = xi; *brpts = obj -> midInterval (((x0 > 0.) ? 2 : 0.5) * x0, xl, xu); way = TWO_LEFT;} 
 
-  else if (yl < -COUENNE_INFINITY)                              // y unbounded below
+  else if (yl < -large_bound)                              // y unbounded below
     {ind = yi; *brpts = obj -> midInterval (((y0 < 0.) ? 2 : 0.5) * y0, yl, yu); way = TWO_RIGHT;}
 
-  else if (yu >  COUENNE_INFINITY)                              // y unbounded above
-    {ind = yi; *brpts = obj -> midInterval (((y0 > 0.) ? 2 : 0.5) * y0, yl, yu) ;way = TWO_LEFT;} 
+  else if (yu >  large_bound)                              // y unbounded above
+    {ind = yi; *brpts = obj -> midInterval (((y0 > 0.) ? 2 : 0.5) * y0, yl, yu); way = TWO_LEFT;} 
 
   else { // both are bounded
 
@@ -137,11 +136,9 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
       // interval is fairly symmetric around 0, branch on it
       *brpts = 0.;
 
-#define LARGE_VALUE 1e8
-
-    else if ((lb < - LARGE_VALUE) && 
-	     (ub >   LARGE_VALUE) &&
-	     (fabs (pt) > LARGE_VALUE / 10))
+    else if ((lb < - large_bound) && 
+	     (ub >   large_bound) &&
+	     (fabs (pt) > large_bound))
       *brpts = 0.;
 
     else switch (obj -> Strategy ()) {
