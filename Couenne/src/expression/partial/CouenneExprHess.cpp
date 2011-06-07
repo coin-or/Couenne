@@ -7,8 +7,6 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include <stdio.h> // ! must go
-
 #include "CoinHelperFunctions.hpp"
 
 #include "CouenneExprHess.hpp"
@@ -18,7 +16,7 @@
 
 using namespace Couenne;
 
-#define DEBUG
+//#define DEBUG
 
 ExprHess::ExprHess ():
 
@@ -56,7 +54,8 @@ ExprHess::~ExprHess () {
 void HessElemFill (int i, int level,
 		   std::set <int> &list, 
 		   expression *expr,
-		   int *row, int **lam, expression ***eee);
+		   int *row, int **lam, expression ***eee,
+		   CouenneProblem *);
 
 /// code for refilling arrays through realloc
 static void reAlloc (int nCur, int &nMax, int *&r, int *&c, int *&n, int **&l, expression ***&e);
@@ -161,7 +160,7 @@ ExprHess::ExprHess (CouenneProblem *p):
     int level = 0;
 
     /// fill term for objective
-    HessElemFill (i, 0, deplist [0], p -> Obj (0) -> Body (), row, lam, eee);
+    HessElemFill (i, 0, deplist [0], p -> Obj (0) -> Body (), row, lam, eee, p);
 
     level++;
 
@@ -171,7 +170,7 @@ ExprHess::ExprHess (CouenneProblem *p):
       if (c -> Body () -> Type () == AUX || 
 	  c -> Body () -> Type () == VAR) continue;
 
-      HessElemFill (i, level, deplist [level], c -> Body (), row, lam, eee);
+      HessElemFill (i, level, deplist [level], c -> Body (), row, lam, eee, p);
 
       level++;
     }
@@ -185,7 +184,7 @@ ExprHess::ExprHess (CouenneProblem *p):
       if ((e -> Type         () != AUX) || 
 	  (e -> Multiplicity () <= 0)) continue;
 
-      HessElemFill (i, level, deplist [level], e -> Image (), row, lam, eee);
+      HessElemFill (i, level, deplist [level], e -> Image (), row, lam, eee, p);
       //HessElemFill (i, level, deplist [level], e,             row, lam, eee); 
       // no need to pass e itself, as its second derivative is zero
 
@@ -257,7 +256,8 @@ void HessElemFill (int i, int level,
 		   expression *expr,
 		   int *row, 
 		   int **lam, 
-		   expression ***eee) {
+		   expression ***eee,
+		   CouenneProblem *p) {
 
   if (list. find (i) == list.end ()) 
     return;
@@ -300,6 +300,8 @@ void HessElemFill (int i, int level,
 	  lam [k] = (int         *) realloc (lam[k], (row[k] + reallocStep) * sizeof (int));
 	  eee [k] = (expression **) realloc (eee[k], (row[k] + reallocStep) * sizeof (expression *));
 	}
+
+	rd2 -> realign (p); // fixes variables' domain with the problem.
 
 	lam [k] [row [k]] = level;
 	eee [k] [row [k]] = rd2;

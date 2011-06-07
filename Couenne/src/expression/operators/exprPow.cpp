@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of powers
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -17,7 +17,6 @@
 #include "CouenneExprMul.hpp"
 #include "CouenneExprDiv.hpp"
 #include "CouenneExprLog.hpp"
-//#include "CouenneExprOpp.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneProblem.hpp"
 

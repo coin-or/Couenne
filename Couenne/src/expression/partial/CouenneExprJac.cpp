@@ -16,7 +16,7 @@
 
 using namespace Couenne;
 
-#define DEBUG
+//#define DEBUG
 
 ExprJac::ExprJac ():
   nnz_   (0),
@@ -127,6 +127,8 @@ ExprJac::ExprJac (CouenneProblem *p):
 
       reAlloc (nnz_ + 1, cursize, iRow_, jCol_, expr_);
 
+      rJ -> realign (p);
+
       iRow_ [nnz_] = nRealCons;
       jCol_ [nnz_] = *k;
       expr_ [nnz_] = rJ;
@@ -150,8 +152,6 @@ ExprJac::ExprJac (CouenneProblem *p):
     if ((e -> Type () != AUX) ||
 	(e -> Multiplicity () <= 0))
       continue;
-
-    printf ("domain of this variable: %x\n", e -> domain ());
 
     // this is a variable definition of the form y </>/= f(x). Find
     // out the variables (original or aux) it depends on, directly
@@ -185,6 +185,8 @@ ExprJac::ExprJac (CouenneProblem *p):
       if ((rJ -> Type  () == CONST) &&
 	  (rJ -> Value () == 0.)) 
 	continue; 
+
+      rJ -> realign (p);
 
       // there is a nonzero entry!
 

@@ -45,8 +45,12 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
   obj -> DepList (objDep, STOP_AT_AUX);
 
-  for (std::set <int>::iterator i = objDep.begin (); i != objDep. end (); ++i)
-    gradient_ . push_back (std::pair <int, expression *> (*i, obj -> differentiate (*i)));
+  for (std::set <int>::iterator i = objDep.begin (); i != objDep. end (); ++i) {
+
+    expression *gradcomp = obj -> differentiate (*i);
+    gradcomp -> realign (problem_);
+    gradient_ . push_back (std::pair <int, expression *> (*i, gradcomp));
+  }
 
   // create data structures for nonlinear variables (see
   // get_[number|list]_of_nonlinear_variables () below)
@@ -257,7 +261,8 @@ bool CouenneTNLP::eval_grad_f (Index n, const Number* x, bool new_x,
   
   CoinFillN (grad_f, n, 0.);
 
-  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); i != gradient_. end (); ++i)
+  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); 
+       i != gradient_. end (); ++i)
     grad_f [i -> first] = (*(i -> second)) ();
 
   return true;
@@ -314,8 +319,6 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
 
   //problem_ -> domain () -> push (n, x, NULL, NULL);
 
-  printf ("Domain: %x\n", problem_ -> domain ());
-
   if (values == NULL && 
       iRow   != NULL && 
       jCol   != NULL) {
@@ -331,21 +334,10 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
     // fill in Jacobian's values. Evaluate each member using the
     // domain modified above by the new value of x
 
-    printf ("filling in jacobian values:\n");
-
     register expression **e = Jac_. expr ();
 
-    for (register int i=0; i<nele_jac; i++) {
-      printf ("%d: ", i); fflush (stdout);
-      if (*e)
-	(*e) -> print ();
-      fflush (stdout);
-      const exprVar *var = dynamic_cast <const exprVar *> ((*e) -> Original ());
-      if (var)
-	printf (" [addr %x]", var);
-      printf ("..\n");
+    for (register int i=0; i<nele_jac; i++)
       *values++ = (**(e++)) ();
-    }
   }
 
   //problem_ -> domain () -> pop ();
@@ -433,7 +425,7 @@ bool CouenneTNLP::intermediate_callback (AlgorithmMode mode,
 					 const IpoptData* ip_data,
 					 IpoptCalculatedQuantities* ip_cq) {
 
-  printf ("Ipopt[FP] %4d %12e %12e %12e\n", iter, obj_value, inf_pr, inf_du);
+  //printf ("Ipopt[FP] %4d %12e %12e %12e\n", iter, obj_value, inf_pr, inf_du);
   return true;
 }
 
