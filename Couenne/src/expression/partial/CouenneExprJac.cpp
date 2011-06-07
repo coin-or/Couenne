@@ -16,7 +16,7 @@
 
 using namespace Couenne;
 
-//#define DEBUG
+#define DEBUG
 
 ExprJac::ExprJac ():
   nnz_   (0),
@@ -62,10 +62,16 @@ ExprJac::ExprJac (CouenneProblem *p):
   expr_  (NULL),
   nRows_ (0) {
 
+#ifdef DEBUG
+  printf ("domain %x, x array: %x\n", 
+	  p -> domain (), p -> domain () -> x ());
+#endif
+
   /// constraints: 
   /// 
-  /// If they are of the form a <= x <= b, they should be ignored and
-  /// be replaced by variable bound (simply ask the problem)
+  /// If they are variable constraints, i.e., of the form a <= x <= b,
+  /// they should be ignored and be replaced by variable bound (simply
+  /// ask the problem).
   ///
   /// All other constraints should be part of the jacobian
 
@@ -145,8 +151,10 @@ ExprJac::ExprJac (CouenneProblem *p):
 	(e -> Multiplicity () <= 0))
       continue;
 
-    // this is a variable definition of the form y = f(x). Find out
-    // the variables (original or aux) it depends on, directly
+    printf ("domain of this variable: %x\n", e -> domain ());
+
+    // this is a variable definition of the form y </>/= f(x). Find
+    // out the variables (original or aux) it depends on, directly
     // (STOP_AT_AUX)
 
     nRows_ ++;

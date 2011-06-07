@@ -76,9 +76,9 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
     exprVar *e = problem_ -> Var (i);
 
-    if ((e -> Type         () != AUX) ||
-	(e -> Multiplicity () <= 0)   ||
-	(e -> Linearity    () <= LINEAR))
+    if ((e -> Type         () != AUX)    ||
+	(e -> Linearity    () <= LINEAR) ||
+	(e -> Multiplicity () <= 0))
       continue;
 
     e -> Image () -> DepList (nonLinVars_, STOP_AT_AUX);
@@ -312,6 +312,10 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
     CoinCopyN (x, n, problem_ -> X ()); // can't push domain as we
 					// don't know when to pop
 
+  //problem_ -> domain () -> push (n, x, NULL, NULL);
+
+  printf ("Domain: %x\n", problem_ -> domain ());
+
   if (values == NULL && 
       iRow   != NULL && 
       jCol   != NULL) {
@@ -329,15 +333,22 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
 
     printf ("filling in jacobian values:\n");
 
-    expression **e = Jac_. expr ();
+    register expression **e = Jac_. expr ();
 
-    for (int i=0; i<nele_jac; i++) {
+    for (register int i=0; i<nele_jac; i++) {
       printf ("%d: ", i); fflush (stdout);
-      (*e) -> print ();
-      printf ("\n");
+      if (*e)
+	(*e) -> print ();
+      fflush (stdout);
+      const exprVar *var = dynamic_cast <const exprVar *> ((*e) -> Original ());
+      if (var)
+	printf (" [addr %x]", var);
+      printf ("..\n");
       *values++ = (**(e++)) ();
     }
   }
+
+  //problem_ -> domain () -> pop ();
 
   return true;
 }

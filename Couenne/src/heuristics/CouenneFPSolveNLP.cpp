@@ -65,7 +65,8 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
 				 NULL, // replaces problem_ -> domain () -> ub (),
 				 false);
 
-  printf ("FP: created TNLP\n");
+  printf ("FP: created TNLP on problem (domain: %x):\n", problem_ -> domain ());
+  problem_ -> print ();
 
   // set new objective
   expression *newObj = updateNLPObj (iSol);
@@ -81,7 +82,6 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   // shamelessly copied from hs071_main.cpp (it's Open Source too!)
 
   SmartPtr <IpoptApplication> app = IpoptApplicationFactory ();
-
   ApplicationReturnStatus status = app -> Initialize ();
 
   if (status != Solve_Succeeded)
@@ -101,7 +101,8 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   /////////////////////////////////////////////////////////
 
   if (nlp_ -> getSolution ()) // check if non-NULL
-    nSol = CoinCopyOfArray (nlp_ -> getSolution (), problem_ -> nVars ());
+    nSol = CoinCopyOfArray (nlp_ -> getSolution (), 
+			    problem_ -> nVars ());
 
   // integer solution with nlp cuts
   // until MINLP feasible

@@ -104,6 +104,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   /* Get the basic options. */
   readOptionsFile();
  
+  // Suppress iteration output from nonlinear solver
+  options () -> SetStringValue ("sb", "yes", false, true);
+
   // in check mode, avoid pop-up error message (there are quite a few messages)
   options_ -> GetStringValue ("test_mode", s, "couenne.");
   if (s == "yes")

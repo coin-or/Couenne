@@ -1,10 +1,10 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    exprDiv.cpp
  * Author:  Pietro Belotti
  * Purpose: definition of divisions
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-11. 
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -14,6 +14,7 @@
 #include "CouenneExprConst.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneExprMul.hpp"
+#include "CouenneExprPow.hpp"
 #include "CouenneExprInv.hpp"
 #include "CouenneExprSub.hpp"
 #include "CouenneExprBDiv.hpp"
@@ -88,16 +89,24 @@ expression *exprDiv::differentiate (int index) {
       !(arglist_ [1] -> dependsOn (index)))
     return new exprConst (0.);
 
-  expression **alm2 = new expression * [3];
+  // expression **alm2 = new expression * [3];
 
-  exprInv *invg = new exprInv (arglist_ [1] -> clone ());
+  // exprInv *invg = new exprInv (arglist_ [1] -> clone ());
 
-  alm2 [0] = arglist_ [0] -> clone ();
-  alm2 [1] = arglist_ [1] -> differentiate (index);
-  alm2 [2] = new exprClone (invg);
+  // alm2 [0] = arglist_ [0] -> clone ();
+  // alm2 [1] = arglist_ [1] -> differentiate (index);
+  // alm2 [2] = new exprClone (invg);
 
-  return new exprMul (invg, new exprSub (arglist_ [0] -> differentiate (index),
-					 new exprMul (alm2, 3)));
+  // return new exprMul (invg, new exprSub (arglist_ [0] -> differentiate (index),
+  // 					 new exprMul (alm2, 3)));
+
+  // in alternative:
+
+  return new exprDiv (new exprSub (new exprMul (arglist_ [1] -> differentiate (index),
+						arglist_ [0] -> clone ()),
+				   new exprMul (arglist_ [1] -> clone (),
+						arglist_ [0] -> differentiate (index))),
+		      new exprPow (arglist_ [1] -> clone (), new exprConst (2.)));
 }
 
 

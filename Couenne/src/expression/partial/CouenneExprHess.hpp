@@ -15,16 +15,18 @@ namespace Couenne {
   class expression;
   class CouenneProblem;
 
-  /// expression matrices
+  /// expression matrices. Used to evaluate the Hessian of the
+  /// Lagrangian function at an optimal solution of the NLP
+
   class ExprHess {
 
   private:
 
-    int           nnz_;  ///< number of (symbolic) nonzeroes
-    int          *iRow_; ///< col indices
-    int          *jCol_; ///< row starts
+    int   nnz_;  ///< number of (symbolic) nonzeroes
+    int  *iRow_; ///< col indices
+    int  *jCol_; ///< row starts
 
-    /// there are m+1 (m constraints + 1 obj).
+    /// There are m+1 (m constraints + 1 obj).
     ///
     /// Implementing a FP requires adding one for gg', the gradient
     /// again being set up at the beginning (at least its expression
@@ -37,11 +39,11 @@ namespace Couenne {
     /// Actually, we could do the gg' trick by replacing the objective
     /// with sum (objective, norm, gg')
 
-    int          *numL_; ///< size of each lamI_
+    int  *numL_; ///< size of each lamI_
 
-    int         **lamI_; ///< vector of indices in the lambda vector
-		 	 ///< whose constraint has nonzero entry in
-		 	 ///< this position of the hessian
+    int **lamI_; ///< vector of indices in the lambda vector
+                 ///< whose constraint has nonzero entry in
+                 ///< this position of the hessian
 
     expression ***expr_; ///< list of lists of pointers to expression
 

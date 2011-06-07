@@ -53,6 +53,7 @@ int nOrbBr = 0; // FIXME: horrible global variable. Brrr.
 
 #include "CoinSignal.hpp"
 
+#if 0
 extern "C" {
 
   static int nInterrupts = 0;
@@ -65,6 +66,7 @@ extern "C" {
     return;
   }
 }
+#endif
 
 //#define FM_FRES
 
@@ -114,6 +116,7 @@ Instructions: http://www.coin-or.org/Couenne\n",
 #endif
 
     CouenneSetup couenne;
+
     if (!couenne.InitializeCouenne (argv, p, NULL, ci, &bb))
       throw infeasible;
 

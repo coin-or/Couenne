@@ -18,7 +18,7 @@
 
 using namespace Couenne;
 
-//#define DEBUG
+#define DEBUG
 
 ExprHess::ExprHess ():
 

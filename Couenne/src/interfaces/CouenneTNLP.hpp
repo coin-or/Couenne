@@ -158,7 +158,6 @@ namespace Couenne {
     /// FORTRAN_STYLE, and 0 for the C_STYLE.
     virtual Index get_number_of_nonlinear_variables ();
 
-
     /// get real list
     virtual bool get_list_of_nonlinear_variables (Index num_nonlin_vars,
 						  Index* pos_nonlin_vars);

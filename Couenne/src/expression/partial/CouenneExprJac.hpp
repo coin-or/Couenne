@@ -15,7 +15,9 @@ namespace Couenne {
   class expression;
   class CouenneProblem;
 
-  /// expression Jacobian
+  /// Jacobian of the problem (computed through Couenne expression
+  /// classes).
+
   class ExprJac {
 
   private:
