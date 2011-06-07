@@ -155,7 +155,7 @@ class exprAux: public exprVar {
     if (isDefinedInteger ()) 
       return true;
 
-    CouNumber l = lb ();
+    register CouNumber l = lb ();
     return ((l == ub ()) && (COUENNE_round (l) == l));
     //CouNumber l = (*(Lb ())) ();
     //return (::isInteger (l) && (fabs (l - (*(Ub ())) ()) < COUENNE_EPS));

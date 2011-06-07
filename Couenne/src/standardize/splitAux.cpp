@@ -41,9 +41,8 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
   expression **alist = body -> ArgList ();
 
-  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf ("  Splitting expression: "); body -> print (); printf ("\n");
-  }
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) 
+    {printf ("  Splitting expression: "); body -> print (); printf ("\n");}
 
   switch (code) { // constraint h(x) = 0 may be in different forms:
 		  // subtraction, sum, linear group
@@ -484,6 +483,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
   // second argument is set to false so as to instruct standardize not
   // to create a new auxiliary variable (we are creating it ourselves,
   // it's aux)
+
   exprAux *aux = rest -> standardize (this, false);
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {

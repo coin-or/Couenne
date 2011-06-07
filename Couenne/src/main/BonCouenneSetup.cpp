@@ -81,6 +81,10 @@ using namespace Couenne;
 CouenneSetup::~CouenneSetup(){
   if (couenneProb_ && couenneProb_is_own_)
     delete couenneProb_;
+
+#ifdef COIN_HAS_ASL
+  // free (aslfg_ -> asl); // triggers segfault
+#endif
 }
 
 bool CouenneSetup::InitializeCouenne (char ** argv,
@@ -137,7 +141,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   nonlinearSolver_ = ci;
 
-  /** Set the output level for the journalist for all Couenne
+  /** Set the output level of the journalist for all Couenne
       categories.  We probably want to make that a bit more flexible
       later. */
 

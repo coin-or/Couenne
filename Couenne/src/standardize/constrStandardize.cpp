@@ -36,7 +36,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
   // structure)
 
   if (p -> Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf ("################################\nStandardizing constraint: "); print ();
+    printf ("Reformulating constraint: "); print ();
 
     printf (" ["); fflush (stdout); lb_ -> print ();
     printf (","); fflush (stdout);  ub_ -> print (); fflush (stdout);
