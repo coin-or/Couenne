@@ -61,8 +61,8 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
 
   problem_ -> domain () -> push (problem_ -> nVars (),
 				 iSol,
-				 NULL, //problem_ -> domain () -> lb (),
-				 NULL, //problem_ -> domain () -> ub (),
+				 NULL, // replaces problem_ -> domain () -> lb (),
+				 NULL, // replaces problem_ -> domain () -> ub (),
 				 false);
 
   printf ("FP: created TNLP\n");

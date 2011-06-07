@@ -30,6 +30,9 @@ const int numConsCutPasses = 5;
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
+  if (problem_ -> nIntVars () <= 0)
+    return 0;
+
   printf ("FP ====================================\n");
 
   if (CoinCpuTime () > problem_ -> getMaxCpuTime ())

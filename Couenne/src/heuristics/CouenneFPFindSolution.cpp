@@ -8,14 +8,7 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-//#include "CbcModel.hpp"
-//#include "CoinTime.hpp"
-//#include "CoinHelperFunctions.hpp"
-
 #include "CouenneFeasPump.hpp"
-//#include "CouenneMINLPInterface.hpp"
-//#include "CouenneProblem.hpp"
-//#include "CouenneProblemElem.hpp"
 
 using namespace Couenne;
 
@@ -50,6 +43,7 @@ void CouenneFeasPump::findSolution () {
   // 4) if H consecutive failutes, ++p[i]
 
   /// solve MILP 
+
   milp_ -> branchAndBound ();
 }
 

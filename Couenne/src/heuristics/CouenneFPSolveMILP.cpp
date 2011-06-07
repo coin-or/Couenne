@@ -158,6 +158,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
      // create constraints
      for (int i=0; i<nconss; i++) {
+
         SCIP_CONS* cons;
         
         char consname[SCIP_MAXSTRLEN];  
