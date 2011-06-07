@@ -115,6 +115,7 @@ AC_CONFIG_FILES([Makefile
                  test/Makefile
                  src/main/Makefile
                  src/bound_tightening/Makefile
+                 src/bound_tightening/twoImpliedBT/Makefile
                  src/branch/Makefile
                  src/convex/Makefile
                  src/interfaces/Makefile
@@ -127,7 +128,6 @@ AC_CONFIG_FILES([Makefile
                  src/standardize/Makefile
                  src/readnl/Makefile
                  src/util/Makefile
-                 src/two_implied_bt/Makefile
                  src/Makefile
 		 test/grandTest.sh
 		 couenne.pc couenne-uninstalled.pc])

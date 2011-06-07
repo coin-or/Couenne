@@ -22,6 +22,7 @@ endif
 SUBDIRS += src/standardize \
 	  src/problem \
 	  src/bound_tightening \
+	  src/bound_tightening/twoImpliedBT \
 	  src/convex \
 	  src/branch \
 	  src/disjunctive \
@@ -29,7 +30,6 @@ SUBDIRS += src/standardize \
 	  src/cut/crossconv \
 	  src/interfaces \
 	  src/heuristics \
-	  src/two_implied_bt \
 	  src \
 	  src/main 
 

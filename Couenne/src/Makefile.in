@@ -116,6 +116,7 @@ am__includecoin_HEADERS_DIST = ../inc/config_couenne.h \
 	standardize/CouenneLQelems.hpp \
 	bound_tightening/CouenneFixPoint.hpp \
 	bound_tightening/CouenneAggrProbing.hpp \
+	bound_tightening/twoImpliedBT/CouenneTwoImplied.hpp \
 	expression/CouenneDomain.hpp \
 	expression/operators/CouenneExprAbs.hpp \
 	expression/operators/CouenneExprExp.hpp \
@@ -158,7 +159,6 @@ am__includecoin_HEADERS_DIST = ../inc/config_couenne.h \
 	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
 	cut/crossconv/CouenneCrossConv.hpp \
-	two_implied_bt/CouenneTwoImplied.hpp \
 	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/CutGen.hpp \
 	cut/sdpcuts/disjunctive_cuts.hpp \
 	cut/sdpcuts/dsyevx_wrapper.hpp cut/sdpcuts/Heuristics.hpp \
@@ -418,11 +418,11 @@ libCouenne_la_LIBADD = \
 	./branch/libCouenneBranch.la \
 	./convex/libCouenneConvex.la \
 	./bound_tightening/libCouenneBoundTightening.la \
+	./bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
 	./util/libCouenneUtil.la \
 	./disjunctive/libCouenneDisjunctive.la \
 	./cut/sdpcuts/libCouenneSdpCuts.la \
-	./cut/crossconv/libCouenneCrossConv.la \
-	./two_implied_bt/libCouenneTwoImplied.la
+	./cut/crossconv/libCouenneCrossConv.la
 
 
 #	./ellipcuts/libCouenneEllipCuts.la 
@@ -470,6 +470,7 @@ includecoin_HEADERS = ../inc/config_couenne.h util/CouenneRootQ.hpp \
 	standardize/CouenneLQelems.hpp \
 	bound_tightening/CouenneFixPoint.hpp \
 	bound_tightening/CouenneAggrProbing.hpp \
+	bound_tightening/twoImpliedBT/CouenneTwoImplied.hpp \
 	expression/CouenneDomain.hpp \
 	expression/operators/CouenneExprAbs.hpp \
 	expression/operators/CouenneExprExp.hpp \
@@ -512,7 +513,6 @@ includecoin_HEADERS = ../inc/config_couenne.h util/CouenneRootQ.hpp \
 	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
 	cut/crossconv/CouenneCrossConv.hpp \
-	two_implied_bt/CouenneTwoImplied.hpp \
 	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/CutGen.hpp \
 	cut/sdpcuts/disjunctive_cuts.hpp \
 	cut/sdpcuts/dsyevx_wrapper.hpp cut/sdpcuts/Heuristics.hpp \
@@ -672,7 +672,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/../inc $(distdir)/bound_tightening $(distdir)/branch $(distdir)/convex $(distdir)/cut/crossconv $(distdir)/cut/sdpcuts $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/standardize $(distdir)/two_implied_bt $(distdir)/util
+	$(mkdir_p) $(distdir)/../inc $(distdir)/bound_tightening $(distdir)/bound_tightening/twoImpliedBT $(distdir)/branch $(distdir)/convex $(distdir)/cut/crossconv $(distdir)/cut/sdpcuts $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/standardize $(distdir)/util
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

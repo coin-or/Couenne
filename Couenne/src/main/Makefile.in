@@ -347,8 +347,8 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/../branch`\
 	-I`$(CYGPATH_W) $(srcdir)/../problem` \
 	-I`$(CYGPATH_W) $(srcdir)/../cut/crossconv` \
-	-I`$(CYGPATH_W) $(srcdir)/../two_implied_bt` \
 	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
+	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening/twoImpliedBT` \
 	-I`$(CYGPATH_W) $(srcdir)/../disjunctive` \
 	-I`$(CYGPATH_W) $(srcdir)/../readnl`
 

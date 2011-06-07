@@ -28,7 +28,7 @@ VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-top_builddir = ../..
+top_builddir = ../../..
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = @INSTALL@
 install_sh_DATA = $(install_sh) -c -m 644
@@ -44,7 +44,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/two_implied_bt
+subdir = src/bound_tightening/twoImpliedBT
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
@@ -318,11 +318,11 @@ libCouenneTwoImplied_la_LDFLAGS = $(LT_LDFLAGS)
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
 AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem` \
-	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening`
+	-I`$(CYGPATH_W) $(srcdir)/../..` \
+	-I`$(CYGPATH_W) $(srcdir)/../../expression` \
+	-I`$(CYGPATH_W) $(srcdir)/../../branch` \
+	-I`$(CYGPATH_W) $(srcdir)/../../problem` \
+	-I`$(CYGPATH_W) $(srcdir)/../../bound_tightening`
 
 
 # This line is necessary to allow VPATH compilation with MS compilers
@@ -341,9 +341,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/two_implied_bt/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/bound_tightening/twoImpliedBT/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  src/two_implied_bt/Makefile
+	  $(AUTOMAKE) --foreign  src/bound_tightening/twoImpliedBT/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

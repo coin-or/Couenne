@@ -22396,7 +22396,7 @@ BONMIN_CFLAGS_INSTALLED=
 BONMIN_DATA=
 BONMIN_DATA_INSTALLED=
 
-# initial list of dependencies is "bonmin", but we need to filter out version number specifications (= x, <= x, >= x)
+# initial list of dependencies is "bonmin", but we need to filter out version number specifications (= x, <= x, >= x, != x)
 projtoprocess="bonmin"
 
 # we first expand the list of projects to process by adding all dependencies just behind the project which depends on it
@@ -22900,7 +22900,7 @@ ASL_CFLAGS_INSTALLED=
 ASL_DATA=
 ASL_DATA_INSTALLED=
 
-# initial list of dependencies is "bonminamplinterface", but we need to filter out version number specifications (= x, <= x, >= x)
+# initial list of dependencies is "bonminamplinterface", but we need to filter out version number specifications (= x, <= x, >= x, != x)
 projtoprocess="bonminamplinterface"
 
 # we first expand the list of projects to process by adding all dependencies just behind the project which depends on it
@@ -23597,7 +23597,7 @@ SCIP_CFLAGS_INSTALLED=
 SCIP_DATA=
 SCIP_DATA_INSTALLED=
 
-# initial list of dependencies is "coinscip", but we need to filter out version number specifications (= x, <= x, >= x)
+# initial list of dependencies is "coinscip", but we need to filter out version number specifications (= x, <= x, >= x, != x)
 projtoprocess="coinscip"
 
 # we first expand the list of projects to process by adding all dependencies just behind the project which depends on it
@@ -24091,7 +24091,7 @@ CPX_CFLAGS_INSTALLED=
 CPX_DATA=
 CPX_DATA_INSTALLED=
 
-# initial list of dependencies is "osi-cplex", but we need to filter out version number specifications (= x, <= x, >= x)
+# initial list of dependencies is "osi-cplex", but we need to filter out version number specifications (= x, <= x, >= x, != x)
 projtoprocess="osi-cplex"
 
 # we first expand the list of projects to process by adding all dependencies just behind the project which depends on it
@@ -24592,7 +24592,7 @@ GRB_CFLAGS_INSTALLED=
 GRB_DATA=
 GRB_DATA_INSTALLED=
 
-# initial list of dependencies is "osi-gurobi", but we need to filter out version number specifications (= x, <= x, >= x)
+# initial list of dependencies is "osi-gurobi", but we need to filter out version number specifications (= x, <= x, >= x, != x)
 projtoprocess="osi-gurobi"
 
 # we first expand the list of projects to process by adding all dependencies just behind the project which depends on it
@@ -25084,7 +25084,7 @@ MSK_CFLAGS_INSTALLED=
 MSK_DATA=
 MSK_DATA_INSTALLED=
 
-# initial list of dependencies is "osi-mosek", but we need to filter out version number specifications (= x, <= x, >= x)
+# initial list of dependencies is "osi-mosek", but we need to filter out version number specifications (= x, <= x, >= x, != x)
 projtoprocess="osi-mosek"
 
 # we first expand the list of projects to process by adding all dependencies just behind the project which depends on it
@@ -25576,7 +25576,7 @@ SPX_CFLAGS_INSTALLED=
 SPX_DATA=
 SPX_DATA_INSTALLED=
 
-# initial list of dependencies is "osi-soplex", but we need to filter out version number specifications (= x, <= x, >= x)
+# initial list of dependencies is "osi-soplex", but we need to filter out version number specifications (= x, <= x, >= x, != x)
 projtoprocess="osi-soplex"
 
 # we first expand the list of projects to process by adding all dependencies just behind the project which depends on it
@@ -26068,7 +26068,7 @@ XPR_CFLAGS_INSTALLED=
 XPR_DATA=
 XPR_DATA_INSTALLED=
 
-# initial list of dependencies is "osi-xpress", but we need to filter out version number specifications (= x, <= x, >= x)
+# initial list of dependencies is "osi-xpress", but we need to filter out version number specifications (= x, <= x, >= x, != x)
 projtoprocess="osi-xpress"
 
 # we first expand the list of projects to process by adding all dependencies just behind the project which depends on it
@@ -27696,7 +27696,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 # Here list all the files that configure should create (except for the
 # configuration header file)
-                                                                                                                                                                                                                  ac_config_files="$ac_config_files Makefile test/Makefile src/main/Makefile src/bound_tightening/Makefile src/branch/Makefile src/convex/Makefile src/interfaces/Makefile src/heuristics/Makefile src/disjunctive/Makefile src/cut/sdpcuts/Makefile src/cut/crossconv/Makefile src/expression/Makefile src/problem/Makefile src/standardize/Makefile src/readnl/Makefile src/util/Makefile src/two_implied_bt/Makefile src/Makefile test/grandTest.sh couenne.pc couenne-uninstalled.pc"
+                                                                                                                                                                                                                  ac_config_files="$ac_config_files Makefile test/Makefile src/main/Makefile src/bound_tightening/Makefile src/bound_tightening/twoImpliedBT/Makefile src/branch/Makefile src/convex/Makefile src/interfaces/Makefile src/heuristics/Makefile src/disjunctive/Makefile src/cut/sdpcuts/Makefile src/cut/crossconv/Makefile src/expression/Makefile src/problem/Makefile src/standardize/Makefile src/readnl/Makefile src/util/Makefile src/Makefile test/grandTest.sh couenne.pc couenne-uninstalled.pc"
 
 
 #                 src/cut/ellipcuts/Makefile
@@ -28496,6 +28496,7 @@ do
   "test/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
   "src/main/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/main/Makefile" ;;
   "src/bound_tightening/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/bound_tightening/Makefile" ;;
+  "src/bound_tightening/twoImpliedBT/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/bound_tightening/twoImpliedBT/Makefile" ;;
   "src/branch/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/branch/Makefile" ;;
   "src/convex/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/convex/Makefile" ;;
   "src/interfaces/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/interfaces/Makefile" ;;
@@ -28508,7 +28509,6 @@ do
   "src/standardize/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/standardize/Makefile" ;;
   "src/readnl/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/readnl/Makefile" ;;
   "src/util/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/util/Makefile" ;;
-  "src/two_implied_bt/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/two_implied_bt/Makefile" ;;
   "src/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
   "test/grandTest.sh" ) CONFIG_FILES="$CONFIG_FILES test/grandTest.sh" ;;
   "couenne.pc" ) CONFIG_FILES="$CONFIG_FILES couenne.pc" ;;

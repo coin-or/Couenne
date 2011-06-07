@@ -28,11 +28,11 @@ libCouenne_la_LIBADD = \
 	./branch/libCouenneBranch.la \
 	./convex/libCouenneConvex.la \
 	./bound_tightening/libCouenneBoundTightening.la \
+	./bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
 	./util/libCouenneUtil.la \
 	./disjunctive/libCouenneDisjunctive.la \
 	./cut/sdpcuts/libCouenneSdpCuts.la \
-	./cut/crossconv/libCouenneCrossConv.la \
-	./two_implied_bt/libCouenneTwoImplied.la
+	./cut/crossconv/libCouenneCrossConv.la
 
 #	./ellipcuts/libCouenneEllipCuts.la 
 #	./readnl/libCouenneReadnl.la 
@@ -111,6 +111,7 @@ includecoin_HEADERS = \
 	standardize/CouenneLQelems.hpp \
 	bound_tightening/CouenneFixPoint.hpp \
 	bound_tightening/CouenneAggrProbing.hpp \
+	bound_tightening/twoImpliedBT/CouenneTwoImplied.hpp \
 	expression/CouenneDomain.hpp \
 	expression/operators/CouenneExprAbs.hpp \
 	expression/operators/CouenneExprExp.hpp \
@@ -162,7 +163,6 @@ includecoin_HEADERS = \
 	disjunctive/CouenneDisjCuts.hpp \
 	convex/CouenneCutGenerator.hpp \
 	cut/crossconv/CouenneCrossConv.hpp \
-	two_implied_bt/CouenneTwoImplied.hpp \
 	cut/sdpcuts/CouenneSdpCuts.hpp \
 	cut/sdpcuts/CutGen.hpp \
 	cut/sdpcuts/disjunctive_cuts.hpp \

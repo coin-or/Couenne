@@ -43,6 +43,7 @@ Couenne/src/bound_tightening/operators/impliedBounds-exprTrilinear.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-mul.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-sum.cpp -text
 Couenne/src/bound_tightening/tightenBounds.cpp -text
+Couenne/src/bound_tightening/twoImpliedBT/TwoImpliedIneqCombine.cpp -text
 Couenne/src/branch/BranchCore.cpp -text
 Couenne/src/branch/CouenneBranchingObject.cpp -text
 Couenne/src/branch/CouenneBranchingObject.hpp -text
@@ -296,7 +297,6 @@ Couenne/src/standardize/linStandardize.cpp -text
 Couenne/src/standardize/splitAux.cpp -text
 Couenne/src/standardize/standardize.cpp -text
 Couenne/src/standardize/sumStandardize.cpp -text
-Couenne/src/two_implied_bt/TwoImpliedIneqCombine.cpp -text
 Couenne/src/util/CouenneFunTriplets.hpp -text
 Couenne/src/util/CouenneRootQ.hpp -text
 Couenne/src/util/drawCuts.cpp -text
