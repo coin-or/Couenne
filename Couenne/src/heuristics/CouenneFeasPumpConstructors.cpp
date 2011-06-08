@@ -11,6 +11,7 @@
 #include <string>
 
 #include "IpOptionsList.hpp"
+
 #include "CouenneFeasPump.hpp"
 #include "CouenneMINLPInterface.hpp"
 #include "CouenneObject.hpp"
@@ -20,9 +21,22 @@
 #include "CouenneExprSub.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneExprSum.hpp"
-#include "CoinHelperFunctions.hpp"
+
 
 using namespace Couenne;
+
+// common code for initializing ipopt application
+void CouenneFeasPump::initIpoptApp () {
+
+  if (!app_)
+    app_ = IpoptApplicationFactory ();
+
+  ApplicationReturnStatus status = app_ -> Initialize ();
+  app_ -> Options () -> SetIntegerValue ("max_iter", 40);
+  if (status != Solve_Succeeded)
+    printf ("FP: Error in initialization\n");
+}
+
 
 // Constructor ////////////////////////////////////////////////// 
 CouenneFeasPump::CouenneFeasPump ():
@@ -31,6 +45,7 @@ CouenneFeasPump::CouenneFeasPump ():
   problem_             (NULL),
   couenneCG_           (NULL),
   nlp_                 (NULL),
+  app_                 (NULL),
   milp_                (NULL),
   numberSolvePerLevel_ (-1),
   betaNLP_             (0.),
@@ -40,6 +55,8 @@ CouenneFeasPump::CouenneFeasPump ():
   maxIter_             (COIN_INT_MAX) {
 
   setHeuristicName ("Couenne Feasibility Pump");
+
+  initIpoptApp ();
 }
 
 
@@ -52,6 +69,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   problem_             (couenne),
   couenneCG_           (cg),
   nlp_                 (NULL),
+  app_                 (NULL),
   milp_                (NULL),
   numberSolvePerLevel_ (-1),
   betaNLP_             (0.),
@@ -71,6 +89,12 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 				    
   options -> GetStringValue  ("feas_pump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
   options -> GetStringValue  ("feas_pump_dist_int", s, "couenne."); compDistInt_      = (s == "yes");
+
+  // Although app_ is only used in CouenneFPSolveNLP, we need to have
+  // an object lasting the program's lifetime as otherwise it appears
+  // to delete the nlp pointer at deletion.
+
+  initIpoptApp ();
 }
 
   
@@ -81,6 +105,7 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   problem_             (other. problem_),
   couenneCG_           (other. couenneCG_),
   nlp_                 (other. nlp_),
+  app_                 (NULL),
   milp_                (other. milp_),
   pool_                (other. pool_),
   numberSolvePerLevel_ (other. numberSolvePerLevel_),
@@ -88,7 +113,10 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   betaMILP_            (other. betaMILP_),
   compDistInt_         (other. compDistInt_),
   milpCuttingPlane_    (other. milpCuttingPlane_),
-  maxIter_             (other. maxIter_) {}
+  maxIter_             (other. maxIter_) {
+
+  initIpoptApp ();
+}
 
 
 // Clone //////////////////////////////////////////////////////// 
@@ -106,6 +134,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     problem_             = rhs. problem_;
     couenneCG_           = rhs. couenneCG_;
     nlp_                 = rhs. nlp_;
+    app_                 = NULL;
     milp_                = rhs. milp_;
     pool_                = rhs. pool_;
     numberSolvePerLevel_ = rhs. numberSolvePerLevel_;
@@ -116,12 +145,17 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     maxIter_             = rhs. maxIter_;
   }
 
+  initIpoptApp ();
   return *this;
 }
 
 
 // Destructor /////////////////////////////////////////////////// 
-CouenneFeasPump::~CouenneFeasPump () {}
+CouenneFeasPump::~CouenneFeasPump () {
+
+  if (app_) delete app_;
+  //if (nlp_) delete nlp_;
+}
 
 
 /// Set new expression as the NLP objective function using
@@ -142,7 +176,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
       expression *base;
 
-      if      (iS == 0.) base = new exprClone (problem_ -> Var (i));
+      if      (iS == 0.) base =              new exprClone (problem_ -> Var (i));
       else if (iS <  0.) base = new exprSum (new exprClone (problem_ -> Var (i)), new exprConst (-iS));
       else               base = new exprSub (new exprClone (problem_ -> Var (i)), new exprConst  (iS));
 
@@ -150,7 +184,11 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     }
   } else {
 
-    // here the objective function is ||P(x-x^0)||_2^2 with P positive semidefinite
+    // here the objective function is 
+    //
+    // ||P(x-x^0)||_2^2 = (x-x^0)' P'P (x-x^0)
+    //
+    // with P positive semidefinite
 
   }
 

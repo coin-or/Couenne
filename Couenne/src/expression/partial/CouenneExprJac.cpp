@@ -34,7 +34,7 @@ ExprJac::~ExprJac () {
     free (jCol_);
 
     for (int i=0; i<nnz_; i++)
-      free (expr_ [i]);
+      delete expr_ [i];
 
     free (expr_);
   }

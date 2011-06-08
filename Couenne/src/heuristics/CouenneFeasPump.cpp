@@ -86,7 +86,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   //						      	          | |
   /////////////////////////////////////////////////////////////// |_| /////
 
-  expression *origObj = problem_ -> Obj (0) -> Body ();
+  //expression *origObj = problem_ -> Obj (0) -> Body ();
 
   int 
     objInd = problem_ -> Obj (0) -> Body () -> Index (),
@@ -283,22 +283,18 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     if (!nlp_) // first call (in this call to FP). Create NLP
       nlp_ = new CouenneTNLP (problem_);
 
-    problem_ -> setObjective (0, origObj);
+    //problem_ -> setObjective (0, origObj);
 
     fixIntVariables (best);
     nlp_ -> setInitSol (best);
 
     ////////////////////////////////////////////////////////////////
 
-    // shamelessly copied from hs071_main.cpp (it's Open Source too!)
+    // Solve with original objective function
 
-    SmartPtr <IpoptApplication> app = IpoptApplicationFactory ();
-
-    ApplicationReturnStatus status = app -> Initialize ();
-    if (status != Solve_Succeeded) printf ("FP: error in initialization\n");
-
-    status = app -> OptimizeTNLP (nlp_);
-    if (status != Solve_Succeeded) printf ("FP: error solving problem\n");
+    ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
+    if (status != Solve_Succeeded) 
+      printf ("FP: error solving problem\n");
 
     ////////////////////////////////////////////////////////////////
 

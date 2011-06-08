@@ -16,7 +16,6 @@
 
 #include "CouenneTypes.hpp"
 #include "CbcHeuristic.hpp"
-#include "IpOptionsList.hpp"
 
 #include "config_couenne.h"
 
@@ -33,6 +32,8 @@ namespace Osi {
 
 namespace Ipopt {
   class IpoptApplication;
+  class OptionsList;
+  template <class T> class SmartPtr;
 }
 
 namespace Bonmin {
@@ -121,6 +122,9 @@ namespace Couenne {
     /// MILP is built
     void init_MILP ();
 
+    /// Common code for initializing non-smartptr ipopt application
+    void initIpoptApp ();
+
   private:
 
     //
@@ -142,6 +146,9 @@ namespace Couenne {
     /// Continuous relaxation of the problem, with an interface for
     /// Ipopt only
     CouenneTNLP *nlp_;
+
+    /// Ipopt Application pointer for solving NLPs
+    Ipopt::IpoptApplication *app_;
 
     /// MILP relaxation of the MINLP (used to find integer
     /// non-NLP-feasible solution)

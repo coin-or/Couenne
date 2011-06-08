@@ -12,8 +12,6 @@
 #include "CoinTime.hpp"
 #include "CoinHelperFunctions.hpp"
 
-#include "IpIpoptApplication.hpp"
-
 #include "CouenneFeasPump.hpp"
 #include "CouenneMINLPInterface.hpp"
 #include "CouenneProblem.hpp"
@@ -84,21 +82,11 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
 
   // shamelessly copied from hs071_main.cpp (it's Open Source too!)
 
-  SmartPtr <IpoptApplication> app = IpoptApplicationFactory ();
-  ApplicationReturnStatus status = app -> Initialize ();
-
-  app -> Options () -> SetIntegerValue ("max_iter", 40);
-
-  if (status != Solve_Succeeded)
-    printf ("FP: Error in initialization\n");
-
   printf ("FP: optimize\n");
 
-  problem_ -> print ();
-
-  status = firstNLP ? 
-    app -> OptimizeTNLP   (nlp_) :
-    app -> ReOptimizeTNLP (nlp_);
+  ApplicationReturnStatus status = firstNLP ? 
+    app_ -> OptimizeTNLP   (nlp_) :
+    app_ -> ReOptimizeTNLP (nlp_);
 
   problem_ -> domain () -> pop ();
 
