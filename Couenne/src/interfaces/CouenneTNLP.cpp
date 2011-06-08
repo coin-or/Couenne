@@ -29,6 +29,13 @@ CouenneTNLP::CouenneTNLP ():
   problem_ (NULL) {}
 
 
+/// Empty constructor
+CouenneTNLP::~CouenneTNLP () {
+  if (sol_)  delete [] sol_;
+  if (sol0_) delete [] sol0_;
+}
+
+
 /// Constructor 
 CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
@@ -57,7 +64,8 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
   // constraints
 
-  printf ("constructing TNLP\n");
+  printf ("constructing TNLP on %d cons, %d vars\n", 
+	  problem_ -> nCons (), problem_ -> nVars ());
 
   for (int i = 0; i < problem_ -> nCons (); i++) {
 
@@ -115,9 +123,13 @@ bool CouenneTNLP::get_nlp_info (Index& n,
 
 
 /// set initial solution
-void CouenneTNLP::setInitSol (double *sol)
-{sol0_ = sol;}
-
+void CouenneTNLP::setInitSol (double *sol) {
+  if (sol) {
+    if (!sol0_)
+      sol0_ = new CouNumber [problem_ -> nVars ()];
+    CoinCopyN (sol, problem_ -> nVars (), sol0_);
+  }
+}
 
 // overload this method to return the information about the bound on
 // the variables and constraints. The value that indicates that a
@@ -127,7 +139,10 @@ void CouenneTNLP::setInitSol (double *sol)
 // TNLPAdapter)
 bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
 				   Index m, Number* g_l, Number* g_u) {
+
   // constraints
+
+  printf ("get_bounds_info on %d cons, %d vars\n", m, n);
 
   for (int i = 0; i < problem_ -> nCons (); i++) {
 
@@ -255,15 +270,28 @@ bool CouenneTNLP::eval_f (Index n, const Number* x, bool new_x,
 bool CouenneTNLP::eval_grad_f (Index n, const Number* x, bool new_x,
 			       Number* grad_f) {
 
+#ifdef DEBUG
+  printf ("eval_grad_f: [");
+  for (int i=0; i<n; i++)
+    printf ("%g ", x [i]);
+  printf ("] --> [");
+#endif
+
   if (new_x)
     CoinCopyN (x, n, problem_ -> X ()); // can't push domain as we
 					// don't know when to pop
-  
+
   CoinFillN (grad_f, n, 0.);
 
   for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); 
        i != gradient_. end (); ++i)
     grad_f [i -> first] = (*(i -> second)) ();
+
+#ifdef DEBUG
+  for (int i=0; i<n; i++)
+    printf ("%g ", grad_f [i]);
+  printf ("]\n");
+#endif
 
   return true;
 }
@@ -277,6 +305,17 @@ bool CouenneTNLP::eval_g (Index n, const Number* x, bool new_x,
     CoinCopyN (x, n, problem_ -> X ()); // can't push domain as we
 					// don't know when to pop
 
+#ifdef DEBUG
+  if (x) {
+    printf ("eval_g: [");
+    for (int i=0; i<n; i++)
+      printf ("%g ", x [i]);
+    printf ("] --> [");
+  }
+#endif
+
+  int nEntries = 0; // FIXME: needs to go
+
   for (int i = 0; i < problem_ -> nCons (); i++) {
 
     expression *b = problem_ -> Con (i) -> Body ();
@@ -285,10 +324,14 @@ bool CouenneTNLP::eval_g (Index n, const Number* x, bool new_x,
 	b -> Type () == VAR) 
       continue;
 
+    nEntries ++;
+
     *g++ = (*b) (); // this element of g is the evaluation of the constraint
   }
 
   // auxiliaries
+
+  assert (n == problem_ -> nVars ());
 
   for (int i = 0; i < problem_ -> nVars (); i++) {
 
@@ -299,7 +342,17 @@ bool CouenneTNLP::eval_g (Index n, const Number* x, bool new_x,
       continue;
 
     *g++ = (*e) ();
+
+    nEntries ++;
   }
+
+#ifdef DEBUG
+  if (x) {
+    for (int i=0; i<nEntries; i++)
+      printf ("%g ", *(g - nEntries + i));
+    printf ("]\n");
+  }
+#endif
 
   return true;
 }
@@ -316,6 +369,15 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
   if (new_x)
     CoinCopyN (x, n, problem_ -> X ()); // can't push domain as we
 					// don't know when to pop
+
+#ifdef DEBUG
+  if (x) {
+    printf ("eval_jac_g: ["); fflush (stdout);
+    for (int i=0; i<n; i++) 
+      {printf ("%g ", x [i]); fflush (stdout);}
+    printf ("] --> ["); fflush (stdout);
+  }
+#endif
 
   //problem_ -> domain () -> push (n, x, NULL, NULL);
 
@@ -340,13 +402,21 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
       *values++ = (**(e++)) ();
   }
 
+#ifdef DEBUG
+  if (values) {
+    for (int i=0; i<nele_jac; i++)
+      {printf ("%g ", *(values - nele_jac + i)); fflush (stdout);}
+    printf ("]\n");
+  } else printf ("empty\n");
+#endif
+
   //problem_ -> domain () -> pop ();
 
   return true;
 }
 
 
-// overload this method to return the hessian of the lagrangian. The
+// Overload this method to return the hessian of the lagrangian. The
 // vectors iRow and jCol only need to be set once (during the first
 // call). The first call is used to set the structure only (iRow and
 // jCol will be non-NULL, and values will be NULL) For subsequent
@@ -365,6 +435,19 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
   if (new_x)
     CoinCopyN (x, n, problem_ -> X ()); // can't push domain as we
 					// don't know when to pop
+
+#ifdef DEBUG
+  if (x) {
+    printf ("eval_h: ["); fflush (stdout);
+    for (int i=0; i<n; i++)
+      {printf ("%g ", x [i]); fflush (stdout);}
+    printf ("], lambda: ["); fflush (stdout);
+    for (int i=0; i<m; i++)
+      {printf ("%g ", lambda [i]); fflush (stdout);}
+    printf ("] --> ["); fflush (stdout);
+  }
+#endif
+
   if (values == NULL && 
       iRow   != NULL && 
       jCol   != NULL) {
@@ -379,7 +462,7 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
     /// generic call, iRow/jCol are known and we should fill in the
     /// values
 
-    for (int i=0; i<m; i++, values++) {
+    for (int i=0; i<nele_hess; i++, values++) {
 
       *values = 0.;
 
@@ -394,6 +477,15 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
     }
   }
 
+
+#ifdef DEBUG
+  if (values) {
+    for (int i=0; i<nele_hess; i++)
+      {printf ("%g ", *(values - nele_hess + i)); fflush (stdout);}
+    printf ("]\n");
+  } else printf ("empty\n");
+#endif
+
   return true;
 }
 
@@ -407,8 +499,10 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 				     const IpoptData* ip_data,
 				     IpoptCalculatedQuantities* ip_cq) {
 
-  printf ("Ipopt[FP] solution: %12e\n", obj_value);
+  printf ("Ipopt[FP] solution (card %d): %12e\n", n, obj_value);
   bestZ_ = obj_value;
+  if (!sol_)
+    sol_ = new CouNumber [n]; 
   CoinCopyN (x, n, sol_);
 }
 
@@ -425,7 +519,7 @@ bool CouenneTNLP::intermediate_callback (AlgorithmMode mode,
 					 const IpoptData* ip_data,
 					 IpoptCalculatedQuantities* ip_cq) {
 
-  //printf ("Ipopt[FP] %4d %12e %12e %12e\n", iter, obj_value, inf_pr, inf_du);
+  //printf ("Ipopt FP: iter %4d obj %12e %12e %12e\n", iter, obj_value, inf_pr, inf_du);
   return true;
 }
 

@@ -136,10 +136,18 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     // here the objective function is ||x-x^0||_2^2
 
     // create the argument list (x_i - x_i^0)^2 for all i's
-    for (int i=0; i<problem_ -> nVars (); i++)
-      list [i] = new exprPow (new exprSub (new exprClone (problem_ -> Var (i)), 
-					   new exprConst (iSol [i])), 
-			      new exprConst (2.));
+    for (int i=0; i<problem_ -> nVars (); i++) {
+
+      CouNumber iS = iSol [i];
+
+      expression *base;
+
+      if      (iS == 0.) base = new exprClone (problem_ -> Var (i));
+      else if (iS <  0.) base = new exprSum (new exprClone (problem_ -> Var (i)), new exprConst (-iS));
+      else               base = new exprSub (new exprClone (problem_ -> Var (i)), new exprConst  (iS));
+
+      list [i] = new exprPow (base, new exprConst (2.));
+    }
   } else {
 
     // here the objective function is ||P(x-x^0)||_2^2 with P positive semidefinite

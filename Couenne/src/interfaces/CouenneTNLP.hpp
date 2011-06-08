@@ -34,6 +34,9 @@ namespace Couenne {
     /// Constructor 
     CouenneTNLP (CouenneProblem *);
 
+    /// Destructor
+    virtual ~CouenneTNLP ();
+
     /// set initial solution
     void setInitSol (double *sol);
 

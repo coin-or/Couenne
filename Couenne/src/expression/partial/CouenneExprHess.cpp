@@ -38,7 +38,7 @@ ExprHess::~ExprHess () {
     for (int i=0; i<nnz_; i++) {
 
       for (int j=0; j<numL_ [i]; j++)
-	free (expr_ [i] [j]);
+	delete expr_ [i] [j];
 
       free (expr_ [i]);
       free (lamI_ [i]);

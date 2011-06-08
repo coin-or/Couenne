@@ -17,6 +17,7 @@
 #include "CouenneFeasPump.hpp"
 #include "CouenneMINLPInterface.hpp"
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 #include "CouenneCutGenerator.hpp"
 
 #include "CouenneTNLP.hpp"
@@ -65,11 +66,13 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
 				 NULL, // replaces problem_ -> domain () -> ub (),
 				 false);
 
-  printf ("FP: created TNLP on problem (domain: %x):\n", problem_ -> domain ());
-  problem_ -> print ();
+  printf ("FP: created TNLP\n");
 
   // set new objective
-  expression *newObj = updateNLPObj (iSol);
+  expression
+    *newObj = updateNLPObj (iSol),
+    *oldObj = problem_ -> Obj (0) -> Body ();
+
   problem_ -> setObjective (0, newObj);
 
   printf ("FP: created obj\n");
@@ -84,10 +87,14 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   SmartPtr <IpoptApplication> app = IpoptApplicationFactory ();
   ApplicationReturnStatus status = app -> Initialize ();
 
+  app -> Options () -> SetIntegerValue ("max_iter", 40);
+
   if (status != Solve_Succeeded)
     printf ("FP: Error in initialization\n");
 
   printf ("FP: optimize\n");
+
+  problem_ -> print ();
 
   status = firstNLP ? 
     app -> OptimizeTNLP   (nlp_) :
@@ -108,6 +115,8 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   // until MINLP feasible
 
   delete newObj;
+
+  problem_ -> setObjective (0, oldObj);
 
   return nlp_ -> getSolValue ();
 }
