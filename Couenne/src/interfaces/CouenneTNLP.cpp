@@ -50,13 +50,23 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
   expression *obj = problem_ -> Obj (0) -> Body ();
 
+  // objective of entering problem is reformulated, no need to go
+  // further
   obj -> DepList (objDep, STOP_AT_AUX);
+
+  printf ("objective:");
+  obj -> print ();
+  printf ("\n");
 
   for (std::set <int>::iterator i = objDep.begin (); i != objDep. end (); ++i) {
 
     expression *gradcomp = obj -> differentiate (*i);
     gradcomp -> realign (problem_);
     gradient_ . push_back (std::pair <int, expression *> (*i, gradcomp));
+
+    printf ("objective depends on x_%d: derivative is ", *i);
+    gradcomp -> print ();
+    printf ("\n");
   }
 
   // create data structures for nonlinear variables (see
@@ -70,6 +80,9 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
   for (int i = 0; i < problem_ -> nCons (); i++) {
 
     expression *e = problem_ -> Con (i) -> Body ();
+
+    // if constraint is single variable, don't treat it as constraint
+    // but rather as variable bound
 
     if (e -> Type      () == AUX ||
 	e -> Type      () == VAR ||
@@ -89,8 +102,8 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
     exprVar *e = problem_ -> Var (i);
 
     if ((e -> Type         () != AUX)    ||
-	(e -> Linearity    () <= LINEAR) ||
-	(e -> Multiplicity () <= 0))
+	(e -> Multiplicity () <= 0)      ||
+	(e -> Linearity    () <= LINEAR))
       continue;
 
     e -> Image () -> DepList (nonLinVars_, STOP_AT_AUX);
@@ -152,8 +165,13 @@ bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
 	c -> Body () -> Type () == VAR) 
       continue;
 
-    *g_l++ = (*c -> Lb ()) ();
-    *g_u++ = (*c -> Ub ()) ();
+    CouNumber
+      clb = (*c -> Lb ()) (),
+      cub = (*c -> Ub ()) ();
+
+    // prevent ipopt from exiting on inconsistent bounds
+    if (clb <= cub) {*g_l++ = clb; *g_u++ = cub;} 
+    else            {*g_l++ = cub; *g_u++ = clb;}
   }
 
   // auxiliaries
@@ -162,15 +180,21 @@ bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
 
     exprVar *e = problem_ -> Var (i);
 
-    *x_l++ = e -> lb ();
-    *x_u++ = e -> ub ();
+    CouNumber
+      lb = e -> lb (),
+      ub = e -> ub ();
+
+    // prevent ipopt from exiting on inconsistent bounds
+    if (lb <= ub) {*x_l++ = lb; *x_u++ = ub;} 
+    else          {*x_l++ = ub; *x_u++ = lb;}
 
     if ((e -> Type () != AUX) ||
 	(e -> Multiplicity () <= 0))
       continue;
 
-    *g_l++ = e -> lb ();
-    *g_u++ = e -> ub ();
+    // prevent ipopt from exiting on inconsistent bounds
+    if (lb <= ub) {*g_l++ = lb; *g_u++ = ub;}
+    else          {*g_l++ = ub; *g_u++ = lb;}
   }
 
   return true;

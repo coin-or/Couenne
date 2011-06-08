@@ -274,6 +274,8 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
     CoinPackedVector x0 (problem_ -> nVars (), nlpSolExp);
 
+    delete [] nlpSolExp;
+
     for (int i=0, j=problem_ -> nVars (), k = problem_ -> nVars (); k--; i++)
 
       if (!compDistInt_ || milp_ -> isInteger (i)) {

@@ -92,9 +92,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     objInd = problem_ -> Obj (0) -> Body () -> Index (),
     nSep = 0;
 
-  do {
+  printf ("FP: main loop --------------------------------- \n");
 
-    printf ("FP: main loop ------------ \n");
+  do {
 
     CouNumber curcutoff = problem_ -> getCutOff ();
 
@@ -358,6 +358,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   delete milp_;
   milp_ = NULL;
+
+  delete [] iSol;
 
   return retval;
 }

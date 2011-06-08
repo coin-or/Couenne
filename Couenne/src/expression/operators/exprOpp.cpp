@@ -85,6 +85,7 @@ expression *exprOpp::simplify () {
     // leak. don't clone, use exprClone
     expression *ret = argument_ -> Argument () -> clone ();
     delete argument_;
+    argument_ = NULL;
     return ret;
   }
 
@@ -92,6 +93,7 @@ expression *exprOpp::simplify () {
   if (argument_ -> Type () == CONST) {
     expression *ret = new exprConst (- argument_ -> Value ());
     delete argument_;
+    argument_ = NULL;
     return ret;
   }
 

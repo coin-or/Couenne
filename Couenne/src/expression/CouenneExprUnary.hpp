@@ -54,7 +54,7 @@ class exprUnary: public expression {
 
   /// Destructor
   ~exprUnary ()
-  {if (argument_) {delete argument_; argument_ = NULL;}}
+  {if (argument_) delete argument_;}
 
   /// return number of arguments
   inline int nArgs () const
