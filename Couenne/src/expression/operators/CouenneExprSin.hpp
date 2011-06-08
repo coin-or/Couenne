@@ -43,7 +43,7 @@ CouNumber trigSelBranch (const CouenneObject *obj,
 bool trigImpliedBound (enum cou_trig, int, int, CouNumber *, CouNumber *, t_chg_bounds *);
 
 
-/// class for sin f(x)
+/// class for \f$ \sin f(x)\f$
 class exprSin: public exprUnary {
 
  public:

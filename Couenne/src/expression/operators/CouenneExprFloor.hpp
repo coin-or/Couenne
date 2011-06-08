@@ -15,7 +15,7 @@
 
 namespace Couenne {
 
-/// class floor
+/// class floor, \f$ \lfloor f(x) \rfloor \f$
 
 class exprFloor: public exprUnary {
 

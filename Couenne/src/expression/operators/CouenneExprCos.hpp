@@ -15,7 +15,7 @@
 
 namespace Couenne {
 
-/// class cosine
+/// class cosine, \f$ \cos f(x) \f$
 
 class exprCos: public exprUnary {
 

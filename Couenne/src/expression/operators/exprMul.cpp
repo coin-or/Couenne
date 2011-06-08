@@ -120,7 +120,7 @@ expression *exprMul::differentiate (int index) {
 
       for (int j = 0; j < nargs_; j++) 
 	if (i!=j)
-	  alm [j] = arglist_ [i] -> clone (); //new exprClone (arglist_ [j]);
+	  alm [j] = arglist_ [j] -> clone (); //new exprClone (arglist_ [j]);
 
       als [nonconst++] = new exprMul (alm, nargs_);
     }

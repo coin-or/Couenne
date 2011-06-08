@@ -16,7 +16,7 @@
 
 namespace Couenne {
 
-  /// class for multiplications
+  /// class for \f$ \prod_{i=1}^n f_i(x) \f$ with \f$ f_i(x) \f$ all binary
 
   class exprBinProd: public exprMul {
 

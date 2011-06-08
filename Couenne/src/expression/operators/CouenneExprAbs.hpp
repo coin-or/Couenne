@@ -18,7 +18,7 @@
 
 namespace Couenne {
 
-/// class for \f$w=|f(x)|\f$
+/// class for \f$ |f(x)| \f$
 
 class exprAbs: public exprUnary {
 

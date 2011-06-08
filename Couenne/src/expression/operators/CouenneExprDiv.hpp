@@ -19,7 +19,7 @@ namespace Couenne {
 #define BR_NEXT_ZERO 1e-3
 #define BR_MULT      1e-3
 
-/// class for divisions
+/// class for divisions, \f$ \frac{f(x)}{g(x)} \f$
 
 class exprDiv: public exprOp {
 

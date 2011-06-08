@@ -17,7 +17,7 @@
 
 namespace Couenne {
 
-/// class for the exponential
+/// class for the exponential, \f$ e^{f(x)} \f$
 
 class exprExp: public exprUnary {
 

@@ -276,17 +276,17 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
     delete [] nlpSolExp;
 
-    for (int i=0, j=problem_ -> nVars (), k = problem_ -> nVars (); k--; i++)
+    for (int i = 0, j = problem_ -> nVars (), k = j; k--; i++)
 
       if (!compDistInt_ || milp_ -> isInteger (i)) {
 
+	// create vector with single entry of 1 at i-th position 
 	double val = 1.;
 	CoinPackedVector vec (1, &i, val);
 
 	if (betaMILP_ > 0.) {
 
 	  // reserved for non-UnitMatrix hessian (i.e. betaMILP_ > 0)
-
 	}
 
 	// right-hand side equals <P^i,x^0>
@@ -309,14 +309,14 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
       init_MILP ();
 
     findSolution ();
-    iSol = CoinCopyOfArray (milp_ -> getColSolution (), 
+    iSol = CoinCopyOfArray (milp_    -> getColSolution (), 
 			    problem_ -> nVars ());
 
     // delete last rows and add them from scratch (common block below)
 
     int 
       nDeleted = nFinalRows - nInitRows,
-      *deleted  = new int [nDeleted],
+     *deleted  = new int [nDeleted],
       nCurRow  = nInitRows;
 
     for (int i = nDeleted; i--;)

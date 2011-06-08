@@ -16,7 +16,7 @@
 
 namespace Couenne {
 
-/// class logarithm
+/// class logarithm, \f$ \log f(x)\f$
 
 class exprLog: public exprUnary {
 

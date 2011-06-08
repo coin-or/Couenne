@@ -197,7 +197,7 @@ class exprAux: public exprVar {
 			      JnlstPtr jnlst);
 
   /// return its sign in the definition constraint
-  inline enum auxSign sign () const 
+  virtual inline enum auxSign sign () const 
   {return sign_;}
 };
 

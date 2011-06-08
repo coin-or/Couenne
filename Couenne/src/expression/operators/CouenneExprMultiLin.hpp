@@ -16,7 +16,7 @@
 
 namespace Couenne {
 
-  /// class for multiplications
+  /// another class for multiplications, \f$ \prod_{i=1}^n f_i(x) \f$
 
   class exprMultiLin: public exprMul {
 

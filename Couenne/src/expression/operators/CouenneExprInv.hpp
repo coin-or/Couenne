@@ -30,7 +30,7 @@ inline CouNumber inv_dblprime (register CouNumber x)
 {return (2 * inv (x*x*x));}
 
 
-/// class inverse (1/f(x))
+/// class inverse: \f$ 1/f(x) \f$
 
 class exprInv: public exprUnary {
 

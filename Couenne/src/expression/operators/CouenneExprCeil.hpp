@@ -15,7 +15,7 @@
 
 namespace Couenne {
 
-/// class ceiling
+/// class ceiling, \f$ \lceil f(x) \rceil \f$
 
 class exprCeil: public exprUnary {
 

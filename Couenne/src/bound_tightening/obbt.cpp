@@ -179,6 +179,9 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 			  Bonmin::BabInfo * babInfo,
 			  t_chg_bounds *chg_bds) {
 
+  // TODO: set up list of hopeless variables and do different OBBT
+  // saving lps
+
   // Check if cs contains only one cut and if it is of the form 1 <=
   // x0 <= -1. That means a previous cut generator has determined that
   // this node is infeasible and we shouldn't take the pain of running

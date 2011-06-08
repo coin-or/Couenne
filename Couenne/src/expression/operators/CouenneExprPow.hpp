@@ -23,7 +23,7 @@ namespace Couenne {
 class funtriplet;
 
 
-/// Power of an expression (binary operator)
+/// Power of an expression (binary operator), \f$ f(x)^k\f$ with \f$ k\f$ constant
 
 class exprPow: public exprOp {
 

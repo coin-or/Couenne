@@ -23,10 +23,12 @@ namespace Couenne {
   private:
 
     int   nnz_;  ///< number of (symbolic) nonzeroes
-    int  *iRow_; ///< col indices
-    int  *jCol_; ///< row starts
+    int  *iRow_; ///< row indices (read this way by eval_h)
+    int  *jCol_; ///< col indices
 
-    /// There are m+1 (m constraints + 1 obj).
+    /// There are m+1 (m constraints + 1 obj) components:
+    ///
+    /// \f$ \nabla^2 \mathcal L (x,\lambda) = \nabla^2 f(x) + \lambda^\top \nabla^2 g(x) \f$
     ///
     /// Implementing a FP requires adding one for gg', the gradient
     /// again being set up at the beginning (at least its expression

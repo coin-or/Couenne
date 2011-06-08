@@ -32,7 +32,7 @@ void CouenneFeasPump::initIpoptApp () {
     app_ = IpoptApplicationFactory ();
 
   ApplicationReturnStatus status = app_ -> Initialize ();
-  app_ -> Options () -> SetIntegerValue ("max_iter", 40);
+  app_ -> Options () -> SetIntegerValue ("max_iter", 50);
   if (status != Solve_Succeeded)
     printf ("FP: Error in initialization\n");
 }

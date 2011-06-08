@@ -16,7 +16,7 @@
 
 using namespace Couenne;
 
-//#define DEBUG
+#define DEBUG
 
 ExprJac::ExprJac ():
   nnz_   (0),
@@ -94,7 +94,7 @@ ExprJac::ExprJac (CouenneProblem *p):
 	c -> Body () -> Type () == VAR) 
       continue;
 
-    // this is a constraint of the form f(x) <= 0. Find out the
+    // This is a constraint of the form f(x) <= 0. Find out the
     // variables (original or aux) it depends on, directly
     // (STOP_AT_AUX)
 

@@ -22,6 +22,8 @@
 #include "CoinHelperFunctions.hpp"
 #include "CoinFinite.hpp"
 
+#define DEBUG
+
 using namespace Couenne;
 
 /// Empty constructor
@@ -192,9 +194,11 @@ bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
 	(e -> Multiplicity () <= 0))
       continue;
 
-    // prevent ipopt from exiting on inconsistent bounds
-    if (lb <= ub) {*g_l++ = lb; *g_u++ = ub;}
-    else          {*g_l++ = ub; *g_u++ = lb;}
+    *g_l = (e -> sign () != expression::AUX_GEQ) ? 0. : -COIN_DBL_MAX;
+    *g_u = (e -> sign () != expression::AUX_LEQ) ? 0. :  COIN_DBL_MAX;
+
+    ++g_l;
+    ++g_u;
   }
 
   return true;
@@ -365,7 +369,7 @@ bool CouenneTNLP::eval_g (Index n, const Number* x, bool new_x,
 	(e -> Multiplicity () <= 0))
       continue;
 
-    *g++ = (*e) ();
+    *g++ = (*(e -> Image ())) () - (*e) ();
 
     nEntries ++;
   }
@@ -403,8 +407,6 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
   }
 #endif
 
-  //problem_ -> domain () -> push (n, x, NULL, NULL);
-
   if (values == NULL && 
       iRow   != NULL && 
       jCol   != NULL) {
@@ -422,7 +424,7 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
 
     register expression **e = Jac_. expr ();
 
-    for (register int i=0; i<nele_jac; i++)
+    for (register int i=nele_jac; i--;)
       *values++ = (**(e++)) ();
   }
 
@@ -433,8 +435,6 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
     printf ("]\n");
   } else printf ("empty\n");
 #endif
-
-  //problem_ -> domain () -> pop ();
 
   return true;
 }

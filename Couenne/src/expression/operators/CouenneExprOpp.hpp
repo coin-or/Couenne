@@ -22,7 +22,7 @@ inline CouNumber opp (register CouNumber arg)
 {return - arg;}
 
 
-/// class opposite 
+/// class opposite, \f$ -f(x) \f$
 
 class exprOpp: public exprUnary {
 

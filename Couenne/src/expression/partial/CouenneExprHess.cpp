@@ -16,7 +16,7 @@
 
 using namespace Couenne;
 
-//#define DEBUG
+#define DEBUG
 
 ExprHess::ExprHess ():
 
@@ -50,12 +50,14 @@ ExprHess::~ExprHess () {
   }
 }
 
+
 /// code for refilling jacobian
 void HessElemFill (int i, int level,
 		   std::set <int> &list, 
 		   expression *expr,
 		   int *row, int **lam, expression ***eee,
 		   CouenneProblem *);
+
 
 /// code for refilling arrays through realloc
 static void reAlloc (int nCur, int &nMax, int *&r, int *&c, int *&n, int **&l, expression ***&e);
@@ -73,6 +75,8 @@ ExprHess::ExprHess (CouenneProblem *p):
 
 #ifdef DEBUG
   printf ("creating Hessian\n");
+
+  p -> print ();
 #endif
 
   /// for each j in (obj,con)
@@ -82,41 +86,40 @@ ExprHess::ExprHess (CouenneProblem *p):
 
   int nLevels = 0; // depth of this 3D structure (<= #con + #var + 1)
 
-  // fill in dependence list for the objective...
+  // fill in dependence list ///////////////////////////////////////////
+
+  // 1) for the objective (nLevels = 0). Note: STOP_AT_AUX is
+  //    sufficient to get to the leaves of this sum of squares
 
   p -> Obj (0) -> Body () -> DepList (deplist [nLevels++], STOP_AT_AUX);
 
-  // ... constraints...
+  // 2) for the constraints
 
   for (int i = 0; i < p -> nCons (); i++) {
 
-    CouenneConstraint *c = p -> Con (i);
+    expression *c = p -> Con (i) -> Body ();
 
-    if (c -> Body () -> Type () == AUX ||
-	c -> Body () -> Type () == VAR ||
-	c -> Body () -> Type () == CONST) 
+    enum nodeType ntype = c -> Type ();
+
+    if (ntype == AUX ||
+	ntype == VAR ||
+	ntype == CONST) 
       continue;
 
-    c -> Body () -> DepList (deplist [nLevels++], STOP_AT_AUX);
+    c -> DepList (deplist [nLevels++], STOP_AT_AUX);
   }
 
-  // ... and auxiliaries
+  // 3) and the auxiliaries
 
   for (int i = 0; i < p -> nVars (); i++) {
 
     exprVar *e = p -> Var (i);
 
-    if ((e -> Type () != AUX) ||
+    if ((e -> Type         () != AUX) ||
 	(e -> Multiplicity () <= 0))
       continue;
 
-    e -> Image () -> DepList (deplist [nLevels], STOP_AT_AUX);
-
-    // insert auxiliary variable defined here as well
-    // No, don't. No second order information will be there
-    //deplist [nLevels].insert (e -> Index ());
-
-    nLevels++;
+    e -> Image () -> DepList (deplist [nLevels++], STOP_AT_AUX);
   }
 
 #ifdef DEBUG
@@ -140,27 +143,30 @@ ExprHess::ExprHess (CouenneProblem *p):
     nVars   = p -> nVars (),
     curSize = 0; // used to expand array through realloc
 
-  /// for each variable (filling a row of the hessian)
+  /// for each variable, fill a row of the hessian
   for (int i=0; i < nVars; i++) {
 
     // create dense row. These will become numL later
-    int          *row = (int          *) malloc (nVars * sizeof (int));
-    int         **lam = (int         **) malloc (nVars * sizeof (int *));
+    int          *rnz = (int          *) malloc (nVars * sizeof (int));   // row's number of nonzero
+    int         **lam = (int         **) malloc (nVars * sizeof (int *)); // row's vectors of indices of nonzeros
     expression ***eee = (expression ***) malloc (nVars * sizeof (expression **));
 
-    CoinFillN (row, nVars, 0);
+    CoinFillN (rnz, nVars, 0);
 
-    for (int j=0; j<nVars; j++) {
-      lam [j] = NULL;
-      eee [j] = NULL;
+    // No CoinFillN for int** and expression***
+    for (int j=nVars; j--;) {
+      *lam++ = NULL;
+      *eee++ = NULL;
     }
 
-    // scan all levels
+    lam -= nVars;
+    eee -= nVars;
 
+    // scan all levels
     int level = 0;
 
     /// fill term for objective
-    HessElemFill (i, 0, deplist [0], p -> Obj (0) -> Body (), row, lam, eee, p);
+    HessElemFill (i, 0, deplist [0], p -> Obj (0) -> Body (), rnz, lam, eee, p);
 
     level++;
 
@@ -168,9 +174,10 @@ ExprHess::ExprHess (CouenneProblem *p):
 
       CouenneConstraint *c = p -> Con (j);
       if (c -> Body () -> Type () == AUX || 
-	  c -> Body () -> Type () == VAR) continue;
+	  c -> Body () -> Type () == VAR) 
+	continue;
 
-      HessElemFill (i, level, deplist [level], c -> Body (), row, lam, eee, p);
+      HessElemFill (i, level, deplist [level], c -> Body (), rnz, lam, eee, p);
 
       level++;
     }
@@ -182,46 +189,43 @@ ExprHess::ExprHess (CouenneProblem *p):
       exprVar *e = p -> Var (j);
 
       if ((e -> Type         () != AUX) || 
-	  (e -> Multiplicity () <= 0)) continue;
+	  (e -> Multiplicity () <= 0)) 
+	continue;
 
-      HessElemFill (i, level, deplist [level], e -> Image (), row, lam, eee, p);
-      //HessElemFill (i, level, deplist [level], e,             row, lam, eee); 
-      // no need to pass e itself, as its second derivative is zero
+      HessElemFill (i, level, deplist [level], e -> Image (), rnz, lam, eee, p);
 
       level++;
     }
 
-    // sparsify row, eee, lam
+    // sparsify rnz, eee, lam
 
     for (int j=0; j <= i; j++) 
-      if (row [j]) {
+      if (rnz [j]) {
 
 	reAlloc (nnz_, curSize, iRow_, jCol_, numL_, lamI_, expr_);
 
 	iRow_ [nnz_] = i;
 	jCol_ [nnz_] = j;
-	numL_ [nnz_] = row [j];
-	lamI_ [nnz_] = (int         *) realloc (lam [j], row [j] * sizeof (int));
-	expr_ [nnz_] = (expression **) realloc (eee [j], row [j] * sizeof (expression *));
+	numL_ [nnz_] = rnz [j];
+	lamI_ [nnz_] = (int         *) realloc (lam [j], rnz [j] * sizeof (int));
+	expr_ [nnz_] = (expression **) realloc (eee [j], rnz [j] * sizeof (expression *));
 
 	++nnz_;
       }
 
-    /// upper triangular matrix has to be discarded
-    for (int j=i+1; j < nVars; j++) 
+    // no it doesn't -- not filled at all
+    // /// upper triangular matrix has to be discarded
+    // for (int j=i+1; j < nVars; j++) 
+    //   if (rnz [j]) { // lam and eee are non NULL too
+    // 	assert (false);
+    // 	free (lam [j]);
+    // 	for (int k=0; k<rnz[j]; k++)
+    // 	  if (eee [j] [k])
+    // 	    delete eee [j] [k];
+    // 	free (eee [j]);
+    //   }
 
-      if (row [j]) { // lam and eee are non nil too
-
-	free (lam [j]);
-
-	for (int k=0; k<row[j]; k++)
-	  if (eee [j] [k])
-	    delete eee [j] [k];
-
-	free (eee [j]);
-      }
-
-    free (row);
+    free (rnz);
     free (lam);
     free (eee);
   }
@@ -251,41 +255,40 @@ ExprHess::ExprHess (CouenneProblem *p):
 
 #define reallocStep 100
 
+// fills a row (?) of the Hessian using expression
+
 void HessElemFill (int i, int level,
 		   std::set <int> &list, 
 		   expression *expr,
-		   int *row, 
+		   int *nnz, 
 		   int **lam, 
 		   expression ***eee,
 		   CouenneProblem *p) {
 
-  if (list. find (i) == list.end ()) 
+  if (list. find (i) == list.end () ||   // expression does not depend on x_i
+      (expr -> Linearity () <= LINEAR))  // no second derivative here
     return;
 
+  // only fills lower triangular part (for symmetry)
   for (int k=0; k <= i; k++) 
     if ((k==i) || (list. find (k) != list.end ())) {
-
-      /// common case: expr is linear, just skip
-
-      if (expr -> Linearity () <= LINEAR)
-	continue;
 
       // objective depends on k and i. Is its second derivative, w.r.t. k and i, nonzero?
 
       expression 
-	*d1  = expr -> differentiate (k),
-	*sd1 = d1 -> simplify (),
-	*rd1 = (sd1 ? sd1 : d1),
-	*d2  = rd1 -> differentiate (i),
-	*sd2 = d2 -> simplify (),
-	*rd2 = (sd2 ? sd2 : d2);
-
+	*d1  = expr -> differentiate (k), // derivative w.r.t. k
+	*sd1 = d1  -> simplify (),        // simplified
+	*rd1 = (sd1 ? sd1 : d1),          // actually used
+	*d2  = rd1 -> differentiate (i),  // its derivative w.r.t. i
+	*sd2 = d2  -> simplify (),        // simplified
+	*rd2 = (sd2 ? sd2 : d2);          // actually used
 
 #ifdef DEBUG
-      printf (" rd2 [x_%d, x_%d]: ", k, i); fflush (stdout); 
-      rd2 -> print (); printf (" -> "); 
+      printf (" rd2 [x_%d, x_%d]: d/d x_%d = ", k, i, k); fflush (stdout); 
+      rd1 -> print (); printf (" -> d/(d x_%d,d x_%d) = ", k, i); 
       rd2 -> print (); printf ("\n");
 #endif
+
       delete d1;
       if (sd1) delete sd1;
       if (sd2) delete d2;
@@ -295,17 +298,16 @@ void HessElemFill (int i, int level,
 
 	// we have a nonzero
 
-	if (!(row [k] % reallocStep)) {
+	if (!(nnz [k] % reallocStep)) {
 
-	  lam [k] = (int         *) realloc (lam[k], (row[k] + reallocStep) * sizeof (int));
-	  eee [k] = (expression **) realloc (eee[k], (row[k] + reallocStep) * sizeof (expression *));
+	  lam [k] = (int         *) realloc (lam [k], (nnz [k] + reallocStep) * sizeof (int));
+	  eee [k] = (expression **) realloc (eee [k], (nnz [k] + reallocStep) * sizeof (expression *));
 	}
 
 	rd2 -> realign (p); // fixes variables' domain with the problem.
 
-	lam [k] [row [k]] = level;
-	eee [k] [row [k]] = rd2;
-	row [k] ++;
+	lam [k] [nnz [k]]   = level;
+	eee [k] [nnz [k]++] = rd2;
 
       } else delete rd2;
     }
@@ -324,4 +326,3 @@ static void reAlloc (int nCur, int &nMax, int *&r, int *&c, int *&n, int **&l, e
     e = (expression ***) realloc (e, nMax * sizeof (expression **));
   }
 }
-

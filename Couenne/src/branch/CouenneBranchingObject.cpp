@@ -158,11 +158,11 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
     else if (brpt - l > .5) {if (!way) brpt -= (1. - COUENNE_EPS);}
   }
 
-  if   (l <  -large_bound)
+  if   (l <  -large_bound) {
     if (u <=  large_bound) // ]-inf,u]
       brpt =  ((brpt < -COUENNE_EPS) ? (AGGR_MUL * (-1. + brpt)) : 
 	       (brpt >  COUENNE_EPS) ? 0.                        : -AGGR_MUL);
-  else
+  } else
     if (u >  large_bound) // [l,+inf[
       brpt = ((brpt >  COUENNE_EPS) ? (AGGR_MUL *  ( 1. + brpt)) : 
 	      (brpt < -COUENNE_EPS) ? 0.                         :  AGGR_MUL);

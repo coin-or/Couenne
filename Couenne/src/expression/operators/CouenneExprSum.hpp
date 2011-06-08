@@ -17,7 +17,7 @@
 
 namespace Couenne {
 
-/// class sum 
+/// class sum, \f$ \sum_{i=1}^n f_i(x) \f$
 
 class exprSum: public exprOp {
 

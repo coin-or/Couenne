@@ -15,9 +15,9 @@
 
 namespace Couenne {
 
-/// OsiObject for complementarity constraints $x_1 x_2 <=/>=/= 0$. 
+/// OsiObject for complementarity constraints \f$ x_1 x_2 \ge,\le,= 0 \f$. 
 ///
-/// Associated with two variables x_1 and x_2, branches with either x_1=0 or x_2=0
+/// Associated with two variables \f$ x_1\f$ and \f$x_2\f$, branches with either \f$x_1=0\f$ or \f$x_2=0\f$
 
 class CouenneComplObject: public CouenneObject {
 

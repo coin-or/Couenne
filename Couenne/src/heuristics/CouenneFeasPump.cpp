@@ -30,13 +30,11 @@ const int numConsCutPasses = 5;
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
-  if (problem_ -> nIntVars () <= 0)
+  if (problem_ -> nIntVars () <= 0 ||
+      CoinCpuTime () > problem_ -> getMaxCpuTime ())
     return 0;
 
   printf ("FP ====================================\n");
-
-  if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
-    return 0;
 
   // This FP works as follows:
   //
@@ -358,8 +356,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   delete milp_;
   milp_ = NULL;
-
-  delete [] iSol;
 
   return retval;
 }

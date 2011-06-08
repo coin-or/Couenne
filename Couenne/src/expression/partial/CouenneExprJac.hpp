@@ -22,10 +22,11 @@ namespace Couenne {
 
   private:
 
-    int          nnz_;  ///< number of (symbolic) nonzeroes
-    int         *iRow_; ///< col indices
-    int         *jCol_; ///< row starts
-    expression **expr_; ///< expression
+    int          nnz_;   ///< number of (symbolic) nonzeroes
+    int         *iRow_;  ///< row indices (read this way by eval_jac_g)
+    int         *jCol_;  ///< col indices
+
+    expression **expr_;  ///< nonzero expression elements (there are nnz_ of them)
 
     int          nRows_; ///< number of actual constraints
 

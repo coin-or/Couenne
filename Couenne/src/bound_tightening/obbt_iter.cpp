@@ -56,12 +56,12 @@ static bool obbt_updateBound (OsiSolverInterface *csi, /// interface to use as a
 /// Iteration on one variable
 
 int CouenneProblem::obbt_iter (OsiSolverInterface *csi, 
-	   t_chg_bounds *chg_bds, 
-	   const CoinWarmStart *warmstart, 
-	   Bonmin::BabInfo *babInfo,
-	   double *objcoe,
-	   int sense, 
-	   int index) const {
+			       t_chg_bounds *chg_bds, 
+			       const CoinWarmStart *warmstart, 
+			       Bonmin::BabInfo *babInfo,
+			       double *objcoe,
+			       int sense, 
+			       int index) const {
 
   // TODO: do NOT apply OBBT if this is a variable of the form
   // w2=c*w1, as it suffices to multiply result. More in general, do
