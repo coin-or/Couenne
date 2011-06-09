@@ -22,7 +22,7 @@
 #include "CoinHelperFunctions.hpp"
 #include "CoinFinite.hpp"
 
-#define DEBUG
+//#define DEBUG
 
 using namespace Couenne;
 
@@ -60,28 +60,17 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
   // further
   obj -> DepList (objDep, STOP_AT_AUX);
 
-  printf ("objective:");
-  obj -> print ();
-  printf ("\n");
-
   for (std::set <int>::iterator i = objDep.begin (); i != objDep. end (); ++i) {
 
     expression *gradcomp = obj -> differentiate (*i);
     gradcomp -> realign (problem_);
     gradient_ . push_back (std::pair <int, expression *> (*i, gradcomp));
-
-    printf ("objective depends on x_%d: derivative is ", *i);
-    gradcomp -> print ();
-    printf ("\n");
   }
 
   // create data structures for nonlinear variables (see
   // get_[number|list]_of_nonlinear_variables () below)
 
   // constraints
-
-  printf ("constructing TNLP on %d cons, %d vars\n", 
-	  problem_ -> nCons (), problem_ -> nVars ());
 
   for (int i = 0; i < problem_ -> nCons (); i++) {
 
@@ -114,8 +103,6 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
     e -> Image () -> DepList (nonLinVars_, STOP_AT_AUX);
   }
-
-  printf ("constructed TNLP\n");
 }
 
 
@@ -132,7 +119,7 @@ bool CouenneTNLP::get_nlp_info (Index& n,
   n = problem_ -> nVars ();
   m = Jac_. nRows ();
 
-  nnz_jac_g = Jac_.nnz ();
+  nnz_jac_g = Jac_ .  nnz ();
   nnz_h_lag = HLa_ -> nnz ();
 
   index_style = C_STYLE; // what else? ;-)
@@ -161,7 +148,9 @@ bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
 
   // constraints
 
+#ifdef DEBUG
   printf ("get_bounds_info on %d cons, %d vars\n", m, n);
+#endif
 
   for (int i = 0; i < problem_ -> nCons (); i++) {
 
@@ -316,14 +305,8 @@ bool CouenneTNLP::eval_grad_f (Index n, const Number* x, bool new_x,
   CoinFillN (grad_f, n, 0.);
 
   for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); 
-       i != gradient_. end (); ++i) {
-
-    // printf ("grad_f [%d] = %g = ", i -> first, (*(i -> second)) ());
-    // i -> second -> print ();
-    // printf ("\n");
-
+       i != gradient_. end (); ++i)
     grad_f [i -> first] = (*(i -> second)) ();
-  }
 
 #ifdef DEBUG
   for (int i=0; i<n; i++)
@@ -486,8 +469,6 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
       iRow   != NULL && 
       jCol   != NULL) {
 
-    printf ("asking for dimensions\n");
-
     /// first call, must determine structure iRow/jCol
 
     CoinCopyN (HLa_ -> iRow (), nele_hess, iRow);
@@ -498,18 +479,21 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
     /// generic call, iRow/jCol are known and we should fill in the
     /// values
 
+    CoinZeroN (values, nele_hess);
+
     for (int i=0; i<nele_hess; i++, values++) {
 
-      *values = 0.;
-
       int 
-	 numL = HLa_ -> numL () [i],
-	*lamI = HLa_ -> lamI () [i];
+	 numL  = HLa_ -> numL () [i],
+	*lamI  = HLa_ -> lamI () [i];
 
-      expression **expr = HLa_ -> expr () [i];
+      expression
+	**expr = HLa_ -> expr () [i];
 
-      for (int j=0; j<numL; j++)
-	*values += lambda [lamI [j]] * (*(expr [j])) ();
+      // the objective's part of the Hessian can only have level index 0, avoid check
+
+      if (0 == *lamI) {*values += obj_factor           * (*(*expr++)) (); --numL;}
+      while (numL--)   *values += lambda [*lamI++ - 1] * (*(*expr++)) ();
     }
   }
 
@@ -529,10 +513,6 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
 // accordingly
 void CouenneTNLP::setObjective (expression *newObj) {
 
-  printf ("Setting new objective:");
-  newObj -> print ();
-  printf ("\n");
-
   if (HLa_)
     delete HLa_;
 
@@ -551,8 +531,6 @@ void CouenneTNLP::setObjective (expression *newObj) {
 
   gradient_ . erase (gradient_ . begin (), gradient_ . end ());
 
-  printf ("Gradient:\n");
-
   for (std::set <int>::iterator i = objDep.begin (); i != objDep. end (); ++i) {
 
     expression
@@ -566,10 +544,6 @@ void CouenneTNLP::setObjective (expression *newObj) {
 
     gradcomp -> realign (problem_);
     gradient_ . push_back (std::pair <int, expression *> (*i, gradcomp));
-
-    printf ("objective depends on x_%d: derivative is ", *i);
-    gradcomp -> print ();
-    printf ("\n");
   }
 }
 
@@ -582,7 +556,8 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 				     const IpoptData* ip_data,
 				     IpoptCalculatedQuantities* ip_cq) {
 
-  printf ("Ipopt[FP] solution (card %d): %12e\n", n, obj_value);
+  //printf ("Ipopt[FP] solution (card %d): %12e\n", n, obj_value);
+
   bestZ_ = obj_value;
   if (!sol_)
     sol_ = new CouNumber [n]; 

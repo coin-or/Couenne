@@ -34,7 +34,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       CoinCpuTime () > problem_ -> getMaxCpuTime ())
     return 0;
 
-  printf ("FP ====================================\n");
+#ifdef DEBUG
+  printf ("================= Feasibility Pump =======================\n");
+#endif
 
   // This FP works as follows:
   //
@@ -90,8 +92,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     objInd = problem_ -> Obj (0) -> Body () -> Index (),
     nSep = 0;
 
-  printf ("FP: main loop --------------------------------- \n");
-
   do {
 
     CouNumber curcutoff = problem_ -> getCutOff ();
@@ -118,9 +118,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 #endif  /* not FM_CHECKNLP2 */
 
     if (isChecked) {
-
-      printf ("FP: MINLP-feasible solution (%g vs. %g)\n", 
-	      z, curcutoff);
 
       // solution is MINLP feasible! Save it.
 
@@ -276,8 +273,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   if (retval > 0) {
 
-    printf ("FP: final NLP\n");
-
     if (!nlp_) // first call (in this call to FP). Create NLP
       nlp_ = new CouenneTNLP (problem_);
 
@@ -292,7 +287,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
     if (status != Solve_Succeeded) 
-      printf ("FP: error solving problem\n");
+      printf ("Feasibility Pump: error solving problem\n");
 
     ////////////////////////////////////////////////////////////////
 

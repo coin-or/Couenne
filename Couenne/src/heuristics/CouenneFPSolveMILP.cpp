@@ -29,8 +29,6 @@ void CouenneFeasPump::checkInfinity(SCIP *scip, SCIP_Real val, double infinity){
 /// NLP-feasible (but fractional) solution nsol
 CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
-  printf ("FP: solveMILP\n");
-
   // The problem is of the form
   //
   // min  f(x)

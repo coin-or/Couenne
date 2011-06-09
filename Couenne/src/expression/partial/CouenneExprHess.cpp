@@ -16,7 +16,7 @@
 
 using namespace Couenne;
 
-#define DEBUG
+//#define DEBUG
 
 ExprHess::ExprHess ():
 
@@ -75,8 +75,7 @@ ExprHess::ExprHess (CouenneProblem *p):
 
 #ifdef DEBUG
   printf ("creating Hessian\n");
-
-  p -> print ();
+  // p -> print ();
 #endif
 
   /// for each j in (obj,con)
@@ -168,7 +167,7 @@ ExprHess::ExprHess (CouenneProblem *p):
     /// fill term for objective
     HessElemFill (i, 0, deplist [0], p -> Obj (0) -> Body (), rnz, lam, eee, p);
 
-    level++;
+    ++level;
 
     for (int j = 0; j < p -> nCons (); j++) {
 
@@ -179,7 +178,7 @@ ExprHess::ExprHess (CouenneProblem *p):
 
       HessElemFill (i, level, deplist [level], c -> Body (), rnz, lam, eee, p);
 
-      level++;
+      ++level;
     }
 
     // and auxiliaries
@@ -194,7 +193,7 @@ ExprHess::ExprHess (CouenneProblem *p):
 
       HessElemFill (i, level, deplist [level], e -> Image (), rnz, lam, eee, p);
 
-      level++;
+      ++level;
     }
 
     // sparsify rnz, eee, lam
@@ -202,7 +201,7 @@ ExprHess::ExprHess (CouenneProblem *p):
     for (int j=0; j <= i; j++) 
       if (rnz [j]) {
 
-	reAlloc (nnz_, curSize, iRow_, jCol_, numL_, lamI_, expr_);
+	reAlloc (nnz_+1, curSize, iRow_, jCol_, numL_, lamI_, expr_);
 
 	iRow_ [nnz_] = i;
 	jCol_ [nnz_] = j;
@@ -212,18 +211,6 @@ ExprHess::ExprHess (CouenneProblem *p):
 
 	++nnz_;
       }
-
-    // no it doesn't -- not filled at all
-    // /// upper triangular matrix has to be discarded
-    // for (int j=i+1; j < nVars; j++) 
-    //   if (rnz [j]) { // lam and eee are non NULL too
-    // 	assert (false);
-    // 	free (lam [j]);
-    // 	for (int k=0; k<rnz[j]; k++)
-    // 	  if (eee [j] [k])
-    // 	    delete eee [j] [k];
-    // 	free (eee [j]);
-    //   }
 
     free (rnz);
     free (lam);

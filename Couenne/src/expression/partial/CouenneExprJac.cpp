@@ -16,7 +16,7 @@
 
 using namespace Couenne;
 
-#define DEBUG
+//#define DEBUG
 
 ExprJac::ExprJac ():
   nnz_   (0),
@@ -56,16 +56,12 @@ static void reAlloc (int nCur, int &nMax, int *&r, int *&c, expression **&e) {
 }
 
 ExprJac::ExprJac (CouenneProblem *p):
+
   nnz_   (0),
   iRow_  (NULL),
   jCol_  (NULL),
   expr_  (NULL),
   nRows_ (0) {
-
-#ifdef DEBUG
-  printf ("domain %x, x array: %x\n", 
-	  p -> domain (), p -> domain () -> x ());
-#endif
 
   /// constraints: 
   /// 
@@ -74,8 +70,6 @@ ExprJac::ExprJac (CouenneProblem *p):
   /// ask the problem).
   ///
   /// All other constraints should be part of the jacobian
-
-  nRows_ = 0;
 
   /// to be resized on demand
   int 
@@ -97,8 +91,6 @@ ExprJac::ExprJac (CouenneProblem *p):
     // This is a constraint of the form f(x) <= 0. Find out the
     // variables (original or aux) it depends on, directly
     // (STOP_AT_AUX)
-
-    nRows_ ++;
 
     std::set <int> deplist;
 
@@ -137,8 +129,10 @@ ExprJac::ExprJac (CouenneProblem *p):
       nTerms++;
     }
 
-    if (nTerms)
-      nRealCons++; // increase the counter of real constraints 
+    if (nTerms) {
+      ++nRealCons; // increase the counter of real constraints 
+      ++nRows_;    // and of rows
+    }
   }
 
   // auxiliaries ////////////////////////////////////////////////////////////
@@ -156,8 +150,6 @@ ExprJac::ExprJac (CouenneProblem *p):
     // this is a variable definition of the form y </>/= f(x). Find
     // out the variables (original or aux) it depends on, directly
     // (STOP_AT_AUX)
-
-    nRows_ ++;
 
     std::set <int> deplist;
 
@@ -179,12 +171,6 @@ ExprJac::ExprJac (CouenneProblem *p):
 	*sJ = J -> simplify (),                   // a simplification
 	*rJ = sJ ? sJ : J;                        // the real one
 
-      printf ("aux "); fflush (stdout); e -> print (); 
-      printf (" := "); fflush (stdout); e -> Image () -> print ();
-      printf (". d/d%d = ", *k); fflush (stdout);
-      rJ -> print ();
-      printf ("\n"); 
-
       if (sJ) 
 	delete J; // the only remaining expression won't be wasted
 
@@ -202,16 +188,18 @@ ExprJac::ExprJac (CouenneProblem *p):
       jCol_ [nnz_] = *k;
       expr_ [nnz_] = rJ;
 
-      nnz_++;
-      nTerms++;
+      ++nnz_;
+      ++nTerms;
     }
 
-    if (nTerms)
-      nRealCons++; // increase the counter of real constraints 
+    if (nTerms) {
+      ++nRealCons; // increase the counter of real constraints 
+      ++nRows_;
+    }
   }
 
 #ifdef DEBUG
-  printf ("jacobian: %d nonzeros\n", nnz_);
+  printf ("jacobian: %d nonzeros, %d rows\n", nnz_, nRows_);
 
   for (int i=0; i<nnz_; i++) {
 
