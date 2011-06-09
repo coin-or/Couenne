@@ -7,6 +7,7 @@
  * 
  * This file is licensed under the Eclipse Public License (EPL)
  */
+#define SCIP_DEBUG 
 
 #include "CouenneFeasPump.hpp"
 #include "CouenneProblem.hpp"
@@ -50,7 +51,7 @@ double CouenneFeasPump::findSolution (double* sol) {
 
 #ifdef COIN_HAS_SCIP
 
-  if (true) {
+  if (useSCIP_) {
      SCIP* scip;
 
      SCIP_VAR** vars;
@@ -99,13 +100,16 @@ double CouenneFeasPump::findSolution (double* sol) {
      // initialize SCIP
      SCIP_CALL_ABORT( SCIPcreate(&scip) );
      assert(scip != NULL);
-
-#ifndef SCIP_DEBUG
-   SCIP_CALL( SCIPsetIntParam(scip, "display/verblevel", 0) );
-#endif
-
+   
      // include default SCIP plugins
      SCIP_CALL_ABORT( SCIPincludeDefaultPlugins(scip) );
+     
+#ifndef SCIP_DEBUG
+     SCIP_CALL( SCIPsetIntParam(scip, "display/verblevel", 0) );
+#endif
+
+     // do not abort subproblem on CTRL-C
+     SCIP_CALL( SCIPsetBoolParam(scip, "misc/catchctrlc", FALSE) );
 
      // create problem instance in SCIP
      SCIP_CALL_ABORT( SCIPcreateProb(scip, "auxiliary FeasPump MILP", NULL, NULL, NULL, NULL, NULL, NULL, NULL) );
