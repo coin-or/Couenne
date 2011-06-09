@@ -157,19 +157,11 @@ includecoin_HEADERS = \
 	convex/CouenneCutGenerator.hpp \
 	cut/crossconv/CouenneCrossConv.hpp \
 	cut/sdpcuts/CouenneSdpCuts.hpp \
-	cut/sdpcuts/CutGen.hpp \
-	cut/sdpcuts/disjunctive_cuts.hpp \
 	cut/sdpcuts/dsyevx_wrapper.hpp \
-	cut/sdpcuts/Heuristics.hpp \
 	cut/sdpcuts/linquad_cuts.hpp \
-	cut/sdpcuts/misc_util.hpp \
-	cut/sdpcuts/orthocut.hpp \
-	cut/sdpcuts/OsiXxxSolverInterface.hpp \
 	cut/sdpcuts/populate.hpp \
 	cut/sdpcuts/quadratic_cuts_check.hpp \
-	cut/sdpcuts/rlt_cuts.hpp \
-	cut/sdpcuts/sdpcuts.hpp \
-	cut/sdpcuts/tracer.hpp 
+	cut/sdpcuts/rlt_cuts.hpp
 
 #	ellipcuts/CouenneEllipCuts.hpp 
 

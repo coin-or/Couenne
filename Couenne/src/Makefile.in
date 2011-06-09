@@ -142,14 +142,10 @@ am__includecoin_HEADERS_DIST = util/CouenneRootQ.hpp \
 	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
 	cut/crossconv/CouenneCrossConv.hpp \
-	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/CutGen.hpp \
-	cut/sdpcuts/disjunctive_cuts.hpp \
-	cut/sdpcuts/dsyevx_wrapper.hpp cut/sdpcuts/Heuristics.hpp \
-	cut/sdpcuts/linquad_cuts.hpp cut/sdpcuts/misc_util.hpp \
-	cut/sdpcuts/orthocut.hpp cut/sdpcuts/OsiXxxSolverInterface.hpp \
-	cut/sdpcuts/populate.hpp cut/sdpcuts/quadratic_cuts_check.hpp \
-	cut/sdpcuts/rlt_cuts.hpp cut/sdpcuts/sdpcuts.hpp \
-	cut/sdpcuts/tracer.hpp branch/Nauty.h
+	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/dsyevx_wrapper.hpp \
+	cut/sdpcuts/linquad_cuts.hpp cut/sdpcuts/populate.hpp \
+	cut/sdpcuts/quadratic_cuts_check.hpp cut/sdpcuts/rlt_cuts.hpp \
+	branch/Nauty.h
 includecoinHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(includecoin_HEADERS)
 ETAGS = etags
@@ -510,14 +506,10 @@ includecoin_HEADERS = util/CouenneRootQ.hpp \
 	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
 	cut/crossconv/CouenneCrossConv.hpp \
-	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/CutGen.hpp \
-	cut/sdpcuts/disjunctive_cuts.hpp \
-	cut/sdpcuts/dsyevx_wrapper.hpp cut/sdpcuts/Heuristics.hpp \
-	cut/sdpcuts/linquad_cuts.hpp cut/sdpcuts/misc_util.hpp \
-	cut/sdpcuts/orthocut.hpp cut/sdpcuts/OsiXxxSolverInterface.hpp \
-	cut/sdpcuts/populate.hpp cut/sdpcuts/quadratic_cuts_check.hpp \
-	cut/sdpcuts/rlt_cuts.hpp cut/sdpcuts/sdpcuts.hpp \
-	cut/sdpcuts/tracer.hpp $(am__append_1)
+	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/dsyevx_wrapper.hpp \
+	cut/sdpcuts/linquad_cuts.hpp cut/sdpcuts/populate.hpp \
+	cut/sdpcuts/quadratic_cuts_check.hpp cut/sdpcuts/rlt_cuts.hpp \
+	$(am__append_1)
 all: config.h config_couenne.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
