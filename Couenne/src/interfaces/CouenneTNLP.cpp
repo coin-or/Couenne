@@ -1,7 +1,7 @@
 /* $Id$
  *
  * Name:    CouenneTNLP.cpp
- * Authors: Pietro Belotti, Lehigh University
+ * Authors: Pietro Belotti
  * Purpose: Implementation of an NLP interface with gradient/Jacobian/etc
  * 
  * This file is licensed under the Eclipse Public License (EPL)
@@ -35,6 +35,7 @@ CouenneTNLP::CouenneTNLP ():
 CouenneTNLP::~CouenneTNLP () {
   if (sol_)  delete [] sol_;
   if (sol0_) delete [] sol0_;
+  if (HLa_)  delete HLa_;
 }
 
 
@@ -46,7 +47,7 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
   sol_     (NULL),
   bestZ_   (COIN_DBL_MAX),
   Jac_     (p),
-  HLa_     (p) {
+  HLa_     (new ExprHess (p)) {
 
   std::set <int> objDep;
 
@@ -129,7 +130,7 @@ bool CouenneTNLP::get_nlp_info (Index& n,
   m = Jac_. nRows ();
 
   nnz_jac_g = Jac_.nnz ();
-  nnz_h_lag = HLa_.nnz ();
+  nnz_h_lag = HLa_ -> nnz ();
 
   index_style = C_STYLE; // what else? ;-)
 
@@ -476,10 +477,12 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
       iRow   != NULL && 
       jCol   != NULL) {
 
+    printf ("asking for dimensions\n");
+
     /// first call, must determine structure iRow/jCol
 
-    CoinCopyN (HLa_.iRow (), nele_hess, iRow);
-    CoinCopyN (HLa_.jCol (), nele_hess, jCol);
+    CoinCopyN (HLa_ -> iRow (), nele_hess, iRow);
+    CoinCopyN (HLa_ -> jCol (), nele_hess, jCol);
 
   } else {
 
@@ -491,10 +494,10 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
       *values = 0.;
 
       int 
-	 numL = HLa_. numL () [i],
-	*lamI = HLa_. lamI () [i];
+	 numL = HLa_ -> numL () [i],
+	*lamI = HLa_ -> lamI () [i];
 
-      expression **expr = HLa_. expr () [i];
+      expression **expr = HLa_ -> expr () [i];
 
       for (int j=0; j<numL; j++)
 	*values += lambda [lamI [j]] * (*(expr [j])) ();
@@ -513,6 +516,43 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
   return true;
 }
 
+// Change objective function and modify gradient expressions
+// accordingly
+void CouenneTNLP::setObjective (expression *newObj) {
+
+  if (HLa_)
+    delete HLa_;
+
+  // change the Hessian accordingly
+
+  HLa_ = new ExprHess (problem_);
+
+  std::set <int> objDep;
+
+  // objective of entering problem is reformulated, no need to go
+  // further
+  newObj -> DepList (objDep, STOP_AT_AUX);
+
+  printf ("new objective:");
+  newObj -> print ();
+  printf ("\n");
+
+  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); i != gradient_. end (); ++i)
+    delete (*i). second;
+
+  gradient_ . erase (gradient_ . begin (), gradient_ . end ());
+
+  for (std::set <int>::iterator i = objDep.begin (); i != objDep. end (); ++i) {
+
+    expression *gradcomp = newObj -> differentiate (*i);
+    gradcomp -> realign (problem_);
+    gradient_ . push_back (std::pair <int, expression *> (*i, gradcomp));
+
+    printf ("objective depends on x_%d: derivative is ", *i);
+    gradcomp -> print ();
+    printf ("\n");
+  }
+}
 
 // This method is called when the algorithm is complete so the TNLP
 // can store/write the solution

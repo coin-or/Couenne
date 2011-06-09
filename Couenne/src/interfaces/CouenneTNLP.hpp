@@ -165,6 +165,10 @@ namespace Couenne {
     virtual bool get_list_of_nonlinear_variables (Index num_nonlin_vars,
 						  Index* pos_nonlin_vars);
 
+    // Change objective function and modify gradient expressions
+    // accordingly
+    virtual void setObjective (expression *newObj);
+
   private:
 
     /// Pointer to the object containing all info
@@ -190,7 +194,7 @@ namespace Couenne {
 
     /// Hessian --- there are 1+m of them, but all are squeezed in a
     /// single object
-    ExprHess HLa_;
+    ExprHess *HLa_;
   };
 }
 

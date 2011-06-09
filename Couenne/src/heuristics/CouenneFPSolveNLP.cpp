@@ -72,6 +72,7 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
     *oldObj = problem_ -> Obj (0) -> Body ();
 
   problem_ -> setObjective (0, newObj);
+  nlp_     -> setObjective (newObj);
 
   printf ("FP: created obj\n");
 
@@ -83,6 +84,8 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   // shamelessly copied from hs071_main.cpp (it's Open Source too!)
 
   printf ("FP: optimize\n");
+
+  problem_ -> print ();
 
   ApplicationReturnStatus status = firstNLP ? 
     app_ -> OptimizeTNLP   (nlp_) :
@@ -105,6 +108,7 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   delete newObj;
 
   problem_ -> setObjective (0, oldObj);
+  nlp_     -> setObjective (oldObj);
 
   return nlp_ -> getSolValue ();
 }
