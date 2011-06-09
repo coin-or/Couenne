@@ -93,7 +93,15 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 				    
   options -> GetStringValue  ("feas_pump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
   options -> GetStringValue  ("feas_pump_dist_int", s, "couenne."); compDistInt_      = (s == "yes");
-  options -> GetStringValue  ("feas_pump_usescip",  s, "couenne."); useSCIP_          = (s == "yes");
+
+  options -> GetStringValue  ("feas_pump_usescip",  s, "couenne."); 
+
+#ifdef COIN_HAS_SCIP
+  useSCIP_ = (s == "yes");
+#else
+  if (s == "yes") 
+    problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_usescip to true, but SCIP is not installed.");
+#endif
 
   // Although app_ is only used in CouenneFPSolveNLP, we need to have
   // an object lasting the program's lifetime as otherwise it appears

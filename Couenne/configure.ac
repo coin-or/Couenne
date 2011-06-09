@@ -88,9 +88,6 @@ AC_LANG_POP(C)
 # SCIP (used in Feasibility Pump)
 AC_COIN_CHECK_PACKAGE(SCIP, [coinscip], [CouenneLib])
 
-# Soplex (used by SCIP in Feasibility Pump)
-AC_COIN_CHECK_PACKAGE(SoPlex, [coinsoplex], [CouenneLib])
-
 # CPLEX: check for OsiCplex, and check for cplex include dir, so we can include cplex.h
 AC_COIN_CHECK_PACKAGE(Cpx, [osi-cplex], [CouenneLib])
 AC_ARG_WITH([cplex-incdir],
