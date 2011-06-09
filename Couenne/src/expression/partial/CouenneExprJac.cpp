@@ -179,6 +179,12 @@ ExprJac::ExprJac (CouenneProblem *p):
 	*sJ = J -> simplify (),                   // a simplification
 	*rJ = sJ ? sJ : J;                        // the real one
 
+      printf ("aux "); fflush (stdout); e -> print (); 
+      printf (" := "); fflush (stdout); e -> Image () -> print ();
+      printf (". d/d%d = ", *k); fflush (stdout);
+      rJ -> print ();
+      printf ("\n"); 
+
       if (sJ) 
 	delete J; // the only remaining expression won't be wasted
 

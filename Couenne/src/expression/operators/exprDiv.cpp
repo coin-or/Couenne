@@ -14,6 +14,7 @@
 #include "CouenneExprConst.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneExprMul.hpp"
+#include "CouenneExprOpp.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneExprInv.hpp"
 #include "CouenneExprSub.hpp"
@@ -53,7 +54,7 @@ expression *exprDiv::simplify () {
 
       expression *ret;
 
-      if (fabs (arglist_ [0] -> Value ()-1) < COUENNE_EPS) {
+      if (fabs (arglist_ [0] -> Value () - 1.) < COUENNE_EPS) {
 	delete *arglist_;
 	*arglist_ = NULL;
 	ret = new exprInv (arglist_ [1]);
@@ -85,9 +86,40 @@ expression *exprDiv::simplify () {
 // d (f/g) / dx = df/dx / g - f/g^2 * dg/dx = 1/g (f' - f/g g')
 expression *exprDiv::differentiate (int index) {
 
-  if (!(arglist_ [0] -> dependsOn (index))  &&
-      !(arglist_ [1] -> dependsOn (index)))
-    return new exprConst (0.);
+  bool 
+    diffNum = arglist_ [0] -> dependsOn (index),
+    diffDen = arglist_ [1] -> dependsOn (index);
+
+  if (diffNum) {
+
+    if (diffDen) {
+
+      // more general case
+
+      return new exprDiv (new exprSub (new exprMul (arglist_ [1] -> differentiate (index),
+						    arglist_ [0] -> clone ()),
+				       new exprMul (arglist_ [1] -> clone (),
+						    arglist_ [0] -> differentiate (index))),
+			  new exprPow (arglist_ [1] -> clone (), new exprConst (2.)));
+
+    } else { // derive numerator and divide by den
+
+      return new exprDiv (arglist_ [0] -> differentiate (index),
+			  arglist_ [1] -> clone ());
+    }
+
+  } else {
+
+    if (diffDen) { // = - f/g^2 * g' or, for (future) simplification purposes, - (f * g')/g^2
+
+      return new exprOpp (new exprDiv (new exprMul (arglist_ [0] -> clone (),
+						    arglist_ [1] -> differentiate (index)),
+				       new exprPow (arglist_ [1] -> clone (),
+						    new exprConst (2.))));
+
+    } else // quotient does not depend on index
+      return new exprConst (0.);
+  }
 
   // expression **alm2 = new expression * [3];
 
@@ -102,11 +134,11 @@ expression *exprDiv::differentiate (int index) {
 
   // in alternative:
 
-  return new exprDiv (new exprSub (new exprMul (arglist_ [1] -> differentiate (index),
-						arglist_ [0] -> clone ()),
-				   new exprMul (arglist_ [1] -> clone (),
-						arglist_ [0] -> differentiate (index))),
-		      new exprPow (arglist_ [1] -> clone (), new exprConst (2.)));
+  // return new exprDiv (new exprSub (new exprMul (arglist_ [1] -> differentiate (index),
+  // 						arglist_ [0] -> clone ()),
+  // 				   new exprMul (arglist_ [1] -> clone (),
+  // 						arglist_ [0] -> differentiate (index))),
+  // 		      new exprPow (arglist_ [1] -> clone (), new exprConst (2.)));
 }
 
 

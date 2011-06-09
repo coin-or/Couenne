@@ -32,7 +32,8 @@ void CouenneFeasPump::initIpoptApp () {
     app_ = IpoptApplicationFactory ();
 
   ApplicationReturnStatus status = app_ -> Initialize ();
-  app_ -> Options () -> SetIntegerValue ("max_iter", 500);
+  app_ -> Options () -> SetIntegerValue ("max_iter", 200);
+  //app_ -> Options () -> SetIntegerValue ("print_level", 4); // 0 for none, 4 for summary
   if (status != Solve_Succeeded)
     printf ("FP: Error in initialization\n");
 }
@@ -154,7 +155,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
 CouenneFeasPump::~CouenneFeasPump () {
 
   if (app_) delete app_;
-  //if (nlp_) delete nlp_;
+  //if (nlp_) delete nlp_; // already deleted by "delete app_;"
 }
 
 
@@ -165,12 +166,17 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
   expression **list = new expression * [problem_ -> nVars ()];
 
+  int nTerms = 0;
+
   if (betaNLP_ == 0.) {
 
     // here the objective function is ||x-x^0||_2^2
 
     // create the argument list (x_i - x_i^0)^2 for all i's
     for (int i=0; i<problem_ -> nVars (); i++) {
+
+      if (compDistInt_ && !(problem_ -> Var (i) -> isInteger ()))
+	continue;
 
       CouNumber iS = iSol [i];
 
@@ -180,7 +186,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
       else if (iS <  0.) base = new exprSum (new exprClone (problem_ -> Var (i)), new exprConst (-iS));
       else               base = new exprSub (new exprClone (problem_ -> Var (i)), new exprConst  (iS));
 
-      list [i] = new exprPow (base, new exprConst (2.));
+      list [nTerms++] = new exprPow (base, new exprConst (2.));
     }
   } else {
 
@@ -189,10 +195,9 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     // ||P(x-x^0)||_2^2 = (x-x^0)' P'P (x-x^0)
     //
     // with P positive semidefinite
-
   }
 
-  return new exprSum (list, problem_ -> nVars ());
+  return new exprSum (list, nTerms);
 }
 
 

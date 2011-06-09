@@ -36,6 +36,9 @@ CouenneTNLP::~CouenneTNLP () {
   if (sol_)  delete [] sol_;
   if (sol0_) delete [] sol0_;
   if (HLa_)  delete HLa_;
+
+  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); i != gradient_. end (); ++i)
+    delete (*i). second;
 }
 
 
@@ -302,7 +305,7 @@ bool CouenneTNLP::eval_grad_f (Index n, const Number* x, bool new_x,
 #ifdef DEBUG
   printf ("eval_grad_f: [");
   for (int i=0; i<n; i++)
-    printf ("%g ", x [i]);
+    printf ("%.2g ", x [i]);
   printf ("] --> [");
 #endif
 
@@ -313,12 +316,18 @@ bool CouenneTNLP::eval_grad_f (Index n, const Number* x, bool new_x,
   CoinFillN (grad_f, n, 0.);
 
   for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); 
-       i != gradient_. end (); ++i)
+       i != gradient_. end (); ++i) {
+
+    // printf ("grad_f [%d] = %g = ", i -> first, (*(i -> second)) ());
+    // i -> second -> print ();
+    // printf ("\n");
+
     grad_f [i -> first] = (*(i -> second)) ();
+  }
 
 #ifdef DEBUG
   for (int i=0; i<n; i++)
-    printf ("%g ", grad_f [i]);
+    printf ("%.2g ", grad_f [i]);
   printf ("]\n");
 #endif
 
@@ -338,7 +347,7 @@ bool CouenneTNLP::eval_g (Index n, const Number* x, bool new_x,
   if (x) {
     printf ("eval_g: [");
     for (int i=0; i<n; i++)
-      printf ("%g ", x [i]);
+      printf ("%.2g ", x [i]);
     printf ("] --> [");
   }
 #endif
@@ -378,7 +387,7 @@ bool CouenneTNLP::eval_g (Index n, const Number* x, bool new_x,
 #ifdef DEBUG
   if (x) {
     for (int i=0; i<nEntries; i++)
-      printf ("%g ", *(g - nEntries + i));
+      printf ("%.2g ", *(g - nEntries + i));
     printf ("]\n");
   }
 #endif
@@ -403,7 +412,7 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
   if (x) {
     printf ("eval_jac_g: ["); fflush (stdout);
     for (int i=0; i<n; i++) 
-      {printf ("%g ", x [i]); fflush (stdout);}
+      {printf ("%.2g ", x [i]); fflush (stdout);}
     printf ("] --> ["); fflush (stdout);
   }
 #endif
@@ -432,7 +441,7 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
 #ifdef DEBUG
   if (values) {
     for (int i=0; i<nele_jac; i++)
-      {printf ("%g ", *(values - nele_jac + i)); fflush (stdout);}
+      {printf ("%.2g ", *(values - nele_jac + i)); fflush (stdout);}
     printf ("]\n");
   } else printf ("empty\n");
 #endif
@@ -465,10 +474,10 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
   if (x) {
     printf ("eval_h: ["); fflush (stdout);
     for (int i=0; i<n; i++)
-      {printf ("%g ", x [i]); fflush (stdout);}
+      {printf ("%.2g ", x [i]); fflush (stdout);}
     printf ("], lambda: ["); fflush (stdout);
     for (int i=0; i<m; i++)
-      {printf ("%g ", lambda [i]); fflush (stdout);}
+      {printf ("%.2g ", lambda [i]); fflush (stdout);}
     printf ("] --> ["); fflush (stdout);
   }
 #endif
@@ -508,7 +517,7 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
 #ifdef DEBUG
   if (values) {
     for (int i=0; i<nele_hess; i++)
-      {printf ("%g ", *(values - nele_hess + i)); fflush (stdout);}
+      {printf ("%.2g ", *(values - nele_hess + i)); fflush (stdout);}
     printf ("]\n");
   } else printf ("empty\n");
 #endif
@@ -519,6 +528,10 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
 // Change objective function and modify gradient expressions
 // accordingly
 void CouenneTNLP::setObjective (expression *newObj) {
+
+  printf ("Setting new objective:");
+  newObj -> print ();
+  printf ("\n");
 
   if (HLa_)
     delete HLa_;
@@ -533,18 +546,24 @@ void CouenneTNLP::setObjective (expression *newObj) {
   // further
   newObj -> DepList (objDep, STOP_AT_AUX);
 
-  printf ("new objective:");
-  newObj -> print ();
-  printf ("\n");
-
   for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); i != gradient_. end (); ++i)
     delete (*i). second;
 
   gradient_ . erase (gradient_ . begin (), gradient_ . end ());
 
+  printf ("Gradient:\n");
+
   for (std::set <int>::iterator i = objDep.begin (); i != objDep. end (); ++i) {
 
-    expression *gradcomp = newObj -> differentiate (*i);
+    expression
+      *gradcomp = newObj -> differentiate (*i),
+      *gsimp    = gradcomp -> simplify ();
+
+    if (gsimp) {
+      delete gradcomp;
+      gradcomp = gsimp;
+    }
+
     gradcomp -> realign (problem_);
     gradient_ . push_back (std::pair <int, expression *> (*i, gradcomp));
 
