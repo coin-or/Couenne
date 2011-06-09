@@ -14,7 +14,6 @@ Couenne/couenne.pc.in -text
 Couenne/depcomp -text
 Couenne/doc/couenne-user-manual.pdf -text
 Couenne/doc/mainpage.dox -text
-Couenne/inc/config_couenne.h.in -text
 Couenne/install-sh -text
 Couenne/ltmain.sh -text
 Couenne/missing -text
@@ -88,6 +87,10 @@ Couenne/src/branch/operators/branchExprTrilinear.cpp -text
 Couenne/src/branch/operators/computeMulBrDist.cpp -text
 Couenne/src/branch/operators/minMaxDelta.cpp -text
 Couenne/src/branch/projections.cpp -text
+Couenne/src/config.h.in -text
+Couenne/src/config_couenne.h.in -text
+Couenne/src/config_couenne_default.h -text
+Couenne/src/config_default.h -text
 Couenne/src/convex/CouenneCutGenerator.cpp -text
 Couenne/src/convex/CouenneCutGenerator.hpp -text
 Couenne/src/convex/addEnvelope.cpp -text

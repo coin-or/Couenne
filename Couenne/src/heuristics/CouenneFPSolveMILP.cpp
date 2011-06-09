@@ -10,6 +10,7 @@
 
 #include "CbcModel.hpp"
 
+#include "CouenneConfig.h"
 #include "CouenneFeasPump.hpp"
 #include "CouenneMINLPInterface.hpp"
 #include "CouenneProblem.hpp"

@@ -46,6 +46,5 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/../branch`\
 	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` 
 
-# This line is necessary to allow VPATH compilation with MS compilers
-# on Cygwin
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
+# This line is necessary to allow VPATH compilation
+DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

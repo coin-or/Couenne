@@ -52,6 +52,5 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/../disjunctive` \
 	-I`$(CYGPATH_W) $(srcdir)/../readnl`
 
-# This line is necessary to allow VPATH compilation with MS compilers
-# on Cygwin
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
+# This line is necessary to allow VPATH compilation
+DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

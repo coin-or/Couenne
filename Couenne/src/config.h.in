@@ -1,4 +1,4 @@
-/* inc/config_couenne.h.in.  Generated from configure.ac by autoheader.  */
+/* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to the debug sanity check level (0 is no test) */
 #undef COIN_COUENNE_CHECKLEVEL
@@ -27,14 +27,14 @@
 /* Define to 1 if the SCIP package is available */
 #undef COIN_HAS_SCIP
 
-/* Define to 1 if the SoPlex package is available */
-#undef COIN_HAS_SOPLEX
-
 /* Define to 1 if the Spx package is available */
 #undef COIN_HAS_SPX
 
 /* Define to 1 if the Xpr package is available */
 #undef COIN_HAS_XPR
+
+/* whether CouenneInterface is derived from Bonmin's AmplInterface */
+#undef COUENNEINTERFACE_FROM_ASL
 
 /* SVN revision number of project */
 #undef COUENNE_SVN_REV

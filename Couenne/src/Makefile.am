@@ -67,13 +67,8 @@ AM_CPPFLAGS =
 
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
 
-if COIN_HAS_SPX
-AM_CPPFLAGS += $(SPXINCDIR)
-endif
-
-# This line is necessary to allow VPATH compilation with MS compilers
-# on Cygwin
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
+# This line is necessary to allow VPATH compilation
+DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)`
 
 ########################################################################
 #                Headers that need to be installed                     #
@@ -83,7 +78,6 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
 # and that therefore should be installed in 'include/coin'
 includecoindir = $(includedir)/coin
 includecoin_HEADERS = \
-	../inc/config_couenne.h \
 	util/CouenneRootQ.hpp \
 	util/CouenneFunTriplets.hpp \
 	main/BonCouenneInfo.hpp \
@@ -94,7 +88,6 @@ includecoin_HEADERS = \
 	heuristics/BonNlpHeuristic.hpp \
 	heuristics/BonInitHeuristic.hpp \
 	heuristics/CouenneFeasPump.hpp \
-	heuristics/CouenneIterativeRounding.hpp \
 	branch/CouenneObject.hpp \
 	branch/CouenneVarObject.hpp \
 	branch/CouenneVTObject.hpp \
@@ -184,20 +177,8 @@ if COIN_HAS_NTY
 includecoin_HEADERS += branch/Nauty.h
 endif
 
-#############################################################################
-# Create the Config.h file that always defines HAVE_CONFIG_H and install it #
-#############################################################################
-
-# You only need to adapt the following line
-ConfigHeader = CouenneConfig.h
-
 install-exec-local:
-	echo "#ifndef HAVE_CONFIG_H" >bla
-	echo "#define HAVE_CONFIG_H" >>bla
-	echo "#endif" >> bla
-	cat $(srcdir)/$(ConfigHeader) >> bla
-	$(install_sh_DATA) bla $(DESTDIR)$(includecoindir)/$(ConfigHeader)
-	rm -f bla
+	$(install_sh_DATA) config_couenne.h $(DESTDIR)$(includecoindir)/CouenneConfig.h
 
 uninstall-local:
-	rm -f $(DESTDIR)$(includecoindir)/$(ConfigHeader)
+	rm -f $(DESTDIR)$(includecoindir)/CouenneConfig.h

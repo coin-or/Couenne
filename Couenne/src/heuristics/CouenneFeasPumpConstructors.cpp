@@ -12,6 +12,7 @@
 
 #include "IpOptionsList.hpp"
 
+#include "CouenneConfig.h"
 #include "CouenneFeasPump.hpp"
 #include "CouenneMINLPInterface.hpp"
 #include "CouenneObject.hpp"

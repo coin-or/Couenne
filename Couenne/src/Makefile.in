@@ -46,35 +46,19 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 
-# AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
-# 	-I`$(CYGPATH_W) $(srcdir)/convex` \
-# 	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
-# 	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
-# 	-I`$(CYGPATH_W) $(srcdir)/expression` \
-# 	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
-# 	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
-# 	-I`$(CYGPATH_W) $(srcdir)/main` \
-# 	-I`$(CYGPATH_W) $(srcdir)/problem` \
-# 	-I`$(CYGPATH_W) $(srcdir)/branch` \
-# 	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
-# 	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
-# 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
-
-#	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
-@COIN_HAS_SPX_TRUE@am__append_1 = $(SPXINCDIR)
-
 #	ellipcuts/CouenneEllipCuts.hpp 
-@COIN_HAS_NTY_TRUE@am__append_2 = branch/Nauty.h
+@COIN_HAS_NTY_TRUE@am__append_1 = branch/Nauty.h
 subdir = src
 DIST_COMMON = $(am__includecoin_HEADERS_DIST) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
+	$(srcdir)/config_couenne.h.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)/inc/config_couenne.h
+CONFIG_HEADER = config.h config_couenne.h
 CONFIG_CLEAN_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -97,16 +81,15 @@ LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libCouenne_la_SOURCES)
 DIST_SOURCES = $(libCouenne_la_SOURCES)
-am__includecoin_HEADERS_DIST = ../inc/config_couenne.h \
-	util/CouenneRootQ.hpp util/CouenneFunTriplets.hpp \
-	main/BonCouenneInfo.hpp main/BonCouenneSetup.hpp \
-	interfaces/BonCouenneInterface.hpp interfaces/CouenneTNLP.hpp \
+am__includecoin_HEADERS_DIST = util/CouenneRootQ.hpp \
+	util/CouenneFunTriplets.hpp main/BonCouenneInfo.hpp \
+	main/BonCouenneSetup.hpp interfaces/BonCouenneInterface.hpp \
+	interfaces/CouenneTNLP.hpp \
 	interfaces/CouenneMINLPInterface.hpp \
 	heuristics/BonNlpHeuristic.hpp heuristics/BonInitHeuristic.hpp \
-	heuristics/CouenneFeasPump.hpp \
-	heuristics/CouenneIterativeRounding.hpp \
-	branch/CouenneObject.hpp branch/CouenneVarObject.hpp \
-	branch/CouenneVTObject.hpp branch/CouenneThreeWayBranchObj.hpp \
+	heuristics/CouenneFeasPump.hpp branch/CouenneObject.hpp \
+	branch/CouenneVarObject.hpp branch/CouenneVTObject.hpp \
+	branch/CouenneThreeWayBranchObj.hpp \
 	branch/CouenneBranchingObject.hpp \
 	branch/CouenneChooseVariable.hpp \
 	branch/CouenneChooseStrong.hpp branch/CouenneComplObject.hpp \
@@ -447,11 +430,26 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
-AM_CPPFLAGS = $(am__append_1)
+AM_CPPFLAGS = 
 
-# This line is necessary to allow VPATH compilation with MS compilers
-# on Cygwin
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
+# AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
+# 	-I`$(CYGPATH_W) $(srcdir)/convex` \
+# 	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
+# 	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
+# 	-I`$(CYGPATH_W) $(srcdir)/expression` \
+# 	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
+# 	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
+# 	-I`$(CYGPATH_W) $(srcdir)/main` \
+# 	-I`$(CYGPATH_W) $(srcdir)/problem` \
+# 	-I`$(CYGPATH_W) $(srcdir)/branch` \
+# 	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
+# 	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
+# 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
+
+#	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
+
+# This line is necessary to allow VPATH compilation
+DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)`
 
 ########################################################################
 #                Headers that need to be installed                     #
@@ -460,16 +458,15 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
 # Here list all the header files that are required by a user of the library,
 # and that therefore should be installed in 'include/coin'
 includecoindir = $(includedir)/coin
-includecoin_HEADERS = ../inc/config_couenne.h util/CouenneRootQ.hpp \
+includecoin_HEADERS = util/CouenneRootQ.hpp \
 	util/CouenneFunTriplets.hpp main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp interfaces/BonCouenneInterface.hpp \
 	interfaces/CouenneTNLP.hpp \
 	interfaces/CouenneMINLPInterface.hpp \
 	heuristics/BonNlpHeuristic.hpp heuristics/BonInitHeuristic.hpp \
-	heuristics/CouenneFeasPump.hpp \
-	heuristics/CouenneIterativeRounding.hpp \
-	branch/CouenneObject.hpp branch/CouenneVarObject.hpp \
-	branch/CouenneVTObject.hpp branch/CouenneThreeWayBranchObj.hpp \
+	heuristics/CouenneFeasPump.hpp branch/CouenneObject.hpp \
+	branch/CouenneVarObject.hpp branch/CouenneVTObject.hpp \
+	branch/CouenneThreeWayBranchObj.hpp \
 	branch/CouenneBranchingObject.hpp \
 	branch/CouenneChooseVariable.hpp \
 	branch/CouenneChooseStrong.hpp branch/CouenneComplObject.hpp \
@@ -529,15 +526,9 @@ includecoin_HEADERS = ../inc/config_couenne.h util/CouenneRootQ.hpp \
 	cut/sdpcuts/orthocut.hpp cut/sdpcuts/OsiXxxSolverInterface.hpp \
 	cut/sdpcuts/populate.hpp cut/sdpcuts/quadratic_cuts_check.hpp \
 	cut/sdpcuts/rlt_cuts.hpp cut/sdpcuts/sdpcuts.hpp \
-	cut/sdpcuts/tracer.hpp $(am__append_2)
-
-#############################################################################
-# Create the Config.h file that always defines HAVE_CONFIG_H and install it #
-#############################################################################
-
-# You only need to adapt the following line
-ConfigHeader = CouenneConfig.h
-all: all-am
+	cut/sdpcuts/tracer.hpp $(am__append_1)
+all: config.h config_couenne.h
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -569,6 +560,33 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+
+config.h: stamp-h1
+	@if test ! -f $@; then \
+	  rm -f stamp-h1; \
+	  $(MAKE) stamp-h1; \
+	else :; fi
+
+stamp-h1: $(srcdir)/config.h.in $(top_builddir)/config.status
+	@rm -f stamp-h1
+	cd $(top_builddir) && $(SHELL) ./config.status src/config.h
+$(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+	cd $(top_srcdir) && $(AUTOHEADER)
+	rm -f stamp-h1
+	touch $@
+
+config_couenne.h: stamp-h2
+	@if test ! -f $@; then \
+	  rm -f stamp-h2; \
+	  $(MAKE) stamp-h2; \
+	else :; fi
+
+stamp-h2: $(srcdir)/config_couenne.h.in $(top_builddir)/config.status
+	@rm -f stamp-h2
+	cd $(top_builddir) && $(SHELL) ./config.status src/config_couenne.h
+
+distclean-hdr:
+	-rm -f config.h stamp-h1 config_couenne.h stamp-h2
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(libdir)" || $(mkdir_p) "$(DESTDIR)$(libdir)"
@@ -642,11 +660,11 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES) config.h.in config_couenne.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) config.h.in config_couenne.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -658,11 +676,11 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	    $$tags $$unique; \
 	fi
 ctags: CTAGS
-CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+CTAGS:  $(HEADERS) $(SOURCES) config.h.in config_couenne.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) config.h.in config_couenne.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -681,7 +699,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/../inc $(distdir)/bound_tightening $(distdir)/bound_tightening/twoImpliedBT $(distdir)/branch $(distdir)/convex $(distdir)/cut/crossconv $(distdir)/cut/sdpcuts $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/standardize $(distdir)/util
+	$(mkdir_p) $(distdir)/bound_tightening $(distdir)/bound_tightening/twoImpliedBT $(distdir)/branch $(distdir)/convex $(distdir)/cut/crossconv $(distdir)/cut/sdpcuts $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/standardize $(distdir)/util
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -710,7 +728,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES) $(HEADERS) config.h config_couenne.h
 installdirs:
 	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includecoindir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
@@ -747,7 +765,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 distclean: distclean-am
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-libtool distclean-tags
+	distclean-hdr distclean-libtool distclean-tags
 
 dvi: dvi-am
 
@@ -791,29 +809,25 @@ uninstall-am: uninstall-includecoinHEADERS uninstall-info-am \
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
 	clean-libLTLIBRARIES clean-libtool ctags distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-exec \
-	install-exec-am install-exec-local install-includecoinHEADERS \
-	install-info install-info-am install-libLTLIBRARIES \
-	install-man install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-includecoinHEADERS uninstall-info-am \
+	distclean-compile distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am \
+	install-exec-local install-includecoinHEADERS install-info \
+	install-info-am install-libLTLIBRARIES install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-includecoinHEADERS uninstall-info-am \
 	uninstall-libLTLIBRARIES uninstall-local
 
 
 install-exec-local:
-	echo "#ifndef HAVE_CONFIG_H" >bla
-	echo "#define HAVE_CONFIG_H" >>bla
-	echo "#endif" >> bla
-	cat $(srcdir)/$(ConfigHeader) >> bla
-	$(install_sh_DATA) bla $(DESTDIR)$(includecoindir)/$(ConfigHeader)
-	rm -f bla
+	$(install_sh_DATA) config_couenne.h $(DESTDIR)$(includecoindir)/CouenneConfig.h
 
 uninstall-local:
-	rm -f $(DESTDIR)$(includecoindir)/$(ConfigHeader)
+	rm -f $(DESTDIR)$(includecoindir)/CouenneConfig.h
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -73,6 +73,11 @@ fi
 # bad bad: if AMPL stuff is available, then libCouenne will depend on it, so we add it to CouenneLib
 AC_COIN_CHECK_PACKAGE(ASL, [bonminamplinterface], [CouenneLib])
 
+# more workaround for having ASL deep inside Couenne
+if test $coin_has_asl = yes ; then
+  AC_DEFINE(COUENNEINTERFACE_FROM_ASL, 1, [whether CouenneInterface is derived from Bonmin's AmplInterface])
+fi
+
 # Nauty library (for symmetry detection)
 AC_LANG_PUSH(C)
 AC_COIN_CHECK_USER_LIBRARY([Nauty],[NTY],[nauty.h],[nauty],,[CouenneLib])
@@ -139,7 +144,7 @@ AC_CONFIG_FILES([Makefile
 #                 src/cut/ellipcuts/Makefile
 
 # Here put the location and name of the configuration header file
-AC_CONFIG_HEADER([inc/config_couenne.h])
+AC_CONFIG_HEADER([src/config.h src/config_couenne.h])
 
 # Finally, we let configure write all the output...
 AC_COIN_FINALIZE

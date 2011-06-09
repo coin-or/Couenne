@@ -12,9 +12,10 @@
 #ifndef CouenneInterface_H
 #define CouenneInterface_H
 
+#include "CouenneConfig.h"
 #include "CouenneCutGenerator.hpp"
 
-#ifdef COIN_HAS_ASL
+#ifdef COUENNEINTERFACE_FROM_ASL
 #include "BonAmplInterface.hpp"
 
 struct ASL;
@@ -47,7 +48,7 @@ namespace Couenne {
     // My name is Couenne [ku:en]
     virtual std::string  appName() {return "couenne";}
 
-#ifdef COIN_HAS_ASL    
+#ifdef COUENNEINTERFACE_FROM_ASL
     /** read ampl file using inputed options, journalist....*/
     virtual void readAmplNlFile(char **& argv, Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions,
 				Ipopt::SmartPtr<Ipopt::OptionsList> options,

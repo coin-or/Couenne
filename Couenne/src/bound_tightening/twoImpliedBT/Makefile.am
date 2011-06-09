@@ -28,6 +28,5 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/../../problem` \
 	-I`$(CYGPATH_W) $(srcdir)/../../bound_tightening`
 
-# This line is necessary to allow VPATH compilation with MS compilers
-# on Cygwin
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/inc
+# This line is necessary to allow VPATH compilation
+DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/src

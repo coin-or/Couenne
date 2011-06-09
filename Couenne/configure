@@ -2849,7 +2849,7 @@ if test x"$CFLAGS" = x; then
       *)
         coin_opt_cflags="-O3"
         coin_add_cflags="-pipe"
-        coin_dbg_cflags="-g"
+        coin_dbg_cflags="-g -O0"
         coin_warn_cflags="-Wimplicit -Wparentheses -Wsequence-point -Wreturn-type -Wcast-qual -Wall -Wno-unknown-pragmas -Wno-long-long"
         case $build in
           *-darwin*)
@@ -3781,7 +3781,7 @@ if test x"$CXXFLAGS" = x; then
 # ToDo decide about unroll-loops
         coin_opt_cxxflags="-O3"
         coin_add_cxxflags="-pipe"
-        coin_dbg_cxxflags="-g"
+        coin_dbg_cxxflags="-g -O0"
         coin_warn_cxxflags="-Wparentheses -Wreturn-type -Wcast-qual -Wall -Wpointer-arith -Wwrite-strings -Wconversion -Wno-unknown-pragmas -Wno-long-long"
         case $build in
           *-darwin*)
@@ -4888,7 +4888,7 @@ if test x"$CFLAGS" = x; then
       *)
         coin_opt_cflags="-O3"
         coin_add_cflags="-pipe"
-        coin_dbg_cflags="-g"
+        coin_dbg_cflags="-g -O0"
         coin_warn_cflags="-Wimplicit -Wparentheses -Wsequence-point -Wreturn-type -Wcast-qual -Wall -Wno-unknown-pragmas -Wno-long-long"
         case $build in
           *-darwin*)
@@ -23204,6 +23204,15 @@ fi
 
 
 
+# more workaround for having ASL deep inside Couenne
+if test $coin_has_asl = yes ; then
+
+cat >>confdefs.h <<\_ACEOF
+#define COUENNEINTERFACE_FROM_ASL 1
+_ACEOF
+
+fi
+
 # Nauty library (for symmetry detection)
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -28199,7 +28208,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 #                 src/cut/ellipcuts/Makefile
 
 # Here put the location and name of the configuration header file
-          ac_config_headers="$ac_config_headers inc/config_couenne.h"
+                    ac_config_headers="$ac_config_headers src/config.h src/config_couenne.h"
 
 
 # Finally, we let configure write all the output...
@@ -29025,7 +29034,8 @@ do
   "couenne.pc" ) CONFIG_FILES="$CONFIG_FILES couenne.pc" ;;
   "couenne-uninstalled.pc" ) CONFIG_FILES="$CONFIG_FILES couenne-uninstalled.pc" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
-  "inc/config_couenne.h" ) CONFIG_HEADERS="$CONFIG_HEADERS inc/config_couenne.h" ;;
+  "src/config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS src/config.h" ;;
+  "src/config_couenne.h" ) CONFIG_HEADERS="$CONFIG_HEADERS src/config_couenne.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;

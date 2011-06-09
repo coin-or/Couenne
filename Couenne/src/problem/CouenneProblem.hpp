@@ -48,7 +48,6 @@ namespace Couenne {
   struct CouenneRecordBestSol;
 }
 
-#ifdef COIN_HAS_NTY
 
 class Nauty;
 
@@ -119,7 +118,6 @@ class Nauty;
       return (a.get_index() < b.get_index() );
     }
   };
-#endif
 
 
 namespace Couenne {
@@ -276,10 +274,8 @@ class CouenneProblem {
   /// options
   Bonmin::BabSetupBase *bonBase_;
 
-#ifdef COIN_HAS_ASL
   /// AMPL structure pointer (temporary --- looking forward to embedding into OS...)
   ASL *asl_;
-#endif
 
   /// some originals may be unused due to their zero multiplicity
   /// (that happens when they are duplicates). This array keeps track
@@ -349,7 +345,6 @@ class CouenneProblem {
 
   // Symmetry Info
 
-#ifdef COIN_HAS_NTY
   std::vector<int>  *Find_Orbit(int) const;
   mutable std::vector<Node> node_info;
   mutable Nauty *nauty_info;
@@ -366,7 +361,6 @@ class CouenneProblem {
 
   // bool node_sort (  Node  a, Node  b);
   // bool index_sort (  Node  a, Node  b);
-#endif
 
   /// empty if no NTY, symmetry data structure setup otherwise
   void setupSymmetry ();

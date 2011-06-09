@@ -17,7 +17,7 @@
 #include "CouenneTypes.hpp"
 #include "CbcHeuristic.hpp"
 
-#include "config_couenne.h"
+#include "CouenneConfig.h"
 
 #ifdef COIN_HAS_SCIP
 /* general SCIP includes */
@@ -199,11 +199,9 @@ namespace Couenne {
     /// maximum iterations per call
     int maxIter_;
 
-#ifdef COIN_HAS_SCIP
     /// use SCIP instead of Cbc for solving MILPs
      bool useSCIP_;
      int milpMethod_;
-#endif
   };
 }
 
