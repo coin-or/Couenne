@@ -161,7 +161,7 @@ namespace Couenne {
     /// expensive, exact method to a cheap, inexact one:
     ///
     /// 1. Solve a MILP relaxation with Manhattan distance as objective
-    /// 2. Apply RENS on 1
+    /// 2. Apply RENS on 1.
     /// 3. Use Objective FP 2.0 for MILPs
     /// 4. round-and-propagate
     /// 5. choose from pool, see 4
