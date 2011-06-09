@@ -116,7 +116,7 @@ namespace Couenne {
     static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions>);
 
     /// find feasible solution (called by solveMILP ())
-    void findSolution ();
+    double findSolution (double *sol);
 
     /// initialize all solvers at the first call, where the initial
     /// MILP is built

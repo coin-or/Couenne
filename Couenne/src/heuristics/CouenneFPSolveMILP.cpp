@@ -189,9 +189,11 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
     if (firstCall)
       init_MILP ();
 
-    findSolution ();
-    iSol = CoinCopyOfArray (milp_    -> getColSolution (), 
-			    problem_ -> nVars ());
+    double *sol = new double[ milp_ -> getNumCols ()];
+    double obj;
+
+    obj = findSolution(sol);
+    iSol = CoinCopyOfArray(sol,problem_ -> nVars ());
 
     // delete last rows and add them from scratch (common block below)
 

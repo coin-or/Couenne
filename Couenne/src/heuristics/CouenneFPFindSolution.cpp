@@ -9,11 +9,12 @@
  */
 
 #include "CouenneFeasPump.hpp"
+#include "CouenneProblem.hpp"
 
 using namespace Couenne;
 
 /// find a feasible or optimal solution of MILP
-void CouenneFeasPump::findSolution () {
+double CouenneFeasPump::findSolution (double* sol) {
 
   /// as found on the notes, these methods can be used, from the most
   /// expensive and accurate (exact) method to a cheap, inexact one:
@@ -42,13 +43,14 @@ void CouenneFeasPump::findSolution () {
   //
   // 4) if H consecutive failutes, ++p[i]
 
+   double obj;
+
   /// solve MILP 
+
 
 #ifdef COIN_HAS_SCIP
 
-  printf ("USING SCIP\n");
-
-  if (useSCIP_) {
+  if (true) {
      SCIP* scip;
 
      SCIP_VAR** vars;
@@ -67,7 +69,7 @@ void CouenneFeasPump::findSolution () {
      double infinity;
      int nvars;
      int nconss;
-     
+
      // COUENNE_INFINITY , getInfinity()
 
      // get problem data
@@ -92,13 +94,25 @@ void CouenneFeasPump::findSolution () {
      coeffs     = matrix -> getElements();
      indices    = matrix -> getIndices();
      
+     SCIPdebugMessage("create SCIP problem instance with %d variables and %d constraints.\n", nvars, nconss);
+
      // initialize SCIP
      SCIP_CALL_ABORT( SCIPcreate(&scip) );
      assert(scip != NULL);
-     
+
+#ifndef SCIP_DEBUG
+   SCIP_CALL( SCIPsetIntParam(scip, "display/verblevel", 0) );
+#endif
+
      // include default SCIP plugins
      SCIP_CALL_ABORT( SCIPincludeDefaultPlugins(scip) );
 
+     // create problem instance in SCIP
+     SCIP_CALL_ABORT( SCIPcreateProb(scip, "auxiliary FeasPump MILP", NULL, NULL, NULL, NULL, NULL, NULL, NULL) );
+
+     // allocate local memory for SCIP variable array
+     SCIP_CALL_ABORT( SCIPallocMemoryArray(scip, &vars, nvars) );
+   
      // one variable for objective !!!!!!!!!
 
      // create variables 
@@ -109,7 +123,7 @@ void CouenneFeasPump::findSolution () {
         assert( 0 <= vartypes[i] && vartypes[i] <= 2);
         checkInfinity(scip, lbs[i], infinity);
         checkInfinity(scip, ubs[i], infinity);
-
+        
         // all variables are named x_i
         (void) SCIPsnprintf(varname, SCIP_MAXSTRLEN, "x_%d", i);
         SCIP_CALL_ABORT( SCIPcreateVar(scip, &vars[i], varname, lbs[i], ubs[i], objs[i], 
@@ -118,9 +132,6 @@ void CouenneFeasPump::findSolution () {
 
         // add the variable to SCIP
         SCIP_CALL_ABORT( SCIPaddVar(scip, vars[i]) );
-        
-        // because the variable was added to the problem, it is captured by SCIP and we can safely release it right now
-        SCIP_CALL_ABORT( SCIPreleaseVar(scip, &vars[i]) );
      }
 
      // create constraints
@@ -134,10 +145,10 @@ void CouenneFeasPump::findSolution () {
         // check that all data is in valid ranges
         checkInfinity(scip, lhss[i], infinity);
         checkInfinity(scip, rhss[i], infinity);
-        
+
         SCIP_CALL_ABORT( SCIPcreateConsLinear(scip, &cons, consname, 0, NULL, NULL, lhss[i], rhss[i], 
               TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE) );
-        
+             
         // add variables to constraint
         for(int j=rowstarts[i]; j<rowstarts[i]+rowlengths[i]; j++)        
         {
@@ -148,18 +159,46 @@ void CouenneFeasPump::findSolution () {
         SCIP_CALL_ABORT( SCIPaddCons(scip, cons) );
         SCIP_CALL_ABORT( SCIPreleaseCons(scip, &cons) );        
      }
-     
+
+          
      // solve the MILP
      SCIP_CALL_ABORT( SCIPsolve(scip) );
 
+     obj = SCIPinfinity(scip);
+     // copy the solution
+     if( SCIPgetNSols(scip) )
+     {
+        SCIP_SOL* bestsol;
+        bestsol = SCIPgetBestSol(scip);
+        assert(bestsol != NULL);
+
+        // get solution values and objective
+        SCIP_CALL_ABORT( SCIPgetSolVals(scip, bestsol, nvars, vars, sol) );
+        obj = SCIPgetSolOrigObj(scip, bestsol);
+     }
+     else 
+        sol = NULL;
+     
+     // release variables before freeing them
+     for (int i=0; i<nvars; i++) {
+        SCIP_CALL_ABORT( SCIPreleaseVar(scip, &vars[i]) );
+     }
+
      // free memory
+     SCIPfreeMemoryArray(scip, &vars);
      SCIP_CALL_ABORT( SCIPfree(&scip) );
    
-     BMScheckEmptyMemory();
+     BMScheckEmptyMemory();     
   }
    else
 #endif      
+   {
       milp_ -> branchAndBound ();
+      sol = CoinCopyOfArray (milp_ -> getColSolution (), problem_ -> nVars ());
+      obj = milp_ -> getObjValue ();
+   }
+
+  return obj;
 }
 
 /// initialize MILP solvers if needed
