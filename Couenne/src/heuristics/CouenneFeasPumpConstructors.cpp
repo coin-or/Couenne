@@ -34,7 +34,7 @@ void CouenneFeasPump::initIpoptApp () {
 
   ApplicationReturnStatus status = app_ -> Initialize ();
   app_ -> Options () -> SetIntegerValue ("max_iter", 1000);
-  //app_ -> Options () -> SetIntegerValue ("print_level", 0); // 0 for none, 4 for summary
+  app_ -> Options () -> SetIntegerValue ("print_level", 4); // 0 for none, 4 for summary
   if (status != Solve_Succeeded)
     printf ("FP: Error in initialization\n");
 }
@@ -321,6 +321,6 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> AddBoundedIntegerOption
     ("feas_pump_milpmethod",
      "How should the integral solution be constructed?",
-     0, 6, 0, 
+     0, 7, 0, 
        "0: automatic, 1; completely, 2: RENS, 3: Objective Feasibility Pump, 4:round-and-propagate, 5: choose from pool, 6: random");
 }
