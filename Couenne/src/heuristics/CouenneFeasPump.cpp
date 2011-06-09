@@ -19,6 +19,8 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneTNLP.hpp"
 
+//#define DEBUG
+
 #include "CouenneRecordBestSol.hpp"
 
 using namespace Couenne;

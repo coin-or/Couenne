@@ -34,7 +34,7 @@ void CouenneFeasPump::initIpoptApp () {
 
   ApplicationReturnStatus status = app_ -> Initialize ();
   app_ -> Options () -> SetIntegerValue ("max_iter", 1000);
-  app_ -> Options () -> SetIntegerValue ("print_level", 0); // 0 for none, 4 for summary
+  //app_ -> Options () -> SetIntegerValue ("print_level", 0); // 0 for none, 4 for summary
   if (status != Solve_Succeeded)
     printf ("FP: Error in initialization\n");
 }
@@ -55,7 +55,8 @@ CouenneFeasPump::CouenneFeasPump ():
   compDistInt_         (false),
   milpCuttingPlane_    (false),
   maxIter_             (COIN_INT_MAX),
-  useSCIP_             (false) {
+  useSCIP_             (false),
+  milpMethod_          (0) {
 
   setHeuristicName ("Couenne Feasibility Pump");
 
@@ -80,7 +81,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   compDistInt_         (false),
   milpCuttingPlane_    (false),
   maxIter_             (COIN_INT_MAX),
-  useSCIP_             (false) {
+  useSCIP_             (false),
+  milpMethod_          (0) {
 
   setHeuristicName ("Couenne Feasibility Pump");
 
@@ -96,7 +98,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   options -> GetStringValue  ("feas_pump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
   options -> GetStringValue  ("feas_pump_dist_int", s, "couenne."); compDistInt_      = (s == "yes");
 
-  options -> GetStringValue  ("feas_pump_usescip",  s, "couenne."); 
+  options -> GetStringValue  ("feas_pump_usescip",    s,           "couenne."); 
+  options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_, "couenne."); 
 
 #ifdef COIN_HAS_SCIP
   useSCIP_ = (s == "yes");
@@ -129,7 +132,8 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   compDistInt_         (other. compDistInt_),
   milpCuttingPlane_    (other. milpCuttingPlane_),
   maxIter_             (other. maxIter_),
-  useSCIP_             (other. useSCIP_) {
+  useSCIP_             (other. useSCIP_),
+  milpMethod_          (other. milpMethod_) {
 
   initIpoptApp ();
 }
@@ -160,6 +164,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     milpCuttingPlane_    = rhs. milpCuttingPlane_;
     maxIter_             = rhs. maxIter_;
     useSCIP_             = rhs. useSCIP_;
+    milpMethod_          = rhs. milpMethod_;
   }
 
   initIpoptApp ();

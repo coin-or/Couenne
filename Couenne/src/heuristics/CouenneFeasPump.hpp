@@ -200,8 +200,10 @@ namespace Couenne {
     int maxIter_;
 
     /// use SCIP instead of Cbc for solving MILPs
-     bool useSCIP_;
-     int milpMethod_;
+    bool useSCIP_;
+
+    /// Which SCIP MILP method to use
+    int milpMethod_;
   };
 }
 

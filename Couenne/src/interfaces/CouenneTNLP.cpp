@@ -492,7 +492,7 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
 
       // the objective's part of the Hessian can only have level index 0, avoid check
 
-      if (0 == *lamI) {*values += obj_factor           * (*(*expr++)) (); --numL;}
+      if (0 == *lamI) {*values += obj_factor           * (*(*expr++)) (); --numL; ++lamI;}
       while (numL--)   *values += lambda [*lamI++ - 1] * (*(*expr++)) ();
     }
   }

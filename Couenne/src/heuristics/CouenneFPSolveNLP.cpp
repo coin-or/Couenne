@@ -67,6 +67,7 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
     *oldObj = problem_ -> Obj (0) -> Body (),
     *newObj = updateNLPObj (iSol);
 
+  newObj   -> realign (problem_);
   problem_ -> setObjective (0, newObj);
   nlp_     -> setObjective (newObj);
 
