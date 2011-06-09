@@ -64,8 +64,8 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
 
   // set new objective
   expression
-    *newObj = updateNLPObj (iSol),
-    *oldObj = problem_ -> Obj (0) -> Body ();
+    *oldObj = problem_ -> Obj (0) -> Body (),
+    *newObj = updateNLPObj (iSol);
 
   problem_ -> setObjective (0, newObj);
   nlp_     -> setObjective (newObj);
@@ -81,10 +81,9 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
     app_ -> OptimizeTNLP   (nlp_) :
     app_ -> ReOptimizeTNLP (nlp_);
 
-  problem_ -> domain () -> pop ();
-
   if (status != Solve_Succeeded)
-    printf ("FP: Error solving problem\n");
+    problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, 
+				    "Feasibility Pump: Error solving NLP problem\n");
 
   /////////////////////////////////////////////////////////
 
@@ -100,5 +99,9 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   problem_ -> setObjective (0, oldObj);
   nlp_     -> setObjective (oldObj);
 
-  return nlp_ -> getSolValue ();
+  CouNumber retval = nlp_ -> getSolValue ();
+
+  problem_ -> domain () -> pop ();
+
+  return retval;
 }

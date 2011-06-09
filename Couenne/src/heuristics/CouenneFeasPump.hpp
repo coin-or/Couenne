@@ -154,9 +154,6 @@ namespace Couenne {
     /// non-NLP-feasible solution)
     OsiSolverInterface *milp_;
 
-    /// Ipopt solver
-    Ipopt::IpoptApplication *nlpSolver_;
-
     /// Pool of solutions
     std::priority_queue <std::pair <CouNumber *, CouNumber> > pool_;
 

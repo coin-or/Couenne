@@ -86,15 +86,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   //						      	          | |
   /////////////////////////////////////////////////////////////// |_| /////
 
-  //expression *origObj = problem_ -> Obj (0) -> Body ();
-
   int 
     objInd = problem_ -> Obj (0) -> Body () -> Index (),
     nSep = 0;
 
   do {
-
-    CouNumber curcutoff = problem_ -> getCutOff ();
 
     // INTEGER PART /////////////////////////////////////////////////////////
 
@@ -287,7 +283,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
     if (status != Solve_Succeeded) 
-      printf ("Feasibility Pump: error solving problem\n");
+      printf ("Feasibility Pump: error solving NLP problem\n");
 
     ////////////////////////////////////////////////////////////////
 
@@ -302,7 +298,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 				    true, // stopAtFirstViol
 				    true, // checkALL
 				    problem_->getFeasTol());
-    if(isChecked) {
+    if (isChecked) {
       z = problem_->getRecordBestSol()->getModSolVal();
     }
 #else /* not FM_CHECKNLP2 */
