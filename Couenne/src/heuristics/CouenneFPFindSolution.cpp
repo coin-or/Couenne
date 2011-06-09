@@ -7,6 +7,7 @@
  * 
  * This file is licensed under the Eclipse Public License (EPL)
  */
+
 #define SCIP_DEBUG 
 
 #include "CouenneFeasPump.hpp"
@@ -48,10 +49,10 @@ double CouenneFeasPump::findSolution (double* sol) {
 
   /// solve MILP 
 
-
 #ifdef COIN_HAS_SCIP
 
-  if (useSCIP_) {
+   if (useSCIP_) {
+
      SCIP* scip;
 
      SCIP_VAR** vars;
@@ -70,6 +71,8 @@ double CouenneFeasPump::findSolution (double* sol) {
      double infinity;
      int nvars;
      int nconss;
+
+     printf ("USING SCIP\n");
 
      // COUENNE_INFINITY , getInfinity()
 

@@ -54,7 +54,8 @@ CouenneFeasPump::CouenneFeasPump ():
   betaMILP_            (0.),
   compDistInt_         (false),
   milpCuttingPlane_    (false),
-  maxIter_             (COIN_INT_MAX) {
+  maxIter_             (COIN_INT_MAX),
+  useSCIP_             (false) {
 
   setHeuristicName ("Couenne Feasibility Pump");
 
@@ -78,7 +79,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   betaMILP_            (0.),
   compDistInt_         (false),
   milpCuttingPlane_    (false),
-  maxIter_             (COIN_INT_MAX) {
+  maxIter_             (COIN_INT_MAX),
+  useSCIP_             (false) {
 
   setHeuristicName ("Couenne Feasibility Pump");
 
@@ -100,7 +102,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   useSCIP_ = (s == "yes");
 #else
   if (s == "yes") 
-    problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_usescip to true, but SCIP is not installed.");
+    problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_usescip to true, but SCIP is not installed.\n");
 #endif
 
   // Although app_ is only used in CouenneFPSolveNLP, we need to have
@@ -126,7 +128,8 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   betaMILP_            (other. betaMILP_),
   compDistInt_         (other. compDistInt_),
   milpCuttingPlane_    (other. milpCuttingPlane_),
-  maxIter_             (other. maxIter_) {
+  maxIter_             (other. maxIter_),
+  useSCIP_             (other. useSCIP_) {
 
   initIpoptApp ();
 }
@@ -156,6 +159,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     compDistInt_         = rhs. compDistInt_;
     milpCuttingPlane_    = rhs. milpCuttingPlane_;
     maxIter_             = rhs. maxIter_;
+    useSCIP_             = rhs. useSCIP_;
   }
 
   initIpoptApp ();
