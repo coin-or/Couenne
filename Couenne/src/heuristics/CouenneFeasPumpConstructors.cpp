@@ -83,14 +83,16 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 
   std::string s;
 
-  options -> GetIntegerValue ("feas_pump_iter",      maxIter_,             "couenne.");
-  options -> GetIntegerValue ("feas_pump_level",     numberSolvePerLevel_, "couenne.");
-  options -> GetNumericValue ("feas_pump_beta_nlp",  betaNLP_,             "couenne.");
-  options -> GetNumericValue ("feas_pump_beta_milp", betaMILP_,            "couenne.");
+  options -> GetIntegerValue ("feas_pump_iter",       maxIter_,             "couenne.");
+  options -> GetIntegerValue ("feas_pump_level",      numberSolvePerLevel_, "couenne.");
+  options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_,          "couenne.");
+
+  options -> GetNumericValue ("feas_pump_beta_nlp",   betaNLP_,             "couenne.");
+  options -> GetNumericValue ("feas_pump_beta_milp",  betaMILP_,            "couenne.");
 				    
   options -> GetStringValue  ("feas_pump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
   options -> GetStringValue  ("feas_pump_dist_int", s, "couenne."); compDistInt_      = (s == "yes");
-  options -> GetStringValue  ("feas_pump_usescip", s, "couenne."); useSCIP_      = (s == "yes");
+  options -> GetStringValue  ("feas_pump_usescip",  s, "couenne."); useSCIP_          = (s == "yes");
 
   // Although app_ is only used in CouenneFPSolveNLP, we need to have
   // an object lasting the program's lifetime as otherwise it appears
@@ -298,4 +300,9 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      "yes","",
      "");
 
+  roptions -> AddBoundedIntegerOption
+    ("feas_pump_milpmethod",
+     "How should the integral solution be constructed?",
+     0, 6, 0, 
+       "0: automatic, 1; completely, 2: RENS, 3: Objective Feasibility Pump, 4:round-and-propagate, 5: choose from pool, 6: random");
 }

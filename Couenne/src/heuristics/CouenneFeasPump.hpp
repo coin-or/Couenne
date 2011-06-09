@@ -201,7 +201,8 @@ namespace Couenne {
 
 #ifdef COIN_HAS_SCIP
     /// use SCIP instead of Cbc for solving MILPs
-    bool useSCIP_;
+     bool useSCIP_;
+     int milpMethod_;
 #endif
   };
 }
