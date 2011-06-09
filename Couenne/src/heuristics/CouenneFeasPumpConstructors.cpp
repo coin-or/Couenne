@@ -90,6 +90,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 				    
   options -> GetStringValue  ("feas_pump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
   options -> GetStringValue  ("feas_pump_dist_int", s, "couenne."); compDistInt_      = (s == "yes");
+  options -> GetStringValue  ("feas_pump_usescip", s, "couenne."); useSCIP_      = (s == "yes");
 
   // Although app_ is only used in CouenneFPSolveNLP, we need to have
   // an object lasting the program's lifetime as otherwise it appears
@@ -288,4 +289,13 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      "no","",
      "yes","",
      "");
+
+  roptions -> AddStringOption2
+    ("feas_pump_usescip",
+     "Should SCIP be used to solve the MILPs?",
+     "no",
+     "no","",
+     "yes","",
+     "");
+
 }
