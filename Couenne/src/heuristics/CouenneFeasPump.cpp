@@ -104,10 +104,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     // if no MILP solution was found, bail out
 
-    if (z >= COIN_DBL_MAX) 
+    if (!iSol || z >= COIN_DBL_MAX/2) 
       break;
 
     bool isChecked = false;
+
 #ifdef FM_CHECKNLP2
     isChecked = problem_->checkNLP2(iSol, 0, false, // do not care about obj 
 				    true, // stopAtFirstViol
@@ -222,21 +223,26 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // check if newly found NLP solution is also integer
 
     isChecked = false;
+
+    if (nSol) {
+
 #ifdef FM_CHECKNLP2
-    isChecked = problem_->checkNLP2(nSol, 0, false, // do not care about obj 
-				    true, // stopAtFirstViol
-				    true, // checkALL
-				    problem_->getFeasTol());
-    if(isChecked) {
-      z = problem_->getRecordBestSol()->getModSolVal();
-    }
+      isChecked = problem_->checkNLP2(nSol, 0, false, // do not care about obj 
+				      true, // stopAtFirstViol
+				      true, // checkALL
+				      problem_->getFeasTol());
+      if(isChecked) {
+	z = problem_->getRecordBestSol()->getModSolVal();
+      }
 #else /* not FM_CHECKNLP2 */
-    isChecked = problem_ -> checkNLP (nSol, z, true);
+      isChecked = problem_ -> checkNLP (nSol, z, true);
 #endif  /* not FM_CHECKNLP2 */
+    }
 
-    if (isChecked &&
+    if (nSol &&
+	isChecked &&
 	(z < problem_ -> getCutOff ())) {
-
+      
       retval = 1;
 
 #ifdef FM_CHECKNLP2
@@ -278,7 +284,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       if (!is_still_feas)
 	break;
-     }	
+    }
 
   } while ((niter++ < maxIter_) && 
 	   (retval == 0));
@@ -317,7 +323,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     if ((status != Solve_Succeeded) && 
 	(status != Solved_To_Acceptable_Level))
  
-      problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, 
+      problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, 
 				      "Feasibility Pump: error in final NLP problem\n");
 
     // if found a solution with the last NLP, check & save it
@@ -325,21 +331,26 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     double z = nlp_ -> getSolValue ();
 
     // check if newly found NLP solution is also integer (unlikely...)
-    bool isChecked;
+    bool isChecked = false;
 
+    if (nSol) {
+      
 #ifdef FM_CHECKNLP2
-    isChecked = problem_->checkNLP2(nSol, 0, false, // do not care about obj 
-				    true, // stopAtFirstViol
-				    true, // checkALL
-				    problem_->getFeasTol());
-    if (isChecked) {
-      z = problem_->getRecordBestSol()->getModSolVal();
-    }
+      isChecked = problem_->checkNLP2(nSol, 0, false, // do not care about obj 
+				      true, // stopAtFirstViol
+				      true, // checkALL
+				      problem_->getFeasTol());
+      if (isChecked) {
+	z = problem_->getRecordBestSol()->getModSolVal();
+      }
+
 #else /* not FM_CHECKNLP2 */
     isChecked = problem_ -> checkNLP (nSol, z, true);
 #endif  /* not FM_CHECKNLP2 */
+    }
 
-    if (isChecked &&
+    if (nSol &&
+	isChecked &&
 	(z < problem_ -> getCutOff ())) {
 
 #ifdef FM_CHECKNLP2
@@ -389,7 +400,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 #define WRAP 3
 
 void printCmpSol (int n, double *iSol, double *nSol, int direction) {
-
+  
   printf ("i:%x n:%x\n### ", iSol, nSol);
 
   double 

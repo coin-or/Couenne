@@ -8,7 +8,7 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-//#define SCIP_DEBUG 
+#define SCIP_DEBUG 
 
 #include "CouenneFeasPump.hpp"
 #include "CouenneProblem.hpp"
@@ -100,7 +100,9 @@ double CouenneFeasPump::findSolution (double* &sol) {
      coeffs     = matrix -> getElements();
      indices    = matrix -> getIndices();
      
-     SCIPdebugMessage("create SCIP problem instance with %d variables and %d constraints.\n", nvars, nconss);
+     if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC)) {
+       SCIPdebugMessage("create SCIP problem instance with %d variables and %d constraints.\n", nvars, nconss);
+     }
 
      // initialize SCIP
      SCIP_CALL_ABORT( SCIPcreate(&scip) );
@@ -109,9 +111,9 @@ double CouenneFeasPump::findSolution (double* &sol) {
      // include default SCIP plugins
      SCIP_CALL_ABORT( SCIPincludeDefaultPlugins(scip) );
      
-#ifndef SCIP_DEBUG
-     SCIP_CALL( SCIPsetIntParam(scip, "display/verblevel", 0) );
-#endif
+     if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_NONE, J_NLPHEURISTIC)) {
+       SCIP_CALL( SCIPsetIntParam(scip, "display/verblevel", 0) );
+     }
 
      // do not abort subproblem on CTRL-C
      SCIP_CALL( SCIPsetBoolParam(scip, "misc/catchctrlc", FALSE) );
@@ -184,7 +186,9 @@ double CouenneFeasPump::findSolution (double* &sol) {
      else 
         currentmilpmethod = milpMethod_; // use a fixed method to solve the MILP
      
-     SCIPdebugMessage("using MILP method: %d\n",currentmilpmethod);
+     if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC)) {
+       SCIPdebugMessage("using MILP method: %d\n",currentmilpmethod);
+     }
 
      // tune SCIP differently, depending on the chosen method to solve the MILP
      switch(currentmilpmethod)

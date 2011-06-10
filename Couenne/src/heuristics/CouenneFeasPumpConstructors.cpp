@@ -36,7 +36,8 @@ void CouenneFeasPump::initIpoptApp () {
   ApplicationReturnStatus status = app_ -> Initialize ();
 
   app_ -> Options () -> SetIntegerValue ("max_iter", 1000);
-  app_ -> Options () -> SetIntegerValue ("print_level", 0); // 0 for none, 4 for summary, 5 for iteration output
+  app_ -> Options () -> SetIntegerValue // 0 for none, 4 for summary, 5 for iteration output
+    ("print_level", (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC) ? 4 : 0));
 
   if (status != Solve_Succeeded)
     printf ("FP: Error in initialization\n");
