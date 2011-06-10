@@ -19,9 +19,11 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneTNLP.hpp"
 
+#include "CouenneRecordBestSol.hpp"
+
 //#define DEBUG
 
-#include "CouenneRecordBestSol.hpp"
+void printCmpSol (int n, double *iSol, double *nSol, int direction);
 
 using namespace Couenne;
 
@@ -102,6 +104,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     double z = solveMILP (nSol, iSol);
 
+    if (nSol)
+      printCmpSol (problem_ -> nVars (), iSol, nSol, -1);
+
     bool isChecked = false;
 #ifdef FM_CHECKNLP2
     isChecked = problem_->checkNLP2(iSol, 0, false, // do not care about obj 
@@ -172,8 +177,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       OsiCuts cs;
 
       problem_ -> domain () -> push (milp_);
-      // remaining three arguments at NULL by default
-      couenneCG_ -> genRowCuts (*milp_, cs, 0, NULL); 
+      couenneCG_ -> genRowCuts (*milp_, cs, 0, NULL); // remaining three arguments NULL by default
       problem_ -> domain () -> pop ();
 
       if (cs.sizeRowCuts ()) { 
@@ -196,6 +200,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // non-MIP) feasible solution
 
     z = solveNLP (iSol, nSol); 
+
+    printCmpSol (problem_ -> nVars (), iSol, nSol, 1);
 
     if (z > COIN_DBL_MAX/2) // something went wrong in the NLP, better bail out
       break;
@@ -274,7 +280,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   if (retval > 0) {
 
-    if (!nlp_) // first call (in this call to FP). Create NLP
+    if (!nlp_) // first call (in this run of FP). Create NLP
       nlp_ = new CouenneTNLP (problem_);
 
     fixIntVariables (best);
@@ -292,7 +298,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     if (status != Solve_Succeeded) 
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, 
-				      "Feasibility Pump: error solving final NLP problem\n");
+				      "Feasibility Pump: error in final NLP problem\n");
 
     else {
 
@@ -360,3 +366,33 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   return retval;
 }
+
+
+#define WRAP 3
+
+void printCmpSol (int n, double *iSol, double *nSol, int direction) {
+
+  printf ("### ");
+
+  double 
+    distance = 0.,
+    diff;
+
+  for (int i=0; i<n; i++) {
+
+    if (i && !(i % WRAP))
+      printf ("\n### ");
+
+    printf ("[%4d %+e -%c- %+e (%e)] ", 
+	    i, iSol [i], direction < 0 ? '<' : '>', 
+	    nSol [i], fabs (iSol [i] - nSol [i]));
+
+    diff = iSol [i] - nSol [i];
+
+    distance += (diff*diff);
+  }
+
+  distance = sqrt (distance);
+
+  printf ("\n### distance: %e\n", distance);
+} 
