@@ -59,8 +59,8 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   problem_ -> domain () -> push (problem_ -> nVars (),
 				 iSol,
 				 NULL, // replaces problem_ -> domain () -> lb (),
-				 NULL, // replaces problem_ -> domain () -> ub (),
-				 false);
+				 NULL); // replaces problem_ -> domain () -> ub (),
+				 //false); // to avoid overlapping with nsol within NLP
 
   // set new objective
   expression
@@ -71,12 +71,12 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   problem_ -> setObjective (0, newObj);
   nlp_     -> setObjective (newObj);
 
+  // FIXME: probably the previous NLP optimum is a better starting point
+
   // compute H_2-closest NLP feasible solution
   nlp_ -> setInitSol (iSol);
 
   /////////////////////////////////////////////////////////
-
-  // shamelessly copied from hs071_main.cpp (it's Open Source too!)
 
   ApplicationReturnStatus status = firstNLP ? 
     app_ -> OptimizeTNLP   (nlp_) :
@@ -85,8 +85,11 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   /////////////////////////////////////////////////////////
 
   if (nlp_ -> getSolution ()) // check if non-NULL
-    nSol = CoinCopyOfArray (nlp_ -> getSolution (), 
-			    problem_ -> nVars ());
+
+    if  (nSol)  CoinCopyN       (nlp_ -> getSolution (), problem_ -> nVars (), nSol);
+    else nSol = CoinCopyOfArray (nlp_ -> getSolution (), problem_ -> nVars ());
+
+  else printf ("warning: NULL solution\n");
 
   // integer solution with nlp cuts
   // until MINLP feasible
@@ -101,9 +104,9 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   if (status != Solve_Succeeded) {
 
     retval = COIN_DBL_MAX;
+    problem_ -> Jnlst () -> Printf 
+      (J_ERROR, J_COUENNE, "Feasibility Pump: Error solving NLP problem\n");
 
-    problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, 
-				    "Feasibility Pump: Error solving NLP problem\n");
   } else
     retval = nlp_ -> getSolValue ();
 

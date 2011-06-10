@@ -119,6 +119,8 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
       // variables, so that we know what (coefficients and rhs) to
       // change at every iteration.
 
+      // ADD CODE HERE...
+
       // Add q variables, each with coefficient 1 in the objective
 
       CoinPackedVector vec;
@@ -189,11 +191,9 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
     if (firstCall)
       init_MILP ();
 
-    double *sol = new double[ milp_ -> getNumCols ()];
     double obj;
 
-    obj = findSolution(sol);
-    iSol = CoinCopyOfArray(sol,problem_ -> nVars ());
+    obj = findSolution (iSol);
 
     // delete last rows and add them from scratch (common block below)
 

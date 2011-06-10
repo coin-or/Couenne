@@ -8,7 +8,7 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#define SCIP_DEBUG 
+//#define SCIP_DEBUG 
 
 #include "CouenneFeasPump.hpp"
 #include "CouenneProblem.hpp"
@@ -17,7 +17,7 @@
 using namespace Couenne;
 
 /// find a feasible or optimal solution of MILP
-double CouenneFeasPump::findSolution (double* sol) {
+double CouenneFeasPump::findSolution (double* &sol) {
 
   /// as found on the notes, these methods can be used, from the most
   /// expensive and accurate (exact) method to a cheap, inexact one:
@@ -304,6 +304,8 @@ double CouenneFeasPump::findSolution (double* sol) {
         SCIP_SOL* bestsol;
         bestsol = SCIPgetBestSol(scip);
         assert(bestsol != NULL);
+
+	sol = new CouNumber [nvars];
 
         // get solution values and objective
         SCIP_CALL_ABORT( SCIPgetSolVals(scip, bestsol, nvars, vars, sol) );

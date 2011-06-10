@@ -23,8 +23,6 @@
 
 //#define DEBUG
 
-void printCmpSol (int n, double *iSol, double *nSol, int direction);
-
 using namespace Couenne;
 
 /// When the current IP (non-NLP) point is not MINLP feasible, linear
@@ -78,7 +76,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   int
     niter  = 0, // current # of iterations
-    retval = 0; // 1 if found a better solution
+    retval = 0, // 1 if found a better solution
+    objInd = problem_ -> Obj (0) -> Body () -> Index (),
+    nSep = 0;
 
   /////////////////////////////////////////////////////////////////////////
   //                      _                   _
@@ -90,10 +90,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   //						      	          | |
   /////////////////////////////////////////////////////////////// |_| /////
 
-  int 
-    objInd = problem_ -> Obj (0) -> Body () -> Index (),
-    nSep = 0;
-
   do {
 
     // INTEGER PART /////////////////////////////////////////////////////////
@@ -103,9 +99,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // original milp's LP solution.
 
     double z = solveMILP (nSol, iSol);
-
-    if (nSol)
-      printCmpSol (problem_ -> nVars (), iSol, nSol, -1);
 
     bool isChecked = false;
 #ifdef FM_CHECKNLP2
@@ -163,6 +156,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	// if bound tightening clears the whole feasible set, stop
 	bool is_still_feas = problem_ -> btCore (chg_bds);
 
+	// TODO: update lb/ub on milp and nlp here
+
 	if (chg_bds) 
 	  delete [] chg_bds;
 
@@ -171,7 +166,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       }
     } else {
 
-      // solution non MINLP feasible, it might get cut by
+      // solution is not MINLP feasible, it might get cut by
       // linearization cuts. If so, add a round of cuts and repeat.
 
       OsiCuts cs;
@@ -201,9 +196,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     z = solveNLP (iSol, nSol); 
 
-    printCmpSol (problem_ -> nVars (), iSol, nSol, 1);
-
-    if (z > COIN_DBL_MAX/2) // something went wrong in the NLP, better bail out
+    if (z > COIN_DBL_MAX/2) // something went wrong in the NLP, bail out
       break;
 
     // check if newly found NLP solution is also integer
@@ -372,27 +365,38 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 void printCmpSol (int n, double *iSol, double *nSol, int direction) {
 
-  printf ("### ");
+  printf ("i:%x n:%x\n### ", iSol, nSol);
 
   double 
     distance = 0.,
     diff;
+
+  char c =
+    direction < 0 ? '<' : 
+    direction > 0 ? '>' : '-';
 
   for (int i=0; i<n; i++) {
 
     if (i && !(i % WRAP))
       printf ("\n### ");
 
+    double 
+      iS = iSol ? iSol [i] : 12345.,
+      nS = nSol ? nSol [i] : 54321.;
+
     printf ("[%4d %+e -%c- %+e (%e)] ", 
-	    i, iSol [i], direction < 0 ? '<' : '>', 
-	    nSol [i], fabs (iSol [i] - nSol [i]));
+	    i, iS, c, nS,
+	    (iSol && nSol) ? fabs (iS - nS) : 0.);
 
-    diff = iSol [i] - nSol [i];
-
-    distance += (diff*diff);
+    if (iSol && nSol) {
+      diff = iS - nS;
+      distance += (diff*diff);
+    }
   }
 
-  distance = sqrt (distance);
+  if (iSol && nSol) {
 
-  printf ("\n### distance: %e\n", distance);
+    distance = sqrt (distance);
+    printf ("\n### distance: %e\n", distance);
+  }
 } 

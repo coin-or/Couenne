@@ -130,6 +130,7 @@ bool CouenneTNLP::get_nlp_info (Index& n,
 
 /// set initial solution
 void CouenneTNLP::setInitSol (double *sol) {
+
   if (sol) {
     if (!sol0_)
       sol0_ = new CouNumber [problem_ -> nVars ()];
@@ -559,9 +560,9 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
   //printf ("Ipopt[FP] solution (card %d): %12e\n", n, obj_value);
 
   bestZ_ = obj_value;
-  if (!sol_)
-    sol_ = new CouNumber [n]; 
-  CoinCopyN (x, n, sol_);
+
+  if  (sol_)  CoinCopyN       (x, n, sol_);
+  else sol_ = CoinCopyOfArray (x, n);
 }
 
 
