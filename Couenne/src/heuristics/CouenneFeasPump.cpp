@@ -21,8 +21,6 @@
 
 #include "CouenneRecordBestSol.hpp"
 
-//#define DEBUG
-
 using namespace Couenne;
 
 /// When the current IP (non-NLP) point is not MINLP feasible, linear
@@ -36,9 +34,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       CoinCpuTime () > problem_ -> getMaxCpuTime ())
     return 0;
 
-#ifdef DEBUG
-  printf ("================= Feasibility Pump =======================\n");
-#endif
+  problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "=================== Feasibility Pump =======================\n");
 
   // This FP works as follows:
   //
@@ -75,10 +71,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     *best = NULL; // best solution found so far
 
   int
-    niter  = 0, // current # of iterations
-    retval = 0, // 1 if found a better solution
-    objInd = problem_ -> Obj (0) -> Body () -> Index (),
-    nSep = 0;
+    niter  = 0,   // iteration counter
+    retval = 0,   // 1 if found a better solution
+    nSep   = 0,   // If separation short circuit, max # of consecutive separations
+    objInd = problem_ -> Obj (0) -> Body () -> Index ();
 
   /////////////////////////////////////////////////////////////////////////
   //                      _                   _
@@ -90,6 +86,12 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   //						      	          | |
   /////////////////////////////////////////////////////////////// |_| /////
 
+  // copy bounding box and current solution to the problem (better
+  // linearization cuts). Note that this push is pop()'d at the end
+  // of the main routine
+
+  problem_ -> domain () -> push (model_ -> solver ());
+
   do {
 
     // INTEGER PART /////////////////////////////////////////////////////////
@@ -99,6 +101,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // original milp's LP solution.
 
     double z = solveMILP (nSol, iSol);
+
+    // if no MILP solution was found, bail out
+
+    if (z >= COIN_DBL_MAX) 
+      break;
 
     bool isChecked = false;
 #ifdef FM_CHECKNLP2
@@ -156,7 +163,19 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	// if bound tightening clears the whole feasible set, stop
 	bool is_still_feas = problem_ -> btCore (chg_bds);
 
-	// TODO: update lb/ub on milp and nlp here
+	// Update lb/ub on milp and nlp here
+
+	const CouNumber 
+	  *plb = problem_ -> Lb (),
+	  *pub = problem_ -> Ub (),
+	  *mlb = milp_    -> getColLower (),
+	  *mub = milp_    -> getColUpper ();
+
+	for (int i=problem_ -> nVars (), j=0; i--; ++j, ++plb, ++pub) {
+	    
+	  if (*plb > *mlb++) milp_ -> setColLower (j, *plb);
+	  if (*pub < *mub++) milp_ -> setColUpper (j, *pub);
+	}
 
 	if (chg_bds) 
 	  delete [] chg_bds;
@@ -171,9 +190,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       OsiCuts cs;
 
-      problem_ -> domain () -> push (milp_);
+      problem_   -> domain () -> push (milp_);
       couenneCG_ -> genRowCuts (*milp_, cs, 0, NULL); // remaining three arguments NULL by default
-      problem_ -> domain () -> pop ();
+      problem_   -> domain () -> pop ();
 
       if (cs.sizeRowCuts ()) { 
 
@@ -187,6 +206,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       }
     }
 
+    // reset number of separation during non-separating iteration
     nSep = 0;
 
     // NONLINEAR PART ///////////////////////////////////////////////////////
@@ -276,80 +296,85 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     if (!nlp_) // first call (in this run of FP). Create NLP
       nlp_ = new CouenneTNLP (problem_);
 
+    problem_ -> domain () -> push (problem_ -> nVars (),
+				   problem_ -> domain () -> x  (),
+				   problem_ -> domain () -> lb (),
+				   problem_ -> domain () -> ub ());
+
+
     fixIntVariables (best);
     nlp_ -> setInitSol (best);
 
     ////////////////////////////////////////////////////////////////
 
     // Solve with original objective function
-
     ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
 
     ////////////////////////////////////////////////////////////////
 
-    problem_ -> domain () -> pop (); // pushed in fixIntVariables
+    problem_ -> domain () -> pop ();
 
-    if (status != Solve_Succeeded) 
+    if ((status != Solve_Succeeded) && 
+	(status != Solved_To_Acceptable_Level))
+ 
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, 
 				      "Feasibility Pump: error in final NLP problem\n");
 
-    else {
+    // if found a solution with the last NLP, check & save it
 
-      // if found a solution with the last NLP, check & save it
+    double z = nlp_ -> getSolValue ();
 
-      double z = nlp_ -> getSolValue ();
+    // check if newly found NLP solution is also integer (unlikely...)
+    bool isChecked;
 
-      // check if newly found NLP solution is also integer (unlikely...)
-      bool isChecked = false;
 #ifdef FM_CHECKNLP2
-      isChecked = problem_->checkNLP2(nSol, 0, false, // do not care about obj 
-				      true, // stopAtFirstViol
-				      true, // checkALL
-				      problem_->getFeasTol());
-      if (isChecked) {
-	z = problem_->getRecordBestSol()->getModSolVal();
-      }
+    isChecked = problem_->checkNLP2(nSol, 0, false, // do not care about obj 
+				    true, // stopAtFirstViol
+				    true, // checkALL
+				    problem_->getFeasTol());
+    if (isChecked) {
+      z = problem_->getRecordBestSol()->getModSolVal();
+    }
 #else /* not FM_CHECKNLP2 */
-      isChecked = problem_ -> checkNLP (nSol, z, true);
+    isChecked = problem_ -> checkNLP (nSol, z, true);
 #endif  /* not FM_CHECKNLP2 */
 
-      if (isChecked &&
-	  (z < problem_ -> getCutOff ())) {
+    if (isChecked &&
+	(z < problem_ -> getCutOff ())) {
 
 #ifdef FM_CHECKNLP2
 #ifdef FM_TRACE_OPTSOL
-	problem_->getRecordBestSol()->update();
-	best = problem_->getRecordBestSol()->getSol();
-	objVal = problem_->getRecordBestSol()->getVal();
+      problem_->getRecordBestSol()->update();
+      best = problem_->getRecordBestSol()->getSol();
+      objVal = problem_->getRecordBestSol()->getVal();
 #else /* not FM_TRACE_OPTSOL */
-	best = problem_->getRecordBestSol()->getModSol();
-	objVal = z;
+      best = problem_->getRecordBestSol()->getModSol();
+      objVal = z;
 #endif /* not FM_TRACE_OPTSOL */
 #else /* not FM_CHECKNLP2 */
 #ifdef FM_TRACE_OPTSOL
-	problem_->getRecordBestSol()->update(nSol, problem_->nVars(),
-					     z, problem_->getFeasTol());
-	best = problem_->getRecordBestSol()->getSol();
-	objVal = problem_->getRecordBestSol()->getVal();
+      problem_->getRecordBestSol()->update(nSol, problem_->nVars(),
+					   z, problem_->getFeasTol());
+      best = problem_->getRecordBestSol()->getSol();
+      objVal = problem_->getRecordBestSol()->getVal();
 #else /* not FM_TRACE_OPTSOL */
-	best   = nSol;
-	objVal = z;
+      best   = nSol;
+      objVal = z;
 #endif /* not FM_TRACE_OPTSOL */
 #endif /* not FM_CHECKNLP2 */
 
-	problem_ -> setCutOff (objVal);
-      }
-    }	
+      problem_ -> setCutOff (objVal);
+    }
   }
 
   if (retval > 0) 
     CoinCopyN (best, problem_ -> nVars (), newSolution);
 
-  delete [] iSol;
-  delete [] nSol;
+  if (iSol) delete [] iSol;
+  if (nSol) delete [] nSol;
 
   // release bounding box
-  problem_ -> domain () -> pop (); // pushed in first call to solveMILP
+  problem_ -> domain () -> pop ();
 
   // deleted at every call from Cbc, since it changes not only in
   // terms of variable bounds but also in of linearization cuts added

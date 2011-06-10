@@ -297,7 +297,6 @@ double CouenneFeasPump::findSolution (double* &sol) {
      // solve the MILP
      SCIP_CALL_ABORT( SCIPsolve(scip) );
 
-     obj = SCIPinfinity(scip);
      // copy the solution
      if( SCIPgetNSols(scip) )
      {
@@ -305,14 +304,15 @@ double CouenneFeasPump::findSolution (double* &sol) {
         bestsol = SCIPgetBestSol(scip);
         assert(bestsol != NULL);
 
-	sol = new CouNumber [nvars];
+	if (!sol)
+	  sol = new CouNumber [nvars];
 
         // get solution values and objective
         SCIP_CALL_ABORT( SCIPgetSolVals(scip, bestsol, nvars, vars, sol) );
         obj = SCIPgetSolOrigObj(scip, bestsol);
      }
      else 
-        sol = NULL;
+       obj = COIN_DBL_MAX;
      
      // release variables before freeing them
      for (int i=0; i<nvars; i++) {

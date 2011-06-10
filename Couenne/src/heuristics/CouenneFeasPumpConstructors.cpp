@@ -10,8 +10,6 @@
 
 #include <string>
 
-#include "IpOptionsList.hpp"
-
 #include "CouenneConfig.h"
 #include "CouenneFeasPump.hpp"
 #include "CouenneMINLPInterface.hpp"
@@ -23,44 +21,25 @@
 #include "CouenneExprPow.hpp"
 #include "CouenneExprSum.hpp"
 
-
 using namespace Couenne;
 
 // common code for initializing ipopt application
 void CouenneFeasPump::initIpoptApp () {
 
+  // Although app_ is only used in CouenneFPSolveNLP, we need to have
+  // an object lasting the program's lifetime as otherwise it appears
+  // to delete the nlp pointer at deletion.
+
   if (!app_)
     app_ = IpoptApplicationFactory ();
 
   ApplicationReturnStatus status = app_ -> Initialize ();
+
   app_ -> Options () -> SetIntegerValue ("max_iter", 1000);
-  app_ -> Options () -> SetIntegerValue ("print_level", 0); // 0 for none, 4 for summary
+  app_ -> Options () -> SetIntegerValue ("print_level", 0); // 0 for none, 4 for summary, 5 for iteration output
+
   if (status != Solve_Succeeded)
     printf ("FP: Error in initialization\n");
-}
-
-
-// Constructor ////////////////////////////////////////////////// 
-CouenneFeasPump::CouenneFeasPump ():
-
-  CbcHeuristic         (),
-  problem_             (NULL),
-  couenneCG_           (NULL),
-  nlp_                 (NULL),
-  app_                 (NULL),
-  milp_                (NULL),
-  numberSolvePerLevel_ (-1),
-  betaNLP_             (0.),
-  betaMILP_            (0.),
-  compDistInt_         (false),
-  milpCuttingPlane_    (false),
-  maxIter_             (COIN_INT_MAX),
-  useSCIP_             (false),
-  milpMethod_          (0) {
-
-  setHeuristicName ("Couenne Feasibility Pump");
-
-  initIpoptApp ();
 }
 
 
@@ -84,33 +63,32 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   useSCIP_             (false),
   milpMethod_          (0) {
 
-  setHeuristicName ("Couenne Feasibility Pump");
+  if (IsValid (options)) {
 
-  std::string s;
+    std::string s;
 
-  options -> GetIntegerValue ("feas_pump_iter",       maxIter_,             "couenne.");
-  options -> GetIntegerValue ("feas_pump_level",      numberSolvePerLevel_, "couenne.");
-  options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_,          "couenne.");
+    options -> GetIntegerValue ("feas_pump_iter",       maxIter_,             "couenne.");
+    options -> GetIntegerValue ("feas_pump_level",      numberSolvePerLevel_, "couenne.");
+    options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_,          "couenne.");
 
-  options -> GetNumericValue ("feas_pump_beta_nlp",   betaNLP_,             "couenne.");
-  options -> GetNumericValue ("feas_pump_beta_milp",  betaMILP_,            "couenne.");
+    options -> GetNumericValue ("feas_pump_beta_nlp",   betaNLP_,             "couenne.");
+    options -> GetNumericValue ("feas_pump_beta_milp",  betaMILP_,            "couenne.");
 				    
-  options -> GetStringValue  ("feas_pump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
-  options -> GetStringValue  ("feas_pump_dist_int", s, "couenne."); compDistInt_      = (s == "yes");
+    options -> GetStringValue  ("feas_pump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
+    options -> GetStringValue  ("feas_pump_dist_int", s, "couenne."); compDistInt_      = (s == "yes");
 
-  options -> GetStringValue  ("feas_pump_usescip",    s,           "couenne."); 
-  options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_, "couenne."); 
+    options -> GetStringValue  ("feas_pump_usescip",    s,           "couenne."); 
+    options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_, "couenne."); 
 
 #ifdef COIN_HAS_SCIP
-  useSCIP_ = (s == "yes");
+    useSCIP_ = (s == "yes");
 #else
-  if (s == "yes") 
-    problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_usescip to true, but SCIP is not installed.\n");
+    if (s == "yes") 
+      problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_usescip to true, but SCIP is not installed.\n");
 #endif
+  }
 
-  // Although app_ is only used in CouenneFPSolveNLP, we need to have
-  // an object lasting the program's lifetime as otherwise it appears
-  // to delete the nlp pointer at deletion.
+  setHeuristicName ("Couenne Feasibility Pump");
 
   initIpoptApp ();
 }
@@ -168,6 +146,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
   }
 
   initIpoptApp ();
+
   return *this;
 }
 
@@ -226,11 +205,6 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 /// components in the nonlinear problem for later re-solve
 void CouenneFeasPump::fixIntVariables (double *sol) {
 
-  problem_ -> domain () -> push (problem_ -> nVars (),
-				 problem_ -> domain () -> x  (),
-				 problem_ -> domain () -> lb (),
-				 problem_ -> domain () -> ub ());
-
   for (int i = problem_ -> nVars (); i--;)
 
     if (problem_ -> Var (i) -> isInteger ()) {
@@ -241,6 +215,7 @@ void CouenneFeasPump::fixIntVariables (double *sol) {
 	rDn   = floor (value + COUENNE_EPS);
 
       // If numerics or sol[i] fractional, set to closest
+
       value = 
 	(rUp < rDn + 0.5)           ? rUp : 
 	(rUp - value < value - rDn) ? rUp : rDn;

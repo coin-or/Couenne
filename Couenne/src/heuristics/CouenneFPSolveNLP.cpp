@@ -101,14 +101,13 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   problem_ -> setObjective (0, oldObj);
   nlp_     -> setObjective (oldObj);
 
-  if (status != Solve_Succeeded) {
+  if ((status != Solve_Succeeded) &&
+      (status != Solved_To_Acceptable_Level))
 
-    retval = COIN_DBL_MAX;
     problem_ -> Jnlst () -> Printf 
       (J_ERROR, J_COUENNE, "Feasibility Pump: Error solving NLP problem\n");
 
-  } else
-    retval = nlp_ -> getSolValue ();
+  retval = nlp_ -> getSolValue ();
 
   problem_ -> domain () -> pop ();
 

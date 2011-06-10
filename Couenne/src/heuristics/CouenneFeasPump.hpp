@@ -19,6 +19,8 @@
 
 #include "CouenneConfig.h"
 
+#include "IpOptionsList.hpp"
+
 #ifdef COIN_HAS_SCIP
 /* general SCIP includes */
 #include "scip/scip.h"
@@ -32,8 +34,6 @@ namespace Osi {
 
 namespace Ipopt {
   class IpoptApplication;
-  class OptionsList;
-  template <class T> class SmartPtr;
 }
 
 namespace Bonmin {
@@ -54,13 +54,10 @@ namespace Couenne {
 
   public:
 
-    // Default constructor
-    CouenneFeasPump ();
-
-    /// Constructor with model and Ipopt problems
-    CouenneFeasPump (CouenneProblem *couenne,
-		     CouenneCutGenerator *cg,
-		     Ipopt::SmartPtr<Ipopt::OptionsList> options);
+    /// Constructor with (optional) MINLP pointer
+    CouenneFeasPump (CouenneProblem *couenne                     = NULL,
+		     CouenneCutGenerator *cg                     = NULL,
+		     Ipopt::SmartPtr<Ipopt::OptionsList> options = NULL);
 
     /// Copy constructor
     CouenneFeasPump (const CouenneFeasPump &other);
