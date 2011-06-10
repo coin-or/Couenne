@@ -30,11 +30,6 @@ couenne_LDADD   = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.l
 
 couenne_DEPENDENCIES  = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
 
-# Finally, the -rpath flag is used by libtool to make sure that the shared
-# library is found (in the lib install directory) when we are using dynamic
-# libraries.
-couenne_LDFLAGS = -rpath $(libdir)
-
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
 AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) \
