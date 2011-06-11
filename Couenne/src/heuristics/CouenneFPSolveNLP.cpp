@@ -105,7 +105,7 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
       (status != Solved_To_Acceptable_Level))
 
     problem_ -> Jnlst () -> Printf 
-      (J_ERROR, J_COUENNE, "Feasibility Pump: Error solving NLP problem\n");
+      (J_ERROR, J_NLPHEURISTIC, "Feasibility Pump: Error solving NLP problem\n");
 
   retval = nlp_ -> getSolValue ();
 

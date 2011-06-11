@@ -111,7 +111,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
      // include default SCIP plugins
      SCIP_CALL_ABORT( SCIPincludeDefaultPlugins(scip) );
      
-     if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_NONE, J_NLPHEURISTIC)) {
+     if (!(problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC))) {
        SCIP_CALL( SCIPsetIntParam(scip, "display/verblevel", 0) );
      }
 
