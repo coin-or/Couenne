@@ -124,6 +124,23 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
   if      (brpt < l) brpt = l;
   else if (brpt > u) brpt = u;
 
+  // anticipate test on bounds w.r.t. test on integrality.
+
+  if   (l <  -large_bound) {
+    if (u <=  large_bound) // ]-inf,u]
+      brpt =  ((brpt < -COUENNE_EPS) ? (AGGR_MUL * (-1. + brpt)) : 
+	       (brpt >  COUENNE_EPS) ? 0.                        : -AGGR_MUL);
+    else brpt = 0.;
+  } else
+    if (u >  large_bound) // [l,+inf[
+      brpt = ((brpt >  COUENNE_EPS) ? (AGGR_MUL *  ( 1. + brpt)) : 
+	      (brpt < -COUENNE_EPS) ? 0.                         :  AGGR_MUL);
+    else {                // [l,u] (finite)
+      CouNumber point = default_alpha * brpt + (1. - default_alpha) * (l + u) / 2.;
+      if      ((point-l) / (u-l) < closeToBounds) brpt = l + (u-l) * closeToBounds;
+      else if ((u-point) / (u-l) < closeToBounds) brpt = u + (l-u) * closeToBounds;
+    }
+
   // If brpt is integer and the variable is constrained to be integer,
   // there will be a valid but weak branching. Modify brpt depending
   // on way and on the bounds on the variable, so that the usual
@@ -146,31 +163,17 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 	    (u - brpt > .5));
 
     if ((brpt - l > .5) &&
-	(u - brpt > .5)) { // brpt is integer interior point of [l,u]
+	(u - brpt > .5) && // brpt is integer interior point of [l,u]
 
-      if (!branchIndex_) { // if this is the first branch operation
-	if (!way) brpt -= (1. - COUENNE_EPS);
-	else      brpt += (1. - COUENNE_EPS);
-      }
+	!branchIndex_) { // if this is the first branch operation
+
+      if (!way) brpt -= (1. - COUENNE_EPS);
+      else      brpt += (1. - COUENNE_EPS);
     } 
 
     else if (u - brpt > .5) {if  (way) brpt += (1. - COUENNE_EPS);} 
     else if (brpt - l > .5) {if (!way) brpt -= (1. - COUENNE_EPS);}
   }
-
-  if   (l <  -large_bound) {
-    if (u <=  large_bound) // ]-inf,u]
-      brpt =  ((brpt < -COUENNE_EPS) ? (AGGR_MUL * (-1. + brpt)) : 
-	       (brpt >  COUENNE_EPS) ? 0.                        : -AGGR_MUL);
-  } else
-    if (u >  large_bound) // [l,+inf[
-      brpt = ((brpt >  COUENNE_EPS) ? (AGGR_MUL *  ( 1. + brpt)) : 
-	      (brpt < -COUENNE_EPS) ? 0.                         :  AGGR_MUL);
-    else {                // [l,u] (finite)
-      CouNumber point = default_alpha * brpt + (1. - default_alpha) * (l + u) / 2.;
-      if      ((point-l) / (u-l) < closeToBounds) brpt = l + (u-l) * closeToBounds;
-      else if ((u-point) / (u-l) < closeToBounds) brpt = u + (l-u) * closeToBounds;
-    }
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "Branching: x%-3d %c= %g\n", 
 		    index, way ? '>' : '<', integer ? (way ? ceil (brpt) : floor (brpt)) : brpt);
