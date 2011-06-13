@@ -78,6 +78,7 @@ CouenneRecordBestSol::CouenneRecordBestSol(const CouenneRecordBestSol &other) {
 
   if (other.modSol != NULL) {
     modSol = new double[other.cardSol];
+    CoinCopyN(other.modSol, cardSol, modSol);
   }
   else {
     modSol = NULL;

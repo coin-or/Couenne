@@ -44,11 +44,6 @@ class CbcModel;
 class OsiObject;
 class CoinWarmStart;
 
-namespace Couenne {
-  struct CouenneRecordBestSol;
-}
-
-
 class Nauty;
 
   class Node{
@@ -137,6 +132,7 @@ namespace Couenne {
   class GlobalCutOff;
   //  class JnlstPtr;
   //  class ConstJnlstPtr;
+  class CouenneRecordBestSol;
 
   typedef Ipopt::SmartPtr<Ipopt::Journalist> JnlstPtr;
   typedef Ipopt::SmartPtr<const Ipopt::Journalist> ConstJnlstPtr;

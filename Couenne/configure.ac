@@ -83,8 +83,6 @@ AC_LANG_PUSH(C)
 AC_COIN_CHECK_USER_LIBRARY([Nauty],[NTY],[nauty.h],[nauty],,[CouenneLib])
 AC_LANG_POP(C)
 
-# FIXME: add symbol for SCIP (any symbol gives an error for now)
-
 # SCIP (used in Feasibility Pump)
 AC_COIN_CHECK_PACKAGE(SCIP, [coinscip], [CouenneLib])
 

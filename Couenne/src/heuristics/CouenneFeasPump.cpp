@@ -13,6 +13,8 @@
 #include "CoinTime.hpp"
 #include "CoinHelperFunctions.hpp"
 
+#include "CouenneExprVar.hpp"
+#include "CouenneExprAux.hpp"
 #include "CouenneFeasPump.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
@@ -26,6 +28,8 @@ using namespace Couenne;
 /// When the current IP (non-NLP) point is not MINLP feasible, linear
 /// cuts are added and the IP is re-solved not more than this times
 const int numConsCutPasses = 5;
+
+void printDist (CouenneProblem *p, double *iSol, double *nSol);
 
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
@@ -110,10 +114,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     bool isChecked = false;
 
 #ifdef FM_CHECKNLP2
-    isChecked = problem_->checkNLP2(iSol, 0, false, // do not care about obj 
-				    true, // stopAtFirstViol
-				    true, // checkALL
-				    problem_->getFeasTol());
+    isChecked = problem_ -> checkNLP2 (iSol, 0, false, // do not care about obj 
+				       true, // stopAtFirstViol
+				       true, // checkALL
+				       problem_->getFeasTol());
     if(isChecked) {
       z = problem_->getRecordBestSol()->getModSolVal();
     }
@@ -286,6 +290,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	break;
     }
 
+    if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC))
+      printDist (problem_, iSol, nSol);
+
   } while ((niter++ < maxIter_) && 
 	   (retval == 0));
 
@@ -378,6 +385,14 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     }
   }
 
+
+  if ((retval > 0) &&
+      problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC)) {
+
+    printf ("returning MINLP feasible solution:\n");
+    printDist (problem_, best, nSol);
+  }
+
   if (retval > 0) 
     CoinCopyN (best, problem_ -> nVars (), newSolution);
 
@@ -394,6 +409,96 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   milp_ = NULL;
 
   return retval;
+}
+
+void printDistSingle (CouenneProblem *p,
+		      int n, double *v, 
+		      double &norm, 
+		      int &nInfI, 
+		      int &nInfN, 
+		      double &infI, 
+		      double &infN) {
+
+  p -> domain () -> push (n, v, NULL, NULL);
+
+  norm = infI = infN = 0.;
+  nInfI = nInfN = 0;
+
+  while (n--) {
+    norm += (*v * *v);
+    ++v;
+  }
+  v -= n;
+
+  norm = sqrt (norm);
+
+  for (std::vector <exprVar *>::iterator i = p -> Variables (). begin (); 
+       i != p -> Variables (). end ();
+       ++i) {
+
+    CouNumber 
+      vval = (**i) ();
+
+    if ((*i) -> Multiplicity () <= 0)
+      continue;
+
+    if ((*i) -> isInteger ()) {
+
+      double inf = CoinMax (vval - floor (vval + COUENNE_EPS),
+			    ceil (vval - COUENNE_EPS) - vval);
+
+      if (inf > COUENNE_EPS) {
+	++nInfI;
+	infI += inf;
+      }
+    }
+
+    if ((*i) -> Type () == AUX) {
+
+      double 
+	diff = 0.,
+	fval = (*((*i) -> Image ())) ();
+
+      if      ((*i) -> sign () != expression::AUX_GEQ) diff = CoinMax (diff, vval - fval);
+      else if ((*i) -> sign () != expression::AUX_LEQ) diff = CoinMax (diff, fval - vval);
+
+      if (diff > COUENNE_EPS) {
+	++nInfN;
+	infN += diff;
+      }
+    }
+  }
+
+  p -> domain () -> pop ();
+}
+
+void printDist (CouenneProblem *p, double *iSol, double *nSol) {
+
+  int nInfII, nInfNI, nInfIN, nInfNN;
+
+  double normI, normN, dist = 0., 
+    infII, infNI,
+    infIN, infNN;
+
+  if (iSol) printDistSingle (p, p -> nVars (), iSol, normI, nInfII, nInfNI, infII, infNI);
+  if (nSol) printDistSingle (p, p -> nVars (), nSol, normN, nInfIN, nInfNN, infIN, infNN);
+  
+  if (iSol && nSol)
+
+    for (int i = p -> nVars (); i--;)
+      dist += 
+	(iSol [i] - nSol [i]) * 
+	(iSol [i] - nSol [i]);
+
+  dist = sqrt (dist);
+
+  printf ("FP: ");
+
+  printf ("MILP norm i:%e n:%e dist %e #inf i:%4d n:%4d max inf i:%e n:%e ", 
+	  normI, normN, dist, nInfII, nInfNI, infII, infNI);
+
+  printf ("NLP #inf i:%4d n:%4d max inf i:%e n:%e\n", 
+	  nInfIN, nInfNN, infIN, infNN);
 }
 
 

@@ -46,7 +46,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
   //
   // 4) if H consecutive failutes, ++p[i]
 
-   double obj;
+  double obj;
 
   /// solve MILP 
 
@@ -296,7 +296,6 @@ double CouenneFeasPump::findSolution (double* &sol) {
   /// 5. round-and-propagate
   /// 6. choose from pool, see 4
   /// 7. random perturbation
-
           
      // solve the MILP
      SCIP_CALL_ABORT( SCIPsolve(scip) );
@@ -333,7 +332,19 @@ double CouenneFeasPump::findSolution (double* &sol) {
 #endif      
    {
       milp_ -> branchAndBound ();
-      sol = CoinCopyOfArray (milp_ -> getColSolution (), problem_ -> nVars ());
+
+      if (!sol)
+	sol = new CouNumber [problem_ -> nVars ()];
+
+      if (milp_ -> getColSolution ())
+	CoinCopyN (milp_ -> getColSolution (), problem_ -> nVars (), sol);
+      else {
+
+	if (sol)
+	  delete [] sol;
+	sol = NULL;
+      }
+
       obj = milp_ -> getObjValue ();
    }
 

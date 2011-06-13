@@ -15,7 +15,7 @@
 
 namespace Couenne {
 
-struct CouenneProblem;
+class CouenneProblem;
 
 // class to record best found feasible solution
 class CouenneRecordBestSol {

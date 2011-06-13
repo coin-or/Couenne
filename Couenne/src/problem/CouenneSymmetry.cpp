@@ -8,6 +8,7 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
+#include <cassert>
 #include <vector>
 #include <algorithm>
 #include <ostream>
