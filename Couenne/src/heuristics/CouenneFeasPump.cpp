@@ -34,8 +34,14 @@ void printDist (CouenneProblem *p, double *iSol, double *nSol);
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
-  if (problem_ -> nIntVars () <= 0 ||
-      CoinCpuTime () > problem_ -> getMaxCpuTime ())
+  const int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
+
+  if ((problem_ -> nIntVars () <= 0) ||                   // feas pump on NLP? Not yet...
+      (CoinCpuTime () > problem_ -> getMaxCpuTime ()) ||  // don't start if time is out
+      ((numberSolvePerLevel_ >= 0) &&                     // stop FP after a certain level
+       (CoinDrand48 () > 1. / CoinMax 
+       (1., (double) ((depth - numberSolvePerLevel_) * 
+		      (depth - numberSolvePerLevel_))))))
     return 0;
 
   problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "=================== Feasibility Pump =======================\n");
