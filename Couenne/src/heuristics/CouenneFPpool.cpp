@@ -91,12 +91,26 @@ CouenneFPsolution::CouenneFPsolution (CouNumber *x,
   maxIinf_    (maxIinf) {}
 
 /// copy constructor
-CouenneFPsolution::CouenneFPsolution (const CouenneFPsolution &src) {
+CouenneFPsolution::CouenneFPsolution (const CouenneFPsolution &src):
+  x_          (src.x_ ? CoinCopyOfArray (src.x_, src.n_) : NULL),
+  n_          (src.n_),
+  nNLinf_     (src.nNLinf_),
+  nIinf_      (src.nIinf_),
+  objVal_     (src.objVal_),
+  maxNLinf_   (src.maxNLinf_),
+  maxIinf_    (src.maxIinf_) {}
 
-}
 
 /// assignment
 CouenneFPsolution &CouenneFPsolution::operator= (const CouenneFPsolution &src) {
+
+  x_         = src.x_ ? CoinCopyOfArray (src.x_, src.n_) : NULL;
+  n_         = src.n_;
+  nNLinf_    = src.nNLinf_;
+  nIinf_     = src.nIinf_;
+  objVal_    = src.objVal_;
+  maxNLinf_  = src.maxNLinf_;
+  maxIinf_   = src.maxIinf_;
 
   return *this;
 }

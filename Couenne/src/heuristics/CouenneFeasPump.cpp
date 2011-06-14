@@ -20,6 +20,7 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneTNLP.hpp"
+#include "CouenneFPpool.hpp"
 
 #include "CouenneRecordBestSol.hpp"
 
@@ -112,6 +113,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // original milp's LP solution.
 
     double z = solveMILP (nSol, iSol);
+
+    if (false && iSol)
+      pool_ -> Queue (). push (CouenneFPsolution (problem_, iSol));
 
     // if no MILP solution was found, bail out
 
