@@ -24438,4 +24438,6 @@ else
 echo "$as_me: No configuration of $PACKAGE_NAME necessary" >&6;}
 fi
 
+{ echo "$as_me:$LINENO: In case of trouble, first consult the troubleshooting page at https://projects.coin-or.org/BuildTools/wiki/user-troubleshooting" >&5
+echo "$as_me: In case of trouble, first consult the troubleshooting page at https://projects.coin-or.org/BuildTools/wiki/user-troubleshooting" >&6;}
 

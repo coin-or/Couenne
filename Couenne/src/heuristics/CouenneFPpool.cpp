@@ -10,11 +10,14 @@
  */
 
 #include "CouenneFPpool.hpp"
+#include "CouenneExprVar.hpp"
+#include "CouenneExprAux.hpp"
 
 using namespace Couenne;
 
 /// CouenneProblem-aware constructor
 CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x):
+
   x_          (CoinCopyOfArray (x, p -> nVars ())),
   n_          (p -> nVars ()),
   nNLPinf_    (0),
@@ -23,7 +26,49 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x):
   maxNLinf_   (0.),
   maxIinf_    (0.) {
 
+  for (std::vector <exprVar *>::iterator i = p -> Variables (). begin (); 
+       i != p -> Variables (). end ();
+       ++i) {
 
+    CouNumber 
+      vval = (**i) ();
+
+    if ((*i) -> Multiplicity () <= 0)
+      continue;
+
+    if ((*i) -> isInteger ()) {
+
+      double inf = CoinMax (vval - floor (vval + COUENNE_EPS),
+			    ceil (vval - COUENNE_EPS) - vval);
+
+      if (inf > COUENNE_EPS) {
+
+	++nIinf_;
+
+	if (inf > maxIinf_) 
+	  maxIinf_ = inf;
+      }
+    }
+
+    if (((*i) -> Type () == AUX) &&
+	((*i) -> Image () -> Linearity () > LINEAR)) {
+
+      double 
+	diff = 0.,
+	fval = (*((*i) -> Image ())) ();
+
+      if      ((*i) -> sign () != expression::AUX_GEQ) diff = CoinMax (diff, vval - fval);
+      else if ((*i) -> sign () != expression::AUX_LEQ) diff = CoinMax (diff, fval - vval);
+
+      if (diff > COUENNE_EPS) {
+
+	++nNLPinf_;
+
+	if (diff > maxNLinf_)
+	  maxNLinf_ = diff;
+      }
+    }
+  }
 }
 
 
