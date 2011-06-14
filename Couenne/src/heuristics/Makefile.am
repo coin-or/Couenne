@@ -17,6 +17,7 @@ libCouenneHeuristics_la_SOURCES = \
 	CouenneFPSolveMILP.cpp \
 	CouenneFPSolveNLP.cpp \
 	CouenneFPFindSolution.cpp \
+	CouenneFPpool.cpp \
 	CouenneIterativeRounding.cpp 
 
 # This is for libtool

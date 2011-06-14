@@ -16,6 +16,8 @@
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 
+#include "CouenneFPpool.hpp"
+
 using namespace Couenne;
 
 #ifdef COIN_HAS_SCIP

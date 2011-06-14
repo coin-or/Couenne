@@ -23437,8 +23437,6 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-# FIXME: add symbol for SCIP (any symbol gives an error for now)
-
 # SCIP (used in Feasibility Pump)
 
 echo "$as_me:$LINENO: checking for COIN-OR package SCIP" >&5
@@ -29694,4 +29692,6 @@ else
 echo "$as_me: No configuration of $PACKAGE_NAME necessary" >&6;}
 fi
 
+{ echo "$as_me:$LINENO: In case of trouble, first consult the troubleshooting page at https://projects.coin-or.org/BuildTools/wiki/user-troubleshooting" >&5
+echo "$as_me: In case of trouble, first consult the troubleshooting page at https://projects.coin-or.org/BuildTools/wiki/user-troubleshooting" >&6;}
 
