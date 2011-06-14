@@ -201,6 +201,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	}
 
       }
+
+      break;
+
     } else {
 
       // solution is not MINLP feasible, it might get cut by
