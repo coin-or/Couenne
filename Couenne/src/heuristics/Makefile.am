@@ -18,7 +18,8 @@ libCouenneHeuristics_la_SOURCES = \
 	CouenneFPSolveNLP.cpp \
 	CouenneFPFindSolution.cpp \
 	CouenneFPpool.cpp \
-	CouenneIterativeRounding.cpp 
+	CouenneIterativeRounding.cpp \
+        cons_rowcuts.cpp
 
 # This is for libtool
 libCouenneHeuristics_la_LDFLAGS = $(LT_LDFLAGS)

@@ -61,7 +61,7 @@ am_libCouenneHeuristics_la_OBJECTS = BonInitHeuristic.lo \
 	BonNlpHeuristic.lo CouenneFeasPumpConstructors.lo \
 	CouenneFeasPump.lo CouenneFPSolveMILP.lo CouenneFPSolveNLP.lo \
 	CouenneFPFindSolution.lo CouenneFPpool.lo \
-	CouenneIterativeRounding.lo
+	CouenneIterativeRounding.lo cons_rowcuts.lo
 libCouenneHeuristics_la_OBJECTS =  \
 	$(am_libCouenneHeuristics_la_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -319,7 +319,8 @@ libCouenneHeuristics_la_SOURCES = \
 	CouenneFPSolveNLP.cpp \
 	CouenneFPFindSolution.cpp \
 	CouenneFPpool.cpp \
-	CouenneIterativeRounding.cpp 
+	CouenneIterativeRounding.cpp \
+        cons_rowcuts.cpp
 
 
 # This is for libtool
@@ -398,6 +399,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPump.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPumpConstructors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneIterativeRounding.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cons_rowcuts.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

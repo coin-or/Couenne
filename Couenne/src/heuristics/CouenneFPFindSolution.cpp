@@ -9,6 +9,7 @@
  */
 
 #include "CouenneFeasPump.hpp"
+#include "CouenneFPpool.hpp"
 #include "CouenneProblem.hpp"
 #include "CoinTime.hpp"
 
@@ -21,11 +22,12 @@ double CouenneFeasPump::findSolution (double* &sol) {
   /// expensive and accurate (exact) method to a cheap, inexact one:
   ///
   /// 1. Solve a MILP relaxation with Manhattan distance as objective
-  /// 2. Apply RENS to 1
-  /// 3. Use Objective FP 2.0 for MILPs
-  /// 4. round-and-propagate
-  /// 5. choose from pool, see 4
-  /// 6. random perturbation
+  /// 2. Partially solve the MILP with emphasis on good solutions
+  /// 3. Apply RENS to 1
+  /// 4. Use Objective FP 2.0 for MILPs
+  /// 5. round-and-propagate
+  /// 6. choose from pool, see 4
+  /// 7. random perturbation
 
   // What order should we use? I suggest we use priorities, assigned
   // at the beginning but changeable in the event of multiple failures
@@ -71,6 +73,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
      double infinity;
      int nvars;
      int nconss;
+     int nscipsols;
 
      int currentmilpmethod;
 
@@ -161,7 +164,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
 
         // create an empty linear constraint
         SCIP_CALL_ABORT( SCIPcreateConsLinear(scip, &cons, consname, 0, NULL, NULL, lhss[i], rhss[i], 
-              TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE) );
+              TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE) );
              
         // add variables to constraint
         for(int j=rowstarts[i]; j<rowstarts[i]+rowlengths[i]; j++)        
@@ -287,6 +290,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
      default:
         break;
      }
+
   /// 1. Solve a MILP relaxation with Manhattan distance as objective
   /// 2. Partially solve the MILP with emphasis on good solutions
   /// 3. Apply RENS to 1
@@ -298,19 +302,48 @@ double CouenneFeasPump::findSolution (double* &sol) {
      // solve the MILP
      SCIP_CALL_ABORT( SCIPsolve(scip) );
 
+     nscipsols =  SCIPgetNSols(scip);
+     
      // copy the solution
-     if( SCIPgetNSols(scip) )
+     if( nscipsols)
      {
+        SCIP_SOL** scipsols;
         SCIP_SOL* bestsol;
+        int nstoredsols;
+
+        /* get incumbent solution */
         bestsol = SCIPgetBestSol(scip);
         assert(bestsol != NULL);
+
+        /* get SCIP solution pool */
+        scipsols = SCIPgetSols(scip);
+        assert(sols != NULL);
 
 	if (!sol)
 	  sol = new CouNumber [nvars];
 
-        // get solution values and objective
+        // get solution values and objective of incumbent
         SCIP_CALL_ABORT( SCIPgetSolVals(scip, bestsol, nvars, vars, sol) );
         obj = SCIPgetSolOrigObj(scip, bestsol);
+
+        nstoredsols = 0;
+
+        // insert other SCIP solutions into solution pool
+        // do not store too many or too poor solutions
+        for(int i=1; i<nscipsols && nstoredsols < 10 && 
+               SCIPgetSolOrigObj(scip,scipsols[i]) <= 2*SCIPgetSolOrigObj(scip,bestsol); i++){
+           double* tmpsol;
+
+           tmpsol = new CouNumber [nvars];
+
+           // get solution values and objective
+           if(true) // TODO: check whether scipsols[i] is in tabu list
+           {
+              SCIP_CALL_ABORT( SCIPgetSolVals(scip, scipsols[i], nvars, vars, tmpsol) );
+              pool_ -> Queue (). push (CouenneFPsolution (problem_, tmpsol));
+              nstoredsols++;
+           }
+        }
      }
      else 
        obj = COIN_DBL_MAX;
