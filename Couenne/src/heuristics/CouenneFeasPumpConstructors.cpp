@@ -12,6 +12,7 @@
 
 #include "CouenneConfig.h"
 #include "CouenneFeasPump.hpp"
+#include "CouenneFPpool.hpp"
 #include "CouenneMINLPInterface.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneProblemElem.hpp"
@@ -56,6 +57,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   nlp_                 (NULL),
   app_                 (NULL),
   milp_                (NULL),
+  pool_                (NULL),
   numberSolvePerLevel_ (-1),
   betaNLP_             (0.),
   betaMILP_            (0.),
@@ -69,6 +71,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 
     std::string s;
 
+    int compareTerm;
+
     options -> GetIntegerValue ("feas_pump_iter",       maxIter_,             "couenne.");
     options -> GetIntegerValue ("feas_pump_level",      numberSolvePerLevel_, "couenne.");
     options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_,          "couenne.");
@@ -81,6 +85,9 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 
     options -> GetStringValue  ("feas_pump_usescip",    s,           "couenne."); 
     options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_, "couenne."); 
+    options -> GetIntegerValue ("feas_pump_poolcomp",   compareTerm, "couenne."); 
+
+    pool_ = new CouenneFPpool ((enum what_to_compare) compareTerm);
 
 #ifdef COIN_HAS_SCIP
     useSCIP_ = (s == "yes");
@@ -92,7 +99,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
     if (milpMethod_ >= 0)
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_milpmethod, but SCIP is not installed.\n");
 #endif
-  }
+  } else 
+    pool_ = new CouenneFPpool (SUM_NINF);
 
   setHeuristicName ("Couenne Feasibility Pump");
 
@@ -109,7 +117,7 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   nlp_                 (other. nlp_),
   app_                 (NULL),
   milp_                (other. milp_),
-  pool_                (other. pool_),
+  pool_                (NULL),
   numberSolvePerLevel_ (other. numberSolvePerLevel_),
   betaNLP_             (other. betaNLP_),
   betaMILP_            (other. betaMILP_),
@@ -118,6 +126,9 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   maxIter_             (other. maxIter_),
   useSCIP_             (other. useSCIP_),
   milpMethod_          (other. milpMethod_) {
+
+  if (other. pool_)
+    pool_ = new CouenneFPpool (*(other. pool_));
 
   initIpoptApp ();
 }
@@ -140,7 +151,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     nlp_                 = rhs. nlp_;
     app_                 = NULL;
     milp_                = rhs. milp_;
-    pool_                = rhs. pool_;
+    pool_                = NULL;
     numberSolvePerLevel_ = rhs. numberSolvePerLevel_;
     betaNLP_             = rhs. betaNLP_;
     betaMILP_            = rhs. betaMILP_;
@@ -149,9 +160,12 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     maxIter_             = rhs. maxIter_;
     useSCIP_             = rhs. useSCIP_;
     milpMethod_          = rhs. milpMethod_;
-  }
 
-  initIpoptApp ();
+    if (rhs. pool_)
+      pool_ = new CouenneFPpool (*(rhs. pool_));
+
+    initIpoptApp ();
+  }
 
   return *this;
 }
@@ -160,7 +174,8 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
 // Destructor /////////////////////////////////////////////////// 
 CouenneFeasPump::~CouenneFeasPump () {
 
-  if (app_) delete app_;
+  if (pool_) delete pool_;
+  if (app_)  delete app_;
   //if (nlp_) delete nlp_; // already deleted by "delete app_;"
 }
 
@@ -304,4 +319,10 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      "How should the integral solution be constructed?",
      -1, 7, -1, 
        "0: automatic, 1; completely, 2: RENS, 3: Objective Feasibility Pump, 4:round-and-propagate, 5: choose from pool, 6: random, -1: SCIP not used.");
+
+  roptions -> AddBoundedIntegerOption
+    ("feas_pump_poolcomp",
+     "Priority field to compare solutions in FP pool",
+     0, 2, 0, 
+       "0: total number of infeasible objects (integer and nonlinear), 1: maximum infeasibility (integer or nonlinear), 2: objective value.");
 }

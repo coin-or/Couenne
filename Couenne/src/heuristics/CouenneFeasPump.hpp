@@ -46,6 +46,7 @@ namespace Couenne {
   class CouenneProblem;
   class CouenneCutGenerator;
   class CouenneTNLP;
+  class CouenneFPpool;
 
   /// An implementation of the Feasibility pump that uses
   /// linearization and Ipopt to find the two sequences of points.
@@ -152,7 +153,7 @@ namespace Couenne {
     OsiSolverInterface *milp_;
 
     /// Pool of solutions
-    std::priority_queue <std::pair <CouNumber *, CouNumber> > pool_;
+    CouenneFPpool *pool_;
 
     /// These methods can be used to solve the MILP, from the most
     /// expensive, exact method to a cheap, inexact one:

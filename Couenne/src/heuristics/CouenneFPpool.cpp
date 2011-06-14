@@ -20,7 +20,7 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x):
 
   x_          (CoinCopyOfArray (x, p -> nVars ())),
   n_          (p -> nVars ()),
-  nNLPinf_    (0),
+  nNLinf_     (0),
   nIinf_      (0),
   objVal_     (0.),
   maxNLinf_   (0.),
@@ -62,7 +62,7 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x):
 
       if (diff > COUENNE_EPS) {
 
-	++nNLPinf_;
+	++nNLinf_;
 
 	if (diff > maxNLinf_)
 	  maxNLinf_ = diff;
@@ -76,22 +76,63 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x):
 /// CouenneProblem to compute them
 CouenneFPsolution::CouenneFPsolution (CouNumber *x, 
 				      int n, 
-				      int nNLPinf,
+				      int nNLinf,
 				      int nIinf,
 				      CouNumber objVal,
 				      CouNumber maxNLinf,
 				      CouNumber maxIinf):
+
   x_          (CoinCopyOfArray (x, n)),
   n_          (n),
-  nNLPinf_    (nNLPinf),
+  nNLinf_     (nNLinf),
   nIinf_      (nIinf),
   objVal_     (objVal),
   maxNLinf_   (maxNLinf),
   maxIinf_    (maxIinf) {}
 
+/// copy constructor
+CouenneFPsolution::CouenneFPsolution (const CouenneFPsolution &src) {
+
+}
+
+/// assignment
+CouenneFPsolution &CouenneFPsolution::operator= (const CouenneFPsolution &src) {
+
+  return *this;
+}
+
+/// destructor
+CouenneFPsolution::~CouenneFPsolution () {
+
+  if (x_)
+    delete [] x_;
+}
 
 /// basic comparison procedure -- what to compare depends on user's choice
-int CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_compare comparedTerm) const {
+bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_compare comparedTerm) const {
 
-  return 0;
+  switch (comparedTerm) {
+
+  case SUM_NINF: return (nNLinf_   + nIinf_   < other.nNLinf_   + other.nIinf_);
+  case SUM_INF:  return (maxNLinf_ + maxIinf_ < other.maxNLinf_ + other.maxIinf_);
+  case OBJVAL:   return (objVal_              < other.objVal_);
+  }
+
+  printf ("CouenneFPsolution::compare: bad compared term\n");
+  abort ();
 }
+
+
+/// copy constructor
+CouenneFPpool::CouenneFPpool (const CouenneFPpool &src):
+  queue_ (src.queue_) {}
+
+
+/// assignment
+CouenneFPpool &CouenneFPpool::operator= (const CouenneFPpool &src) {
+
+  queue_ = src.queue_;
+
+  return *this;
+}
+
