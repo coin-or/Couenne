@@ -196,8 +196,8 @@ double CouenneFeasPump::findSolution (double* &sol) {
 
      case 2: // solve the MILP quickly. Set limits on overall nodes and stall nodes (nodes without incumbent improvement)
              // disable or cut down all procedures which are merely used for improving the dual bound, e.g., cuts
-        SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/stallnodes", 100) );
-        SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/nodes", 1000) );
+        SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/stallnodes", 1000) );
+        SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/nodes", 10000) );
 
         // disable cutting plane separation 
         SCIP_CALL_ABORT( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );

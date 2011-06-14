@@ -267,6 +267,11 @@ void HessElemFill (int i,
 
   // only fills lower triangular part (for symmetry)
 
+  expression
+    *d1  = expr -> differentiate (i),  // derivative w.r.t. i
+    *sd1 = d1  -> simplify (),         // simplified
+    *rd1 = (sd1 ? sd1 : d1);           // actually used
+
   for (std::set <int>::iterator k = list.begin (); k != list. end (); ++k) {
 
     if (*k > i) 
@@ -275,10 +280,7 @@ void HessElemFill (int i,
     // objective depends on k and i. Is its second derivative, w.r.t. k and i, nonzero?
 
     expression 
-      *d1  = expr -> differentiate (*k), // derivative w.r.t. k
-      *sd1 = d1  -> simplify (),         // simplified
-      *rd1 = (sd1 ? sd1 : d1),           // actually used
-      *d2  = rd1 -> differentiate (i),   // its derivative w.r.t. i
+      *d2  = rd1 -> differentiate (*k),  // its derivative w.r.t. *k
       *sd2 = d2  -> simplify (),         // simplified
       *rd2 = (sd2 ? sd2 : d2);           // actually used
 
@@ -288,8 +290,6 @@ void HessElemFill (int i,
     rd2 -> print (); printf ("\n");
 #endif
 
-    delete d1;
-    if (sd1) delete sd1;
     if (sd2) delete d2;
 
     if ((rd2 -> Type  () != CONST) ||
@@ -315,6 +315,9 @@ void HessElemFill (int i,
 
     } else delete rd2;
   }
+
+  if (sd1) delete sd1;
+  delete d1;
 }
 
 static void reAlloc (int nCur, int &nMax, int *&r, int *&c, int *&n, int **&l, expression ***&e) {

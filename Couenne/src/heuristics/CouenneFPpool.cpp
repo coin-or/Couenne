@@ -149,4 +149,3 @@ CouenneFPpool &CouenneFPpool::operator= (const CouenneFPpool &src) {
 
   return *this;
 }
-
