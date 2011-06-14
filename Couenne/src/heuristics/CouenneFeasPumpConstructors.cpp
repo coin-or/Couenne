@@ -89,7 +89,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 #else
     if (s == "yes") 
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_usescip to true, but SCIP is not installed.\n");
-    if (milpMethod >= 0)
+    if (milpMethod_ >= 0)
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_milpmethod, but SCIP is not installed.\n");
 #endif
   }
