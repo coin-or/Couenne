@@ -76,132 +76,130 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
   	                            // solveMILP; initialization will be
   	                            // necessary
   
-    if (!milp_) {
+  if (!milp_) {
 
-      firstCall = true;
+    milp_ = model_ -> solver () -> clone ();
 
-      milp_ = model_ -> solver () -> clone ();
+    // no data is available so far, retrieve it from the MILP solver
+    // used as the linearization
 
-      // no data is available so far, retrieve it from the MILP solver
-      // used as the linearization
+    // Construct an (empty) Hessian. It will be modified later, but
+    // the changes should be relatively easy for the case when
+    // betaMILP > 0 and there are no changes if betaMILP_ == 0
 
-      // Construct an (empty) Hessian. It will be modified later, but
-      // the changes should be relatively easy for the case when
-      // betaMILP > 0 and there are no changes if betaMILP_ == 0
+    P. setDimensions (problem_ -> nVars (), 
+		      problem_ -> nVars ());
 
-      P. setDimensions (problem_ -> nVars (), 
-			problem_ -> nVars ());
+    // The MILP has to be changed the first time it is used.
+    //
+    // Suppose Ax >= b has m inequalities. In order to solve the
+    // problem above, we need q new variables z_i and 2q inequalities
+    //
+    //   z_i >=   P^i (x - x^0)  or  P^i x - z_i <= P^i x^0 (*)
+    //   z_i >= - P^i (x - x^0)                             (**)
+    // 
+    // (the latter being equivalent to
+    //
+    // - z_i <=   P^i (x - x^0)  or  P^i x + z_i >= P^i x^0 (***)
+    //
+    // so we'll use this instead as most coefficients don't change)
+    // for each i, where q is the number of variables involved (either
+    // q=|N|, the number of integer variables, or q=n, the number of
+    // variables).
+    //
+    // We need to memorize the number of initial inequalities and of
+    // variables, so that we know what (coefficients and rhs) to
+    // change at every iteration.
 
-      // The MILP has to be changed the first time it is used.
-      //
-      // Suppose Ax >= b has m inequalities. In order to solve the
-      // problem above, we need q new variables z_i and 2q inequalities
-      //
-      //   z_i >=   P^i (x - x^0)  or  P^i x - z_i <= P^i x^0 (*)
-      //   z_i >= - P^i (x - x^0)                             (**)
-      // 
-      // (the latter being equivalent to
-      //
-      // - z_i <=   P^i (x - x^0)  or  P^i x + z_i >= P^i x^0 (***)
-      //
-      // so we'll use this instead as most coefficients don't change)
-      // for each i, where q is the number of variables involved (either
-      // q=|N|, the number of integer variables, or q=n, the number of
-      // variables).
-      //
-      // We need to memorize the number of initial inequalities and of
-      // variables, so that we know what (coefficients and rhs) to
-      // change at every iteration.
+    // ADD CODE HERE...
 
-      // ADD CODE HERE...
+    // Add q variables, each with coefficient 1 in the objective
 
-      // Add q variables, each with coefficient 1 in the objective
+    CoinPackedVector vec;
 
-      CoinPackedVector vec;
+    for (int i=0; i<problem_ -> nVars (); i++)
+      if (!compDistInt_ || milp_ -> isInteger (i))
+	// (empty) coeff col vector, lb, ub, obj coeff
+	milp_ -> addCol (vec, 0, COIN_DBL_MAX, 1.); 
 
-      for (int i=0; i<problem_ -> nVars (); i++)
-	if (!compDistInt_ || milp_ -> isInteger (i))
-	  // (empty) coeff col vector, lb, ub, obj coeff
-	  milp_ -> addCol (vec, 0, COIN_DBL_MAX, 1.); 
+    // Set to zero all other variables' obj coefficient. This means we
+    // just do it for the single variable in the reformulated
+    // problem's linear relaxation (all other variables do not appear
+    // in the objective)
 
-      // Set to zero all other variables' obj coefficient. This means we
-      // just do it for the single variable in the reformulated
-      // problem's linear relaxation (all other variables do not appear
-      // in the objective)
+    milp_ -> setObjCoeff (problem_ -> Obj (0) -> Body () -> Index (), 0.);
+  }
 
-      milp_ -> setObjCoeff (problem_ -> Obj (0) -> Body () -> Index (), 0.);
-    }
+  // Add 2q inequalities
 
-    // Add 2q inequalities
+  int nInitRows = milp_ -> getNumRows ();
 
-    int nInitRows = milp_ -> getNumRows ();
+  CouNumber * nlpSolExp;
 
-    CouNumber * nlpSolExp;
+  if (nSol0) {
 
-    if (nSol0) {
+    nlpSolExp = new CouNumber [problem_ -> nVars ()];
 
-      nlpSolExp = new CouNumber [problem_ -> nVars ()];
+    CoinCopyN (nSol0, problem_ -> nOrigVars (), nlpSolExp);
+    problem_ -> getAuxs (nlpSolExp);
 
-      CoinCopyN (nSol0, problem_ -> nOrigVars (), nlpSolExp);
-      problem_ -> getAuxs (nlpSolExp);
+  } else 
+    nlpSolExp = CoinCopyOfArray (milp_ -> getColSolution (), 
+				 problem_ -> nVars ());
 
-    } else 
-      nlpSolExp = CoinCopyOfArray (milp_ -> getColSolution (), 
-				   problem_ -> nVars ());
+  CoinPackedVector x0 (problem_ -> nVars (), nlpSolExp);
 
-    CoinPackedVector x0 (problem_ -> nVars (), nlpSolExp);
+  delete [] nlpSolExp;
 
-    delete [] nlpSolExp;
+  for (int i = 0, j = problem_ -> nVars (), k = j; k--; i++)
 
-    for (int i = 0, j = problem_ -> nVars (), k = j; k--; i++)
+    if (!compDistInt_ || milp_ -> isInteger (i)) {
 
-      if (!compDistInt_ || milp_ -> isInteger (i)) {
+      // create vector with single entry of 1 at i-th position 
+      double val = 1.;
+      CoinPackedVector vec (1, &i, val);
 
-	// create vector with single entry of 1 at i-th position 
-	double val = 1.;
-	CoinPackedVector vec (1, &i, val);
+      if (betaMILP_ > 0.) {
 
-	if (betaMILP_ > 0.) {
-
-	  // reserved for non-UnitMatrix hessian (i.e. betaMILP_ > 0)
-	}
-
-	// right-hand side equals <P^i,x^0>
-	double PiX0 = sparseDotProduct (vec, x0); 
-
-	vec.insert     (j, -1.); milp_ -> addRow (vec, -COIN_DBL_MAX,         PiX0); // (*)
-	vec.setElement (1, +1.); milp_ -> addRow (vec,          PiX0, COIN_DBL_MAX); // (***)
-
-	++j; // index of variable within problem (plus nVars_)
+	// reserved for non-UnitMatrix hessian (i.e. betaMILP_ > 0)
       }
 
-    int nFinalRows = milp_ -> getNumRows ();
+      // right-hand side equals <P^i,x^0>
+      double PiX0 = sparseDotProduct (vec, x0); 
 
-    // The MILP is complete. We have several ways of solving it, or
-    // better, to find feasible solutions to it. We have to interface
-    // with each of them once at the very beginning, and later we loop
-    // through them in order to find a feasible solution.
+      vec.insert     (j, -1.); milp_ -> addRow (vec, -COIN_DBL_MAX,         PiX0); // (*)
+      vec.setElement (1, +1.); milp_ -> addRow (vec,          PiX0, COIN_DBL_MAX); // (***)
 
-    if (firstCall)
-      init_MILP ();
+      ++j; // index of variable within problem (plus nVars_)
+    }
 
-    double obj;
+  int nFinalRows = milp_ -> getNumRows ();
 
-    obj = findSolution (iSol);
+  // The MILP is complete. We have several ways of solving it, or
+  // better, to find feasible solutions to it. We have to interface
+  // with each of them once at the very beginning, and later we loop
+  // through them in order to find a feasible solution.
 
-    // delete last rows and add them from scratch (common block below)
+  if (firstCall)
+    init_MILP ();
 
-    int 
-      nDeleted = nFinalRows - nInitRows,
-     *deleted  = new int [nDeleted],
-      nCurRow  = nInitRows;
+  double obj;
 
-    for (int i = nDeleted; i--;)
-      deleted [i] = nCurRow++;
+  obj = findSolution (iSol);
 
-    milp_ -> deleteRows (nDeleted, deleted);
+  // delete last rows and add them from scratch (common block below)
 
-    delete [] deleted;
+  int 
+    nDeleted = nFinalRows - nInitRows,
+    *deleted  = new int [nDeleted],
+    nCurRow  = nInitRows;
 
-    return milp_ -> getObjValue ();
+  for (int i = nDeleted; i--;)
+    deleted [i] = nCurRow++;
+
+  milp_ -> deleteRows (nDeleted, deleted);
+
+  delete [] deleted;
+
+  return milp_ -> getObjValue ();
 }

@@ -393,8 +393,8 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
   if (depth <= 0) {
 
-    if (foundSolution) couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done. Solution: %g\n", objectiveValue);
-    else               couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done (no solution).\n");
+    if (foundSolution) couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "solution found, obj. %g\n", objectiveValue);
+    else               couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "no solution.\n");
   }
 
   return foundSolution;
@@ -411,14 +411,14 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
       CoinCopyN       (couenne_ -> getCutOffSol (), couenne_ -> nVars (), newSolution);
 
       if (depth <= 0)
-	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done. Solution: %g\n", objectiveValue);
+	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "solution found, obj. %g\n", objectiveValue);
 
       return 1;
 
     } else {
 
       if (depth <= 0 && e==noSolution)
-	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "done (no solution).\n", objectiveValue);
+	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "no solution.\n", objectiveValue);
 
       return 0;
     }

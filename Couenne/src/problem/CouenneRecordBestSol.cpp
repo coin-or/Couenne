@@ -109,7 +109,7 @@ CouenneRecordBestSol::~CouenneRecordBestSol(){
 
 /*****************************************************************************/
 void CouenneRecordBestSol::setInitIsInt(const bool *givenIsInt,
-				 const int givenCard) {
+					const int givenCard) {
 
   if(initIsInt == NULL) {
     if(cardInitDom == -1) {
@@ -139,7 +139,7 @@ void CouenneRecordBestSol::setInitIsInt(const bool *givenIsInt,
 
 /*****************************************************************************/
 void CouenneRecordBestSol::setInitDomLb(const CouNumber *givenLb, 
-				 const int givenCard) {
+					const int givenCard) {
   if(initDomLb == NULL) {
     if(cardInitDom == -1) {
       cardInitDom = givenCard;
@@ -161,7 +161,7 @@ void CouenneRecordBestSol::setInitDomLb(const CouNumber *givenLb,
 
 /*****************************************************************************/
 void CouenneRecordBestSol::setInitDomUb(const CouNumber *givenUb, 
-				 const int givenCard) {
+					const int givenCard) {
   if(initDomUb == NULL) {
     if(cardInitDom == -1) {
       cardInitDom = givenCard;

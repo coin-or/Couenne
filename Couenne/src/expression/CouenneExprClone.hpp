@@ -61,9 +61,6 @@ class exprClone: public exprCopy {
   /// null function for evaluating the expression
   inline CouNumber operator () () 
   {return ((*copy_) ());}
-
-  /// redirect variables to proper variable vector
-  //void realign (const CouenneProblem *p);
 };
 
 }

@@ -84,9 +84,13 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 
 #ifdef COIN_HAS_SCIP
     useSCIP_ = (s == "yes");
+    if (milpMethod_ < 0)
+      milpMethod_ = 0;
 #else
     if (s == "yes") 
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_usescip to true, but SCIP is not installed.\n");
+    if (milpMethod >= 0)
+      problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_milpmethod, but SCIP is not installed.\n");
 #endif
   }
 
@@ -298,6 +302,6 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> AddBoundedIntegerOption
     ("feas_pump_milpmethod",
      "How should the integral solution be constructed?",
-     0, 7, 0, 
-       "0: automatic, 1; completely, 2: RENS, 3: Objective Feasibility Pump, 4:round-and-propagate, 5: choose from pool, 6: random");
+     -1, 7, -1, 
+       "0: automatic, 1; completely, 2: RENS, 3: Objective Feasibility Pump, 4:round-and-propagate, 5: choose from pool, 6: random, -1: SCIP not used.");
 }

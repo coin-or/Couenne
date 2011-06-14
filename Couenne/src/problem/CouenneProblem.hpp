@@ -756,19 +756,26 @@ protected:
 
 public:
 
-  inline int getLastPrioSort() const {return lastPrioSort_;};
-  void setLastPrioSort(int givenLastPS);
+  /// 
+  inline int getLastPrioSort() const 
+  {return lastPrioSort_;};
 
-  inline CouenneRecordBestSol *getRecordBestSol() const {return recBSol;};
+  ///
+  void setLastPrioSort (int givenLastPS);
 
+  /// returns recorded best solution
+  inline CouenneRecordBestSol *getRecordBestSol() const 
+  {return recBSol;};
+
+  /// returns feasibility tolerance
   double getFeasTol() {return feas_tolerance_;};
 
-  // Recompute objective value for sol
+  /// Recompute objective value for sol
   double checkObj(const CouNumber *sol, const double &precision) const;
 
-  // check integrality of vars in sol with index between from and upto 
-  // (original vars only if origVarOnly == true); 
-  // return true if all integer vars are within precision of an integer value
+  /// check integrality of vars in sol with index between from and upto 
+  /// (original vars only if origVarOnly == true); 
+  /// return true if all integer vars are within precision of an integer value
   bool checkInt(const CouNumber *sol,
 		const int from, const int upto, 
 		const std::vector<int> listInt,
@@ -776,45 +783,45 @@ public:
 		const bool stopAtFirstViol,
 		const double precision, double &maxViol) const;
 
-  // Check bounds; returns true iff feasible for given precision
+  /// Check bounds; returns true iff feasible for given precision
   bool checkBounds(const CouNumber *sol,
 		   const bool stopAtFirstViol,
 		   const double precision, double &maxViol) const;
 
-  // returns true iff value of all auxilliaries are within bounds
+  /// returns true iff value of all auxilliaries are within bounds
   bool checkAux(const CouNumber *sol,
 		const bool stopAtFirstViol,
 		const double precision, double &maxViol) const;
 
-  // returns true iff value of all auxilliaries are within bounds
+  /// returns true iff value of all auxilliaries are within bounds
   bool checkCons(const CouNumber *sol,
 		 const bool stopAtFirstViol,
 		 const double precision, double &maxViol) const;
 
-  // Return true if either solution or recomputed_solution obtained
-  // using getAuxs() from the original variables in solution is feasible
-  // within precision (the solution with minimum violation is then stored
-  // in recBSol->modSol, as well as its value and violation); 
-  // return false otherwise.
-  // If stopAtFirstViol == true, recBSol->modSol is meaningless upon return.
-  // If stopAtFirstViol == false, recBSol->modSol contains the solution
-  // with minimum violation, although this violation might be larger than 
-  // precision.
-  // This is useful for cases where the current solution must be considered
-  // valid (e.g., because Cbc is going to accept it anyway), although it 
-  // violates precision requirements.
+  /// Return true if either solution or recomputed_solution obtained
+  /// using getAuxs() from the original variables in solution is feasible
+  /// within precision (the solution with minimum violation is then stored
+  /// in recBSol->modSol, as well as its value and violation); 
+  /// return false otherwise.
+  /// If stopAtFirstViol == true, recBSol->modSol is meaningless upon return.
+  /// If stopAtFirstViol == false, recBSol->modSol contains the solution
+  /// with minimum violation, although this violation might be larger than 
+  /// precision.
+  /// This is useful for cases where the current solution must be considered
+  /// valid (e.g., because Cbc is going to accept it anyway), although it 
+  /// violates precision requirements.
 
-  // Value of obj matters only if careAboutObj == true;
-  // the code then tries to balance violation of constraints and
-  // value of objective.
+  /// Value of obj matters only if careAboutObj == true;
+  /// the code then tries to balance violation of constraints and
+  /// value of objective.
 
-  // if checkAll = false, check only integrality/bounds for 
-  // original vars and constraints; consider only recomputed_sol
-  // if checkAll == true, check also integrality/bounds on auxs;
-  // consider both recomputed_sol and solution
+  /// if checkAll = false, check only integrality/bounds for 
+  /// original vars and constraints; consider only recomputed_sol
+  /// if checkAll == true, check also integrality/bounds on auxs;
+  /// consider both recomputed_sol and solution
 
-  // if careAboutObj is set to true, then stopAtFirstViol must be set to 
-  // false too.
+  /// if careAboutObj is set to true, then stopAtFirstViol must be set to 
+  /// false too.
   bool checkNLP2(const double *solution,
 		 const double obj, const bool careAboutObj,
 		 const bool stopAtFirstViol,

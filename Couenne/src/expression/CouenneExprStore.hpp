@@ -56,9 +56,6 @@ class exprStore: public exprCopy {
   /// previous evaluation
   virtual inline CouNumber operator () () 
   {return (copy_ -> Value ());}
-
-  /// empty function to redirect variables to proper variable vector
-  //virtual void realign (const CouenneProblem *p);
 };
 
 }

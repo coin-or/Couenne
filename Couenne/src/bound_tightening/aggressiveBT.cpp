@@ -332,8 +332,8 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
   delete [] oub;
 
   if (info.level <= 0 && !(info.inTree))  {
-    if (!retval) jnlst_ -> Printf (J_ERROR, J_COUENNE, "done (infeasible)\n");
-    else         jnlst_ -> Printf (J_ERROR, J_COUENNE, "done (%d improved bounds)\n", nTotImproved);
+    if (!retval) jnlst_ -> Printf (J_ERROR, J_COUENNE, "infeasible\n");
+    else         jnlst_ -> Printf (J_ERROR, J_COUENNE, "%d improved bounds\n", nTotImproved);
   }
 
   return retval; // && btCore (psi, cs, chg_bds, babInfo, true); // !!!

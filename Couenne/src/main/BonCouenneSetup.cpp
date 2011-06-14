@@ -331,7 +331,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   options () -> GetStringValue ("branching_object", s, "couenne.");
 
-  enum CouenneObject::branch_obj objType;// = CouenneObject::VAR_OBJ;
+  enum CouenneObject::branch_obj objType = CouenneObject::VAR_OBJ;
 
   if      (s ==   "vt_obj") objType = CouenneObject::VT_OBJ;
   else if (s ==  "var_obj") objType = CouenneObject::VAR_OBJ;
@@ -512,11 +512,11 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   // TODO: add Cbc heuristics
 
-  int doHeuristic = 0;
+  std::string doHeuristic;
 
-  options () -> GetEnumValue ("local_optimization_heuristic", doHeuristic, "couenne.");
+  options () -> GetStringValue ("local_optimization_heuristic", doHeuristic, "couenne.");
 
-  if (doHeuristic) {
+  if (doHeuristic == "yes") {
 
     int numSolve;
     options()->GetIntegerValue("log_num_local_optimization_per_level",numSolve,"couenne.");
@@ -531,9 +531,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     heuristics_.push_back(h);
   }
 
-  options () -> GetEnumValue ("iterative_rounding_heuristic", doHeuristic, "couenne.");
+  options () -> GetStringValue ("iterative_rounding_heuristic", doHeuristic, "couenne.");
   
-  if (doHeuristic) {
+  if (doHeuristic == "yes") {
     CouenneIterativeRounding * nlpHeuristic = new CouenneIterativeRounding(nonlinearSolver_, ci, couenneProb_, options());
     HeuristicMethod h;
     h.id = "Couenne Iterative Rounding";
@@ -541,9 +541,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     heuristics_.push_back(h);
   }
 
-  options () -> GetEnumValue ("feas_pump_heuristic", doHeuristic, "couenne.");
+  options () -> GetStringValue ("feas_pump_heuristic", doHeuristic, "couenne.");
 
-  if (doHeuristic) {
+  if (doHeuristic == "yes") {
 
     int numSolve;
     options () -> GetIntegerValue ("feas_pump_level", numSolve, "couenne.");

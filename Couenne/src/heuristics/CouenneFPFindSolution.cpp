@@ -8,8 +8,6 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#define SCIP_DEBUG 
-
 #include "CouenneFeasPump.hpp"
 #include "CouenneProblem.hpp"
 #include "CoinTime.hpp"

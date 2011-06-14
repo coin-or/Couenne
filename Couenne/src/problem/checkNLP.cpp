@@ -303,7 +303,6 @@ double CouenneProblem::checkObj(const CouNumber *sol, const double &precision)
 #ifdef FM_TRACE_NLP
 	(0) || 
 #endif
-	
 	(Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM))) {
       printf ("%.12e %.12e %.12e ------------------------------\n", 
 	      realObj, sol[objBody -> Index ()], 
@@ -419,7 +418,7 @@ bool CouenneProblem::checkBounds(const CouNumber *sol,
 }
 
 /************************************************************************/
-// returns true iff value of all auxilliaries are within bounds
+// returns true iff value of all auxiliaries are within bounds
 bool CouenneProblem::checkAux(const CouNumber *sol,
 			      const bool stopAtFirstViol,  
 			      const double precision, double &maxViol) const {

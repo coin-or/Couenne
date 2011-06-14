@@ -44,7 +44,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 		      (depth - numberSolvePerLevel_))))))
     return 0;
 
-  problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "=================== Feasibility Pump =======================\n");
+  problem_ -> Jnlst () -> Printf 
+    (J_ERROR, J_NLPHEURISTIC, "=================== Feasibility Pump =======================\n");
 
   // This FP works as follows:
   //
@@ -174,8 +175,15 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	// if bound tightening clears the whole feasible set, stop
 	bool is_still_feas = problem_ -> btCore (chg_bds);
 
-	// Update lb/ub on milp and nlp here
+	// don't tighten MILP if BT says it's infeasible
 
+	if (chg_bds) 
+	  delete [] chg_bds;
+
+	if (!is_still_feas)
+	  break;
+
+	// Update lb/ub on milp and nlp here
 	const CouNumber 
 	  *plb = problem_ -> Lb (),
 	  *pub = problem_ -> Ub (),
@@ -188,11 +196,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  if (*pub < *mub++) milp_ -> setColUpper (j, *pub);
 	}
 
-	if (chg_bds) 
-	  delete [] chg_bds;
-
-	if (!is_still_feas)
-	  break;
       }
     } else {
 

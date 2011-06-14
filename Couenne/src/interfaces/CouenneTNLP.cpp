@@ -491,6 +491,16 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
       expression
 	**expr = HLa_ -> expr () [i];
 
+#ifdef DEBUG
+      printf ("[%d %d] %d lambdas: ", HLa_ -> iRow () [i], HLa_ -> jCol () [i], numL); fflush (stdout);
+      for (int k=0; k<numL; k++) {
+	printf ("%d ", lamI [k]);
+	fflush (stdout);
+	expr [k] -> print ();
+	printf ("\n");
+      }
+#endif
+
       // the objective's part of the Hessian can only have level index 0, avoid check
 
       if (0 == *lamI) {*values += obj_factor           * (*(*expr++)) (); --numL; ++lamI;}

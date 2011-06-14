@@ -56,7 +56,8 @@ void HessElemFill (int i, int level,
 		   std::set <int> &list, 
 		   expression *expr,
 		   int *row, int **lam, expression ***eee,
-		   CouenneProblem *);
+		   CouenneProblem *,
+		   std::set <int> &globList);
 
 
 /// code for refilling arrays through realloc
@@ -150,6 +151,8 @@ ExprHess::ExprHess (CouenneProblem *p):
     int         **lam = (int         **) malloc (nVars * sizeof (int *)); // row's vectors of indices of nonzeros
     expression ***eee = (expression ***) malloc (nVars * sizeof (expression **));
 
+    std::set <int> globDepList;
+
     CoinFillN (rnz, nVars, 0);
 
     // No CoinFillN for int** and expression***
@@ -165,7 +168,7 @@ ExprHess::ExprHess (CouenneProblem *p):
     int level = 0;
 
     /// fill term for objective
-    HessElemFill (i, 0, deplist [0], p -> Obj (0) -> Body (), rnz, lam, eee, p);
+    HessElemFill (i, 0, deplist [0], p -> Obj (0) -> Body (), rnz, lam, eee, p, globDepList);
 
     ++level;
 
@@ -176,7 +179,7 @@ ExprHess::ExprHess (CouenneProblem *p):
 	  c -> Body () -> Type () == VAR) 
 	continue;
 
-      HessElemFill (i, level, deplist [level], c -> Body (), rnz, lam, eee, p);
+      HessElemFill (i, level, deplist [level], c -> Body (), rnz, lam, eee, p, globDepList);
 
       ++level;
     }
@@ -191,26 +194,30 @@ ExprHess::ExprHess (CouenneProblem *p):
 	  (e -> Multiplicity () <= 0)) 
 	continue;
 
-      HessElemFill (i, level, deplist [level], e -> Image (), rnz, lam, eee, p);
+      HessElemFill (i, level, deplist [level], e -> Image (), rnz, lam, eee, p, globDepList);
 
       ++level;
     }
 
     // sparsify rnz, eee, lam
 
-    for (int j=0; j <= i; j++) 
-      if (rnz [j]) {
+    for (std::set <int>::iterator j = globDepList.begin (); j != globDepList. end (); ++j) {
 
-	reAlloc (nnz_+1, curSize, iRow_, jCol_, numL_, lamI_, expr_);
+      if (*j > i)
+	continue;
 
-	iRow_ [nnz_] = i;
-	jCol_ [nnz_] = j;
-	numL_ [nnz_] = rnz [j];
-	lamI_ [nnz_] = (int         *) realloc (lam [j], rnz [j] * sizeof (int));
-	expr_ [nnz_] = (expression **) realloc (eee [j], rnz [j] * sizeof (expression *));
+      assert (rnz [*j]);
 
-	++nnz_;
-      }
+      reAlloc (nnz_ + 1, curSize, iRow_, jCol_, numL_, lamI_, expr_);
+
+      iRow_ [nnz_] = i;
+      jCol_ [nnz_] = *j;
+      numL_ [nnz_] = rnz [*j];
+      lamI_ [nnz_] = (int         *) realloc (lam [*j], rnz [*j] * sizeof (int));
+      expr_ [nnz_] = (expression **) realloc (eee [*j], rnz [*j] * sizeof (expression *));
+
+      ++nnz_;
+    }
 
     free (rnz);
     free (lam);
@@ -244,60 +251,70 @@ ExprHess::ExprHess (CouenneProblem *p):
 
 // fills a row (?) of the Hessian using expression
 
-void HessElemFill (int i, int level,
+void HessElemFill (int i, 
+		   int level,
 		   std::set <int> &list, 
 		   expression *expr,
 		   int *nnz, 
 		   int **lam, 
 		   expression ***eee,
-		   CouenneProblem *p) {
+		   CouenneProblem *p,
+		   std::set <int> &globList) {
 
   if (list. find (i) == list.end () ||   // expression does not depend on x_i
       (expr -> Linearity () <= LINEAR))  // no second derivative here
     return;
 
   // only fills lower triangular part (for symmetry)
-  for (int k=0; k <= i; k++) 
-    if ((k==i) || (list. find (k) != list.end ())) {
 
-      // objective depends on k and i. Is its second derivative, w.r.t. k and i, nonzero?
+  for (std::set <int>::iterator k = list.begin (); k != list. end (); ++k) {
 
-      expression 
-	*d1  = expr -> differentiate (k), // derivative w.r.t. k
-	*sd1 = d1  -> simplify (),        // simplified
-	*rd1 = (sd1 ? sd1 : d1),          // actually used
-	*d2  = rd1 -> differentiate (i),  // its derivative w.r.t. i
-	*sd2 = d2  -> simplify (),        // simplified
-	*rd2 = (sd2 ? sd2 : d2);          // actually used
+    if (*k > i) 
+      continue;
+
+    // objective depends on k and i. Is its second derivative, w.r.t. k and i, nonzero?
+
+    expression 
+      *d1  = expr -> differentiate (*k), // derivative w.r.t. k
+      *sd1 = d1  -> simplify (),         // simplified
+      *rd1 = (sd1 ? sd1 : d1),           // actually used
+      *d2  = rd1 -> differentiate (i),   // its derivative w.r.t. i
+      *sd2 = d2  -> simplify (),         // simplified
+      *rd2 = (sd2 ? sd2 : d2);           // actually used
 
 #ifdef DEBUG
-      printf (" rd2 [x_%d, x_%d]: d/d x_%d = ", k, i, k); fflush (stdout); 
-      rd1 -> print (); printf (" -> d/(d x_%d,d x_%d) = ", k, i); 
-      rd2 -> print (); printf ("\n");
+    printf (" rd2 [x_%d, x_%d]: d/d x_%d = ", *k, i, *k); fflush (stdout); 
+    rd1 -> print (); printf (" -> d/(d x_%d,d x_%d) = ", *k, i); 
+    rd2 -> print (); printf ("\n");
 #endif
 
-      delete d1;
-      if (sd1) delete sd1;
-      if (sd2) delete d2;
+    delete d1;
+    if (sd1) delete sd1;
+    if (sd2) delete d2;
 
-      if ((rd2 -> Type  () != CONST) ||
-	  (rd2 -> Value () != 0.)) {
+    if ((rd2 -> Type  () != CONST) ||
+	(rd2 -> Value () != 0.)) {
 
-	// we have a nonzero
+      // we have a nonzero element of the hessian for constraint i
 
-	if (!(nnz [k] % reallocStep)) {
+      int &curNNZ = nnz [*k];
 
-	  lam [k] = (int         *) realloc (lam [k], (nnz [k] + reallocStep) * sizeof (int));
-	  eee [k] = (expression **) realloc (eee [k], (nnz [k] + reallocStep) * sizeof (expression *));
-	}
+      if (!curNNZ && globList.find (*k) == globList. end ())
+	globList.insert (*k);
 
-	rd2 -> realign (p); // fixes variables' domain with the problem.
+      if (!(curNNZ % reallocStep)) {
 
-	lam [k] [nnz [k]]   = level;
-	eee [k] [nnz [k]++] = rd2;
+	lam [*k] = (int         *) realloc (lam [*k], (curNNZ + reallocStep) * sizeof (int));
+	eee [*k] = (expression **) realloc (eee [*k], (curNNZ + reallocStep) * sizeof (expression *));
+      }
 
-      } else delete rd2;
-    }
+      rd2 -> realign (p); // fixes variables' domain with the problem.
+
+      lam [*k] [curNNZ]   = level;
+      eee [*k] [curNNZ++] = rd2;
+
+    } else delete rd2;
+  }
 }
 
 static void reAlloc (int nCur, int &nMax, int *&r, int *&c, int *&n, int **&l, expression ***&e) {

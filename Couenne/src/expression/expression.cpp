@@ -212,14 +212,14 @@ void exprCopy::realign (const CouenneProblem *p) {
 
     /*printf ("exprCopy::realign replaces %x with %x (", 
 	    copy_ -> Original (), p -> Var (copy_ -> Index ())); 
-    copy_ -> Original () -> print (); printf (" - ");
-    p -> Var (copy_ -> Index ()) -> print (); printf ("\n");*/
+    copy_ -> Original () -> print (); printf (" --> ");
+    p -> Var (copy_ -> Index ()) -> print (); printf (")\n");*/
 
     expression *trash = copy_;
 
     copy_ = p -> Var (copy_ -> Index ());
     delete trash;
-  }
+  } else copy_ -> realign (p);
 }
 
 /// printing method for copy expressions
@@ -238,7 +238,6 @@ void exprClone::print (std::ostream &out, bool descend) const
 void exprStore::print (std::ostream &out, bool descend) const
 {copy_ -> Original () -> print (out, descend);}
 //{out << "<"; copy_ -> print (out, descend); out << "><" << copy_ << ">"; }
-
 
 
 // /// redirect variables to proper variable vector
