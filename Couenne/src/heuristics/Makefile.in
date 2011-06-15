@@ -42,8 +42,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@COIN_HAS_CPX_TRUE@am__append_1 = -I`$(CYGPATH_W) $(CPXINCDIR)`
-@COIN_HAS_SPX_TRUE@am__append_2 = -I`$(CYGPATH_W) $(SPXINCDIR)`
+@COIN_HAS_SCIP_TRUE@am__append_1 = cons_rowcuts.cpp
+@COIN_HAS_CPX_TRUE@am__append_2 = -I`$(CYGPATH_W) $(CPXINCDIR)`
+@COIN_HAS_SPX_TRUE@am__append_3 = -I`$(CYGPATH_W) $(SPXINCDIR)`
 subdir = src/heuristics
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -57,11 +58,18 @@ CONFIG_HEADER = $(top_builddir)/src/config.h \
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneHeuristics_la_LIBADD =
+am__libCouenneHeuristics_la_SOURCES_DIST = BonInitHeuristic.cpp \
+	BonNlpHeuristic.cpp CouenneFeasPumpConstructors.cpp \
+	CouenneFeasPump.cpp CouenneFPSolveMILP.cpp \
+	CouenneFPSolveNLP.cpp CouenneFPFindSolution.cpp \
+	CouenneFPpool.cpp CouenneIterativeRounding.cpp \
+	cons_rowcuts.cpp
+@COIN_HAS_SCIP_TRUE@am__objects_1 = cons_rowcuts.lo
 am_libCouenneHeuristics_la_OBJECTS = BonInitHeuristic.lo \
 	BonNlpHeuristic.lo CouenneFeasPumpConstructors.lo \
 	CouenneFeasPump.lo CouenneFPSolveMILP.lo CouenneFPSolveNLP.lo \
 	CouenneFPFindSolution.lo CouenneFPpool.lo \
-	CouenneIterativeRounding.lo cons_rowcuts.lo
+	CouenneIterativeRounding.lo $(am__objects_1)
 libCouenneHeuristics_la_OBJECTS =  \
 	$(am_libCouenneHeuristics_la_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -75,7 +83,7 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libCouenneHeuristics_la_SOURCES)
-DIST_SOURCES = $(libCouenneHeuristics_la_SOURCES)
+DIST_SOURCES = $(am__libCouenneHeuristics_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -310,18 +318,11 @@ AUTOMAKE_OPTIONS = foreign
 noinst_LTLIBRARIES = libCouenneHeuristics.la
 
 # List all source files for this library, including headers
-libCouenneHeuristics_la_SOURCES = \
-	BonInitHeuristic.cpp \
-	BonNlpHeuristic.cpp \
-	CouenneFeasPumpConstructors.cpp \
-	CouenneFeasPump.cpp \
-	CouenneFPSolveMILP.cpp \
-	CouenneFPSolveNLP.cpp \
-	CouenneFPFindSolution.cpp \
-	CouenneFPpool.cpp \
-	CouenneIterativeRounding.cpp \
-        cons_rowcuts.cpp
-
+libCouenneHeuristics_la_SOURCES = BonInitHeuristic.cpp \
+	BonNlpHeuristic.cpp CouenneFeasPumpConstructors.cpp \
+	CouenneFeasPump.cpp CouenneFPSolveMILP.cpp \
+	CouenneFPSolveNLP.cpp CouenneFPFindSolution.cpp \
+	CouenneFPpool.cpp CouenneIterativeRounding.cpp $(am__append_1)
 
 # This is for libtool
 libCouenneHeuristics_la_LDFLAGS = $(LT_LDFLAGS)
@@ -334,8 +335,8 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) -I`$(CYGPATH_W) \
 	$(srcdir)/../expression/operators` -I`$(CYGPATH_W) \
 	$(srcdir)/../expression/partial` -I`$(CYGPATH_W) \
 	$(srcdir)/../interfaces` -I`$(CYGPATH_W) $(srcdir)/../branch` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem` $(am__append_1) \
-	$(am__append_2)
+	-I`$(CYGPATH_W) $(srcdir)/../problem` $(am__append_2) \
+	$(am__append_3)
 
 # This line is necessary to allow VPATH compilation
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

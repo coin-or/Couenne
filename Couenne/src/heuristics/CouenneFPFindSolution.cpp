@@ -317,7 +317,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
 
         /* get SCIP solution pool */
         scipsols = SCIPgetSols(scip);
-        assert(sols != NULL);
+        assert (scipsols != NULL);
 
 	if (!sol)
 	  sol = new CouNumber [nvars];

@@ -175,8 +175,10 @@ ExprHess::ExprHess (CouenneProblem *p):
     for (int j = 0; j < p -> nCons (); j++) {
 
       CouenneConstraint *c = p -> Con (j);
-      if (c -> Body () -> Type () == AUX || 
-	  c -> Body () -> Type () == VAR) 
+      enum nodeType ctype = c -> Body () -> Type ();
+
+      if (ctype == AUX || 
+	  ctype == VAR) 
 	continue;
 
       HessElemFill (i, level, deplist [level], c -> Body (), rnz, lam, eee, p, globDepList);
@@ -203,9 +205,7 @@ ExprHess::ExprHess (CouenneProblem *p):
 
     for (std::set <int>::iterator j = globDepList.begin (); j != globDepList. end (); ++j) {
 
-      if (*j > i)
-	continue;
-
+      assert (*j <= i);
       assert (rnz [*j]);
 
       reAlloc (nnz_ + 1, curSize, iRow_, jCol_, numL_, lamI_, expr_);
@@ -272,6 +272,8 @@ void HessElemFill (int i,
     *sd1 = d1  -> simplify (),         // simplified
     *rd1 = (sd1 ? sd1 : d1);           // actually used
 
+  rd1 -> realign (p); // fixes variables' domain with the problem.
+
   for (std::set <int>::iterator k = list.begin (); k != list. end (); ++k) {
 
     if (*k > i) 
@@ -280,7 +282,7 @@ void HessElemFill (int i,
     // objective depends on k and i. Is its second derivative, w.r.t. k and i, nonzero?
 
     expression 
-      *d2  = rd1 -> differentiate (*k),  // its derivative w.r.t. *k
+      *d2  = rd1 -> differentiate (*k),  // rd1's derivative w.r.t. *k
       *sd2 = d2  -> simplify (),         // simplified
       *rd2 = (sd2 ? sd2 : d2);           // actually used
 
@@ -299,7 +301,8 @@ void HessElemFill (int i,
 
       int &curNNZ = nnz [*k];
 
-      if (!curNNZ && globList.find (*k) == globList. end ())
+      if (!curNNZ && 
+	  globList.find (*k) == globList. end ())
 	globList.insert (*k);
 
       if (!(curNNZ % reallocStep)) {
