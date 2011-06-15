@@ -153,9 +153,26 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       } else {
 
-	const CouenneFPsolution &newSol = pool_ -> Queue (). top ();
-	CoinCopyN (newSol. x (), problem_ -> nVars (), iSol);
-	pool_ -> Queue (). pop ();
+         // try to find non-tabu solution in the solution pool
+         do
+         {
+            // retrieve the top solution from the pool
+            const CouenneFPsolution &newSol = pool_ -> Queue (). top ();
+            CoinCopyN (newSol. x (), problem_ -> nVars (), iSol);
+            pool_ -> Queue (). pop ();
+
+            // we found a solution that is not in the tabu list
+            if (tabuPool_. find(newSol)  == tabuPool_ . end ())
+               break;
+
+            // the pool is empty -> bail out
+            if (pool_ -> Queue ().empty())
+            {
+               delete[] iSol;
+               iSol = NULL;
+            }
+
+         } while( !pool_ -> Queue ().empty() );
       }
 
     } else tabuPool_. insert (CouenneFPsolution (problem_, iSol));

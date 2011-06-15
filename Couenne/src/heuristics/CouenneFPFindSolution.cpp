@@ -177,7 +177,10 @@ double CouenneFeasPump::findSolution (double* &sol) {
         SCIP_CALL_ABORT( SCIPaddCons(scip, cons) );
         SCIP_CALL_ABORT( SCIPreleaseCons(scip, &cons) );        
      }
-     
+
+     SCIP_CALL_ABORT( SCIPwriteOrigProblem(scip, "debug.lp", NULL, FALSE) );
+     SCIP_CALL_ABORT( SCIPwriteParams(scip, "debug.set", FALSE,TRUE) );
+
      // determine the method to solve the MILP
      if (milpMethod_ == 0 )
      {
@@ -317,7 +320,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
 
         /* get SCIP solution pool */
         scipsols = SCIPgetSols(scip);
-        assert (scipsols != NULL);
+        assert(scipsols != NULL);
 
 	if (!sol)
 	  sol = new CouNumber [nvars];
@@ -335,12 +338,15 @@ double CouenneFeasPump::findSolution (double* &sol) {
            double* tmpsol;
 
            tmpsol = new CouNumber [nvars];
+           
+           // get solution values
+           SCIP_CALL_ABORT( SCIPgetSolVals(scip, scipsols[i], nvars, vars, tmpsol) );
+           CouenneFPsolution couennesol = CouenneFPsolution (problem_, tmpsol);
 
-           // get solution values and objective
-           if(true) // TODO: check whether scipsols[i] is in tabu list
-           {
-              SCIP_CALL_ABORT( SCIPgetSolVals(scip, scipsols[i], nvars, vars, tmpsol) );
-              pool_ -> Queue (). push (CouenneFPsolution (problem_, tmpsol));
+           // add solutions to the pool if they are not in the tabu list
+           if (tabuPool_. find (couennesol) == tabuPool_ . end ()
+              ){              //              && pool_ -> Queue (). find (couennesol) == pool_ -> Queue(). end () ) {
+              pool_ -> Queue (). push (couennesol);
               nstoredsols++;
            }
         }
