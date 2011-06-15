@@ -187,7 +187,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
   double obj;
 
-  {
+  if (false) {
     static int cntr = 0;
 
     char filename [30];
