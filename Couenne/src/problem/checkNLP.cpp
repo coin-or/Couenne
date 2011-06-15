@@ -527,10 +527,10 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
       violRelUb = violAbsUb / denomUb;
       violUb = violAbsUb - precision * denomUb;
 
-#ifdef FM_USE_REL_VIOL_CONS
-      maxViol = (maxViol > violRelUb ? maxViol : violRelUb);
-#else
+#ifdef FM_USE_ABS_VIOL_CONS
       maxViol = (maxViol > violAbsUb ? maxViol : violAbsUb);
+#else
+      maxViol = (maxViol > violRelUb ? maxViol : violRelUb);
 #endif
     }
 
@@ -540,15 +540,28 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
       violRelLb = violAbsLb / denomLb;
       violLb = violAbsLb - precision * denomLb;
 
-#ifdef FM_USE_REL_VIOL_CONS
-      maxViol = (maxViol > violRelLb ? maxViol : violRelLb);
-#else
+#ifdef FM_USE_ABS_VIOL_CONS
       maxViol = (maxViol > violAbsLb ? maxViol : violAbsLb);
+#else
+      maxViol = (maxViol > violRelLb ? maxViol : violRelLb);
 #endif
     }
 
-
-#ifdef FM_USE_REL_VIOL_CONS
+#ifdef FM_USE_ABS_VIOL_CONS
+    if((violAbsUb > precision) || (violAbsLb > precision)) {
+      if (Jnlst()->ProduceOutput(Ipopt::J_MOREVECTOR, J_PROBLEM)) {
+	
+	printf ("CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, absolute violation: %g)\n",
+		i, lhs, body, rhs, CoinMax(violAbsUb, violAbsLb));
+	
+	c -> print ();
+      }
+      
+      
+#ifdef FM_TRACE_NLP
+      printf ("CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, absolute violation: %g)\n",
+	      i, lhs, body, rhs, CoinMax (violAbsUb, violAbsLb));
+#else /* not FM_USE_ABS_VIOL_CONS */
     if((violUb > 0) || (violLb > 0)) {
       if (Jnlst()->ProduceOutput(Ipopt::J_MOREVECTOR, J_PROBLEM)) {
 	
@@ -568,20 +581,8 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
 	break;
       }
     }
-#else /* not FM_USE_REL_VIOL_CONS */
-    if((violAbsUb > precision) || (violAbsLb > precision)) {
-      if (Jnlst()->ProduceOutput(Ipopt::J_MOREVECTOR, J_PROBLEM)) {
-	
-	printf ("CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, absolute violation: %g)\n",
-		i, lhs, body, rhs, CoinMax(violAbsUb, violAbsLb));
-	
-	c -> print ();
-      }
-      
-      
-#ifdef FM_TRACE_NLP
-      printf ("CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, absolute violation: %g)\n",
-	      i, lhs, body, rhs, CoinMax (violAbsUb, violAbsLb));
+
+
 #endif
 
       isFeas = false;
@@ -589,7 +590,7 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
 	break;
       }
     }
-#endif /* not FM_USE_REL_VIOL_CONS */
+#endif /* not FM_ABS_REL_VIOL_CONS */
   }
   return(isFeas);
 }

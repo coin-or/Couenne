@@ -20,7 +20,6 @@
 
 //#define TRACE_STRONG
 //#define TRACE_STRONG2
-//#define FM_MOD
 //#define FM_SORT_STRONG
 //#define FM_ALWAYS_SORT
 //#define OLD_STYLE
@@ -106,7 +105,6 @@ const CouNumber estProdEps = 1e-6;
      We can pick up a forced branch (can change bound) from whichForcedObject() and whichForcedWay()
      If we have a solution then we can pick up from goodObjectiveValue() and goodSolution()
   */
-#ifdef FM_MOD
 /*******************************************************************/
   int CouenneChooseStrong::chooseVariable (OsiSolverInterface * solver,
 					   OsiBranchingInformation *info,
@@ -564,323 +562,8 @@ const CouNumber estProdEps = 1e-6;
 
     return retval;
   }
+
 /*******************************************************************/
-#else /* not FM_MOD */
-  int CouenneChooseStrong::chooseVariable (OsiSolverInterface * solver,
-					   OsiBranchingInformation *info,
-					   bool fixVariables) {
-
-    /// Note: had to copy code from
-    /// BonChooseVariable::chooseVariable() in order to test product
-    /// thing
-
-    problem_ -> domain () -> push
-      (problem_ -> nVars (),
-       info -> solution_,
-       info -> lower_,
-       info -> upper_);
-
-    int retval;
-
-#ifdef TRACE_STRONG2
-    int pv = -1;
-    if(info->depth_ > minDepthPrint_) {
-      if(pv > -1) {
-	printf("CCS: beg: x[%d]: %10.4f  lb: %10.4f  ub: %10.4f\n",
-	       pv, solver->getColSolution()[pv], solver->getColLower()[pv], solver->getColUpper()[pv]);
-	printf("CCS: info: x[%d]: %10.4f  lb: %10.4f  ub: %10.4f\n",
-	       pv, info->solution_[pv], info->lower_[pv], info->upper_[pv]);
-	printf("CCS: problem: lb: %10.4f  ub: %10.4f\n",
-	       problem_->Lb(pv), problem_->Ub(pv));
-      }
-    }
-#endif
-
-    //int retval = BonChooseVariable::chooseVariable (solver, info, fixVariables);
-
-    // COPY of Bonmin starts here ////////////////////////////////////////////
-
-    // We assume here that chooseVariable is called once at the very
-    // beginning with fixVariables set to true.  This is then the root
-    // node.
-
-    bool isRoot = isRootNode(info);
-    int numberStrong = numberStrong_;
-    if (isRoot) {
-      numberStrong = CoinMax(numberStrong_, numberStrongRoot_);
-    }
-    if (numberUnsatisfied_) {
-      const double* upTotalChange = pseudoCosts_.upTotalChange();
-      const double* downTotalChange = pseudoCosts_.downTotalChange();
-      const int* upNumber = pseudoCosts_.upNumber();
-      const int* downNumber = pseudoCosts_.downNumber();
-      int numberBeforeTrusted = pseudoCosts_.numberBeforeTrusted();
-      int numberLeft = CoinMin(numberStrong -numberStrongDone_,numberUnsatisfied_);
-      results_.clear();
-      int returnCode=0;
-      bestObjectIndex_ = -1;
-      bestWhichWay_ = -1;
-      firstForcedObjectIndex_ = -1;
-      firstForcedWhichWay_ =-1;
-      double bestTrusted=-COIN_DBL_MAX;
-      for (int i=0;i<numberLeft;i++) {
-        int iObject = list_[i];
-        if (numberBeforeTrusted == 0||
-            i < minNumberStrongBranch_ ||
-            (
-              only_pseudo_when_trusted_ && number_not_trusted_>0 ) ||
-              ( !isRoot && (upNumber[iObject]<numberBeforeTrusted ||
-                          downNumber[iObject]<numberBeforeTrusted ))||
-              ( isRoot && (!upNumber[iObject] && !downNumber[iObject])) ) {
-
-#ifdef TRACE_STRONG
-	  if(info->depth_ > minDepthPrint_) {
-	    printf("Push object %d for strong branch\n", iObject);
-	  }
-#endif
-	  results_.push_back(Bonmin::HotInfo(solver, info,
-					     solver->objects(), iObject));
-        }
-        else {
-
-#ifdef TRACE_STRONG
-	  if(info->depth_ > minDepthPrint_) {
-	    printf("Use pseudo cost for object %d\n", iObject);
-	  }
-#endif
-
-          const OsiObject * obj = solver->object(iObject);
-          double
-	    upEstimate       = (upTotalChange[iObject]*obj->upEstimate())/upNumber[iObject],
-	    downEstimate     = (downTotalChange[iObject]*obj->downEstimate())/downNumber[iObject],
-	    MAXMIN_CRITERION = maxminCrit (info),
-	    minVal, maxVal, value;
-
-	  if (downEstimate < upEstimate) {
-	    minVal = downEstimate;
-	    maxVal = upEstimate;
-	  } else {
-	    minVal = upEstimate;
-	    maxVal = downEstimate;
-	  }
-
-	  value = 
-	    estimateProduct_ ? 
-	    ((estProdEps + minVal) * maxVal) :
-	    (       MAXMIN_CRITERION  * minVal + 
-	     (1.0 - MAXMIN_CRITERION) * maxVal);
-
-          if (value > bestTrusted) {
-            bestObjectIndex_=iObject;
-            bestWhichWay_ = upEstimate>downEstimate ? 0 : 1;
-            bestTrusted = value;
-          }
-        }
-      }
-
-      int numberFixed=0;
-
-      if (results_.size() > 0) {
-
-	// do strong branching //////////////////////////////////////////////////
-        returnCode = doStrongBranching (solver, info, results_.size(), 1);
-
-        if (bb_log_level_>=3) {
-          const char* stat_msg[] = {"NOTDON", "FEAS", "INFEAS", "NOFINI"};
-          message(SB_HEADER)<<CoinMessageEol;
-          for (unsigned int i = 0; i< results_.size(); i++) {
-            double up_change = results_[i].upChange();
-            double down_change = results_[i].downChange();
-            int up_status = results_[i].upStatus();
-            int down_status = results_[i].downStatus();
-            message(SB_RES)<<(int) i<<stat_msg[down_status+1]<<down_change
-            <<stat_msg[up_status+1]<< up_change<< CoinMessageEol;
-          }
-        }
-
-        if (returnCode >= 0 && 
-	    returnCode <= 2) {
-
-          if (returnCode)
-            returnCode = (bestObjectIndex_>=0) ? 3 : 4;
-
-          for (unsigned int i=0;i < results_.size (); i++) {
-
-	    if((results_[i].upStatus() < 0) || (results_[i].downStatus() < 0))
-	      continue;
-
-
-            if((results_[i].upStatus() < 0) || (results_[i].downStatus() < 0)) {
-	      continue;
-	    }
-
-            int iObject = results_[i].whichObject();
-	    
-	    ///////////////////////////////////////////////////////////////////
-
-            double upEstimate;
-
-            if (results_[i].upStatus()!=1) {
-	      assert (results_[i].upStatus()>=0);
-              upEstimate = results_[i].upChange();
-            }
-            else {
-              // infeasible - just say expensive
-              if (info->cutoff_<1.0e50)
-                upEstimate = 2.0*(info->cutoff_-info->objectiveValue_);
-              else
-                upEstimate = 2.0*fabs(info->objectiveValue_);
-              if (firstForcedObjectIndex_ <0) {
-                // first fixed variable
-                firstForcedObjectIndex_ = iObject;
-                firstForcedWhichWay_ =0;
-              }
-
-              numberFixed++;
-
-              if (fixVariables) {
-
-                const OsiObject * obj = solver->objects()[iObject];
-		OsiBranchingObject * branch = obj -> createBranch (solver, info, 0);
-		branch -> branch (solver);
-		delete branch;
-              }
-            }
-
-	    ///////////////////////////////////////////////////////////////////
-
-            double downEstimate;
-
-            if (results_[i].downStatus()!=1) {
-	      assert (results_[i].downStatus()>=0);
-	      downEstimate = results_[i].downChange();
-            }
-            else {
-              // infeasible - just say expensive
-              if (info->cutoff_<1.0e50)
-                downEstimate = 2.0*(info->cutoff_-info->objectiveValue_);
-              else
-                downEstimate = 2.0*fabs(info->objectiveValue_);
-              if (firstForcedObjectIndex_ <0) {
-                firstForcedObjectIndex_ = iObject;
-                firstForcedWhichWay_ =1;
-              }
-              numberFixed++;
-              if (fixVariables) {
-
-                const OsiObject * obj = solver->objects()[iObject];
-		OsiBranchingObject * branch = obj -> createBranch (solver, info, 1);
-		branch -> branch (solver);
-		delete branch;
-              }
-            }
-
-            double
-	      MAXMIN_CRITERION = maxminCrit (info),
-	      minVal, maxVal, value;
-
-	    if (downEstimate < upEstimate) {
-	      minVal = downEstimate;
-	      maxVal = upEstimate;
-	    } else {
-	      minVal = upEstimate;
-	      maxVal = downEstimate;
-	    }
-
-	    value = 
-	      estimateProduct_ ? 
-	      ((estProdEps + minVal) * maxVal) :
-	      (       MAXMIN_CRITERION  * minVal + 
-	       (1.0 - MAXMIN_CRITERION) * maxVal);
-
-	    if (value>bestTrusted) {
-              bestTrusted = value;
-              bestObjectIndex_ = iObject;
-              bestWhichWay_ = upEstimate>downEstimate ? 0 : 1;
-              // but override if there is a preferred way
-              const OsiObject * obj = solver->object(iObject);
-              if (obj->preferredWay()>=0&&obj->infeasibility())
-                bestWhichWay_ = obj->preferredWay();
-              if (returnCode)
-                returnCode = 2;
-            }
-          }
-        }
-        else if (returnCode==3) {
-          // max time - just choose one
-          bestObjectIndex_ = list_[0];
-          bestWhichWay_ = 0;
-          returnCode=0;
-        }
-      }
-      else {
-        bestObjectIndex_=list_[0];
-      }
-    
-      if(bestObjectIndex_ >=0) {
-        OsiObject * obj = solver->objects()[bestObjectIndex_];
-        obj->setWhichWay(bestWhichWay_);
-        message(BRANCH_VAR)<<bestObjectIndex_<< bestWhichWay_ <<CoinMessageEol;
-	CouenneObject *co =  dynamic_cast <CouenneObject *>(solver->objects()[bestObjectIndex_]);
-
-	int objectInd = -1;
-	if(co) {
-	  objectInd = co->Reference()->Index();
-	}
-	else {
-	  objectInd = obj->columnNumber();
-	}
-
-#ifdef TRACE_STRONG
-	if(info->depth_ > minDepthPrint_) {
-	  if(objectInd >= 0) {
-            double vUb = solver->getColUpper()[objectInd];                      
-            double vLb = solver->getColLower()[objectInd];                      
-            double vSolI = info->solution_[objectInd];                          
-            double vSolS = solver->getColSolution()[objectInd];                 
-            printf("Branch on object %d (var: %d): solInfo: %10.4f  SolSolver: \
-%10.4f low: %10.4f  up: %10.4f\n",                                              
-                   bestObjectIndex_, objectInd, vSolI, vSolS, vLb, vUb);        
-	  }
-	  else {
-	    printf("Branch on object %d (var: -1)\n", bestObjectIndex_);	    
-	  }
-	}
-#endif
-
-      }
-
-      message(CHOSEN_VAR)<<bestObjectIndex_<<CoinMessageEol;
-
-      if (numberFixed==numberUnsatisfied_&&numberFixed)
-        returnCode=4;
-      retval = returnCode;
-    }
-    else {
-      retval = 1;
-    }
-
-    // COPY of Bonmin ends here //////////////////////////////////////////////
-
-#ifdef TRACE_STRONG2
-    if(info->depth_ > minDepthPrint_) {
-      if(pv > -1) {
-	printf("CCS: end: x[%d]: %10.4f  lb: %10.4f  ub: %10.4f\n",
-	       pv, solver->getColSolution()[pv], solver->getColLower()[pv], solver->getColUpper()[pv]);
-	printf("CCS: info: x[%d]: %10.4f  lb: %10.4f  ub: %10.4f\n",
-	       pv, info->solution_[pv], info->lower_[pv], info->upper_[pv]);
-	printf("CCS: problem: lb: %10.4f  ub: %10.4f\n",
-	       problem_->Lb(pv), problem_->Ub(pv));
-      }                                                   
-      printf("retval: %d\n", retval);
-    }
-#endif
-    problem_ -> domain () -> pop ();
-
-    return retval;
-    }
-#endif /* not FM_MOD */
-
   // Sets up strong list and clears all if initialize is true.
   // Returns number of infeasibilities.
   int CouenneChooseStrong::setupList (OsiBranchingInformation *info, bool initialize) {
@@ -1286,7 +969,21 @@ const CouNumber estProdEps = 1e-6;
 	    }
 #endif
 	  }
-	
+
+#ifdef FM_ALWAYS_SORT
+	  int from = 0, upto = 1;
+	  while(upto < card_vPriority) {
+	    while(vPriority[upto] == vPriority[from]) {
+	      upto++;
+	      if(upto == card_vPriority) {
+		break;
+	      }
+	    }
+	    CoinSort_2(useful_+from, useful_+upto, list_+from);
+	    from = upto;
+	    upto = from+1;
+	  }
+#else /* not FM_ALWAYS_SORT */
 	  if(sortUpTo > maximumStrong) {
 	    // compute from, upto such that 
 	    // vPriority[k] == vPriority[maximumStrong] for k in [from..upto-1]
@@ -1304,6 +1001,8 @@ const CouNumber estProdEps = 1e-6;
 	    // useful_[from]..useful_[upto-1]
 	    CoinSort_2(useful_+from, useful_+upto, list_+from);
 	  }
+
+#endif /* not FM_ALWAYS_SORT */
 	}
 
 #ifdef FM_CHECK
