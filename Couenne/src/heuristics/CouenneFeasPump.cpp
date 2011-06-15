@@ -46,7 +46,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     return 0;
 
   problem_ -> Jnlst () -> Printf 
-    (J_ERROR, J_NLPHEURISTIC, "=================== Feasibility Pump =======================\n");
+    (J_ERROR, J_NLPHEURISTIC, "FP: start ===================\n");
 
   // This FP works as follows:
   //
@@ -114,8 +114,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     double z = solveMILP (nSol, iSol);
 
-    if (false && iSol)
-      pool_ -> Queue (). push (CouenneFPsolution (problem_, iSol));
+    // placeholder for how to use pool
+    //if (false && iSol)
+    //pool_ -> Queue (). push (CouenneFPsolution (problem_, iSol));
 
     // if no MILP solution was found, bail out
 
@@ -140,31 +141,31 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       // solution is MINLP feasible! Save it.
 
-      if (z < problem_ -> getCutOff ()) {
-
-	retval = 1;
-	objVal = z;
+      retval = 1;
+      objVal = z;
 
 #ifdef FM_CHECKNLP2
 #ifdef FM_TRACE_OPTSOL
-	problem_->getRecordBestSol()->update();
-	best = problem_->getRecordBestSol()->getSol();
-	objVal = problem_->getRecordBestSol()->getVal();
+      problem_->getRecordBestSol()->update();
+      best = problem_->getRecordBestSol()->getSol();
+      objVal = problem_->getRecordBestSol()->getVal();
 #else /* not FM_TRACE_OPTSOL */
-	best = problem_->getRecordBestSol()->getModSol();
-	objVal = z;
+      best = problem_->getRecordBestSol()->getModSol();
+      objVal = z;
 #endif /* not FM_TRACE_OPTSOL */
 #else /* not FM_CHECKNLP2 */
 #ifdef FM_TRACE_OPTSOL
-	problem_->getRecordBestSol()->update(iSol, problem_->nVars(),
-					     z, problem_->getFeasTol());
-	best = problem_->getRecordBestSol()->getSol();
-	objVal = problem_->getRecordBestSol()->getVal();
+      problem_->getRecordBestSol()->update(iSol, problem_->nVars(),
+					   z, problem_->getFeasTol());
+      best = problem_->getRecordBestSol()->getSol();
+      objVal = problem_->getRecordBestSol()->getVal();
 #else /* not FM_TRACE_OPTSOL */
-	best   = iSol;
-	objVal = z;
+      best   = iSol;
+      objVal = z;
 #endif /* not FM_TRACE_OPTSOL */
 #endif /* not FM_CHECKNLP2 */
+
+      if (z < problem_ -> getCutOff ()) {
 
 	problem_ -> setCutOff (objVal);
 
@@ -199,7 +200,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  if (*plb > *mlb++) milp_ -> setColLower (j, *plb);
 	  if (*pub < *mub++) milp_ -> setColUpper (j, *pub);
 	}
-
       }
 
       break;
@@ -259,11 +259,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 #endif  /* not FM_CHECKNLP2 */
     }
 
-    if (nSol &&
-	isChecked &&
-	(z < problem_ -> getCutOff ())) {
+    if (nSol &&	isChecked) {
       
       retval = 1;
+      objVal = z;
 
 #ifdef FM_CHECKNLP2
 #ifdef FM_TRACE_OPTSOL
@@ -286,24 +285,27 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 #endif /* not FM_TRACE_OPTSOL */
 #endif /* not FM_CHECKNLP2 */
       
-      problem_ -> setCutOff (objVal);
+      if (z < problem_ -> getCutOff ()) {
 
-      t_chg_bounds *chg_bds = NULL;
+	problem_ -> setCutOff (objVal);
 
-      if (objInd >= 0) {
+	t_chg_bounds *chg_bds = NULL;
+
+	if (objInd >= 0) {
 	
-	chg_bds = new t_chg_bounds [problem_ -> nVars ()];
-	chg_bds [objInd].setUpper (t_chg_bounds::CHANGED); 
+	  chg_bds = new t_chg_bounds [problem_ -> nVars ()];
+	  chg_bds [objInd].setUpper (t_chg_bounds::CHANGED); 
+	}
+
+	// if bound tightening clears the whole feasible set, stop
+	bool is_still_feas = problem_ -> btCore (chg_bds);
+
+	if (chg_bds) 
+	  delete [] chg_bds;
+
+	if (!is_still_feas)
+	  break;
       }
-
-      // if bound tightening clears the whole feasible set, stop
-      bool is_still_feas = problem_ -> btCore (chg_bds);
-
-      if (chg_bds) 
-	delete [] chg_bds;
-
-      if (!is_still_feas)
-	break;
     }
 
     if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC))
@@ -329,7 +331,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 				   problem_ -> domain () -> x  (),
 				   problem_ -> domain () -> lb (),
 				   problem_ -> domain () -> ub ());
-
 
     fixIntVariables (best);
     nlp_ -> setInitSol (best);
@@ -401,16 +402,16 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     }
   }
 
+  if (retval > 0) {
 
-  if ((retval > 0) &&
-      problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC)) {
+    if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC)) {
 
-    printf ("returning MINLP feasible solution:\n");
-    printDist (problem_, best, nSol);
-  }
+      printf ("FP: returning MINLP feasible solution:\n");
+      printDist (problem_, best, nSol);
+    }
 
-  if (retval > 0) 
     CoinCopyN (best, problem_ -> nVars (), newSolution);
+  }
 
   if (iSol) delete [] iSol;
   if (nSol) delete [] nSol;
@@ -424,16 +425,19 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   delete milp_;
   milp_ = NULL;
 
+  problem_ -> Jnlst () -> Printf 
+    (J_ERROR, J_NLPHEURISTIC, "FP: done ===================\n");
+
   return retval;
 }
 
-void printDistSingle (CouenneProblem *p,
-		      int n, double *v, 
-		      double &norm, 
-		      int &nInfI, 
-		      int &nInfN, 
-		      double &infI, 
-		      double &infN) {
+void compDistSingle (CouenneProblem *p,
+		     int n, double *v, 
+		     double &norm, 
+		     int &nInfI, 
+		     int &nInfN, 
+		     double &infI, 
+		     double &infN) {
 
   p -> domain () -> push (n, v, NULL, NULL);
 
@@ -490,30 +494,35 @@ void printDistSingle (CouenneProblem *p,
 
 void printDist (CouenneProblem *p, double *iSol, double *nSol) {
 
-  int nInfII, nInfNI, nInfIN, nInfNN;
+  int nInfII = -1, nInfNI = -1, nInfIN = -1, nInfNN = -1;
 
-  double normI, normN, dist = 0., 
-    infII, infNI,
-    infIN, infNN;
+  double 
+    dist  = -1., 
+    normI = -1., normN = -1., 
+    infII = -1., infNI = -1.,
+    infIN = -1., infNN = -1.;
 
-  if (iSol) printDistSingle (p, p -> nVars (), iSol, normI, nInfII, nInfNI, infII, infNI);
-  if (nSol) printDistSingle (p, p -> nVars (), nSol, normN, nInfIN, nInfNN, infIN, infNN);
+  if (iSol) compDistSingle (p, p -> nVars (), iSol, normI, nInfII, nInfNI, infII, infNI);
+  if (nSol) compDistSingle (p, p -> nVars (), nSol, normN, nInfIN, nInfNN, infIN, infNN);
   
-  if (iSol && nSol)
+  if (iSol && nSol) {
+
+    dist = 0.;
 
     for (int i = p -> nVars (); i--;)
       dist += 
 	(iSol [i] - nSol [i]) * 
 	(iSol [i] - nSol [i]);
 
-  dist = sqrt (dist);
+    dist = sqrt (dist);
+  }
 
   printf ("FP: ");
 
-  printf ("MILP norm i:%e n:%e dist %e #inf i:%4d n:%4d max inf i:%e n:%e ", 
+  printf ("IP norm i:%e n:%e dist %e #inf i:%4d n:%4d max inf i:%e n:%e ", 
 	  normI, normN, dist, nInfII, nInfNI, infII, infNI);
 
-  printf ("NLP #inf i:%4d n:%4d max inf i:%e n:%e\n", 
+  printf ("NL #inf i:%4d n:%4d max inf i:%e n:%e\n", 
 	  nInfIN, nInfNN, infIN, infNN);
 }
 
@@ -522,7 +531,7 @@ void printDist (CouenneProblem *p, double *iSol, double *nSol) {
 
 void printCmpSol (int n, double *iSol, double *nSol, int direction) {
   
-  printf ("i:%x n:%x\n### ", iSol, nSol);
+  printf ("i:%p n:%p\n### ", iSol, nSol);
 
   double 
     distance = 0.,

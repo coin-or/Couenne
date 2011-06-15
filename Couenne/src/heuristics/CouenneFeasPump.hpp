@@ -19,6 +19,8 @@
 
 #include "CouenneConfig.h"
 
+#include "CouenneFPpool.hpp"
+
 #include "IpOptionsList.hpp"
 
 #ifdef COIN_HAS_SCIP
@@ -46,7 +48,6 @@ namespace Couenne {
   class CouenneProblem;
   class CouenneCutGenerator;
   class CouenneTNLP;
-  class CouenneFPpool;
 
   /// An implementation of the Feasibility pump that uses
   /// linearization and Ipopt to find the two sequences of points.
@@ -154,6 +155,9 @@ namespace Couenne {
 
     /// Pool of solutions
     CouenneFPpool *pool_;
+
+    /// Solutions to avoid
+    std::set <CouenneFPsolution, compareSol> tabuPool_;
 
     /// These methods can be used to solve the MILP, from the most
     /// expensive, exact method to a cheap, inexact one:

@@ -87,7 +87,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
     options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_, "couenne."); 
     options -> GetIntegerValue ("feas_pump_poolcomp",   compareTerm, "couenne."); 
 
-    pool_ = new CouenneFPpool ((enum what_to_compare) compareTerm);
+    pool_     = new CouenneFPpool ((enum what_to_compare) compareTerm);
 
 #ifdef COIN_HAS_SCIP
     useSCIP_ = (s == "yes");
@@ -96,11 +96,10 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 #else
     if (s == "yes") 
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_usescip to true, but SCIP is not installed.\n");
-    if (milpMethod_ >= 0)
-      problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_milpmethod, but SCIP is not installed.\n");
 #endif
-  } else 
-    pool_ = new CouenneFPpool (SUM_NINF);
+
+  } else
+    pool_     = new CouenneFPpool (SUM_NINF);
 
   setHeuristicName ("Couenne Feasibility Pump");
 
@@ -129,6 +128,11 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
 
   if (other. pool_)
     pool_ = new CouenneFPpool (*(other. pool_));
+
+  for (std::set <CouenneFPsolution, compareSol>::iterator i = other.tabuPool_.begin (); 
+       i != other.tabuPool_.end ();
+       ++i)
+    tabuPool_. insert (CouenneFPsolution (*i));
 
   initIpoptApp ();
 }
@@ -164,6 +168,11 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     if (rhs. pool_)
       pool_ = new CouenneFPpool (*(rhs. pool_));
 
+    for (std::set <CouenneFPsolution, compareSol>::iterator i = rhs.tabuPool_.begin (); 
+	 i != rhs.tabuPool_.end ();
+	 ++i)
+      tabuPool_. insert (CouenneFPsolution (*i));
+
     initIpoptApp ();
   }
 
@@ -176,6 +185,7 @@ CouenneFeasPump::~CouenneFeasPump () {
 
   if (pool_) delete pool_;
   if (app_)  delete app_;
+
   //if (nlp_) delete nlp_; // already deleted by "delete app_;"
 }
 
@@ -225,6 +235,8 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 /// Reads a (possibly fractional) solution and fixes the integer
 /// components in the nonlinear problem for later re-solve
 void CouenneFeasPump::fixIntVariables (double *sol) {
+
+  assert (sol);
 
   for (int i = problem_ -> nVars (); i--;)
 

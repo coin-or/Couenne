@@ -9,22 +9,27 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
+#include "CoinHelperFunctions.hpp"
+
+#include "CouenneProblem.hpp"
 #include "CouenneFPpool.hpp"
 #include "CouenneExprVar.hpp"
 #include "CouenneExprAux.hpp"
+
+const double COMP_TOLERANCE = COUENNE_EPS;
 
 using namespace Couenne;
 
 /// CouenneProblem-aware constructor
 CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x):
 
-  x_          (CoinCopyOfArray (x, p -> nVars ())),
-  n_          (p -> nVars ()),
-  nNLinf_     (0),
-  nIinf_      (0),
-  objVal_     (0.),
-  maxNLinf_   (0.),
-  maxIinf_    (0.) {
+  x_        (CoinCopyOfArray (x, p -> nVars ())),
+  n_        (p -> nVars ()),
+  nNLinf_   (0),
+  nIinf_    (0),
+  objVal_   (0.),
+  maxNLinf_ (0.),
+  maxIinf_  (0.) {
 
   for (std::vector <exprVar *>::iterator i = p -> Variables (). begin (); 
        i != p -> Variables (). end ();
@@ -148,4 +153,21 @@ CouenneFPpool &CouenneFPpool::operator= (const CouenneFPpool &src) {
   queue_ = src.queue_;
 
   return *this;
+}
+
+/// compare, base version
+bool compareSol::operator() (const CouenneFPsolution &one, 
+			     const CouenneFPsolution &two) {
+
+  register const double
+    *x1 = one.x (),
+    *x2 = two.x ();
+
+  register int i = one.n ();
+
+  while (i--)
+    if ((*x1++ - *x2++) < COMP_TOLERANCE)
+      return true;
+
+  return false;
 }

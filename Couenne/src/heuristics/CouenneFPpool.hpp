@@ -4,18 +4,23 @@
  * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
  * Purpose: Pool of MILP- (and why not? NLP-) feasible solutions for
- *          restart use in the Feasibility Pump
+ *          restart use in the Feasibility Pump and sets of solutions
+ *          to be used as tabu list
  * 
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include "CouenneFeasPump.hpp"
-#include "CouenneProblem.hpp"
-#include "CouenneProblemElem.hpp"
-#include "CouenneCutGenerator.hpp"
-#include "CouenneTNLP.hpp"
+#ifndef CouenneFPpool_hpp
+#define CouenneFPpool_hpp
+
+#include <queue>
+
+#include "CouenneTypes.hpp"
+#include "CoinFinite.hpp"
 
 namespace Couenne {
+
+  class CouenneProblem;
 
   /// what term to compare: the sum of infeasibilities, the sum of
   /// numbers of infeasible terms, or the objective function
@@ -54,6 +59,12 @@ namespace Couenne {
 
     ~CouenneFPsolution (); ///< destructor
 
+    /// returns size
+    const int n () const {return n_;}
+
+    /// returns vector
+    const double *x () const {return x_;}
+
     /// basic comparison procedure -- what to compare depends on user's choice
     bool compare (const CouenneFPsolution &other, enum what_to_compare comparedTerm) const;
   };
@@ -63,6 +74,15 @@ namespace Couenne {
   inline bool operator< (const CouenneFPsolution &one, 
 			 const CouenneFPsolution &two)
   {return one.compare (two, comparedTerm_);}
+
+
+  /// class for comparing solutions (used in tabu list)
+  class compareSol {
+
+  public:
+    bool operator () (const CouenneFPsolution &one, 
+		      const CouenneFPsolution &two);
+  };
 
 
   /// Pool of solutions
@@ -90,3 +110,5 @@ namespace Couenne {
     {return queue_;}
   };
 }
+
+#endif
