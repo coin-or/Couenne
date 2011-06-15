@@ -31,9 +31,9 @@ libCouenne_la_LIBADD = \
 	./bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
 	./util/libCouenneUtil.la \
 	./disjunctive/libCouenneDisjunctive.la \
-	./cut/sdpcuts/libCouenneSdpCuts.la \
 	./cut/crossconv/libCouenneCrossConv.la
 
+#	./cut/sdpcuts/libCouenneSdpCuts.la
 #	./ellipcuts/libCouenneEllipCuts.la 
 #	./readnl/libCouenneReadnl.la 
 

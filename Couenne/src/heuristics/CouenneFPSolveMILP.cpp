@@ -187,6 +187,15 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
   double obj;
 
+  {
+    static int cntr = 0;
+
+    char filename [30];
+    sprintf (filename, "fp-milp%04d", cntr++);
+
+    milp_ -> writeLp (filename);
+  }
+
   obj = findSolution (iSol);
 
   // delete last rows and add them from scratch (common block below)

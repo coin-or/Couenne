@@ -26,13 +26,13 @@ SUBDIRS += src/standardize \
 	  src/convex \
 	  src/branch \
 	  src/disjunctive \
-	  src/cut/sdpcuts \
 	  src/cut/crossconv \
 	  src/interfaces \
 	  src/heuristics \
 	  src \
 	  src/main 
 
+#	  src/cut/sdpcuts
 #	  src/cut/ellipcuts
 
 # We don't want to compile the test subdirectory, unless the test target is
