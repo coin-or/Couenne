@@ -323,6 +323,4 @@ void CouenneSolverInterface<T>::solveFromHotStart () {
   if (isProvenDualInfeasible   ()) knowDualInfeasible_ = true;
 }
 
-//class CouenneSolverInterface <OsiClpSolverInterface>;
-
 }

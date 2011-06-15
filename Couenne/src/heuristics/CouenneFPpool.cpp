@@ -21,15 +21,27 @@ const double COMP_TOLERANCE = COUENNE_EPS;
 using namespace Couenne;
 
 /// CouenneProblem-aware constructor
-CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x):
+CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x, bool copied):
 
-  x_        (CoinCopyOfArray (x, p -> nVars ())),
+  x_        (NULL),
   n_        (p -> nVars ()),
   nNLinf_   (0),
   nIinf_    (0),
   objVal_   (0.),
   maxNLinf_ (0.),
-  maxIinf_  (0.) {
+  maxIinf_  (0.),
+  copied_   (copied) {
+
+  /// NOTE: the copied flag means we won't use this solution for
+  /// anything but testing it against a tabu list, so we don't need to
+  /// perform all checks
+
+  if (copied_) {
+    x_ = x;
+    return;
+  }
+
+  x_ = CoinCopyOfArray (x, p -> nVars ());
 
   for (std::vector <exprVar *>::iterator i = p -> Variables (). begin (); 
        i != p -> Variables (). end ();
@@ -93,7 +105,8 @@ CouenneFPsolution::CouenneFPsolution (CouNumber *x,
   nIinf_      (nIinf),
   objVal_     (objVal),
   maxNLinf_   (maxNLinf),
-  maxIinf_    (maxIinf) {}
+  maxIinf_    (maxIinf),
+  copied_     (false) {}
 
 /// copy constructor
 CouenneFPsolution::CouenneFPsolution (const CouenneFPsolution &src):
@@ -103,7 +116,8 @@ CouenneFPsolution::CouenneFPsolution (const CouenneFPsolution &src):
   nIinf_      (src.nIinf_),
   objVal_     (src.objVal_),
   maxNLinf_   (src.maxNLinf_),
-  maxIinf_    (src.maxIinf_) {}
+  maxIinf_    (src.maxIinf_),
+  copied_     (false) {}
 
 
 /// assignment
@@ -116,6 +130,7 @@ CouenneFPsolution &CouenneFPsolution::operator= (const CouenneFPsolution &src) {
   objVal_    = src.objVal_;
   maxNLinf_  = src.maxNLinf_;
   maxIinf_   = src.maxIinf_;
+  copied_    = false;
 
   return *this;
 }
@@ -123,7 +138,7 @@ CouenneFPsolution &CouenneFPsolution::operator= (const CouenneFPsolution &src) {
 /// destructor
 CouenneFPsolution::~CouenneFPsolution () {
 
-  if (x_)
+  if (x_ && !copied_)
     delete [] x_;
 }
 

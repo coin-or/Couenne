@@ -13,7 +13,7 @@
 #include "CoinTime.hpp"
 #include "CoinHelperFunctions.hpp"
 
-#include "CouenneExprVar.hpp"
+//#include "CouenneExprVar.hpp"
 #include "CouenneExprAux.hpp"
 #include "CouenneFeasPump.hpp"
 #include "CouenneProblem.hpp"
@@ -21,7 +21,6 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneTNLP.hpp"
 #include "CouenneFPpool.hpp"
-
 #include "CouenneRecordBestSol.hpp"
 
 using namespace Couenne;
@@ -115,8 +114,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     double z = solveMILP (nSol, iSol);
 
     // placeholder for how to use pool
-    //if (false && iSol)
-    //pool_ -> Queue (). push (CouenneFPsolution (problem_, iSol));
 
     // if no MILP solution was found, bail out
 
@@ -124,6 +121,44 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       break;
 
     bool isChecked = false;
+
+    // if a solution was found, but it is in the tabu list, then we
+    // have two choices:
+    //
+    // 1) the pool is empty: do a round of cuts and repeat;
+    //
+    // 2) the pool is nonempty: extract the best solution from the
+    //    pool and use it instead
+
+    CouenneFPsolution checkedSol (problem_, iSol, false); // false is for not allocating space for this
+
+    if (tabuPool_. find (checkedSol) != tabuPool_ . end ()) {
+
+      if (pool_ -> Queue (). empty ()) {
+
+	OsiCuts cs;
+
+	problem_   -> domain () -> push (milp_);
+	couenneCG_ -> genRowCuts (*milp_, cs, 0, NULL); // remaining three arguments NULL by default
+	problem_   -> domain () -> pop ();
+
+	if (cs.sizeRowCuts ()) {
+
+	  milp_ -> applyCuts (cs);
+
+	  if (nSep++ < numConsCutPasses)
+	    continue;
+
+	} else break; // nothing left to do, just bail out
+
+      } else {
+
+	const CouenneFPsolution &newSol = pool_ -> Queue (). top ();
+	CoinCopyN (newSol. x (), problem_ -> nVars (), iSol);
+	pool_ -> Queue (). pop ();
+      }
+
+    } else tabuPool_. insert (CouenneFPsolution (problem_, iSol));
 
 #ifdef FM_CHECKNLP2
     isChecked = problem_ -> checkNLP2 (iSol, 0, false, // do not care about obj 
@@ -237,6 +272,12 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     z = solveNLP (iSol, nSol); 
 
+    if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC)) {
+
+      printDist   (problem_,             iSol, nSol);
+      printCmpSol (problem_ -> nVars (), iSol, nSol, 0);
+    }
+
     if (z > COIN_DBL_MAX/2) // something went wrong in the NLP, bail out
       break;
 
@@ -307,9 +348,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  break;
       }
     }
-
-    if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC))
-      printDist (problem_, iSol, nSol);
 
   } while ((niter++ < maxIter_) && 
 	   (retval == 0));
@@ -531,7 +569,8 @@ void printDist (CouenneProblem *p, double *iSol, double *nSol) {
 
 void printCmpSol (int n, double *iSol, double *nSol, int direction) {
   
-  printf ("i:%p n:%p\n### ", iSol, nSol);
+  printf ("i:%p n:%p\nFP # ", 
+	  (void *) iSol, (void *) nSol);
 
   double 
     distance = 0.,
@@ -544,7 +583,7 @@ void printCmpSol (int n, double *iSol, double *nSol, int direction) {
   for (int i=0; i<n; i++) {
 
     if (i && !(i % WRAP))
-      printf ("\n### ");
+      printf ("\nFP # ");
 
     double 
       iS = iSol ? iSol [i] : 12345.,

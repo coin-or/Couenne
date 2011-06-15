@@ -39,9 +39,15 @@ namespace Couenne {
     CouNumber  maxNLinf_; ///< maximum NL      infeasibility
     CouNumber  maxIinf_;  ///< maximum integer infeasibility
 
+    /// This is a temporary copy, not really a solution holder. As a
+    /// result, all the above members are meaningless for copied
+    /// solutions
+
+    bool       copied_;   
+
   public:
 
-    CouenneFPsolution (CouenneProblem *p, CouNumber *x); ///< CouenneProblem-aware constructor
+    CouenneFPsolution (CouenneProblem *p, CouNumber *x, bool copied = false); ///< CouenneProblem-aware constructor
 
     /// independent constructor --- must provide other data as no
     /// CouenneProblem to compute them

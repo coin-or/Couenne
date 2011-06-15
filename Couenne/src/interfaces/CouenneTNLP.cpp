@@ -202,7 +202,7 @@ bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
 // overload this method to return the variables linearity
 // (TNLP::LINEAR or TNLP::NON_LINEAR). The var_types array should be
 // allocated with length at least n. (default implementation just
-// return false and does not fill the array).
+// returns false and does not fill the array).
 bool CouenneTNLP::get_variables_linearity (Index n, Ipopt::TNLP::LinearityType* var_types) {
 
   CoinFillN (var_types, n, Ipopt::TNLP::LINEAR);
@@ -215,7 +215,7 @@ bool CouenneTNLP::get_variables_linearity (Index n, Ipopt::TNLP::LinearityType* 
 
 // overload this method to return the constraint linearity.  array
 // should be alocated with length at least n. (default implementation
-// just return false and does not fill the array).
+// just returns false and does not fill the array).
 bool CouenneTNLP::get_constraints_linearity (Index m, Ipopt::TNLP::LinearityType* const_types) {
 
   // constraints
