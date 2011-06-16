@@ -30,9 +30,9 @@ libCouenne_la_LIBADD = \
 	./bound_tightening/libCouenneBoundTightening.la \
 	./bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
 	./util/libCouenneUtil.la \
-	./disjunctive/libCouenneDisjunctive.la \
-	./cut/crossconv/libCouenneCrossConv.la
+	./disjunctive/libCouenneDisjunctive.la 
 
+#	./cut/crossconv/libCouenneCrossConv.la
 #	./cut/sdpcuts/libCouenneSdpCuts.la
 #	./ellipcuts/libCouenneEllipCuts.la 
 #	./readnl/libCouenneReadnl.la 
@@ -154,16 +154,17 @@ includecoin_HEADERS = \
 	problem/CouenneRecordBestSol.hpp \
 	expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp \
-	cut/crossconv/CouenneCrossConv.hpp \
-	cut/sdpcuts/CouenneSdpCuts.hpp \
-	cut/sdpcuts/dsyevx_wrapper.hpp \
-	cut/sdpcuts/linquad_cuts.hpp \
-	cut/sdpcuts/populate.hpp \
-	cut/sdpcuts/quadratic_cuts_check.hpp \
-	cut/sdpcuts/rlt_cuts.hpp
+	convex/CouenneCutGenerator.hpp
 
-#	ellipcuts/CouenneEllipCuts.hpp 
+# cut/crossconv/CouenneCrossConv.hpp
+# cut/sdpcuts/CouenneSdpCuts.hpp 
+# cut/sdpcuts/dsyevx_wrapper.hpp 
+# cut/sdpcuts/linquad_cuts.hpp 
+# cut/sdpcuts/populate.hpp 
+# cut/sdpcuts/quadratic_cuts_check.hpp 
+# cut/sdpcuts/rlt_cuts.hpp
+
+# ellipcuts/CouenneEllipCuts.hpp 
 
 if COIN_HAS_NTY
 includecoin_HEADERS += branch/Nauty.h

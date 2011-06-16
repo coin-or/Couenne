@@ -19,6 +19,13 @@
 
 #include "CouenneFPpool.hpp"
 
+#ifdef COIN_HAS_SCIP
+/* general SCIP includes */
+#include "scip/scip.h"
+#include "scip/cons_linear.h"
+#include "scip/scipdefplugins.h"
+#endif
+
 using namespace Couenne;
 
 #define NUMERICS_THRES 1e19

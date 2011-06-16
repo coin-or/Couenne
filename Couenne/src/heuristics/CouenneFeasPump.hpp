@@ -23,12 +23,7 @@
 
 #include "IpOptionsList.hpp"
 
-#ifdef COIN_HAS_SCIP
-/* general SCIP includes */
-#include "scip/scip.h"
-#include "scip/cons_linear.h"
-#include "scip/scipdefplugins.h"
-#endif
+struct Scip;
 
 namespace Osi {
   class OsiSolverInterface;
@@ -93,7 +88,7 @@ namespace Couenne {
 
 #ifdef COIN_HAS_SCIP
     /// checks if val is above a threshold for finiteness
-    void checkInfinity (SCIP *scip, SCIP_Real val, double infinity);
+    void checkInfinity (struct Scip *scip, double val, double infinity);
 #endif
 
     /// find integer (possibly NLP-infeasible) point isol closest

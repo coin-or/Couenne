@@ -163,14 +163,14 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 	    (u - brpt > .5));
 
     if ((brpt - l > .5) &&
-	(u - brpt > .5) && // brpt is integer interior point of [l,u]
+	(u - brpt > .5)) {// brpt is integer interior point of [l,u]
 
-	!branchIndex_) { // if this is the first branch operation
+      if (!branchIndex_) { // if this is the first branch operation
 
-      if (!way) brpt -= (1. - COUENNE_EPS);
-      else      brpt += (1. - COUENNE_EPS);
+	if (!way) brpt -= (1. - COUENNE_EPS);
+	else      brpt += (1. - COUENNE_EPS);
+      }
     } 
-
     else if (u - brpt > .5) {if  (way) brpt += (1. - COUENNE_EPS);} 
     else if (brpt - l > .5) {if (!way) brpt -= (1. - COUENNE_EPS);}
   }

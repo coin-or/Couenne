@@ -46,7 +46,15 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 
-#	ellipcuts/CouenneEllipCuts.hpp 
+# cut/crossconv/CouenneCrossConv.hpp
+# cut/sdpcuts/CouenneSdpCuts.hpp 
+# cut/sdpcuts/dsyevx_wrapper.hpp 
+# cut/sdpcuts/linquad_cuts.hpp 
+# cut/sdpcuts/populate.hpp 
+# cut/sdpcuts/quadratic_cuts_check.hpp 
+# cut/sdpcuts/rlt_cuts.hpp
+
+# ellipcuts/CouenneEllipCuts.hpp 
 @COIN_HAS_NTY_TRUE@am__append_1 = branch/Nauty.h
 subdir = src
 DIST_COMMON = $(am__includecoin_HEADERS_DIST) $(srcdir)/Makefile.am \
@@ -141,10 +149,6 @@ am__includecoin_HEADERS_DIST = util/CouenneRootQ.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
 	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
-	cut/crossconv/CouenneCrossConv.hpp \
-	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/dsyevx_wrapper.hpp \
-	cut/sdpcuts/linquad_cuts.hpp cut/sdpcuts/populate.hpp \
-	cut/sdpcuts/quadratic_cuts_check.hpp cut/sdpcuts/rlt_cuts.hpp \
 	branch/Nauty.h
 includecoinHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(includecoin_HEADERS)
@@ -399,10 +403,10 @@ libCouenne_la_LIBADD = \
 	./bound_tightening/libCouenneBoundTightening.la \
 	./bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
 	./util/libCouenneUtil.la \
-	./disjunctive/libCouenneDisjunctive.la \
-	./cut/crossconv/libCouenneCrossConv.la
+	./disjunctive/libCouenneDisjunctive.la 
 
 
+#	./cut/crossconv/libCouenneCrossConv.la
 #	./cut/sdpcuts/libCouenneSdpCuts.la
 #	./ellipcuts/libCouenneEllipCuts.la 
 #	./readnl/libCouenneReadnl.la 
@@ -505,10 +509,6 @@ includecoin_HEADERS = util/CouenneRootQ.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
 	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
-	cut/crossconv/CouenneCrossConv.hpp \
-	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/dsyevx_wrapper.hpp \
-	cut/sdpcuts/linquad_cuts.hpp cut/sdpcuts/populate.hpp \
-	cut/sdpcuts/quadratic_cuts_check.hpp cut/sdpcuts/rlt_cuts.hpp \
 	$(am__append_1)
 all: config.h config_couenne.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -682,7 +682,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/bound_tightening $(distdir)/bound_tightening/twoImpliedBT $(distdir)/branch $(distdir)/convex $(distdir)/cut/crossconv $(distdir)/cut/sdpcuts $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/standardize $(distdir)/util
+	$(mkdir_p) $(distdir)/bound_tightening $(distdir)/bound_tightening/twoImpliedBT $(distdir)/branch $(distdir)/convex $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/standardize $(distdir)/util
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

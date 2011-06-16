@@ -43,9 +43,5 @@ if COIN_HAS_CPX
 AM_CPPFLAGS += -I`$(CYGPATH_W) $(CPXINCDIR)`
 endif
 
-if COIN_HAS_SPX
-AM_CPPFLAGS += -I`$(CYGPATH_W) $(SPXINCDIR)`
-endif
-
 # This line is necessary to allow VPATH compilation
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

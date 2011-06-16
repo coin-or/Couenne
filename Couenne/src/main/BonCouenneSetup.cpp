@@ -61,7 +61,7 @@
 #include "CouenneFixPoint.hpp"
 #include "CouenneCutGenerator.hpp"
 #include "CouenneDisjCuts.hpp"
-#include "CouenneCrossConv.hpp"
+//#include "CouenneCrossConv.hpp"
 #include "CouenneTwoImplied.hpp"
 
 #include "BonCouenneInfo.hpp"
@@ -625,21 +625,21 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   // Add cross-aux redundant cuts ///////////////////////////////////////////////////////
 
-  options () -> GetIntegerValue ("crossconv_cuts", freq, "couenne.");
+  // options () -> GetIntegerValue ("crossconv_cuts", freq, "couenne.");
 
-  if (freq != 0) {
+  // if (freq != 0) {
 
-    CouenneCrossConv * couenneCross = 
-      new CouenneCrossConv (couenneProb,
-			    journalist (),
-			    options ());
+  //   CouenneCrossConv * couenneCross = 
+  //     new CouenneCrossConv (couenneProb,
+  // 			    journalist (),
+  // 			    options ());
 
-    CuttingMethod cg;
-    cg.frequency = freq;
-    cg.cgl = couenneCross;
-    cg.id = "Couenne cross-aux cuts";
-    cutGenerators (). push_back(cg);
-  }
+  //   CuttingMethod cg;
+  //   cg.frequency = freq;
+  //   cg.cgl = couenneCross;
+  //   cg.id = "Couenne cross-aux cuts";
+  //   cutGenerators (). push_back(cg);
+  // }
 
   // Add sdp cuts ///////////////////////////////////////////////////////
 
@@ -682,7 +682,7 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   CouenneChooseVariable   ::registerOptions (roptions);
   CouenneFixPoint         ::registerOptions (roptions);
   CouenneDisjCuts         ::registerOptions (roptions);
-  CouenneCrossConv        ::registerOptions (roptions);
+  //  CouenneCrossConv        ::registerOptions (roptions);
   CouenneTwoImplied       ::registerOptions (roptions);
   NlpSolveHeuristic       ::registerOptions (roptions);
   CouenneFeasPump         ::registerOptions (roptions);

@@ -44,7 +44,6 @@ build_triplet = @build@
 host_triplet = @host@
 @COIN_HAS_SCIP_TRUE@am__append_1 = cons_rowcuts.cpp
 @COIN_HAS_CPX_TRUE@am__append_2 = -I`$(CYGPATH_W) $(CPXINCDIR)`
-@COIN_HAS_SPX_TRUE@am__append_3 = -I`$(CYGPATH_W) $(SPXINCDIR)`
 subdir = src/heuristics
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -335,8 +334,7 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) -I`$(CYGPATH_W) $(srcdir)/..` \
 	$(srcdir)/../expression/operators` -I`$(CYGPATH_W) \
 	$(srcdir)/../expression/partial` -I`$(CYGPATH_W) \
 	$(srcdir)/../interfaces` -I`$(CYGPATH_W) $(srcdir)/../branch` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem` $(am__append_2) \
-	$(am__append_3)
+	-I`$(CYGPATH_W) $(srcdir)/../problem` $(am__append_2)
 
 # This line is necessary to allow VPATH compilation
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

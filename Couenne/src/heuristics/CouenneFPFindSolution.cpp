@@ -13,6 +13,13 @@
 #include "CouenneProblem.hpp"
 #include "CoinTime.hpp"
 
+#ifdef COIN_HAS_SCIP
+/* general SCIP includes */
+#include "scip/scip.h"
+#include "scip/cons_linear.h"
+#include "scip/scipdefplugins.h"
+#endif
+
 using namespace Couenne;
 
 int currentmilpmethod_;
