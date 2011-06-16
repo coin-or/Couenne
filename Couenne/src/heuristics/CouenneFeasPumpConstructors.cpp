@@ -339,8 +339,8 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> AddBoundedIntegerOption
     ("feas_pump_milpmethod",
      "How should the integral solution be constructed?",
-     -1, 7, -1, 
-       "0: automatic, 1; completely, 2: RENS, 3: Objective Feasibility Pump, 4:round-and-propagate, 5: choose from pool, 6: random, -1: SCIP not used.");
+     -1, 4, -1, 
+       "0: automatic, 1: aggressive heuristics, large node limit, 2: default, node limit, 3: RENS, 4: Objective Feasibility Pump,  -1: solve MILP completely");
 
   roptions -> AddBoundedIntegerOption
     ("feas_pump_poolcomp",

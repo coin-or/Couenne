@@ -15,8 +15,10 @@
 
 using namespace Couenne;
 
+int currentmilpmethod_;
+
 /// find a feasible or optimal solution of MILP
-double CouenneFeasPump::findSolution (double* &sol) {
+double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
 
   /// as found on the notes, these methods can be used, from the most
   /// expensive and accurate (exact) method to a cheap, inexact one:
@@ -51,7 +53,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
   /// solve MILP 
 
 #ifdef COIN_HAS_SCIP
-   if (useSCIP_) {
+  if (useSCIP_) {
 
      SCIP* scip;
 
@@ -75,7 +77,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
      int nconss;
      int nscipsols;
 
-     int currentmilpmethod;
+     bool solveagain;
 
      // COUENNE_INFINITY , getInfinity()
 
@@ -102,7 +104,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
      indices    = matrix -> getIndices();
      
      if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC)) {
-       SCIPdebugMessage("create SCIP problem instance with %d variables and %d constraints.\n", nvars, nconss);
+        SCIPdebugMessage("create SCIP problem instance with %d variables and %d constraints.\n", nvars, nconss);
      }
 
      // initialize SCIP
@@ -112,17 +114,6 @@ double CouenneFeasPump::findSolution (double* &sol) {
      // include default SCIP plugins
      SCIP_CALL_ABORT( SCIPincludeDefaultPlugins(scip) );
      
-     if (!(problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC))) {
-       SCIP_CALL( SCIPsetIntParam(scip, "display/verblevel", 0) );
-     }
-
-     // do not abort subproblem on CTRL-C
-     SCIP_CALL( SCIPsetBoolParam(scip, "misc/catchctrlc", FALSE) );
-
-     // set time limit
-     timelimit = problem_ -> getMaxCpuTime () - CoinCpuTime ();
-     SCIP_CALL( SCIPsetRealParam(scip, "limits/time", timelimit) );
-
      // create problem instance in SCIP
      SCIP_CALL_ABORT( SCIPcreateProb(scip, "auxiliary FeasPump MILP", NULL, NULL, NULL, NULL, NULL, NULL, NULL) );
 
@@ -177,183 +168,242 @@ double CouenneFeasPump::findSolution (double* &sol) {
         SCIP_CALL_ABORT( SCIPaddCons(scip, cons) );
         SCIP_CALL_ABORT( SCIPreleaseCons(scip, &cons) );        
      }
+  
+     // determine the method to solve the MILP
+     if (milpMethod_ == 0 && niter == 0)
+     {
+        // initialize currentmilpmethod
+        //????????????? TODO: make this dependant on depth in Couenne's B&B tree        
+        currentmilpmethod_ = 2;
+     }
+     else if (milpMethod_ != 0)
+        currentmilpmethod_ = milpMethod_; // use a fixed method to solve the MILP
+     
 
+     // MILP solving loop. If the MILP terminates without a solution, it might get resolved with a more expensive atrategy
+     do {
+        solveagain = false;
+
+        // reset parameters if MILP is solved agian
+        SCIP_CALL( SCIPresetParams(scip) );
+        
+        // deactivate SCIP output
+        if (!(problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC))) {
+           SCIP_CALL( SCIPsetIntParam(scip, "display/verblevel", 0) );
+        }
+        
+        // do not abort subproblem on CTRL-C
+        SCIP_CALL( SCIPsetBoolParam(scip, "misc/catchctrlc", FALSE) );
+        
+        // set time limit
+        timelimit = problem_ -> getMaxCpuTime () - CoinCpuTime ();
+        SCIP_CALL( SCIPsetRealParam(scip, "limits/time", timelimit) );        
+
+
+        if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC)) {
+           SCIPinfoMessage(scip, NULL, "using MILP method: %d\n",currentmilpmethod_);
+        }
+        
+        // tune SCIP differently, depending on the chosen method to solve the MILP
+        /// -1. Solve the MILP relaxation to proven optimality
+        ///  0. Let Couenne choose
+        ///  1. Partially solve the MILP with emphasis on good solutions
+        ///  2. Solve the MILP relaxation partially, up to a certain node limit
+        ///  3. Apply RENS to 1
+        ///  4. Use Objective FP 2.0 for MILPs
+        switch(currentmilpmethod_)
+        {
+        case -1: // solve the MILP completely. SCIP's default setting should be best for this
+           break;
+
+        case 1: // Be aggressive in finding feasible solutions, but lazy about the dual bound. 
+           // Set limits on overall nodes and stall nodes (nodes without incumbent improvement).
+           SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/stallnodes", 1000) );
+           SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/nodes", 10000) );
+
+           // disable cutting plane separation 
+           SCIP_CALL_ABORT( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );
+        
+           // disable expensive presolving 
+           SCIP_CALL_ABORT( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
+
+           // use aggressive primal heuristics 
+           SCIP_CALL_ABORT( SCIPsetHeuristics(scip, SCIP_PARAMSETTING_AGGRESSIVE, TRUE) );
+        
+           // use best estimate node selection 
+           if( SCIPfindNodesel(scip, "estimate") != NULL )
+           {
+              SCIP_CALL_ABORT( SCIPsetIntParam(scip, "nodeselection/estimate/stdpriority", INT_MAX/4) ); 
+           }
+        
+           // use inference branching 
+           if( SCIPfindBranchrule(scip, "inference") != NULL )
+           {
+              SCIP_CALL_ABORT( SCIPsetIntParam(scip, "branching/inference/priority", INT_MAX/4) );
+           }
+        
+           // disable conflict analysis 
+           SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "conflict/useprop", FALSE) );
+           SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "conflict/useinflp", FALSE) );
+           SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "conflict/useboundlp", FALSE) );
+           SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "conflict/usesb", FALSE) );
+           SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "conflict/usepseudo", FALSE) );
+
+           break;
+
+        case 2: // default SCIP with node limits
+           SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/stallnodes", 500) );
+           SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/nodes", 5000) );
+           break;
+        case 3: // solve the MILP with RENS. Disable most other features, enable RENS
+           SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/nodes", 1) );
+
+           // disable cutting plane separation 
+           SCIP_CALL_ABORT( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );
+        
+           // disable expensive presolving 
+           SCIP_CALL_ABORT( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
+
+           // besides RENS, only use cheap heuristics 
+           SCIP_CALL_ABORT( SCIPsetHeuristics(scip, SCIP_PARAMSETTING_FAST, TRUE) );
+
+           // use inference branching 
+           if( SCIPfindBranchrule(scip, "inference") != NULL )
+           {
+              SCIP_CALL_ABORT( SCIPsetIntParam(scip, "branching/inference/priority", INT_MAX/4) );
+           }
+
+           // ensure that RENS is called
+           if( SCIPfindHeur(scip, "rens") != NULL )
+           {
+              SCIP_CALL_ABORT( SCIPsetIntParam(scip, "heuristics/rens/freq", 0) );
+              SCIP_CALL_ABORT( SCIPsetRealParam(scip, "heuristics/rens/minfixingrate", 0.0) );
+           }
+           break;
+
+        case 4: // solve the MILP with Feasibility Pump. Disable most other features, enable stage 3 for feaspump
+           SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/nodes", 1) );
+
+           // disable cutting plane separation 
+           SCIP_CALL_ABORT( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );
+        
+           // disable expensive presolving 
+           SCIP_CALL_ABORT( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
+
+           // besides feaspump, only use cheap heuristics 
+           SCIP_CALL_ABORT( SCIPsetHeuristics(scip, SCIP_PARAMSETTING_FAST, TRUE) );
+
+           // use inference branching 
+           if( SCIPfindBranchrule(scip, "inference") != NULL )
+           {
+              SCIP_CALL_ABORT( SCIPsetIntParam(scip, "branching/inference/priority", INT_MAX/4) );
+           }
+
+           // ensure that feasibility pump is called
+           if( SCIPfindHeur(scip, "feaspump") != NULL )
+           {
+              SCIP_CALL_ABORT( SCIPsetIntParam(scip, "heuristics/feaspump/freq", 0) );
+              SCIP_CALL_ABORT( SCIPsetIntParam(scip, "heuristics/feaspump/maxsols", -1) );
+
+              if( SCIPversion() <= 2.01 )
+              {
+                 SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "heuristics/feaspump2/stage3", TRUE) );
+              }
+              else
+              {
+                 SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "heuristics/feaspump/stage3", TRUE) );
+              }
+           }
+
+           break;
+
+        default:
+           printf("invalid MILP method: %d\n", currentmilpmethod_);
+           assert(false);
+           break;
+        }
+
+#if 0
+     // writes MILP problem and SCIP settings into a file
      SCIP_CALL_ABORT( SCIPwriteOrigProblem(scip, "debug.lp", NULL, FALSE) );
      SCIP_CALL_ABORT( SCIPwriteParams(scip, "debug.set", FALSE,TRUE) );
-
-     // determine the method to solve the MILP
-     if (milpMethod_ == 0 )
-     {
-        // TODO: add rule for automatic choice of currentmilpmethod
-        currentmilpmethod = 1;
-     }
-     else 
-        currentmilpmethod = milpMethod_; // use a fixed method to solve the MILP
-     
-     if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC)) {
-       SCIPdebugMessage("using MILP method: %d\n",currentmilpmethod);
-     }
-
-     // tune SCIP differently, depending on the chosen method to solve the MILP
-     switch(currentmilpmethod)
-     {
-     case 1: // solve the MILP completely. SCIP's default setting should be best for this
-        break;
-
-     case 2: // solve the MILP quickly. Set limits on overall nodes and stall nodes (nodes without incumbent improvement)
-             // disable or cut down all procedures which are merely used for improving the dual bound, e.g., cuts
-        SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/stallnodes", 1000) );
-        SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/nodes", 10000) );
-
-        // disable cutting plane separation 
-        SCIP_CALL_ABORT( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );
-        
-        // disable expensive presolving 
-        SCIP_CALL_ABORT( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
-
-        // use aggressuve Heuristics 
-        SCIP_CALL_ABORT( SCIPsetHeuristics(scip, SCIP_PARAMSETTING_AGGRESSIVE, TRUE) );
-        
-        // use best estimate node selection 
-        if( SCIPfindNodesel(scip, "estimate") != NULL )
-        {
-           SCIP_CALL_ABORT( SCIPsetIntParam(scip, "nodeselection/estimate/stdpriority", INT_MAX/4) ); 
-        }
-        
-        // use inference branching 
-        if( SCIPfindBranchrule(scip, "inference") != NULL )
-        {
-           SCIP_CALL_ABORT( SCIPsetIntParam(scip, "branching/inference/priority", INT_MAX/4) );
-        }
-        
-        // disable conflict analysis 
-        SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "conflict/useprop", FALSE) );
-        SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "conflict/useinflp", FALSE) );
-        SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "conflict/useboundlp", FALSE) );
-        SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "conflict/usesb", FALSE) );
-        SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "conflict/usepseudo", FALSE) );
-
-        break;
-
-     case 3: // solve the MILP with RENS. Disable most other features, enable RENS
-        SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/nodes", 1) );
-
-        // disable cutting plane separation 
-        SCIP_CALL_ABORT( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );
-        
-        // disable expensive presolving 
-        SCIP_CALL_ABORT( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
-
-        // besides RENS, only use cheap heuristics 
-        SCIP_CALL_ABORT( SCIPsetHeuristics(scip, SCIP_PARAMSETTING_FAST, TRUE) );
-
-        // use inference branching 
-        if( SCIPfindBranchrule(scip, "inference") != NULL )
-        {
-           SCIP_CALL_ABORT( SCIPsetIntParam(scip, "branching/inference/priority", INT_MAX/4) );
-        }
-
-        // ensure that RENS is called
-        if( SCIPfindHeur(scip, "rens") != NULL )
-        {
-           SCIP_CALL_ABORT( SCIPsetIntParam(scip, "heuristics/rens/freq", 0) );
-           SCIP_CALL_ABORT( SCIPsetRealParam(scip, "heuristics/rens/minfixingrate", 0.0) );
-        }
-        break;
-
-     case 4: // solve the MILP with Feasibility Pump. Disable most other features, enable stage 3 for feaspump
-        SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "limits/nodes", 1) );
-
-        // disable cutting plane separation 
-        SCIP_CALL_ABORT( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );
-        
-        // disable expensive presolving 
-        SCIP_CALL_ABORT( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
-
-        // besides feaspump, only use cheap heuristics 
-        SCIP_CALL_ABORT( SCIPsetHeuristics(scip, SCIP_PARAMSETTING_FAST, TRUE) );
-
-        // use inference branching 
-        if( SCIPfindBranchrule(scip, "inference") != NULL )
-        {
-           SCIP_CALL_ABORT( SCIPsetIntParam(scip, "branching/inference/priority", INT_MAX/4) );
-        }
-
-        // ensure that feasibility pump is called
-        if( SCIPfindHeur(scip, "feaspump") != NULL )
-        {
-           SCIP_CALL_ABORT( SCIPsetIntParam(scip, "heuristics/feaspump/freq", 0) );
-           SCIP_CALL_ABORT( SCIPsetIntParam(scip, "heuristics/feaspump/maxsols", -1) );
-           (void) SCIPsetBoolParam(scip, "heuristics/feaspump/stage3", TRUE);
-           (void) SCIPsetBoolParam(scip, "heuristics/feaspump2/stage3", TRUE);
-        }
-
-        break;
-
-     default:
-        break;
-     }
-
-  /// 1. Solve a MILP relaxation with Manhattan distance as objective
-  /// 2. Partially solve the MILP with emphasis on good solutions
-  /// 3. Apply RENS to 1
-  /// 4. Use Objective FP 2.0 for MILPs
-  /// 5. round-and-propagate
-  /// 6. choose from pool, see 4
-  /// 7. random perturbation
+#endif
           
-     // solve the MILP
-     SCIP_CALL_ABORT( SCIPsolve(scip) );
+        // solve the MILP
+        SCIP_CALL_ABORT( SCIPsolve(scip) );
 
-     nscipsols =  SCIPgetNSols(scip);
+        nscipsols =  SCIPgetNSols(scip);
      
-     // copy the solution
-     if( nscipsols)
-     {
-        SCIP_SOL** scipsols;
-        SCIP_SOL* bestsol;
-        int nstoredsols;
+        // copy the solution
+        if( nscipsols)
+        {
+           SCIP_SOL** scipsols;
+           SCIP_SOL* bestsol;
+           int nstoredsols;
 
-        /* get incumbent solution */
-        bestsol = SCIPgetBestSol(scip);
-        assert(bestsol != NULL);
+           /* get incumbent solution */
+           bestsol = SCIPgetBestSol(scip);
+           assert(bestsol != NULL);
 
-        /* get SCIP solution pool */
-        scipsols = SCIPgetSols(scip);
-        assert(scipsols != NULL);
+           /* get SCIP solution pool */
+           scipsols = SCIPgetSols(scip);
+           assert(scipsols != NULL);
 
-	if (!sol)
-	  sol = new CouNumber [nvars];
+           if (!sol)
+              sol = new CouNumber [nvars];
 
-        // get solution values and objective of incumbent
-        SCIP_CALL_ABORT( SCIPgetSolVals(scip, bestsol, nvars, vars, sol) );
-        obj = SCIPgetSolOrigObj(scip, bestsol);
+           // get solution values and objective of incumbent
+           SCIP_CALL_ABORT( SCIPgetSolVals(scip, bestsol, nvars, vars, sol) );
+           obj = SCIPgetSolOrigObj(scip, bestsol);
 
-        nstoredsols = 0;
+           nstoredsols = 0;
 
-        // insert other SCIP solutions into solution pool
-        // do not store too many or too poor solutions
-        for(int i=1; i<nscipsols && nstoredsols < 10 && 
-               SCIPgetSolOrigObj(scip,scipsols[i]) <= 2*SCIPgetSolOrigObj(scip,bestsol); i++){
-           double* tmpsol;
+           // insert other SCIP solutions into solution pool
+           // do not store too many or too poor solutions 
+           // ?????????????????  TODO: the 2* criterion is bad if using a Obj FP
+           for(int i=1; i<nscipsols && nstoredsols < 10 && 
+                  SCIPgetSolOrigObj(scip,scipsols[i]) <= 2*SCIPgetSolOrigObj(scip,bestsol); i++){
+              double* tmpsol;
 
-           tmpsol = new CouNumber [nvars];
+              tmpsol = new CouNumber [nvars];
            
-           // get solution values
-           SCIP_CALL_ABORT( SCIPgetSolVals(scip, scipsols[i], nvars, vars, tmpsol) );
-           CouenneFPsolution couennesol = CouenneFPsolution (problem_, tmpsol);
+              // get solution values
+              SCIP_CALL_ABORT( SCIPgetSolVals(scip, scipsols[i], nvars, vars, tmpsol) );
+              CouenneFPsolution couennesol = CouenneFPsolution (problem_, tmpsol);
 
-           // add solutions to the pool if they are not in the tabu list
-           if (tabuPool_. find (couennesol) == tabuPool_ . end ()
-              ){              //              && pool_ -> Queue (). find (couennesol) == pool_ -> Queue(). end () ) {
-              pool_ -> Queue (). push (couennesol);
-              nstoredsols++;
+              // add solutions to the pool if they are not in the tabu list
+              if (tabuPool_. find (couennesol) == tabuPool_ . end ()
+                 ){              //              && pool_ -> Queue (). find (couennesol) == pool_ -> Queue(). end () ) { ??????????????? TODO
+                 pool_ -> Queue (). push (couennesol);
+                 nstoredsols++;
+              }
            }
+
+           (*nsuciter)++;
+
+           // if we succeeded five times in a row, try a cheaper MILP_ solving method next time
+           // TODO: if we want to use time limits, hitting the time limit would be another good reason to switch
+           if( *nsuciter >= 3 && currentmilpmethod_ < 4 )
+           {
+              currentmilpmethod_++;
+              *nsuciter = 0;
+           }          
         }
-     }
-     else 
-       obj = COIN_DBL_MAX;
-     
+        //try to use a more aggressive, more expensive way to solve the MILP
+        else if( milpMethod_ == 0 && currentmilpmethod_ > 1 )
+        {
+           currentmilpmethod_--;
+           solveagain = true;
+           *nsuciter = 0;
+
+           // throw away the current solution process
+           SCIP_CALL( SCIPfreeTransform(scip) );
+        }
+        else
+           obj = COIN_DBL_MAX;  
+
+     } while (solveagain);
+   
      // release variables before freeing them
      for (int i=0; i<nvars; i++) {
         SCIP_CALL_ABORT( SCIPreleaseVar(scip, &vars[i]) );
@@ -365,7 +415,7 @@ double CouenneFeasPump::findSolution (double* &sol) {
    
      BMScheckEmptyMemory();     
   }
-   else
+  else
 #endif      
    {
       milp_ -> branchAndBound ();

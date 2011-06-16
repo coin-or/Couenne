@@ -83,6 +83,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   int
     niter  = 0,   // iteration counter
+    nsuciter = 0,// counter for consecutive successful application of one MILP solving method
     retval = 0,   // 1 if found a better solution
     nSep   = 0,   // If separation short circuit, max # of consecutive separations
     objInd = problem_ -> Obj (0) -> Body () -> Index ();
@@ -111,7 +112,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // l-1 distance from. If nSol==NULL, the MILP is created using the
     // original milp's LP solution.
 
-    double z = solveMILP (nSol, iSol);
+     double z = solveMILP (nSol, iSol, niter, &nsuciter);
 
     // placeholder for how to use pool
 
