@@ -532,6 +532,11 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
 #else
       maxViol = (maxViol > violRelUb ? maxViol : violRelUb);
 #endif
+
+#ifdef FM_TRACE_NLP
+      printf("violAbsUb: %12.10f  violRelUb: %12.10f  violUb: %12.10f maxViol: %12.10f\n",
+	     violAbsUb, violRelUb, violUb, maxViol);
+#endif
     }
 
     double violLb = 0, violRelLb = 0, violAbsLb = 0;
@@ -544,6 +549,11 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
       maxViol = (maxViol > violAbsLb ? maxViol : violAbsLb);
 #else
       maxViol = (maxViol > violRelLb ? maxViol : violRelLb);
+#endif
+
+#ifdef FM_TRACE_NLP
+      printf("violAbsLb: %12.10f  violRelLb: %12.10f  violLb: %12.10f maxViol: %12.10f\n",
+	     violAbsLb, violRelLb, violLb, maxViol);
 #endif
     }
 
@@ -561,6 +571,13 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
 #ifdef FM_TRACE_NLP
       printf ("CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, absolute violation: %g)\n",
 	      i, lhs, body, rhs, CoinMax (violAbsUb, violAbsLb));
+#endif
+
+      isFeas = false;
+      if(stopAtFirstViol) {
+	break;
+      }
+    }
 #else /* not FM_USE_ABS_VIOL_CONS */
     if((violUb > 0) || (violLb > 0)) {
       if (Jnlst()->ProduceOutput(Ipopt::J_MOREVECTOR, J_PROBLEM)) {
@@ -581,16 +598,7 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
 	break;
       }
     }
-
-
-#endif
-
-      isFeas = false;
-      if(stopAtFirstViol) {
-	break;
-      }
-    }
-#endif /* not FM_ABS_REL_VIOL_CONS */
+#endif /* not FM_USE_ABS_VIOL_CONS */
   }
   return(isFeas);
 }
