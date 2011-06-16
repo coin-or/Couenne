@@ -57,6 +57,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   nlp_                 (NULL),
   app_                 (NULL),
   milp_                (NULL),
+  postlp_              (NULL),
   pool_                (NULL),
   numberSolvePerLevel_ (-1),
   betaNLP_             (0.),
@@ -120,7 +121,8 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   couenneCG_           (other. couenneCG_),
   nlp_                 (other. nlp_),
   app_                 (NULL),
-  milp_                (other. milp_),
+  milp_                (other.milp_   ? other. milp_   -> clone () : NULL),
+  postlp_              (other.postlp_ ? other. postlp_ -> clone () : NULL),
   pool_                (NULL),
   numberSolvePerLevel_ (other. numberSolvePerLevel_),
   betaNLP_             (other. betaNLP_),
@@ -159,7 +161,8 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     couenneCG_           = rhs. couenneCG_;
     nlp_                 = rhs. nlp_;
     app_                 = NULL;
-    milp_                = rhs. milp_;
+    milp_                = rhs. milp_   ? rhs. milp_   -> clone () : NULL;
+    postlp_              = rhs. postlp_ ? rhs. postlp_ -> clone () : NULL;
     pool_                = NULL;
     numberSolvePerLevel_ = rhs. numberSolvePerLevel_;
     betaNLP_             = rhs. betaNLP_;
@@ -188,8 +191,10 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
 // Destructor /////////////////////////////////////////////////// 
 CouenneFeasPump::~CouenneFeasPump () {
 
-  if (pool_) delete pool_;
-  if (app_)  delete app_;
+  if (pool_)   delete pool_;
+  if (app_)    delete app_;
+  if (milp_)   delete milp_;
+  if (postlp_) delete postlp_;
 
   //if (nlp_) delete nlp_; // already deleted by "delete app_;"
 }

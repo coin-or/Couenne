@@ -56,6 +56,8 @@ namespace Couenne {
 
   public:
 
+    enum compDistIntType {FP_DIST_INT, FP_DIST_ALL, FP_DIST_POST};
+
     /// Constructor with (optional) MINLP pointer
     CouenneFeasPump (CouenneProblem *couenne                     = NULL,
 		     CouenneCutGenerator *cg                     = NULL,
@@ -124,6 +126,18 @@ namespace Couenne {
     /// Common code for initializing non-smartptr ipopt application
     void initIpoptApp ();
 
+    /// return pointer to problem
+    CouenneProblem *Problem () const
+    {return problem_;}
+
+    /// return type of MILP solved
+    enum compDistIntType compDistInt () const
+    {return compDistInt_;}
+
+    /// return Lagrangian Hessian multiplier
+    double betaMILP () const
+    {return betaMILP_;}
+
   private:
 
     //
@@ -138,8 +152,10 @@ namespace Couenne {
     CouenneCutGenerator *couenneCG_;
 
     //
-    // PERSISTENT OBJECTS -- not necessary to identify FP, but it's
-    // useful to keep them between calls
+    // PERSISTENT OBJECTS
+    //
+    // (not necessary to identify FP, but useful to keep between
+    // calls)
     //
 
     /// Continuous relaxation of the problem, with an interface for
@@ -152,6 +168,11 @@ namespace Couenne {
     /// MILP relaxation of the MINLP (used to find integer
     /// non-NLP-feasible solution)
     OsiSolverInterface *milp_;
+
+    /// LP relaxation of the MINLP used when fixing integer variables
+    /// (used for compDistInt_ in FP_DIST_POST and possibly
+    /// FP_DIST_INT)
+    OsiSolverInterface *postlp_;
 
     /// Pool of solutions
     CouenneFPpool *pool_;
@@ -193,7 +214,7 @@ namespace Couenne {
     double betaMILP_; // decrease it over time
 
     /// compute distance from integer variables only, not all variables;
-    enum {FP_DIST_INT, FP_DIST_ALL, FP_DIST_POST} compDistInt_;
+    enum compDistIntType compDistInt_;
 
     /// Skip NLP solver if found integer but MINLP-infeasible solution 
     bool milpCuttingPlane_;

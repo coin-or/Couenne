@@ -30,6 +30,13 @@ void CouenneFeasPump::checkInfinity(SCIP *scip, SCIP_Real val, double infinity){
 }
 #endif
 
+
+/// create clone of MILP and add variables for special objective
+OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model, bool isMILP);
+
+/// modify MILP or LP to implement distance by adding extra rows (extra cols were already added by createCloneMILP)
+void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, double *sol, bool isMILP);
+
 /// find integer (possibly NLP-infeasible) point isol closest
 /// (according to the l-1 norm of the Hessian) to the current
 /// NLP-feasible (but fractional) solution nsol
@@ -83,58 +90,50 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
   
   if (!milp_) {
 
-    milp_ = model_ -> solver () -> clone ();
+    // create MILP
 
-    // no data is available so far, retrieve it from the MILP solver
-    // used as the linearization
+    milp_ = createCloneMILP (this, model_, true);
 
-    // Construct an (empty) Hessian. It will be modified later, but
-    // the changes should be relatively easy for the case when
-    // betaMILP > 0 and there are no changes if betaMILP_ == 0
-
-    P. setDimensions (problem_ -> nVars (), 
-		      problem_ -> nVars ());
-
-    // The MILP has to be changed the first time it is used.
+    // Post-processing LP: persistent if FP_DIST_POST, created on the
+    // fly if FP_DIST_INT and numerics, not created if FP_DIST_ALL
     //
-    // Suppose Ax >= b has m inequalities. In order to solve the
-    // problem above, we need q new variables z_i and 2q inequalities
-    //
-    //   z_i >=   P^i (x - x^0)  or  P^i x - z_i <= P^i x^0 (*)
-    //   z_i >= - P^i (x - x^0)                             (**)
-    // 
-    // (the latter being equivalent to
-    //
-    // - z_i <=   P^i (x - x^0)  or  P^i x + z_i >= P^i x^0 (***)
-    //
-    // so we'll use this instead as most coefficients don't change)
-    // for each i, where q is the number of variables involved (either
-    // q=|N|, the number of integer variables, or q=n, the number of
-    // variables).
-    //
-    // We need to memorize the number of initial inequalities and of
-    // variables, so that we know what (coefficients and rhs) to
-    // change at every iteration.
+    // set up an LP as a copy of the original MILP. Don't do the
+    // same for FP_DIST_INT as it is only necessary upon numerical
+    // problems, which might not happen
 
-    // ADD CODE HERE...
-
-    // Add q variables, each with coefficient 1 in the objective
-
-    CoinPackedVector vec;
-
-    for (int i = problem_ -> nVars (), j = 0; i--; ++j)
-
-      if (compDistInt_ == FP_DIST_ALL || milp_ -> isInteger (j))
-	// (empty) coeff col vector, lb, ub, obj coeff
-	milp_ -> addCol (vec, 0., COIN_DBL_MAX, 1.); 
-
-    // Set to zero all other variables' obj coefficient. This means we
-    // just do it for the single variable in the reformulated
-    // problem's linear relaxation (all other variables do not appear
-    // in the objective)
-
-    milp_ -> setObjCoeff (problem_ -> Obj (0) -> Body () -> Index (), 0.);
+    if (compDistInt_ == FP_DIST_POST)
+      postlp_ = createCloneMILP (this, model_, false);
   }
+
+  // Construct an (empty) Hessian. It will be modified later, but
+  // the changes should be relatively easy for the case when
+  // betaMILP > 0 and there are no changes if betaMILP_ == 0
+
+  P. setDimensions (problem_ -> nVars (), 
+		    problem_ -> nVars ());
+
+  // The MILP has to be changed the first time it is used.
+  //
+  // Suppose Ax >= b has m inequalities. In order to solve the
+  // problem above, we need q new variables z_i and 2q inequalities
+  //
+  //   z_i >=   P^i (x - x^0)  or  P^i x - z_i <= P^i x^0 (*)
+  //   z_i >= - P^i (x - x^0)                             (**)
+  // 
+  // (the latter being equivalent to
+  //
+  // - z_i <=   P^i (x - x^0)  or  P^i x + z_i >= P^i x^0 (***)
+  //
+  // so we'll use this instead as most coefficients don't change)
+  // for each i, where q is the number of variables involved (either
+  // q=|N|, the number of integer variables, or q=n, the number of
+  // variables).
+  //
+  // We need to memorize the number of initial inequalities and of
+  // variables, so that we know what (coefficients and rhs) to
+  // change at every iteration.
+
+  // ADD CODE HERE...
 
   // Add 2q inequalities
 
@@ -153,31 +152,9 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
     nlpSolExp = CoinCopyOfArray (milp_ -> getColSolution (), 
 				 problem_ -> nVars ());
 
-  CoinPackedVector x0 (problem_ -> nVars (), nlpSolExp);
+  addDistanceConstraints (this, milp_, nlpSolExp, true);
 
   delete [] nlpSolExp;
-
-  for (int i = 0, j = problem_ -> nVars (), k = j; k--; ++i)
-
-    if (compDistInt_ == FP_DIST_ALL || milp_ -> isInteger (i)) {
-
-      // create vector with single entry of 1 at i-th position 
-      double val = 1.;
-      CoinPackedVector vec (1, &i, val);
-
-      if (betaMILP_ > 0.) {
-
-	// reserved for non-UnitMatrix hessian (i.e. betaMILP_ > 0)
-      }
-
-      // right-hand side equals <P^i,x^0>
-      double PiX0 = sparseDotProduct (vec, x0); 
-
-      vec.insert     (j, -1.); milp_ -> addRow (vec, -COIN_DBL_MAX,         PiX0); // (*)
-      vec.setElement (1, +1.); milp_ -> addRow (vec,          PiX0, COIN_DBL_MAX); // (***)
-
-      ++j; // index of variable within problem (plus nVars_)
-    }
 
   int nFinalRows = milp_ -> getNumRows ();
 
@@ -224,6 +201,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
       // solve LP where integer variables have been fixed:
       //
+      // a) check if postlp_ exists yet
       // 0) save integer bounds
       // 1) fix integer variables 
       // 2) add variables and inequalities
@@ -232,12 +210,44 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
       // 5) restore IP bounds
       // 6) delete variables
 
+      // (2) add inequalities
 
+      if (!postlp_)
+	postlp_ = createCloneMILP (this, model_, false);
 
+      // save integer bounds to restore them later
+      double
+	*saveLB = CoinCopyOfArray (postlp_ -> getColLower (), postlp_ -> getNumCols ()),
+	*saveUB = CoinCopyOfArray (postlp_ -> getColUpper (), postlp_ -> getNumCols ());
 
+      int nInitRowsLP  = milp_ -> getNumRows ();
+
+      addDistanceConstraints (this, postlp_, iSol, false);
+
+      int nFinalRowsLP  = milp_ -> getNumRows ();
+
+      // Solve the LP, obtain closest point with integer variables fixed
+
+      postlp_ -> initialSolve ();
+
+      postlp_ -> setColLower (saveLB);
+      postlp_ -> setColUpper (saveUB);
+
+      // delete 
+
+      int 
+	nDeleted = nFinalRowsLP - nInitRowsLP,
+       *deleted  = new int [nDeleted],
+	nCurRow  = nInitRowsLP;
+
+      for (int i = nDeleted; i--;)
+	deleted [i] = nCurRow++;
+
+      postlp_ -> deleteRows (nDeleted, deleted);
+
+      delete [] deleted;
     }
   }
-
 
   // delete last rows and add them from scratch (common block below)
 
@@ -253,5 +263,87 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
   delete [] deleted;
 
-  return milp_ -> getObjValue ();
+  return obj;// milp_ -> getObjValue ();
+}
+
+
+/// create clone of MILP and add variables for special objective
+OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model, bool isMILP) {
+
+  OsiSolverInterface *lp = model -> solver () -> clone ();
+
+  // no data is available so far, retrieve it from the MILP solver
+  // used as the linearization
+
+  // Add q variables, each with coefficient 1 in the objective
+
+  CoinPackedVector vec;
+
+  for (int i = fp -> Problem () -> nVars (), j = 0; i--; ++j) {
+
+    // column has to be added if:
+    //
+    // creating MIP AND (integer variable OR FP_DIST_ALL)
+    // creating LP  AND fractional variable
+
+    bool intVar = lp -> isInteger (j);
+
+    if ((isMILP && (intVar || (fp -> compDistInt () == CouenneFeasPump::FP_DIST_ALL)))
+	||
+	(!isMILP && !intVar))
+      // (empty) coeff col vector, lb, ub, obj coeff
+      lp -> addCol (vec, 0., COIN_DBL_MAX, 1.); 
+  }
+
+  // Set to zero all other variables' obj coefficient. This means we
+  // just do it for the single variable in the reformulated
+  // problem's linear relaxation (all other variables do not appear
+  // in the objective)
+
+  lp -> setObjCoeff (fp -> Problem () -> Obj (0) -> Body () -> Index (), 0.);
+
+  return lp;
+}
+
+
+/// modify MILP or LP to implement distance by adding extra rows (extra cols were already added by createCloneMILP)
+void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, double *sol, bool isMILP) {
+
+  CoinPackedVector x0 (fp -> Problem () -> nVars (), sol);
+
+  for (int i = 0, j = fp -> Problem () -> nVars (), k = j; k--; ++i) {
+
+    // two rows have to be added if:
+    //
+    // amending MIP AND (integer variable OR FP_DIST_ALL)
+    // amending ssLP  AND fractional variable
+
+    bool intVar = lp -> isInteger (j);
+
+    if ((isMILP && (intVar || (fp -> compDistInt () == CouenneFeasPump::FP_DIST_ALL)))
+	||
+	(!isMILP && !intVar)) {
+
+      // create vector with single entry of 1 at i-th position 
+      double val = 1.;
+      CoinPackedVector vec (1, &i, val);
+
+      if (fp -> betaMILP () > 0.) {
+
+	// reserved for non-UnitMatrix hessian (i.e. betaMILP_ > 0)
+      }
+
+      // right-hand side equals <P^i,x^0>
+      double PiX0 = sparseDotProduct (vec, x0); 
+
+      vec.insert     (j, -1.); lp -> addRow (vec, -COIN_DBL_MAX,         PiX0); // (*)
+      vec.setElement (1, +1.); lp -> addRow (vec,          PiX0, COIN_DBL_MAX); // (***)
+
+      ++j; // index of variable within problem (plus nVars_)
+
+    } else if (intVar) {
+
+      // fix integer variable to its value in iSol      
+    }
+  }
 }
