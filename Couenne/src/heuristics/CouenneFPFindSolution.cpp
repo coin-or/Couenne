@@ -25,7 +25,7 @@ using namespace Couenne;
 int currentmilpmethod_;
 
 /// find a feasible or optimal solution of MILP
-double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
+double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, int depth) {
 
   /// as found on the notes, these methods can be used, from the most
   /// expensive and accurate (exact) method to a cheap, inexact one:
@@ -179,18 +179,21 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
      // determine the method to solve the MILP
      if (milpMethod_ == 0 && niter == 0)
      {
-        // initialize currentmilpmethod
-        //????????????? TODO: make this dependant on depth in Couenne's B&B tree        
-        currentmilpmethod_ = 2;
+        // initialize currentmilpmethod: at the root node we solve the MILP with SCIP default
+        // deeper in the tree, we will solve the MILP by a FP heuristic
+        if( depth == 0 )
+           currentmilpmethod_ = 2;
+        else 
+           currentmilpmethod_ = 4;
      }
      else if (milpMethod_ != 0)
         currentmilpmethod_ = milpMethod_; // use a fixed method to solve the MILP
      
-
+     
      // MILP solving loop. If the MILP terminates without a solution, it might get resolved with a more expensive atrategy
      do {
         solveagain = false;
-
+        
         // reset parameters if MILP is solved agian
         SCIP_CALL( SCIPresetParams(scip) );
         

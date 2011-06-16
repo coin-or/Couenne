@@ -119,7 +119,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // l-1 distance from. If nSol==NULL, the MILP is created using the
     // original milp's LP solution.
 
-     double z = solveMILP (nSol, iSol, niter, &nsuciter);
+     double z = solveMILP (nSol, iSol, niter, &nsuciter, depth);
 
     // placeholder for how to use pool
 
