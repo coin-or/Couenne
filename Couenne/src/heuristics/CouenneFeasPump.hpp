@@ -193,7 +193,7 @@ namespace Couenne {
     double betaMILP_; // decrease it over time
 
     /// compute distance from integer variables only, not all variables;
-    bool compDistInt_;
+    enum {FP_DIST_INT, FP_DIST_ALL, FP_DIST_POST} compDistInt_;
 
     /// Skip NLP solver if found integer but MINLP-infeasible solution 
     bool milpCuttingPlane_;

@@ -15,10 +15,13 @@
 #include "CouenneMINLPInterface.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
+#include "CouenneExprVar.hpp"
 
 #include "CouenneFPpool.hpp"
 
 using namespace Couenne;
+
+#define NUMERICS_THRES 1e19
 
 #ifdef COIN_HAS_SCIP
 void CouenneFeasPump::checkInfinity(SCIP *scip, SCIP_Real val, double infinity){
@@ -119,10 +122,11 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
     CoinPackedVector vec;
 
-    for (int i=0; i<problem_ -> nVars (); i++)
-      if (!compDistInt_ || milp_ -> isInteger (i))
+    for (int i = problem_ -> nVars (), j = 0; i--; ++j)
+
+      if (compDistInt_ == FP_DIST_ALL || milp_ -> isInteger (j))
 	// (empty) coeff col vector, lb, ub, obj coeff
-	milp_ -> addCol (vec, 0, COIN_DBL_MAX, 1.); 
+	milp_ -> addCol (vec, 0., COIN_DBL_MAX, 1.); 
 
     // Set to zero all other variables' obj coefficient. This means we
     // just do it for the single variable in the reformulated
@@ -153,9 +157,9 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
 
   delete [] nlpSolExp;
 
-  for (int i = 0, j = problem_ -> nVars (), k = j; k--; i++)
+  for (int i = 0, j = problem_ -> nVars (), k = j; k--; ++i)
 
-    if (!compDistInt_ || milp_ -> isInteger (i)) {
+    if (compDistInt_ == FP_DIST_ALL || milp_ -> isInteger (i)) {
 
       // create vector with single entry of 1 at i-th position 
       double val = 1.;
@@ -185,24 +189,61 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol) {
   if (firstCall)
     init_MILP ();
 
-  double obj;
-
   if (false) {
     static int cntr = 0;
-
     char filename [30];
     sprintf (filename, "fp-milp%04d", cntr++);
-
     milp_ -> writeLp (filename);
   }
 
-  obj = findSolution (iSol);
+  double obj = findSolution (iSol);
+
+  // check iSol for numerics (i.e. components whose fabs () is large,
+  // or >= 1e20) or post-process to obtain a second solution by fixing
+  // the integer coordinates and solving the resulting LP
+
+  if (compDistInt_ != FP_DIST_ALL) {
+
+    bool numerics = false;
+
+    if (compDistInt_ == FP_DIST_INT) {
+
+      for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
+	   i != problem_ -> Variables (). end (); ++i)
+
+	if ((  (*i) -> Multiplicity () > 0) &&
+	    ! ((*i) -> isInteger    ())     &&
+	    (fabs (iSol [(*i) -> Index ()]) > NUMERICS_THRES)) {
+
+	  numerics = true;
+	  break;
+	}
+    }
+
+    if (numerics || (compDistInt_ == FP_DIST_POST)) {
+
+      // solve LP where integer variables have been fixed:
+      //
+      // 0) save integer bounds
+      // 1) fix integer variables 
+      // 2) add variables and inequalities
+      // 3) solve LP
+      // 4) if optimal, save solution
+      // 5) restore IP bounds
+      // 6) delete variables
+
+
+
+
+    }
+  }
+
 
   // delete last rows and add them from scratch (common block below)
 
   int 
     nDeleted = nFinalRows - nInitRows,
-    *deleted  = new int [nDeleted],
+   *deleted  = new int [nDeleted],
     nCurRow  = nInitRows;
 
   for (int i = nDeleted; i--;)

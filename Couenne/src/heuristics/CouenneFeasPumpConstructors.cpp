@@ -61,7 +61,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   numberSolvePerLevel_ (-1),
   betaNLP_             (0.),
   betaMILP_            (0.),
-  compDistInt_         (false),
+  compDistInt_         (FP_DIST_INT),
   milpCuttingPlane_    (false),
   maxIter_             (COIN_INT_MAX),
   useSCIP_             (false),
@@ -81,13 +81,18 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
     options -> GetNumericValue ("feas_pump_beta_milp",  betaMILP_,            "couenne.");
 				    
     options -> GetStringValue  ("feas_pump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
-    options -> GetStringValue  ("feas_pump_dist_int", s, "couenne."); compDistInt_      = (s == "yes");
+    options -> GetStringValue  ("feas_pump_vardist",  s, "couenne."); 
 
-    options -> GetStringValue  ("feas_pump_usescip",    s,           "couenne."); 
+    compDistInt_ = 
+      (s == "integer") ? FP_DIST_INT : 
+      (s == "all")     ? FP_DIST_ALL : FP_DIST_POST;
+
     options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_, "couenne."); 
     options -> GetIntegerValue ("feas_pump_poolcomp",   compareTerm, "couenne."); 
 
-    pool_     = new CouenneFPpool ((enum what_to_compare) compareTerm);
+    pool_ = new CouenneFPpool ((enum what_to_compare) compareTerm);
+
+    options -> GetStringValue  ("feas_pump_usescip",    s,           "couenne."); 
 
 #ifdef COIN_HAS_SCIP
     useSCIP_ = (s == "yes");
@@ -99,7 +104,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 #endif
 
   } else
-    pool_     = new CouenneFPpool (SUM_NINF);
+    pool_ = new CouenneFPpool (SUM_NINF);
 
   setHeuristicName ("Couenne Feasibility Pump");
 
@@ -206,7 +211,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     // create the argument list (x_i - x_i^0)^2 for all i's
     for (int i=0; i<problem_ -> nVars (); i++) {
 
-      if (compDistInt_ && !(problem_ -> Var (i) -> isInteger ()))
+      if (compDistInt_ == FP_DIST_INT && !(problem_ -> Var (i) -> isInteger ()))
 	continue;
 
       CouNumber iS = iSol [i];
@@ -310,13 +315,13 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      "yes","",
      "");
 
-  roptions -> AddStringOption2
-    ("feas_pump_dist_int",
-     "only compute the distance from integer coordinates (\"yes\") instead of all variables (\"no\")",
-     "yes",
-     "no","",
-     "yes","",
-     "");
+  roptions -> AddStringOption3
+    ("feas_pump_vardist",
+     "Distance computed on integer-only or on both types of variables, in different flavors.",
+     "integer",
+     "integer",         "Only compute the distance based on integer coordinates (use post-processing if numerical errors occur)",
+     "all",             "Compute the distance using continuous and integer variables",
+     "int-postprocess", "Use a post-processing fixed-IP LP to determine a closest-point solution");
 
   roptions -> AddStringOption2
     ("feas_pump_usescip",
