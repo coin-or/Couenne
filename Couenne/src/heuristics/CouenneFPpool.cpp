@@ -13,6 +13,7 @@
 
 #include "CouenneProblem.hpp"
 #include "CouenneFPpool.hpp"
+#include "CouenneFeasPump.hpp"
 #include "CouenneExprVar.hpp"
 #include "CouenneExprAux.hpp"
 
@@ -159,13 +160,13 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
 
 /// copy constructor
 CouenneFPpool::CouenneFPpool (const CouenneFPpool &src):
-  queue_ (src.queue_) {}
+  set_ (src.set_) {}
 
 
 /// assignment
 CouenneFPpool &CouenneFPpool::operator= (const CouenneFPpool &src) {
 
-  queue_ = src.queue_;
+  set_ = src.set_;
 
   return *this;
 }
@@ -185,4 +186,11 @@ bool compareSol::operator() (const CouenneFPsolution &one,
       return true;
 
   return false;
+}
+
+/// finds, in pool, solution x closest to sol; removes it from the
+/// pool and overwrites it to sol
+void CouenneFPpool::findClosestAndReplace (const CouenneFeasPump &fp, double *sol) const {
+
+  
 }

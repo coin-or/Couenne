@@ -142,7 +142,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     if (tabuPool_. find (checkedSol) != tabuPool_ . end ()) {
 
-      if (pool_ -> Queue (). empty ()) {
+      if (pool_ -> Set (). empty ()) {
 
 	OsiCuts cs;
 
@@ -165,22 +165,28 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
          do
          {
             // retrieve the top solution from the pool
-            const CouenneFPsolution &newSol = pool_ -> Queue (). top ();
-            CoinCopyN (newSol. x (), problem_ -> nVars (), iSol);
-            pool_ -> Queue (). pop ();
+	   pool_ -> findClosestAndReplace (*this, iSol);
+
+	    // 
+
+
+	   //CoinCopyN (newSol. x (), problem_ -> nVars (), iSol);
+	   //pool_ -> Queue (). pop ();
+
+	   CouenneFPsolution newSol (problem_, iSol);
 
             // we found a solution that is not in the tabu list
             if (tabuPool_. find(newSol)  == tabuPool_ . end ())
                break;
 
             // the pool is empty -> bail out
-            if (pool_ -> Queue ().empty())
+            if (pool_ -> Set ().empty())
             {
                delete[] iSol;
                iSol = NULL;
             }
 
-         } while( !pool_ -> Queue ().empty() );
+         } while( !pool_ -> Set ().empty() );
       }
 
     } else tabuPool_. insert (CouenneFPsolution (problem_, iSol));

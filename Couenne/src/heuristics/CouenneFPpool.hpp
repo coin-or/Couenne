@@ -13,7 +13,7 @@
 #ifndef CouenneFPpool_hpp
 #define CouenneFPpool_hpp
 
-#include <queue>
+#include <set>
 
 #include "CouenneTypes.hpp"
 #include "CoinFinite.hpp"
@@ -21,6 +21,7 @@
 namespace Couenne {
 
   class CouenneProblem;
+  class CouenneFeasPump;
 
   /// what term to compare: the sum of infeasibilities, the sum of
   /// numbers of infeasible terms, or the objective function
@@ -97,7 +98,7 @@ namespace Couenne {
   protected:
 
     /// Pool
-    std::priority_queue <CouenneFPsolution> queue_;
+    std::set <CouenneFPsolution> set_;
 
   public:
 
@@ -112,8 +113,12 @@ namespace Couenne {
     CouenneFPpool &operator= (const CouenneFPpool &src);
 
     /// return the main object in this class
-    std::priority_queue <CouenneFPsolution> &Queue ()
-    {return queue_;}
+    std::set <CouenneFPsolution> &Set ()
+    {return set_;}
+
+    /// finds, in pool, solution x closest to sol; removes it from the
+    /// pool and overwrites it to sol
+    void findClosestAndReplace (const CouenneFeasPump &fp, double *sol) const;
   };
 }
 
