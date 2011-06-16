@@ -89,8 +89,6 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
   //
   // so that we can balance the Hessian and the distance.
 
-  CoinPackedMatrix P;
-
   bool firstCall = (milp_ != NULL); // true if this is the first call to
   	                            // solveMILP; initialization will be
   	                            // necessary
@@ -115,6 +113,8 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
   // Construct an (empty) Hessian. It will be modified later, but
   // the changes should be relatively easy for the case when
   // betaMILP > 0 and there are no changes if betaMILP_ == 0
+
+  CoinPackedMatrix P;
 
   P. setDimensions (problem_ -> nVars (), 
 		    problem_ -> nVars ());
@@ -159,6 +159,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
     nlpSolExp = CoinCopyOfArray (milp_ -> getColSolution (), 
 				 problem_ -> nVars ());
 
+  // create constraints to define l_1 distance objective function
   addDistanceConstraints (this, milp_, nlpSolExp, true);
 
   delete [] nlpSolExp;
@@ -182,16 +183,18 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 
   double obj = findSolution (iSol, niter, nsuciter, depth);
 
-  // do post processing if we got a solution from MILP, otherwise bail
-  // out
+  //
+  // POST PROCESSING 
+  //
+  // (if we got a solution from MILP, otherwise bail out)
+  //
 
-  if (iSol) {
+  if (iSol &&
+      (compDistInt_ != FP_DIST_ALL)) {
 
     // check iSol for numerics (i.e. components whose fabs () is large,
     // or >= 1e20) or post-process to obtain a second solution by fixing
     // the integer coordinates and solving the resulting LP
-
-    if (compDistInt_ != FP_DIST_ALL) {
 
       bool numerics = false;
 
@@ -222,30 +225,53 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 	// 5) restore IP bounds
 	// 6) delete variables
 
-	// (2) add inequalities
-
 	if (!postlp_)
 	  postlp_ = createCloneMILP (this, model_, false);
 
+	int nvars = postlp_ -> getNumCols ();
+
 	// save integer bounds to restore them later
 	double
-	  *saveLB = CoinCopyOfArray (postlp_ -> getColLower (), postlp_ -> getNumCols ()),
-	  *saveUB = CoinCopyOfArray (postlp_ -> getColUpper (), postlp_ -> getNumCols ());
+	  *saveLB = CoinCopyOfArray (postlp_ -> getColLower (), nvars),
+	  *saveUB = CoinCopyOfArray (postlp_ -> getColUpper (), nvars),
+	  *newLB  = CoinCopyOfArray (postlp_ -> getColLower (), nvars),
+	  *newUB  = CoinCopyOfArray (postlp_ -> getColUpper (), nvars);
 
-	int nInitRowsLP  = milp_ -> getNumRows ();
+	// fix integer variables
 
+	for (int i = problem_ -> nVars (); i--;)
+	  if (milp_ -> isInteger (i))
+	    newLB [i] = newUB [i] = milp_ -> getColSolution () [i];
+
+	postlp_ -> setColLower (newLB);
+	postlp_ -> setColUpper (newUB);
+
+	// add inequalities
+
+	int nInitRowsLP  = postlp_ -> getNumRows ();
 	addDistanceConstraints (this, postlp_, iSol, false);
-
-	int nFinalRowsLP  = milp_ -> getNumRows ();
+	int nFinalRowsLP = postlp_ -> getNumRows ();
 
 	// Solve the LP, obtain closest point with integer variables fixed
 
 	postlp_ -> initialSolve ();
 
+	// save as new solution
+
+	if (postlp_ -> isProvenOptimal ()) 
+	  CoinCopyN (postlp_ -> getColSolution (), problem_ -> nVars (), iSol);
+
 	postlp_ -> setColLower (saveLB);
 	postlp_ -> setColUpper (saveUB);
 
-	// delete 
+	// delete temp data
+
+	delete [] saveLB;
+	delete [] saveUB;
+	delete [] newLB;
+	delete [] newUB;
+
+	// delete added rows
 
 	int 
 	  nDeleted = nFinalRowsLP - nInitRowsLP,
@@ -259,7 +285,6 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 
 	delete [] deleted;
       }
-    }
   }
 
   // delete last rows and add them from scratch (common block below)
