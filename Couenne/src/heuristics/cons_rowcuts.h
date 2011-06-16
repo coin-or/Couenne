@@ -2,6 +2,7 @@
  *
  * @file   cons_rowcuts.h
  * @brief  constraint handler for rowcuts constraints
+ *         enables separation of convexification cuts during SCIP solution procedure
  * @author Pietro Belotti
  * @author Timo Berthold
  * @license This file is licensed under the Eclipse Public License (EPL)

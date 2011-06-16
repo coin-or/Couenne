@@ -118,7 +118,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // Solve IP using nSol as the initial point to minimize weighted
     // l-1 distance from. If nSol==NULL, the MILP is created using the
     // original milp's LP solution.
-
+            
     double z = solveMILP (nSol, iSol, niter, &nsuciter, depth);
 
     // placeholder for how to use pool
@@ -141,7 +141,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     CouenneFPsolution checkedSol (problem_, iSol, false); // false is for not allocating space for this
 
     if (tabuPool_. find (checkedSol) != tabuPool_ . end ()) {
-
+    
       if (pool_ -> Set (). empty ()) {
 
 	OsiCuts cs;
@@ -174,7 +174,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
          do
          {
             // retrieve the top solution from the pool
-	   pool_ -> findClosestAndReplace (*this, iSol);
+            pool_ -> findClosestAndReplace (*pool_, iSol, nSol, problem_ -> nVars ());
+
 
 	    // 
 

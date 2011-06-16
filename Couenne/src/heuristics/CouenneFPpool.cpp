@@ -62,7 +62,7 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x, bool copi
       if (inf > COUENNE_EPS) {
 
 	++nIinf_;
-
+ 
 	if (inf > maxIinf_) 
 	  maxIinf_ = inf;
       }
@@ -190,7 +190,38 @@ bool compareSol::operator() (const CouenneFPsolution &one,
 
 /// finds, in pool, solution x closest to sol; removes it from the
 /// pool and overwrites it to sol
-void CouenneFPpool::findClosestAndReplace (const CouenneFeasPump &fp, double *sol) const {
+void CouenneFPpool::findClosestAndReplace (CouenneFPpool &pool, double *sol, double *nSol, int nvars)  {
 
-  
+   double bestdist = 1e20;
+   std::set <CouenneFPsolution>::iterator bestsol = pool. Set ().  end ();
+
+   if( nSol )
+   {
+      for (std::set <CouenneFPsolution>::iterator i = pool. Set (). begin (); 
+           i != pool. Set ().  end (); ++i)
+      {
+         double dist;
+
+         //compute distance of pool solution and NLP solution
+         dist = 0.0;
+         for (int j = nvars; j--;)
+            dist += ((*i).x()[j] - nSol [j]) * ((*i).x()[j] - nSol [j]);
+
+         //update best solution
+         if( dist <= bestdist )
+         {
+            bestdist = dist;
+            bestsol = i;
+         }
+      }   
+   }
+   else 
+      bestsol = pool. Set (). begin ();
+
+   if( bestsol != pool. Set ().  end () )
+   {
+      sol = CoinCopyOfArray ((*bestsol).x(), nvars); 
+      pool. Set ().erase(bestsol);
+   }
+   
 }

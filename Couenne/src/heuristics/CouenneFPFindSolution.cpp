@@ -387,9 +387,10 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
 
               // add solutions to the pool if they are not in the tabu list
               if (tabuPool_. find (couennesol) == tabuPool_ . end () 
-		  && pool_ -> Set (). find (couennesol) == pool_ -> Set(). end () // ??????????????? TODO
+		  && pool_ -> Set (). find (couennesol) == pool_ -> Set(). end ()
                  ){
                  pool_ -> Set (). insert (couennesol);
+
                  nstoredsols++;
               }
            }
