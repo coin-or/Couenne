@@ -13,7 +13,6 @@
 #include "CoinTime.hpp"
 #include "CoinHelperFunctions.hpp"
 
-//#include "CouenneExprVar.hpp"
 #include "CouenneExprAux.hpp"
 #include "CouenneFeasPump.hpp"
 #include "CouenneProblem.hpp"
@@ -32,11 +31,8 @@
 
 using namespace Couenne;
 
-/// When the current IP (non-NLP) point is not MINLP feasible, linear
-/// cuts are added and the IP is re-solved not more than this times
-const int numConsCutPasses = 5;
-
 void printDist (CouenneProblem *p, double *iSol, double *nSol);
+void printCmpSol (int n, double *iSol, double *nSol, int direction);
 
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
@@ -130,8 +126,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     bool isChecked = false;
 
-    // if a solution was found, but it is in the tabu list, then we
-    // have two choices:
+    // if a solution was found, but is in the tabu list, two choices:
     //
     // 1) the pool is empty: do a round of cuts and repeat;
     //
@@ -154,7 +149,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	  milp_ -> applyCuts (cs);
 
-	  if (nSep++ < numConsCutPasses)
+	  if (nSep++ < nSepRounds_)
 	    continue;
 
 	} else break; // nothing left to do, just bail out
@@ -510,6 +505,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   return retval;
 }
 
+// gather data on single solution for later printout
 void compDistSingle (CouenneProblem *p,
 		     int n, double *v, 
 		     double &norm, 
@@ -571,6 +567,8 @@ void compDistSingle (CouenneProblem *p,
   p -> domain () -> pop ();
 }
 
+
+// print solutions and distances
 void printDist (CouenneProblem *p, double *iSol, double *nSol) {
 
   int nInfII = -1, nInfNI = -1, nInfIN = -1, nInfNN = -1;

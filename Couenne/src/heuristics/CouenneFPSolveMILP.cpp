@@ -41,8 +41,10 @@ void CouenneFeasPump::checkInfinity(SCIP *scip, SCIP_Real val, double infinity){
 /// create clone of MILP and add variables for special objective
 OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model, bool isMILP);
 
+
 /// modify MILP or LP to implement distance by adding extra rows (extra cols were already added by createCloneMILP)
 void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, double *sol, bool isMILP);
+
 
 /// find integer (possibly NLP-infeasible) point isol closest
 /// (according to the l-1 norm of the Hessian) to the current

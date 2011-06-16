@@ -209,6 +209,4 @@ namespace Couenne {
   };
 }
 
-void printCmpSol (int n, double *iSol, double *nSol, int direction);
-
 #endif
