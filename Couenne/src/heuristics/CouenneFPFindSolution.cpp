@@ -349,6 +349,8 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
         {
            SCIP_SOL** scipsols;
            SCIP_SOL* bestsol;
+           SCIP_Real cutoffbound;
+
            int nstoredsols;
 
            /* get incumbent solution */
@@ -368,11 +370,13 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
 
            nstoredsols = 0;
 
+           // if we use an objective feaspump, the objective function might be negative
+           cutoffbound = obj > 0 ? 2*obj : obj / 2.0;
+
            // insert other SCIP solutions into solution pool
            // do not store too many or too poor solutions 
-           // ?????????????????  TODO: the 2* criterion is bad if using a Obj FP
            for(int i=1; i<nscipsols && nstoredsols < 10 && 
-                  SCIPgetSolOrigObj(scip,scipsols[i]) <= 2*SCIPgetSolOrigObj(scip,bestsol); i++){
+                  SCIPgetSolOrigObj(scip,scipsols[i]) <= cutoffbound; i++){
               double* tmpsol;
 
               tmpsol = new CouNumber [nvars];
