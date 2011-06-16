@@ -182,77 +182,83 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 
   double obj = findSolution (iSol, niter, nsuciter, depth);
 
-  // check iSol for numerics (i.e. components whose fabs () is large,
-  // or >= 1e20) or post-process to obtain a second solution by fixing
-  // the integer coordinates and solving the resulting LP
+  // do post processing if we got a solution from MILP, otherwise bail
+  // out
 
-  if (compDistInt_ != FP_DIST_ALL) {
+  if (iSol) {
 
-    bool numerics = false;
+    // check iSol for numerics (i.e. components whose fabs () is large,
+    // or >= 1e20) or post-process to obtain a second solution by fixing
+    // the integer coordinates and solving the resulting LP
 
-    if (compDistInt_ == FP_DIST_INT) {
+    if (compDistInt_ != FP_DIST_ALL) {
 
-      for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
-	   i != problem_ -> Variables (). end (); ++i)
+      bool numerics = false;
 
-	if ((  (*i) -> Multiplicity () > 0) &&
-	    ! ((*i) -> isInteger    ())     &&
-	    (fabs (iSol [(*i) -> Index ()]) > NUMERICS_THRES)) {
+      if (compDistInt_ == FP_DIST_INT) {
 
-	  numerics = true;
-	  break;
-	}
-    }
+	for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
+	     i != problem_ -> Variables (). end (); ++i)
 
-    if (numerics || (compDistInt_ == FP_DIST_POST)) {
+	  if ((  (*i) -> Multiplicity () > 0) &&
+	      ! ((*i) -> isInteger    ())     &&
+	      (fabs (iSol [(*i) -> Index ()]) > NUMERICS_THRES)) {
 
-      // solve LP where integer variables have been fixed:
-      //
-      // a) check if postlp_ exists yet
-      // 0) save integer bounds
-      // 1) fix integer variables 
-      // 2) add variables and inequalities
-      // 3) solve LP
-      // 4) if optimal, save solution
-      // 5) restore IP bounds
-      // 6) delete variables
+	    numerics = true;
+	    break;
+	  }
+      }
 
-      // (2) add inequalities
+      if (numerics || (compDistInt_ == FP_DIST_POST)) {
 
-      if (!postlp_)
-	postlp_ = createCloneMILP (this, model_, false);
+	// solve LP where integer variables have been fixed:
+	//
+	// a) check if postlp_ exists yet
+	// 0) save integer bounds
+	// 1) fix integer variables 
+	// 2) add variables and inequalities
+	// 3) solve LP
+	// 4) if optimal, save solution
+	// 5) restore IP bounds
+	// 6) delete variables
 
-      // save integer bounds to restore them later
-      double
-	*saveLB = CoinCopyOfArray (postlp_ -> getColLower (), postlp_ -> getNumCols ()),
-	*saveUB = CoinCopyOfArray (postlp_ -> getColUpper (), postlp_ -> getNumCols ());
+	// (2) add inequalities
 
-      int nInitRowsLP  = milp_ -> getNumRows ();
+	if (!postlp_)
+	  postlp_ = createCloneMILP (this, model_, false);
 
-      addDistanceConstraints (this, postlp_, iSol, false);
+	// save integer bounds to restore them later
+	double
+	  *saveLB = CoinCopyOfArray (postlp_ -> getColLower (), postlp_ -> getNumCols ()),
+	  *saveUB = CoinCopyOfArray (postlp_ -> getColUpper (), postlp_ -> getNumCols ());
 
-      int nFinalRowsLP  = milp_ -> getNumRows ();
+	int nInitRowsLP  = milp_ -> getNumRows ();
 
-      // Solve the LP, obtain closest point with integer variables fixed
+	addDistanceConstraints (this, postlp_, iSol, false);
 
-      postlp_ -> initialSolve ();
+	int nFinalRowsLP  = milp_ -> getNumRows ();
 
-      postlp_ -> setColLower (saveLB);
-      postlp_ -> setColUpper (saveUB);
+	// Solve the LP, obtain closest point with integer variables fixed
 
-      // delete 
+	postlp_ -> initialSolve ();
 
-      int 
-	nDeleted = nFinalRowsLP - nInitRowsLP,
-       *deleted  = new int [nDeleted],
-	nCurRow  = nInitRowsLP;
+	postlp_ -> setColLower (saveLB);
+	postlp_ -> setColUpper (saveUB);
 
-      for (int i = nDeleted; i--;)
-	deleted [i] = nCurRow++;
+	// delete 
 
-      postlp_ -> deleteRows (nDeleted, deleted);
+	int 
+	  nDeleted = nFinalRowsLP - nInitRowsLP,
+	  *deleted  = new int [nDeleted],
+	  nCurRow  = nInitRowsLP;
 
-      delete [] deleted;
+	for (int i = nDeleted; i--;)
+	  deleted [i] = nCurRow++;
+
+	postlp_ -> deleteRows (nDeleted, deleted);
+
+	delete [] deleted;
+      }
     }
   }
 

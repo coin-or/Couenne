@@ -360,7 +360,7 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
            assert(scipsols != NULL);
 
            if (!sol)
-              sol = new CouNumber [nvars];
+	     sol = new CouNumber [nvars];
 
            // get solution values and objective of incumbent
            SCIP_CALL_ABORT( SCIPgetSolVals(scip, bestsol, nvars, vars, sol) );
