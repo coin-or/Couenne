@@ -161,6 +161,15 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       } else {
 
+	// if POOL = rnd-perturb, perturb solution iSol randomly and continue
+	// if POOL = none, bail out
+	// if POOL = pool, do below
+
+	// CODE HERE ---------------------------------------------------
+
+	// if no solution 
+
+
          // try to find non-tabu solution in the solution pool
          do
          {
