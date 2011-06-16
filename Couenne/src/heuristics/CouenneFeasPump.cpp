@@ -119,7 +119,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // l-1 distance from. If nSol==NULL, the MILP is created using the
     // original milp's LP solution.
 
-     double z = solveMILP (nSol, iSol, niter, &nsuciter, depth);
+    double z = solveMILP (nSol, iSol, niter, &nsuciter, depth);
 
     // placeholder for how to use pool
 
@@ -279,7 +279,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       break;
 
-    } else {
+    } else if (milpCuttingPlane_ == FP_CUT_EXTERNAL) {
 
       // solution is not MINLP feasible, it might get cut by
       // linearization cuts. If so, add a round of cuts and repeat.
@@ -297,7 +297,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	milp_ -> applyCuts (cs);
 
 	// found linearization cut, now re-solve MILP (not quite a FP)
-	if (milpCuttingPlane_ && (nSep++ < numConsCutPasses))
+	if (nSep++ < nSepRounds_)
 	  continue;
       }
     }

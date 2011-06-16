@@ -331,7 +331,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
     // amending MIP AND (integer variable OR FP_DIST_ALL)
     // amending ssLP  AND fractional variable
 
-    bool intVar = lp -> isInteger (j);
+    bool intVar = lp -> isInteger (i);
 
     if ((isMILP && (intVar || (fp -> compDistInt () == CouenneFeasPump::FP_DIST_ALL)))
 	||

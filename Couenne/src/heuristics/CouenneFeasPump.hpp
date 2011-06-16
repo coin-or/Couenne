@@ -51,7 +51,8 @@ namespace Couenne {
 
   public:
 
-    enum compDistIntType {FP_DIST_INT, FP_DIST_ALL, FP_DIST_POST};
+    enum fpCompDistIntType {FP_DIST_INT, FP_DIST_ALL,       FP_DIST_POST};
+    enum fpCutPlane        {FP_CUT_NONE, FP_CUT_INTEGRATED, FP_CUT_EXTERNAL, FP_CUT_POST}; 
 
     /// Constructor with (optional) MINLP pointer
     CouenneFeasPump (CouenneProblem *couenne                     = NULL,
@@ -126,7 +127,7 @@ namespace Couenne {
     {return problem_;}
 
     /// return type of MILP solved
-    enum compDistIntType compDistInt () const
+    enum fpCompDistIntType compDistInt () const
     {return compDistInt_;}
 
     /// return Lagrangian Hessian multiplier
@@ -175,26 +176,6 @@ namespace Couenne {
     /// Solutions to avoid
     std::set <CouenneFPsolution, compareSol> tabuPool_;
 
-    /// These methods can be used to solve the MILP, from the most
-    /// expensive, exact method to a cheap, inexact one:
-    ///
-    /// 1. Solve a MILP relaxation with Manhattan distance as objective
-    /// 2. Apply RENS on 1.
-    /// 3. Use Objective FP 2.0 for MILPs
-    /// 4. round-and-propagate
-    /// 5. choose from pool, see 4
-    /// 6. random pertubation
-
-    enum Methods {SOLVE_MILP,       APPLY_RENS,  USE_FP_2, ROUND_N_PROPAGATE, 
-		  CHOOSE_FROM_POOL, RND_PERTURB, NUM_METHODS};
-
-    /// array of NUM_METHODS elements containing a number indicating
-    /// the recent successes of the corresponding algorithm (see enum
-    /// right above). The larger method_success_ [i], the more often
-    /// the i-th method should be used.
-
-    int *method_success_;
-
     //
     // PARAMETERS
     //
@@ -209,10 +190,13 @@ namespace Couenne {
     double betaMILP_; // decrease it over time
 
     /// compute distance from integer variables only, not all variables;
-    enum compDistIntType compDistInt_;
+    enum fpCompDistIntType compDistInt_;
 
-    /// Skip NLP solver if found integer but MINLP-infeasible solution 
-    bool milpCuttingPlane_;
+    /// Separate convexification cuts during or after MILP
+    enum fpCutPlane milpCuttingPlane_;
+
+    /// Number of separation rounds for MILP convexification cuts
+    int nSepRounds_;
 
     /// maximum iterations per call
     int maxIter_;

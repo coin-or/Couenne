@@ -3,7 +3,7 @@
  * Name:    CouenneFeasPump.cpp
  * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
- * Purpose: Implement the Feasibility Pump heuristic class
+ * Purpose: Constructors and service methods of the Feasibility Pump class
  *
  * This file is licensed under the Eclipse Public License (EPL)
  */
@@ -63,7 +63,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   betaNLP_             (0.),
   betaMILP_            (0.),
   compDistInt_         (FP_DIST_INT),
-  milpCuttingPlane_    (false),
+  milpCuttingPlane_    (FP_CUT_NONE),
+  nSepRounds_          (0),
   maxIter_             (COIN_INT_MAX),
   useSCIP_             (false),
   milpMethod_          (0) {
@@ -81,7 +82,15 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
     options -> GetNumericValue ("feas_pump_beta_nlp",   betaNLP_,             "couenne.");
     options -> GetNumericValue ("feas_pump_beta_milp",  betaMILP_,            "couenne.");
 				    
-    options -> GetStringValue  ("feas_pump_lincut",   s, "couenne."); milpCuttingPlane_ = (s == "yes");
+    options -> GetStringValue  ("feas_pump_convcuts", s, "couenne."); 
+
+    milpCuttingPlane_ = 
+      (s == "none")       ? FP_CUT_NONE       :
+      (s == "integrated") ? FP_CUT_INTEGRATED : 
+      (s == "postcut")    ? FP_CUT_POST       : FP_CUT_EXTERNAL;
+
+    options -> GetIntegerValue ("feas_pump_nseprounds", nSepRounds_, "couenne."); 
+
     options -> GetStringValue  ("feas_pump_vardist",  s, "couenne."); 
 
     compDistInt_ = 
@@ -129,6 +138,7 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   betaMILP_            (other. betaMILP_),
   compDistInt_         (other. compDistInt_),
   milpCuttingPlane_    (other. milpCuttingPlane_),
+  nSepRounds_          (other. nSepRounds_),
   maxIter_             (other. maxIter_),
   useSCIP_             (other. useSCIP_),
   milpMethod_          (other. milpMethod_) {
@@ -169,6 +179,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     betaMILP_            = rhs. betaMILP_;
     compDistInt_         = rhs. compDistInt_;
     milpCuttingPlane_    = rhs. milpCuttingPlane_;
+    nSepRounds_          = rhs. nSepRounds_;
     maxIter_             = rhs. maxIter_;
     useSCIP_             = rhs. useSCIP_;
     milpMethod_          = rhs. milpMethod_;
@@ -229,13 +240,14 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
       list [nTerms++] = new exprPow (base, new exprConst (2.));
     }
+
   } else {
 
     // here the objective function is 
     //
     // ||P(x-x^0)||_2^2 = (x-x^0)' P'P (x-x^0)
     //
-    // with P positive semidefinite
+    // with P'P positive semidefinite
   }
 
   return new exprSum (list, nTerms);
@@ -312,13 +324,13 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      1., false,
      0., "0 for distance only, 1 for lagrangian hessian only");
 
-  roptions -> AddStringOption2
-    ("feas_pump_lincut",
-     "Shortcut to linearization cutting plane applied to the MILP solution instead of solving NLPs",
-     "no",
-     "no","",
-     "yes","",
-     "");
+  // roptions -> AddStringOption2
+  //   ("feas_pump_lincut",
+  //    "Shortcut to linearization cutting plane applied to the MILP solution instead of solving NLPs",
+  //    "no",
+  //    "no","",
+  //    "yes","",
+  //    "");
 
   roptions -> AddStringOption3
     ("feas_pump_vardist",
@@ -328,18 +340,19 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      "all",             "Compute the distance using continuous and integer variables",
      "int-postprocess", "Use a post-processing fixed-IP LP to determine a closest-point solution");
 
-  roptions -> AddStringOption3
+  roptions -> AddStringOption4
     ("feas_pump_convcuts",
      "Separate MILP-feasible, MINLP-infeasible solution during or after MILP solver.",
      "none",
      "integrated", "Done within the MILP solver in a branch-and-cut fashion",
      "external",   "Done after the MILP solver, in a Benders-like fashion",
+     "postcut",    "Do one round of cuts and proceed with NLP",
      "none",       "Just proceed to the NLP");
 
   roptions -> AddBoundedIntegerOption
     ("feas_pump_nseprounds",
-     "Number of rounds that separate convexification cuts",
-     0, 1e5, 0, 
+     "Number of rounds that separate convexification cuts. Must be at least 1",
+     1, 1e5, 4,
      "");
 
   roptions -> AddStringOption3
