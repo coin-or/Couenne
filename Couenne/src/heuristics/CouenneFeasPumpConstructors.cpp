@@ -328,12 +328,34 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      "all",             "Compute the distance using continuous and integer variables",
      "int-postprocess", "Use a post-processing fixed-IP LP to determine a closest-point solution");
 
+  roptions -> AddStringOption3
+    ("feas_pump_convcuts",
+     "Separate MILP-feasible, MINLP-infeasible solution during or after MILP solver.",
+     "none",
+     "integrated", "Done within the MILP solver in a branch-and-cut fashion",
+     "external",   "Done after the MILP solver, in a Benders-like fashion",
+     "none",       "Just proceed to the NLP");
+
+  roptions -> AddBoundedIntegerOption
+    ("feas_pump_nseprounds",
+     "Number of rounds that separate convexification cuts",
+     0, 1e5, 0, 
+     "");
+
+  roptions -> AddStringOption3
+    ("feas_pump_poolmgt",
+     "Retrieval of MILP solutions when the one returned is unsatisfactory",
+     "pool",
+     "pool",       "Use a solution pool and replace unsatisfactory solution with Euclidean-closest in pool",
+     "perturb",    "Randomly perturb unsatisfactory solution",
+     "none",       "Bail out of feasibility pump");
+
   roptions -> AddStringOption2
     ("feas_pump_usescip",
      "Should SCIP be used to solve the MILPs?",
      "no",
-     "no","",
-     "yes","",
+     "no",  "Use Cbc's branch-and-cut to solve the MILP",
+     "yes", "Use SCIP's branch-and-cut or heuristics (see feas_pump_milpmethod option) to solve the MILP",
      "");
 
   roptions -> AddBoundedIntegerOption
