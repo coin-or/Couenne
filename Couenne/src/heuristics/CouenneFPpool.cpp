@@ -190,25 +190,26 @@ bool compareSol::operator() (const CouenneFPsolution &one,
 
 /// finds, in pool, solution x closest to sol; removes it from the
 /// pool and overwrites it to sol
-void CouenneFPpool::findClosestAndReplace (CouenneFPpool &pool, double *sol, double *nSol, int nvars)  {
+void CouenneFPpool::findClosestAndReplace (double *sol, double *nSol, int nvars)  {
 
    double bestdist = 1e20;
-   std::set <CouenneFPsolution>::iterator bestsol = pool. Set ().  end ();
+   std::set <CouenneFPsolution>::iterator bestsol = set_.  end ();
 
    if( nSol )
    {
-      for (std::set <CouenneFPsolution>::iterator i = pool. Set (). begin (); 
-           i != pool. Set ().  end (); ++i)
+      for (std::set <CouenneFPsolution>::iterator i = set_. begin (); 
+           i != set_.  end (); ++i)
       {
          double dist;
 
          //compute distance of pool solution and NLP solution
          dist = 0.0;
          for (int j = nvars; j--;)
-            dist += ((*i).x()[j] - nSol [j]) * ((*i).x()[j] - nSol [j]);
+            dist += ((*i).x()[j] - nSol [j]) * 
+	            ((*i).x()[j] - nSol [j]);
 
          //update best solution
-         if( dist <= bestdist )
+         if( dist < bestdist )
          {
             bestdist = dist;
             bestsol = i;
@@ -216,12 +217,12 @@ void CouenneFPpool::findClosestAndReplace (CouenneFPpool &pool, double *sol, dou
       }   
    }
    else 
-      bestsol = pool. Set (). begin ();
+      bestsol = set_. begin ();
 
-   if( bestsol != pool. Set ().  end () )
+   if( bestsol != set_. end () )
    {
       sol = CoinCopyOfArray ((*bestsol).x(), nvars); 
-      pool. Set ().erase(bestsol);
+      set_. erase(bestsol);
    }
    
 }

@@ -185,6 +185,26 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 
   double obj = findSolution (iSol, niter, nsuciter, depth);
 
+  if ((nSol0 && iSol) &&
+      (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_STRONGWARNING, J_NLPHEURISTIC))) {
+
+    double dist = 0.;
+    int nNonint = 0;
+
+    for (int i = 0; i < problem_ -> nVars (); ++i) {
+
+      if (problem_ -> Var (i) -> isInteger () &&
+	  (fabs (iSol [i] - ceil (iSol [i] - .5)) > 1e-4))
+	++nNonint;
+
+      dist += 
+	(iSol [i] - nSol0 [i]) * 
+	(iSol [i] - nSol0 [i]);
+    }
+
+    printf ("FP: solution: distance %g, %d nonintegers\n", dist, nNonint);
+  }
+
   //
   // POST PROCESSING 
   //

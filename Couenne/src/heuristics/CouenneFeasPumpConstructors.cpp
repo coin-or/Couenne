@@ -67,7 +67,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   nSepRounds_          (0),
   maxIter_             (COIN_INT_MAX),
   useSCIP_             (false),
-  milpMethod_          (0) {
+  milpMethod_          (0),
+  tabuMgt_             (FP_TABU_NONE) {
 
   if (IsValid (options)) {
 
@@ -102,7 +103,14 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 
     pool_ = new CouenneFPpool ((enum what_to_compare) compareTerm);
 
-    options -> GetStringValue  ("feas_pump_usescip",    s,           "couenne."); 
+    options -> GetStringValue  ("feas_pump_tabumgt", s, "couenne.");
+
+    tabuMgt_ = 
+      (s == "pool")    ? FP_TABU_POOL    :
+      (s == "perturb") ? FP_TABU_PERTURB : 
+      (s == "cut")     ? FP_TABU_CUT     : FP_TABU_NONE;
+
+    options -> GetStringValue  ("feas_pump_usescip", s, "couenne."); 
 
 #ifdef COIN_HAS_SCIP
     useSCIP_ = (s == "yes");
@@ -141,7 +149,8 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   nSepRounds_          (other. nSepRounds_),
   maxIter_             (other. maxIter_),
   useSCIP_             (other. useSCIP_),
-  milpMethod_          (other. milpMethod_) {
+  milpMethod_          (other. milpMethod_),
+  tabuMgt_             (other. tabuMgt_) {
 
   if (other. pool_)
     pool_ = new CouenneFPpool (*(other. pool_));
@@ -183,6 +192,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     maxIter_             = rhs. maxIter_;
     useSCIP_             = rhs. useSCIP_;
     milpMethod_          = rhs. milpMethod_;
+    tabuMgt_             = rhs. tabuMgt_;
 
     if (rhs. pool_)
       pool_ = new CouenneFPpool (*(rhs. pool_));
@@ -355,12 +365,13 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      1, 1e5, 4,
      "");
 
-  roptions -> AddStringOption3
-    ("feas_pump_poolmgt",
+  roptions -> AddStringOption4
+    ("feas_pump_tabumgt",
      "Retrieval of MILP solutions when the one returned is unsatisfactory",
      "pool",
      "pool",       "Use a solution pool and replace unsatisfactory solution with Euclidean-closest in pool",
      "perturb",    "Randomly perturb unsatisfactory solution",
+     "cut",        "Separate convexification cuts",
      "none",       "Bail out of feasibility pump");
 
   roptions -> AddStringOption2

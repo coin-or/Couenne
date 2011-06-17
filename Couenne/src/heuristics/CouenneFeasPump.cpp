@@ -85,11 +85,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     *best = NULL; // best solution found so far
 
   int
-    niter  = 0,   // iteration counter
-    nsuciter = 0,// counter for consecutive successful application of one MILP solving method
-    retval = 0,   // 1 if found a better solution
-    nSep   = 0,   // If separation short circuit, max # of consecutive separations
-    objInd = problem_ -> Obj (0) -> Body () -> Index ();
+    niter    = 0,   // iteration counter
+    nsuciter = 0,   // counter for consecutive successful applications of one MILP solving method
+    retval   = 0,   // 1 if found a better solution
+    nSep     = 0,   // If separation short circuit, max # of consecutive separations
+    objInd   = problem_ -> Obj (0) -> Body () -> Index ();
 
   /////////////////////////////////////////////////////////////////////////
   //                      _                   _
@@ -106,6 +106,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   // of the main routine
 
   problem_ -> domain () -> push (model_ -> solver ());
+
+  expression *originalObjective = problem_ -> Obj (0) -> Body ();
 
   do {
 
@@ -137,7 +139,35 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     if (tabuPool_. find (checkedSol) != tabuPool_ . end ()) {
     
-      if (pool_ -> Set (). empty ()) {
+      // Current solution was visited before. Replace it with another
+      // MILP solution from the pool, if any.
+
+      if         (tabuMgt_ == FP_TABU_NONE) break;
+
+      else   if ((tabuMgt_ == FP_TABU_POOL) && !(pool_ -> Set (). empty ())) {
+
+	// try to find non-tabu solution in the solution pool
+	do {
+
+            // retrieve the top solution from the pool
+            pool_ -> findClosestAndReplace (iSol, nSol, problem_ -> nVars ());
+
+	    CouenneFPsolution newSol (problem_, iSol);
+
+            // we found a solution that is not in the tabu list
+            if (tabuPool_. find(newSol)  == tabuPool_ . end ())
+	      break;
+
+            // the pool is empty -> bail out
+            if (pool_ -> Set ().empty())
+	      {
+		delete[] iSol;
+		iSol = NULL;
+	      }
+
+	  } while( !pool_ -> Set ().empty() );
+
+      } else if  (tabuMgt_ == FP_TABU_CUT   ||  (pool_ -> Set (). empty ())) {
 
 	OsiCuts cs;
 
@@ -154,44 +184,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	} else break; // nothing left to do, just bail out
 
-      } else {
+      } else if  (tabuMgt_ == FP_TABU_PERTURB) {
 
-	// if POOL = rnd-perturb, perturb solution iSol randomly and continue
-	// if POOL = none, bail out
-	// if POOL = pool, do below
+	// TODO: perturb solution	
 
-	// CODE HERE ---------------------------------------------------
-
-	// if no solution 
-
-
-         // try to find non-tabu solution in the solution pool
-         do
-         {
-            // retrieve the top solution from the pool
-            pool_ -> findClosestAndReplace (*pool_, iSol, nSol, problem_ -> nVars ());
-
-
-	    // 
-
-
-	   //CoinCopyN (newSol. x (), problem_ -> nVars (), iSol);
-	   //pool_ -> Queue (). pop ();
-
-	   CouenneFPsolution newSol (problem_, iSol);
-
-            // we found a solution that is not in the tabu list
-            if (tabuPool_. find(newSol)  == tabuPool_ . end ())
-               break;
-
-            // the pool is empty -> bail out
-            if (pool_ -> Set ().empty())
-            {
-               delete[] iSol;
-               iSol = NULL;
-            }
-
-         } while( !pool_ -> Set ().empty() );
       }
 
     } else tabuPool_. insert (CouenneFPsolution (problem_, iSol));
@@ -275,7 +271,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       break;
 
-    } else if (milpCuttingPlane_ == FP_CUT_EXTERNAL) {
+    } else if (milpCuttingPlane_ == FP_CUT_EXTERNAL || 
+	       milpCuttingPlane_ == FP_CUT_POST) {
 
       // solution is not MINLP feasible, it might get cut by
       // linearization cuts. If so, add a round of cuts and repeat.
@@ -293,12 +290,16 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	milp_ -> applyCuts (cs);
 
 	// found linearization cut, now re-solve MILP (not quite a FP)
-	if (nSep++ < nSepRounds_)
+	if (milpCuttingPlane_ == FP_CUT_EXTERNAL && 
+	    nSep++ < nSepRounds_)
 	  continue;
       }
     }
 
+    //
     // reset number of separation during non-separating iteration
+    //
+
     nSep = 0;
 
     // NONLINEAR PART ///////////////////////////////////////////////////////
@@ -395,6 +396,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   // 1) restore original objective 
   // 2) fix integer variables
   // 3) resolve NLP
+
+  if (nlp_)
+    nlp_ -> setObjective (originalObjective);
 
   if (retval > 0) {
 

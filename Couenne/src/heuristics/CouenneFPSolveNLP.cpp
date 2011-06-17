@@ -89,17 +89,13 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
     if  (nSol)  CoinCopyN       (nlp_ -> getSolution (), problem_ -> nVars (), nSol);
     else nSol = CoinCopyOfArray (nlp_ -> getSolution (), problem_ -> nVars ());
 
-  else printf ("warning: NULL solution\n");
-
-  // integer solution with nlp cuts
-  // until MINLP feasible
+  else printf ("FP: warning, NLP returns a NULL solution\n");
 
   delete newObj;
 
   CouNumber retval;
 
   problem_ -> setObjective (0, oldObj);
-  nlp_     -> setObjective (oldObj);
 
   if ((status != Solve_Succeeded) &&
       (status != Solved_To_Acceptable_Level))

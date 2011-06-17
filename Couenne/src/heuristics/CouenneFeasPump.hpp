@@ -51,8 +51,9 @@ namespace Couenne {
 
   public:
 
-    enum fpCompDistIntType {FP_DIST_INT, FP_DIST_ALL,       FP_DIST_POST};
-    enum fpCutPlane        {FP_CUT_NONE, FP_CUT_INTEGRATED, FP_CUT_EXTERNAL, FP_CUT_POST}; 
+    enum fpCompDistIntType {FP_DIST_INT,  FP_DIST_ALL,       FP_DIST_POST};
+    enum fpCutPlane        {FP_CUT_NONE,  FP_CUT_INTEGRATED, FP_CUT_EXTERNAL, FP_CUT_POST}; 
+    enum fpTabuMgtPolicy   {FP_TABU_NONE, FP_TABU_POOL,      FP_TABU_PERTURB, FP_TABU_CUT};
 
     /// Constructor with (optional) MINLP pointer
     CouenneFeasPump (CouenneProblem *couenne                     = NULL,
@@ -206,6 +207,9 @@ namespace Couenne {
 
     /// Which SCIP MILP method to use
     int milpMethod_;
+
+    /// Tabu management policy: none, use from pool, random perturbation of current solution
+    enum fpTabuMgtPolicy tabuMgt_;
   };
 }
 
