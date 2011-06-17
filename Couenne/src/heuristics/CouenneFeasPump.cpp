@@ -172,11 +172,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	  } while( !pool_ -> Set ().empty() );
 
-      } else if  (tabuMgt_ == FP_TABU_CUT   ||  (pool_ -> Set (). empty ())) {
+      } else if ((tabuMgt_ == FP_TABU_CUT   ||  (pool_ -> Set (). empty ()) && iSol)) {
 
 	OsiCuts cs;
 
-	problem_   -> domain () -> push (milp_);
+	problem_   -> domain () -> push (problem_ -> nVars (), iSol, NULL, NULL);
 	couenneCG_ -> genRowCuts (*milp_, cs, 0, NULL); // remaining three arguments NULL by default
 	problem_   -> domain () -> pop ();
 
@@ -189,7 +189,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	} else break; // nothing left to do, just bail out
 
-      } else if  (tabuMgt_ == FP_TABU_PERTURB) {
+      } else if ((tabuMgt_ == FP_TABU_PERTURB) && iSol) {
 
 	// perturb solution	
 

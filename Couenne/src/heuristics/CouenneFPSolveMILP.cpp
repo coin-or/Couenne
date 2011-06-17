@@ -261,7 +261,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 
 	for (int i = problem_ -> nVars (); i--;)
 	  if (milp_ -> isInteger (i))
-	    newLB [i] = newUB [i] = milp_ -> getColSolution () [i];
+	    newLB [i] = newUB [i] = iSol [i];
 
 	postlp_ -> setColLower (newLB);
 	postlp_ -> setColUpper (newUB);
@@ -321,7 +321,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 
   delete [] deleted;
 
-  return obj;// milp_ -> getObjValue ();
+  return obj;
 }
 
 

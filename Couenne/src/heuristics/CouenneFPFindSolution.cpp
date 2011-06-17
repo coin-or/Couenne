@@ -430,10 +430,6 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
      SCIP_CALL_ABORT( SCIPfree(&scip) );
    
      BMScheckEmptyMemory();     
-
-     // save solution into milp_
-
-     milp_ -> setColSolution (sol);
   }
   else
 #endif      
