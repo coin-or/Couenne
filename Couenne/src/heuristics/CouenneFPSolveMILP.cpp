@@ -142,8 +142,6 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
   // variables, so that we know what (coefficients and rhs) to
   // change at every iteration.
 
-  // ADD CODE HERE...
-
   // Add 2q inequalities
 
   int nInitRows = milp_ -> getNumRows ();
@@ -186,7 +184,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
   double obj = findSolution (iSol, niter, nsuciter, depth);
 
   if ((nSol0 && iSol) &&
-      (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_STRONGWARNING, J_NLPHEURISTIC))) {
+      (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC))) {
 
     double dist = 0.;
     int nNonint = 0;
@@ -202,7 +200,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 	(iSol [i] - nSol0 [i]);
     }
 
-    printf ("FP: solution: distance %g, %d nonintegers\n", dist, nNonint);
+    printf ("FP: after MILP, distance %g, %d nonintegers\n", sqrt (dist), nNonint);
   }
 
   //

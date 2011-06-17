@@ -123,8 +123,13 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     // if no MILP solution was found, bail out
 
-    if (!iSol || z >= COIN_DBL_MAX/2) 
+    if (!iSol || z >= COIN_DBL_MAX/2) {
+
+      problem_ -> Jnlst () -> Printf 
+	(Ipopt::J_ERROR, J_NLPHEURISTIC,
+	 "FP: breaking out of loop upon %p==NULL or %.3f large\n", iSol, z);
       break;
+    }
 
     bool isChecked = false;
 
@@ -186,8 +191,44 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       } else if  (tabuMgt_ == FP_TABU_PERTURB) {
 
-	// TODO: perturb solution	
+	// perturb solution	
 
+	const CouNumber 
+	  *lb = milp_ -> getColLower (),
+	  *ub = milp_ -> getColUpper ();
+
+	double 
+	  downMoves = 0.,
+	  upMoves   = 0.;
+
+	int startIndex = (int) floor (CoinDrand48 () * problem_ -> nOrigVars ());
+
+	for (int ii=problem_ -> nOrigVars (); ii--; lb++, ub++) {
+
+	  // make perturbation start from random points
+
+	  int i = (startIndex + ii) % problem_ -> nOrigVars ();
+
+	  if (problem_ -> Var (i) -> isInteger ()) {
+
+	    double
+	      rnd  = CoinDrand48 (), 
+	      down = 0.,
+	      up   = 1.;
+
+	    // if there is room on the left (resp. right) of the
+	    // solution, consider moving down (resp. up). Make moves
+	    // less likely as we don't want to perturb too many variables
+
+#define RND_DECR_EXPONENT .5
+
+	    if (iSol [i] >= lb [i] - 1.) down =      1. / pow (1. + (downMoves += 1.), RND_DECR_EXPONENT);
+	    if (iSol [i] <= ub [i] + 1.) up   = 1. - 1. / pow (1. + (upMoves   += 1.), RND_DECR_EXPONENT);
+
+	    if      (rnd < down) iSol [i] -= 1.;
+	    else if (rnd > up)   iSol [i] += 1.;
+	  }
+	}
       }
 
     } else tabuPool_. insert (CouenneFPsolution (problem_, iSol));
@@ -200,11 +241,16 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     if(isChecked) {
       z = problem_->getRecordBestSol()->getModSolVal();
     }
+
 #else /* not FM_CHECKNLP2 */
     isChecked = problem_ -> checkNLP (iSol, z, true);
 #endif  /* not FM_CHECKNLP2 */
 
     if (isChecked) {
+
+      problem_ -> Jnlst () -> Printf 
+	(Ipopt::J_ERROR, J_NLPHEURISTIC, 
+	 "FP: IP solution is MINLP feasible\n");
 
       // solution is MINLP feasible! Save it.
 
@@ -309,6 +355,26 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     z = solveNLP (iSol, nSol); 
 
+    if ((nSol && iSol) &&
+	(problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC))) {
+
+      double dist = 0.;
+      int nNonint = 0;
+
+      for (int i = 0; i < problem_ -> nVars (); ++i) {
+
+	if (problem_ -> Var (i) -> isInteger () &&
+	    (fabs (iSol [i] - ceil (iSol [i] - .5)) > 1e-4))
+	  ++nNonint;
+
+	dist += 
+	  (iSol [i] - nSol [i]) * 
+	  (iSol [i] - nSol [i]);
+      }
+
+      printf ("FP: after NLP, distance %g, %d nonintegers\n", sqrt (dist), nNonint);
+    }
+
     if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC)) {
 
       printDist   (problem_,             iSol, nSol);
@@ -410,6 +476,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 				   problem_ -> domain () -> lb (),
 				   problem_ -> domain () -> ub ());
 
+    // fix integer coordinates of current (MINLP feasible!) solution
+    // and set it as initial (obviously NLP feasible) solution
+
     fixIntVariables (best);
     nlp_ -> setInitSol (best);
 
@@ -426,7 +495,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	(status != Solved_To_Acceptable_Level))
  
       problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, 
-				      "Feasibility Pump: error in final NLP problem\n");
+				      "Feasibility Pump: error in final NLP problem (due to fixing integer variables?)\n");
 
     // if found a solution with the last NLP, check & save it
 

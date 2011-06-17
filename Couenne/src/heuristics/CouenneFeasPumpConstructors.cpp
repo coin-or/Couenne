@@ -285,8 +285,10 @@ void CouenneFeasPump::fixIntVariables (double *sol) {
 	(rUp < rDn + 0.5)           ? rUp : 
 	(rUp - value < value - rDn) ? rUp : rDn;
 
-      problem_ -> Lb (i) = 
-      problem_ -> Ub (i) = value;
+#define INT_NLP_BRACKET 1e-8
+
+      problem_ -> Lb (i) = value - INT_NLP_BRACKET;
+      problem_ -> Ub (i) = value + INT_NLP_BRACKET;
     }
 }
 
@@ -307,12 +309,12 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      "Specify the logarithm of the number of feasibility pumps to perform" 
      " on average for each level of given depth of the tree.",
      -1,
-     2, "Solve as many nlp's at the nodes for each level of the tree. "
+     3, "Solve as many nlp's at the nodes for each level of the tree. "
      "Nodes are randomly selected. If for a "
      "given level there are less nodes than this number nlp are solved for every nodes. "
      "For example if parameter is 8, nlp's are solved for all node until level 8, " 
      "then for half the node at level 9, 1/4 at level 10.... "
-     "Value -1 specify to perform at all nodes.");
+     "Set to -1 to perform at all nodes.");
 
   roptions -> AddLowerBoundedIntegerOption
     ("feas_pump_iter",
@@ -333,14 +335,6 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      0., false,
      1., false,
      0., "0 for distance only, 1 for lagrangian hessian only");
-
-  // roptions -> AddStringOption2
-  //   ("feas_pump_lincut",
-  //    "Shortcut to linearization cutting plane applied to the MILP solution instead of solving NLPs",
-  //    "no",
-  //    "no","",
-  //    "yes","",
-  //    "");
 
   roptions -> AddStringOption3
     ("feas_pump_vardist",
