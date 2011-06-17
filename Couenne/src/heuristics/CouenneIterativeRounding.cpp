@@ -576,7 +576,7 @@ namespace Couenne{
 	  CoinCopyN (couenne_->getRecordBestSol()->getSol(), n, tmpSolution);
 	  obj = couenne_->getRecordBestSol()->getVal();
 #else /* not FM_TRACE_OPTSOL */
-	  CoinCopyN (couenne_->getRecordBestSol()->getModSol(), n, tmpSolution);
+	  CoinCopyN (couenne_->getRecordBestSol()->getModSol(n), n, tmpSolution);
 #endif /* not FM_TRACE_OPTSOL */
 #else /* not FM_CHECKNLP2 */
 	  
@@ -912,7 +912,7 @@ namespace Couenne{
 	CoinCopyN (couenne_->getRecordBestSol()->getSol(), n, tmpSolution);
 	obj = couenne_->getRecordBestSol()->getVal();
 #else /* not FM_TRACE_OPTSOL */
-	CoinCopyN (couenne_->getRecordBestSol()->getModSol(), n, tmpSolution);
+	CoinCopyN (couenne_->getRecordBestSol()->getModSol(n), n, tmpSolution);
 #endif /* not FM_TRACE_OPTSOL */
 #else /* not FM_CHECKNLP2 */
 	

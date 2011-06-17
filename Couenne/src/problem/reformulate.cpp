@@ -129,7 +129,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
     setCutOff(getRecordBestSol()->getModSolVal());
 #else
     setCutOff(getRecordBestSol()->getModSolVal(), 
-	      getRecordBestSol()->getModSol());
+	      getRecordBestSol()->getModSol(nVars()));
 #endif
 #endif /* not FM_TRACE_OPTSOL */
 

@@ -263,7 +263,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       best = problem_->getRecordBestSol()->getSol();
       objVal = problem_->getRecordBestSol()->getVal();
 #else /* not FM_TRACE_OPTSOL */
-      best = problem_->getRecordBestSol()->getModSol();
+      best = problem_->getRecordBestSol()->getModSol(problem_->nVars());
       objVal = z;
 #endif /* not FM_TRACE_OPTSOL */
 #else /* not FM_CHECKNLP2 */
@@ -414,7 +414,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       best = problem_->getRecordBestSol()->getSol();
       objVal = problem_->getRecordBestSol()->getVal();
 #else /* not FM_TRACE_OPTSOL */
-      best = problem_->getRecordBestSol()->getModSol();
+      best = problem_->getRecordBestSol()->getModSol(problem_ -> nVars ());
       objVal = z;
 #endif /* not FM_TRACE_OPTSOL */
 #else /* not FM_CHECKNLP2 */
@@ -532,7 +532,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       best = problem_->getRecordBestSol()->getSol();
       objVal = problem_->getRecordBestSol()->getVal();
 #else /* not FM_TRACE_OPTSOL */
-      best = problem_->getRecordBestSol()->getModSol();
+      best = problem_->getRecordBestSol()->getModSol(problem_ -> nVars ());
       objVal = z;
 #endif /* not FM_TRACE_OPTSOL */
 #else /* not FM_CHECKNLP2 */
