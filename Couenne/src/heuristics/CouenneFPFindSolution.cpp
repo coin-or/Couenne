@@ -12,6 +12,7 @@
 #include "CouenneFPpool.hpp"
 #include "CouenneProblem.hpp"
 #include "CoinTime.hpp"
+#include "cons_rowcuts.h"
 
 #ifdef COIN_HAS_SCIP
 /* general SCIP includes */
@@ -120,7 +121,13 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
    
      // include default SCIP plugins
      SCIP_CALL_ABORT( SCIPincludeDefaultPlugins(scip) );
-     
+
+     // include row cut constraint hanlder
+     if( milpCuttingPlane_ == FP_CUT_INTEGRATED )
+     { 
+        SCIP_CALL_ABORT( SCIPincludeConshdlrRowcuts(scip, couenneCG_, milp_) );
+     }
+
      // create problem instance in SCIP
      SCIP_CALL_ABORT( SCIPcreateProb(scip, "auxiliary FeasPump MILP", NULL, NULL, NULL, NULL, NULL, NULL, NULL) );
 
@@ -224,6 +231,10 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
         switch(currentmilpmethod_)
         {
         case -1: // solve the MILP completely. SCIP's default setting should be best for this
+           if( milpCuttingPlane_ == FP_CUT_INTEGRATED )
+           { 
+              SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "constraints/rowcuts/maxcuttingrounds", 0) );
+           }
            break;
 
         case 1: // Be aggressive in finding feasible solutions, but lazy about the dual bound. 
@@ -289,6 +300,10 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
               SCIP_CALL_ABORT( SCIPsetIntParam(scip, "heuristics/rens/freq", 0) );
               SCIP_CALL_ABORT( SCIPsetRealParam(scip, "heuristics/rens/minfixingrate", 0.0) );
            }
+           if( milpCuttingPlane_ == FP_CUT_INTEGRATED )
+           { 
+              SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "constraints/rowcuts/maxcuttingrounds", 0) );
+           }
            break;
 
         case 4: // solve the MILP with Feasibility Pump. Disable most other features, enable stage 3 for feaspump
@@ -324,7 +339,10 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
                  SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "heuristics/feaspump/stage3", TRUE) );
               }
            }
-
+           if( milpCuttingPlane_ == FP_CUT_INTEGRATED )
+           { 
+              SCIP_CALL_ABORT( SCIPsetLongintParam(scip, "constraints/rowcuts/maxcuttingrounds", 0) );
+           }
            break;
 
         default:
