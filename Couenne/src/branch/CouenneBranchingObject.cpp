@@ -159,8 +159,8 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
     // 
     // 3) l <  b <= u: LEFT branch on b-1, RIGHT branch on b
 
-    assert ((brpt - l > .5) || 
-	    (u - brpt > .5));
+    // assert ((brpt - l > .5) || 
+    // 	    (u - brpt > .5));
 
     if ((brpt - l > .5) &&
 	(u - brpt > .5)) {// brpt is integer interior point of [l,u]

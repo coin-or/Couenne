@@ -484,6 +484,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     ////////////////////////////////////////////////////////////////
 
+    app_ -> Options () -> SetStringValue ("fixed_variable_treatment", "make_parameter");
+
     // Solve with original objective function
     ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
 
