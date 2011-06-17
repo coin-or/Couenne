@@ -270,6 +270,8 @@ void CouenneFeasPump::fixIntVariables (double *sol) {
 
   assert (sol);
 
+  t_chg_bounds *chg_bds = new t_chg_bounds [problem_ -> nVars ()];
+
   for (int i = problem_ -> nVars (); i--;)
 
     if (problem_ -> Var (i) -> isInteger ()) {
@@ -285,11 +287,21 @@ void CouenneFeasPump::fixIntVariables (double *sol) {
 	(rUp < rDn + 0.5)           ? rUp : 
 	(rUp - value < value - rDn) ? rUp : rDn;
 
-#define INT_NLP_BRACKET 1e-8
+#define INT_NLP_BRACKET 1e-6
 
       problem_ -> Lb (i) = value - INT_NLP_BRACKET;
       problem_ -> Ub (i) = value + INT_NLP_BRACKET;
+
+      chg_bds [i].setLower (t_chg_bounds::CHANGED); 
+      chg_bds [i].setUpper (t_chg_bounds::CHANGED); 
     }
+
+  // Now, to restrict the bounding box even more (and hopefully make
+  // it easier) apply BT
+
+  problem_ -> btCore (chg_bds);
+
+  delete [] chg_bds;
 }
 
 
