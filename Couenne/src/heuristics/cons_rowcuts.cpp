@@ -1,11 +1,20 @@
-/** $Id$
+/* $Id$
  *
  * @file   cons_rowcuts.c
+ * @brief  constraint handler for rowcuts constraints
+ *         enables separation of convexification cuts during SCIP solution procedure
+ * @author Pietro Belotti
+ * @author Timo Berthold
+ * @license This file is licensed under the Eclipse Public License (EPL)
+ * 
+ * This file is licensed under the Eclipse Public License (EPL)
+ */
+
+/**@file   cons_rowcuts.c
  * @ingroup CONSHDLRS 
  * @brief  constraint handler for rowcuts constraints
  * @author Pietro Belotti
  * @author Timo Berthold
- * @license This file is licensed under the Eclipse Public License (EPL)
  */
 
 /*---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+----9----+----0----+----1----+----2*/
@@ -14,6 +23,7 @@
 
 #include "cons_rowcuts.h"
 #include "scip/cons_linear.h"
+#include "scip/scip.h"
 
 #include "CouenneProblem.hpp"
 
@@ -33,6 +43,8 @@
 #define CONSHDLR_DELAYPRESOL      FALSE /**< should presolving method be delayed, if other presolvers found reductions? */
 #define CONSHDLR_NEEDSCONS        FALSE /**< should the constraint handler be skipped, if no constraints are available? */
 
+#define DEFAULT_MAXCUTTINGROUNDS     5 /**< how many rounds of cuts should be applied at most? */
+
 using namespace Couenne;
 
 /*
@@ -44,6 +56,8 @@ struct SCIP_ConshdlrData
 {
    CouenneCutGenerator*  cutgenerator;       /* CouenneCutGenerator for linearization cuts */
    OsiSolverInterface*   milp;               /* Couenne's MILP relaxation of Couenne's MINLP */
+   int                   maxcuttingrounds;   /* how many rounds of cuts should be applied at most */
+   int                   ncuttingrounds;     /* how many rounds of cuts have been applied already */
 };
 
 
@@ -61,7 +75,11 @@ SCIP_RETCODE checkRowcuts(
    )
 {
    SCIP_CONSHDLRDATA* conshdlrdata;
+   CouenneProblem* problem;
    OsiCuts cs;
+   SCIP_Real* sol;
+   SCIP_VAR** vars;
+   int nvars;
    int i;
 
    assert(scip != NULL);
@@ -73,16 +91,22 @@ SCIP_RETCODE checkRowcuts(
    conshdlrdata = SCIPconshdlrGetData(conshdlr);
    assert(conshdlrdata != NULL);
 
-   double *sol = NULL;
+   /* get Couenne problem data */
+   problem = conshdlrdata->cutgenerator-> Problem ();
 
-#if 1
-   conshdlrdata->cutgenerator-> Problem () -> domain () -> push (conshdlrdata->cutgenerator-> Problem () -> nVars (), sol, NULL, NULL);
+   /* get variable data, create sol */
+   nvars = SCIPgetNVars(scip);
+   vars = SCIPgetVars(scip);
+   sol = new SCIP_Real [nvars];
+   SCIP_CALL( SCIPgetSolVals(scip, NULL, nvars, vars, sol) );
+
+   /* store solution into MILP data structure */
+   conshdlrdata -> milp -> setColSolution(sol);
 
    /* let Couenne generate linearization cuts */
+   problem -> domain () -> push (problem -> nVars (), sol, NULL, NULL);
    conshdlrdata->cutgenerator->genRowCuts(*(conshdlrdata->milp), cs, 0, NULL);
-
-   conshdlrdata->cutgenerator-> Problem () -> domain () -> pop  ();
-#endif
+   problem -> domain () -> pop  ();
 
    if( !addcons )
    {
@@ -94,8 +118,9 @@ SCIP_RETCODE checkRowcuts(
    {
       CoinPackedVector row;
 
-      SCIP_VAR** vars;
       SCIP_CONS* cons;
+      SCIP_VAR** vars;
+
       char consname[SCIP_MAXSTRLEN];  
       SCIP_Real* vals;
       int* idxs;
@@ -121,8 +146,9 @@ SCIP_RETCODE checkRowcuts(
       /* create an empty linear constraint */
       SCIP_CALL_ABORT( SCIPcreateConsLinear(scip, &cons, consname, 0, NULL, NULL, lhs, rhs, 
             TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE) );
-      
-      vars = SCIPgetVars(scip);
+
+      /* get SCIP variable array */
+      vars = SCIPgetVars(scip);      
 
       /* add variables to constraint */
       for( j = 0; j < nvals; j++ )
@@ -132,11 +158,19 @@ SCIP_RETCODE checkRowcuts(
       
       /* add constraint to SCIP */
       SCIP_CALL( SCIPaddCons(scip, cons) );
+#if 0
+       SCIP_CALL( SCIPprintCons(scip,cons,NULL) );
+#endif
       SCIP_CALL( SCIPreleaseCons(scip, &cons) );        
 
       *result = SCIP_CONSADDED;
    }
    
+   /* store cuts to MILP data structure */
+   if (cs.sizeRowCuts ()) {
+      conshdlrdata -> milp -> applyCuts (cs);
+   }
+
    return SCIP_OKAY;
 }
 
@@ -160,7 +194,7 @@ SCIP_DECL_CONSFREE(consFreeRowcuts)
    /* get constraint handler data */
    conshdlrdata = SCIPconshdlrGetData(conshdlr);
    assert(conshdlrdata != NULL);
-
+   
    /* free constraint handler data */
    SCIPfreeMemory(scip, &conshdlrdata);
    SCIPconshdlrSetData(conshdlr, NULL);
@@ -205,9 +239,25 @@ SCIP_DECL_CONSFREE(consFreeRowcuts)
 static
 SCIP_DECL_CONSENFOLP(consEnfolpRowcuts)
 {  /*lint --e{715}*/
-   *result = SCIP_FEASIBLE;
+   SCIP_CONSHDLRDATA* conshdlrdata;
 
-   SCIP_CALL( checkRowcuts(scip, conshdlr, result, TRUE) );
+   assert(scip != NULL);
+   assert(conshdlr != NULL);
+   assert(strcmp(SCIPconshdlrGetName(conshdlr), CONSHDLR_NAME) == 0);
+   assert(nconss == 0 && conss == NULL); /* there should be no constraints */
+   assert(result != NULL);
+
+
+   conshdlrdata = SCIPconshdlrGetData(conshdlr);
+   assert(conshdlrdata != NULL);
+   if( conshdlrdata->ncuttingrounds < conshdlrdata->maxcuttingrounds )
+   {
+      SCIP_CALL( checkRowcuts(scip, conshdlr, result, TRUE) );
+      conshdlrdata->ncuttingrounds++;
+   }
+
+   /* we want to accept all solutions, even if we added a constraint that cuts them off */
+   *result = SCIP_FEASIBLE;
 
    return SCIP_OKAY;
 }
@@ -216,9 +266,26 @@ SCIP_DECL_CONSENFOLP(consEnfolpRowcuts)
 static
 SCIP_DECL_CONSENFOPS(consEnfopsRowcuts)
 {  /*lint --e{715}*/
-   *result = SCIP_FEASIBLE;
+   SCIP_CONSHDLRDATA* conshdlrdata;
 
-   SCIP_CALL( checkRowcuts(scip, conshdlr, result, TRUE) );
+   assert(scip != NULL);
+   assert(conshdlr != NULL);
+   assert(strcmp(SCIPconshdlrGetName(conshdlr), CONSHDLR_NAME) == 0);
+   assert(nconss == 0 && conss == NULL); /* there should be no constraints */
+   assert(result != NULL);
+
+
+   conshdlrdata = SCIPconshdlrGetData(conshdlr);
+   assert(conshdlrdata != NULL);
+
+   if( conshdlrdata->ncuttingrounds < conshdlrdata->maxcuttingrounds )
+   {
+      SCIP_CALL( checkRowcuts(scip, conshdlr, result, TRUE) );
+      conshdlrdata->ncuttingrounds++;
+   }
+
+   /* we want to accept all solutions, even if we added a constraint that cuts them off */
+   *result = SCIP_FEASIBLE;
 
    return SCIP_OKAY;
 }
@@ -227,6 +294,23 @@ SCIP_DECL_CONSENFOPS(consEnfopsRowcuts)
 static
 SCIP_DECL_CONSCHECK(consCheckRowcuts)
 {  /*lint --e{715}*/
+   SCIP_CONSHDLRDATA* conshdlrdata;
+
+   assert(scip != NULL);
+   assert(conshdlr != NULL);
+   assert(strcmp(SCIPconshdlrGetName(conshdlr), CONSHDLR_NAME) == 0);
+   assert(nconss == 0 && conss == NULL); /* there should be no constraints */
+   assert(result != NULL);
+
+
+   conshdlrdata = SCIPconshdlrGetData(conshdlr);
+   assert(conshdlrdata != NULL);
+   if( SCIPgetStage(scip) == SCIP_STAGE_SOLVING && conshdlrdata->ncuttingrounds < conshdlrdata->maxcuttingrounds )
+   {
+      SCIP_CALL( checkRowcuts(scip, conshdlr, result, TRUE) );
+      conshdlrdata->ncuttingrounds++;
+   }
+
    *result = SCIP_FEASIBLE;
 
    return SCIP_OKAY;
@@ -288,6 +372,7 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
    SCIP_CALL( SCIPallocMemory(scip, &conshdlrdata) );
    conshdlrdata->cutgenerator = cutgenerator;
    conshdlrdata->milp = milp;
+   conshdlrdata->ncuttingrounds = 0;
 
    /* include constraint handler */
    SCIP_CALL( SCIPincludeConshdlr(scip, CONSHDLR_NAME, CONSHDLR_DESC,
@@ -306,7 +391,10 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
          conshdlrdata) );
 
    /* add rowcuts constraint handler parameters */
-   /* TODO: (optional) add constraint handler specific parameters with SCIPaddTypeParam() here */
+   SCIP_CALL( SCIPaddIntParam(scip,
+         "constraints/"CONSHDLR_NAME"/maxcuttingrounds",
+         "how many rounds of cuts should be applied at most?",
+         &conshdlrdata->maxcuttingrounds, FALSE, DEFAULT_MAXCUTTINGROUNDS, -1, INT_MAX, NULL, NULL) );
 
    return SCIP_OKAY;
 }

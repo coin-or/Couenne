@@ -17,8 +17,9 @@
 #include "OsiSolverInterface.hpp"
 
 #include "scip/scip.h"
-namespace Couenne
-{
+
+using namespace Couenne;
+
 /** creates the handler for rowcuts constraints and includes it in SCIP */
 extern
 SCIP_RETCODE SCIPincludeConshdlrRowcuts(
@@ -26,5 +27,4 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
    CouenneCutGenerator*  cutgenerator,       /**< CouenneCutGenerator for linearization cuts */
    OsiSolverInterface*   milp                /**< Couenne's MILP relaxation of Couenne's MINLP */
    );
-}
 #endif
