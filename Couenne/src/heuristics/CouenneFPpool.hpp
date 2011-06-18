@@ -88,7 +88,7 @@ namespace Couenne {
 
   public:
     bool operator () (const CouenneFPsolution &one, 
-		      const CouenneFPsolution &two);
+		      const CouenneFPsolution &two) const;
   };
 
 

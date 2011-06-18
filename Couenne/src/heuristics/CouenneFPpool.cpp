@@ -155,6 +155,7 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
 
   printf ("CouenneFPsolution::compare: bad compared term\n");
   abort ();
+  return false;
 }
 
 
@@ -173,7 +174,7 @@ CouenneFPpool &CouenneFPpool::operator= (const CouenneFPpool &src) {
 
 /// compare, base version
 bool compareSol::operator() (const CouenneFPsolution &one, 
-			     const CouenneFPsolution &two) {
+			     const CouenneFPsolution &two) const {
 
   register const double
     *x1 = one.x (),

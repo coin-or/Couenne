@@ -155,7 +155,7 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   if (other. pool_)
     pool_ = new CouenneFPpool (*(other. pool_));
 
-  for (std::set <CouenneFPsolution, compareSol>::iterator i = other.tabuPool_.begin (); 
+  for (std::set <CouenneFPsolution, compareSol>::const_iterator i = other.tabuPool_.begin (); 
        i != other.tabuPool_.end ();
        ++i)
     tabuPool_. insert (CouenneFPsolution (*i));
@@ -197,7 +197,7 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     if (rhs. pool_)
       pool_ = new CouenneFPpool (*(rhs. pool_));
 
-    for (std::set <CouenneFPsolution, compareSol>::iterator i = rhs.tabuPool_.begin (); 
+    for (std::set <CouenneFPsolution, compareSol>::const_iterator i = rhs.tabuPool_.begin (); 
 	 i != rhs.tabuPool_.end ();
 	 ++i)
       tabuPool_. insert (CouenneFPsolution (*i));

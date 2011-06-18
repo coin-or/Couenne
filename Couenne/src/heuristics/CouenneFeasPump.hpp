@@ -24,10 +24,7 @@
 #include "IpOptionsList.hpp"
 
 struct Scip;
-
-namespace Osi {
-  class OsiSolverInterface;
-}
+class OsiSolverInterface;
 
 namespace Ipopt {
   class IpoptApplication;
