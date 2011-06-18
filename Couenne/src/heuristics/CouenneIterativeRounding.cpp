@@ -367,7 +367,7 @@ namespace Couenne{
 
     // write down starting time and apply heuristics
     startTime_ = CoinCpuTime();
-    endTime_ = (numSol_ == 0) ? maxTimeFirstCall_ : maxTime_;
+    endTime_ = ((numSol_ == 0) ? maxTimeFirstCall_ : maxTime_);
 
     const double* bestKnownSolution = model_->bestSolution();
     bool found = false;
@@ -547,7 +547,8 @@ namespace Couenne{
 
 	cinlp_->messageHandler()->setLogLevel(1);
 	cinlp_->resolve();
-	obj = (cinlp_->isProvenOptimal()) ? cinlp_->getObjValue():COIN_DBL_MAX;
+	obj = ((cinlp_->isProvenOptimal()) ? 
+	       cinlp_->getObjValue():COIN_DBL_MAX);
 	memcpy(tmpSolution, cinlp_->getColSolution(), 
 	       nNlp*sizeof(double));
 	// check solution of the NLP;
@@ -639,7 +640,7 @@ namespace Couenne{
 	numIntAtBound = computeIntAtBound(xtilde, avgBound);
 	
 	if (numIntAtBound >= 50 || 
-	    numIntAtBound >= (numIntegers_*0.1 > 5) ? numIntegers_*0.1 : 5){
+	    numIntAtBound >= ((numIntegers_*0.1 > 5) ? numIntegers_*0.1 : 5)){
 	  // write reverse local branching constraint
 	  // this avoids finding the same xtilde again
 	  avgBound = floor(avgBound + 0.5);
@@ -741,7 +742,7 @@ namespace Couenne{
     numIntAtBound = computeIntAtBound(solution, avgBound);
 
     if (numIntAtBound >= 50 ||
-	numIntAtBound >= (numIntegers_*0.1 > 5) ? numIntegers_*0.1 : 5){
+	numIntAtBound >= ((numIntegers_*0.1 > 5) ? numIntegers_*0.1 : 5)){
       // write local branching constraint
       writeLB(lbcut1, solution, 'L', lbrhs + floor(avgBound - 0.5));
       lbcuts.insert(lbcut1);
@@ -883,7 +884,7 @@ namespace Couenne{
 
       cinlp_->messageHandler()->setLogLevel(1);
       cinlp_->resolve();
-      obj = (cinlp_->isProvenOptimal()) ? cinlp_->getObjValue():COIN_DBL_MAX;
+      obj = ((cinlp_->isProvenOptimal()) ? cinlp_->getObjValue():COIN_DBL_MAX);
       memcpy(tmpSolution, cinlp_->getColSolution(), 
 	     nNlp*sizeof(double));
       // check solution of the NLP;
@@ -974,7 +975,7 @@ namespace Couenne{
       numIntAtBound = computeIntAtBound(xtilde, avgBound);
 	
       if (numIntAtBound >= 50 || 
-	  numIntAtBound >= (numIntegers_*0.1 > 5) ? numIntegers_*0.1 : 5){
+	  numIntAtBound >= ((numIntegers_*0.1 > 5) ? numIntegers_*0.1 : 5)){
 	// write reverse local branching constraint
 	// this avoids finding the same xtilde again
 	avgBound = floor(avgBound + 0.5);
