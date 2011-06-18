@@ -12,6 +12,7 @@
 #include "CouenneDisjCuts.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// constructor

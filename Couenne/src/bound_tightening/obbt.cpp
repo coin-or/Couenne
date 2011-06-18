@@ -18,6 +18,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneInfeasCut.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 #define THRESH_OBBT_AUX 50 // if more than this originals, don't do OBBT on auxs

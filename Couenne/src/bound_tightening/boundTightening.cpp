@@ -86,7 +86,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
       first = false;
 
     if ((ntightened < 0) || (nbwtightened < 0)) {
-      Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "infeasible BT\n");
+      Jnlst () -> Printf (Ipopt::J_ITERSUMMARY, J_BOUNDTIGHTENING, "infeasible BT\n");
       return false;
     }
 
@@ -147,7 +147,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 	  (Ub (i) < - MAX_BOUND) ||
 	  (Lb (i) >   MAX_BOUND)) {
 
-	Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "final test: infeasible BT\n");
+	Jnlst () -> Printf (Ipopt::J_ITERSUMMARY, J_BOUNDTIGHTENING, "final test: infeasible BT\n");
 	return false;
       }
 
@@ -177,7 +177,7 @@ bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds,
   //     if (Ub (i) >  SMALL_BOUND) Ub (i) =  SMALL_BOUND;
   //   } 
 
-  Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING,
+  Jnlst () -> Printf (Ipopt::J_ITERSUMMARY, J_BOUNDTIGHTENING,
 		      "Feasibility-based Bound Tightening\n");
 
   int objInd = Obj (0) -> Body () -> Index ();
@@ -241,7 +241,7 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
       *U  = psi -> getColUpper    (),
       *RC = psi -> getReducedCost ();
 
-    if (jnlst_ -> ProduceOutput (J_MATRIX, J_BOUNDTIGHTENING)) {
+    if (jnlst_ -> ProduceOutput (Ipopt::J_MATRIX, J_BOUNDTIGHTENING)) {
       printf ("REDUCED COST BT (LB=%g, UB=%g):\n", LB, UB);
       for (int i=0; i < nVars (); i++) 
 	printf ("%3d %10e [%10e %10e] rc %10e\n", i, X [i], L [i], U [i], RC [i]);

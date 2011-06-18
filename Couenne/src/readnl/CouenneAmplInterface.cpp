@@ -116,7 +116,7 @@ Ipopt::SmartPtr<Bonmin::TMINLP> CouenneAmplInterface::getTMINLP() {
 		return tminlp;
 	
 	if (IsNull(roptions)) {
-		jnlst->Printf(J_ERROR, J_INITIALIZATION, "Error: Need registered options to create AmplTMINLP object!\n");
+		jnlst->Printf(Ipopt::J_ERROR, Ipopt::J_INITIALIZATION, "Error: Need registered options to create AmplTMINLP object!\n");
 		return NULL;
 	}
 	

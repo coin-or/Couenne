@@ -20,6 +20,7 @@
 #include "BonCbc.hpp"
 #include "CouenneRecordBestSol.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// constructor

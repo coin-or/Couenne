@@ -13,6 +13,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// generate row cuts for one side of the  disjunction

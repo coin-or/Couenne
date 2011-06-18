@@ -16,6 +16,7 @@
 //#include "CouenneProblem.hpp"
 #include "CouenneInfeasCut.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 #define COEFF_BOUNDS 1.e10

@@ -14,6 +14,7 @@
 #include "CouenneBranchingObject.hpp"
 #include "CouenneDisjCuts.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// Called from simulateBranch when object is not CouenneObject and

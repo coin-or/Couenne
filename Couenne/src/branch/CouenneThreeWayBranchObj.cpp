@@ -13,6 +13,7 @@
 #include "CouenneBranchingObject.hpp"
 #include "CouenneThreeWayBranchObj.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// Constructor. Get a variable as an argument and set value_ through

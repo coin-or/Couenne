@@ -18,6 +18,7 @@
 #include "CouenneObject.hpp"
 #include "CouenneComplBranchingObject.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 // translate changed bound sparse array into a dense one

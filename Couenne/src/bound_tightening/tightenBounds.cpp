@@ -13,6 +13,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneExprVar.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// Bound propagation for auxiliary variables

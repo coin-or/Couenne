@@ -14,6 +14,7 @@
 
 extern int nOrbBr;
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /** \brief Execute the core of the branch --- need to separate code

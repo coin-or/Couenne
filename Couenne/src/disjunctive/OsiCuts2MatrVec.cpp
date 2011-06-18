@@ -22,6 +22,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneExprVar.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 // add CGLP columns to solver interface; return number of columns

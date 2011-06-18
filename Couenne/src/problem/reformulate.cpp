@@ -34,7 +34,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   double now = CoinCpuTime ();
 
   if (nVars () > THRESHOLD_OUTPUT_REFORMULATE) {
-    jnlst_ -> Printf (J_ERROR, J_COUENNE, "Reformulating problem: "); 
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Reformulating problem: "); 
     fflush (stdout);
   }
 
@@ -213,7 +213,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   createUnusedOriginals ();
 
   if (nOrigVars () > THRESHOLD_OUTPUT_REFORMULATE)
-    jnlst_ -> Printf (J_ERROR, J_COUENNE, "%.1f seconds\n", CoinCpuTime () - now); 
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "%.1f seconds\n", CoinCpuTime () - now); 
 
   if (orbitalBranching_)
     setupSymmetry ();

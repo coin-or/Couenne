@@ -16,6 +16,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneInfeasCut.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// generate disjunctive cuts

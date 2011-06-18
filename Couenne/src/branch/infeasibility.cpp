@@ -13,6 +13,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneVarObject.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// weights for computing infeasibility

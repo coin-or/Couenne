@@ -22,6 +22,7 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneDepGraph.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// standardize (nonlinear) common expressions, objectives, and constraints

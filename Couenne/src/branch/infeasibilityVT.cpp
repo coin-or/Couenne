@@ -14,6 +14,7 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneVTObject.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// compute infeasibility of this variable, |w - f(x)| (where w is the

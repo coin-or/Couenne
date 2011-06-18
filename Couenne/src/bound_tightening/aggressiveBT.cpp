@@ -21,6 +21,7 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneProblemElem.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 namespace Bonmin {

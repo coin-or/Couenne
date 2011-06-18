@@ -11,6 +11,7 @@
 #include "CouenneComplObject.hpp"
 #include "CouenneComplBranchingObject.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// Constructor with information for branching point selection strategy

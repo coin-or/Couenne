@@ -19,6 +19,7 @@
 //#define TRACE_STRONG
 //#define TRACE_STRONG2
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// Called from simulateBranch and from disjunctive cut generators

@@ -16,6 +16,7 @@
 #include "CoinHelperFunctions.hpp"
 #include "CoinFinite.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// Empty constructor

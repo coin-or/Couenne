@@ -14,6 +14,7 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprVar.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 #define OBBT_EPS 1e-3

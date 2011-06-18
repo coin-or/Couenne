@@ -20,6 +20,7 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneInfeasCut.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// Cut Generator for FBBT fixpoint

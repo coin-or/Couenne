@@ -24,6 +24,8 @@
 #include "Nauty.h"
 #endif
 
+using namespace Ipopt;
+
 namespace Couenne {
 
 #define Couenne_large_bound2 9.99e12

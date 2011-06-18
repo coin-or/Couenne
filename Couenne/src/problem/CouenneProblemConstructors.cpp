@@ -238,7 +238,7 @@ CouenneProblem::~CouenneProblem () {
 
 
 /// initializes parameters like doOBBT
-void CouenneProblem::initOptions(SmartPtr<OptionsList> options) {
+void CouenneProblem::initOptions(Ipopt::SmartPtr<Ipopt::OptionsList> options) {
 
   assert(IsValid(options));
 

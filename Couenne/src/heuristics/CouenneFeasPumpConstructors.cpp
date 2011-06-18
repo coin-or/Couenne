@@ -22,6 +22,7 @@
 #include "CouenneExprPow.hpp"
 #include "CouenneExprSum.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 // common code for initializing ipopt application

@@ -76,6 +76,7 @@
 #include "getstub.h"
 #endif
 
+using namespace Ipopt;
 using namespace Couenne;
   
 CouenneSetup::~CouenneSetup(){

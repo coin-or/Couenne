@@ -24,6 +24,7 @@
 //#define FM_ALWAYS_SORT
 //#define OLD_STYLE
 
+using namespace Ipopt;
 using namespace Couenne;
 
 const CouNumber estProdEps = 1e-6;

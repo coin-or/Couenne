@@ -21,6 +21,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneExprVar.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 // construct reduced, standard form matrix M from coefficient matrix of si
