@@ -91,7 +91,130 @@ const CouNumber estProdEps = 1e-6;
     return *this;
   }
 
+/***********************************************************************/
+int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
+				       OsiBranchingInformation *info,
+				       OsiObject **object, const int iObject,
+				       const double prec) {
+  CouenneObject *co = dynamic_cast <CouenneObject *>(object[iObject]);
+  OsiSimpleInteger *simpl = dynamic_cast <OsiSimpleInteger *>(object[iObject]);
+  
+  int vInd = -1;
+  bool varIsInt = false;
+  if(co) {
+    vInd = co->Reference()->Index();
+    if(vInd >= 0) {
+      varIsInt = co->Reference()->isInteger();
+    }
+  }
+  else {
+    if(simpl) {
+      vInd = object[iObject]->columnNumber();
+      varIsInt = true;
+    }
+    else {
+      printf("CouenneChooseStrong::goodCandidate): ### ERROR: unknown object\n");
+      exit(1);
+    }
+  }
+  
+  int goodCand = 2; // good candidate
+  
+  // Must not call branch() for integer variable vInd with
+  // upper == lower ot for OsiSimpleInteger with 
+  // info->solution[vInd] not between lower and upper
+  if((vInd >= 0) && varIsInt) {
+    goodCand = 0; // bad candidate
+    double vUp = solver->getColUpper()[vInd];
+    double vLow = solver->getColLower()[vInd];
+    double infoVal = info->solution_[vInd];
+    double distToInt = fabs(infoVal - floor(infoVal + 0.5));
+    if(distToInt > 0.5) {
+      distToInt = 1 - distToInt;
+    }
+    if(simpl) {
+      if((distToInt > info->integerTolerance_) &&
+	 (vUp > vLow + prec)) {
+	goodCand = 2; // good candidate
+	if((vUp + prec < infoVal) || (infoVal < vLow - prec)) {
+	  goodCand = 1; // bad candidate
+	}
+      }
+    }
+    if(co) {
+      if(vUp > vLow + prec) {
+	goodCand = 2;
+      }
+    }
+  }
+  return(goodCand);
+} /* goodCandidate */
 
+/***********************************************************************/
+bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject, 
+				       const double value, 
+				       const double upEstimate, 
+				       const double downEstimate,
+				       double &bestVal1, 
+				       double &bestVal2, int &bestIndex,
+				       int &bestWay) {
+  bool retval = false;
+
+#ifdef FM_IMPLIC_GRAPH
+  double rat = 0.5;
+  if(value > rat * bestVal1) {
+    int objectInd = -1;
+    CouenneObject *co =  dynamic_cast <CouenneObject *>(object[iObject]);
+    if(co) {
+      objectInd = co->Reference()->Index();
+    }
+    else {
+      objectInd = object[iObject]->columnNumber();
+    }
+    int reachedFromLow = 0, reachedFromUp = 0, reachedFromEither = 0;
+    Couenne::BoundImplicationsGraph *ig = 
+      problem_->getFmBranchInfo()->get_implicGraph();
+    ig->getNumReached(objectInd, reachedFromLow, reachedFromUp, 
+		      reachedFromEither);
+    int minReach = (reachedFromLow < reachedFromUp ? 
+		    reachedFromLow : reachedFromUp);
+    
+    if(((value > bestVal1) && (minReach > rat * bestVal2)) || 
+       (minReach > bestVal2)) {
+      retval = true;
+      if(bestVal1 < value) {
+	bestVal1 = value;
+      }
+      if(bestVal2 < minReach) {
+	bestVal2 = minReach;
+      }
+      bestIndex = iObject;
+      bestWay = upEstimate > downEstimate ? 0 : 1;
+      // but override if there is a preferred way
+      const OsiObject * obj = object[iObject];
+      if (obj->preferredWay() >= 0 && obj->infeasibility()) {
+	bestWay = obj->preferredWay();
+      }
+    }
+  }
+#else /* not FM_IMPLIC_GRAPH */
+  if(value > bestVal1) {
+    retval = true;
+    bestVal1 = value;
+    bestIndex = iObject;
+    bestWay = upEstimate > downEstimate ? 0 : 1;
+    // but override if there is a preferred way
+    const OsiObject * obj = object[iObject];
+    if (obj->preferredWay() >= 0 && obj->infeasibility()) {
+      bestWay = obj->preferredWay();
+    }
+  }
+#endif /* not FM_IMPLIC_GRAPH */
+
+  return(retval);
+} /* saveBestCand */
+
+/*******************************************************************/
   /* Choose a variable. Returns:
 
     -1  Node is infeasible
@@ -105,7 +228,6 @@ const CouNumber estProdEps = 1e-6;
      We can pick up a forced branch (can change bound) from whichForcedObject() and whichForcedWay()
      If we have a solution then we can pick up from goodObjectiveValue() and goodSolution()
   */
-/*******************************************************************/
   int CouenneChooseStrong::chooseVariable (OsiSolverInterface * solver,
 					   OsiBranchingInformation *info,
 					   bool fixVariables) {
@@ -135,6 +257,7 @@ const CouNumber estProdEps = 1e-6;
  #endif                                                                         
 
     int retval;
+    const double prec = problem_->getFeasTol();
 
     //int retval = BonChooseVariable::chooseVariable (solver, info, fixVariables);
 
@@ -165,7 +288,9 @@ const CouNumber estProdEps = 1e-6;
       bestWhichWay_ = -1;
       firstForcedObjectIndex_ = -1;
       firstForcedWhichWay_ =-1;
-      double bestTrusted=-COIN_DBL_MAX;
+      double bestTrustedVal1 = -COIN_DBL_MAX;
+      double bestTrustedVal2 = -COIN_DBL_MAX;
+
       for (int i=0;i<numberLeft;i++) {
         int iObject = list_[i];
         if (numberBeforeTrusted == 0||
@@ -223,8 +348,6 @@ const CouNumber estProdEps = 1e-6;
 	  else {
 	    returnCode = 0;
 	  }
-	  const double prec = problem_->getFeasTol();
-
           for (unsigned int i=0;i < results_.size (); i++) {
 
 	    if((results_[i].upStatus() < 0) || (results_[i].downStatus() < 0))
@@ -236,6 +359,8 @@ const CouNumber estProdEps = 1e-6;
 	    }
 
             int iObject = results_[i].whichObject();
+	    const OsiObject * obj = object[iObject];
+	    int needBranch = goodCandidate(solver, info, object, iObject, prec);
 
 	    ///////////////////////////////////////////////////////////////////
 
@@ -259,32 +384,10 @@ const CouNumber estProdEps = 1e-6;
 
               numberFixed++;
               if (fixVariables) {
-		bool needBranch = true;
-		const OsiObject * obj = object[iObject];
-		CouenneObject *co = dynamic_cast <CouenneObject *>(object[iObject]);
-		OsiSimpleInteger *simpl = dynamic_cast <OsiSimpleInteger *>(object[iObject]);
-               int vInd = -1;
-                if(co) {
-                  vInd = co->Reference()->Index();
-                }
-                else {
-                  vInd = obj->columnNumber();
-                }
-                if((vInd >= 0) && (simpl)) {
-                  needBranch = false;
-                  double nearest = floor(info->solution_[vInd] + 0.5);
-                  if(nearest > 0.5) {
-                    nearest = 1 - nearest;
-                  }
-                                                                                
-                  if((nearest > info->integerTolerance_) &&
-                     (solver->getColUpper()[vInd] > solver->getColLower()[vInd]\
- + prec)) {
-                    needBranch = true;
-                  }
-                }
-                if(needBranch) {
-		  OsiBranchingObject * branch = obj -> createBranch (solver, info, 0);
+                if(needBranch == 2) { // do not branch if upper == lower 
+		  // for integer var or if value is outside info bounds
+		  OsiBranchingObject * branch = 
+                                        obj->createBranch(solver, info, 0);
 		  branch -> branch (solver);
 		  delete branch;
 		}
@@ -311,38 +414,16 @@ const CouNumber estProdEps = 1e-6;
               }
               numberFixed++;
               if (fixVariables) {
-		bool needBranch = true;
-		const OsiObject * obj = object[iObject];
-		CouenneObject *co = dynamic_cast <CouenneObject *>(object[iObject]);
-		OsiSimpleInteger *simpl = dynamic_cast <OsiSimpleInteger *>(object[iObject]);
-		int vInd = -1;
-                if(co) {
-                  vInd = co->Reference()->Index();
-                }
-                else {
-                  vInd = obj->columnNumber();
-                }
-                if((vInd >= 0) && (simpl)) {
-                  needBranch = false;
-                  double nearest = floor(info->solution_[vInd] + 0.5);
-                  if(nearest > 0.5) {
-                    nearest = 1 - nearest;
-                  }
-                                                                                
-                  if((nearest > info->integerTolerance_) &&
-                     (solver->getColUpper()[vInd] > solver->getColLower()[vInd]\
- + prec)) {
-                    needBranch = true;
-                  }
-                }
-                if(needBranch) {
-		  OsiBranchingObject * branch = obj -> createBranch (solver, info, 1);
+                if(needBranch == 2) { // do not branch if upper == lower 
+		  // for integer var or if value is outside info bounds
+		  OsiBranchingObject * branch = 
+                                         obj->createBranch(solver, info, 1);
 		  branch -> branch (solver);
 		  delete branch;
 		}
 	      }
             }
-
+	  
             double
 	      MAXMIN_CRITERION = maxminCrit (info),
 	      minVal, maxVal, value;
@@ -361,16 +442,12 @@ const CouNumber estProdEps = 1e-6;
 	      (       MAXMIN_CRITERION  * minVal + 
 	       (1.0 - MAXMIN_CRITERION) * maxVal);
 
-	    if (value>bestTrusted) {
-              bestTrusted = value;
-              bestObjectIndex_ = iObject;
-              bestWhichWay_ = upEstimate>downEstimate ? 0 : 1;
-              // but override if there is a preferred way
-              const OsiObject * obj = object[iObject];
-              if (obj->preferredWay()>=0&&obj->infeasibility())
-                bestWhichWay_ = obj->preferredWay();
-              if(returnCodeSB) { // 1 or 2
-                returnCode = 2; 
+	    if((needBranch == 2) &&
+	       saveBestCand(object, iObject, value, upEstimate, downEstimate,
+			    bestTrustedVal1, 
+			    bestTrustedVal2, bestObjectIndex_, bestWhichWay_)) {
+	      if(returnCodeSB) { // 1 or 2
+		returnCode = 2; 
 	      }
 	    }
           }
@@ -378,6 +455,8 @@ const CouNumber estProdEps = 1e-6;
         else { // returnCodeSB is -1 or 3
 	  if (returnCodeSB == 3) { // max time - just choose one
 	    if(bestObjectIndex_ < 0) {
+	      // should not select an integer var with fixed bounds
+	      // taken care of below
 	      bestObjectIndex_ = list_[0];
 	      bestWhichWay_ = 0;
 	      returnCode = 0;
@@ -398,18 +477,18 @@ const CouNumber estProdEps = 1e-6;
       if(returnCodeSB != -1) {  
 	          // if returnCodeSB == -1 (i.e. problem is infeasible)
 	          // no need to scan objects with pseudocosts
-	const double *solverUb = solver->getColUpper();
-	const double *solverLb = solver->getColLower();
-	const double prec = problem_->getFeasTol();
 	
 	// to keep best object skipped on basis of bounds and branching value
 	int bestObjectIndex2 = -1;
 	int bestWhichWay2 = 0;
-	double bestTrusted2 = -COIN_DBL_MAX;
+	double bestTrusted2Val1 = -COIN_DBL_MAX;
+	double bestTrusted2Val2 = -COIN_DBL_MAX;
 	
 	for(int ips=0; ips<cardIndForPseudo; ips++) {
 	  int iObject = indForPseudo[ips];
 	  const OsiObject * obj = object[iObject];
+	  int needBranch = goodCandidate(solver, info, object, iObject, prec);
+
 	  double
 	    upEstimate       = (upTotalChange[iObject]*obj->upEstimate())/upNumber[iObject],
 	    downEstimate     = (downTotalChange[iObject]*obj->downEstimate())/downNumber[iObject],
@@ -431,34 +510,16 @@ const CouNumber estProdEps = 1e-6;
 		    (1.0 - MAXMIN_CRITERION) * maxVal);
 	  
 	  
-	  // skip OsiSimpleInteger objects with variable fixed or 
-	  // branching value outside bounds
-	  bool skipIt = false;
-	  CouenneObject *co = dynamic_cast <CouenneObject *>(object[iObject]);
-	  OsiSimpleInteger *simpl = dynamic_cast <OsiSimpleInteger *>(object[iObject]);
-	  int vInd = -1;
-	  if(co) {
-	    vInd = co->Reference()->Index();
-	  }
-	  else {
-	    vInd = obj->columnNumber();
-	  }
-	  if(simpl && (vInd >= 0)) {
-	    double vUb = solverUb[vInd];
-	    double vLb = solverLb[vInd];
-	    double vSol = info->solution_[vInd];
-	    if((vSol < vLb + prec) || (vSol > vUb - prec) || (vUb-vLb < prec)) {
-	      skipIt = true;
-	      numberFixed++;
+	  // store bad candidates in secondary best
+	  if(needBranch < 2) {
+	    if(saveBestCand(object, iObject, value, 
+			    upEstimate, downEstimate,
+			    bestTrusted2Val1, 
+			    bestTrusted2Val2, bestObjectIndex2, 
+			    bestWhichWay2)) {
+	      // no returnCode change
 	    }
-	  }
-	  
-	  if(skipIt) {
-	    if (value > bestTrusted2) {
-	      bestObjectIndex2 = iObject;
-	      bestWhichWay2 = upEstimate>downEstimate ? 0 : 1;
-	      bestTrusted2 = value;
-	    }
+
 #ifdef TRACE_STRONG
             if(info->depth_ > minDepthPrint_) {
               printf("Object %d skip pseudocost\n", iObject);
@@ -466,13 +527,14 @@ const CouNumber estProdEps = 1e-6;
 #endif
 	  }
 	  else {
-	    if (value > bestTrusted) {
-	      bestObjectIndex_ = iObject;
-	      bestWhichWay_ = upEstimate>downEstimate ? 0 : 1;
-	      bestTrusted = value;
+	    if(saveBestCand(object, iObject, value, 
+			    upEstimate, downEstimate,
+			    bestTrustedVal1, 
+			    bestTrustedVal2, bestObjectIndex_, bestWhichWay_)) {
 	      returnCode = (returnCode ? 3 : 0); // if returnCode was 2 or 3
                                                  // it becomes 3
 	    }
+
 #ifdef TRACE_STRONG
             if(info->depth_ > minDepthPrint_) {
               printf("Object %d use pseudocost\n", iObject);
@@ -486,7 +548,7 @@ const CouNumber estProdEps = 1e-6;
 	if((bestObjectIndex_ < 0) && (bestObjectIndex2 >= 0)) {
 	  bestObjectIndex_ = bestObjectIndex2;
 	  bestWhichWay_ = bestWhichWay2;
-	  bestTrusted = bestTrusted2;
+	  bestTrustedVal1 = bestTrusted2Val1;
 	  returnCode = 4;
 	}
       }
@@ -522,13 +584,13 @@ const CouNumber estProdEps = 1e-6;
 #endif
       }
       message(CHOSEN_VAR)<<bestObjectIndex_<<CoinMessageEol;
-
+    
       if (numberFixed==numberUnsatisfied_&&numberFixed)
         returnCode=4;
 
       if((returnCode == 2) || (returnCode == 3)) {
         if((objectVarInd > -1) && 
-	   (solver->getColUpper()[objectVarInd] < solver->getColLower()[objectVarInd] + problem_->getFeasTol())) {
+	   !goodCandidate(solver, info, object, bestObjectIndex_, prec)) {
           // Can occur: two objects for same var, first scanned object
           // has both branches feasible and is saved as bestObjectIndex_,
           // second scanned object fixes the variable
@@ -554,8 +616,11 @@ const CouNumber estProdEps = 1e-6;
 	printf("CCS: problem: lb: %10.4f  ub: %10.4f\n",
 	       problem_->Lb(pv), problem_->Ub(pv));
       }
-      printf("retval: %d\n", retval);
     }
+#endif
+
+#ifdef TRACE_STRONG
+    printf("CouenneChooseStrong::ChooseVariable(): retval: %d\n", retval);
 #endif
   
     problem_ -> domain () -> pop ();

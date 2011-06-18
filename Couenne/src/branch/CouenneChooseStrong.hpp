@@ -82,7 +82,28 @@ private:
   
   // print object violations
   void printObjViol(OsiBranchingInformation *info);
-  
+
+  // Due to possible fixing during strong branching, must check
+  // that selected variable is still a valid candidate. Must not 
+  // branch on an integer variable whose upper and lower bounds
+  // are equal (return value is 0) 
+  // or on an OsiSimpleInteger object for integer variable
+  // vInd with info->solution_[vInd] not between its lower and upper boud
+  // (return value is 1).
+  // If the object is a good candidate, return value is 2.
+  int goodCandidate(OsiSolverInterface *solver, 
+		    OsiBranchingInformation *info,
+		    OsiObject **object, const int iObject, const double prec);
+
+  /// Save best candidate
+  bool saveBestCand(OsiObject **object, const int iObject, 
+		    const double value, 
+		    const double upEstimate, 
+		    const double downEstimate,
+		    double &bestVal1, 
+		    double &bestVal2, int &bestIndex,
+		    int &bestWay);
+
 protected:
 
   /// does one side of the branching
