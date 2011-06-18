@@ -29,6 +29,7 @@
 #include "scip/scipdefplugins.h"
 #endif
 
+using namespace Ipopt;
 using namespace Couenne;
 
 void printDist (CouenneProblem *p, double *iSol, double *nSol);

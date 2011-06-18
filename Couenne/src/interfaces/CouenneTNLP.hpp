@@ -17,8 +17,6 @@
 #include <vector>
 #include <set>
 
-using namespace Ipopt;
-
 namespace Couenne {
 
   class CouenneProblem;
@@ -101,7 +99,7 @@ namespace Couenne {
 
     /// return the vector of constraint values
     virtual bool eval_g (Ipopt::Index n, const Ipopt::Number* x, bool new_x,
-			 Ipopt::Index m, Number* g);
+			 Ipopt::Index m, Ipopt::Number* g);
 
     /// return the jacobian of the constraints. The vectors iRow and
     /// jCol only need to be set once. The first call is used to set
@@ -127,25 +125,25 @@ namespace Couenne {
 			 Ipopt::Index* iRow, Ipopt::Index* jCol, Ipopt::Number* values);
 
     /// This method is called when the algorithm is complete so the TNLP can store/write the solution
-    virtual void finalize_solution (SolverReturn status,
-				    Index n, const Number* x, const Number* z_L, const Number* z_U,
-				    Index m, const Number* g, const Number* lambda,
-				    Number obj_value,
-				    const IpoptData* ip_data,
-				    IpoptCalculatedQuantities* ip_cq);
+    virtual void finalize_solution (Ipopt::SolverReturn status,
+				    Ipopt::Index n, const Ipopt::Number* x, const Ipopt::Number* z_L, const Ipopt::Number* z_U,
+				    Ipopt::Index m, const Ipopt::Number* g, const Ipopt::Number* lambda,
+				    Ipopt::Number obj_value,
+				    const Ipopt::IpoptData* ip_data,
+				    Ipopt::IpoptCalculatedQuantities* ip_cq);
 
     /// Intermediate Callback method for the user.  Providing dummy
     /// default implementation.  For details see IntermediateCallBack
     /// in IpNLP.hpp.
-    virtual bool intermediate_callback (AlgorithmMode mode,
-					Index iter, Number obj_value,
-					Number inf_pr, Number inf_du,
-					Number mu, Number d_norm,
-					Number regularization_size,
-					Number alpha_du, Number alpha_pr,
-					Index ls_trials,
-					const IpoptData* ip_data,
-					IpoptCalculatedQuantities* ip_cq);
+    virtual bool intermediate_callback (Ipopt::AlgorithmMode mode,
+					Ipopt::Index iter, Ipopt::Number obj_value,
+					Ipopt::Number inf_pr, Ipopt::Number inf_du,
+					Ipopt::Number mu, Ipopt::Number d_norm,
+					Ipopt::Number regularization_size,
+					Ipopt::Number alpha_du, Ipopt::Number alpha_pr,
+					Ipopt::Index ls_trials,
+					const Ipopt::IpoptData* ip_data,
+					Ipopt::IpoptCalculatedQuantities* ip_cq);
 
     /// @name Methods for quasi-Newton approximation.  If the second
     /// derivatives are approximated by Ipopt, it is better to do this
@@ -159,11 +157,11 @@ namespace Couenne {
     /// the return value of get_number_of_nonlinear_variables ().  It
     /// is assumed that the indices are counted starting with 1 in the
     /// FORTRAN_STYLE, and 0 for the C_STYLE.
-    virtual Index get_number_of_nonlinear_variables ();
+    virtual Ipopt::Index get_number_of_nonlinear_variables ();
 
     /// get real list
-    virtual bool get_list_of_nonlinear_variables (Index num_nonlin_vars,
-						  Index* pos_nonlin_vars);
+    virtual bool get_list_of_nonlinear_variables (Ipopt::Index num_nonlin_vars,
+						  Ipopt::Index* pos_nonlin_vars);
 
     // Change objective function and modify gradient expressions
     // accordingly

@@ -20,6 +20,7 @@
 
 #include "CouenneTNLP.hpp"
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// obtain continuous (if fractional) solution

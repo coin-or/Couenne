@@ -24,6 +24,7 @@
 
 //#define DEBUG
 
+using namespace Ipopt;
 using namespace Couenne;
 
 /// Empty constructor
