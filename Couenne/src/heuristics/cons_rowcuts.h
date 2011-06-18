@@ -16,6 +16,8 @@
 #include "CouenneCutGenerator.hpp"
 #include "OsiSolverInterface.hpp"
 
+#ifdef COIN_HAS_SCIP
+
 #include "scip/scip.h"
 
 using namespace Couenne;
@@ -27,4 +29,6 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
    CouenneCutGenerator*  cutgenerator,       /**< CouenneCutGenerator for linearization cuts */
    OsiSolverInterface*   milp                /**< Couenne's MILP relaxation of Couenne's MINLP */
    );
+
+#endif
 #endif

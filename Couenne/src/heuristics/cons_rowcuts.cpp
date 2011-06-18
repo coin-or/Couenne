@@ -21,6 +21,8 @@
 
 #include <assert.h>
 
+#ifdef COIN_HAS_SCIP
+
 #include "cons_rowcuts.h"
 #include "scip/cons_linear.h"
 #include "scip/scip.h"
@@ -398,3 +400,5 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
 
    return SCIP_OKAY;
 }
+
+#endif
