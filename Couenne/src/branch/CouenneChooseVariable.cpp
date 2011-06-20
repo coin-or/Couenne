@@ -247,7 +247,7 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
   roptions -> AddLowerBoundedIntegerOption
     ("cont_var_priority",
      "Priority of continuous variable branching",
-     1, 50,
+     1, 2000,
      "When branching, this is compared to the priority of integer variables, whose priority is given by int_var_priority, and SOS, whose priority is 10. "
      "Higher values mean smaller priority."
     );
@@ -255,7 +255,7 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
   roptions -> AddLowerBoundedIntegerOption
     ("int_var_priority",
      "Priority of integer variable branching",
-     1, 50,
+     1, 1000,
      "When branching, this is compared to the priority of continuous variables, whose priority is given by cont_var_priority, and SOS, whose priority is 10. "
      "Higher values mean smaller priority."
     );

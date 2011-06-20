@@ -3,9 +3,10 @@
  * Name:    CouenneChooseStrong.cpp
  * Authors: Andreas Waechter, IBM Corp.
  *          Pietro Belotti, Lehigh University
+ *          Francois Margot, Carnegie Mellon University
  * Purpose: Strong branching objects for Couenne
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -97,7 +98,7 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
 				       OsiBranchingInformation *info,
 				       OsiObject **object, const int iObject,
 				       const double prec) {
-  CouenneObject *co = dynamic_cast <CouenneObject *>(object[iObject]);
+  CouenneObject    *co    = dynamic_cast <CouenneObject *>(object[iObject]);
   OsiSimpleInteger *simpl = dynamic_cast <OsiSimpleInteger *>(object[iObject]);
   
   int vInd = -1;
@@ -114,8 +115,14 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
       varIsInt = true;
     }
     else {
-      printf("CouenneChooseStrong::goodCandidate: ### ERROR: unknown object\n");
-      exit(1);
+
+      // printf("CouenneChooseStrong::goodCandidate: ### ERROR: unknown object\n");
+      // exit(1);
+
+      // this is probably a SOS object, and anyhow we don't want to
+      // exit on it.
+
+      return 2;
     }
   }
   
