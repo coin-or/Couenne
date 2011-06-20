@@ -591,7 +591,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 
       if((returnCode == 2) || (returnCode == 3)) {
         if((objectVarInd > -1) && 
-	   !goodCandidate(solver, info, object, bestObjectIndex_, prec)) {
+	   (goodCandidate(solver, info, object, bestObjectIndex_, prec) != 2)) {
           // Can occur: two objects for same var, first scanned object
           // has both branches feasible and is saved as bestObjectIndex_,
           // second scanned object fixes the variable
