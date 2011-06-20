@@ -155,7 +155,6 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
 
   printf ("CouenneFPsolution::compare: bad compared term\n");
   abort ();
-  return false;
 }
 
 
@@ -180,10 +179,10 @@ bool compareSol::operator() (const CouenneFPsolution &one,
     *x1 = one.x (),
     *x2 = two.x ();
 
-  register int i = one.n ();
+  register int n = one.n ();
 
-  while (i--)
-    if ((*x1++ - *x2++) < COMP_TOLERANCE)
+  while (n--)
+    if ((*x1++ - *x2++) <= COMP_TOLERANCE)
       return true;
 
   return false;
@@ -193,21 +192,41 @@ bool compareSol::operator() (const CouenneFPsolution &one,
 /// pool and overwrites it to sol
 void CouenneFPpool::findClosestAndReplace (double *sol, double *nSol, int nvars)  {
 
-   double bestdist = 1e20;
-   std::set <CouenneFPsolution>::iterator bestsol = set_.  end ();
+   double bestdist = COIN_DBL_MAX;
+   std::set <CouenneFPsolution>::iterator bestsol = set_. end ();
 
    if( nSol )
    {
       for (std::set <CouenneFPsolution>::iterator i = set_. begin (); 
-           i != set_.  end (); ++i)
+           i != set_. end (); ++i)
       {
-         double dist;
+	//compute distance of pool solution and NLP solution
 
-         //compute distance of pool solution and NLP solution
-         dist = 0.0;
-         for (int j = nvars; j--;)
-            dist += ((*i).x()[j] - nSol [j]) * 
-	            ((*i).x()[j] - nSol [j]);
+	register double 
+	   dist = 0.0,
+	   delta;
+
+	const register double 
+	  *x = i -> x (),
+	  *s = nSol;
+
+	register bool move_on = false;
+
+	for (int j = nvars; j--;) {
+
+	  delta = *x++ - *s++;
+
+	  dist += delta * delta;
+
+	  if (dist >= bestdist) { // interrupt check of this solution
+				  // if already above current best
+	    move_on = true;
+	    break;
+	  }
+	}
+
+	if (move_on) 
+	  continue;
 
          //update best solution
          if( dist < bestdist )
@@ -224,6 +243,5 @@ void CouenneFPpool::findClosestAndReplace (double *sol, double *nSol, int nvars)
    {
       sol = CoinCopyOfArray ((*bestsol).x(), nvars); 
       set_. erase(bestsol);
-   }
-   
+   }   
 }

@@ -44,7 +44,7 @@ exprAux *exprPow::standardize (CouenneProblem *p, bool addAux) {
 
     CouNumber base = arglist_ [0] -> Value ();
 
-    if (fabs (base - M_E) < COUENNE_EPS) // is base e = 2.7182818...
+    if (fabs (base - M_E) < COUENNE_EPS_SIMPL) // is base e = 2.7182818...
       ret = new exprExp (new exprClone (arglist_ [1]));
     else // no? convert k^x to e^(x log (k))
       ret = new exprExp (new exprClone 

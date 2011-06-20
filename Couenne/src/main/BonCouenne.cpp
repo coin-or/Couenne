@@ -165,7 +165,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
 		     prob -> nOrigVars (),
 		     prob -> nOrigIntVars (),
 		     prob -> nVars    () - prob -> nOrigVars (),
-		     prob -> nIntVars () - prob -> nOrigIntVars ());
+		     CoinMax (0, prob -> nIntVars () - prob -> nOrigIntVars ()));
 
     double time_start = CoinCpuTime();
 

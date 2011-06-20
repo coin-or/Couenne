@@ -23,10 +23,8 @@
 
 using namespace Couenne;
 
-int currentmilpmethod_;
-
 /// find a feasible or optimal solution of MILP
-double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, int depth) {
+double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
 
   /// as found on the notes, these methods can be used, from the most
   /// expensive and accurate (exact) method to a cheap, inexact one:
@@ -55,6 +53,10 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
   //    necessarily new best feasible), --p[i]
   //
   // 4) if H consecutive failutes, ++p[i]
+
+  static int currentmilpmethod = 0;
+
+  int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
 
   double obj;
 
@@ -189,12 +191,12 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
         // initialize currentmilpmethod: at the root node we solve the MILP with SCIP default
         // deeper in the tree, we will solve the MILP by a FP heuristic
         if( depth == 0 )
-           currentmilpmethod_ = 2;
+           currentmilpmethod = 2;
         else 
-           currentmilpmethod_ = 4;
+           currentmilpmethod = 4;
      }
      else if (milpMethod_ != 0)
-        currentmilpmethod_ = milpMethod_; // use a fixed method to solve the MILP
+        currentmilpmethod = milpMethod_; // use a fixed method to solve the MILP
      
      
      // MILP solving loop. If the MILP terminates without a solution, it might get resolved with a more expensive atrategy
@@ -218,7 +220,7 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
 
 
         if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC)) {
-           SCIPinfoMessage(scip, NULL, "using MILP method: %d\n",currentmilpmethod_);
+           SCIPinfoMessage(scip, NULL, "using MILP method: %d\n",currentmilpmethod);
         }
         
         // tune SCIP differently, depending on the chosen method to solve the MILP
@@ -228,7 +230,7 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
         ///  2. Solve the MILP relaxation partially, up to a certain node limit
         ///  3. Apply RENS to 1
         ///  4. Use Objective FP 2.0 for MILPs
-        switch(currentmilpmethod_)
+        switch(currentmilpmethod)
         {
         case -1: // solve the MILP completely. SCIP's default setting should be best for this
            if( milpCuttingPlane_ == FP_CUT_INTEGRATED )
@@ -346,7 +348,7 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
            break;
 
         default:
-           printf("invalid MILP method: %d\n", currentmilpmethod_);
+           printf("invalid MILP method: %d\n", currentmilpmethod);
            assert(false);
            break;
         }
@@ -409,24 +411,24 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter, in
                  ){
                  pool_ -> Set (). insert (couennesol);
 
-                 nstoredsols++;
+                 ++nstoredsols;
               }
            }
 
-           (*nsuciter)++;
+           ++(*nsuciter);
 
            // if we succeeded five times in a row, try a cheaper MILP_ solving method next time
            // TODO: if we want to use time limits, hitting the time limit would be another good reason to switch
-           if( *nsuciter >= 3 && currentmilpmethod_ < 4 )
+           if( *nsuciter >= 3 && currentmilpmethod < 4 )
            {
-              currentmilpmethod_++;
+              ++currentmilpmethod;
               *nsuciter = 0;
            }          
         }
         //try to use a more aggressive, more expensive way to solve the MILP
-        else if( milpMethod_ == 0 && currentmilpmethod_ > 1 )
+        else if( milpMethod_ == 0 && currentmilpmethod > 1 )
         {
-           currentmilpmethod_--;
+ 	   --currentmilpmethod;
            solveagain = true;
            *nsuciter = 0;
 

@@ -93,7 +93,7 @@ namespace Couenne {
     /// find integer (possibly NLP-infeasible) point isol closest
     /// (according to the l-1 norm of the hessian) to the current
     /// NLP-feasible (but fractional) solution nsol
-    CouNumber solveMILP (CouNumber *nSol, CouNumber *&iSol, int niter, int* nsuciter, int depth); 
+    CouNumber solveMILP (CouNumber *nSol, CouNumber *&iSol, int niter, int* nsuciter); 
 
     /// obtain solution to NLP
     CouNumber solveNLP  (CouNumber *nSol, CouNumber *&iSol);
@@ -111,7 +111,7 @@ namespace Couenne {
     static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions>);
 
     /// find feasible solution (called by solveMILP ())
-     double findSolution (double *&sol, int niter, int* nsuciter, int depth);
+    double findSolution (double *&sol, int niter, int* nsuciter);
 
     /// initialize all solvers at the first call, where the initial
     /// MILP is built

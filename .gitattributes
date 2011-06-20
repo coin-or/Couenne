@@ -192,6 +192,7 @@ Couenne/src/expression/operators/CouenneExprBinProd.hpp -text
 Couenne/src/expression/operators/CouenneExprCeil.hpp -text
 Couenne/src/expression/operators/CouenneExprCos.hpp -text
 Couenne/src/expression/operators/CouenneExprDiv.hpp -text
+Couenne/src/expression/operators/CouenneExprEvenPow.hpp -text
 Couenne/src/expression/operators/CouenneExprExp.hpp -text
 Couenne/src/expression/operators/CouenneExprFloor.hpp -text
 Couenne/src/expression/operators/CouenneExprGroup.hpp -text
@@ -203,10 +204,12 @@ Couenne/src/expression/operators/CouenneExprMin.hpp -text
 Couenne/src/expression/operators/CouenneExprMul.hpp -text
 Couenne/src/expression/operators/CouenneExprMultiLin.hpp -text
 Couenne/src/expression/operators/CouenneExprNorm.hpp -text
+Couenne/src/expression/operators/CouenneExprOddPow.hpp -text
 Couenne/src/expression/operators/CouenneExprOpp.hpp -text
 Couenne/src/expression/operators/CouenneExprPWLinear.hpp -text
 Couenne/src/expression/operators/CouenneExprPow.hpp -text
 Couenne/src/expression/operators/CouenneExprQuad.hpp -text
+Couenne/src/expression/operators/CouenneExprSignPow.hpp -text
 Couenne/src/expression/operators/CouenneExprSin.hpp -text
 Couenne/src/expression/operators/CouenneExprSub.hpp -text
 Couenne/src/expression/operators/CouenneExprSum.hpp -text

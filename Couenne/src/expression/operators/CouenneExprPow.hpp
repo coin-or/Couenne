@@ -1,8 +1,9 @@
 /* $Id$
  *
- * Name:    exprPow.hpp
+ * Name:    CouenneExprPow.hpp
  * Author:  Pietro Belotti
- * Purpose: definition of powers
+ * Purpose: definition of powers, specifically with fractional
+ *          exponent (odd/even/signed: see appropriate files)
  *
  * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
@@ -42,55 +43,55 @@ class exprPow: public exprOp {
     {return new exprPow (clonearglist (d), nargs_);}
 
   /// print operator
-  std::string printOp () const
+  virtual std::string printOp () const
     {return "^";}
 
   /// function for the evaluation of the expression
-  CouNumber operator () ();
+  virtual CouNumber operator () ();
 
   /// return l-2 norm of gradient at given point
-  CouNumber gradientNorm (const double *x);
+  virtual CouNumber gradientNorm (const double *x);
 
   /// differentiation
-  expression *differentiate (int index); 
+  virtual expression *differentiate (int index); 
 
   /// simplification
-  expression *simplify ();
+  virtual expression *simplify ();
 
   /// get a measure of "how linear" the expression is
-  int Linearity ();
+  virtual int Linearity ();
 
   /// is this expression integer?
-  bool isInteger ();
+  virtual bool isInteger ();
 
   /// Get lower and upper bound of an expression (if any)
-  void getBounds (expression *&, expression *&);
+  virtual void getBounds (expression *&, expression *&);
 
   /// Get value of lower and upper bound of an expression (if any)
-  void getBounds (CouNumber &lb, CouNumber &ub);
+  virtual void getBounds (CouNumber &lb, CouNumber &ub);
 
   /// reduce expression in standard form, creating additional aux
   /// variables (and constraints)
-  exprAux *standardize (CouenneProblem *p, bool addAux = true);
+  virtual exprAux *standardize (CouenneProblem *p, bool addAux = true);
 
   /// generate equality between *this and *w
-  void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		     OsiCuts &cs, const CouenneCutGenerator *cg, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
-		     CouNumber =  COUENNE_INFINITY);
+  virtual void generateCuts (expression *w, //const OsiSolverInterface &si, 
+			     OsiCuts &cs, const CouenneCutGenerator *cg, 
+			     t_chg_bounds * = NULL, int = -1, 
+			     CouNumber = -COUENNE_INFINITY, 
+			     CouNumber =  COUENNE_INFINITY);
 
   /// return an index to the variable's argument that is better fixed
   /// in a branching rule for solving a nonconvexity gap
-  expression *getFixVar () 
-    {return arglist_ [0];}
+  virtual expression *getFixVar () 
+  {return arglist_ [0];}
 
   /// code for comparison
   virtual enum expr_type code () 
-    {return COU_EXPRPOW;}
+  {return COU_EXPRPOW;}
 
   /// implied bound processing
-  bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
@@ -133,7 +134,7 @@ inline CouNumber safe_pow (CouNumber base,
 	  (fabs (1. / lexponent - (rndexp = COUENNE_round (1. / lexponent))) < COUENNE_EPS)))) {
       if (rndexp % 2)
 	retval = (- pow (- lbase, lexponent)); // x^k, x negative, k odd
-      else retval = pow (-lbase, lexponent);   // x^k, x negative, k even
+      else retval = pow (- lbase, lexponent);  // x^k, x negative, k even
     }
     else retval =  0.; // this is incorrect but avoids nan's
   }

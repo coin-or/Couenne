@@ -48,7 +48,7 @@ expression *exprPow::simplify () {
       return new exprConst (pow (c0, c1));
     }
     else 
-      if (fabs (c0) < COUENNE_EPS_SIMPL) 
+      if (fabs (c0) <= COUENNE_EPS_SIMPL) 
 	return new exprConst (0.);
   }
   else // only need to check if g(x) == 0
@@ -57,10 +57,10 @@ expression *exprPow::simplify () {
 
       CouNumber expon = arglist_ [1] -> Value ();
 
-      if (fabs (expon) < COUENNE_EPS_SIMPL) // expr = x ^ 0 = 1
+      if (fabs (expon) <= COUENNE_EPS_SIMPL) // expr = x ^ 0 = 1
 	return new exprConst (1.);
 
-      else if (fabs (expon - 1) < COUENNE_EPS_SIMPL) { // expr = x ^ 1 = x
+      else if (fabs (expon - 1.) <= COUENNE_EPS_SIMPL) { // expr = x ^ 1 = x
 
 	delete arglist_ [1];
 	expression *ret = arglist_ [0];
@@ -68,7 +68,7 @@ expression *exprPow::simplify () {
 	return ret;
       }
 
-      else if (fabs (expon + 1) < COUENNE_EPS_SIMPL) { // expr = x ^ -1 = 1/x
+      else if (fabs (expon + 1.) <= COUENNE_EPS_SIMPL) { // expr = x ^ -1 = 1/x
 
 	delete arglist_ [1];
 	expression *ret = new exprInv (arglist_ [0]);
@@ -244,8 +244,10 @@ bool exprPow::isInteger () {
   // exponent
 
   if (!(arglist_ [1] -> isInteger ())) { 
-    // exponent not integer: check if constant and integer (and
-    // positive, or base negative integer)
+
+    // exponent not defined integer: check if constant and at integer
+    // value (and positive, or base negative integer)
+
     CouNumber lb, ub;
     arglist_ [1] -> getBounds (lb, ub);
 
@@ -262,6 +264,16 @@ bool exprPow::isInteger () {
 	  !::isInteger (1. / lb))
 	return false;
     }
+  } else {
+
+    // if base integer and exponent integer, must check that exponent
+    // is nonnegative
+
+    CouNumber lb, ub;
+    arglist_ [1] -> getBounds (lb, ub);
+
+    if (lb < .5)
+      return false;
   }
 
   return true;

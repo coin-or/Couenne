@@ -777,6 +777,6 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   totalTime_ += CoinCpuTime () - now;
 
   if (info.level <= 0)
-    jnlst_ -> Printf (J_ERROR, J_COUENNE, "%d bounds reduced\n", ntightened);
+    jnlst_ -> Printf (J_ERROR, J_COUENNE, "%d improved bounds\n", ntightened);
 }
 }

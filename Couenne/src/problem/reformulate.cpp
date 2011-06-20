@@ -212,11 +212,16 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
   createUnusedOriginals ();
 
-  if (nOrigVars () > THRESHOLD_OUTPUT_REFORMULATE)
+  if (nOrigVars_  > THRESHOLD_OUTPUT_REFORMULATE)
     jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "%.1f seconds\n", CoinCpuTime () - now); 
+  else if (nVars () > 2*THRESHOLD_OUTPUT_REFORMULATE) 
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Reformulation: %.1f seconds\n", CoinCpuTime () - now); 
 
-  if (orbitalBranching_)
+  if (orbitalBranching_) {
+
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Setting up symmetry groups\n"); 
     setupSymmetry ();
+  }
 
   //writeAMPL ("extended-aw.mod", true);
   //writeAMPL ("original.mod", false);

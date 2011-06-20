@@ -114,7 +114,7 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
       varIsInt = true;
     }
     else {
-      printf("CouenneChooseStrong::goodCandidate): ### ERROR: unknown object\n");
+      printf("CouenneChooseStrong::goodCandidate: ### ERROR: unknown object\n");
       exit(1);
     }
   }

@@ -269,7 +269,7 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
     if ((info.level <= 0 && !(info.inTree)) ||
     	jnlst_ -> ProduceOutput (J_STRONGWARNING, J_COUENNE))
-      jnlst_ -> Printf (J_ERROR, J_COUENNE, "%d bounds improved\n", nTotImproved);
+      jnlst_ -> Printf (J_ERROR, J_COUENNE, "%d improved bounds\n", nTotImproved);
 
     if (nImprov < 0) {
       jnlst_->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "  Couenne: infeasible node after OBBT\n");

@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods of the expression class
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -19,16 +19,16 @@
 #include "CouenneProblem.hpp"
 #include "CouenneFunTriplets.hpp"
 
-namespace Couenne {
+using namespace Couenne;
 
 // adds convex (upper/lower) envelope to a power function
 
-void addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
-		     int wi, int xi,
-		     CouNumber x, CouNumber y,
-		     CouNumber k, 
-		     CouNumber l, CouNumber u,
-		     int sign) {
+void Couenne::addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
+			      int wi, int xi,
+			      CouNumber x, CouNumber y,
+			      CouNumber k, 
+			      CouNumber l, CouNumber u,
+			      int sign) {
 
   // set x to get a deeper cut (so that we get a tangent which is
   // orthogonal with line through current- and tangent point)
@@ -51,11 +51,14 @@ void addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
   // small fictitious bounds, resulting in
   //
   // 1) still valid cuts, but
+  //
   // 2) a very abrupt change in their coefficients; 
+  //
   // 3) cuts that may result in an LP solution far away from x (this
-  // behavior recalls that of bundle methods for NDO);
+  //    behavior recalls that of bundle methods for NDO);
+  //
   // 4) a non-exact linearization at the bounds (in theory, necessary
-  // for convergence...).
+  //    for convergence...).
   //
   // New values for l and u, if necessary, are therefore set to the
   // maximum bounds if l and/or u are beyond them.
@@ -78,6 +81,4 @@ void addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
   // convex envelope
   cg -> addEnvelope (cs, sign, &pt, 
 		     wi, xi, x, l, u);
-}
-
 }
