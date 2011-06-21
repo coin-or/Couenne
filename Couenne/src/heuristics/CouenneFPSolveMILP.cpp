@@ -91,11 +91,11 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
   //
   // so that we can balance the Hessian and the distance.
 
-  bool firstCall = (milp_ != NULL); // true if this is the first call to
+  bool firstCall = (milp_ == NULL); // true if this is the first call to
   	                            // solveMILP; initialization will be
   	                            // necessary
-  
-  if (!milp_) {
+
+  if (firstCall) {
 
     // create MILP
 
@@ -108,7 +108,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
     // same for FP_DIST_INT as it is only necessary upon numerical
     // problems, which might not happen
 
-    if (compDistInt_ == FP_DIST_POST)
+    if ((compDistInt_ == FP_DIST_POST) && !postlp_)
       postlp_ = createCloneMILP (this, model_, false);
   }
 
@@ -295,7 +295,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 
 	int 
 	  nDeleted = nFinalRowsLP - nInitRowsLP,
-	  *deleted  = new int [nDeleted],
+	 *deleted  = new int [nDeleted],
 	  nCurRow  = nInitRowsLP;
 
 	for (int i = nDeleted; i--;)
@@ -399,7 +399,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
       ++j; // index of variable within problem (plus nVars_)
 
-    } else if (intVar) {
+    } else if (intVar) { // implies (!isMILP)
 
       // fix integer variable to its value in iSol      
     }

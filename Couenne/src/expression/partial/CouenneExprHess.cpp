@@ -224,6 +224,8 @@ ExprHess::ExprHess (CouenneProblem *p):
     free (eee);
   }
 
+  delete [] deplist;
+
 #ifdef DEBUG
   printf ("hessian: %d nonzeros\n", nnz_);
 

@@ -193,6 +193,12 @@ namespace Couenne {
     /// Hessian --- there are 1+m of them, but all are squeezed in a
     /// single object
     ExprHess *HLa_;
+
+    /// Stores the values of the Hessian of the Lagrangian at optimum for later use
+    CouNumber *optHessianVal_; ///< (values)
+    int       *optHessianCol_; ///< Column indices
+    int       *optHessianRow_; ///< Row indices
+    int        optHessianNum_; ///< number of elements
   };
 }
 

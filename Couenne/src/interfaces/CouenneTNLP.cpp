@@ -29,16 +29,34 @@ using namespace Couenne;
 
 /// Empty constructor
 CouenneTNLP::CouenneTNLP ():
-  problem_ (NULL) {}
+
+  problem_ (NULL),
+  sol_     (NULL),
+  sol0_    (NULL),
+  HLa_     (NULL),
+
+  optHessianVal_ (NULL),
+  optHessianCol_ (NULL),
+  optHessianRow_ (NULL),
+  optHessianNum_ (0) {}
 
 
 /// Empty constructor
 CouenneTNLP::~CouenneTNLP () {
+
   if (sol_)  delete [] sol_;
   if (sol0_) delete [] sol0_;
   if (HLa_)  delete HLa_;
 
-  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); i != gradient_. end (); ++i)
+  if (optHessianVal_) {
+
+    delete [] optHessianVal_;
+    delete [] optHessianCol_;
+    delete [] optHessianRow_;
+  }
+
+  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); 
+       i != gradient_. end (); ++i)
     delete (*i). second;
 }
 
@@ -46,12 +64,16 @@ CouenneTNLP::~CouenneTNLP () {
 /// Constructor 
 CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
-  problem_ (p),
-  sol0_    (NULL),
-  sol_     (NULL),
-  bestZ_   (COIN_DBL_MAX),
-  Jac_     (p),
-  HLa_     (new ExprHess (p)) {
+  problem_       (p),
+  sol0_          (NULL),
+  sol_           (NULL),
+  bestZ_         (COIN_DBL_MAX),
+  Jac_           (p),
+  HLa_           (new ExprHess (p)),
+  optHessianVal_ (NULL),
+  optHessianCol_ (NULL),
+  optHessianRow_ (NULL),
+  optHessianNum_ (0) {
 
   std::set <int> objDep;
 

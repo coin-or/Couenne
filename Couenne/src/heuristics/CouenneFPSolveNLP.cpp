@@ -54,7 +54,7 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
 
   bool firstNLP = (nlp_ == NULL);
 
-  if (!nlp_) // first call (in this call to FP). Create NLP
+  if (firstNLP) // first call (in this call to FP). Create NLP
     nlp_ = new CouenneTNLP (problem_);
 
   problem_ -> domain () -> push (problem_ -> nVars (),

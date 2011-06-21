@@ -44,8 +44,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       (CoinCpuTime () > problem_ -> getMaxCpuTime ()) ||  // don't start if time is out
       ((numberSolvePerLevel_ >= 0) &&                     // stop FP after a certain level
        (CoinDrand48 () > 1. / CoinMax                     // decided randomly and inversely proportional
-	(1., (double) ((CoinMax (0, depth - numberSolvePerLevel_)) *   // to BB tree depth
-   		                   (depth - numberSolvePerLevel_))))))
+	(1., (double) ((CoinMax (0, depth - numberSolvePerLevel_ + 1)) *   // to BB tree depth
+   		                   (depth - numberSolvePerLevel_ + 1))))))
     return 0;
 
   problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "FP: BEGIN\n");
@@ -126,6 +126,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       problem_ -> Jnlst () -> Printf 
 	(Ipopt::J_ERROR, J_NLPHEURISTIC,
 	 "FP: breaking out of loop upon %p==NULL or %.3f large\n", iSol, z);
+
       break;
     }
 
