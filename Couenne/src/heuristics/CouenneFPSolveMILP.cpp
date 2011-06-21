@@ -402,6 +402,11 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
     } else if (intVar) { // implies (!isMILP)
 
       // fix integer variable to its value in iSol      
+
+#define INT_LP_BRACKET 0
+
+      lp -> setColLower (i, sol [i] - INT_LP_BRACKET);
+      lp -> setColUpper (i, sol [i] + INT_LP_BRACKET);
     }
   }
 }

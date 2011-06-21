@@ -560,7 +560,8 @@ void CouenneTNLP::setObjective (expression *newObj) {
   // further
   newObj -> DepList (objDep, STOP_AT_AUX);
 
-  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); i != gradient_. end (); ++i)
+  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); 
+       i != gradient_. end (); ++i)
     delete (*i). second;
 
   gradient_ . erase (gradient_ . begin (), gradient_ . end ());
