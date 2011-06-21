@@ -568,10 +568,12 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   problem_ -> domain () -> pop ();
 
   // deleted at every call from Cbc, since it changes not only in
-  // terms of variable bounds but also in of linearization cuts added
+  // terms of variable bounds but also in terms of linearization cuts
+  // added
 
   delete milp_;
-  milp_ = NULL;
+  delete postlp_;
+  milp_ = postlp_ = NULL;
 
   problem_ -> Jnlst () -> Printf 
     (J_ERROR, J_NLPHEURISTIC, "FP: done ===================\n");
