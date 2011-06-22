@@ -260,7 +260,10 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
 
 
 /// computes a not-too-bad point where to branch, in the "middle" of an interval
-CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u) const {
+CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u, CouNumber curAlpha) const {
+
+  if (curAlpha < 0.) 
+    curAlpha = alpha_;
 
   if (u < l + COUENNE_EPS)
     return (0.5 * (l + u));
@@ -276,7 +279,7 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u) con
       if (l < - COUENNE_EPS) return 0.;
       else                   return CoinMin ((l+u)/2, (AGGR_MUL * (1. + l)));
     else {                                               // [l,u]
-      CouNumber point = alpha_ * x + (1. - alpha_) * (l + u) / 2.;
+      CouNumber point = curAlpha * x + (1. - curAlpha) * (l + u) / 2.;
       if      ((point-l) / (u-l) < closeToBounds) point = l + (u-l) * closeToBounds;
       else if ((u-point) / (u-l) < closeToBounds) point = u + (l-u) * closeToBounds;
       return point;

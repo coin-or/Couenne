@@ -15,6 +15,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprVar.hpp"
+#include "CouenneObject.hpp"
 
 using namespace Couenne;
 
@@ -233,7 +234,7 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
      "b = alpha x_lp + (1-alpha) (lb+ub)/2.",
      0.,false,
      1.,false,
-     0.25,
+     default_alpha,
      "Default value is 0.25.");
 
   roptions -> AddBoundedNumberOption

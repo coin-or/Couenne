@@ -20,7 +20,7 @@
 
 namespace Couenne {
 
-const CouNumber default_alpha  = 0.2;
+const CouNumber default_alpha  = 0.25;
 const CouNumber default_clamp  = 0.2;
 const CouNumber max_pseudocost = 1000.;
 
@@ -122,8 +122,8 @@ public:
   CouNumber getBrPoint (funtriplet *ft, CouNumber x0, CouNumber l, CouNumber u) const;
 
   /// returns a point "inside enough" a given interval, or x if it
-  /// already is
-  CouNumber midInterval (CouNumber x, CouNumber l, CouNumber u) const;
+  /// already is. use curAlpha in place of alpha_ if passed as an argument.
+  CouNumber midInterval (CouNumber x, CouNumber l, CouNumber u, CouNumber curAlpha = -1.) const;
 
   /// Return "down" estimate (for non-convex, distance old <--> new LP point)
   virtual double downEstimate () const

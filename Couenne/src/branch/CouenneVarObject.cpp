@@ -16,6 +16,7 @@
 #include "CouenneVarObject.hpp"
 #include "CouenneBranchingObject.hpp"
 #include "CouenneComplObject.hpp"
+#include "CouenneProblemElem.hpp"
 
 using namespace Ipopt;
 using namespace Couenne;
@@ -104,9 +105,28 @@ OsiBranchingObject *CouenneVarObject::createBranch (OsiSolverInterface *si,
     case CouenneObject::LP_CLAMPED:   brpt = CoinMax (l + width, CoinMin (brpt, u - width));        break;
     case CouenneObject::LP_CENTRAL:   if ((brpt < l + width) || 
 					  (brpt > u - width)) brpt = .5 * (l+u);                    break;
+#if 0
+    case CouenneObject::MID_INTERVAL: 
+      {
+	int objInd = problem_ -> Obj (0) -> Body () -> Index ();   
+
+	double
+	  baseAlpha  = alpha_,
+	  lb = info -> lower_ [objInd],
+	  ub = info -> upper_ [objInd],
+	  currentGap = (ub - lb) / (1. + CoinMax (fabs (ub), fabs (lb)));
+
+	brpt = midInterval (brpt, 
+			    info -> lower_ [indVar],
+			    info -> upper_ [indVar],
+			    alpha_ + (1-alpha_) / (1. + 1.e3 * currentGap));
+      }            
+      break;
+#else
     case CouenneObject::MID_INTERVAL: brpt = midInterval (brpt, 
-							  info -> lower_ [indVar], 
-							  info -> upper_ [indVar]);                 break;
+    							  info -> lower_ [indVar], 
+    							  info -> upper_ [indVar]);                 break;
+#endif
     default: assert (false); // this will never be used
     }
 
