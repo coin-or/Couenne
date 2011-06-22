@@ -174,6 +174,12 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
     } 
     else if (u - brpt > .5) {if  (way) brpt += (1. - COUENNE_EPS);} 
     else if (brpt - l > .5) {if (!way) brpt -= (1. - COUENNE_EPS);}
+    else { // u == l == brpt; must still branch to fix variables in object
+           // but one branch is infeasible
+      if(way) {
+        solver->setColLower(index, u+1); // infeasible
+      }
+    }
   }
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "Branching: x%-3d %c= %g\n", 

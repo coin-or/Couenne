@@ -84,13 +84,14 @@ private:
   void printObjViol(OsiBranchingInformation *info);
 
   // Due to possible fixing during strong branching, must check
-  // that selected variable is still a valid candidate. Must not 
-  // branch on an integer variable whose upper and lower bounds
-  // are equal (return value is 0) 
-  // or on an OsiSimpleInteger object for integer variable
-  // vInd with info->solution_[vInd] not between its lower and upper boud
-  // (return value is 1).
-  // If the object is a good candidate, return value is 2.
+  // that variable reference vInd for the selected object (if not -1)
+  // is not fixed or has a current value inside bounds.
+  // Return value is:
+  // 0: OsiSimpleInteger with upper[vInd] == lower[vInd]
+  // 1: OsiSimpleInteger with upper[vInd] > lower[vInd] and
+  //    info->solution[vInd] outside bounds
+  // 2: CouenneBranchingObject with upper[vInd] == lower[vInd]
+  // 3: otherwise (meaning good object)
   int goodCandidate(OsiSolverInterface *solver, 
 		    OsiBranchingInformation *info,
 		    OsiObject **object, const int iObject, const double prec);

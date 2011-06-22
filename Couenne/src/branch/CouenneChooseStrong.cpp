@@ -122,17 +122,16 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
       // this is probably a SOS object, and anyhow we don't want to
       // exit on it.
 
-      return 2;
+      return 3;
     }
   }
   
-  int goodCand = 2; // good candidate
-  
+  int goodCand = 3; // good candidate
+ 
   // Must not call branch() for integer variable vInd with
-  // upper == lower ot for OsiSimpleInteger with 
+  // upper == lower or for OsiSimpleInteger with
   // info->solution[vInd] not between lower and upper
   if((vInd >= 0) && varIsInt) {
-    goodCand = 0; // bad candidate
     double vUp = solver->getColUpper()[vInd];
     double vLow = solver->getColLower()[vInd];
     double infoVal = info->solution_[vInd];
@@ -141,17 +140,19 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
       distToInt = 1 - distToInt;
     }
     if(simpl) {
+      goodCand = 0; // bad candidate
       if((distToInt > info->integerTolerance_) &&
-	 (vUp > vLow + prec)) {
-	goodCand = 2; // good candidate
-	if((vUp + prec < infoVal) || (infoVal < vLow - prec)) {
-	  goodCand = 1; // bad candidate
-	}
+         (vUp > vLow + prec)) {
+        goodCand = 3; // good candidate
+        if((vUp + prec < infoVal) || (infoVal < vLow - prec)) {
+          goodCand = 1; // bad candidate
+        }
       }
     }
     if(co) {
+      goodCand = 2;
       if(vUp > vLow + prec) {
-	goodCand = 2;
+        goodCand = 3; // good candidate
       }
     }
   }
@@ -167,45 +168,6 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 				       double &bestVal2, int &bestIndex,
 				       int &bestWay) {
   bool retval = false;
-
-#ifdef FM_IMPLIC_GRAPH
-  double rat = 0.5;
-  if(value > rat * bestVal1) {
-    int objectInd = -1;
-    CouenneObject *co =  dynamic_cast <CouenneObject *>(object[iObject]);
-    if(co) {
-      objectInd = co->Reference()->Index();
-    }
-    else {
-      objectInd = object[iObject]->columnNumber();
-    }
-    int reachedFromLow = 0, reachedFromUp = 0, reachedFromEither = 0;
-    Couenne::BoundImplicationsGraph *ig = 
-      problem_->getFmBranchInfo()->get_implicGraph();
-    ig->getNumReached(objectInd, reachedFromLow, reachedFromUp, 
-		      reachedFromEither);
-    int minReach = (reachedFromLow < reachedFromUp ? 
-		    reachedFromLow : reachedFromUp);
-    
-    if(((value > bestVal1) && (minReach > rat * bestVal2)) || 
-       (minReach > bestVal2)) {
-      retval = true;
-      if(bestVal1 < value) {
-	bestVal1 = value;
-      }
-      if(bestVal2 < minReach) {
-	bestVal2 = minReach;
-      }
-      bestIndex = iObject;
-      bestWay = upEstimate > downEstimate ? 0 : 1;
-      // but override if there is a preferred way
-      const OsiObject * obj = object[iObject];
-      if (obj->preferredWay() >= 0 && obj->infeasibility()) {
-	bestWay = obj->preferredWay();
-      }
-    }
-  }
-#else /* not FM_IMPLIC_GRAPH */
   if(value > bestVal1) {
     retval = true;
     bestVal1 = value;
@@ -217,8 +179,6 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
       bestWay = obj->preferredWay();
     }
   }
-#endif /* not FM_IMPLIC_GRAPH */
-
   return(retval);
 } /* saveBestCand */
 
@@ -392,8 +352,9 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 
               numberFixed++;
               if (fixVariables) {
-                if(needBranch == 2) { // do not branch if upper == lower 
-		  // for integer var or if value is outside info bounds
+		if(needBranch >= 2) { // for OsiSimpleInteger: do not branch
+                  // if upper == lower or if info value is outside bounds
+                  // for other objects: branch
 		  OsiBranchingObject * branch = 
                                         obj->createBranch(solver, info, 0);
 		  branch -> branch (solver);
@@ -422,8 +383,9 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
               }
               numberFixed++;
               if (fixVariables) {
-                if(needBranch == 2) { // do not branch if upper == lower 
-		  // for integer var or if value is outside info bounds
+		if(needBranch >= 2) { // for OsiSimpleInteger: do not branch
+                  // if upper == lower or if info value is outside bounds
+                  // for other objects: branch
 		  OsiBranchingObject * branch = 
                                          obj->createBranch(solver, info, 1);
 		  branch -> branch (solver);
@@ -450,7 +412,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	      (       MAXMIN_CRITERION  * minVal + 
 	       (1.0 - MAXMIN_CRITERION) * maxVal);
 
-	    if((needBranch == 2) &&
+	    if((needBranch == 3) &&
 	       saveBestCand(object, iObject, value, upEstimate, downEstimate,
 			    bestTrustedVal1, 
 			    bestTrustedVal2, bestObjectIndex_, bestWhichWay_)) {
@@ -519,7 +481,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	  
 	  
 	  // store bad candidates in secondary best
-	  if(needBranch < 2) {
+	  if(needBranch != 3) {
 	    if(saveBestCand(object, iObject, value, 
 			    upEstimate, downEstimate,
 			    bestTrusted2Val1, 
