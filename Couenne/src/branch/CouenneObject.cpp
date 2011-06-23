@@ -268,7 +268,7 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
 
   CouNumber curAlpha = alpha_;
 
-#if 1
+#if 0
   if (info) {
 
     // adaptive scheme: make LP point count more when gap approaches zero
