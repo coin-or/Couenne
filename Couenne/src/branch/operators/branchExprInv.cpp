@@ -20,6 +20,7 @@ using namespace Couenne;
 
 /// generic approach for negative powers (commom with exprInv::selectBranch())
 CouNumber negPowSelectBranch (const CouenneObject *obj, 
+			      const OsiBranchingInformation *info,
 			      double * &brpts, 	
 			      double * &brDist, // distance of current LP
 			                        // point to new convexifications
@@ -117,7 +118,7 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
 
     *brpts = obj -> midInterval ((x0 >= 0.) ? 
  	 			  powNewton ( x0,  y0, &pt) : 
-				 -powNewton (-x0, -y0, &pt), l, u);
+				 -powNewton (-x0, -y0, &pt), l, u, info);
 
     CouNumber dy = y0 - safe_pow (*brpts >= 0 ? *brpts : - *brpts, 1. / k);
     x0 -= *brpts;
@@ -175,7 +176,7 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
   if (l < - COUENNE_INFINITY) { // u << -0
 
     way = TWO_RIGHT;
-    *brpts = obj -> midInterval (x0, l, u);
+    *brpts = obj -> midInterval (x0, l, u, info);
 
     return CoinMin (brDist [0] = y0 - safe_pow (*brpts, 1. / k), 
 		    brDist [1] = projectSeg (x0, y0, l, safe_pow (l, k), 
@@ -185,7 +186,7 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
   if (u > COUENNE_INFINITY) { // l >> +0
 
     way = TWO_LEFT;
-    *brpts = obj -> midInterval (x0, l, u);
+    *brpts = obj -> midInterval (x0, l, u, info);
 
     return CoinMin (brDist [1] = y0 - safe_pow (*brpts, 1. / k), 
 		    brDist [0] = projectSeg (x0, y0, l, safe_pow (l, k), 
@@ -195,7 +196,7 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
   // last case: nice finite interval and limited curve
 
   powertriplet ft (k);
-  *brpts = obj -> getBrPoint (&ft, x0, l, u);
+  *brpts = obj -> getBrPoint (&ft, x0, l, u, info);
 
   /*  // TODO: check if it works with all exponents
   if (u > l + COUENNE_EPS) {
@@ -207,7 +208,7 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
     // if (u < 0)
     // *brpts = - *brpts;
   }
-  else *brpts = midInterval (x0, l, u);*/
+  else *brpts = midInterval (x0, l, u, info);*/
 
   way = TWO_RAND;
 
@@ -246,5 +247,5 @@ CouNumber exprInv::selectBranch (const CouenneObject *obj,
             l  = info -> lower_    [ind],
             u  = info -> upper_    [ind];
 
-  return negPowSelectBranch (obj, brpts, brDist, way, -1, x0, y0, l,  u);
+  return negPowSelectBranch (obj, info, brpts, brDist, way, -1, x0, y0, l,  u);
 }

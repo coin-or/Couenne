@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: return branch suggestion for exprAbs
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -16,7 +16,7 @@
 
 using namespace Couenne;
 
-static const double sqrt_2 = sqrt (2.);
+//static const double sqrt_2 = sqrt (2.);
 
 /// set up branching object by evaluating branching points for each
 /// expression's arguments. For an exprAbs, simply branch at zero.
@@ -49,10 +49,11 @@ CouNumber exprAbs::selectBranch (const CouenneObject *obj,
 
   brDist = (double *) realloc (brDist, 2 * sizeof (double));
 
-  assert ((y0 >= x0 - COUENNE_EPS) && (y0 >= -x0 - COUENNE_EPS));
+  assert ((y0 >=  x0 - COUENNE_EPS) && 
+	  (y0 >= -x0 - COUENNE_EPS));
 
-  brDist [0] = (x0 + y0) / sqrt_2;
-  brDist [1] = (y0 - x0) / sqrt_2;
+  brDist [0] = (x0 + y0) / M_SQRT2l;
+  brDist [1] = (y0 - x0) / M_SQRT2l;
 
   // exact distance between current point and the two subsequent
   // convexifications

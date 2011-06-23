@@ -10,11 +10,11 @@
  */
 
 #include "CouenneProblem.hpp"
+#include "CouenneProblemElem.hpp"
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
 
 #include "CoinHelperFunctions.hpp"
-#include "CoinFinite.hpp"
 
 using namespace Ipopt;
 using namespace Couenne;
@@ -184,8 +184,11 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
       selectBranch (this, info,                      // input parameters
 		    brVar, brPts, brDist, whichWay); // result: who, where, distance, and direction
   else {
+
+    // reference_ -> Image () == NULL implies this is an integer object
+
     brVar = reference_;
-    brPts  = (double *) realloc (brPts, sizeof (double)); 
+    brPts  = (double *) realloc (brPts,      sizeof (double)); 
     brDist = (double *) realloc (brDist, 2 * sizeof (double)); 
 
     double point = info -> solution_ [reference_ -> Index ()];
@@ -260,10 +263,35 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
 
 
 /// computes a not-too-bad point where to branch, in the "middle" of an interval
-CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u, CouNumber curAlpha) const {
+CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u, 
+				      const OsiBranchingInformation *info) const {
 
-  if (curAlpha < 0.) 
-    curAlpha = alpha_;
+  CouNumber curAlpha = alpha_;
+
+#if 1
+  if (info) {
+
+    // adaptive scheme: make LP point count more when gap approaches zero
+    int objInd = problem_ -> Obj (0) -> Body () -> Index ();
+
+    double
+      lb = info -> lower_ [objInd],
+      ub = problem_ -> getCutOff (),
+      currentGap = 
+      (ub >  COUENNE_INFINITY    / 10 ||
+       lb < -Couenne_large_bound / 10) ? 1e3 : 
+      fabs (ub - lb) / (1.e-3 + CoinMin (fabs (ub), fabs (lb)));
+
+    // make curAlpha closer to 1 by adding remaining (1-alpha_)
+    // weighted inversely proportional to gap
+    curAlpha = curAlpha + (1 - alpha_) / (1. + 1.e3 * currentGap);
+
+    // printf ("using %g rather than %g. cutoff %g, lb %g, gap %g\n", 
+    // 	    curAlpha, alpha_,
+    // 	    problem_ -> getCutOff (),
+    // 	    lb, currentGap);
+  }
+#endif
 
   if (u < l + COUENNE_EPS)
     return (0.5 * (l + u));
@@ -279,6 +307,7 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u, Cou
       if (l < - COUENNE_EPS) return 0.;
       else                   return CoinMin ((l+u)/2, (AGGR_MUL * (1. + l)));
     else {                                               // [l,u]
+
       CouNumber point = curAlpha * x + (1. - curAlpha) * (l + u) / 2.;
       if      ((point-l) / (u-l) < closeToBounds) point = l + (u-l) * closeToBounds;
       else if ((u-point) / (u-l) < closeToBounds) point = u + (l-u) * closeToBounds;
@@ -288,7 +317,8 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u, Cou
 
 
 /// pick branching point based on current strategy
-CouNumber CouenneObject::getBrPoint (funtriplet *ft, CouNumber x0, CouNumber l, CouNumber u) const {
+CouNumber CouenneObject::getBrPoint (funtriplet *ft, CouNumber x0, CouNumber l, CouNumber u, 
+				     const OsiBranchingInformation *info) const {
 
   if ((l < -COUENNE_EPS) && 
       (u >  COUENNE_EPS) && 
@@ -304,7 +334,8 @@ CouNumber CouenneObject::getBrPoint (funtriplet *ft, CouNumber x0, CouNumber l, 
   case CouenneObject::BALANCED:     return minMaxDelta (ft, l, u);
   case CouenneObject::LP_CLAMPED:   return CoinMax (l + width, CoinMin (x0, u - width));
   case CouenneObject::LP_CENTRAL:   return ((x0 < l + width) || (x0 > u - width)) ? (l+u)/2 : x0;
-  case CouenneObject::MID_INTERVAL: return midInterval (x0, l, u);
+  case CouenneObject::MID_INTERVAL: return midInterval (x0, l, u, info);
+
   default:
     printf ("Couenne: unknown branching point selection strategy\n");
     exit (-1);
@@ -567,7 +598,7 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   // now move it away from the bounds, unless this is an integer variable
 
   //if (!isInteger)
-  point = midInterval (point, lower, upper);
+  point = midInterval (point, lower, upper, info);
 
   //printf ("point = %g\n", point);
 

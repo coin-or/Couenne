@@ -102,16 +102,16 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
   int ind = -1;
 
   if      (xl < -large_bound)                              // x unbounded below
-    {ind = xi; *brpts = obj -> midInterval (((x0 < 0.) ? 2 : 0.5) * x0, xl, xu); way = TWO_RIGHT;}
+    {ind = xi; *brpts = obj -> midInterval (((x0 < 0.) ? 2 : 0.5) * x0, xl, xu, info); way = TWO_RIGHT;}
 
   else if (xu >  large_bound)                              // x unbounded above
-    {ind = xi; *brpts = obj -> midInterval (((x0 > 0.) ? 2 : 0.5) * x0, xl, xu); way = TWO_LEFT;} 
+    {ind = xi; *brpts = obj -> midInterval (((x0 > 0.) ? 2 : 0.5) * x0, xl, xu, info); way = TWO_LEFT;} 
 
   else if (yl < -large_bound)                              // y unbounded below
-    {ind = yi; *brpts = obj -> midInterval (((y0 < 0.) ? 2 : 0.5) * y0, yl, yu); way = TWO_RIGHT;}
+    {ind = yi; *brpts = obj -> midInterval (((y0 < 0.) ? 2 : 0.5) * y0, yl, yu, info); way = TWO_RIGHT;}
 
   else if (yu >  large_bound)                              // y unbounded above
-    {ind = yi; *brpts = obj -> midInterval (((y0 > 0.) ? 2 : 0.5) * y0, yl, yu); way = TWO_LEFT;} 
+    {ind = yi; *brpts = obj -> midInterval (((y0 > 0.) ? 2 : 0.5) * y0, yl, yu, info); way = TWO_LEFT;} 
 
   else { // both are bounded
 
@@ -147,7 +147,7 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
 						       pt = .5 * (lb+ub);                     break;
       case CouenneObject::LP_CLAMPED:   *brpts = CoinMax (lb + margin, 
 				 	         CoinMin (ub - margin, pt));                  break;
-      case CouenneObject::MID_INTERVAL: *brpts = obj -> midInterval (pt, lb, ub);             break;
+      case CouenneObject::MID_INTERVAL: *brpts = obj -> midInterval (pt, lb, ub, info);       break;
       case CouenneObject::BALANCED:     *brpts = balancedMul (info, (ind == xi) ? 0 : 1, wi); break;
       case CouenneObject::MIN_AREA: // in products, the minimum volume
 				    // subdivision is at the middle of

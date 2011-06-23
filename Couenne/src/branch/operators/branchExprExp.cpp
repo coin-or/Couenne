@@ -66,7 +66,7 @@ CouNumber exprExp::selectBranch (const CouenneObject *obj,
     // Look for point (x1,y1) on curve y=exp(x) closest to current
     // (x0,y0), branch at x1
 
-    *brpts = obj -> midInterval (powNewton (x0, y0, exp, exp, exp), l, u);
+    *brpts = obj -> midInterval (powNewton (x0, y0, exp, exp, exp), l, u, info);
 
     way = TWO_RAND;
 
@@ -107,7 +107,7 @@ CouNumber exprExp::selectBranch (const CouenneObject *obj,
 
   if (l < - COUENNE_INFINITY) { // 2) unbounded from below --> break vertically
 
-    *brpts = obj -> midInterval (x0, l, u);
+    *brpts = obj -> midInterval (x0, l, u, info);
 
     way = TWO_RIGHT;
     return CoinMin (brDist [0] = y0 - exp (x0), 
@@ -116,7 +116,7 @@ CouNumber exprExp::selectBranch (const CouenneObject *obj,
 
   if (u > COUENNE_INFINITY) { // 3) unbounded from above -- break horizontally
 
-    *brpts = obj -> midInterval (log (y0), l, u);
+    *brpts = obj -> midInterval (log (y0), l, u, info);
 
     way = TWO_LEFT;
     return CoinMin (brDist [0] = projectSeg (x0, y0, l, exp (l), *brpts, exp (*brpts), -1),
@@ -127,7 +127,7 @@ CouNumber exprExp::selectBranch (const CouenneObject *obj,
   // 4) both are finite
 
   simpletriplet ft (exp, exp, exp, log);
-  *brpts = obj -> getBrPoint (&ft, x0, l, u); // select based on strategy
+  *brpts = obj -> getBrPoint (&ft, x0, l, u, info); // select based on strategy
 
   way = TWO_RAND;
 

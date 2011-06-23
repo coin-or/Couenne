@@ -78,7 +78,7 @@ CouNumber minMaxDelta (funtriplet *ft, CouNumber lb, CouNumber ub) {
   }
 
   return b;
-  //return obj -> midInterval (b, lb, ub);
+  //return obj -> midInterval (b, lb, ub, info);
 }
 
 

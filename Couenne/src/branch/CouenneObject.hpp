@@ -119,11 +119,11 @@ public:
   {return strategy_;}
 
   /// pick branching point based on current strategy
-  CouNumber getBrPoint (funtriplet *ft, CouNumber x0, CouNumber l, CouNumber u) const;
+  CouNumber getBrPoint (funtriplet *ft, CouNumber x0, CouNumber l, CouNumber u, const OsiBranchingInformation *info = NULL) const;
 
   /// returns a point "inside enough" a given interval, or x if it
-  /// already is. use curAlpha in place of alpha_ if passed as an argument.
-  CouNumber midInterval (CouNumber x, CouNumber l, CouNumber u, CouNumber curAlpha = -1.) const;
+  /// already is. Modify alpha_ using gap provided by info
+  CouNumber midInterval (CouNumber x, CouNumber l, CouNumber u, const OsiBranchingInformation *info = NULL) const;
 
   /// Return "down" estimate (for non-convex, distance old <--> new LP point)
   virtual double downEstimate () const

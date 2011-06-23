@@ -133,7 +133,7 @@ bool CouenneProblem::readOptimum (std::string *fname) {
   // read optimal objective function first
   if (fscanf (f, "%lf", &bestObj_) < 1) {
     fclose (f);
-    printf ("could not read objective from file \"%s\"\n", fname -> c_str ());
+    printf ("Couenne: warning, could not read objective from file \"%s\"\n", fname -> c_str ());
     return false;
   }
 
@@ -141,9 +141,11 @@ bool CouenneProblem::readOptimum (std::string *fname) {
   for (int i = 0; i < nOrigVars_; i++)
     if (fscanf (f, "%lf", optimum_ + i) < 1) {
       fclose (f);
-      printf ("could not read optimal value of x_%d from file \"%s\"\n", i, fname -> c_str ());
+      printf ("Couenne: warning, could not read optimal value of x_%d from file \"%s\"\n", i, fname -> c_str ());
       return false;
-    }
+    } else
+      if (variables_ [i] -> isDefinedInteger ()) 
+	optimum_ [i] = ceil (optimum_ [i] - .5);
 
   if (opt_window_ < 1e50) // restrict solution space around known optimum
     for (int i = 0; i < nOrigVars_; i++) {

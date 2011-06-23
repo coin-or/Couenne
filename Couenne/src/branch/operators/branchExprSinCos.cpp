@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: return branch gain and branch object for sines/cosines
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -52,7 +52,7 @@ CouNumber trigSelBranch (const CouenneObject *obj,
 
   brpts  = (double *) realloc (brpts,    sizeof (double));
   brDist = (double *) realloc (brDist, 2*sizeof (double));
-  *brpts = obj -> getBrPoint (&ft, x0, l, u);
+  *brpts = obj -> getBrPoint (&ft, x0, l, u, info);
 
   return (brDist [0] = brDist [1] = y0 - ((type == COU_SINE) ? sin(x0) : cos(x0)));
 }

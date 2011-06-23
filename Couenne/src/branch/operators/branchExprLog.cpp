@@ -76,7 +76,7 @@ CouNumber exprLog::selectBranch (const CouenneObject *obj,
 
     // Outside -> branch on closest point on curve
 
-    *brpts = obj -> midInterval (powNewton (x0, y0, log, inv, oppInvSqr), l, u);
+    *brpts = obj -> midInterval (powNewton (x0, y0, log, inv, oppInvSqr), l, u, info);
 
     way = TWO_LEFT;
     CouNumber dy = y0 - log (*brpts);
@@ -120,7 +120,7 @@ CouNumber exprLog::selectBranch (const CouenneObject *obj,
 
   if (l <= SQ_COUENNE_EPS) { // u is finite
 
-    *brpts = obj -> midInterval (exp (y0), l, u);
+    *brpts = obj -> midInterval (exp (y0), l, u, info);
     way = TWO_RIGHT;
 
     brDist [0] = x0 - *brpts;
@@ -130,7 +130,7 @@ CouNumber exprLog::selectBranch (const CouenneObject *obj,
  
   if (u > COUENNE_INFINITY) { // l is far from zero
 
-    *brpts = CoinMax (10*x0, obj -> midInterval (x0, l, u));
+    *brpts = CoinMax (10*x0, obj -> midInterval (x0, l, u, info));
     way = TWO_LEFT;
 
     brDist [1] = log (*brpts) - y0;
@@ -143,9 +143,9 @@ CouNumber exprLog::selectBranch (const CouenneObject *obj,
  
   simpletriplet ft (log, inv, oppInvSqr, inv);
 
-  *brpts = obj -> getBrPoint (&ft, x0, l, u);
+  *brpts = obj -> getBrPoint (&ft, x0, l, u, info);
 
-  //  *brpts = midInterval (powNewton (x0, y0, log, inv, oppInvSqr), l, u); 
+  //  *brpts = midInterval (powNewton (x0, y0, log, inv, oppInvSqr), l, u, info); 
   // WRONG! Local minima may be at bounds
 
   // compute distance from current point to new convexification(s) and

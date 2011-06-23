@@ -18,8 +18,9 @@
 
 using namespace Couenne;
 
-/// generic approach for negative powers (commom with exprInv::selectBranch
+/// generic approach for negative powers (used by expr{Pow,Inv}::selectBranch())
 CouNumber negPowSelectBranch (const CouenneObject *obj,
+			      const OsiBranchingInformation *info,
 			      double * &brpts, 
 			      double * &brDist, // distance of current LP
 				                // point to new convexifications
@@ -76,7 +77,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
   }
 
   // case 1: k negative, resort to method similar to exprInv:: ///////////////////////////////
-  if (k<0) return negPowSelectBranch (obj, brpts, brDist, way, k, x0, y0, l, u);
+  if (k<0) return negPowSelectBranch (obj, info, brpts, brDist, way, k, x0, y0, l, u);
 
   brDist = (double *) realloc (brDist, 2 * sizeof (double));
 
@@ -157,7 +158,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
     if (l < -COUENNE_INFINITY) {
 
       // if y0 is huge, try to make it close to 0
-      *brpts = obj -> midInterval (-safe_pow (y0, 1. / k), l, u);
+      *brpts = obj -> midInterval (-safe_pow (y0, 1. / k), l, u, info);
       way = TWO_RIGHT;
 
       //printf ("  ----> brptPow %g\n", *brpts);
@@ -173,7 +174,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
       // if y0 is huge, try to make it close to 0
       //*brpts = CoinMin (safe_pow (y0, 1. / k), COU_MAX_COEFF / k);
-      *brpts = obj -> midInterval (safe_pow (y0, 1. / k), l, u);
+      *brpts = obj -> midInterval (safe_pow (y0, 1. / k), l, u, info);
       way = TWO_LEFT;
 
       //printf ("  ----> brptPow %g\n", *brpts);
@@ -189,7 +190,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     powertriplet ft (k);
     //*brpts = maxHeight (&ft, x0, y0, l, u);
-    *brpts = obj -> getBrPoint (&ft, x0, l, u);
+    *brpts = obj -> getBrPoint (&ft, x0, l, u, info);
 
     way = (x0 < *brpts) ? TWO_LEFT : TWO_RIGHT;
 
@@ -210,7 +211,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
     return retval;
 
     /*      brpts = (double *) realloc (brpts, sizeof (double));
-     *brpts = midInterval (x0, l, u);
+     *brpts = midInterval (x0, l, u, info);
      way = 
      (l < - COUENNE_INFINITY) ? TWO_RIGHT : 
      (u >   COUENNE_INFINITY) ? TWO_LEFT  : TWO_RAND;
@@ -255,7 +256,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
     // is bounded.
 
     powertriplet pt (k);
-    *brpts = obj -> getBrPoint (&pt, x0, l, u);
+    *brpts = obj -> getBrPoint (&pt, x0, l, u, info);
 
     // in min-area and balanced strategy, point returned is
     // positive. Put the right sign
@@ -305,9 +306,9 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
       } else {
 
-	*brpts = x0; // safe for  any x0 as (l != x0 != u)
+	*brpts = x0; // safe for any x0 as (l != x0 != u)
 
-	//*brpts = obj -> midInterval (x0, l, u);
+	//*brpts = obj -> midInterval (x0, l, u, info);
 
 	return (brDist [0] = brDist [1] = (x0 > 0) ? // approx distance
 	  projectSeg (x0,y0,x0, pow0, CoinMax (0., pow (y0, 1./k)), y0, 0) :
@@ -319,7 +320,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
     // is bounded.
 
     powertriplet pt (k);
-    *brpts = obj -> getBrPoint (&pt, x0, l, u);
+    *brpts = obj -> getBrPoint (&pt, x0, l, u, info);
 
     // in min-area and balanced strategy, point returned is
     // positive. Put the right sign
@@ -371,7 +372,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 	*brpts = 0.5 * (x0 + pow (y0, 1. / k));
       else {
 	powertriplet pt (k);
-	*brpts = obj -> getBrPoint (&pt, x0, l, u);
+	*brpts = obj -> getBrPoint (&pt, x0, l, u, info);
       }
       
       way = TWO_LEFT;
@@ -399,7 +400,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 	*brpts = 0.5 * (x0 + pow (y0, 1. / k));
       else {
 	powertriplet pt (k);
-	*brpts = obj -> getBrPoint (&pt, x0, l, u);
+	*brpts = obj -> getBrPoint (&pt, x0, l, u, info);
       }
 
       //*brpts = 0.5 * (x0 + pow (x0, 1. / k));

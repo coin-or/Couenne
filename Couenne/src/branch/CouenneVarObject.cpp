@@ -63,6 +63,8 @@ OsiBranchingObject *CouenneVarObject::createBranch (OsiSolverInterface *si,
      info -> lower_,
      info -> upper_, false); // don't have to alloc+copy
 
+  OsiBranchingObject *obj = NULL;
+
   // For some obscure reason, this only seems to work if
   // strong/reliability branching is not used. I suppose it has to do
   // with omitted pseudocost multiplier update, or some other hidden
@@ -105,74 +107,46 @@ OsiBranchingObject *CouenneVarObject::createBranch (OsiSolverInterface *si,
     case CouenneObject::LP_CLAMPED:   brpt = CoinMax (l + width, CoinMin (brpt, u - width));        break;
     case CouenneObject::LP_CENTRAL:   if ((brpt < l + width) || 
 					  (brpt > u - width)) brpt = .5 * (l+u);                    break;
-#if 0
-    case CouenneObject::MID_INTERVAL: 
-      {
-	int objInd = problem_ -> Obj (0) -> Body () -> Index ();   
-
-	double
-	  baseAlpha  = alpha_,
-	  lb = info -> lower_ [objInd],
-	  ub = info -> upper_ [objInd],
-	  currentGap = (ub - lb) / (1. + CoinMax (fabs (ub), fabs (lb)));
-
-	brpt = midInterval (brpt, 
-			    info -> lower_ [indVar],
-			    info -> upper_ [indVar],
-			    alpha_ + (1-alpha_) / (1. + 1.e3 * currentGap));
-      }            
-      break;
-#else
     case CouenneObject::MID_INTERVAL: brpt = midInterval (brpt, 
     							  info -> lower_ [indVar], 
-    							  info -> upper_ [indVar]);                 break;
-#endif
+    							  info -> upper_ [indVar], info);           break;
     default: assert (false); // this will never be used
     }
 
-    OsiBranchingObject *obj = new CouenneBranchingObject (si, this, jnlst_, cutGen_, problem_, reference_, 
+    obj = new CouenneBranchingObject (si, this, jnlst_, cutGen_, problem_, reference_, 
 							  TWO_LEFT, brpt, doFBBT_, doConvCuts_);
+  } else {
 
-    problem_ -> domain () -> pop ();
+    // now deal with the more complicated branching selections
 
-    return obj;
+    // The infeasibility on an (independent) variable x_i is given by
+    // something more elaborate than |w-f(x)|, that is, a function of
+    // all infeasibilities of all expressions which depend on x_i.
+
+    int bestWay;
+    const CouenneObject *criticalObject = NULL; // should create the branchingObject
+
+    CouNumber bestPt = computeBranchingPoint (info, bestWay, criticalObject);
+
+    ///////////////////////////////////////////
+
+    int indVar = reference_ -> Index ();
+
+    jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, ":::: creating branching on x_%d @%g [%g,%g]\n", 
+		      indVar, 
+		      info -> solution_ [indVar],
+		      info -> lower_    [indVar],
+		      info -> upper_    [indVar]);
+
+    obj = criticalObject ? 
+      criticalObject -> createBranch (si, info, way) :
+      new CouenneBranchingObject (si, this, jnlst_, cutGen_, problem_, reference_, 
+				  way, bestPt, doFBBT_, doConvCuts_);
   }
-
-  // now deal with the more complicated branching selections
-
-  // The infeasibility on an (independent) variable x_i is given by
-  // something more elaborate than |w-f(x)|, that is, a function of
-  // all infeasibilities of all expressions which depend on x_i.
-
-  // problem_ -> domain () -> push 
-  //   (problem_ -> nVars (),
-  //    info -> solution_,
-  //    info -> lower_,
-  //    info -> upper_, false); // don't have to alloc+copy
-
-  int bestWay;
-  const CouenneObject *criticalObject = NULL; // should create the branchingObject
-
-  CouNumber bestPt = computeBranchingPoint (info, bestWay, criticalObject);
-
-  ///////////////////////////////////////////
-
-  int indVar = reference_ -> Index ();
-
-  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, ":::: creating branching on x_%d @%g [%g,%g]\n", 
-		    indVar, 
-		    info -> solution_ [indVar],
-		    info -> lower_    [indVar],
-		    info -> upper_    [indVar]);
-
-  OsiBranchingObject *brObj = criticalObject ? 
-    criticalObject -> createBranch (si, info, way) :
-    new CouenneBranchingObject (si, this, jnlst_, cutGen_, problem_, reference_, 
-				way, bestPt, doFBBT_, doConvCuts_);
 
   problem_ -> domain () -> pop ();
 
-  return brObj;
+  return obj;
 }
 
 
@@ -304,7 +278,7 @@ CouNumber CouenneVarObject::computeBranchingPoint (const OsiBranchingInformation
 
     default: 
       // all other cases (balanced, min-area)
-      bestPt = midInterval (bestPt, l, u);
+      bestPt = midInterval (bestPt, l, u, info);
 
       if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
 	if (CoinMin (fabs (bestPt - l), fabs (bestPt - u)) < 1e-3) {

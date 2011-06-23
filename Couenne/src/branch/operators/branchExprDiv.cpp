@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: select branch for divisions
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -33,6 +33,8 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
 
   assert ((xi >= 0) && (yi >= 0) && (wi >= 0));
 
+  brpts  = (double *) realloc (brpts,  sizeof (double));
+
   // choosing branching variable and point is difficult, use
   // proportion in bound intervals
 
@@ -46,7 +48,6 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
       (yu >  COUENNE_EPS)) {
 
     var = arglist_ [1];
-    brpts  = (double *) realloc (brpts,  sizeof (double));
 
     *brpts = 0.;
 
@@ -75,7 +76,6 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
       (yu >  COUENNE_INFINITY)) { // and yl > 0
 
     var = arglist_ [1];
-    brpts = (double *) realloc (brpts, sizeof (CouNumber));
 
     // if y0 close to bounds, branch away from it
     if      (fabs (y0-yl) < COUENNE_NEAR_BOUND) *brpts = y0 + 1. + yl*10.;
@@ -120,7 +120,6 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
 	wmax = w0;
       }
 
-      brpts = (double *) realloc (brpts, sizeof (CouNumber));
       *brpts = wreal;
       way = (w0 < wreal) ? TWO_LEFT : TWO_RIGHT;
 
@@ -130,8 +129,6 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
     } else {
 
       // unbounded in one direction only, use two way branching
-
-      brpts = (double *) realloc (brpts, sizeof (CouNumber));
 
       // if y0 close to bounds, branch away from it
       if      (fabs (w0-wl) < COUENNE_NEAR_BOUND) *brpts = w0 + 1 + wl*10;
@@ -154,8 +151,6 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
     dx = xu-xl,
     dy = yu-yl,
     dw = wu-wl;
-
-  brpts = (double *) realloc (brpts, sizeof (CouNumber));
 
   // Check largest interval and choose branch variable accordingly.
   // Branching point depends on where the current point is, but for
