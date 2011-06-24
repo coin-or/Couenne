@@ -30,29 +30,30 @@ using namespace Couenne;
 /// Empty constructor
 CouenneTNLP::CouenneTNLP ():
 
-  problem_ (NULL),
-  sol_     (NULL),
-  sol0_    (NULL),
-  HLa_     (NULL),
+  problem_        (NULL),
+  sol0_           (NULL),
+  sol_            (NULL),
+  HLa_            (NULL),
 
-  optHessianVal_ (NULL),
-  optHessianCol_ (NULL),
-  optHessianRow_ (NULL),
-  optHessianNum_ (0) {}
+  optHessianVal_  (NULL),
+  optHessianCol_  (NULL),
+  optHessianRow_  (NULL),
+  optHessianNum_  (0),
+  saveOptHessian_ (false) {}
 
 
 /// Empty constructor
 CouenneTNLP::~CouenneTNLP () {
 
-  if (sol_)  delete [] sol_;
   if (sol0_) delete [] sol0_;
+  if (sol_)  delete [] sol_;
   if (HLa_)  delete HLa_;
 
   if (optHessianVal_) {
 
-    delete [] optHessianVal_;
-    delete [] optHessianCol_;
-    delete [] optHessianRow_;
+    free (optHessianVal_);
+    free (optHessianCol_);
+    free (optHessianRow_);
   }
 
   for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); 
@@ -64,16 +65,17 @@ CouenneTNLP::~CouenneTNLP () {
 /// Constructor 
 CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
-  problem_       (p),
-  sol0_          (NULL),
-  sol_           (NULL),
-  bestZ_         (COIN_DBL_MAX),
-  Jac_           (p),
-  HLa_           (new ExprHess (p)),
-  optHessianVal_ (NULL),
-  optHessianCol_ (NULL),
-  optHessianRow_ (NULL),
-  optHessianNum_ (0) {
+  problem_        (p),
+  sol0_           (NULL),
+  sol_            (NULL),
+  bestZ_          (COIN_DBL_MAX),
+  Jac_            (p),
+  HLa_            (new ExprHess (p)),
+  optHessianVal_  (NULL),
+  optHessianCol_  (NULL),
+  optHessianRow_  (NULL),
+  optHessianNum_  (0),
+  saveOptHessian_ (false) {
 
   std::set <int> objDep;
 
@@ -126,6 +128,13 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
     e -> Image () -> DepList (nonLinVars_, STOP_AT_AUX);
   }
+}
+
+
+/// Copy constructor 
+CouenneTNLP::CouenneTNLP (const CouenneTNLP &) {
+
+  assert (false);
 }
 
 
@@ -597,6 +606,49 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 
   if  (sol_)  CoinCopyN       (x, n, sol_);
   else sol_ = CoinCopyOfArray (x, n);
+
+  // if a save-lagrangian-hessian flag was set, save this solution's lagrangian hessian 
+
+  if (saveOptHessian_) {
+
+    problem_ -> domain () -> push (n, x, NULL, NULL);
+
+    int nnz = HLa_ -> nnz ();
+
+    // resize them to full size (and realloc them to optHessianNum_ later)
+
+    optHessianVal_ = (double *) realloc (optHessianVal_, nnz * sizeof (double));
+    optHessianRow_ = (int    *) realloc (optHessianRow_, nnz * sizeof (int));
+    optHessianCol_ = (int    *) realloc (optHessianCol_, nnz * sizeof (int));
+    optHessianNum_ = 0;    
+
+    for (int i = 0; i < HLa_ -> nnz (); ++i) {
+
+      double hessMember = 0.;
+      expression **elist = HLa_ -> expr () [i];
+
+      for (int j=0; j < HLa_ -> numL () [i]; ++j) {
+
+	int indLam = HLa_ -> lamI () [i][j];
+
+	hessMember += (indLam == 0) ? 
+	  (*(elist [j])) () :                  // this is the objective
+	  (*(elist [j])) () * lambda [indLam]; // this is a constraint
+      }
+
+      if (hessMember != 0.) {
+	optHessianVal_ [optHessianNum_]   = hessMember;
+	optHessianRow_ [optHessianNum_]   = HLa_ -> iRow () [i];
+	optHessianVal_ [optHessianNum_++] = HLa_ -> jCol () [i];
+      }
+    }
+
+    optHessianVal_ = (double *) realloc (optHessianVal_, optHessianNum_ * sizeof (double));
+    optHessianRow_ = (int    *) realloc (optHessianRow_, optHessianNum_ * sizeof (int));
+    optHessianCol_ = (int    *) realloc (optHessianCol_, optHessianNum_ * sizeof (int));
+
+    problem_ -> domain () -> pop ();
+  }
 }
 
 

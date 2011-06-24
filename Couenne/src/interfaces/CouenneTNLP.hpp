@@ -32,6 +32,9 @@ namespace Couenne {
     /// Constructor 
     CouenneTNLP (CouenneProblem *);
 
+    /// Copy Constructor 
+    CouenneTNLP (const CouenneTNLP &);
+
     /// Destructor
     virtual ~CouenneTNLP ();
 
@@ -163,9 +166,13 @@ namespace Couenne {
     virtual bool get_list_of_nonlinear_variables (Ipopt::Index num_nonlin_vars,
 						  Ipopt::Index* pos_nonlin_vars);
 
-    // Change objective function and modify gradient expressions
-    // accordingly
+    /// Change objective function and modify gradient expressions
+    /// accordingly
     virtual void setObjective (expression *newObj);
+
+    /// set and get saveOptHessian_
+    bool &getSaveOptHessian ()
+    {return saveOptHessian_;}
 
   private:
 
@@ -199,6 +206,9 @@ namespace Couenne {
     int       *optHessianCol_; ///< Column indices
     int       *optHessianRow_; ///< Row indices
     int        optHessianNum_; ///< number of elements
+
+    /// flag to be set to save this solution's lagrangian hessian in above structure
+    bool saveOptHessian_;
   };
 }
 
