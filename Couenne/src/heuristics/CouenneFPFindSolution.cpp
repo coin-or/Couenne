@@ -46,7 +46,7 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
   // 1) Assign all methods i a number p[i] (for instance those in the
   //    list above)
   //
-  // 2) Call each in the order define by p[i], return a solution if
+  // 2) Call each in the order defined by p[i], return a solution if
   //    found, otherwise proceed to next method
   //
   // 3) If K consecutive successes at finding new solution (not
