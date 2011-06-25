@@ -35,10 +35,11 @@ CouenneTNLP::CouenneTNLP ():
   sol_            (NULL),
   HLa_            (NULL),
 
+  optHessianNum_  (0),
   optHessianVal_  (NULL),
   optHessianCol_  (NULL),
   optHessianRow_  (NULL),
-  optHessianNum_  (0),
+
   saveOptHessian_ (false) {}
 
 
@@ -71,10 +72,10 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
   bestZ_          (COIN_DBL_MAX),
   Jac_            (p),
   HLa_            (new ExprHess (p)),
+  optHessianNum_  (0),
   optHessianVal_  (NULL),
   optHessianCol_  (NULL),
   optHessianRow_  (NULL),
-  optHessianNum_  (0),
   saveOptHessian_ (false) {
 
   std::set <int> objDep;
@@ -132,10 +133,26 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
 
 /// Copy constructor 
-CouenneTNLP::CouenneTNLP (const CouenneTNLP &) {
+CouenneTNLP::CouenneTNLP (const CouenneTNLP &rhs):
 
-  assert (false);
-}
+  problem_            (rhs.problem_),
+
+  sol0_               (rhs.sol0_ && problem_ ? CoinCopyOfArray (rhs.sol0_, problem_ -> nVars ()) : NULL),
+  sol_                (rhs.sol_  && problem_ ? CoinCopyOfArray (rhs.sol_,  problem_ -> nVars ()) : NULL),
+
+  bestZ_              (rhs.bestZ_),
+  gradient_           (rhs.gradient_),
+  nonLinVars_         (rhs.nonLinVars_),
+
+  Jac_                (rhs.Jac_),
+  HLa_                (rhs.HLa_ ? new ExprHess (*(rhs.HLa_)) : NULL),
+
+  optHessianNum_      (rhs.optHessianNum_),
+  optHessianVal_      (rhs.optHessianVal_ && optHessianNum_ ? CoinCopyOfArray (rhs.optHessianVal_, optHessianNum_) : NULL),
+  optHessianCol_      (rhs.optHessianCol_ && optHessianNum_ ? CoinCopyOfArray (rhs.optHessianCol_, optHessianNum_) : NULL),
+  optHessianRow_      (rhs.optHessianRow_ && optHessianNum_ ? CoinCopyOfArray (rhs.optHessianRow_, optHessianNum_) : NULL),
+
+  saveOptHessian_     (rhs.saveOptHessian_) {}
 
 
 // overload this method to return the number of variables and

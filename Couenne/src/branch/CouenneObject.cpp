@@ -268,7 +268,7 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
 
   CouNumber curAlpha = alpha_;
 
-#if 0
+#if 1
   if (info) {
 
     // adaptive scheme: make LP point count more when gap approaches zero
@@ -279,12 +279,12 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
       ub = problem_ -> getCutOff (),
       currentGap = 
       (ub >  COUENNE_INFINITY    / 10 ||
-       lb < -Couenne_large_bound / 10) ? 1e3 : 
+       lb < -Couenne_large_bound / 10) ? 1.e3 : 
       fabs (ub - lb) / (1.e-3 + CoinMin (fabs (ub), fabs (lb)));
 
     // make curAlpha closer to 1 by adding remaining (1-alpha_)
     // weighted inversely proportional to gap
-    curAlpha = curAlpha + (1 - alpha_) / (1. + 1.e3 * currentGap);
+    curAlpha += (1 - alpha_) / (1. + 1.e3 * currentGap);
 
     // printf ("using %g rather than %g. cutoff %g, lb %g, gap %g\n", 
     // 	    curAlpha, alpha_,
@@ -300,17 +300,19 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
   else if (x>u) x = u;
 
   if   (l < -large_bound)
-    if (u >  COUENNE_EPS) return 0.;                     // ]-inf,+inf[
+    if (u >  COUENNE_EPS) return 0.;                                        // ]-inf,+inf[
     else                  return CoinMax ((l+u)/2, (AGGR_MUL * (-1. + u))); // ]-inf,u]
   else
-    if (u >  large_bound)                                // [l,+inf[
+    if (u >  large_bound)                                                   // [l,+inf[
       if (l < - COUENNE_EPS) return 0.;
       else                   return CoinMin ((l+u)/2, (AGGR_MUL * (1. + l)));
-    else {                                               // [l,u]
+    else {                                                                  // [l,u]
 
       CouNumber point = curAlpha * x + (1. - curAlpha) * (l + u) / 2.;
+
       if      ((point-l) / (u-l) < closeToBounds) point = l + (u-l) * closeToBounds;
       else if ((u-point) / (u-l) < closeToBounds) point = u + (l-u) * closeToBounds;
+
       return point;
     }
 }

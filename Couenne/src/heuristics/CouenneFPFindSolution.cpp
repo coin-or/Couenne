@@ -54,15 +54,16 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
   //
   // 4) if H consecutive failutes, ++p[i]
 
-  static int currentmilpmethod = 0;
-
-  int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
-
   double obj;
 
   /// solve MILP 
 
 #ifdef COIN_HAS_SCIP
+
+  static int currentmilpmethod = 0;
+
+  int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
+
   if (useSCIP_) {
 
      SCIP* scip;

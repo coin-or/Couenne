@@ -202,10 +202,10 @@ namespace Couenne {
     ExprHess *HLa_;
 
     /// Stores the values of the Hessian of the Lagrangian at optimum for later use
+    int        optHessianNum_; ///< number of elements
     CouNumber *optHessianVal_; ///< (values)
     int       *optHessianCol_; ///< Column indices
     int       *optHessianRow_; ///< Row indices
-    int        optHessianNum_; ///< number of elements
 
     /// flag to be set to save this solution's lagrangian hessian in above structure
     bool saveOptHessian_;

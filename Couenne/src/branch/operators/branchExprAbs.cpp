@@ -10,6 +10,11 @@
 
 #include <math.h>
 
+// apparently unknown to OS
+#ifndef M_SQRT2l
+#define M_SQRT2l (sqrt (2.))
+#endif
+
 #include "CoinHelperFunctions.hpp"
 #include "CouenneExprAbs.hpp"
 #include "CouenneObject.hpp"
