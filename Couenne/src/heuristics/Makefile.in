@@ -59,14 +59,15 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneHeuristics_la_LIBADD =
 am__libCouenneHeuristics_la_SOURCES_DIST = BonInitHeuristic.cpp \
 	BonNlpHeuristic.cpp CouenneFeasPumpConstructors.cpp \
-	CouenneFeasPump.cpp CouenneFPSolveMILP.cpp \
-	CouenneFPSolveNLP.cpp CouenneFPFindSolution.cpp \
-	CouenneFPpool.cpp CouenneIterativeRounding.cpp \
-	cons_rowcuts.cpp
+	CouenneFeasPump.cpp CouenneFPcreateMILP.cpp \
+	CouenneFPSolveMILP.cpp CouenneFPSolveNLP.cpp \
+	CouenneFPFindSolution.cpp CouenneFPpool.cpp \
+	CouenneIterativeRounding.cpp cons_rowcuts.cpp
 @COIN_HAS_SCIP_TRUE@am__objects_1 = cons_rowcuts.lo
 am_libCouenneHeuristics_la_OBJECTS = BonInitHeuristic.lo \
 	BonNlpHeuristic.lo CouenneFeasPumpConstructors.lo \
-	CouenneFeasPump.lo CouenneFPSolveMILP.lo CouenneFPSolveNLP.lo \
+	CouenneFeasPump.lo CouenneFPcreateMILP.lo \
+	CouenneFPSolveMILP.lo CouenneFPSolveNLP.lo \
 	CouenneFPFindSolution.lo CouenneFPpool.lo \
 	CouenneIterativeRounding.lo $(am__objects_1)
 libCouenneHeuristics_la_OBJECTS =  \
@@ -319,9 +320,10 @@ noinst_LTLIBRARIES = libCouenneHeuristics.la
 # List all source files for this library, including headers
 libCouenneHeuristics_la_SOURCES = BonInitHeuristic.cpp \
 	BonNlpHeuristic.cpp CouenneFeasPumpConstructors.cpp \
-	CouenneFeasPump.cpp CouenneFPSolveMILP.cpp \
-	CouenneFPSolveNLP.cpp CouenneFPFindSolution.cpp \
-	CouenneFPpool.cpp CouenneIterativeRounding.cpp $(am__append_1)
+	CouenneFeasPump.cpp CouenneFPcreateMILP.cpp \
+	CouenneFPSolveMILP.cpp CouenneFPSolveNLP.cpp \
+	CouenneFPFindSolution.cpp CouenneFPpool.cpp \
+	CouenneIterativeRounding.cpp $(am__append_1)
 
 # This is for libtool
 libCouenneHeuristics_la_LDFLAGS = $(LT_LDFLAGS)
@@ -334,7 +336,8 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) -I`$(CYGPATH_W) $(srcdir)/..` \
 	$(srcdir)/../expression/operators` -I`$(CYGPATH_W) \
 	$(srcdir)/../expression/partial` -I`$(CYGPATH_W) \
 	$(srcdir)/../interfaces` -I`$(CYGPATH_W) $(srcdir)/../branch` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem` $(am__append_2)
+	-I`$(CYGPATH_W) $(srcdir)/../util` -I`$(CYGPATH_W) \
+	$(srcdir)/../problem` $(am__append_2)
 
 # This line is necessary to allow VPATH compilation
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..
@@ -394,6 +397,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFPFindSolution.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFPSolveMILP.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFPSolveNLP.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFPcreateMILP.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFPpool.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPump.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPumpConstructors.Plo@am__quote@

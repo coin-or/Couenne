@@ -282,9 +282,21 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
        lb < -Couenne_large_bound / 10) ? 1.e3 : 
       fabs (ub - lb) / (1.e-3 + CoinMin (fabs (ub), fabs (lb)));
 
+#if 1
+    if (currentGap < 1e-3) {
+
+      currentGap *= 1e3;
+
+      assert ((currentGap >= 0.) && 
+	      (currentGap <= 1.));
+
+      curAlpha = currentGap * alpha_ + (1 - currentGap);
+    }
+#else
     // make curAlpha closer to 1 by adding remaining (1-alpha_)
     // weighted inversely proportional to gap
-    curAlpha += (1 - alpha_) / (1. + 1.e3 * currentGap);
+    curAlpha += (1 - alpha_) / (1. + currentGap);
+#endif
 
     // printf ("using %g rather than %g. cutoff %g, lb %g, gap %g\n", 
     // 	    curAlpha, alpha_,

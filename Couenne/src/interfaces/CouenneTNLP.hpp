@@ -13,6 +13,7 @@
 #include "IpTNLP.hpp"
 #include "CouenneExprJac.hpp"
 #include "CouenneExprHess.hpp"
+#include "CouenneTypes.hpp"
 
 #include <vector>
 #include <set>
@@ -20,6 +21,7 @@
 namespace Couenne {
 
   class CouenneProblem;
+  class CouenneSparseMatrix;
 
   /// Class for handling NLPs using CouenneProblem
   class CouenneTNLP: public Ipopt::TNLP {
@@ -32,8 +34,14 @@ namespace Couenne {
     /// Constructor 
     CouenneTNLP (CouenneProblem *);
 
-    /// Copy Constructor 
+    /// Copy constructor 
     CouenneTNLP (const CouenneTNLP &);
+
+    /// Assignment
+    CouenneTNLP &operator= (const CouenneTNLP &rhs);
+
+    /// Clone
+    CouenneTNLP *clone ();
 
     /// Destructor
     virtual ~CouenneTNLP ();
@@ -170,8 +178,12 @@ namespace Couenne {
     /// accordingly
     virtual void setObjective (expression *newObj);
 
+    /// Get methods
+    inline CouenneSparseMatrix *&optHessian () 
+    {return optHessian_;}
+
     /// set and get saveOptHessian_
-    bool &getSaveOptHessian ()
+    inline bool &getSaveOptHessian ()
     {return saveOptHessian_;}
 
   private:
@@ -202,12 +214,9 @@ namespace Couenne {
     ExprHess *HLa_;
 
     /// Stores the values of the Hessian of the Lagrangian at optimum for later use
-    int        optHessianNum_; ///< number of elements
-    CouNumber *optHessianVal_; ///< (values)
-    int       *optHessianCol_; ///< Column indices
-    int       *optHessianRow_; ///< Row indices
+    CouenneSparseMatrix *optHessian_;
 
-    /// flag to be set to save this solution's lagrangian hessian in above structure
+    /// flag to be set to save this solution's Lagrangian hessian in above structure
     bool saveOptHessian_;
   };
 }

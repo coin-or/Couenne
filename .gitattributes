@@ -244,6 +244,7 @@ Couenne/src/heuristics/BonInitHeuristic.hpp -text
 Couenne/src/heuristics/BonNlpHeuristic.cpp -text
 Couenne/src/heuristics/BonNlpHeuristic.hpp -text
 Couenne/src/heuristics/CouenneFPFindSolution.cpp -text
+Couenne/src/heuristics/CouenneFPcreateMILP.cpp -text
 Couenne/src/heuristics/CouenneFPpool.cpp -text
 Couenne/src/heuristics/CouenneFPpool.hpp -text
 Couenne/src/heuristics/CouenneFeasPump.cpp -text
@@ -309,6 +310,8 @@ Couenne/src/standardize/standardize.cpp -text
 Couenne/src/standardize/sumStandardize.cpp -text
 Couenne/src/util/CouenneFunTriplets.hpp -text
 Couenne/src/util/CouenneRootQ.hpp -text
+Couenne/src/util/CouenneSparseMatrix.cpp -text
+Couenne/src/util/CouenneSparseMatrix.hpp -text
 Couenne/src/util/drawCuts.cpp -text
 Couenne/src/util/rootQ.cpp -text
 Couenne/test/Makefile.am -text

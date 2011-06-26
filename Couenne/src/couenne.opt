@@ -116,7 +116,7 @@ branch_conv_cuts yes
 #
 # The default value of this option is a convex combination 
 #
-#     alpha xm + (1-alpha) xp
+#     alpha xp + (1-alpha) xm
 #
 #
 # where xm is the middle point (l+u)/2, xp is the value of x in the
@@ -138,7 +138,7 @@ branch_pt_select mid-point
 # Defines convex combination of mid point and current LP point. See
 # comments on option "branch_pt_select" above.
 
-#branch_midpoint_alpha 0.75
+#branch_midpoint_alpha 0.25
 
 
 # Priority of continuous variable branching

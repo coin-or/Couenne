@@ -14,6 +14,7 @@ libCouenneHeuristics_la_SOURCES = \
 	BonNlpHeuristic.cpp \
 	CouenneFeasPumpConstructors.cpp \
 	CouenneFeasPump.cpp \
+	CouenneFPcreateMILP.cpp \
 	CouenneFPSolveMILP.cpp \
 	CouenneFPSolveNLP.cpp \
 	CouenneFPFindSolution.cpp \
@@ -37,6 +38,7 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/../expression/partial` \
 	-I`$(CYGPATH_W) $(srcdir)/../interfaces` \
 	-I`$(CYGPATH_W) $(srcdir)/../branch`\
+	-I`$(CYGPATH_W) $(srcdir)/../util`\
 	-I`$(CYGPATH_W) $(srcdir)/../problem`
 
 if COIN_HAS_CPX

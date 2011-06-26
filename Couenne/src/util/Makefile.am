@@ -11,7 +11,8 @@ noinst_LTLIBRARIES = libCouenneUtil.la
 # List all source files for this library, including headers
 libCouenneUtil_la_SOURCES = \
 	drawCuts.cpp \
-	rootQ.cpp
+	rootQ.cpp \
+	CouenneSparseMatrix.cpp
 
 # This is for libtool
 libCouenneUtil_la_LDFLAGS = $(LT_LDFLAGS)

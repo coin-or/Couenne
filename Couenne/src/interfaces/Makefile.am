@@ -26,6 +26,7 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression/partial` \
 	-I`$(CYGPATH_W) $(srcdir)/../branch`\
+	-I`$(CYGPATH_W) $(srcdir)/../util`\
 	-I`$(CYGPATH_W) $(srcdir)/../problem`
 
 # This line is necessary to allow VPATH compilation

@@ -50,6 +50,50 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "FP: BEGIN\n");
 
+  // Solve NLP once at the beginning ////////////////////////
+  //
+  // First, it possibly provides an NLP feasible point (the LP
+  // provides a neither NLP nor integer point)
+  //
+  // Second, we need it to compile the Lagrangian Hessian used as a
+  // distance
+
+  if (!nlp_) // first call (in this run of FP). Create NLP
+    nlp_ = new CouenneTNLP (problem_);
+
+  problem_ -> domain () -> push (problem_ -> nVars (),
+				 problem_ -> domain () -> x  (),
+				 problem_ -> domain () -> lb (),
+				 problem_ -> domain () -> ub ());
+
+  // fix integer coordinates of current (MINLP feasible!) solution
+  // and set it as initial (obviously NLP feasible) solution
+
+  nlp_ -> setInitSol (problem_ -> domain () -> x ());
+
+  ////////////////////////////////////////////////////////////////
+
+  if ((multHessNLP_  > 0.) || 
+      (multHessMILP_ > 0.))
+    nlp_ -> getSaveOptHessian () = true;
+
+  // Solve with original objective function
+  ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
+
+  ////////////////////////////////////////////////////////////////
+
+  problem_ -> domain () -> pop ();
+
+  if ((status != Solve_Succeeded) && 
+      (status != Solved_To_Acceptable_Level))
+ 
+    problem_ -> Jnlst () -> Printf 
+      (J_ERROR, J_NLPHEURISTIC, "Feasibility Pump: error in initial NLP problem\n");
+
+  if ((multHessNLP_  > 0.) || 
+      (multHessMILP_ > 0.))
+    nlp_ -> getSaveOptHessian () = false;
+
   // This FP works as follows:
   //
   // obtain current NLP solution xN or, if none available, current LP solution
@@ -483,10 +527,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     ////////////////////////////////////////////////////////////////
 
-    app_ -> Options () -> SetStringValue ("fixed_variable_treatment", "make_parameter");
+    //app_ -> Options () -> SetStringValue ("fixed_variable_treatment", "make_parameter");
 
     // Solve with original objective function
-    ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
+    status = app_ -> OptimizeTNLP (nlp_);
 
     ////////////////////////////////////////////////////////////////
 

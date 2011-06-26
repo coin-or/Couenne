@@ -40,6 +40,7 @@ namespace Couenne {
   class CouenneProblem;
   class CouenneCutGenerator;
   class CouenneTNLP;
+  class CouenneSparseMatrix;
 
   /// An implementation of the Feasibility pump that uses
   /// linearization and Ipopt to find the two sequences of points.
@@ -128,9 +129,20 @@ namespace Couenne {
     enum fpCompDistIntType compDistInt () const
     {return compDistInt_;}
 
-    /// return Lagrangian Hessian multiplier
-    double betaMILP () const
-    {return betaMILP_;}
+    /// Return Weights in computing distance, in both MILP and NLP (must sum
+    /// up to 1 for MILP and for NLP):
+
+    double multDistNLP  () const {return multDistNLP_;}  ///< weight of distance  in NLP
+    double multHessNLP  () const {return multHessNLP_;}  ///< weight of Hessian   in NLP
+    double multObjFNLP  () const {return multObjFNLP_;}  ///< weight of objective in NLP
+
+    double multDistMILP () const {return multDistMILP_;} ///< weight of distance  in MILP
+    double multHessMILP () const {return multHessMILP_;} ///< weight of Hessian   in MILP
+    double multObjFMILP () const {return multObjFMILP_;} ///< weight of objective in MILP
+
+    /// return NLP
+    CouenneTNLP *nlp () const
+    {return nlp_;}
 
   private:
 
@@ -181,11 +193,16 @@ namespace Couenne {
     /// Number of NLPs solved for each given level of the tree
     int numberSolvePerLevel_;
 
-    /// weight of the Hessian in computing the objective functions of NLP
-    double betaNLP_;
+    /// Weights in computing distance, in both MILP and NLP (must sum
+    /// up to 1 for MILP and for NLP):
 
-    /// weight of the Hessian in computing the objective functions of MILP
-    double betaMILP_; // decrease it over time
+    double multDistNLP_;  ///< weight of distance  in NLP
+    double multHessNLP_;  ///< weight of Hessian   in NLP
+    double multObjFNLP_;  ///< weight of objective in NLP
+
+    double multDistMILP_; ///< weight of distance  in MILP
+    double multHessMILP_; ///< weight of Hessian   in MILP
+    double multObjFMILP_; ///< weight of objective in MILP
 
     /// compute distance from integer variables only, not all variables;
     enum fpCompDistIntType compDistInt_;

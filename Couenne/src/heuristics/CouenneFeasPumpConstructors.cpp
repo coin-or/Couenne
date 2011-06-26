@@ -21,6 +21,7 @@
 #include "CouenneExprSub.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneExprSum.hpp"
+#include "CouenneSparseMatrix.hpp"
 
 using namespace Ipopt;
 using namespace Couenne;
@@ -42,6 +43,8 @@ void CouenneFeasPump::initIpoptApp () {
     ("print_level", (problem_ -> Jnlst () -> ProduceOutput (J_ERROR,         J_NLPHEURISTIC) ? 4 : 
 		     problem_ -> Jnlst () -> ProduceOutput (J_STRONGWARNING, J_NLPHEURISTIC) ? 5 : 0));
 
+  app_ -> Options () -> SetStringValue ("fixed_variable_treatment", "make_parameter");
+
   if (status != Solve_Succeeded)
     printf ("FP: Error in initialization\n");
 }
@@ -51,8 +54,8 @@ void CouenneFeasPump::initIpoptApp () {
 CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 				  CouenneCutGenerator *cg,
 				  Ipopt::SmartPtr<Ipopt::OptionsList> options):
-
   CbcHeuristic         (),
+
   problem_             (couenne),
   couenneCG_           (cg),
   nlp_                 (NULL),
@@ -60,9 +63,17 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   milp_                (NULL),
   postlp_              (NULL),
   pool_                (NULL),
-  numberSolvePerLevel_ (-1),
-  betaNLP_             (0.),
-  betaMILP_            (0.),
+
+  numberSolvePerLevel_ (5), // if options are not valid, don't overuse FP
+
+  multDistNLP_         (1.), // settings for classical FP
+  multHessNLP_         (0.),
+  multObjFNLP_         (0.),
+
+  multDistMILP_        (1.),
+  multHessMILP_        (0.),
+  multObjFMILP_        (0.),
+
   compDistInt_         (FP_DIST_INT),
   milpCuttingPlane_    (FP_CUT_NONE),
   nSepRounds_          (0),
@@ -81,8 +92,13 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
     options -> GetIntegerValue ("feas_pump_level",      numberSolvePerLevel_, "couenne.");
     options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_,          "couenne.");
 
-    options -> GetNumericValue ("feas_pump_beta_nlp",   betaNLP_,             "couenne.");
-    options -> GetNumericValue ("feas_pump_beta_milp",  betaMILP_,            "couenne.");
+    options -> GetNumericValue ("feas_pump_mult_dist_nlp",  multDistNLP_,     "couenne.");
+    options -> GetNumericValue ("feas_pump_mult_hess_nlp",  multHessNLP_,     "couenne.");
+    options -> GetNumericValue ("feas_pump_mult_objf_nlp",  multObjFNLP_,     "couenne.");
+
+    options -> GetNumericValue ("feas_pump_mult_dist_milp", multDistMILP_,    "couenne.");
+    options -> GetNumericValue ("feas_pump_mult_hess_milp", multHessMILP_,    "couenne.");
+    options -> GetNumericValue ("feas_pump_mult_objf_milp", multObjFMILP_,    "couenne.");
 				    
     options -> GetStringValue  ("feas_pump_convcuts", s, "couenne."); 
 
@@ -135,6 +151,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
 
   CbcHeuristic         (other),
+
   problem_             (other. problem_),
   couenneCG_           (other. couenneCG_),
   nlp_                 (other. nlp_),
@@ -142,12 +159,21 @@ CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
   milp_                (other.milp_   ? other. milp_   -> clone () : NULL),
   postlp_              (other.postlp_ ? other. postlp_ -> clone () : NULL),
   pool_                (NULL),
+
   numberSolvePerLevel_ (other. numberSolvePerLevel_),
-  betaNLP_             (other. betaNLP_),
-  betaMILP_            (other. betaMILP_),
+
+  multDistNLP_         (other. multDistNLP_),
+  multHessNLP_         (other. multHessNLP_),
+  multObjFNLP_         (other. multObjFNLP_),
+			       	       
+  multDistMILP_        (other. multDistMILP_),
+  multHessMILP_        (other. multHessMILP_),
+  multObjFMILP_        (other. multObjFMILP_),
+
   compDistInt_         (other. compDistInt_),
   milpCuttingPlane_    (other. milpCuttingPlane_),
   nSepRounds_          (other. nSepRounds_),
+
   maxIter_             (other. maxIter_),
   useSCIP_             (other. useSCIP_),
   milpMethod_          (other. milpMethod_),
@@ -184,9 +210,17 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     milp_                = rhs. milp_   ? rhs. milp_   -> clone () : NULL;
     postlp_              = rhs. postlp_ ? rhs. postlp_ -> clone () : NULL;
     pool_                = NULL;
+
     numberSolvePerLevel_ = rhs. numberSolvePerLevel_;
-    betaNLP_             = rhs. betaNLP_;
-    betaMILP_            = rhs. betaMILP_;
+
+    multDistNLP_         = rhs. multDistNLP_;
+    multHessNLP_         = rhs. multHessNLP_;
+    multObjFNLP_         = rhs. multObjFNLP_;
+			       	       
+    multDistMILP_        = rhs. multDistMILP_;
+    multHessMILP_        = rhs. multHessMILP_;
+    multObjFMILP_        = rhs. multObjFMILP_;
+
     compDistInt_         = rhs. compDistInt_;
     milpCuttingPlane_    = rhs. milpCuttingPlane_;
     nSepRounds_          = rhs. nSepRounds_;
@@ -213,10 +247,10 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
 // Destructor /////////////////////////////////////////////////// 
 CouenneFeasPump::~CouenneFeasPump () {
 
-  if (pool_)   delete pool_;
-  if (app_)    delete app_;
-  if (milp_)   delete milp_;
-  if (postlp_) delete postlp_;
+  if (pool_)         delete pool_;
+  if (app_)          delete app_;
+  if (milp_)         delete milp_;
+  if (postlp_)       delete postlp_;
 
   //if (nlp_) delete nlp_; // already deleted by "delete app_;"
 }
@@ -231,23 +265,26 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
   int nTerms = 0;
 
-  if (betaNLP_ == 0.) {
+  const double *iS = iSol;
+
+  if (multHessNLP_ == 0.) {
 
     // here the objective function is ||x-x^0||_2^2
 
     // create the argument list (x_i - x_i^0)^2 for all i's
     for (int i=0; i<problem_ -> nVars (); i++) {
 
-      if (compDistInt_ == FP_DIST_INT && !(problem_ -> Var (i) -> isInteger ()))
+      if (compDistInt_ == FP_DIST_INT && 
+	  !(problem_ -> Var (i) -> isInteger ()))
 	continue;
-
-      CouNumber iS = iSol [i];
 
       expression *base;
 
-      if      (iS == 0.) base =              new exprClone (problem_ -> Var (i));
-      else if (iS <  0.) base = new exprSum (new exprClone (problem_ -> Var (i)), new exprConst (-iS));
-      else               base = new exprSub (new exprClone (problem_ -> Var (i)), new exprConst  (iS));
+      if      (*iS == 0.) base =              new exprClone (problem_ -> Var (i));
+      else if (*iS <  0.) base = new exprSum (new exprClone (problem_ -> Var (i)), new exprConst (-*iS));
+      else                base = new exprSub (new exprClone (problem_ -> Var (i)), new exprConst  (*iS));
+
+      ++iS;
 
       list [nTerms++] = new exprPow (base, new exprConst (2.));
     }
@@ -335,19 +372,28 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      -1,
      10, "-1 means no limit");
 
-  roptions -> AddBoundedNumberOption
-    ("feas_pump_beta_nlp",
-     "Weight of the Lagrangian Hessian in computing the objective function of the NLP problem",
-     0., false,
-     1., false,
-     0., "0 for distance only, 1 for lagrangian hessian only");
+  // six options
 
-  roptions -> AddBoundedNumberOption
-    ("feas_pump_beta_milp",
-     "Weight of the Lagrangian Hessian in computing the objective function of the MILP problem",
-     0., false,
-     1., false,
-     0., "0 for distance only, 1 for lagrangian hessian only");
+  char option [40];
+  char help   [250];
+
+  std::string terms [] = {"dist", "hess", "objf"};
+  std::string types [] = {"nlp",  "milp"};
+
+  for   (int j=0; j<3; j++) 
+    for (int i=0; i<2; i++) {
+
+      sprintf (option, "feas_pump_mult_%s_%s",                                              terms [j].c_str (), types [i].c_str ());
+      sprintf (help,       "Weight of the %s in the distance function of the %s problem", 
+	       !(strcmp ("dist", terms [j].c_str ())) ? "distance" : 
+	       !(strcmp ("hess", terms [j].c_str ())) ? "Hessian"  : "original objective function",             types [i].c_str ());
+
+      roptions -> AddBoundedNumberOption
+	(option, help,
+	 0., false,
+	 1., false,
+	 0., "0: no weight, 1: full weight");
+    }
 
   roptions -> AddStringOption3
     ("feas_pump_vardist",

@@ -55,7 +55,8 @@ CONFIG_HEADER = $(top_builddir)/src/config.h \
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneUtil_la_LIBADD =
-am_libCouenneUtil_la_OBJECTS = drawCuts.lo rootQ.lo
+am_libCouenneUtil_la_OBJECTS = drawCuts.lo rootQ.lo \
+	CouenneSparseMatrix.lo
 libCouenneUtil_la_OBJECTS = $(am_libCouenneUtil_la_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -305,7 +306,8 @@ noinst_LTLIBRARIES = libCouenneUtil.la
 # List all source files for this library, including headers
 libCouenneUtil_la_SOURCES = \
 	drawCuts.cpp \
-	rootQ.cpp
+	rootQ.cpp \
+	CouenneSparseMatrix.cpp
 
 
 # This is for libtool
@@ -375,6 +377,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSparseMatrix.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/drawCuts.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rootQ.Plo@am__quote@
 
