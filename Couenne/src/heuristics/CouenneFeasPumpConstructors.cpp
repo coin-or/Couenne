@@ -21,6 +21,7 @@
 #include "CouenneExprSub.hpp"
 #include "CouenneExprPow.hpp"
 #include "CouenneExprSum.hpp"
+#include "CouenneTNLP.hpp"
 #include "CouenneSparseMatrix.hpp"
 
 using namespace Ipopt;
@@ -148,46 +149,48 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 
   
 // Copy constructor ///////////////////////////////////////////// 
-CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other):
+CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other) {
 
-  CbcHeuristic         (other),
+  operator= (other);
 
-  problem_             (other. problem_),
-  couenneCG_           (other. couenneCG_),
-  nlp_                 (other. nlp_),
-  app_                 (NULL),
-  milp_                (other.milp_   ? other. milp_   -> clone () : NULL),
-  postlp_              (other.postlp_ ? other. postlp_ -> clone () : NULL),
-  pool_                (NULL),
+  // CbcHeuristic         (other),
 
-  numberSolvePerLevel_ (other. numberSolvePerLevel_),
+  // problem_             (other. problem_),
+  // couenneCG_           (other. couenneCG_),
+  // nlp_                 (other. nlp_),
+  // app_                 (NULL),
+  // milp_                (other.milp_   ? other. milp_   -> clone () : NULL),
+  // postlp_              (other.postlp_ ? other. postlp_ -> clone () : NULL),
+  // pool_                (NULL),
 
-  multDistNLP_         (other. multDistNLP_),
-  multHessNLP_         (other. multHessNLP_),
-  multObjFNLP_         (other. multObjFNLP_),
+  // numberSolvePerLevel_ (other. numberSolvePerLevel_),
+
+  // multDistNLP_         (other. multDistNLP_),
+  // multHessNLP_         (other. multHessNLP_),
+  // multObjFNLP_         (other. multObjFNLP_),
 			       	       
-  multDistMILP_        (other. multDistMILP_),
-  multHessMILP_        (other. multHessMILP_),
-  multObjFMILP_        (other. multObjFMILP_),
+  // multDistMILP_        (other. multDistMILP_),
+  // multHessMILP_        (other. multHessMILP_),
+  // multObjFMILP_        (other. multObjFMILP_),
 
-  compDistInt_         (other. compDistInt_),
-  milpCuttingPlane_    (other. milpCuttingPlane_),
-  nSepRounds_          (other. nSepRounds_),
+  // compDistInt_         (other. compDistInt_),
+  // milpCuttingPlane_    (other. milpCuttingPlane_),
+  // nSepRounds_          (other. nSepRounds_),
 
-  maxIter_             (other. maxIter_),
-  useSCIP_             (other. useSCIP_),
-  milpMethod_          (other. milpMethod_),
-  tabuMgt_             (other. tabuMgt_) {
+  // maxIter_             (other. maxIter_),
+  // useSCIP_             (other. useSCIP_),
+  // milpMethod_          (other. milpMethod_),
+  // tabuMgt_             (other. tabuMgt_) {
 
-  if (other. pool_)
-    pool_ = new CouenneFPpool (*(other. pool_));
+  // if (other. pool_)
+  //   pool_ = new CouenneFPpool (*(other. pool_));
 
-  for (std::set <CouenneFPsolution, compareSol>::const_iterator i = other.tabuPool_.begin (); 
-       i != other.tabuPool_.end ();
-       ++i)
-    tabuPool_. insert (CouenneFPsolution (*i));
+  // for (std::set <CouenneFPsolution, compareSol>::const_iterator i = other.tabuPool_.begin (); 
+  //      i != other.tabuPool_.end ();
+  //      ++i)
+  //   tabuPool_. insert (CouenneFPsolution (*i));
 
-  initIpoptApp ();
+  // initIpoptApp ();
 }
 
 
@@ -247,10 +250,10 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
 // Destructor /////////////////////////////////////////////////// 
 CouenneFeasPump::~CouenneFeasPump () {
 
-  if (pool_)         delete pool_;
-  if (app_)          delete app_;
-  if (milp_)         delete milp_;
-  if (postlp_)       delete postlp_;
+  if (pool_)   delete pool_;
+  if (app_)    delete app_;
+  if (milp_)   delete milp_;
+  if (postlp_) delete postlp_;
 
   //if (nlp_) delete nlp_; // already deleted by "delete app_;"
 }
@@ -267,7 +270,12 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
   const double *iS = iSol;
 
-  if (multHessNLP_ == 0.) {
+  if (multObjFNLP_ != 0.)
+    list [nTerms++] = new exprMul (new exprConst (multObjFNLP_),
+				   new exprClone (problem_ -> Obj (0) -> Body ()));
+
+  if ((multHessNLP_ == 0.) || 
+      (nlp_ -> optHessian () == NULL)) {
 
     // here the objective function is ||x-x^0||_2^2
 
@@ -295,7 +303,97 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     //
     // ||P(x-x^0)||_2^2 = (x-x^0)' P'P (x-x^0)
     //
-    // with P'P positive semidefinite
+    // with P'P positive semidefinite stored in CouenneTNLP::optHessian_
+
+    // P is a convex combination, with weights multDistMILP_ and
+    // multHessMILP_, of the distance and the Hessian respectively
+
+    bool *diag;
+
+    if (multDistNLP_ > 0.) { // only use this if distance is used
+
+      diag = new bool [problem_ -> nVars ()];
+      CoinFillN (diag, problem_ -> nVars (), false);
+    }
+
+    int    *row = nlp_ -> optHessian () -> row ();
+    int    *col = nlp_ -> optHessian () -> col ();
+    double *val = nlp_ -> optHessian () -> val ();
+
+    int     num = nlp_ -> optHessian () -> num ();
+
+    // Add Hessian part -- only lower triangular part
+    for (int i=0; i<num; ++i, ++row, ++col, ++val) {
+
+      // check if necessary given options
+
+      if (compDistInt_ == FP_DIST_INT && 
+	  !(problem_ -> Var (*row) -> isInteger () &&
+	    problem_ -> Var (*col) -> isInteger ()))
+	continue;
+
+      // second, only do subdiagonal elements
+
+      if (*col < *row) { // that is, lower triangular
+
+	if (*val == 1.)
+
+	  list [nTerms++] = new exprMul (new exprSub (new exprClone (problem_ -> Var (*row)), new exprConst (iSol [*row])),
+					 new exprSub (new exprClone (problem_ -> Var (*col)), new exprConst (iSol [*col])));
+	else if (*val != 0.) {
+
+	  expression **mlist = new expression * [3];
+
+	  mlist [0] = new exprConst (*val);
+	  mlist [1] = new exprSub (new exprClone (problem_ -> Var (*row)), new exprConst (iSol [*row]));
+	  mlist [2] = new exprSub (new exprClone (problem_ -> Var (*col)), new exprConst (iSol [*col]));
+
+	  list [nTerms++] = new exprMul (mlist, 3);
+	}
+
+      } else if (*col == *row) { // or diagonal elements
+
+	if (multDistNLP_ > 0.)
+	  diag [*col] = true;
+
+	if (*val + multDistNLP_ == 1.)
+
+	  list [nTerms++] = new exprPow (new exprSub (new exprClone (problem_ -> Var (*row)), 
+						      new exprConst (iSol [*row])), new exprConst (2.));
+
+	else if (*val + multDistNLP_ != 0.)
+
+	  list [nTerms++] = new exprMul (new exprConst (*val + multDistNLP_),
+					 new exprPow (new exprSub (new exprClone (problem_ -> Var (*row)), 
+								   new exprConst (iSol [*row])), new exprConst (2.)));
+      }
+    }
+
+    // third, add missing diagonal elements
+      
+    if (multDistNLP_ > 0.) {
+
+      // create the argument list (x_i - x_i^0)^2 for all i's
+      for (int i=0; i<problem_ -> nVars (); i++) {
+	  
+	if ((compDistInt_ == FP_DIST_INT && 
+	     !(problem_ -> Var (i) -> isInteger ())) ||
+	    diag [i])
+	  continue;
+	  
+	expression *base;
+
+	if      (*iS == 0.) base =              new exprClone (problem_ -> Var (i));
+	else if (*iS <  0.) base = new exprSum (new exprClone (problem_ -> Var (i)), new exprConst (-*iS));
+	else                base = new exprSub (new exprClone (problem_ -> Var (i)), new exprConst  (*iS));
+
+	++iS;
+
+	list [nTerms++] = new exprPow (base, new exprConst (2.));
+      }
+
+      delete [] diag;
+    }
   }
 
   return new exprSum (list, nTerms);
