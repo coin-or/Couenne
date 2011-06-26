@@ -336,7 +336,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
       if (*col < *row) { // that is, lower triangular
 
-	if (*val == 1.)
+	if (2. * *val == 1.) // check if this would have trivial coefficient when doubled (off-diagonal element)
 
 	  list [nTerms++] = new exprMul (new exprSub (new exprClone (problem_ -> Var (*row)), new exprConst (iSol [*row])),
 					 new exprSub (new exprClone (problem_ -> Var (*col)), new exprConst (iSol [*col])));
@@ -344,7 +344,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
 	  expression **mlist = new expression * [3];
 
-	  mlist [0] = new exprConst (*val);
+	  mlist [0] = new exprConst (2. * *val);  // twice elements off diagonal
 	  mlist [1] = new exprSub (new exprClone (problem_ -> Var (*row)), new exprConst (iSol [*row]));
 	  mlist [2] = new exprSub (new exprClone (problem_ -> Var (*col)), new exprConst (iSol [*col]));
 

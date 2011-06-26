@@ -625,6 +625,9 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 
   if (saveOptHessian_) {
 
+    if (!optHessian_)
+      optHessian_ = new CouenneSparseMatrix;
+
     problem_ -> domain () -> push (n, x, NULL, NULL);
 
     int nnz = HLa_ -> nnz ();
@@ -643,7 +646,7 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 
     optHessianNum = 0;    
 
-    for (int i = 0; i < HLa_ -> nnz (); ++i) {
+    for (int i=0; i < HLa_ -> nnz (); ++i) {
 
       double hessMember = 0.;
       expression **elist = HLa_ -> expr () [i];
@@ -654,14 +657,18 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 
 	hessMember += (indLam == 0) ? 
 	  (*(elist [j])) () :                  // this is the objective
-	  (*(elist [j])) () * lambda [indLam]; // this is a constraint
+	  (*(elist [j])) () * lambda [indLam-1]; // this is a constraint
       }
 
       if (hessMember != 0.) {
 
+	printf ("saving: %d, %d --> %g\n", 
+		HLa_ -> iRow () [i],
+		HLa_ -> jCol () [i], hessMember);
+
 	optHessianVal [optHessianNum]   = hessMember;
 	optHessianRow [optHessianNum]   = HLa_ -> iRow () [i];
-	optHessianVal [optHessianNum++] = HLa_ -> jCol () [i];
+	optHessianCol [optHessianNum++] = HLa_ -> jCol () [i];
       }
     }
 

@@ -92,13 +92,13 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
   // variables, so that we know what (coefficients and rhs) to
   // change at every iteration.
 
+  CoinPackedVector x0 (n, sol);
+
   // set objective coefficient if we are using a little Objective FP
 
   if (isMILP && (fp -> multObjFMILP () > 0.))
     lp -> setObjCoeff (fp -> Problem () -> Obj (0) -> Body () -> Index (), 
 		       fp -> multObjFMILP ());
-
-  CoinPackedVector x0 (n, sol);
 
   if (isMILP && 
       (fp -> multHessMILP () > 0.) &&
@@ -164,33 +164,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
 
 extern "C" {
-
-  static int dsyev (char JOBZ, char RANGE, char UPLO, int N,
-		    double *A, int LDA, double VL, double VU,
-		    int IL, int IU, double ABSTOL, int *M,
-		    double *W, double *Z, int LDZ, int *ISUPPZ,
-		    double *WORK, int LWORK, int *IWORK, int LIWORK) {
-
-    extern void dsyev_ (char *JOBZp, char *RANGEp, char *UPLOp, int *Np,
-			 double *A, int *LDAp, double *VLp, double *VUp,
-			 int *ILp, int *IUp, double *ABSTOLp, int *Mp,
-			 double *W, double *Z, int *LDZp, int *ISUPPZ,
-			 double *WORK, int *LWORKp, int *IWORK, int *LIWORKp,
-			 int *INFOp);
-    int INFO;
-
-    dsyev_ (&JOBZ, &RANGE, &UPLO, &N, A, &LDA, &VL, &VU,
-	     &IL, &IU, &ABSTOL, M, W, Z, &LDZ, ISUPPZ,
-	     WORK, &LWORK, IWORK, &LIWORK, &INFO);
-
-    return INFO;
-  }
-
-  static double dlamch (char CMACH) {
-
-    extern double dlamch_ (char *CMACHp);
-    return dlamch_ (&CMACH);
-  }
+  void dsyev_ (char *JOBZ, char *UPLO, int *N, double *A, int *LDA, double *W, double *WORK, int *LWORK, int *INFO);
 }
 
 #define GRADIENT_WEIGHT 1
@@ -209,22 +183,30 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   int    *col = hessian -> col ();
   int     num = hessian -> num ();
 
+  printf ("compute square root:\n");
+
   // Remove objective's row and column (equivalent to taking the
   // Lagrangian's Hessian, setting f(x) = x_z = c, and recomputing the
   // hessian). 
 
   double maxElem = 0.; // used in adding diagonal element of x_z
 
-  for (int i=0; i<num; ++i, ++row, ++col, ++val)
+  for (int i=0; i<num; ++i, ++row, ++col, ++val) {
+
+    printf ("elem: %d, %d --> %g\n", *row, *col, *val);
+
     if ((*row == objInd) || 
 	(*col == objInd))
+
       *val = 0;
+
     else if (fabs (*val) > maxElem)
       maxElem = fabs (*val);
+  }
 
-  val -= n;
-  row -= n;
-  col -= n;
+  val -= num;
+  row -= num;
+  col -= num;
 
   // fill an input to Lapack/Blas procedures using hessian
 
@@ -251,17 +233,26 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   double 
     *eigenval = (double *) malloc (     n * sizeof (double)),
-    *eigenvec = (double *) malloc ( n * n * sizeof (double)),
-    *unused2  = (double *) malloc (26 * n * sizeof (double));
+    *unusedD  = (double *) malloc (26 * n * sizeof (double));
 
   int
-    *unused1  = (int    *) malloc ( 2 * n * sizeof (int)),
-    *unused3  = (int    *) malloc (10 * n * sizeof (int)), M;
+    *unusedI  = (int    *) malloc (10 * n * sizeof (int)), 
+     status;
+
+  char v = 'V', l = 'L';
 
 #if 1
-  dsyev ('V', 'A', 'L', n, A, n, 0, 0, 0, 0, dlamch ('S'), &M,
-	  eigenval, eigenvec, n, unused1, unused2, 26*n, unused3, 10*n);
+  dsyev_ (&v, &l, &n, A, &n, eigenval, unusedD, unusedI, &status);
 #endif
+
+  if (status < 0)
+    printf ("argument %d illegal\n", -status);
+  else if (status > 0)
+    printf ("dsyev did not converge\n");
+  else printf ("wo-hoo!\n");
+
+  free (unusedD);
+  free (unusedI);
 
   // define a new matrix B = E * D, where
   //
@@ -269,6 +260,8 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   // D = diagonal with square roots of eigenvalues
 
   double *B = (double *) malloc (n*n * sizeof(double));
+
+  double *eigenvec = A; // as overwritten by dsyev_;
 
   for   (int j=0; j<n; ++j) 
     for (int i=0; i<n; ++i)
@@ -286,4 +279,8 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
       P [i]. insert (j, elem);
     }
+
+  free (eigenval);
+  free (A);
+  free (B);
 }
