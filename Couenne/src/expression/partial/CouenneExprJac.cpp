@@ -9,6 +9,8 @@
 
 #include <stdio.h> // ! must go
 
+#include "CoinHelperFunctions.hpp"
+
 #include "CouenneExprJac.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
@@ -18,6 +20,7 @@ using namespace Couenne;
 
 //#define DEBUG
 
+// empty constructor
 ExprJac::ExprJac ():
   nnz_   (0),
   iRow_  (NULL),
@@ -26,6 +29,7 @@ ExprJac::ExprJac ():
   nRows_ (0) {}
 
 
+//destructor
 ExprJac::~ExprJac () {
 
   if (nnz_) {
@@ -39,6 +43,41 @@ ExprJac::~ExprJac () {
     free (expr_);
   }
 }
+
+// copy constructor
+ExprJac::ExprJac  (const ExprJac &rhs)
+{operator= (rhs);}
+
+
+// clone
+ExprJac *ExprJac::clone ()
+{return new ExprJac (*this);}
+
+
+// assignment
+ExprJac &ExprJac::operator= (const ExprJac &rhs) {
+
+  nnz_   = rhs. nnz_;
+  nRows_ = rhs. nRows_;
+
+  iRow_ = (nnz_ && rhs.iRow_) ? (int *) malloc (nnz_ * sizeof (int)) : NULL;
+  jCol_ = (nnz_ && rhs.jCol_) ? (int *) malloc (nnz_ * sizeof (int)) : NULL;
+
+  CoinCopyN (rhs.iRow_, nnz_, iRow_);
+  CoinCopyN (rhs.jCol_, nnz_, jCol_);
+
+  if (nnz_) {
+
+    expr_ = (expression **) malloc (nnz_ * sizeof (expression *));
+
+    for (int i=0; i<nnz_; i++)
+      expr_ [i] = expr_ [i] -> clone ();
+
+  } else expr_ = NULL;
+
+  return *this;
+}
+
 
 /// code for refilling jacobian
 
@@ -55,6 +94,7 @@ static void reAlloc (int nCur, int &nMax, int *&r, int *&c, expression **&e) {
   }
 }
 
+// constructor
 ExprJac::ExprJac (CouenneProblem *p):
 
   nnz_   (0),

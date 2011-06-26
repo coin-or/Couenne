@@ -36,6 +36,10 @@ namespace Couenne {
     ExprJac  (CouenneProblem *);
     ~ExprJac ();
 
+    ExprJac  (const ExprJac &);
+    ExprJac *clone ();
+    ExprJac &operator= (const ExprJac &);
+
     int  nnz  () const {return nnz_;}
     int *iRow () const {return iRow_;}
     int *jCol () const {return jCol_;}

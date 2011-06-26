@@ -121,22 +121,8 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
 
 /// Copy constructor 
-CouenneTNLP::CouenneTNLP (const CouenneTNLP &rhs):
-
-  problem_            (rhs.problem_),
-
-  sol0_               (rhs.sol0_ && problem_ ? CoinCopyOfArray (rhs.sol0_, problem_ -> nVars ()) : NULL),
-  sol_                (rhs.sol_  && problem_ ? CoinCopyOfArray (rhs.sol_,  problem_ -> nVars ()) : NULL),
-
-  bestZ_              (rhs.bestZ_),
-  gradient_           (rhs.gradient_),
-  nonLinVars_         (rhs.nonLinVars_),
-
-  Jac_                (rhs.Jac_),
-  HLa_                (rhs.HLa_ ? new ExprHess (*(rhs.HLa_)) : NULL),
-
-  optHessian_         (rhs.optHessian_ ? new CouenneSparseMatrix (*(rhs.optHessian_)) : NULL),
-  saveOptHessian_     (rhs.saveOptHessian_) {}
+CouenneTNLP::CouenneTNLP (const CouenneTNLP &rhs) 
+{operator= (rhs);}
 
 
 /// Assignment 

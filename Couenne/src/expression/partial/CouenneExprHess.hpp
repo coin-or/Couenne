@@ -53,6 +53,11 @@ namespace Couenne {
 
     ExprHess  ();
     ExprHess  (CouenneProblem *);
+
+    ExprHess  (const ExprHess &);
+    ExprHess  &operator=(const ExprHess &);
+    ExprHess  *clone ();
+
     ~ExprHess ();
 
     int   nnz  () {return nnz_;}

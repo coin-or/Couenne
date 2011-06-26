@@ -34,21 +34,17 @@ CouenneSparseMatrix::~CouenneSparseMatrix () {
 }
 
 /// Copy constructor 
-CouenneSparseMatrix::CouenneSparseMatrix (const CouenneSparseMatrix &rhs):
-
-  num_      (rhs.num_),
-  val_      (rhs.val_ && num_ ? CoinCopyOfArray (rhs.val_, num_) : NULL),
-  col_      (rhs.col_ && num_ ? CoinCopyOfArray (rhs.col_, num_) : NULL),
-  row_      (rhs.row_ && num_ ? CoinCopyOfArray (rhs.row_, num_) : NULL) {}
-
+CouenneSparseMatrix::CouenneSparseMatrix (const CouenneSparseMatrix &rhs)
+{operator= (rhs);}
 
 /// Assignment 
 CouenneSparseMatrix &CouenneSparseMatrix::operator= (const CouenneSparseMatrix &rhs) {
 
-  num_      = rhs.num_;
-  val_      = rhs.val_ && num_ ? CoinCopyOfArray (rhs.val_, num_) : NULL;
-  col_      = rhs.col_ && num_ ? CoinCopyOfArray (rhs.col_, num_) : NULL;
-  row_      = rhs.row_ && num_ ? CoinCopyOfArray (rhs.row_, num_) : NULL;
+  num_ = rhs.num_;
+
+  val_ = rhs.val_ && num_ ? CoinCopyOfArray (rhs.val_, num_) : NULL;
+  col_ = rhs.col_ && num_ ? CoinCopyOfArray (rhs.col_, num_) : NULL;
+  row_ = rhs.row_ && num_ ? CoinCopyOfArray (rhs.row_, num_) : NULL;
 
   return *this;
 }

@@ -18,6 +18,7 @@ using namespace Couenne;
 
 //#define DEBUG
 
+/// empty constructor
 ExprHess::ExprHess ():
 
   nnz_  (0),
@@ -28,6 +29,48 @@ ExprHess::ExprHess ():
   expr_ (NULL) {}
 
 
+/// copy constructor
+ExprHess::ExprHess (const ExprHess &rhs)
+{operator= (rhs);}
+
+
+/// code for refilling jacobian
+ExprHess &ExprHess::operator= (const ExprHess &rhs) {
+
+  nnz_  = rhs. nnz_;
+
+  iRow_ = nnz_ && rhs.iRow_ ? (int *) malloc (nnz_ * sizeof (int)) : NULL;
+  jCol_ = nnz_ && rhs.jCol_ ? (int *) malloc (nnz_ * sizeof (int)) : NULL;
+  numL_ = nnz_ && rhs.numL_ ? (int *) malloc (nnz_ * sizeof (int)) : NULL;
+
+  CoinCopyN (rhs.iRow_, nnz_, iRow_);
+  CoinCopyN (rhs.jCol_, nnz_, jCol_);
+  CoinCopyN (rhs.numL_, nnz_, numL_);
+
+  if (nnz_) {
+
+    lamI_ = (int         **) malloc (nnz_ * sizeof (int         *));
+    expr_ = (expression ***) malloc (nnz_ * sizeof (expression **));
+
+    for (int i=0; i<nnz_; i++) {
+
+      lamI_ [i] = CoinCopyOfArray (rhs. lamI_ [i], numL_ [i]);
+
+      for (int j=0; j<numL_ [i]; j++)
+	expr_ [i] [j] = rhs. expr_ [i][j] -> clone ();
+    }
+  }
+
+  return *this;
+}
+
+
+/// Cloning operator
+ExprHess *ExprHess::clone ()
+{return new ExprHess (*this);}
+
+
+/// Destructor
 ExprHess::~ExprHess () {
 
   if (nnz_) {
