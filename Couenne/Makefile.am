@@ -26,12 +26,12 @@ SUBDIRS += src/standardize \
 	  src/convex \
 	  src/branch \
 	  src/disjunctive \
-	  src/cut/crossconv \
 	  src/interfaces \
 	  src/heuristics \
 	  src \
 	  src/main 
 
+#	  src/cut/crossconv
 #	  src/cut/sdpcuts
 #	  src/cut/ellipcuts
 

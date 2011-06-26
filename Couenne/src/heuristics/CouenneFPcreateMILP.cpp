@@ -163,16 +163,15 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 }
 
 
-#if 0
-extern "FORTRAN" {
+extern "C" {
 
-  int dsyevr (char JOBZ, char RANGE, char UPLO, int N,
-	      double *A, int LDA, double VL, double VU,
-	      int IL, int IU, double ABSTOL, int *M,
-	      double *W, double *Z, int LDZ, int *ISUPPZ,
-	      double *WORK, int LWORK, int *IWORK, int LIWORK) {
+  static int dsyev (char JOBZ, char RANGE, char UPLO, int N,
+		    double *A, int LDA, double VL, double VU,
+		    int IL, int IU, double ABSTOL, int *M,
+		    double *W, double *Z, int LDZ, int *ISUPPZ,
+		    double *WORK, int LWORK, int *IWORK, int LIWORK) {
 
-    extern void dsyevr_ (char *JOBZp, char *RANGEp, char *UPLOp, int *Np,
+    extern void dsyev_ (char *JOBZp, char *RANGEp, char *UPLOp, int *Np,
 			 double *A, int *LDAp, double *VLp, double *VUp,
 			 int *ILp, int *IUp, double *ABSTOLp, int *Mp,
 			 double *W, double *Z, int *LDZp, int *ISUPPZ,
@@ -180,16 +179,13 @@ extern "FORTRAN" {
 			 int *INFOp);
     int INFO;
 
-    dsyevr_ (&JOBZ, &RANGE, &UPLO, &N, A, &LDA, &VL, &VU,
+    dsyev_ (&JOBZ, &RANGE, &UPLO, &N, A, &LDA, &VL, &VU,
 	     &IL, &IU, &ABSTOL, M, W, Z, &LDZ, ISUPPZ,
 	     WORK, &LWORK, IWORK, &LIWORK, &INFO);
 
     return INFO;
   }
-}
-#endif
 
-extern "C" {
   static double dlamch (char CMACH) {
 
     extern double dlamch_ (char *CMACHp);
@@ -202,7 +198,6 @@ extern "C" {
 void ComputeSquareRoot (const CouenneFeasPump *fp, 
 			CouenneSparseMatrix *hessian, 
 			CoinPackedVector *P) {
-
   int 
     objInd = fp -> Problem () -> Obj (0) -> Body () -> Index (),
     n      = fp -> Problem () -> nVars ();
@@ -237,9 +232,10 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   CoinZeroN (A, n*n);
 
-  // Add Hessian part
+  // Add Hessian part -- only lower triangular part
   for (int i=0; i<num; ++i, ++row, ++col, ++val)
-    A [*col++ * n + *row++] = fp -> multHessMILP () * *val++;
+    if (*col <= *row)
+      A [*col * n + *row] = fp -> multHessMILP () * *val;
 
   // Add distance part
   for (int i=0; i<n; ++i)
@@ -253,19 +249,41 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   // call Lapack/Blas routines
 
-  double *W      = (double *) malloc (     n * sizeof (double));
-  double *Z      = (double *) malloc ( n * n * sizeof (double));
-  double *WORK   = (double *) malloc (26 * n * sizeof (double));
+  double 
+    *eigenval = (double *) malloc (     n * sizeof (double)),
+    *eigenvec = (double *) malloc ( n * n * sizeof (double)),
+    *unused2  = (double *) malloc (26 * n * sizeof (double));
 
-  int    *ISUPPZ = (int    *) malloc ( 2 * n * sizeof (int));
-  int    *IWORK  = (int    *) malloc (10 * n * sizeof (int));
+  int
+    *unused1  = (int    *) malloc ( 2 * n * sizeof (int)),
+    *unused3  = (int    *) malloc (10 * n * sizeof (int)), M;
 
-  int     M;
-
-#if 0
-  dsyevr ('V', 'A', 'L', n, A, n, 0, 0, 0, 0, dlamch ('S'), &M,
-	  W, Z, n, ISUPPZ, WORK, 26*n, IWORK, 10*n);
+#if 1
+  dsyev ('V', 'A', 'L', n, A, n, 0, 0, 0, 0, dlamch ('S'), &M,
+	  eigenval, eigenvec, n, unused1, unused2, 26*n, unused3, 10*n);
 #endif
 
-  // fill P with content from output Lapack/Blas routines
+  // define a new matrix B = E * D, where
+  //
+  // E = eigenvector matrix
+  // D = diagonal with square roots of eigenvalues
+
+  double *B = (double *) malloc (n*n * sizeof(double));
+
+  for   (int j=0; j<n; ++j) 
+    for (int i=0; i<n; ++i)
+      B [i * n + j] = sqrt (eigenval [j]) * eigenvec [i * n + j];
+
+  // Now compute B * E', where E' is E transposed
+
+  for     (int i=0; i<n; ++i)
+    for   (int j=0; j<n; ++j) { 
+
+      double elem = 0.;
+
+      for (int k=0; k<n; ++k)
+	elem += B [i * n + k] * eigenvec [j * n + k];
+
+      P [i]. insert (j, elem);
+    }
 }
