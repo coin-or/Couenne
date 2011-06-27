@@ -45,7 +45,7 @@ OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model,
     if ((isMILP && (intVar || (fp -> compDistInt () == CouenneFeasPump::FP_DIST_ALL)))
 	||
 	(!isMILP && !intVar))
-      // (empty) coeff col vector, lb, ub, obj coeff
+      // (empty) coeff col vector, lb = 0, ub = inf, obj coeff
       lp -> addCol (vec, 0., COIN_DBL_MAX, 1.); 
   }
 
@@ -138,6 +138,9 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
       // create vector with single entry of 1 at i-th position 
       CoinPackedVector &vec = P [i];
+
+      if (vec.getNumElements () == 0)
+	continue;
 
       // right-hand side equals <P^i,x^0>
       double PiX0 = sparseDotProduct (vec, x0); 
