@@ -8,10 +8,11 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
+#include "CoinTime.hpp"
+
 #include "CouenneFeasPump.hpp"
 #include "CouenneFPpool.hpp"
 #include "CouenneProblem.hpp"
-#include "CoinTime.hpp"
 #include "cons_rowcuts.h"
 
 #ifdef COIN_HAS_SCIP

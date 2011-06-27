@@ -72,6 +72,12 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   problem_ -> setObjective (0, newObj);
   nlp_     -> setObjective (newObj);
 
+  if (problem_ -> Jnlst () -> ProduceOutput (J_STRONGWARNING, J_NLPHEURISTIC)) {
+    printf ("now solving NLP:\n");
+    problem_ -> print ();
+    printf ("-----------------------\n");
+  }
+
   // FIXME: probably the previous NLP optimum is a better starting point
 
   // compute H_2-closest NLP feasible solution
@@ -90,7 +96,8 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
     if  (nSol)  CoinCopyN       (nlp_ -> getSolution (), problem_ -> nVars (), nSol);
     else nSol = CoinCopyOfArray (nlp_ -> getSolution (), problem_ -> nVars ());
 
-  else printf ("FP: warning, NLP returns a NULL solution\n");
+  else problem_ -> Jnlst () -> Printf 
+      (J_ERROR, J_NLPHEURISTIC, "FP: warning, NLP returns a NULL solution\n");
 
   delete newObj;
 

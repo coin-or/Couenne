@@ -142,7 +142,7 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
   if (firstCall)
     init_MILP ();
 
-  if (false) {
+  if (false) { // should always be false upon commit
     static int cntr = 0;
     char filename [30];
     sprintf (filename, "fp-milp%04d", cntr++);

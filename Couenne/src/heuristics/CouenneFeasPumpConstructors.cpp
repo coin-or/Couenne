@@ -543,9 +543,9 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
     ("feas_pump_usescip",
      "Should SCIP be used to solve the MILPs?",
 #ifdef COIN_HAS_SCIP
-     "yes",
+     "yes", // we want it by default if SCIP is available
 #else
-     "no",
+     "no",  // otherwise switch it off and warn the user if turned on
 #endif
      "no",  "Use Cbc's branch-and-cut to solve the MILP",
      "yes", "Use SCIP's branch-and-cut or heuristics (see feas_pump_milpmethod option) to solve the MILP",

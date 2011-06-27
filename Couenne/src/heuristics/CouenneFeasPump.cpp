@@ -77,6 +77,14 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       (multHessMILP_ > 0.))
     nlp_ -> getSaveOptHessian () = true;
 
+  if (problem_ -> Jnlst () -> ProduceOutput  
+      (J_WARNING, J_NLPHEURISTIC)) {
+
+    printf ("initial NLP:\n");
+    problem_ -> print ();
+    printf ("---------------------\n");
+  }
+
   // Solve with original objective function
   ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
 

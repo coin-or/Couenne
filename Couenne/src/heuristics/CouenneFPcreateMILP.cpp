@@ -142,9 +142,10 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
       // right-hand side equals <P^i,x^0>
       double PiX0 = sparseDotProduct (vec, x0); 
 
-      // j is the index of the j-th extra variable z, used for z >= x - x0
-      vec.insert     (j, -1.); lp -> addRow (vec, -COIN_DBL_MAX,         PiX0); // (*)
-      vec.setElement (1, +1.); lp -> addRow (vec,          PiX0, COIN_DBL_MAX); // (***)
+      // j is the index of the j-th extra variable z_j, used for z_j >=  P (x - x0)  ===> z_j - Px >= - Px_0 ==> -z_j + Px <= Px_0
+      // Second inequality is                                    z_j >= -P (x - x0)                          ==>  z_j + Px >= Px_0
+      vec.insert     (j,                         -1.); lp -> addRow (vec, -COIN_DBL_MAX,         PiX0); // (*)
+      vec.setElement (vec.getNumElements () - 1, +1.); lp -> addRow (vec,          PiX0, COIN_DBL_MAX); // (***)
 
       ++j; // index of variable within problem (plus nVars_)
 
@@ -193,7 +194,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   double maxElem = 0.; // used in adding diagonal element of x_z
 
-  for (int i=0; i<num; ++i, ++row, ++col, ++val) {
+  for (int i=num; i--; ++row, ++col, ++val) {
 
     //printf ("elem: %d, %d --> %g\n", *row, *col, *val);
 
@@ -223,7 +224,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   // Add distance part
   for (int i=0; i<n; ++i)
-    A [i * (n+1)] = fp -> multDistMILP ();
+    A [i * (n+1)] += fp -> multDistMILP ();
 
   // Add gradient-parallel term to the hessian, (x_z - x_z_0)^2. This
   // amounts to setting the diagonal element to GRADIENT_WEIGHT. Don't
@@ -239,42 +240,74 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   int
     status,
-    unusedI = 3*n;
+    unusedI = 3*n; // self-explanatory
 
-  char v = 'V', l = 'L';
+  char 
+    v = 'V', // Compute eigenvectors too, not just eigenvalues
+    l = 'L'; // Onlt the lower triangular part of the matrix is filled 
 
 #if 1
   dsyev_ (&v, &l, &n, A, &n, eigenval, unusedD, &unusedI, &status);
 #endif
 
-  if      (status < 0)    printf ("Couenne: warning, argument %d illegal\n", -status);
-  else if (status > 0)    printf ("Couenne: warning, dsyev did not converge\n");
+  if      (status < 0) printf ("Couenne: warning, argument %d illegal\n",                     -status);
+  else if (status > 0) printf ("Couenne: warning, dsyev did not converge (error code: %d)\n",  status);
 
-  // define a new matrix B = E * D, where
+  // define a new matrix B = E' * D, where E' is E transposed,
   //
   // E = eigenvector matrix
   // D = diagonal with square roots of eigenvalues
+  //
+  // Eventually, the square root is given by E' D E
 
   double *B = (double *) malloc (n*n * sizeof(double));
 
   double *eigenvec = A; // as overwritten by dsyev_;
 
-  for   (int j=0; j<n; ++j) 
-    for (int i=0; i<n; ++i)
-      B [i * n + j] = sqrt (eigenval [j]) * eigenvec [i * n + j];
+  // 
+  // eigenvec is column major, hence post-multiplying it by D equals
+  // multiplying each column i by the i-th eigenvalue
+  //
 
-  // Now compute B * E', where E' is E transposed
+  for (int j=0; j<n; ++j) {
+
+    register double sqrtEig = sqrt (eigenval [j]);
+
+    for (int i=n; i--;)
+      *B++ = sqrtEig * eigenvec [i*n+j];
+  }
+
+  B -= n*n;
+
+  // TODO: set up B as    row-major sparse matrix and 
+  //              E as column-major sparse matrix
+  //
+  // Otherwise this multiplication is O(n^3)
+
+  // Now compute B * E
 
   for     (int i=0; i<n; ++i)
     for   (int j=0; j<n; ++j) { 
 
+      // multiply i-th row of B by j-th column of E
+
       double elem = 0.;
 
       for (int k=0; k<n; ++k)
-	elem += B [i * n + k] * eigenvec [j * n + k];
+	elem += B [i + k * n] * eigenvec [j * n + k];
 
-      P [i]. insert (j, elem);
+      if (fabs (elem) > COUENNE_EPS)
+	P [i]. insert (j, elem);
     }
+
+  if (fp -> Problem () -> Jnlst () -> ProduceOutput (Ipopt::J_STRONGWARNING, J_NLPHEURISTIC)) {
+
+    printf ("P:\n");
+
+
+    printf ("P^{1/2}:\n");
+
+  }
 
   free (eigenval);
   free (A);

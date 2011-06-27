@@ -106,6 +106,9 @@ CouenneBranchingObject::CouenneBranchingObject (OsiSolverInterface *solver,
 
 double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 
+  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
+		    "::branch: at %.20e\n", value_);
+
   // way = 0 if "<=" node, 
   //       1 if ">=" node
 
@@ -129,15 +132,17 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 
   if   (l <  -large_bound) {
     if (u <=  large_bound) // ]-inf,u]
-      brpt =  ((brpt < -COUENNE_EPS) ? (AGGR_MUL * (-1. + brpt)) : 
-	       (brpt >  COUENNE_EPS) ? 0.                        : -AGGR_MUL);
+      brpt = ((u < -COUENNE_EPS) ? CoinMax (CoinMax (brpt, .5 * (l+u)), AGGR_MUL * (-1. + brpt)) : 
+	      (u >  COUENNE_EPS) ? 0.                                                            : -AGGR_MUL);
     else brpt = 0.;
   } else
     if (u >  large_bound) // [l,+inf[
-      brpt = ((brpt >  COUENNE_EPS) ? (AGGR_MUL *  ( 1. + brpt)) : 
-	      (brpt < -COUENNE_EPS) ? 0.                         :  AGGR_MUL);
+      brpt = ((l >  COUENNE_EPS) ? CoinMin (CoinMin (brpt, .5 * (l+u)), AGGR_MUL * ( 1. + brpt)) : 
+	      (l < -COUENNE_EPS) ? 0.                                                            :  AGGR_MUL);
     else {                // [l,u] (finite)
+
       CouNumber point = default_alpha * brpt + (1. - default_alpha) * (l + u) / 2.;
+
       if      ((point-l) / (u-l) < closeToBounds) brpt = l + (u-l) * closeToBounds;
       else if ((u-point) / (u-l) < closeToBounds) brpt = u + (l-u) * closeToBounds;
     }
@@ -182,7 +187,7 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
     }
   }
 
-  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "Branching: x%-3d %c= %g\n", 
+  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "Branching: x%-3d %c= %.20e\n", 
 		    index, way ? '>' : '<', integer ? (way ? ceil (brpt) : floor (brpt)) : brpt);
 
   if (way) {
