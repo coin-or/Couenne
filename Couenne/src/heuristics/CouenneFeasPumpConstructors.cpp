@@ -100,7 +100,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
     options -> GetNumericValue ("feas_pump_mult_dist_milp", multDistMILP_,    "couenne.");
     options -> GetNumericValue ("feas_pump_mult_hess_milp", multHessMILP_,    "couenne.");
     options -> GetNumericValue ("feas_pump_mult_objf_milp", multObjFMILP_,    "couenne.");
-				    
+
     options -> GetStringValue  ("feas_pump_convcuts", s, "couenne."); 
 
     milpCuttingPlane_ = 
@@ -264,18 +264,16 @@ CouenneFeasPump::~CouenneFeasPump () {
 /// objective function.
 expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
-  expression **list = new expression * [problem_ -> nVars ()];
+  expression **list = NULL; 
 
   int nTerms = 0;
 
   const double *iS = iSol;
 
-  if (multObjFNLP_ != 0.)
-    list [nTerms++] = new exprMul (new exprConst (multObjFNLP_),
-				   new exprClone (problem_ -> Obj (0) -> Body ()));
-
   if ((multHessNLP_ == 0.) || 
       (nlp_ -> optHessian () == NULL)) {
+
+    list = new expression * [1 + problem_ -> nVars ()];
 
     // here the objective function is ||x-x^0||_2^2
 
@@ -299,6 +297,11 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
   } else {
 
+    // possibly a much larger set of operands
+
+    list = new expression * [problem_ -> nVars () * 
+			     problem_ -> nVars ()];
+
     // here the objective function is 
     //
     // ||P(x-x^0)||_2^2 = (x-x^0)' P'P (x-x^0)
@@ -308,7 +311,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     // P is a convex combination, with weights multDistMILP_ and
     // multHessMILP_, of the distance and the Hessian respectively
 
-    bool *diag;
+    bool *diag = NULL;
 
     if (multDistNLP_ > 0.) { // only use this if distance is used
 
@@ -340,7 +343,8 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
 	  list [nTerms++] = new exprMul (new exprSub (new exprClone (problem_ -> Var (*row)), new exprConst (iSol [*row])),
 					 new exprSub (new exprClone (problem_ -> Var (*col)), new exprConst (iSol [*col])));
-	else if (*val != 0.) {
+
+	else if (fabs (*val) > COUENNE_EPS) { // we don't need extreme precision...
 
 	  expression **mlist = new expression * [3];
 
@@ -361,7 +365,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 	  list [nTerms++] = new exprPow (new exprSub (new exprClone (problem_ -> Var (*row)), 
 						      new exprConst (iSol [*row])), new exprConst (2.));
 
-	else if (*val + multDistNLP_ != 0.)
+	else if (fabs (*val + multDistNLP_) > COUENNE_EPS)
 
 	  list [nTerms++] = new exprMul (new exprConst (*val + multDistNLP_),
 					 new exprPow (new exprSub (new exprClone (problem_ -> Var (*row)), 
@@ -395,6 +399,16 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
       delete [] diag;
     }
   }
+
+  if (multObjFNLP_ != 0.) 
+    list [nTerms++] = new exprMul (new exprConst (multObjFNLP_),
+				   new exprClone (problem_ -> Obj (0) -> Body ()));
+
+  // resize list
+
+  expression **tmp = list;
+  list = CoinCopyOfArray (tmp, nTerms);
+  delete [] tmp;
 
   return new exprSum (list, nTerms);
 }

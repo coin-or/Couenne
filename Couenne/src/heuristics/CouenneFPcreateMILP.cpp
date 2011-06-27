@@ -164,7 +164,9 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
 
 extern "C" {
-  void dsyev_ (char *JOBZ, char *UPLO, int *N, double *A, int *LDA, double *W, double *WORK, int *LWORK, int *INFO);
+  void dsyev_ (char *JOBZ, char *UPLO, int *N, 
+	       double *A, int *LDA, double *W, 
+	       double *WORK, int *LWORK, int *INFO);
 }
 
 #define GRADIENT_WEIGHT 1
@@ -183,7 +185,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   int    *col = hessian -> col ();
   int     num = hessian -> num ();
 
-  printf ("compute square root:\n");
+  //printf ("compute square root:\n");
 
   // Remove objective's row and column (equivalent to taking the
   // Lagrangian's Hessian, setting f(x) = x_z = c, and recomputing the
@@ -193,7 +195,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   for (int i=0; i<num; ++i, ++row, ++col, ++val) {
 
-    printf ("elem: %d, %d --> %g\n", *row, *col, *val);
+    //printf ("elem: %d, %d --> %g\n", *row, *col, *val);
 
     if ((*row == objInd) || 
 	(*col == objInd))
@@ -231,28 +233,22 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   // call Lapack/Blas routines
 
-  double 
-    *eigenval = (double *) malloc (     n * sizeof (double)),
-    *unusedD  = (double *) malloc (26 * n * sizeof (double));
+  double
+    *eigenval = (double *) malloc (n   * sizeof (double)),
+    *unusedD  = (double *) malloc (3*n * sizeof (double));
 
   int
-    *unusedI  = (int    *) malloc (10 * n * sizeof (int)), 
-     status;
+    status,
+    unusedI = 3*n;
 
   char v = 'V', l = 'L';
 
 #if 1
-  dsyev_ (&v, &l, &n, A, &n, eigenval, unusedD, unusedI, &status);
+  dsyev_ (&v, &l, &n, A, &n, eigenval, unusedD, &unusedI, &status);
 #endif
 
-  if (status < 0)
-    printf ("argument %d illegal\n", -status);
-  else if (status > 0)
-    printf ("dsyev did not converge\n");
-  else printf ("wo-hoo!\n");
-
-  free (unusedD);
-  free (unusedI);
+  if      (status < 0)    printf ("Couenne: warning, argument %d illegal\n", -status);
+  else if (status > 0)    printf ("Couenne: warning, dsyev did not converge\n");
 
   // define a new matrix B = E * D, where
   //

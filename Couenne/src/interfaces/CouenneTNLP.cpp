@@ -662,9 +662,9 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 
       if (hessMember != 0.) {
 
-	printf ("saving: %d, %d --> %g\n", 
-		HLa_ -> iRow () [i],
-		HLa_ -> jCol () [i], hessMember);
+	// printf ("saving: %d, %d --> %g\n", 
+	// 	HLa_ -> iRow () [i],
+	// 	HLa_ -> jCol () [i], hessMember);
 
 	optHessianVal [optHessianNum]   = hessMember;
 	optHessianRow [optHessianNum]   = HLa_ -> iRow () [i];
