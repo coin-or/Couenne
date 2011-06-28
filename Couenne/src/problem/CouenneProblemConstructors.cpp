@@ -243,6 +243,7 @@ void CouenneProblem::initOptions(Ipopt::SmartPtr<Ipopt::OptionsList> options) {
   assert(IsValid(options));
 
   std::string s;
+
   options -> GetStringValue ("use_quadratic",   s, "couenne."); useQuadratic_ = (s == "yes");
   options -> GetStringValue ("feasibility_bt",  s, "couenne."); doFBBT_ = (s == "yes");
   options -> GetStringValue ("redcost_bt",      s, "couenne."); doRCBT_ = (s == "yes");

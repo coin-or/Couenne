@@ -432,7 +432,7 @@ void NlpSolveHeuristic::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOpti
 
   roptions -> AddStringOption2
     ("local_optimization_heuristic",
-     "Search for local solutions of MINLP's",
+     "Search for local solutions of MINLPs",
      "yes",
      "no","",
      "yes","",

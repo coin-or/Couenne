@@ -62,9 +62,6 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
   domain_.push (nVars (), xInt, lb, ub);
 
-  //CoinCopyN (lb, nVars (), Lb ()); // useless?
-  //CoinCopyN (ub, nVars (), Ub ()); // useless?
-
   enum fixType *fixed = new enum fixType [nOrigVars_]; // integer variables that were fixed
 
   for (int i=0; i<nOrigVars_; i++) 
@@ -179,8 +176,8 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	      (Var (i) -> isInteger    ())     && // integer, may fix if independent of other integers
 	      (integerRank_ [i] == rank)) {
 
-	    Lb (i) = CoinMax (Lb (i), floor (xFrac [i])); 
-	    Ub (i) = CoinMin (Ub (i), ceil  (xFrac [i]));
+	    Lb (i) = CoinMax (Lb (i), floor (xFrac [i] - COUENNE_EPS)); 
+	    Ub (i) = CoinMin (Ub (i), ceil  (xFrac [i] + COUENNE_EPS));
 	  }
 
 	// translate current NLP point+bounds into higher-dimensional space

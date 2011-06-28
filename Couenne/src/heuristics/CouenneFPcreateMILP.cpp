@@ -10,6 +10,8 @@
 
 #include "CbcModel.hpp"
 
+#include "IpLapack.hpp"
+
 #include "CouenneSparseMatrix.hpp"
 #include "CouenneTNLP.hpp"
 #include "CouenneFeasPump.hpp"
@@ -167,12 +169,6 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 }
 
 
-extern "C" {
-  void dsyev_ (char *JOBZ, char *UPLO, int *N, 
-	       double *A, int *LDA, double *W, 
-	       double *WORK, int *LWORK, int *INFO);
-}
-
 #define GRADIENT_WEIGHT 1
 
 void ComputeSquareRoot (const CouenneFeasPump *fp, 
@@ -237,21 +233,11 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   // call Lapack/Blas routines
 
-  double
-    *eigenval = (double *) malloc (n   * sizeof (double)),
-    *unusedD  = (double *) malloc (3*n * sizeof (double));
+  double *eigenval = (double *) malloc (n   * sizeof (double));
 
-  int
-    status,
-    unusedI = 3*n; // self-explanatory
+  int status;
 
-  char 
-    v = 'V', // Compute eigenvectors too, not just eigenvalues
-    l = 'L'; // Onlt the lower triangular part of the matrix is filled 
-
-#if 1
-  dsyev_ (&v, &l, &n, A, &n, eigenval, unusedD, &unusedI, &status);
-#endif
+  Ipopt::IpLapackDsyev (true, n, A, n, eigenval, status);
 
   if      (status < 0) printf ("Couenne: warning, argument %d illegal\n",                     -status);
   else if (status > 0) printf ("Couenne: warning, dsyev did not converge (error code: %d)\n",  status);
@@ -265,7 +251,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   double *B = (double *) malloc (n*n * sizeof(double));
 
-  double *eigenvec = A; // as overwritten by dsyev_;
+  double *eigenvec = A; // as overwritten by dsyev;
 
   // 
   // eigenvec is column major, hence post-multiplying it by D equals
