@@ -406,6 +406,8 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
     //solver -> doingResolve () = true;
     branchtime_ += CoinCpuTime () - timeStart;
 
+    jnlst_ -> Printf (J_DETAILED, J_BRANCHING, "Done doStrongBranching\n");
+
     return returnCode;
   }
 

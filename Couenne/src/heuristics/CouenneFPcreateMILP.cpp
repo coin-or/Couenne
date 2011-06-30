@@ -260,6 +260,9 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   for (int j=0; j<n; ++j) {
 
+    if (eigenval [j] < 0.)
+      eigenval [j] = 0.;
+
     register double sqrtEig = sqrt (eigenval [j]);
 
     for (int i=n; i--;)

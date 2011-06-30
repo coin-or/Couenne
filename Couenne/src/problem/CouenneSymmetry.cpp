@@ -306,7 +306,16 @@ void CouenneProblem::sym_setup (){
 
 
 void CouenneProblem::Compute_Symmetry() const{
-  //printf("Computing Symmetry\n");
+
+  ChangeBounds (Lb (), Ub (), nVars ());
+
+  // jnlst_ -> Printf(Ipopt::J_VECTOR, J_BRANCHING,"== Computing Symmetry\n");
+  // for (int i = 0; i < nVars (); i++)
+  //   if (Var (i) -> Multiplicity () > 0)
+  //     jnlst_->Printf(Ipopt::J_VECTOR, J_BRANCHING,"%4d %+20.8g [%+20.8g,%+20.8g]\n", i,
+  // 		     X  (i), Lb (i), Ub (i));
+  // jnlst_->Printf(Ipopt::J_VECTOR, J_BRANCHING,"=============================\n");
+
   std::sort(node_info. begin (), node_info. end (), node_sort);
 
   for (std::vector <Node>:: iterator i = node_info. begin ();  i != node_info. end (); ++i) 
@@ -362,20 +371,21 @@ void CouenneProblem::Print_Orbits () const {
 
   printf ("%d non-trivial orbits\n", nNonTrivialOrbits);
 
-  // if (nNonTrivialOrbits)
-  //   for (int i=0; i< nVars (); i++) {
+#if 0
+  if (nNonTrivialOrbits)
+    for (int i=0; i< nVars (); i++) {
 
-  //     std::vector< int > *branch_orbit = Find_Orbit (i);
+      std::vector< int > *branch_orbit = Find_Orbit (i);
 
-  //     if (branch_orbit -> size () > 1) {
-  // 	printf ("x%04d: ", i);
+      if (branch_orbit -> size () > 1) {
+  	printf ("x%04d: ", i);
 
-  // 	for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it) 
-  // 	  printf ("%d ", *it);
-  // 	printf ("\n");
-  //     }
-  //   }
-
+  	for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it) 
+  	  printf ("%d ", *it);
+  	printf ("\n");
+      }
+    }
+#endif
   delete new_orbits;
 }
 
