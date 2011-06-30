@@ -448,18 +448,16 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       for (int i=0, ii = problem_ -> getNtyInfo () -> getNumOrbits (); ii--; i++){
 
 	CouNumber
-	  ll = -COUENNE_INFINITY;
-	  //uu =  COUENNE_INFINITY; 
-
+	  ll = -COUENNE_INFINITY,
+	  uu =  COUENNE_INFINITY; 
+	
 	std::vector <int> orbit = (*new_orbits)[i];
 
 	if (orbit.size () <= 1)
 	  continue; // not much to do when only one variable in this orbit
 
 	if (jnlst_ -> ProduceOutput (J_VECTOR, J_BOUNDTIGHTENING)) {
-
 	  printf ("orbit bounds: "); fflush (stdout);
-
 	  for(int j = 0; j < orbit.size (); j++) {
 	    printf ("x_%d [%g,%g] ", orbit[j], lb [orbit [j]], ub [orbit [j]]);
 	    fflush (stdout);
@@ -467,21 +465,30 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	  printf ("\n");
 	}
 
-	for (int j = 0; j < orbit.size (); j++) 
-	  if (orbit [j] < problem_ -> nVars ()) {
+	for (int j = 0; j < orbit.size (); j++) {
+ 
+	  int indOrb = orbit [j];
 
-	    if (lb [orbit [j]] > ll) ll = lb [orbit [j]];
-	    //if (ub [orbit [j]] < uu) uu = ub [orbit [j]];
+	  if (indOrb < problem_ -> nVars ()) {
+
+	    if (lb [indOrb] > ll) ll = lb [indOrb];
+	    if (ub [indOrb] < uu) uu = ub [indOrb];
 	  }
+	}
 
 	jnlst_ -> Printf (J_VECTOR, J_BOUNDTIGHTENING, 
 			  " --> new common lower bounds: [%g,--]\n", ll);
 
-	for(int j = 0; j < orbit.size (); j++) 
-	  if (orbit [j] < problem_ -> nVars ()){
-	    lb [orbit [j]] = ll;
-	    //ub [orbit [j]] = uu;
+	for(int j = 0; j < orbit.size (); j++) {
+
+	  int indOrb = orbit [j];
+
+	  if (indOrb < problem_ -> nVars ()){
+
+	    lb [indOrb] = ll;
+	    ub [indOrb] = uu;
 	  }
+	}
       }
 
       delete new_orbits;

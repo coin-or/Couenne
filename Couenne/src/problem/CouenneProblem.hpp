@@ -56,27 +56,19 @@ class Nauty;
     int sign;
   public:
     void node(int, double, double, double, int, int);
-    void color_vertex(int);
-    int get_index () {return index;
-    };
-    double get_coeff () {return coeff;
-    };
-    double get_lb () {return lb;
-    };
-    double get_ub () {return ub ;
-    };
-    int get_color () {return color;
-    };
-    int get_code () {return code;
-    };
-    int get_sign () {return sign;
-    };
-    void bounds( double a, double b){ lb = a; ub = b;
-    };
+    inline void color_vertex (register int k) {color = k;}
+    inline int get_index () const {return index;}
+    inline double get_coeff () const {return coeff;}
+    inline double get_lb () const {return lb;}
+    inline double get_ub () const {return ub;}
+    inline int get_color () const {return color;}
+    inline int get_code () const {return code;}
+    inline int get_sign () const {return sign;}
+    inline void bounds(register double a, register double b){ lb = a; ub = b;}
   };
 
   struct myclass0 {
-    bool operator() (Node a, Node b) {
+    inline bool operator() (register const Node &a, register const Node &b) {
       bool is_less = 0;
       
       if(a.get_code() < b.get_code() )
@@ -109,7 +101,7 @@ class Nauty;
     
       
   struct myclass {
-    bool operator() (Node a, Node b) {
+    inline bool operator() (register const  Node &a, register const Node &b) {
       return (a.get_index() < b.get_index() );
     }
   };
@@ -352,7 +344,7 @@ class CouenneProblem {
   void Compute_Symmetry() const;
   void Print_Orbits() const;
   void ChangeBounds (const double * , const double *, int ) const;
-  bool compare (  Node a, Node b) const;
+  inline bool compare (register Node &a, register Node &b) const;
   Nauty *getNtyInfo () {return nauty_info;}
 
   // bool node_sort (  Node  a, Node  b);
