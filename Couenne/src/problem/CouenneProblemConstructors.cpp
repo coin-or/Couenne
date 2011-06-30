@@ -105,6 +105,10 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
 
   recBSol = new struct Couenne::CouenneRecordBestSol();
   lastPrioSort_ = 1000000;
+
+  minDepthPrint_ = -1;
+  minNodePrint_ = -1;
+  doPrint_ = false;
 }
 
 
@@ -191,6 +195,10 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
 
   recBSol = new CouenneRecordBestSol(*(p.recBSol));
   lastPrioSort_ = p.lastPrioSort_;
+
+  minDepthPrint_ = p.minDepthPrint_;
+  minNodePrint_ = p.minNodePrint_;
+  doPrint_ = p.doPrint_;
 }
 
 

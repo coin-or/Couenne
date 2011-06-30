@@ -223,4 +223,15 @@ void CouenneCutGenerator::printLineInfo() const {
     printf("%10d  %8d  %6d  %10.6f  %10.6f   ----------\n", 
 	   nbNodes, nbNodesRem, depth, cbcLb, lpVal);
   }
+  problem_->doPrint_ = true;
+  if((depth < problem_->minDepthPrint_) ||
+     (nbNodes < problem_->minNodePrint_)) {
+    problem_->doPrint_ = false;
+  }
+  /***
+  if(depth > 200) {
+    printf("CouenneCutGenerator::printLineInfo(): exit on depth\n");
+    exit(1);
+  }
+  ***/
 } /* printLineInfo */

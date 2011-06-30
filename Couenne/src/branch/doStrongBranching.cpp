@@ -72,7 +72,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
 #ifdef TRACE_STRONG2
     int pv = -1;
-    if(info->depth_ > minDepthPrint_) {
+    if(problem_->doPrint_) {
       if(pv > -1) {
 	printf("doSB: beg: x[%d]: %10.4f  lb: %10.4f  ub: %10.4f\n",
 	       pv, solver->getColSolution()[pv], solver->getColLower()[pv], solver->getColUpper()[pv]);
@@ -229,7 +229,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       }
 
 #ifdef TRACE_STRONG
-      if(info->depth_ > minDepthPrint_) {
+      if(problem_->doPrint_) {
 	printf("Strong on object %d: status0: %d  status1: %d\n", 
 	       result->whichObject(), status0, status1);
       }
@@ -379,7 +379,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
     jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "----------------------done\n\n\n");
 
 #ifdef TRACE_STRONG2
-    if(info->depth_ > minDepthPrint_) {
+    if(problem_->doPrint_) {
       if(pv > -1) {
 	printf("doSB: beg: x[%d]: %10.4f  lb: %10.4f  ub: %10.4f\n",
 	       pv, solver->getColSolution()[pv], solver->getColLower()[pv], solver->getColUpper()[pv]);

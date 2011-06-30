@@ -139,9 +139,6 @@ protected:
 
   /// total time spent in strong branching
   double branchtime_;
-
-  // For debugging
-  int minDepthPrint_;
 };
 
 }

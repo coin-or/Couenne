@@ -154,6 +154,15 @@ class CouenneProblem {
   /// Type of multilinear separation
   enum multiSep {MulSepNone, MulSepSimple, MulSepTight};
 
+  // min depth for strong branching output
+  int minDepthPrint_;
+
+  // min number of nodes for strong branching output
+  int minNodePrint_;
+
+  // indicate if strong branching output should be printed
+  bool doPrint_;
+
  protected:
 
   /// problem name

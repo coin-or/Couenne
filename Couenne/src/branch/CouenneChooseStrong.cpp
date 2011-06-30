@@ -23,6 +23,8 @@
 //#define TRACE_STRONG2
 //#define FM_SORT_STRONG
 //#define FM_ALWAYS_SORT
+//#define USE_NOT_TRUSTED
+//#define USE_SMALL_GAP
 //#define OLD_STYLE
 
 using namespace Ipopt;
@@ -53,8 +55,6 @@ const CouNumber estProdEps = 1e-6;
 
     setTrustStrongForSolution (s == "yes");
     setTrustStrongForBound    (s == "yes");
-
-    minDepthPrint_ = -1;
   }
 
   /// copy constructor
@@ -64,8 +64,7 @@ const CouNumber estProdEps = 1e-6;
     pseudoUpdateLP_   (rhs.pseudoUpdateLP_),
     estimateProduct_  (rhs.estimateProduct_),
     jnlst_            (rhs.jnlst_),
-    branchtime_       (rhs.branchtime_),
-    minDepthPrint_    (rhs.minDepthPrint_)
+    branchtime_       (rhs.branchtime_)
   {}
 
   /// destructor
@@ -88,7 +87,6 @@ const CouNumber estProdEps = 1e-6;
       estimateProduct_ = rhs.estimateProduct_;
       jnlst_           = rhs.jnlst_;
       branchtime_      = rhs.branchtime_;
-      minDepthPrint_   = rhs.minDepthPrint_;
     }
     return *this;
   }
@@ -212,7 +210,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 
 #ifdef TRACE_STRONG2
     int pv = -1;
-    if(info->depth_ > minDepthPrint_) {
+    if(problem_->doPrint_) {
       if(pv > -1) {
 	printf("CCS: beg: x[%d]: %10.4f  lb: %10.4f  ub: %10.4f\n",
 	       pv, solver->getColSolution()[pv], solver->getColLower()[pv], solver->getColUpper()[pv]);
@@ -259,6 +257,32 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
       double bestTrustedVal1 = -COIN_DBL_MAX;
       double bestTrustedVal2 = -COIN_DBL_MAX;
 
+      bool smallGap = false;
+      bool sbObjPosImp = false; // true if an object on which strong branching
+                                // was performed has a positive improvement 
+                                // in both branches; used only when gap is
+                                // deemed small
+
+#ifdef USE_SMALL_GAP
+      int objInd = problem_ -> Obj (0) -> Body () -> Index ();
+      double lbGap = info -> lower_ [objInd];
+      double ubGap = problem_ -> getCutOff ();
+      double currentGap = 
+	(ubGap >  COUENNE_INFINITY    / 10 ||
+	 lbGap < -Couenne_large_bound / 10) ? 1e3 : 
+	fabs (ubGap - lbGap) / (1.e-3 + CoinMin (fabs (ubGap), fabs (lbGap)));
+
+      if(currentGap < 1e-3) {
+	smallGap = true;
+      }
+#endif
+
+#ifdef TRACE_STRONG
+      if((problem_->doPrint_) && (number_not_trusted_ > 0)) {
+	printf("number_not_trusted: %d\n", number_not_trusted_);
+      }
+#endif
+
       for (int i=0;i<numberLeft;i++) {
         int iObject = list_[i];
         if (numberBeforeTrusted == 0||
@@ -270,7 +294,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
               ( isRoot && (!upNumber[iObject] && !downNumber[iObject])) ) {
          
 #ifdef TRACE_STRONG
-	  if(info->depth_ > minDepthPrint_) {
+	  if(problem_->doPrint_) {
 	    printf("Push object %d for strong branch\n", iObject);
 	  }
 #endif
@@ -280,7 +304,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
         else {
 
 #ifdef TRACE_STRONG
-	  if(info->depth_ > minDepthPrint_) {
+	  if(problem_->doPrint_) {
 	    printf("Use pseudo cost for object %d\n", iObject);
 	  }
 #endif
@@ -406,11 +430,16 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	      maxVal = downEstimate;
 	    }
 
-	    value = 
-	      estimateProduct_ ? 
-	      ((estProdEps + minVal) * maxVal) :
-	      (       MAXMIN_CRITERION  * minVal + 
-	       (1.0 - MAXMIN_CRITERION) * maxVal);
+	    if(smallGap) { // use change in objective value
+	      value = minVal;
+	    }
+	    else {
+	      value = 
+		estimateProduct_ ? 
+		((estProdEps + minVal) * maxVal) :
+		(       MAXMIN_CRITERION  * minVal + 
+			(1.0 - MAXMIN_CRITERION) * maxVal);
+	    }
 
 	    if((needBranch == 3) &&
 	       saveBestCand(object, iObject, value, upEstimate, downEstimate,
@@ -419,6 +448,13 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	      if(returnCodeSB) { // 1 or 2
 		returnCode = 2; 
 	      }
+
+#ifdef USE_SMALL_GAP
+	      if(smallGap && (minVal > 1e-3)) {
+		sbObjPosImp = true;
+	      }
+#endif
+
 	    }
           }
         }
@@ -444,9 +480,13 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 #endif
       }
 
-      if(returnCodeSB != -1) {  
+      if((returnCodeSB != -1) && 
+	 ((returnCode != 0) || (!sbObjPosImp))) {  
 	          // if returnCodeSB == -1 (i.e. problem is infeasible)
 	          // no need to scan objects with pseudocosts
+	          // if returnCode == 0 and sbObjPOsImp is true
+	          // we want to branch on that object
+                  // to be sure to improve the lower bound
 	
 	// to keep best object skipped on basis of bounds and branching value
 	int bestObjectIndex2 = -1;
@@ -491,7 +531,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	    }
 
 #ifdef TRACE_STRONG
-            if(info->depth_ > minDepthPrint_) {
+            if(problem_->doPrint_) {
               printf("Object %d skip pseudocost\n", iObject);
             }
 #endif
@@ -506,7 +546,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	    }
 
 #ifdef TRACE_STRONG
-            if(info->depth_ > minDepthPrint_) {
+            if(problem_->doPrint_) {
               printf("Object %d use pseudocost\n", iObject);
             }
 #endif
@@ -538,7 +578,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
         message(BRANCH_VAR)<<bestObjectIndex_<< bestWhichWay_ <<CoinMessageEol;
 
 #ifdef TRACE_STRONG
-	if(info->depth_ > minDepthPrint_) {
+	if(problem_->doPrint_) {
 	  if(objectVarInd >= 0) {
             double vUb = solver->getColUpper()[objectVarInd];
             double vLb = solver->getColLower()[objectVarInd];
@@ -577,7 +617,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 
 
 #ifdef TRACE_STRONG2
-    if(info->depth_ > minDepthPrint_) {
+    if(problem_->doPrint_) {
       if(pv > -1) {
 	printf("CCS: end: x[%d]: %10.4f  lb: %10.4f  ub: %10.4f\n",
 	       pv, solver->getColSolution()[pv], solver->getColLower()[pv], solver->getColUpper()[pv]);
@@ -590,7 +630,9 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 #endif
 
 #ifdef TRACE_STRONG
-    printf("CouenneChooseStrong::ChooseVariable(): retval: %d\n", retval);
+    if(problem_->doPrint_) {
+      printf("CouenneChooseStrong::ChooseVariable(): retval: %d\n", retval);
+    }
 #endif
   
     problem_ -> domain () -> pop ();
@@ -639,7 +681,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
     int numberObjects = info->solver_->numberObjects();
 
 #ifdef TRACE_STRONG
-    if(info->depth_ > minDepthPrint_) {
+    if(problem_->doPrint_) {
       printObjViol(info);
     }
 #endif
@@ -681,7 +723,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
     }
 
 #ifdef TRACE_STRONG
-    if(info->depth_ > minDepthPrint_) {
+    if(problem_->doPrint_) {
       printf("Strong list: (obj_ind var_ind priority useful)\n");
       printf("numberStrong: %d  numberStrongRoot: %d  retval: %d\n", 
 	     numberStrong_, numberStrongRoot_, retval);
@@ -711,6 +753,28 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 
 /****************************************************************************/
 // Copied from BonChooseVariable.cpp and modified slightly
+//
+// If FM_SORT_STRONG is used:
+// Select unsatisfied objects first on priority, then usefulness. 
+//
+// if FM_ALWAYS_SORT is also defined exact sorting is done. Otherwise, on return
+// all objects in list[0..numberOnList_] have either smaller priority
+// or equal priority and usefulness not worse than other unsatisfied objects.
+//
+// If USE_NOT_TRUSTED is defined, modify usefulness of a fraction
+// of unsatisfied objects with minimum priority (most fractional first)
+// to make them more attractive.  Number of such objects is
+// number_not_trusted_ on return.
+//
+// If FM_SORT_STRONG is not used:
+// Select unsatisfied objects first on priority, then usefulness
+// but in a weird way: Only guarantee is that objects with minimum
+// priority will be first in the list, objects with higher priority
+// appearing after them in no predictable order. Then
+// objects (with priority matching the smallest priority value among 
+// unsatisfied objects, most fractional first) have their usefulness 
+// modified to make them more attractive. Number of such objects is
+// number_not_trusted_ on return. List is then sorted according to usefulness. 
   int CouenneChooseStrong::gutsOfSetupList(OsiBranchingInformation *info, 
 				      bool initialize)
   {
@@ -749,11 +813,10 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
       pseudoCosts_.setNumberBeforeTrusted(saveNumberBeforeTrusted);
     }
     double check = -COIN_DBL_MAX;
-    int checkIndex=0;
-    int bestPriority=COIN_INT_MAX;
+    int checkIndex = 0;
+    int bestPriority = COIN_INT_MAX;
     int putOther = numberObjects;
     int i;
-
 #ifdef FM_SORT_STRONG
     int numStr = numberStrong_;
     if(isRootNode(info)) {
@@ -764,6 +827,11 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
     int card_vPriority = 0;
     int posEnd_vPriority = numberObjects;
     double *vPriority = new double[numberObjects];
+    double *infeasVal = new double[numberObjects];
+    int max_most_fra = setup_pseudo_frac_ > 0. ? (int)floor(setup_pseudo_frac_*(double)maximumStrong): 0;
+    if (setup_pseudo_frac_ > 0.) {
+      max_most_fra = CoinMax(1, max_most_fra);
+    }
 #else /* not FM_SORT_STRONG */
     int maximumStrong = CoinMin(CoinMax(numberStrong_,numberStrongRoot_),
         numberObjects) ;
@@ -816,10 +884,16 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 
     bool firstPass = false; // not important; useful for making two
                             // passes, picking different objects
+
     while(numberOnList_ == 0) {
       for(i=0;i<numberObjects;i++) {
 	int way;
 	double value = object[i]->infeasibility(info, way);
+
+#ifdef FM_SORT_STRONG
+	infeasVal[i] = value;
+#endif
+
 	double lbForInfeas = 0.0;
 	if(value > lbForInfeas) {
 	  numberUnsatisfied_++;
@@ -831,6 +905,9 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	  int priorityLevel = object[i]->priority();
 
 #ifdef FM_SORT_STRONG
+	  if(priorityLevel < bestPriority) {
+	    bestPriority = priorityLevel;	    
+	  }
 	  if(priorityLevel > lastPrio) {
 	    posEnd_vPriority--;
 	    vPriority[posEnd_vPriority] = priorityLevel;
@@ -854,11 +931,11 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	    }
 	    maximumStrong = CoinMin(maximumStrong,putOther);
 	    bestPriority = priorityLevel;
-	    check=-COIN_DBL_MAX;
-	    checkIndex=0;
-	    check2=-COIN_DBL_MAX;
-	    checkIndex2=0;
-	    number_not_trusted_=0;
+	    check = -COIN_DBL_MAX;
+	    checkIndex = 0;
+	    check2 = -COIN_DBL_MAX;
+	    checkIndex2 = 0;
+	    number_not_trusted_ = 0;
 	    if(max_most_fra > 0) {
 	      for(int j=0; j<max_most_fra; j++) {
 		list2[j]=-1;
@@ -905,7 +982,8 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	      list_[--putOther]=i;
 	      maximumStrong = CoinMin(maximumStrong,putOther);
 	    }
-	    if(max_most_fra > 0 && value2 > check2) {
+
+	    if((max_most_fra > 0) && (value2 > check2)) {
 	      // add to list of integer infeasibilities
 	      number_not_trusted_++;
 	      list2[checkIndex2]=i;
@@ -972,7 +1050,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	if(card_vPriority > 0) {
 	  numberOnList_ = (card_vPriority < maximumStrong ? card_vPriority : maximumStrong);
 
-#ifdef FM_ALWAYS_SORT
+#ifdef FM_ALWAYS_SORT /* FM_SORT_STRONG */
 	  bool alwaysSort = true;
 #else	  
 	  bool alwaysSort = false;
@@ -993,7 +1071,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 				      upMultiplier, downMultiplier, value,
 				      object[indObj], indObj, value2);
 
-#ifdef OLD_USEFULLNESS
+#ifdef OLD_USEFULLNESS /* FM_SORT_STRONG */
 	    useful_[i] = -value;
 #else
 	    if ((sortCrit_ & 1) == 0) {
@@ -1003,9 +1081,58 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	      useful_[i] = value;
 	    }
 #endif
+
+#ifdef USE_NOT_TRUSTED
+	    if(value2 < -COIN_DBL_MAX / 10) { // object with trusted pseudo-cost
+	      infeasVal[indObj] = -COIN_DBL_MAX;
+	    }
+#endif
 	  }
 
-#ifdef FM_ALWAYS_SORT
+#ifdef USE_NOT_TRUSTED /* FM_SORT_STRONG */
+	  // adjust usefulness of objects having priority bestPriority
+	  if((card_vPriority > maximumStrong) &&
+	     (vPriority[maximumStrong] < bestPriority + COUENNE_EPS)) { 
+	    // not all objects with bestPriority will be selected
+	    
+	    int cardFrac = 0;
+	    int *fracInd = new int[card_vPriority]; // holds position 
+	                                            // in list_
+	    double *fracVal = new double[card_vPriority];
+
+	    // Find all untrusted objects with min priority
+	    for(i=0; i<card_vPriority; i++) {
+	      int indObj = list_[i];
+	      if(vPriority[i] < bestPriority + COUENNE_EPS) {
+		if(infeasVal[indObj] > -COIN_DBL_MAX/10) {
+		  fracInd[cardFrac] = i;
+		  fracVal[cardFrac] = -infeasVal[indObj];
+		  cardFrac++;
+		}
+	      }
+	    }
+	    if(max_most_fra > 0) {
+
+	    // if more than max_most_fra, sort to pick the ones with max viol
+	      if(cardFrac > max_most_fra) {
+		CoinSort_2(fracVal, fracVal+cardFrac, fracInd);
+	      }
+	      for(i=0; i<cardFrac; i++) {
+		useful_[fracInd[i]] = 
+                      -1e150*(1. + infeasVal[list_[fracInd[i]]]);
+		number_not_trusted_++;
+		if(i == max_most_fra - 1) {
+		  break;
+		}
+	      }
+	    }
+	    delete[] fracInd;
+	    delete[] fracVal;
+	  }
+#endif /* USE_NOT_TRUSTED and FM_SORT_STRONG */
+	}
+
+#ifdef FM_ALWAYS_SORT /* FM_SORT_STRONG */
 	  int from = 0, upto = 1;
 	  while(upto < card_vPriority) {
 	    while(vPriority[upto] == vPriority[from]) {
@@ -1018,7 +1145,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	    from = upto;
 	    upto = from+1;
 	  }
-#else /* not FM_ALWAYS_SORT */
+#else /* FM_SORT_STRONG not FM_ALWAYS_SORT */
 	  if(sortUpTo > maximumStrong) {
 	    // compute from, upto such that 
 	    // vPriority[k] == vPriority[maximumStrong] for k in [from..upto-1]
@@ -1037,48 +1164,45 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	    CoinSort_2(useful_+from, useful_+upto, list_+from);
 	  }
 
-#endif /* not FM_ALWAYS_SORT */
-	}
+#endif /* FM_SORT_STRONG not FM_ALWAYS_SORT */
 
 #ifdef FM_CHECK
-	// priority of last selected object
-	double ckPrio = (card_vPriority < numberUnsatisfied_ ?
-			 vPriority[card_vPriority] : 100000);
-	double ckUse = (card_vPriority < numberUnsatisfied_ ?
-		      useful_[card_vPriority] : 100000);
-	for(i=0; i<card_vPriority; i++) {
-	  int indObj = list_[i];
-	  if(object[indObj]->priority() > ckPrio + 1e-3) {
-	    printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->priority(): %d  > ckPrio: %d\n", 
-		   indObj, object[indObj]->priority(), ckPrio);
-	    exit(1);
-	  }
-	  if(fabs(object[indObj]->priority() - ckPrio) < 1e-3) {
-	    if(useful_[i] > ckUse + 1e-3) {
-	      printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->useful: %f  > ckUse: %d\n", 
-		   indObj, useful_[i], ckUse);
+	  // priority of last selected object
+	  double ckPrio = (card_vPriority < numberUnsatisfied_ ?
+			   vPriority[card_vPriority] : 100000);
+	  double ckUse = (card_vPriority < numberUnsatisfied_ ?
+			  useful_[card_vPriority] : 100000);
+	  for(i=0; i<card_vPriority; i++) {
+	    int indObj = list_[i];
+	    if(object[indObj]->priority() > ckPrio + 1e-3) {
+	      printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->priority(): %d  > ckPrio: %d\n", 
+		     indObj, object[indObj]->priority(), ckPrio);
 	      exit(1);
 	    }
-	  }
-	}
-	for(i=card_vPriority; i<numberUnsatisfied_; i++) {
-	  int indObj = list_[i];
-	  if(object[indObj]->priority() < ckPrio - 1e-3) {
-	    printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->priority(): %d  < ckPrio: %d\n", 
-		   indObj, object[indObj]->priority(), ckPrio);
-	    exit(1);
-	  }
-	  if(fabs(object[indObj]->priority() - ckPrio) < 1e-3) {
-	    if(useful_[i] < ckUse - 1e-3) {
-	      printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->useful: %f  < ckUse: %d\n", 
-		   indObj, useful_[i], ckUse);
-	      exit(1);
+	    if(fabs(object[indObj]->priority() - ckPrio) < 1e-3) {
+	      if(useful_[i] > ckUse + 1e-3) {
+		printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->useful: %f  > ckUse: %d\n", 
+		       indObj, useful_[i], ckUse);
+		exit(1);
+	      }
 	    }
 	  }
-	}
+	  for(i=card_vPriority; i<numberUnsatisfied_; i++) {
+	    int indObj = list_[i];
+	    if(object[indObj]->priority() < ckPrio - 1e-3) {
+	      printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->priority(): %d  < ckPrio: %d\n", 
+		     indObj, object[indObj]->priority(), ckPrio);
+	      exit(1);
+	    }
+	    if(fabs(object[indObj]->priority() - ckPrio) < 1e-3) {
+	      if(useful_[i] < ckUse - 1e-3) {
+		printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->useful: %f  < ckUse: %d\n", 
+		       indObj, useful_[i], ckUse);
+		exit(1);
+	      }
+	    }
+	  }
 #endif
-	
-
       }
       else {
 	numberUnsatisfied_ = -1;
@@ -1130,7 +1254,12 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 		bool found1 = (list_[i1]==i);
 		bool found2 = (list2[i2]==i);
 		if (found1 && found2) {
+
+#ifdef OLD_USEFULLNESS
+		  useful_[i1] = 1e150*(1.+useful2[i2]);
+#else
 		  useful_[i1] = -1e150*(1.+useful2[i2]);
+#endif
 		  list2[i2] = -1;
 		}
 		if (found1) i1++;
@@ -1140,7 +1269,12 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	      for (i=0; i<number_not_trusted_; i++) {
 		if (list2[i] >= 0) {
 		  list_[numberOnList_+tmp_on_list] = list2[i];
+
+#ifdef OLD_USEFULLNESS
+		  useful_[numberOnList_+tmp_on_list] = 1e150*(1.+useful2[i]);
+#else
 		  useful_[numberOnList_+tmp_on_list] = -1e150*(1.+useful2[i]);
+#endif
 		  tmp_on_list++;
 		}
 	      }
@@ -1170,12 +1304,15 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
     } /* while(numberOnList_ == 0) */
 
 #ifdef TRACE_STRONG
+    if(problem_->doPrint_) {
       printf("numberStrong_: %d   maximumStrong: %d\n", 
 	     numberStrong_, maximumStrong);
+    }
 #endif
 
 #ifdef FM_SORT_STRONG
       delete [] vPriority;
+      delete [] infeasVal;
 #else  /* not FM_SORT_STRONG */
     delete [] list2;
     delete [] useful2;
@@ -1195,6 +1332,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
         <<CoinMessageEol;
       }
     }
+
     // return -1 if infeasible to differentiate with numberOnList_==0
     // when feasible
     if(numberUnsatisfied_ == -1) {
