@@ -69,6 +69,7 @@ class Nauty;
 
   struct myclass0 {
     inline bool operator() (register const Node &a, register const Node &b) {
+
       bool is_less = 0;
       
       if(a.get_code() < b.get_code() )
@@ -86,8 +87,11 @@ class Nauty;
 		  if(a.get_ub() < b.get_ub())
 		    is_less = 1;
 		  else{
-		    if(a.get_index() < b.get_index())
-		      is_less = 1;
+		    if(a.get_ub() == b.get_ub()) {
+		    
+		      if(a.get_index() < b.get_index())
+			is_less = 1;
+		    }
 		  }
 		}
 	      }
@@ -290,9 +294,6 @@ class CouenneProblem {
 
   /// Type of Multilinear separation
   enum multiSep multilinSep_;
-
-  /// Use semiauxiliaries
-  bool useSemiaux_;
 
   /// number of FBBT iterations
   int max_fbbt_iter_;
@@ -660,10 +661,6 @@ class CouenneProblem {
   enum multiSep MultilinSep () const
   {return multilinSep_;}
 
-  /// return usage of semiauxiliaries
-  bool useSemiaux () const
-  {return useSemiaux_;}
-
   /// true if latest call to FBBT terminated due to iteration limit reached
   bool fbbtReachedIterLimit () const
   {return fbbtReachedIterLimit_;}
@@ -686,6 +683,9 @@ class CouenneProblem {
   /// return type of decomposition of quadrilinear terms    
   enum TrilinDecompType getTrilinDecompType ()
   {return trilinDecompType_;}
+
+  /// options
+  Bonmin::BabSetupBase *bonBase () const {return bonBase_;}
 
 protected:
 

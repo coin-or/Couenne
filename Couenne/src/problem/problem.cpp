@@ -407,6 +407,14 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
      "yes",  "Use auxiliaries defined by w <= f(x), w >= f(x), and w = f(x)"
     );
 
+  roptions -> AddStringOption2
+    ("use_auxcons",
+     "Use constraints-defined auxiliaries, i.e. auxiliaries w = f(x) defined by original constraints f(x) - w = 0",
+     "yes",
+     "no",   "",
+     "yes",  ""
+    );
+
   roptions -> AddStringOption2 
     ("redcost_bt",
      "Reduced cost bound tightening",

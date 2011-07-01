@@ -77,7 +77,6 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   unusedOriginalsIndices_ (NULL),
   nUnusedOriginals_ (-1),
   multilinSep_ (CouenneProblem::MulSepNone),
-  useSemiaux_  (false),
   max_fbbt_iter_ (MAX_FBBT_ITER),
   orbitalBranching_ (false) {
 
@@ -152,7 +151,6 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   unusedOriginalsIndices_ (NULL),
   nUnusedOriginals_ (p.nUnusedOriginals_),
   multilinSep_  (p.multilinSep_),
-  useSemiaux_   (p.useSemiaux_),
   max_fbbt_iter_  (p.max_fbbt_iter_),
   orbitalBranching_  (p.orbitalBranching_) {
 
@@ -271,7 +269,6 @@ void CouenneProblem::initOptions(Ipopt::SmartPtr<Ipopt::OptionsList> options) {
 		  s == "simple" ? CouenneProblem::MulSepSimple :
                  		  CouenneProblem::MulSepTight);
 
-  options -> GetStringValue ("use_semiaux", s, "couenne."); useSemiaux_ = (s == "yes");
   options -> GetStringValue ("orbital_branching", s, "couenne."); orbitalBranching_ = (s == "yes");
 
   options -> GetStringValue ("quadrilinear_decomp",  s, "couenne."); 
