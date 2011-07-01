@@ -22,6 +22,7 @@
 //#define TRACE_STRONG
 //#define TRACE_STRONG2
 //#define FM_SORT_STRONG
+//#define FM_SEC_SORT_USEFUL
 //#define FM_ALWAYS_SORT
 //#define USE_NOT_TRUSTED
 //#define USE_SMALL_GAP
@@ -677,8 +678,9 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 		info -> solution_ [i], info -> lower_ [i], info -> upper_ [i]);
     }
 
+#ifdef TRACE_STRONG
     OsiObject ** object = info->solver_->objects();
-    int numberObjects = info->solver_->numberObjects();
+#endif
 
 #ifdef TRACE_STRONG
     if(problem_->doPrint_) {
@@ -689,7 +691,6 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
     int retval = gutsOfSetupList(info, initialize);
 
     if(retval == 0) { // No branching is possible
-      double ckObj = info->objectiveValue_;
 
 #ifdef FM_CHECKNLP2
       if(!(problem_->checkNLP2(info->solution_, 
@@ -704,6 +705,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	}
       }
 #else /* not FM_CHECKNLP2 */
+      double ckObj = info->objectiveValue_;
       if(!(problem_->checkNLP(info->solution_, ckObj, true))) {
 	if (!warned) {
 	  printf("CouenneChooseStrong::setupList(): ### WARNING: checkNLP() returns infeasible, no branching object selected\n");
@@ -757,14 +759,20 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 // If FM_SORT_STRONG is used:
 // Select unsatisfied objects first on priority, then usefulness. 
 //
-// if FM_ALWAYS_SORT is also defined exact sorting is done. Otherwise, on return
-// all objects in list[0..numberOnList_] have either smaller priority
-// or equal priority and usefulness not worse than other unsatisfied objects.
+//   If USE_NOT_TRUSTED is also defined, modify usefulness of a fraction
+//   of unsatisfied objects with minimum priority (most fractional first)
+//   to make them more attractive.  Number of such objects is
+//   number_not_trusted_ on return.
+
+// Additional options working with FM_SORT_STRONG (at most one of the two):
+//   if FM_ALWAYS_SORT is also defined exact sorting is done. Otherwise, 
+//   on return all objects in list[0..numberOnList_] have either smaller 
+//   priority or equal priority and usefulness not worse than other 
+//   unsatisfied objects.
 //
-// If USE_NOT_TRUSTED is defined, modify usefulness of a fraction
-// of unsatisfied objects with minimum priority (most fractional first)
-// to make them more attractive.  Number of such objects is
-// number_not_trusted_ on return.
+//   if FM_SEC_SORT_USEFUL is defined, objects are selected by priority
+//   then usefulness and the final list is sorted according to usefulness.
+//
 //
 // If FM_SORT_STRONG is not used:
 // Select unsatisfied objects first on priority, then usefulness
@@ -775,6 +783,10 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 // unsatisfied objects, most fractional first) have their usefulness 
 // modified to make them more attractive. Number of such objects is
 // number_not_trusted_ on return. List is then sorted according to usefulness. 
+//
+// Recommended settings: one of 
+// i) define FM_SORT_STRONG USE_NOT_TRUSTED FM_SEC_SORT_USEFUL
+// ii) no flags defined (default)
   int CouenneChooseStrong::gutsOfSetupList(OsiBranchingInformation *info, 
 				      bool initialize)
   {
@@ -812,10 +824,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
       pseudoCosts_.initialize(numberObjects);
       pseudoCosts_.setNumberBeforeTrusted(saveNumberBeforeTrusted);
     }
-    double check = -COIN_DBL_MAX;
-    int checkIndex = 0;
     int bestPriority = COIN_INT_MAX;
-    int putOther = numberObjects;
     int i;
 #ifdef FM_SORT_STRONG
     int numStr = numberStrong_;
@@ -833,6 +842,9 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
       max_most_fra = CoinMax(1, max_most_fra);
     }
 #else /* not FM_SORT_STRONG */
+    int putOther = numberObjects;
+    double check = -COIN_DBL_MAX;
+    int checkIndex = 0;
     int maximumStrong = CoinMin(CoinMax(numberStrong_,numberStrongRoot_),
         numberObjects) ;
     for (i=0;i<numberObjects;i++) {
@@ -1066,7 +1078,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	  }
 	  for(i=0; i<card_vPriority; i++) {
 	    int indObj = list_[i];
-	    double value, value2;
+	    double value = 0, value2;
 	    value = computeUsefulness(MAXMIN_CRITERION,
 				      upMultiplier, downMultiplier, value,
 				      object[indObj], indObj, value2);
@@ -1132,6 +1144,9 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 #endif /* USE_NOT_TRUSTED and FM_SORT_STRONG */
 	}
 
+#ifdef FM_SEC_SORT_USEFUL
+	CoinSort_2(useful_, useful_+card_vPriority, list_);
+#else /* FM_SORT_STRONG not FM_SEC_SORT_USEFUL */
 #ifdef FM_ALWAYS_SORT /* FM_SORT_STRONG */
 	  int from = 0, upto = 1;
 	  while(upto < card_vPriority) {
@@ -1202,7 +1217,8 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	      }
 	    }
 	  }
-#endif
+#endif /* CHECK */
+#endif /* FM_SORT_STRONG not FM_ALWAYS_SORT */
       }
       else {
 	numberUnsatisfied_ = -1;
@@ -1390,13 +1406,12 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 					      int numberObjects,
 					      const OsiObject ** objects) {
 
-    double obj = solution [problem_ -> Obj (0) -> Body () -> Index ()];
-
 #ifdef FM_CHECKNLP2
     bool isFeas = problem_->checkNLP2(solution, 0, false, true, true, 
 				      problem_->getFeasTol());
     return isFeas;
 #else
+    double obj = solution [problem_ -> Obj (0) -> Body () -> Index ()];
     return problem_ -> checkNLP (solution, obj);
 #endif
   }
