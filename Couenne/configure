@@ -22334,7 +22334,7 @@ if test $coin_has_bonmin = notGiven; then
 
 if test -n "$PKG_CONFIG" ; then
   if $PKG_CONFIG --exists "bonmin"; then
-    BONMIN_VERSIONS=`$PKG_CONFIG --modversion "bonmin" 2>/dev/null | tr '\n' ' '`
+    BONMIN_VERSIONS="`$PKG_CONFIG --modversion "bonmin" 2>/dev/null | tr '\n' ' '`"
      cflags=`$PKG_CONFIG --cflags "bonmin" 2>/dev/null`
     # pkg-config cannot handle spaces, so CYGPATH_W cannot be put into .pc files
 	# thus, we modify the cflags extracted from pkg-config by putting CYGPATH_W behind -I's
@@ -22857,7 +22857,7 @@ if test $coin_has_asl = notGiven; then
 
 if test -n "$PKG_CONFIG" ; then
   if $PKG_CONFIG --exists "bonminamplinterface"; then
-    ASL_VERSIONS=`$PKG_CONFIG --modversion "bonminamplinterface" 2>/dev/null | tr '\n' ' '`
+    ASL_VERSIONS="`$PKG_CONFIG --modversion "bonminamplinterface" 2>/dev/null | tr '\n' ' '`"
      cflags=`$PKG_CONFIG --cflags "bonminamplinterface" 2>/dev/null`
     # pkg-config cannot handle spaces, so CYGPATH_W cannot be put into .pc files
 	# thus, we modify the cflags extracted from pkg-config by putting CYGPATH_W behind -I's
@@ -23580,7 +23580,7 @@ if test $coin_has_scip = notGiven; then
 
 if test -n "$PKG_CONFIG" ; then
   if $PKG_CONFIG --exists "coinscip"; then
-    SCIP_VERSIONS=`$PKG_CONFIG --modversion "coinscip" 2>/dev/null | tr '\n' ' '`
+    SCIP_VERSIONS="`$PKG_CONFIG --modversion "coinscip" 2>/dev/null | tr '\n' ' '`"
      cflags=`$PKG_CONFIG --cflags "coinscip" 2>/dev/null`
     # pkg-config cannot handle spaces, so CYGPATH_W cannot be put into .pc files
 	# thus, we modify the cflags extracted from pkg-config by putting CYGPATH_W behind -I's
@@ -24093,7 +24093,7 @@ if test $coin_has_cpx = notGiven; then
 
 if test -n "$PKG_CONFIG" ; then
   if $PKG_CONFIG --exists "osi-cplex"; then
-    CPX_VERSIONS=`$PKG_CONFIG --modversion "osi-cplex" 2>/dev/null | tr '\n' ' '`
+    CPX_VERSIONS="`$PKG_CONFIG --modversion "osi-cplex" 2>/dev/null | tr '\n' ' '`"
      cflags=`$PKG_CONFIG --cflags "osi-cplex" 2>/dev/null`
     # pkg-config cannot handle spaces, so CYGPATH_W cannot be put into .pc files
 	# thus, we modify the cflags extracted from pkg-config by putting CYGPATH_W behind -I's
@@ -24613,7 +24613,7 @@ if test $coin_has_grb = notGiven; then
 
 if test -n "$PKG_CONFIG" ; then
   if $PKG_CONFIG --exists "osi-gurobi"; then
-    GRB_VERSIONS=`$PKG_CONFIG --modversion "osi-gurobi" 2>/dev/null | tr '\n' ' '`
+    GRB_VERSIONS="`$PKG_CONFIG --modversion "osi-gurobi" 2>/dev/null | tr '\n' ' '`"
      cflags=`$PKG_CONFIG --cflags "osi-gurobi" 2>/dev/null`
     # pkg-config cannot handle spaces, so CYGPATH_W cannot be put into .pc files
 	# thus, we modify the cflags extracted from pkg-config by putting CYGPATH_W behind -I's
@@ -25124,7 +25124,7 @@ if test $coin_has_msk = notGiven; then
 
 if test -n "$PKG_CONFIG" ; then
   if $PKG_CONFIG --exists "osi-mosek"; then
-    MSK_VERSIONS=`$PKG_CONFIG --modversion "osi-mosek" 2>/dev/null | tr '\n' ' '`
+    MSK_VERSIONS="`$PKG_CONFIG --modversion "osi-mosek" 2>/dev/null | tr '\n' ' '`"
      cflags=`$PKG_CONFIG --cflags "osi-mosek" 2>/dev/null`
     # pkg-config cannot handle spaces, so CYGPATH_W cannot be put into .pc files
 	# thus, we modify the cflags extracted from pkg-config by putting CYGPATH_W behind -I's
@@ -25635,7 +25635,7 @@ if test $coin_has_spx = notGiven; then
 
 if test -n "$PKG_CONFIG" ; then
   if $PKG_CONFIG --exists "osi-soplex"; then
-    SPX_VERSIONS=`$PKG_CONFIG --modversion "osi-soplex" 2>/dev/null | tr '\n' ' '`
+    SPX_VERSIONS="`$PKG_CONFIG --modversion "osi-soplex" 2>/dev/null | tr '\n' ' '`"
      cflags=`$PKG_CONFIG --cflags "osi-soplex" 2>/dev/null`
     # pkg-config cannot handle spaces, so CYGPATH_W cannot be put into .pc files
 	# thus, we modify the cflags extracted from pkg-config by putting CYGPATH_W behind -I's
@@ -26146,7 +26146,7 @@ if test $coin_has_xpr = notGiven; then
 
 if test -n "$PKG_CONFIG" ; then
   if $PKG_CONFIG --exists "osi-xpress"; then
-    XPR_VERSIONS=`$PKG_CONFIG --modversion "osi-xpress" 2>/dev/null | tr '\n' ' '`
+    XPR_VERSIONS="`$PKG_CONFIG --modversion "osi-xpress" 2>/dev/null | tr '\n' ' '`"
      cflags=`$PKG_CONFIG --cflags "osi-xpress" 2>/dev/null`
     # pkg-config cannot handle spaces, so CYGPATH_W cannot be put into .pc files
 	# thus, we modify the cflags extracted from pkg-config by putting CYGPATH_W behind -I's
@@ -27927,6 +27927,10 @@ if test x$coin_skip_ac_output != xyes; then
 
   fi
 
+  # On AIX, the default sed cannot deal with somewhat long sed commands executed by config.status.
+  # So we reduce the hardcoded number of commands given to sed from 48 to 5 in config.status, hoping this will suffice.
+
+
   cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -29649,6 +29653,16 @@ cat >>$CONFIG_STATUS <<\_ACEOF
 _ACEOF
 chmod +x $CONFIG_STATUS
 ac_clean_files=$ac_clean_files_save
+
+
+    case $build in
+      *-aix*)
+        { echo "$as_me:$LINENO: patching config.status to reduce ac_max_sed_lines to 5" >&5
+echo "$as_me: patching config.status to reduce ac_max_sed_lines to 5" >&6;}
+        sed -e 's/ac_max_sed_lines=48/ac_max_sed_lines=5/g' config.status > config.status.tmp
+        mv config.status.tmp config.status
+      ;;
+    esac
 
 
 # configure is writing to config.log, and then calls config.status.
