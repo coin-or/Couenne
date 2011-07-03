@@ -40,7 +40,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   const int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
 
-  if ((problem_ -> nIntVars () <= 0) ||                   // feas pump on NLP? Not yet...
+  if (//(problem_ -> nIntVars () <= 0) ||                   // feas pump on NLP? Why not?
       (CoinCpuTime () > problem_ -> getMaxCpuTime ()) ||  // don't start if time is out
       ((numberSolvePerLevel_ >= 0) &&                     // stop FP after a certain level
        (CoinDrand48 () > 1. / CoinMax                     // decided randomly and inversely proportional
@@ -223,7 +223,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	  } while( !pool_ -> Set ().empty() );
 
-      } else if ((tabuMgt_ == FP_TABU_CUT   ||  (pool_ -> Set (). empty ()) && iSol)) {
+      } else if (((tabuMgt_ == FP_TABU_CUT)   ||  
+		  ((pool_ -> Set (). empty ()) && iSol))) {
 
 	OsiCuts cs;
 

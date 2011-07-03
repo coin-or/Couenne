@@ -65,7 +65,7 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
 
   int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
 
-  if (useSCIP_) {
+  if (useSCIP_ && problem_ -> nIntVars () > 0) { // if LP, use Clp below
 
      SCIP* scip;
 
@@ -455,23 +455,25 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
   }
   else
 #endif      
-   {
-      milp_ -> branchAndBound ();
+  {
 
-      if (!sol)
-	sol = new CouNumber [problem_ -> nVars ()];
+     if (problem_ -> nIntVars () > 0) milp_ -> branchAndBound ();
+     else                             milp_ -> initialSolve ();
 
-      if (milp_ -> getColSolution ())
-	CoinCopyN (milp_ -> getColSolution (), problem_ -> nVars (), sol);
-      else {
+     if (!sol)
+       sol = new CouNumber [problem_ -> nVars ()];
 
-	if (sol)
-	  delete [] sol;
-	sol = NULL;
-      }
+     if (milp_ -> getColSolution ())
+       CoinCopyN (milp_ -> getColSolution (), problem_ -> nVars (), sol);
+     else {
 
-      obj = milp_ -> getObjValue ();
-   }
+       if (sol)
+	 delete [] sol;
+       sol = NULL;
+     }
+
+     obj = milp_ -> getObjValue ();
+  }
 
   return obj;
 }

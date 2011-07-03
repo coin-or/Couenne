@@ -58,7 +58,10 @@ OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model,
   // problem's linear relaxation (all other variables do not appear
   // in the objective)
 
-  lp -> setObjCoeff (fp -> Problem () -> Obj (0) -> Body () -> Index (), 0.);
+  int objInd = fp -> Problem () -> Obj (0) -> Body () -> Index ();
+
+  if (objInd >= 0)
+    lp -> setObjCoeff (objInd, 0.);
 
   return lp;
 }
@@ -100,9 +103,13 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
   // set objective coefficient if we are using a little Objective FP
 
-  if (isMILP && (fp -> multObjFMILP () > 0.))
-    lp -> setObjCoeff (fp -> Problem () -> Obj (0) -> Body () -> Index (), 
-		       fp -> multObjFMILP ());
+  if (isMILP && (fp -> multObjFMILP () > 0.)) {
+
+    int objInd = fp -> Problem () -> Obj (0) -> Body () -> Index ();
+
+    if (objInd >= 0)
+      lp -> setObjCoeff (objInd, fp -> multObjFMILP ());
+  }
 
   if (isMILP && 
       (fp -> multHessMILP () > 0.) &&
@@ -180,7 +187,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
     objInd = fp -> Problem () -> Obj (0) -> Body () -> Index (),
     n      = fp -> Problem () -> nVars ();
 
-  assert (objInd >= 0);
+  //assert (objInd >= 0);
 
   double *val = hessian -> val ();
   int    *row = hessian -> row ();
@@ -231,7 +238,8 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   // amounts to setting the diagonal element to GRADIENT_WEIGHT. Don't
   // do it directly on hessian
 
-  A [objInd * (n+1)] = maxElem * GRADIENT_WEIGHT * n;
+  if (objInd >= 0)
+    A [objInd * (n+1)] = maxElem * GRADIENT_WEIGHT * n;
 
   // call Lapack/Blas routines
   double *eigenval = (double *) malloc (n   * sizeof (double));
