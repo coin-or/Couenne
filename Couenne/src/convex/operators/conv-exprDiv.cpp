@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: standardization and convexification methods for divisions
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -52,10 +52,12 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
     cRY = (chg [yi].upper() != t_chg_bounds::UNCHANGED);
   }
 
-  if ((yl < -0.) && (yu > 0.)) return;   // no convexification for
-					 // terms x/y where y=0 is
-					 // internal to the bounding
-					 // box
+  // no convexification for terms x/y where y=0 is internal to the
+  // bounding box
+
+  if ((yl < -0.) && 
+      (yu >  0.)) return;   
+
   CouNumber k;
 
   enum auxSign sign = cg -> Problem () -> Var (wi) -> sign ();
@@ -65,7 +67,7 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
   if ((fabs (yl-yu) < COUENNE_EPS) && 
       ((fabs (k = ((yl+yu) / 2)) > COUENNE_EPS))) {
     if (cLY || cRY)
-      cg -> createCut (cs, 0., sign, wi, -1., xi, 1./k);
+      cg -> createCut (cs, 0., sign, wi, 1., xi, -1./k);
     return;
   }
 
@@ -95,19 +97,28 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
   CouNumber xl, xu;
   arglist_ [0] -> getBounds (xl, xu);
 
+  if ((fabs (xl-xu) < COUENNE_EPS) &&
+      (fabs (yl-yu) < COUENNE_EPS) &&
+      (fabs (wl-wu) < COUENNE_EPS))
+    return; // not much to do here...
+
   // same as product, just a change in coordinates
 
   //CouNumber *x = w -> domain () -> x ();
   CouNumber *x = cg -> Problem () -> X ();
 
+  bool 
+    ineqFullOrthantF = (((sign == expression::AUX_LEQ) && (yl >  0.)) || ((sign == expression::AUX_GEQ) && (yu < -0.))),
+    ineqFullOrthantB = (((sign == expression::AUX_LEQ) && (yu < -0.)) || ((sign == expression::AUX_GEQ) && (yl >  0.)));
+
   unifiedProdCuts (cg, cs,
 		   wi, x [wi], wl, wu,
 		   yi, x [yi], yl, yu,
 		   xi, x [xi], 
-		   (((sign == expression::AUX_LEQ) && (yl >  0.)) || ((sign == expression::AUX_GEQ) && (yu < -0.)))? -COIN_DBL_MAX : xl, 
-		   (((sign == expression::AUX_LEQ) && (yu < -0.)) || ((sign == expression::AUX_GEQ) && (yl >  0.)))?  COIN_DBL_MAX : xu, 
+		   ineqFullOrthantF ? -COIN_DBL_MAX : xl, 
+		   ineqFullOrthantB ?  COIN_DBL_MAX : xu, 
 		   chg, 
-		   (((sign == expression::AUX_LEQ) && (yl >  0.)) || ((sign == expression::AUX_GEQ) && (yu < -0.)))? expression::AUX_GEQ :
-		   (((sign == expression::AUX_LEQ) && (yu < -0.)) || ((sign == expression::AUX_GEQ) && (yl >  0.)))? expression::AUX_LEQ : 
-		   expression::AUX_EQ);
+		   ineqFullOrthantF ? expression::AUX_GEQ :
+		   ineqFullOrthantB ? expression::AUX_LEQ : 
+ 	 	                      expression::AUX_EQ);
 }

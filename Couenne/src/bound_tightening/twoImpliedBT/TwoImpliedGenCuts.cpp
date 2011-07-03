@@ -402,7 +402,9 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
   double
     *clb = CoinCopyOfArray (problem_ -> Lb (), n),
-    *cub = CoinCopyOfArray (problem_ -> Ub (), n);
+    *cub = CoinCopyOfArray (problem_ -> Ub (), n),
+    *oldLB = CoinCopyOfArray (problem_ -> Lb (), n),
+    *oldUB = CoinCopyOfArray (problem_ -> Ub (), n);
 
   const int
     *rInd = rowA -> getIndices      (),
@@ -677,10 +679,6 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
   if (result >= 0 && ntightened) {
 
-    const double 
-      *oldLB = si.getColLower (),
-      *oldUB = si.getColUpper ();
-
     // check old and new bounds
 
     int 
@@ -699,11 +697,11 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
 	if (problem_ -> bestSol () &&
 	    problem_ -> bestSol () [i] > oldLB [i] &&
-	    problem_ -> bestSol () [i] < clb   [i]) {
+	    problem_ -> bestSol () [i] < clb   [i] - 1e-12) {
 
 	  jnlst_ -> Printf (J_ERROR, J_COUENNE, 
-			    "Warning, twoImplBounds new LB cuts optimal solution: LB x_%d = %g --> %g, opt %g\n",
-			    i, oldLB [i], clb [i], problem_ -> bestSol () [i]);
+			    "Warning, twoImplBounds new LB cuts optimal solution: LB x_%d = %g --> %g, opt %g (diff: %g)\n",
+			    i, oldLB [i], clb [i], problem_ -> bestSol () [i], clb [i] - problem_ -> bestSol () [i]);
 
 	}
 
@@ -716,11 +714,11 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
 	if (problem_ -> bestSol () &&
 	    problem_ -> bestSol () [i] < oldUB [i] &&
-	    problem_ -> bestSol () [i] > cub   [i]) {
+	    problem_ -> bestSol () [i] > cub   [i] + 1e-12) {
 
 	  jnlst_ -> Printf (J_ERROR, J_COUENNE, 
-			    "Warning, twoImplBounds new UB cuts optimal solution: UB x_%d = %g --> %g, opt %g\n",
-			    i, oldUB [i], cub [i], problem_ -> bestSol () [i]);
+			    "Warning, twoImplBounds new UB cuts optimal solution: UB x_%d = %g --> %g, opt %g (diff: %g)\n",
+			    i, oldUB [i], cub [i], problem_ -> bestSol () [i], problem_ -> bestSol () [i] - cub [i]);
 
 	}
 
@@ -757,6 +755,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 
   delete [] clb;
   delete [] cub;
+  delete [] oldLB;
+  delete [] oldUB;
   delete [] sa1;
   delete [] sa2; 
   delete [] chg_bds;

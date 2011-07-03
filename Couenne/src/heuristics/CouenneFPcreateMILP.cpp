@@ -18,6 +18,8 @@
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 
+#define COUENNE_EIG_RATIO .1 // how much smaller than the largest eigenvalue should the minimum be set at?
+
 using namespace Couenne;
 
 /// computes square root of a CouenneSparseMatrix
@@ -232,11 +234,10 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   A [objInd * (n+1)] = maxElem * GRADIENT_WEIGHT * n;
 
   // call Lapack/Blas routines
-
   double *eigenval = (double *) malloc (n   * sizeof (double));
-
   int status;
 
+  // compute eigenvalues and eigenvectors
   Ipopt::IpLapackDsyev (true, n, A, n, eigenval, status);
 
   if      (status < 0) printf ("Couenne: warning, argument %d illegal\n",                     -status);
@@ -258,10 +259,39 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   // multiplying each column i by the i-th eigenvalue
   //
 
-  for (int j=0; j<n; ++j) {
+  // if all eigenvalues are nonpositive, set them all to one
 
-    if (eigenval [j] < 0.)
-      eigenval [j] = 0.;
+  double
+    MinEigVal = eigenval [0],
+    MaxEigVal = eigenval [n-1];
+
+  for (int j=1; j<n; j++)
+    assert (eigenval [j-1] <= eigenval [j]);
+
+  if (MaxEigVal <= 0.)
+
+    // in this case it makes sense to invert each eigenvalue
+    // (i.e. take its inverse) and change its sign, as the steepest
+    // descent should correspond to the thinnest direction
+
+    for (int j=0; j<n; j++)
+      eigenval [j] = 1. / (.1 - eigenval [j]);
+
+  else {
+
+    // set all not-too-positive ones to a fraction of the maximum
+    // ("un-thins" the level curves defined by the HL)
+
+    MinEigVal = MaxEigVal * COUENNE_EIG_RATIO;
+
+    if (eigenval [0] <= MinEigVal) 
+      for (int j=0; eigenval [j] <= MinEigVal; j++)
+	eigenval [j] = MinEigVal;
+  }
+
+  // Now obtain sqrt (A)
+
+  for (int j=0; j<n; ++j) {
 
     register double sqrtEig = sqrt (eigenval [j]);
 

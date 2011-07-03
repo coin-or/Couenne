@@ -13,9 +13,8 @@
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprVar.hpp"
-#include "BonBabInfos.hpp"
 
-//#define DEBUG
+#include "BonBabInfos.hpp"
 
 using namespace Couenne;
 
@@ -71,7 +70,9 @@ CouNumber fictBounds (char direction,
       // else                       return (direction ? AGGR_MUL : lb/AGGR_DIV);
 
     } else // [l,u]
-      return (direction ? (x + (ub-x) / AGGR_DIV) : x - (x-lb) / AGGR_DIV);
+      return (direction ? 
+	      (x + (ub-x) / AGGR_DIV) : 
+	      (x - (x-lb) / AGGR_DIV));
   }
 }
 
@@ -109,10 +110,9 @@ fake_tighten (char direction,  // 0: left, 1: right
   // outer, on a monotone function of which we can compute the value
   // (with relative expense) but not the derivative.
 
-#ifdef DEBUG
-  CouNumber curdb     = Lb (objind);// : Ub (objind);  // current dual bound
-  printf ("  x_%d.  x = %10g, lb = %g, cutoff = %g-----------------\n", index,xcur,curdb,getCutOff());
-#endif
+  jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING, 
+		    "  x_%d.  x = %10g, lb = %g, cutoff = %g-----------------\n", 
+		    index,xcur,Lb (objind),getCutOff());
 
   /*if (index == objind)
     printf ("  x_%d [%g,%g].  x = %10g, break at %g, cutoff = %g-----------------\n", 
@@ -122,17 +122,22 @@ fake_tighten (char direction,  // 0: left, 1: right
 
     if (intvar) {
 
-      if (!direction) {inner = floor (inner); outer = ceil  (outer);}
-      else            {inner = ceil  (inner); outer = floor (outer);}
+      if (!direction) {inner = floor (inner + COUENNE_EPS); outer = ceil  (outer - COUENNE_EPS);}
+      else            {inner = ceil  (inner - COUENNE_EPS); outer = floor (outer + COUENNE_EPS);}
 
       if ( (direction && (inner > outer)) ||
 	  (!direction && (inner < outer))) {
+
+	// fictitious interval is empty
 
 	// apply bound
 	if (direction) {oub[index] = Ub (index) = fb; chg_bds[index].setUpper(t_chg_bounds::CHANGED);}
 	else           {olb[index] = Lb (index) = fb; chg_bds[index].setLower(t_chg_bounds::CHANGED);}
 
 	tightened = true;
+
+	if (!(btCore (f_chg))) 
+	  return -1;
 
 	// restore initial bound
 	CoinCopyN (chg_bds, ncols, f_chg);
@@ -148,29 +153,28 @@ fake_tighten (char direction,  // 0: left, 1: right
     }
 
     if (direction) {
-      Lb (index) = intvar ? ceil (fb) : fb; 
+      Lb (index) = intvar ? ceil (fb - COUENNE_EPS)  : fb; 
       f_chg [index].setLower (t_chg_bounds::CHANGED);
     } else {
-      Ub (index) = intvar ? floor (fb) : fb; 
+      Ub (index) = intvar ? floor (fb + COUENNE_EPS) : fb; 
       f_chg [index].setUpper (t_chg_bounds::CHANGED);
     }
 
     //    (direction ? lb_ : ub_) [index] = fb; 
 
-#ifdef DEBUG
-    char c1 = direction ? '-' : '>', c2 = direction ? '<' : '-';
-    printf ("    #%3d: [%+10g -%c %+10g %c- %+10g] /\\/\\ ",iter,olb[index],c1,fb,c2, oub [index]);
-    printf (" [%10g,%10g]<%g,%g>=> ",Lb (index),Ub (index),CoinMin(inner,outer),CoinMax(inner,outer));
-#endif
+    if (jnlst_ -> ProduceOutput (Ipopt::J_ERROR, J_BOUNDTIGHTENING)) {
+      char c1 = direction ? '-' : '>', c2 = direction ? '<' : '-';
+      printf ("    #%3d: [%+10g -%c %+10g %c- %+10g] /\\/\\ ",iter,olb[index],c1,fb,c2, oub [index]);
+      printf (" [%10g,%10g]<%g,%g>=> ",Lb (index),Ub (index),CoinMin(inner,outer),CoinMax(inner,outer));
+    }
 
     bool
-      feasible  = btCore (f_chg),             // true if feasible with fake bound
-      betterbds = Lb (objind) > getCutOff (); // true if over cutoff
+      feasible  = btCore (f_chg),                           // true if feasible with fake bound
+      betterbds = Lb (objind) > getCutOff () + COUENNE_EPS; // true if over cutoff
 
-#ifdef DEBUG
-    printf(" [%10g,%10g] lb = %g {fea=%d,btr=%d} ",
-	   Lb (index), Ub (index), Lb (objind),feasible,betterbds);
-#endif
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING,
+		      " [%10g,%10g] lb = %g {fea=%d,btr=%d} ",
+		      Lb (index), Ub (index), Lb (objind),feasible,betterbds);
 
     if (feasible && !betterbds) {
 
@@ -183,6 +187,13 @@ fake_tighten (char direction,  // 0: left, 1: right
       CoinCopyN (oub, ncols, Ub ());
 
     } else {
+
+      // Here, !feasible || betterbds
+      //
+      // If !feasible OR
+      //    (betterbds and the new lb is above the cutoff)
+      //
+      // then there is a tightening
 
       // case 2: tightening valid, apply and move outer in
 
@@ -227,12 +238,13 @@ fake_tighten (char direction,  // 0: left, 1: right
       // apply bound
       if (direction) {
 
-	oub [index] = Ub (index) = intvar ? floor (fb) : fb; 
+	oub [index] = Ub (index) = intvar ? floor (fb + COUENNE_EPS) : fb; 
 	chg_bds [index]. setUpper (t_chg_bounds::CHANGED);
-      }
-      else {
-	olb [index] = Lb (index) = intvar ? ceil (fb) : fb; 
-	chg_bds [index].setLower (t_chg_bounds::CHANGED);
+
+      } else {
+
+	olb [index] = Lb (index) = intvar ? ceil (fb - COUENNE_EPS) : fb; 
+	chg_bds [index]. setLower (t_chg_bounds::CHANGED);
       }
 
       outer = fb; // we have at least a tightened bound, save it 
@@ -248,10 +260,17 @@ fake_tighten (char direction,  // 0: left, 1: right
       //#if BR_TEST_LOG < 0 // for fair testing
       // check tightened problem for feasibility
       if (!(btCore (chg_bds))) {
-#ifdef DEBUG
-	printf ("\n    pruned by aggressive BT\n");
-#endif
+
+	jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING, 
+			  "\n    pruned by aggressive BT\n");
 	return -1;
+
+      } else {
+
+	// bounds further tightened should be saved
+	
+	CoinCopyN (Lb (), ncols, olb);
+	CoinCopyN (Ub (), ncols, oub);
       }
       //#endif
     }
@@ -261,18 +280,33 @@ fake_tighten (char direction,  // 0: left, 1: right
 
     //fb = fictBounds (direction, fb, CoinMin (inner, outer), CoinMax (inner, outer));
 
-    CouNumber diff = fabs (inner-outer);
+    // inner and outer might have to change. Update 
 
-    if (diff == 0.) break;
+    CouNumber 
+      lb = Lb (index),
+      ub = Ub (index);
 
-    if (diff > 1) {
+    if ((!direction && ((inner > ub) || (outer < lb))) ||
+	( direction && ((inner < lb) || (outer > ub)))) {
+
+      // keep it simple
+
+      inner = direction ? lb : ub;
+      outer = direction ? ub : lb;
+    }
+
+    CouNumber diff = fabs (inner - outer);
+
+    if (diff <= COUENNE_EPS) break;
+
+    if (diff > 1.) {
 
       CouNumber L = log (diff) / log (10.);
 
       if (direction) fb = inner + exp (log (10.) * L/2);
       else           fb = inner - exp (log (10.) * L/2);
 
-    } else fb = (inner+outer)/2;
+    } else fb = (inner + outer)/2;
 
     //    if () fb = (          inner + (phi-1) * outer) / phi;
     //    else  fb = ((phi-1) * inner +           outer) / phi;
@@ -282,9 +316,7 @@ fake_tighten (char direction,  // 0: left, 1: right
     //	     direction ? lb [index] : outer,
     //	     direction ? outer      : ub [index]);
 
-#ifdef DEBUG
-    printf ("\n");
-#endif
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING, "\n");
   }
 
   Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING, "\n");

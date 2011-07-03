@@ -32,7 +32,7 @@ static bool obbt_updateBound (OsiSolverInterface *csi, /// interface to use as a
   //csi -> deleteScaleFactors ();
   csi -> setDblParam (OsiDualObjectiveLimit, COIN_DBL_MAX); 
   csi -> setDblParam (OsiPrimalObjectiveLimit, (sense==1) ? bound : -bound);
-  csi -> setObjSense (1); // always minimize, just change the sign of the variable
+  //csi -> setObjSense (1); // always minimize, just change the sign of the variable // done in caller
 
   ////////////////////////////////////////////////////////////////////////
 
@@ -147,18 +147,21 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 	CouNumber lb, ub;
 	var -> Image () -> getBounds (lb, ub);
 
+	if (lb < Lb (index)) lb = Lb (index);
+	if (ub > Ub (index)) ub = Ub (index);
+
 	if (var -> isInteger ()) {
 	  lb = ceil  (lb - COUENNE_EPS);
 	  ub = floor (ub + COUENNE_EPS);
 	}
 
-	if (csi -> getColLower () [index] < lb - COUENNE_EPS) {
+	if (lb > csi -> getColLower () [index] + COUENNE_EPS) {
 	  csi -> setColLower (index, lb); 
 	  Lb (index) = lb;
 	  chg_bds      [index].setLowerBits(t_chg_bounds::CHANGED | t_chg_bounds::EXACT);
 	} else chg_bds [index].setLowerBits(t_chg_bounds::EXACT);
 
-	if (csi -> getColUpper () [index] > ub + COUENNE_EPS) {
+	if (ub < csi -> getColUpper () [index] - COUENNE_EPS) {
 	  csi -> setColUpper (index, ub); 
 	  Ub (index) = ub;
 	  chg_bds      [index].setUpperBits(t_chg_bounds::CHANGED | t_chg_bounds::EXACT);
@@ -256,6 +259,9 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 			    index, Ub (index), knownOptimum [index], bound);
 	}
       }
+
+      if (sense == 1) {if (bound > Lb (index)) Lb (index) = bound;}
+      else            {if (bound < Ub (index)) Ub (index) = bound;}
 
       // more conservative, only change (and set CHANGED) if improve
 

@@ -227,8 +227,8 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
   assert (objind >= 0);
 
   CouNumber
-    UB = getCutOff (), //babInfo -> babPtr () -> model (). getObjValue(), // todo: get cutoff
-    LB = Lb (objind);  //babInfo -> babPtr () -> model (). getBestPossibleObjValue (); // todo:  w_0^l
+    UB = getCutOff (), //babInfo -> babPtr () -> model (). getObjValue(),
+    LB = Lb (objind);  //babInfo -> babPtr () -> model (). getBestPossibleObjValue ();
 
   //////////////////////// Reduced cost bound tightening //////////////////////
 
@@ -243,8 +243,13 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
 
     if (jnlst_ -> ProduceOutput (Ipopt::J_MATRIX, J_BOUNDTIGHTENING)) {
       printf ("REDUCED COST BT (LB=%g, UB=%g):\n", LB, UB);
-      for (int i=0; i < nVars (); i++) 
-	printf ("%3d %10e [%10e %10e] rc %10e\n", i, X [i], L [i], U [i], RC [i]);
+      for (int i=0, j=0; i < nVars (); i++) {
+	if (Var (i) -> Multiplicity () <= 0)
+	  continue;
+	printf ("%3d %7e [%7e %7e] c %7e ", i, X [i], L [i], U [i], RC [i]);
+	if (!(++j % 3))
+	  printf ("\n");
+      }
       printf ("-----------\n");
     }
 
@@ -260,38 +265,62 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
 	  u  = U  [i],
 	  rc = RC [i];
 
-	if ((rc < COUENNE_EPS) || (l==u)) // no need to check
+#define CLOSE_TO_BOUNDS 1.e-15
+
+	if ((fabs (rc)  < CLOSE_TO_BOUNDS) || 
+	    (fabs (l-u) < CLOSE_TO_BOUNDS)) // no need to check
 	  continue;
 
 	bool isInt = Var (i) -> isInteger ();
 
-	if (x == l) {
+	if ((rc >= 0.) && 
+	    (fabs (x-l) <= CLOSE_TO_BOUNDS)) {
+
 	  if (LB + (u-l)*rc > UB) {
-	    //printf ("ub [%d]: %g ", i, Ub (i));
-	    Ub (i) = l + (UB-LB) / rc;
-	    if (isInt) 
-	      Ub (i) = floor (Ub (i) + COUENNE_EPS);
-	    //printf ("--> %g\n", Ub (i));
-	    nchanges++;
-	    chg_bds [i].setLower(t_chg_bounds::CHANGED);
+
+	    CouNumber newUb = l + (UB-LB) / rc; // which is surely < u
+	    newUb = !isInt ? newUb : floor (newUb + COUENNE_EPS);
+
+	    if (newUb < Ub (i)) {
+
+	      Ub (i) = newUb;
+
+	      nchanges++;
+	      chg_bds [i].setLower (t_chg_bounds::CHANGED);
+	    }
 	  }
-	} else if (x == u) {
-	  if (LB + (u-l) * rc > UB) {
-	    //printf ("lb [%d]: %g ", i, Lb (i));
-	    Lb (i) = u - (UB-LB) / rc;
-	    if (isInt) 
-	      Lb (i) = ceil (Lb (i) - COUENNE_EPS);
-	    //printf ("--> %g\n", Lb (i));
-	    nchanges++;
-	    chg_bds [i].setUpper(t_chg_bounds::CHANGED);
+
+	} else if ((rc <= 0.) && 
+		   (fabs (x-u) <= CLOSE_TO_BOUNDS)) {
+
+	  if (LB - (u-l) * rc > UB) {
+
+	    CouNumber newLb = u + (UB-LB) / rc; // recall rc < 0 here
+
+	    newLb = !isInt ? newLb : ceil (newLb - COUENNE_EPS);
+
+	    if (newLb > Lb (i)) {
+
+	      Lb (i) = newLb;
+
+	      nchanges++;
+	      chg_bds [i].setUpper (t_chg_bounds::CHANGED);
+	    }
 	  }
 	}
       }
 
-    /*printf ("AFTER reduced cost bt:\n");
-      for (int i=0; i < nVars (); i++) 
-	printf ("%3d [%10e %10e]\n", i, Lb (i), Ub (i));
-	printf ("-----------\n");*/
+    if (jnlst_ -> ProduceOutput (Ipopt::J_MATRIX, J_BOUNDTIGHTENING)) {
+      printf ("AFTER reduced cost bt:\n");
+      for (int i=0, j=0; i < nVars (); ++i) {
+	if (Var (i) -> Multiplicity () <= 0)
+	  continue;
+	printf ("%3d [%7e %7e] ", i, Lb (i), Ub (i));
+	if (!(++j % 4))
+	  printf ("\n");
+      }
+      printf ("-----------\n");
+    }
   }
 
   return nchanges;

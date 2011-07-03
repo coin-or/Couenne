@@ -34,19 +34,20 @@ namespace Bonmin {
 #define THRES_ABT_IMPROVED     0  // only continue ABT if at least these bounds have improved
 #define THRES_ABT_ORIG       100  // only do ABT on auxiliaries if they are less originals than this 
 
-static double distanceToBound (int n, const double* xOrig,
-			       const double* lower, const double* upper) {
+static double distanceToBound (register int n, 
+			       register const double* xOrig,
+			       register const double* lower, 
+			       register const double* upper,
+			       register double cutoff_distance) { // stop if distance is above this
 
-  double Xdist = 0.;
+  register double Xdist = 0.;
 
-  for (int i=0, j=n; j--; i++) {
+  for (int i=0; n--; ++i, ++upper) {
 
-    CouNumber 
-      diff, 
-      xO = xOrig [i];
+    register CouNumber diff = *lower++ - *xOrig++;
 
-    if      ((diff = lower [i] - xO) > 0) Xdist += diff;
-    else if ((diff = xO - upper [i]) > 0) Xdist += diff;
+    if      ( diff                    > 0) {if ((Xdist += diff) > cutoff_distance) break;}
+    else if ((diff = *xOrig - *upper) > 0) {if ((Xdist += diff) > cutoff_distance) break;}
   }
 
   return Xdist;
@@ -63,8 +64,6 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 				   const CglTreeInfo &info,
 				   Bonmin::BabInfo * babInfo) const {
 
-  Jnlst () -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "Probing\n");
-
   if (info.level <= 0 && !(info.inTree))  {
     jnlst_ -> Printf (J_ERROR, J_COUENNE, "Probing: ");
     fflush (stdout);
@@ -77,12 +76,8 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
   bool retval = false;
 
   CouNumber
-    *olb = new CouNumber [ncols],
-    *oub = new CouNumber [ncols];
-
-  // save current bounds
-  CoinCopyN (Lb (), ncols, olb);
-  CoinCopyN (Ub (), ncols, oub);
+    *olb = CoinCopyOfArray (Lb (), ncols),
+    *oub = CoinCopyOfArray (Ub (), ncols);
 
   // Find the solution that is closest to the current bounds
   // TODO: Also check obj value
@@ -96,9 +91,12 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
     for (std::list<SmartPtr<const CouenneInfo::NlpSolution> >::const_iterator 
 	   i = solList.begin();
-	 i != solList.end(); i++) {
-      assert(nOrigVars_ == (*i)->nVars());
-      const double thisDist = distanceToBound(nOrigVars_, (*i)->solution(), olb, oub);
+	 i != solList.end(); ++i) {
+
+      assert (nOrigVars_ == (*i)->nVars());
+
+      const double thisDist = distanceToBound (nOrigVars_, (*i)->solution(), olb, oub, dist);
+
       if (thisDist < dist) {
 	closestSol = *i;
 	dist = thisDist;
@@ -149,6 +147,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	nlp -> options () -> SetNumericValue ("max_cpu_time", CoinMax (0., getMaxCpuTime () - CoinCpuTime ()));
 	nlp -> initialSolve ();
       }
+
       catch (Bonmin::TNLPSolver::UnsolvedError *E) {}
     
       delete [] Y;
@@ -235,7 +234,8 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
 	int index = evalOrder (i);
 
-	if (Var (index) -> Multiplicity () <= 0) 
+	if ((Var (index) -> Multiplicity () <= 0) ||
+	    (fabs (Lb (index) - Ub (index)) < COUENNE_EPS)) 
 	  continue;
 
 	// AW: We only want to do the loop that temporarily changes

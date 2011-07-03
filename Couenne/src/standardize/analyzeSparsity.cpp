@@ -61,7 +61,7 @@ void CouenneProblem::analyzeSparsity (CouNumber c0,
     printf ("qmap has %d element, occur has %d, md*s*(s+1)/2 = %g\n", 
 	    qmap.Map().size (), 
 	    occur.size (),
-	    MIN_DENSITY * occur.size () * (occur.size () + 1) / 2);
+	    MIN_DENSITY * (double) (occur.size ()) * ((double) (occur.size ()) + 1.) / 2);
   }
 
   int nterms = occur.size ();

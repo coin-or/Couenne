@@ -180,7 +180,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
     couenne.setDoubleParameter (Bonmin::BabSetupBase::MaxTime, 
 				CoinMax (1., timeLimit - time_start));
 
-    jnlst -> Printf (J_ERROR, J_COUENNE, "Starting branch-and-bound\n");
+    //jnlst -> Printf (J_ERROR, J_COUENNE, "Starting branch-and-bound\n");
 
     //////////////////////////////////
 
