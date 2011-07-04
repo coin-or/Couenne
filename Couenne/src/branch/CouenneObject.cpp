@@ -16,7 +16,6 @@
 #include "CouenneObject.hpp"
 #include "CouenneBranchingObject.hpp"
 
-const CouNumber default_alpha  = 0.2;
 const CouNumber default_clamp  = 0.2;
 const CouNumber max_pseudocost = 1000.;
 

@@ -23,6 +23,7 @@
 #define THRES_ZERO_SYMM 0.8
 
 const CouNumber closeToBounds = .05;
+const CouNumber default_alpha = .2;
 
 /// Define what kind of branching (two- or three-way) and where to
 /// start from: left, (center,) or right. The last is to help

@@ -73,8 +73,8 @@ void CouenneProblem::initAuxs () const {
     if ((Ub (index) = CoinMin (Ub (index), ub)) >=  COUENNE_INFINITY) Ub (index) =  COIN_DBL_MAX;
   }
 
-  // only one loop is sufficient here, since auxiliary variable are
-  // defined in such a way that w_i does NOT depend on w_j if i<j.
+  // only one loop is sufficient here, since auxiliary variables are
+  // scanned according to their dependence.
 
   Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, "InitAux -- assigning bounds\n");
 
@@ -116,7 +116,7 @@ void CouenneProblem::initAuxs () const {
       Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
 			  " --> [%10g,%10g]\n", Lb (ord), Ub (ord));
 
-      bool integer = variables_ [ord] -> isInteger ();
+      bool integer = variables_ [ord] -> isDefinedInteger ();
 
       if (integer) {
 	Lb (ord) = ceil  (Lb (ord) - COUENNE_EPS);

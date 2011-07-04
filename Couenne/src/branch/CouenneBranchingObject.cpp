@@ -137,6 +137,73 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
     u      = solver -> getColUpper () [index],
     brpt   = value_;
 
+  // merged
+  //////////////////////////////////////////////////////////////////////
+
+  if      (brpt < l) brpt = l;
+  else if (brpt > u) brpt = u;
+
+  // anticipate test on bounds w.r.t. test on integrality.
+
+  if   (l <  -large_bound) {
+    if (u <=  large_bound) // ]-inf,u]
+      brpt = ((u < -COUENNE_EPS) ? CoinMax (CoinMax (brpt, .5 * (l+u)), AGGR_MUL * (-1. + brpt)) : 
+	      (u >  COUENNE_EPS) ? 0.                                                            : -AGGR_MUL);
+    else brpt = 0.;
+  } else
+    if (u >  large_bound) // [l,+inf[
+      brpt = ((l >  COUENNE_EPS) ? CoinMin (CoinMin (brpt, .5 * (l+u)), AGGR_MUL * ( 1. + brpt)) : 
+	      (l < -COUENNE_EPS) ? 0.                                                            :  AGGR_MUL);
+    else {                // [l,u] (finite)
+
+      CouNumber point = default_alpha * brpt + (1. - default_alpha) * (l + u) / 2.;
+
+      if      ((point-l) / (u-l) < closeToBounds) brpt = l + (u-l) * closeToBounds;
+      else if ((u-point) / (u-l) < closeToBounds) brpt = u + (l-u) * closeToBounds;
+    }
+
+  // If brpt is integer and the variable is constrained to be integer,
+  // there will be a valid but weak branching. Modify brpt depending
+  // on way and on the bounds on the variable, so that the usual
+  // integer branching will be performed.
+
+  if (integer && 
+      ::isInteger (brpt)) {
+
+    // Look at all possible cases (l,u are bounds, b is the branching
+    // point. l,u,b all integer):
+    //
+    // 1) l <  b <  u: first branch on b +/- 1 depending on branch
+    // direction, right branch on b;
+    //
+    // 2) l <= b <  u: LEFT branch on b, RIGHT branch on b+1
+    // 
+    // 3) l <  b <= u: LEFT branch on b-1, RIGHT branch on b
+
+    // assert ((brpt - l > .5) || 
+    // 	    (u - brpt > .5));
+
+    if ((brpt - l > .5) &&
+	(u - brpt > .5)) {// brpt is integer interior point of [l,u]
+
+      if (!branchIndex_) { // if this is the first branch operation
+
+	if (!way) brpt -= (1. - COUENNE_EPS);
+	else      brpt += (1. - COUENNE_EPS);
+      }
+    } 
+    else if (u - brpt > .5) {if  (way) brpt += (1. - COUENNE_EPS);} 
+    else if (brpt - l > .5) {if (!way) brpt -= (1. - COUENNE_EPS);}
+    else { // u == l == brpt; must still branch to fix variables in object
+           // but one branch is infeasible
+      if(way) {
+        solver->setColLower(index, u+1); // infeasible
+      }
+    }
+  }
+
+  //////////////////////////////////////////////////////////////////////
+
   if (way) {
     if      (value_ < l)             
       jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "Nonsense up-br: [ %.8f ,(%.8f)] -> %.8f\n",l,u,value_);
@@ -149,8 +216,8 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
       jnlst_->Printf(J_STRONGWARNING, J_BRANCHING, "## WEAK  dn-br: [(%.8f), %.8f ] -> %.8f\n",l,u,value_);
   }
 
-  if ((brpt < l) || (brpt > u))
-    brpt = 0.5 * (l+u);
+  //if ((brpt < l) || (brpt > u))
+  //brpt = 0.5 * (l+u);
 
   jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "Branching: x%-3d %c= %g\n", 
 		    //printf ("Branching: x%-3d %c= %g\n", 
