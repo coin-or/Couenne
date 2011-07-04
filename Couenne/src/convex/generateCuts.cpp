@@ -319,8 +319,6 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // use new optimum as lower bound for variable associated w/objective
     int indobj = problem_ -> Obj (0) -> Body () -> Index ();
 
-    assert (indobj >= 0);
-
     // transmit solution from OsiSolverInterface to problem
     problem_ -> domain () -> push (&si, &cs);
 

@@ -106,7 +106,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       C1 [ipos++] = 1.;
 
       // add entry to integer variable
-      if (arglist_ [i] -> isInteger ())
+      if (arglist_ [i] -> isDefinedInteger ())
 	intSet.insert (index);
     }
   }
@@ -126,7 +126,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       if      (coe >  0.) {I1 [ipos] = ind; C1 [ipos++] = coe;}
       else if (coe < -0.) {I2 [ineg] = ind; C2 [ineg++] = coe;}
 
-      if (el -> first -> isInteger ())
+      if (el -> first -> isDefinedInteger ())
 	intSet.insert (ind);
     }
   }

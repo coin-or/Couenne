@@ -124,14 +124,13 @@ void CouenneProblem::initAuxs () const {
 			  ord, l, u, Lb (ord), Ub (ord));
 
       // set bounds 
-      if ((var -> sign () != expression::AUX_LEQ) && 
-	  ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY)) Lb (ord) = -COIN_DBL_MAX;
-      if ((var -> sign () != expression::AUX_GEQ) &&
-	  ((Ub (ord) = CoinMin (Ub (ord), u)) >=  COUENNE_INFINITY)) Ub (ord) =  COIN_DBL_MAX;
+      if ((var -> sign () != expression::AUX_LEQ) && ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY)) Lb (ord) = -COIN_DBL_MAX;
+      if ((var -> sign () != expression::AUX_GEQ) && ((Ub (ord) = CoinMin (Ub (ord), u)) >=  COUENNE_INFINITY)) Ub (ord) =  COIN_DBL_MAX;
+
       //if ((lb_ [ord] = (*(aux -> Lb ())) ()) <= -COUENNE_INFINITY) lb_ [ord] = -DBL_MAX;
       //if ((ub_ [ord] = (*(aux -> Ub ())) ()) >=  COUENNE_INFINITY) ub_ [ord] =  DBL_MAX;
 
-      bool integer = var -> isInteger ();
+      bool integer = var -> isDefinedInteger ();
 
       if (integer) {
 	if (var -> sign () != expression::AUX_GEQ) Lb (ord) = ceil  (Lb (ord) - COUENNE_EPS);
