@@ -102,7 +102,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       C1 [ipos++] = 1.;
 
       // add entry to integer variable
-      if (arglist_ [i] -> isInteger ())
+      if (arglist_ [i] -> isDefinedInteger ())
 	intSet.insert (index);
     }
   }
@@ -122,7 +122,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       if      (coe >  0.) {I1 [ipos] = ind; C1 [ipos++] = coe;}
       else if (coe < -0.) {I2 [ineg] = ind; C2 [ineg++] = coe;}
 
-      if (el -> first -> isInteger ())
+      if (el -> first -> isDefinedInteger ())
 	intSet.insert (ind);
     }
   }
@@ -142,13 +142,13 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       infUp1 = -1, infUp2 = -1;
 
   // upper bound of the sum, considering lower/upper bounds of the
-  // variables but negliging the infinite ones:
+  // variables but neglecting the infinite ones:
   //
-  // lower = $a0 + \sum_{i in I_1: a_i <  \infinity} a_i l_i
-  //             + \sum_{i in I_2: a_i > -\infinity} a_i u_i$
+  // lower = \f$a0 + \sum_{i in I_1: a_i <  \infinity} a_i l_i
+  //               + \sum_{i in I_2: a_i > -\infinity} a_i u_i\f$
   //
-  // upper = $a0 + \sum_{i in I_1: a_i <  \infinity} a_i u_i
-  //             + \sum_{i in I_2: a_i > -\infinity} a_i l_i$
+  // upper = \f$a0 + \sum_{i in I_1: a_i <  \infinity} a_i u_i
+  //               + \sum_{i in I_2: a_i > -\infinity} a_i l_i\f$
 
   CouNumber
 
