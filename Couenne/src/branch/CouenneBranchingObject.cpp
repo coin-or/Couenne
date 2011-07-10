@@ -145,6 +145,7 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 
       if      ((point-l) / (u-l) < closeToBounds) brpt = l + (u-l) * closeToBounds;
       else if ((u-point) / (u-l) < closeToBounds) brpt = u + (l-u) * closeToBounds;
+      else                                        brpt = point;
     }
 
   // If brpt is integer and the variable is constrained to be integer,

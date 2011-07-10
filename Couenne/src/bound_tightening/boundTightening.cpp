@@ -16,7 +16,6 @@
 #include "BonCbc.hpp"
 
 // max # bound tightening iterations
-//#define MAX_BT_ITER 3
 #define THRES_IMPROVED 0
 
 using namespace Couenne;
