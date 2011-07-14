@@ -13,6 +13,8 @@
 #include "CouenneConfig.h"
 #include "CoinFinite.hpp"
 
+//#define FM_MOD
+
 using namespace Couenne;
 
 
@@ -81,73 +83,141 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     bool resxL,  resxU,  resyL, resyU = 
          resxL = resxU = resyL = false;
 
-    if (wl >= 0.) {
+#ifdef FM_MOD
+    bool xlIsZero = (fabs(*xl) < COUENNE_EPS);
+    bool xuIsZero = (fabs(*xu) < COUENNE_EPS);
+    bool ylIsZero = (fabs(*yl) < COUENNE_EPS);
+    bool yuIsZero = (fabs(*yu) < COUENNE_EPS);
+    bool wlIsZero = (fabs(wl)  < COUENNE_EPS);
+    bool wuIsZero = (fabs(wu)  < COUENNE_EPS);
 
-      // point B in central infeasible area
+    if(wlIsZero) {
+      if ((!xuIsZero) && (!yuIsZero) && (*xu * *yu < wl)) {
+	  if (!ylIsZero) {
+	    resxU = (*xu * *yl < wl) && updateBound (+1, xu, wl / *yl);
 
-      if (*xu * *yu < wl) {
-	resxU = (*xu * *yl < wl) && updateBound (+1, xu, wl / *yl);
-	resyU = (*xl * *yu < wl) && updateBound (+1, yu, wl / *xl);
+	  } else // this else added as the two ifs are mutually
+		 // exclusive: if xu != 0 != yu and wl = 0, xu * yu <
+		 // 0 means either upper bound is negative, so at
+		 // least one of the lower bounds must be negative
+		 // too. This holds for the next three if/else's,
+		 // where the elses are added for efficiency
+
+	  if (!xlIsZero) {
+	    resyU = (*xl * *yu < wl) && updateBound (+1, yu, wl / *xl);
+	  }
+	}
       }
 
       // point C in central infeasible area
 
-      if (*xl * *yl < wl) {
-	resxL = (*xl * *yu < wl) && updateBound (-1, xl, wl / *yu);
-	resyL = (*xu * *yl < wl) && updateBound (-1, yl, wl / *xu);
+      if ((!xlIsZero) && (!ylIsZero) && (*xl * *yl < wl)) {
+	if (!yuIsZero) {
+	  resxL = (*xl * *yu < wl) && updateBound (-1, xl, wl / *yu);
+	} else
+	if (!xuIsZero) {
+	  resyL = (*xu * *yl < wl) && updateBound (-1, yl, wl / *xu);
+	}
       }
-    } else if (wl > -COUENNE_INFINITY) {
+    }
+    else // wl is not zero
 
-      // the infeasible set is a hyperbola with two branches
-
-      // upper left
-      resxL = (*xl * *yl < wl) && (*yl > 0.) && updateBound (-1, xl, wl / *yl); // point C
-      resyU = (*xu * *yu < wl) && (*yu > 0.) && updateBound (+1, yu, wl / *xu); // point B
-
-      // lower right
-      resyL = (*xl * *yl < wl) && (*yl < 0.) && updateBound (-1, yl, wl / *xl); // point C
-      resxU = (*xu * *yu < wl) && (*yu < 0.) && updateBound (+1, xu, wl / *yu); // point B
+#endif
+    {
+      if (wl >= 0.) {
+	// point B in central infeasible area
+	if (*xu * *yu < wl) {
+	  resxU = (*xu * *yl < wl) && updateBound (+1, xu, wl / *yl);
+	  resyU = (*xl * *yu < wl) && updateBound (+1, yu, wl / *xl);
+	}
+	
+	// point C in central infeasible area
+	
+	if (*xl * *yl < wl) {
+	  resxL = (*xl * *yu < wl) && updateBound (-1, xl, wl / *yu);
+	  resyL = (*xu * *yl < wl) && updateBound (-1, yl, wl / *xu);
+	}
+	
+      } else if (wl > -COUENNE_INFINITY) {
+	
+	// the infeasible set is a hyperbola with two branches
+	
+	// upper left
+	resxL = (*xl * *yl < wl) && (*yl > 0.) && updateBound (-1, xl, wl / *yl); // point C
+	resyU = (*xu * *yu < wl) && (*yu > 0.) && updateBound (+1, yu, wl / *xu); // point B
+	
+	// lower right
+	resyL = (*xl * *yl < wl) && (*yl < 0.) && updateBound (-1, yl, wl / *xl); // point C
+	resxU = (*xu * *yu < wl) && (*yu < 0.) && updateBound (+1, xu, wl / *yu); // point B
+      }
     }
 
     bool
       xInt = arglist_ [0] -> isInteger (),
       yInt = arglist_ [1] -> isInteger ();
-
-    if (resxL) {if (xInt) *xl = ceil  (*xl - COUENNE_EPS);}
-    if (resxU) {if (xInt) *xu = floor (*xu + COUENNE_EPS);}
-    if (resyL) {if (yInt) *yl = ceil  (*yl - COUENNE_EPS);}
-    if (resyU) {if (yInt) *yu = floor (*yu + COUENNE_EPS);}
-
+    
+    if (resxL && xInt) *xl = ceil  (*xl - COUENNE_EPS);}
+    if (resxU && xInt) *xu = floor (*xu + COUENNE_EPS);}
+    if (resyL && yInt) *yl = ceil  (*yl - COUENNE_EPS);}
+    if (resyU && yInt) *yu = floor (*yu + COUENNE_EPS);}
+    
     // w's upper bound ///////////////////////////////////////////
+#ifdef FM_MOD
+    
+    if(wuIsZero) {
 
-    if (wu >= 0.) {
-
-      if (wu < COUENNE_INFINITY) {
-	// the infeasible set is a hyperbola with two branches
-
-	// upper right
-	resxU = ((*xu * *yl > wu) && (*yl > 0.) && updateBound (+1, xu, wu / *yl)) || resxU; // point D
-	resyU = ((*xl * *yu > wu) && (*yu > 0.) && updateBound (+1, yu, wu / *xl)) || resyU; // point A
-
-	// lower left
-	resxL = ((*xl * *yu > wu) && (*yu < 0.) && updateBound (-1, xl, wu / *yu)) || resxL; // point A
-	resyL = ((*xu * *yl > wu) && (*yl < 0.) && updateBound (-1, yl, wu / *xu)) || resyL; // point D
+      if((!xuIsZero) && (!ylIsZero) && (*xu * *yl > wu)) {
+	if(!yuIsZero) {
+	  resxU = (*xu * *yu > wu) && updateBound (+1, xu, wu / *yu) || resxU;
+	} else
+	if(!xlIsZero) {
+	  resyL = (*xl * *yl > wu) && updateBound (-1, yl, wu / *xl) || resyL;
+	}
       }
 
-    } else {
-
-      // point D in central infeasible area
-
-      if (*xu * *yl > wu) {
-	resxU = ((*xu * *yu > wu) && updateBound (+1, xu, wu / *yu)) || resxU;
-	resyL = ((*xl * *yl > wu) && updateBound (-1, yl, wu / *xl)) || resyL;
+      if((!xlIsZero) && (!yuIsZero) && (*xl * *yu > wu)) {
+	if(!ylIsZero) {
+	  resxL = (*xl * *yl > wu) && updateBound (-1, xl, wu / *yl) || resxL;
+	} else
+	if(!xuIsZero) {
+	  resyU = (*xu * *yu > wu) && updateBound (+1, yu, wu / *xu) || resyU;
+	}
       }
+    }
 
-      // point A in central infeasible area
+    else // wu is not zero 
 
-      if (*xl * *yu > wu) {
-	resxL = ((*xl * *yl > wu) && updateBound (-1, xl, wu / *yl)) || resxL;
-	resyU = ((*xu * *yu > wu) && updateBound (+1, yu, wu / *xu)) || resyU;
+#endif /* FM_MOD */
+
+    {
+      if (wu >= 0.) {
+	if (wu < COUENNE_INFINITY) {
+	  // the infeasible set is a hyperbola with two branches
+	  
+	  // upper right
+	  resxU = ((*xu * *yl > wu) && (*yl > 0.) && updateBound (+1, xu, wu / *yl)) || resxU; // point D
+	  resyU = ((*xl * *yu > wu) && (*yu > 0.) && updateBound (+1, yu, wu / *xl)) || resyU; // point A
+	  
+	  // lower left
+	  resxL = ((*xl * *yu > wu) && (*yu < 0.) && updateBound (-1, xl, wu / *yu)) || resxL; // point A
+	  resyL = ((*xu * *yl > wu) && (*yl < 0.) && updateBound (-1, yl, wu / *xu)) || resyL; // point D
+	}
+	
+      } else {
+	
+	// point D in central infeasible area
+	
+	if (*xu * *yl > wu) {
+	  resxU = ((*xu * *yu > wu) && updateBound (+1, xu, wu / *yu)) || resxU;
+	  resyL = ((*xl * *yl > wu) && updateBound (-1, yl, wu / *xl)) || resyL;
+	}
+	
+	// point A in central infeasible area
+	
+	if (*xl * *yu > wu) {
+	  resxL = ((*xl * *yl > wu) && updateBound (-1, xl, wu / *yl)) || resxL;
+	  resyU = ((*xu * *yu > wu) && updateBound (+1, yu, wu / *xu)) || resyU;
+	}
       }
     }
 
