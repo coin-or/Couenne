@@ -93,20 +93,19 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
     if(wlIsZero) {
       if ((!xuIsZero) && (!yuIsZero) && (*xu * *yu < wl)) {
-	  if (!ylIsZero) {
-	    resxU = (*xu * *yl < wl) && updateBound (+1, xu, wl / *yl);
+	if (!ylIsZero) {
+	  resxU = (*xu * *yl < wl) && updateBound (+1, xu, wl / *yl);
 
-	  } else // this else added as the two ifs are mutually
-		 // exclusive: if xu != 0 != yu and wl = 0, xu * yu <
-		 // 0 means either upper bound is negative, so at
-		 // least one of the lower bounds must be negative
-		 // too. This holds for the next three if/else's,
-		 // where the elses are added for efficiency
+	} else // this else added as the two ifs are mutually
+	  // exclusive: if xu != 0 != yu and wl = 0, xu * yu <
+	  // 0 means either upper bound is negative, so at
+	  // least one of the lower bounds must be negative
+	  // too. This holds for the next three if/else's,
+	  // where the elses are added for efficiency
 
 	  if (!xlIsZero) {
 	    resyU = (*xl * *yu < wl) && updateBound (+1, yu, wl / *xl);
 	  }
-	}
       }
 
       // point C in central infeasible area
@@ -156,10 +155,10 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       xInt = arglist_ [0] -> isInteger (),
       yInt = arglist_ [1] -> isInteger ();
     
-    if (resxL && xInt) *xl = ceil  (*xl - COUENNE_EPS);}
-    if (resxU && xInt) *xu = floor (*xu + COUENNE_EPS);}
-    if (resyL && yInt) *yl = ceil  (*yl - COUENNE_EPS);}
-    if (resyU && yInt) *yu = floor (*yu + COUENNE_EPS);}
+    if (resxL && xInt) *xl = ceil  (*xl - COUENNE_EPS);
+    if (resxU && xInt) *xu = floor (*xu + COUENNE_EPS);
+    if (resyL && yInt) *yl = ceil  (*yl - COUENNE_EPS);
+    if (resyU && yInt) *yu = floor (*yu + COUENNE_EPS);
     
     // w's upper bound ///////////////////////////////////////////
 #ifdef FM_MOD
