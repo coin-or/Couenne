@@ -383,7 +383,7 @@ double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) c
     ratio = (CoinMax (1., fabs (vval)) / 
 	     CoinMax (1., fabs (fval)));
 
-  //printf ("checkinf --> v=%e f=%e den=%e ret=%e ratio=%e\n", vval, fval, denom, retval, ratio);
+  //jnlst_ -> Printf (J_DETAILED, J_BRANCHING, "checkinf --> v=%e f=%e den=%e ret=%e ratio=%e\n", vval, fval, denom, retval, ratio);
 
   if ((ratio < 2)  && 
       (ratio > .5) &&
