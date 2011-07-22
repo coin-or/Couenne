@@ -41,8 +41,6 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 }
 
 
-//namespace Bonmin {
-
   /**  This is a utility function which does strong branching on
        a list of objects and stores the results in OsiHotInfo.objects.
        On entry the object sequence is stored in the OsiHotInfo object
@@ -457,4 +455,3 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
     return returnCode;
   }
-//}
