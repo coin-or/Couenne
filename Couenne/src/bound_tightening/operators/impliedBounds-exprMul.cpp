@@ -101,17 +101,11 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	if (!ylIsZero) {
 	  resxU = (*xu * *yl < wl) && updateBound (+1, xu, wl / *yl);
 	  xuIsZero = (fabs(*xu) < COUENNE_EPS ? true : false);                
-	} else // this else added as the two ifs are mutually
-	  // exclusive: if xu != 0 != yu and wl = 0, xu * yu <
-	  // 0 means either upper bound is negative, so at
-	  // least one of the lower bounds must be negative
-	  // too. This holds for the next three if/else's,
-	  // where the elses are added for efficiency
-
-	  if (!xlIsZero) {
-	    resyU = (*xl * *yu < wl) && updateBound (+1, yu, wl / *xl);
-	    yuIsZero = (fabs(*yu) < COUENNE_EPS ? true : false);
-	  }
+	} 
+	if (!xlIsZero) {
+	  resyU = (*xl * *yu < wl) && updateBound (+1, yu, wl / *xl);
+	  yuIsZero = (fabs(*yu) < COUENNE_EPS ? true : false);
+	}
       }
 
       // point C in central infeasible area
@@ -120,7 +114,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	if (!yuIsZero) {
 	  resxL = (*xl * *yu < wl) && updateBound (-1, xl, wl / *yu);
 	  xlIsZero = (fabs(*xl) < COUENNE_EPS ? true : false); 
-	} else
+	}
 	if (!xuIsZero) {
 	  resyL = (*xu * *yl < wl) && updateBound (-1, yl, wl / *xu);
 	  ylIsZero = (fabs(*yl) < COUENNE_EPS ? true : false);
@@ -226,7 +220,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	if(!yuIsZero) {
 	  resxU = (*xu * *yu > wu) && updateBound (+1, xu, wu / *yu) || resxU;
 	  xuIsZero = (fabs(*xu) < COUENNE_EPS ? true : false);
-	} else
+	}
 	if(!xlIsZero) {
 	  resyL = (*xl * *yl > wu) && updateBound (-1, yl, wu / *xl) || resyL;
 	  ylIsZero = (fabs(*yl) < COUENNE_EPS ? true : false);
@@ -237,7 +231,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	if(!ylIsZero) {
 	  resxL = (*xl * *yl > wu) && updateBound (-1, xl, wu / *yl) || resxL;
 	  xlIsZero = (fabs(*xl) < COUENNE_EPS ? true : false);
-	} else
+	}
 	if(!xuIsZero) {
 	  resyU = (*xu * *yu > wu) && updateBound (+1, yu, wu / *xu) || resyU;
 	  yuIsZero = (fabs(*yu) < COUENNE_EPS ? true : false);
