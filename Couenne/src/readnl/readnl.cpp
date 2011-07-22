@@ -208,6 +208,14 @@ int CouenneProblem::readnl (const ASL *asl) {
 
   // objective functions /////////////////////////////////////////////////////////////
 
+  if (n_obj == 0) {
+
+    // strange, no objective function. Add one equal to zero
+
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM, "Couenne: warning, no objective function found\nAdded fictitious function f(x)=0\n");     
+    addObjective (new exprConst (0.), "min");
+  }
+
   for (int i = 0; i < n_obj; i++) {
 
     ////////////////////////////////////////////////
