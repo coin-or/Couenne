@@ -128,9 +128,9 @@ fake_tighten (char direction,  // 0: left, 1: right
       if ( (direction && (inner > outer)) ||
 	  (!direction && (inner < outer))) {
 
-	// fictitious interval is empty
+	// fictitious interval is empty, hence useless to check. 
 
-	// apply bound
+	// apply new (valid, tightened) bound
 	if (direction) {oub[index] = Ub (index) = fb; chg_bds[index].setUpper(t_chg_bounds::CHANGED);}
 	else           {olb[index] = Lb (index) = fb; chg_bds[index].setLower(t_chg_bounds::CHANGED);}
 
@@ -139,10 +139,13 @@ fake_tighten (char direction,  // 0: left, 1: right
 	if (!(btCore (f_chg))) 
 	  return -1;
 
-	// restore initial bound
+	CoinCopyN (Lb (), ncols, olb);
+	CoinCopyN (Ub (), ncols, oub);
+
+	// restore initial bound. 
 	CoinCopyN (chg_bds, ncols, f_chg);
-	CoinCopyN (olb, ncols, Lb ());
-	CoinCopyN (oub, ncols, Ub ());
+	//CoinCopyN (olb, ncols, Lb ());
+	//CoinCopyN (oub, ncols, Ub ());
 
 	break;
       }
@@ -243,14 +246,14 @@ fake_tighten (char direction,  // 0: left, 1: right
 
       } else {
 
-	olb [index] = Lb (index) = intvar ? ceil (fb - COUENNE_EPS) : fb; 
+	olb [index] = Lb (index) = intvar ? ceil  (fb - COUENNE_EPS) : fb; 
 	chg_bds [index]. setLower (t_chg_bounds::CHANGED);
       }
 
       outer = fb; // we have at least a tightened bound, save it 
 
       tightened = true;
-	//}
+      //}
 
       // restore initial bound
       CoinCopyN (chg_bds, ncols, f_chg);

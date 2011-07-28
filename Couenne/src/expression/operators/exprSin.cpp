@@ -49,13 +49,13 @@ void exprSin::getBounds (CouNumber &lb, CouNumber &ub) {
   CouNumber l, u;
   argument_ -> getBounds (l, u);
 
-  if ((u - l > pi2) ||        // 1) interval spans whole cycle
+  if ((u - l >= pi2) ||       // 1) interval spans whole cycle
       (floor (l/pi2 - 0.75) < // 2) there is a pi + 2k pi between l and u
        floor (u/pi2 - 0.75))) 
     lb = -1.;
   else lb = CoinMin (sin (l), sin (u));
 
-  if ((u - l > pi2) ||        // 1) interval spans whole cycle
+  if ((u - l >= pi2) ||       // 1) interval spans whole cycle
       (floor (l/pi2 - 0.25) < // 2) there is a 3/2 pi + 2k pi between l and u
        floor (u/pi2 - 0.25))) 
     ub = 1.;

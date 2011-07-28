@@ -120,7 +120,7 @@ int CouenneCutGenerator::addSegment (OsiCuts &cs, int wi, int xi,
     if (fabs (y2-y1) > MAX_SLOPE * COUENNE_EPS)
       jnlst_->Printf(J_WARNING, J_CONVEXIFYING,
 		     "warning, discontinuity of %e over an interval of %e\n", y2-y1, x2-x1);
-    else return createCut (cs, y2, (int) 0, wi, 1.);
+    //else return createCut (cs, y2, (int) 0, wi, 1.);
   }
 
   CouNumber dx = x2-x1, dy = y2-y1;

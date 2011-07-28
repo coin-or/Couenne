@@ -63,7 +63,7 @@ inline CouNumber exprLBSin::operator () () {
 
   CouNumber pi2 = 2 * M_PI;
  
-  if ((u - l > pi2) ||        // 1) interval spans whole cycle
+  if ((u - l >= pi2) ||        // 1) interval spans whole cycle
       (floor (l/pi2 - 0.75) < // 2) there is a 3/2 pi + 2k pi between l and u
        floor (u/pi2 - 0.75))) 
     return -1.;
@@ -116,7 +116,7 @@ inline CouNumber exprUBSin::operator () () {
 
   CouNumber pi2 = 2 * M_PI;
 
-  if ((u - l > pi2) ||        // 1) interval spans whole cycle
+  if ((u - l >= pi2) ||       // 1) interval spans whole cycle
       (floor (l/pi2 - 0.25) < // 2) there is a pi/2 + 2k pi between l and u
        floor (u/pi2 - 0.25))) 
     return 1.;

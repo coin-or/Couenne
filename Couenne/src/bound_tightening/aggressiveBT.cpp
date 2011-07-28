@@ -91,7 +91,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
     for (std::list<SmartPtr<const CouenneInfo::NlpSolution> >::const_iterator 
 	   i = solList.begin();
-	 i != solList.end(); ++i) {
+	 i  != solList.end(); ++i) {
 
       assert (nOrigVars_ == (*i)->nVars());
 
@@ -228,7 +228,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
       for (int i=0; i<ncols; i++) {
 
 	if (CoinCpuTime () > maxCpuTime_) {
-	  maxTimeReached = true; // avoids getrusage...
+	  maxTimeReached = true; // avoids getrusage after loop...
 	  break;
 	}
 

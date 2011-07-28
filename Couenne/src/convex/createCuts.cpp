@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    createCuts.cpp
  * Author:  Pietro Belotti
  * Purpose: a standard cut creator for use with convexification
@@ -156,18 +156,17 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
     CouNumber &curL = problem_ -> Lb (i1),
               &curU = problem_ -> Ub (i1);
 
-    if (uu < COUENNE_INFINITY) {
+    if ((uu < COUENNE_INFINITY) &&
+	(uu < curU - COUENNE_EPS)) {
+
       cut -> setUbs (1, &i1, &uu); 
-      if (uu < curU - COUENNE_EPS) {
-	curU = uu; // TODO: chg_bds
-      }
+      curU = uu; // TODO: chg_bds
     }
 
-    if (ll > -COUENNE_INFINITY) {
+    if ((ll > -COUENNE_INFINITY) && 
+	(ll > curL + COUENNE_EPS)) {
       cut -> setLbs (1, &i1, &ll); 
-      if (ll > curL + COUENNE_EPS) {
-	curL = ll; // idem
-      }
+      curL = ll; // idem
     }
 
     cut -> setGloballyValid (is_global); // global?

@@ -22,8 +22,6 @@
 #include "CouenneTypes.hpp"
 #include "CouenneProblem.hpp"
 
-//#include "CouenneExpression.hpp"
-
 #include "CouenneExprSin.hpp"
 #include "CouenneExprCos.hpp"
 #include "CouenneExprAux.hpp"
@@ -195,7 +193,7 @@ int bayEnvelope (const CouenneCutGenerator *cg, // cut generator that has called
       if (!*s1 && (sign != -up)) // -> chord, if not already added in previous call
 	*s1 = ((ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), x1,       sin (rx1), up)) > 0);
     } else      
-      if (sign != -up) 
+      if (sign != -up)
 	ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), base+tpt, sin (tpt), up);
   } else {
 
@@ -207,7 +205,7 @@ int bayEnvelope (const CouenneCutGenerator *cg, // cut generator that has called
       CouNumber cosrx0 = cos (rx0);
       if (up * (sin (rx1) - sinrx0 - cosrx0 * (rx1-rx0)) < 0) {
 	// (b,sinb) below tangent --> tangent
-	if (sign != up) 
+	if (sign != up)
 	  ncuts += cg -> addTangent (cs, wi, xi, x0, sinrx0, cosrx0, -up);
       } else {    // up: either chord or leaning plane
 	CouNumber searchpt = M_PI_2 * (2 + 3*left - up);
@@ -216,13 +214,13 @@ int bayEnvelope (const CouenneCutGenerator *cg, // cut generator that has called
 	  if (!*s0 && (sign != up) )
 	    *s0 = ((ncuts += cg->addSegment (cs, wi, xi, x0, sin(rx0), x1,       sin(rx1), -up)) > 0);
 	} else 
-	  if (sign != up) 
+	  if (sign != up)
 	    ncuts += cg->addSegment (cs, wi, xi, x0, sin(rx0), base+tpt, sin(tpt), -up);
       }
     } else {
       CouNumber searchpt = M_PI_2 * (2 + 3*left - up);
       tpt = trigNewton (rx0, searchpt, searchpt + left * M_PI_2);
-      if (sign != up) 
+      if (sign != up)
 	ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), base + tpt, sin (tpt), -up);
     }
 
@@ -230,10 +228,10 @@ int bayEnvelope (const CouenneCutGenerator *cg, // cut generator that has called
     if ((left * (rx1 - (zero + M_PI)) < 0) || 
 	(left * (rx1 - (tpt = trigNewton (rx0, (2 +   left - up) * M_PI_2, 
 		  			       (2 + 2*left - up) * M_PI_2))) < 0)) {
-      if (!*s1 && (sign != -up)) 
+      if (!*s1 && (sign != -up))
 	*s1 = ((ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), x1, sin (rx1), up)) > 0);
     } else 
-      if (sign != -up) 
+      if (sign != -up)
 	ncuts += cg -> addSegment (cs, wi, xi, x0, sin (rx0), base + tpt, sin (tpt), up);
   }
 
