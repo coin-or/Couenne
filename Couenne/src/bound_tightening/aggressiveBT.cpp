@@ -218,9 +218,9 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     // derivative-free, uni-dimensional optimization problem on a
     // monotone function.
 
-    do {
+    bool maxTimeReached = false;
 
-      bool maxTimeReached = false;
+    do {
 
       improved = 0;
 
@@ -235,7 +235,9 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	int index = evalOrder (i);
 
 	if ((Var (index) -> Multiplicity () <= 0) ||
-	    (fabs (Lb (index) - Ub (index)) < COUENNE_EPS)) 
+	    (fabs (Lb (index) - Ub (index)) < COUENNE_EPS) ||
+	    ((nOrigVars_ >= THRES_ABT_ORIG) &&
+	     (index >= nOrigVars_)))
 	  continue;
 
 	// AW: We only want to do the loop that temporarily changes
@@ -248,7 +250,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	// PBe: That makes a lot of sense when problems are really
 	// big. Instances arki000[24].nl spend a lot of time here
 
-	if ((nOrigVars_ < THRES_ABT_ORIG) || (index < nOrigVars_)) {
+	{ //if ((nOrigVars_ < THRES_ABT_ORIG) || (index < nOrigVars_)) {
 
 	  // if (index == objind) continue; // don't do it on objective function
 
@@ -258,8 +260,8 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	      (X [index] >= Lb (index) + COUENNE_EPS)) {
 
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-			    "------------- tighten left x%d @%g [%g,%g]\n", 
-			    index, X [index], olb [index], oub [index]);
+			    "------------- tighten left %d-th = x%d @%g [%g,%g]\n", 
+			    i, index, X [index], olb [index], oub [index]);
 
 	    // tighten on left
 	    if ((improved = fake_tighten (0, index, X, olb, oub, chg_bds, f_chg)) < 0) {
@@ -273,9 +275,10 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
 	  if (retval && (variables_ [index] -> sign () != expression::AUX_LEQ) &&
 	      (X [index] <= Ub (index) - COUENNE_EPS)) {
+
 	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-			    "------------- tighten right x%d @%g [%g,%g]\n", 
-			    index, X [index], olb [index], oub [index]);
+			    "------------- tighten right %d-th = x%d @%g [%g,%g]\n", 
+			    i, index, X [index], olb [index], oub [index]);
 
 	    // tighten on right
 	    if ((second = fake_tighten (1, index, X, olb, oub, chg_bds, f_chg) < 0)) {
@@ -289,10 +292,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	}
       }
 
-      if (maxTimeReached)
-	break;
-
-    } while (retval && (improved > THRES_ABT_IMPROVED) && (iter++ < MAX_ABT_ITER));
+    } while (!maxTimeReached && retval && (improved > THRES_ABT_IMPROVED) && (iter++ < MAX_ABT_ITER));
 
     // store new valid bounds, or restore old ones if none changed
     CoinCopyN (olb, ncols, Lb ());

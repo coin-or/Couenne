@@ -12,6 +12,7 @@
 #define BonCouenneSetup_H
 
 #include "BonBabSetupBase.hpp"
+#include "BonBonminSetup.hpp"
 #include "CbcFeasibilityBase.hpp"
 
 struct ASL;
@@ -36,11 +37,11 @@ namespace Couenne {
     virtual ~SmartAsl();
   };
 
-  class CouenneSetup : public Bonmin::BabSetupBase{
+  class CouenneSetup : public Bonmin::BonminSetup{
   public:
     /** Default constructor*/
     CouenneSetup():
-    BabSetupBase(),
+    BonminSetup(),
     aslfg_(NULL),
     CouennePtr_ (NULL),
     displayStats_ (false),
@@ -49,7 +50,7 @@ namespace Couenne {
 
     /** Copy constructor.*/
     CouenneSetup(const CouenneSetup& other):
-      BabSetupBase(other),
+      BonminSetup(other),
       aslfg_(NULL),
       displayStats_ (other.displayStats_),
       couenneProb_ (other.couenneProb_) {}

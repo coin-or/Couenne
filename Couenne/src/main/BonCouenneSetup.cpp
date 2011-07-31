@@ -48,6 +48,18 @@
 #include "BonInitHeuristic.hpp"
 #include "BonNlpHeuristic.hpp"
 
+#include "Heuristics/BonFixAndSolveHeuristic.hpp"
+#include "Heuristics/BonDummyPump.hpp"
+#include "Heuristics/BonPumpForMinlp.hpp"
+#include "Heuristics/BonHeuristicRINS.hpp"
+#include "Heuristics/BonHeuristicLocalBranching.hpp"
+#include "Heuristics/BonHeuristicFPump.hpp"
+#include "Heuristics/BonHeuristicDiveFractional.hpp"
+#include "Heuristics/BonHeuristicDiveVectorLength.hpp"
+#include "Heuristics/BonHeuristicDiveMIPFractional.hpp"
+#include "Heuristics/BonHeuristicDiveMIPVectorLength.hpp"
+#include "Heuristics/BonMilpRounding.hpp"
+
 #include "BonGuessHeuristic.hpp"
 #include "CbcCompareActual.hpp"
 
@@ -511,8 +523,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   // Setup heuristic to solve MINLP problems. /////////////////////////////////
 
-  // TODO: add Cbc heuristics
-
   std::string doHeuristic;
 
   options () -> GetStringValue ("local_optimization_heuristic", doHeuristic, "couenne.");
@@ -558,6 +568,127 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     h.id = "Couenne Feasibility Pump";
     h.heuristic = nlpHeuristic;
     heuristics_. push_back (h);
+  }
+
+
+  if (0) { // inactive as of yet -- segfaults 
+
+    Ipopt::Index doHeuristicDiveFractional = false;
+    options()->GetEnumValue("heuristic_dive_fractional",doHeuristicDiveFractional,prefix_.c_str());
+    if(doHeuristicDiveFractional){
+      Bonmin::HeuristicDiveFractional* dive_fractional = new Bonmin::HeuristicDiveFractional(this);
+      HeuristicMethod h;
+      h.heuristic = dive_fractional;
+      h.id = "DiveFractional";
+      heuristics_.push_back(h);
+    }
+
+    Ipopt::Index doHeuristicDiveVectorLength = false;
+    options()->GetEnumValue("heuristic_dive_vectorLength",doHeuristicDiveVectorLength,prefix_.c_str());
+    if(doHeuristicDiveVectorLength){
+      Bonmin::HeuristicDiveVectorLength* dive_vectorLength = new Bonmin::HeuristicDiveVectorLength(this);
+      HeuristicMethod h;
+      h.heuristic = dive_vectorLength;
+      h.id = "DiveVectorLength";
+      heuristics_.push_back(h);
+    }
+
+    Ipopt::Index doHeuristicDiveMIPFractional = false;
+    if(!options()->GetEnumValue("heuristic_dive_MIP_fractional",doHeuristicDiveMIPFractional,prefix_.c_str())){
+      doHeuristicDiveMIPFractional = true;
+      std::string o_name = prefix_ + "heuristic_dive_MIP_fractional";
+      options_->SetStringValue(o_name.c_str(), "yes",true,true);
+    }
+    if(doHeuristicDiveMIPFractional){
+      Bonmin::HeuristicDiveMIPFractional* dive_MIP_fractional = new Bonmin::HeuristicDiveMIPFractional(this);
+      HeuristicMethod h;
+      h.heuristic = dive_MIP_fractional;
+      h.id = "DiveMIPFractional";
+      heuristics_.push_back(h);
+    }
+
+    Ipopt::Index doHeuristicDiveMIPVectorLength = false;
+    options()->GetEnumValue("heuristic_dive_MIP_vectorLength",doHeuristicDiveMIPVectorLength,prefix_.c_str());
+    if(doHeuristicDiveMIPVectorLength){
+      Bonmin::HeuristicDiveMIPVectorLength* dive_MIP_vectorLength = new Bonmin::HeuristicDiveMIPVectorLength(this);
+      HeuristicMethod h;
+      h.heuristic = dive_MIP_vectorLength;
+      h.id = "DiveMIPVectorLength";
+      heuristics_.push_back(h);
+    }
+    Ipopt::Index doHeuristicFPump = false;
+    if(!nonlinearSolver_->model()->hasGeneralInteger() && !options()->GetEnumValue("heuristic_feasibility_pump",doHeuristicFPump,prefix_.c_str())){
+      doHeuristicFPump = true;
+      std::string o_name = prefix_ + "heuristic_feasibility_pump";
+      options_->SetStringValue(o_name.c_str(), "yes",true,true);
+    }
+    if(doHeuristicFPump){
+      Bonmin::HeuristicFPump* feasibility_pump = new Bonmin::HeuristicFPump(this);
+      HeuristicMethod h;
+      h.heuristic = feasibility_pump;
+      h.id = "FPump";
+      heuristics_.push_back(h);
+    }
+
+    Ipopt::Index doFixAndSolve = false;
+    options()->GetEnumValue("fix_and_solve_heuristic",doFixAndSolve,prefix_.c_str());
+    if(doFixAndSolve){
+      Bonmin::FixAndSolveHeuristic* fix_and_solve = new Bonmin::FixAndSolveHeuristic(this);
+      HeuristicMethod h;
+      h.heuristic = fix_and_solve;
+      h.id = "Fix and Solve";
+      heuristics_.push_back(h);
+    }
+
+    Ipopt::Index doDummyPump = false;
+    options()->GetEnumValue("dummy_pump_heuristic",doDummyPump,prefix_.c_str());
+    if(doDummyPump){
+      Bonmin::DummyPump* fix_and_solve = new Bonmin::DummyPump(this);
+      HeuristicMethod h;
+      h.heuristic = fix_and_solve;
+      h.id = "Dummy pump";
+      heuristics_.push_back(h);
+    }
+
+    Ipopt::Index doHeuristicRINS = false;
+    options()->GetEnumValue("heuristic_RINS",doHeuristicRINS,prefix_.c_str());
+    if(doHeuristicRINS){
+      Bonmin::HeuristicRINS* rins = new Bonmin::HeuristicRINS(this);
+      HeuristicMethod h;
+      h.heuristic = rins;
+      h.id = "RINS";
+      heuristics_.push_back(h);
+    }
+
+    Ipopt::Index doHeuristicLocalBranching = false;
+    options()->GetEnumValue("heuristic_local_branching",doHeuristicLocalBranching,prefix_.c_str());
+    if(doHeuristicLocalBranching){
+      Bonmin::HeuristicLocalBranching* local_branching = new Bonmin::HeuristicLocalBranching(this);
+      HeuristicMethod h;
+      h.heuristic = local_branching;
+      h.id = "LocalBranching";
+      heuristics_.push_back(h);
+    }
+
+    Ipopt::Index doHeuristicPumpForMinlp = false;
+    options()->GetEnumValue("pump_for_minlp",doHeuristicPumpForMinlp,prefix_.c_str());
+    if(doHeuristicPumpForMinlp){
+      Bonmin::PumpForMinlp * pump = new Bonmin::PumpForMinlp(this);
+      HeuristicMethod h;
+      h.heuristic = pump;
+      h.id = "Pump for MINLP";
+      heuristics_.push_back(h);
+    }
+
+    Ipopt::Index doHeuristicMilpRounding = false;
+    options()->GetEnumValue("MILP_rounding_heuristic",doHeuristicMilpRounding,prefix_.c_str());
+    if(doHeuristicMilpRounding){
+      Bonmin::MilpRounding * round = new Bonmin::MilpRounding(this);
+      HeuristicMethod h;
+      h.heuristic = round;
+      h.id = "MILP Rounding";
+      heuristics_.push_back(h);
+    }
   }
 
   // Add Branching rules ///////////////////////////////////////////////////////
@@ -676,6 +807,49 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
 
   BabSetupBase        ::registerAllOptions (roptions);
   Bonmin::BonCbcFullNodeInfo  ::registerOptions (roptions);
+
+  /// Heuristics
+  Bonmin::LocalSolverBasedHeuristic    ::registerOptions (roptions);
+  Bonmin::FixAndSolveHeuristic         ::registerOptions (roptions);
+  Bonmin::DummyPump                    ::registerOptions (roptions);
+  Bonmin::MilpRounding                 ::registerOptions (roptions);
+  Bonmin::PumpForMinlp                 ::registerOptions (roptions);
+  Bonmin::HeuristicRINS                ::registerOptions (roptions);
+  Bonmin::HeuristicLocalBranching      ::registerOptions (roptions);
+  Bonmin::HeuristicFPump               ::registerOptions (roptions);
+  Bonmin::HeuristicDiveFractional      ::registerOptions (roptions);
+  Bonmin::HeuristicDiveVectorLength    ::registerOptions (roptions);
+  Bonmin::HeuristicDiveMIPFractional   ::registerOptions (roptions);
+  Bonmin::HeuristicDiveMIPVectorLength ::registerOptions (roptions);  
+
+  roptions -> AddStringOption3 ("milp_solver",
+				"Choose the subsolver to solve MILP sub-problems in OA decompositions.",
+				"Cbc_D",
+				"Cbc_D","Coin Branch and Cut with its default",
+				"Cbc_Par", "Coin Branch and Cut with passed parameters",
+				"Cplex","Ilog Cplex",
+				" To use Cplex, a valid license is required and you should have compiled OsiCpx in COIN-OR  (see Osi documentation).");
+
+  roptions -> setOptionExtraInfo ("milp_solver",64);
+
+  roptions -> AddStringOption2 ("milp_strategy",
+				"Choose a strategy for MILPs.",
+				"find_good_sol",
+				"find_good_sol","Stop sub milps when a solution improving the incumbent is found",
+				"solve_to_optimality", "Solve MILPs to optimality",
+				"");
+
+  roptions -> AddStringOption6 ("algorithm",
+				"Choice of the algorithm.",
+				"B-BB",
+				"B-BB","simple branch-and-bound algorithm,",
+				"B-OA","OA Decomposition algorithm,",
+				"B-QG","Quesada and Grossmann branch-and-cut algorithm,",
+				"B-Hyb","hybrid outer approximation based branch-and-cut,",
+				"B-Ecp","ecp cuts based branch-and-cut a la FilMINT.",
+				"B-iFP","Iterated Feasibility Pump for MINLP.",
+				"This will preset some of the options of bonmin depending on the algorithm choice."
+				);
 
   CouenneProblem          ::registerOptions (roptions);
   CouenneCutGenerator     ::registerOptions (roptions);

@@ -18,7 +18,7 @@
 
 using namespace Couenne;
 
-#define MAX_ITER  10 // max # fake tightening (inner) iterations 
+#define MAX_ITER  3 // max # fake tightening (inner) iterations 
 #define AGGR_MUL  2 // the larger,  the more conservative. Must be > 0
 #define AGGR_DIV  2 // the smaller, the more conservative. Must be > 1
 
@@ -125,8 +125,8 @@ fake_tighten (char direction,  // 0: left, 1: right
       if (!direction) {inner = floor (inner + COUENNE_EPS); outer = ceil  (outer - COUENNE_EPS);}
       else            {inner = ceil  (inner - COUENNE_EPS); outer = floor (outer + COUENNE_EPS);}
 
-      if ( (direction && (inner > outer)) ||
-	  (!direction && (inner < outer))) {
+      if ( (direction && (inner > outer + .5)) || // more robust check on integer-valued doubles
+	  (!direction && (inner < outer - .5))) {
 
 	// fictitious interval is empty, hence useless to check. 
 
@@ -167,7 +167,7 @@ fake_tighten (char direction,  // 0: left, 1: right
 
     if (jnlst_ -> ProduceOutput (Ipopt::J_ERROR, J_BOUNDTIGHTENING)) {
       char c1 = direction ? '-' : '>', c2 = direction ? '<' : '-';
-      printf ("    #%3d: [%+10g -%c %+10g %c- %+10g] /\\/\\ ",iter,olb[index],c1,fb,c2, oub [index]);
+      printf ("    # x%d = %g iter %3d: [%+10g -%c %+10g %c- %+10g] /\\/\\ ",index,xcur,iter,olb[index],c1,fb,c2, oub [index]);
       printf (" [%10g,%10g]<%g,%g>=> ",Lb (index),Ub (index),CoinMin(inner,outer),CoinMax(inner,outer));
     }
 
@@ -265,7 +265,7 @@ fake_tighten (char direction,  // 0: left, 1: right
       if (!(btCore (chg_bds))) {
 
 	jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING, 
-			  "\n    pruned by aggressive BT\n");
+			  "\n    pruned by Probing\n");
 	return -1;
 
       } else {
