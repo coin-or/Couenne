@@ -92,7 +92,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
     if (wind >= 0) { // this IS the definition of an auxiliary variable w = f(x)
 
-      // first, simplify expression (you never know)
+      // simplify expression (you never know)
 
       expression *restSimple = rest -> simplify ();
 
@@ -101,8 +101,8 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	rest = restSimple;
       }
 
-      // second, if this is a constraint of the form x=k, reset x's
-      // bounds and do nothing else
+      // if this is a constraint of the form x=k, reset x's bounds and
+      // do nothing else
 
       if (rest -> code () == COU_EXPRCONST) {
 
@@ -115,9 +115,9 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	return NULL;
       }
 
-      // now assign a new auxiliary variable (with the same index,
-      // "wind", as the old original variable) to the expression
-      // contained in "rest"
+      // Assign a new auxiliary variable (with the same index, "wind",
+      // as the old original variable) to the expression contained in
+      // "rest"
 
       p -> Commuted () [wind] = true;
 

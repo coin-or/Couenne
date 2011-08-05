@@ -25,6 +25,8 @@
 using namespace Ipopt;
 using namespace Couenne;
 
+void replace (CouenneProblem *p, int wind, int xind);
+
 /// standardize (nonlinear) common expressions, objectives, and constraints
 
 bool CouenneProblem::standardize () {
@@ -72,19 +74,33 @@ bool CouenneProblem::standardize () {
 
     exprAux *naux = (*i) -> standardize (this, false);
 
-    expression *img = naux -> Image ();
+    expression *img = (*i);
+
+    if (naux)
+      img = naux -> Image ();
 
     // trick to obtain same index as common expression: create exprAux
     // with index initVar and replace occurrences with address of
     // newly created exprAux through auxiliarize()
 
-    exprAux *newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
+    exprAux *newvar;
     //img -> isInteger () ? exprAux::Integer : exprAux::Continuous);
 
-    auxiliarize (newvar); // puts newvar at right position in variables_
+    //auxiliarize (newvar); // puts newvar at right position in variables_
 
-    graph_ -> insert (newvar);
-    graph_ -> erase (naux);
+    if (((*i) -> Type () == VAR) ||
+	((*i) -> Type () == AUX)) {
+
+      //newvar -> zeroMult ();
+      replace (this, initVar, img -> Index ());
+      auxiliarize (variables_ [initVar], 
+		   variables_ [img -> Index ()]);
+    } else {
+
+      newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
+      graph_ -> insert (newvar);
+      graph_ -> erase (naux);
+    }
 
     //variables_ . erase (variables_ . end () - 1);
 

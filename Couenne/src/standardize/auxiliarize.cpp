@@ -89,6 +89,11 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
     expression *body = (*i) -> Body ();
 
     if (body) {
+
+      if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
+	printf ("replacing within constraint: "); fflush (stdout); (*i) -> print (); 
+      }
+
       if ((body -> Type () == VAR) ||
 	  (body -> Type () == AUX)) {
 
