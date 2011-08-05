@@ -31,7 +31,7 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf ("replacing  "); if (aux)   aux   -> print (); 
-    printf (" with ");      if (subst) subst -> print (); 
+    if (subst) {printf (" with "); subst -> print ();}
     printf ("\n");
   }
 
@@ -61,6 +61,31 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
     return;
   }
 
+  // all common expressions
+
+  for (std::vector <expression *>::iterator i = commonexprs_.begin ();
+       i != commonexprs_.end (); ++i) {
+
+    expression *body = *i;
+
+    if (body) {
+
+      if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
+	printf ("replacing within common expression [%d]: ", i - commonexprs_.begin ()); fflush (stdout); (*i) -> print (); printf ("\n");
+      }
+
+      if ((body -> Type () == VAR) || 
+	  (body -> Type () == AUX)) {
+
+	if (body -> Index () == (*orig) -> Index ()) {
+      
+	  delete body;
+	  *i = new exprClone (subst);
+	}
+      } else body -> replace (*orig, subst);
+    }
+  }
+
   // all objectives
 
   for (std::vector <CouenneObjective *>::iterator i = objectives_.begin ();
@@ -69,6 +94,11 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
     expression *body = (*i) -> Body ();
 
     if (body) {
+
+      if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
+	printf ("replacing within objective: "); fflush (stdout); (*i) -> print (); 
+      }
+
       if ((body -> Type () == VAR) || 
 	  (body -> Type () == AUX)) {
 
@@ -91,7 +121,7 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
     if (body) {
 
       if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-	printf ("replacing within constraint: "); fflush (stdout); (*i) -> print (); 
+	printf ("replacing within constraint [%d]: ", i - constraints_.begin ()); fflush (stdout); (*i) -> print (); 
       }
 
       if ((body -> Type () == VAR) ||

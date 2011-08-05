@@ -17,6 +17,7 @@
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
 #include "CouenneExprIVar.hpp"
+#include "CouenneExprSub.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
@@ -52,6 +53,8 @@ bool CouenneProblem::standardize () {
 
   int initVar = variables_ . size () - commonexprs_ . size ();
 
+  std::set <int> DefVarDiffSet;
+
   // DEFINED VARIABLES -----------------------------------------------------------------------
 
   // standardize initial aux variables (aka defined variables, aka
@@ -68,22 +71,28 @@ bool CouenneProblem::standardize () {
        i != commonexprs_ . end (); ++i) {
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("-- stdz common expr [%d] :=", initVar); fflush (stdout);
-      (*i) -> print (); printf ("\n"); fflush (stdout);
+      printf ("\n=====> [1] stdz common expr [%d] := ", initVar); fflush (stdout);
+      (*i) -> print (); printf ("\n");
     }
 
-    exprAux *naux = (*i) -> standardize (this, false);
-
-    expression *img = (*i);
+    exprAux    *naux = (*i) -> standardize (this, false);
+    expression *img  = (*i);
 
     if (naux)
       img = naux -> Image ();
+
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+      printf ("\n=====> [2] "); fflush (stdout);
+      if (*i)   (*i) -> print (); else printf ("(null)"); printf (" [*i] ");   fflush (stdout);
+      if (naux) naux -> print (); else printf ("(null)"); printf (" [naux] "); fflush (stdout);
+      if (img)  img  -> print (); else printf ("(null)"); printf (" [img]\n");
+    }
 
     // trick to obtain same index as common expression: create exprAux
     // with index initVar and replace occurrences with address of
     // newly created exprAux through auxiliarize()
 
-    exprAux *newvar;
+    exprVar *newvar;
     //img -> isInteger () ? exprAux::Integer : exprAux::Continuous);
 
     //auxiliarize (newvar); // puts newvar at right position in variables_
@@ -91,15 +100,54 @@ bool CouenneProblem::standardize () {
     if (((*i) -> Type () == VAR) ||
 	((*i) -> Type () == AUX)) {
 
-      //newvar -> zeroMult ();
+      newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
       replace (this, initVar, img -> Index ());
       auxiliarize (variables_ [initVar], 
 		   variables_ [img -> Index ()]);
+
+      //delete variables_ [initVar];
+
+      variables_ [initVar] = newvar;
+      variables_ [initVar] -> zeroMult ();
+
     } else {
 
-      newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
-      graph_ -> insert (newvar);
-      graph_ -> erase (naux);
+      if (img -> dependsOn (&initVar, 1, TAG_AND_RECURSIVE)) {
+
+	//printf ("depends! "); img -> print (); 
+
+	expression *diff = new exprSub (new exprClone (variables_ [initVar]), img);
+
+	//printf ("; diff = "); diff -> print ();
+
+	exprAux *diffAux = diff -> standardize (this, false);
+
+	//printf ("; aux: "); if (diffAux) diffAux -> print (); 
+
+	//if (diffAux)
+	exprAux *newAux = addAuxiliary (diff);
+
+	//printf ("; real aux: "); if (newAux) newAux -> print (); putchar ('\n');
+	
+	//Lb (newAux -> Index ()) = 
+	//Ub (newAux -> Index ()) = 0.;
+
+	DefVarDiffSet. insert (newAux -> Index ());
+
+      } else {
+
+	newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
+	//replace (this, initVar, newvar -> Index ());
+
+	auxiliarize (newvar);
+
+	//delete variables_ [initVar];
+	variables_ [initVar] = newvar;
+
+	graph_ -> insert (newvar);
+	//if (naux) 
+	graph_ -> erase (naux);
+      }
     }
 
     //variables_ . erase (variables_ . end () - 1);
@@ -346,6 +394,12 @@ bool CouenneProblem::standardize () {
       domain_.x  (ord) = (*(variables_ [ord] -> Image ())) ();
       domain_.lb (ord) = (*(variables_ [ord] -> Lb    ())) ();
       domain_.ub (ord) = (*(variables_ [ord] -> Ub    ())) ();
+
+      if (DefVarDiffSet.find (ord) != DefVarDiffSet.end ()) {
+
+	domain_.lb (ord) =
+	domain_.ub (ord) = 0.;
+      }
 
       if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
 	printf (" --> %10g [%10g, %10g] [", 
