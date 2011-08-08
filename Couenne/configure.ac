@@ -13,7 +13,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[trunk],[couenne@list.coin-or.org])
+AC_INIT([Couenne],[0.4],[couenne@list.coin-or.org])
 
 AC_COPYRIGHT([
 Copyright 2006 Carnegie Mellon University, International Business Machines and others.
