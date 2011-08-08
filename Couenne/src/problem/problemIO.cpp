@@ -82,8 +82,8 @@ void CouenneProblem::print (std::ostream &out) {
     out << "common expressions:" << std::endl;
     for (std::vector <expression *>::iterator i = commonexprs_.begin ();
 	 i != commonexprs_.end (); ++i) {
-      out << "v["    << i - commonexprs_.begin () << ";x" 
-	  << nOrigVars_ - commonexprs_ . size () + i - commonexprs_.begin () << "] := ";
+      out << "v_"    
+	  << nOrigVars_ - commonexprs_ . size () + i - commonexprs_.begin () << " := ";
       (*i) -> print (out);
       out << std::endl;
     }

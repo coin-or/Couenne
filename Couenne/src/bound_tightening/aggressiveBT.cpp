@@ -42,12 +42,12 @@ static double distanceToBound (register int n,
 
   register double Xdist = 0.;
 
-  for (int i=0; n--; ++i, ++upper) {
+  for (; n--; ++upper, ++xOrig) {
 
-    register CouNumber diff = *lower++ - *xOrig++;
+    register CouNumber diff = *lower++ - *xOrig;
 
-    if      ( diff                    > 0) {if ((Xdist += diff) > cutoff_distance) break;}
-    else if ((diff = *xOrig - *upper) > 0) {if ((Xdist += diff) > cutoff_distance) break;}
+    if      ( diff                    > 0.) {if ((Xdist += diff) > cutoff_distance) break;}
+    else if ((diff = *xOrig - *upper) > 0.) {if ((Xdist += diff) > cutoff_distance) break;}
   }
 
   return Xdist;
@@ -82,7 +82,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
   // Find the solution that is closest to the current bounds
   // TODO: Also check obj value
   SmartPtr<const CouenneInfo::NlpSolution> closestSol;
-  double dist = 1e50;
+  double dist = 1.e50;
 
   if (couInfo) {
 
@@ -93,9 +93,9 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	   i = solList.begin();
 	 i  != solList.end(); ++i) {
 
-      assert (nOrigVars_ == (*i)->nVars());
+      assert (nOrigVars_ - ndefined_ == (*i)->nVars());
 
-      const double thisDist = distanceToBound (nOrigVars_, (*i)->solution(), olb, oub, dist);
+      const double thisDist = distanceToBound (nOrigVars_ - ndefined_, (*i)->solution(), olb, oub, dist);
 
       if (thisDist < dist) {
 	closestSol = *i;
@@ -121,13 +121,13 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     CoinFillN (lower, nvars, -COUENNE_INFINITY);
     CoinFillN (upper, nvars,  COUENNE_INFINITY);
 
-    CoinCopyN (nlp -> getColLower (), nOrigVars_, lower);
-    CoinCopyN (nlp -> getColUpper (), nOrigVars_, upper);
+    CoinCopyN (nlp -> getColLower (), nOrigVars_ - ndefined_, lower);
+    CoinCopyN (nlp -> getColUpper (), nOrigVars_ - ndefined_, upper);
 
     double *Y = new double [nvars];
 
-    CoinFillN (Y,    nvars,      0.);
-    CoinCopyN (X (), nOrigVars_, Y);
+    CoinZeroN (Y,    nvars);
+    CoinCopyN (X (), nOrigVars_ - ndefined_, Y);
 
     if (getIntegerCandidate (nlp -> getColSolution (), Y, lower, upper) < 0) {
 
@@ -158,7 +158,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
 	if (couInfo) {
 	  closestSol = new CouenneInfo::NlpSolution 
-	    (nOrigVars_, nlp->getColSolution(), nlp->getObjValue());
+	    (nOrigVars_ - ndefined_, nlp->getColSolution(), nlp->getObjValue());
 	  couInfo->addSolution(closestSol);
 	  dist = 0.;
 	  haveNLPsol = true;      
@@ -189,7 +189,8 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     if (haveNLPsol) {
 
       X = new double [ncols];
-      CoinCopyN (closestSol -> solution(), nOrigVars_, X);
+      CoinZeroN (X, nVars ());
+      CoinCopyN (closestSol -> solution(), nOrigVars_ - ndefined_, X);
       getAuxs (X);
     } else X = domain () -> x ();
 
@@ -199,7 +200,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     if (Jnlst()->ProduceOutput(J_ITERSUMMARY, J_BOUNDTIGHTENING)) {
       //    CouNumber cutoff = getCutOff ();
       int       objind = Obj (0) -> Body  () -> Index ();
-      for (int i=0; i<nOrigVars_; i++)
+      for (int i=0; i<nOrigVars_ - ndefined_; i++)
 	Jnlst()->Printf(J_MOREVECTOR, J_BOUNDTIGHTENING,
 			"   %2d %+20g [%+20g %+20g]\n",
 			i, X [i], Lb (i), Ub (i));

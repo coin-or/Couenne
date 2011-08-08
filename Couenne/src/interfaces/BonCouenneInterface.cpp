@@ -166,7 +166,7 @@ CouenneInterface::extractLinearRelaxation
       if (getNumIntegers () > 0) {
 
 	int
-	  norig = p -> nOrigVars (),
+	  norig = p -> nOrigVars () - p -> nDefVars (),
 	  nvars = p -> nVars ();
 
 	bool fractional = false;
@@ -175,8 +175,8 @@ CouenneInterface::extractLinearRelaxation
 	// fractional. If so, round them and re-optimize
 
 	for (int i=0; i<norig; i++)
-	  if (p  -> Var (i) -> isInteger () &&
-	      (p -> Var (i) -> Multiplicity () > 0) &&
+	  if ((p -> Var (i) -> Multiplicity () > 0) &&
+	      p  -> Var (i) -> isDefinedInteger () &&
 	      (!::isInteger (solution [i]))) {
 	    fractional = true;
 	    break;
@@ -219,7 +219,7 @@ CouenneInterface::extractLinearRelaxation
 
 	    for (int i=0; i<norig; i++)
 	      if ((p -> Var (i) -> Multiplicity () > 0) &&
-		  p  -> Var (i) -> isInteger ()) {
+		  p  -> Var (i) -> isDefinedInteger ()) {
 		setColLower (i, lbCur [i]);
 		setColUpper (i, ubCur [i]);
 	      }
@@ -241,7 +241,7 @@ CouenneInterface::extractLinearRelaxation
 	    // restore previous bounds on integer variables
 	    for (int i=0; i<norig; i++)
 	      if ((p -> Var (i) -> Multiplicity () > 0) &&
-		  p  -> Var (i) -> isInteger ()) {
+		  p  -> Var (i) -> isDefinedInteger ()) {
 		setColLower (i, lbSave [i]);
 		setColUpper (i, ubSave [i]);
 	      }

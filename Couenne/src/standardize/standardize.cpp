@@ -51,123 +51,123 @@ bool CouenneProblem::standardize () {
 
   // allocate space in auxiliaries_ from commonexprs_
 
-  int initVar = variables_ . size () - commonexprs_ . size ();
+  //int initVar = variables_ . size () - commonexprs_ . size ();
 
-  std::set <int> DefVarDiffSet;
+  //std::set <int> DefVarDiffSet;
 
-  // DEFINED VARIABLES -----------------------------------------------------------------------
+  // // DEFINED VARIABLES -----------------------------------------------------------------------
 
-  // standardize initial aux variables (aka defined variables, aka
-  // common expression)
+  // // standardize initial aux variables (aka defined variables, aka
+  // // common expression)
 
-  if (commonexprs_.size ()) jnlst_ -> Printf (J_ALL, J_REFORMULATE,
-					      "%d common exprs, initVar = %d = %d - %d\n", 
-					      commonexprs_ . size (), 
-					      initVar, 
-					      variables_   . size (), 
-					      commonexprs_ . size ());
+  // if (commonexprs_.size ()) jnlst_ -> Printf (J_ALL, J_REFORMULATE,
+  // 					      "%d common exprs, initVar = %d = %d - %d\n", 
+  // 					      commonexprs_ . size (), 
+  // 					      initVar, 
+  // 					      variables_   . size (), 
+  // 					      commonexprs_ . size ());
 
-  for (std::vector <expression *>::iterator i = commonexprs_ . begin ();
-       i != commonexprs_ . end (); ++i) {
+  // for (std::vector <expression *>::iterator i = commonexprs_ . begin ();
+  //      i != commonexprs_ . end (); ++i) {
 
-    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("\n=====> [1] stdz common expr [%d] := ", initVar); fflush (stdout);
-      (*i) -> print (); printf ("\n");
-    }
+  //   if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+  //     printf ("\n=====> [1] stdz common expr [%d] := ", initVar); fflush (stdout);
+  //     (*i) -> print (); printf ("\n");
+  //   }
 
-    exprAux    *naux = (*i) -> standardize (this, false);
-    expression *img  = (*i);
+  //   exprAux    *naux = (*i) -> standardize (this, false);
+  //   expression *img  = (*i);
 
-    if (naux)
-      img = naux -> Image ();
+  //   if (naux)
+  //     img = naux -> Image ();
 
-    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("\n=====> [2] "); fflush (stdout);
-      if (*i)   (*i) -> print (); else printf ("(null)"); printf (" [*i] ");   fflush (stdout);
-      if (naux) naux -> print (); else printf ("(null)"); printf (" [naux] "); fflush (stdout);
-      if (img)  img  -> print (); else printf ("(null)"); printf (" [img]\n");
-    }
+  //   if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+  //     printf ("\n=====> [2] "); fflush (stdout);
+  //     if (*i)   (*i) -> print (); else printf ("(null)"); printf (" [*i] ");   fflush (stdout);
+  //     if (naux) naux -> print (); else printf ("(null)"); printf (" [naux] "); fflush (stdout);
+  //     if (img)  img  -> print (); else printf ("(null)"); printf (" [img]\n");
+  //   }
 
-    // trick to obtain same index as common expression: create exprAux
-    // with index initVar and replace occurrences with address of
-    // newly created exprAux through auxiliarize()
+  //   // trick to obtain same index as common expression: create exprAux
+  //   // with index initVar and replace occurrences with address of
+  //   // newly created exprAux through auxiliarize()
 
-    exprVar *newvar;
-    //img -> isInteger () ? exprAux::Integer : exprAux::Continuous);
+  //   exprVar *newvar;
+  //   //img -> isInteger () ? exprAux::Integer : exprAux::Continuous);
 
-    //auxiliarize (newvar); // puts newvar at right position in variables_
+  //   //auxiliarize (newvar); // puts newvar at right position in variables_
 
-    if (((*i) -> Type () == VAR) ||
-	((*i) -> Type () == AUX)) {
+  //   if (((*i) -> Type () == VAR) ||
+  // 	((*i) -> Type () == AUX)) {
 
-      newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
-      replace (this, initVar, img -> Index ());
-      auxiliarize (variables_ [initVar], 
-		   variables_ [img -> Index ()]);
+  //     newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
+  //     replace (this, initVar, img -> Index ());
+  //     //auxiliarize (variables_ [initVar], 
+  //     //variables_ [img -> Index ()]);
 
-      //delete variables_ [initVar];
+  //     //delete variables_ [initVar];
 
-      variables_ [initVar] = newvar;
-      variables_ [initVar] -> zeroMult ();
+  //     variables_ [initVar] = newvar;
+  //     variables_ [initVar] -> zeroMult ();
 
-    } else {
+  //   } else {
 
-      if (img -> dependsOn (&initVar, 1, TAG_AND_RECURSIVE)) {
+  //     if (img -> dependsOn (&initVar, 1, TAG_AND_RECURSIVE)) {
 
-	//printf ("depends! "); img -> print (); 
+  // 	//printf ("depends! "); img -> print (); 
 
-	expression *diff = new exprSub (new exprClone (variables_ [initVar]), img);
+  // 	expression *diff = new exprSub (new exprClone (variables_ [initVar]), img);
 
-	//printf ("; diff = "); diff -> print ();
+  // 	//printf ("; diff = "); diff -> print ();
 
-	exprAux *diffAux = diff -> standardize (this, false);
+  // 	exprAux *diffAux = diff -> standardize (this, false);
 
-	//printf ("; aux: "); if (diffAux) diffAux -> print (); 
+  // 	//printf ("; aux: "); if (diffAux) diffAux -> print (); 
 
-	//if (diffAux)
-	exprAux *newAux = addAuxiliary (diff);
+  // 	//if (diffAux)
+  // 	exprAux *newAux = addAuxiliary (diff);
 
-	//printf ("; real aux: "); if (newAux) newAux -> print (); putchar ('\n');
+  // 	//printf ("; real aux: "); if (newAux) newAux -> print (); putchar ('\n');
 	
-	//Lb (newAux -> Index ()) = 
-	//Ub (newAux -> Index ()) = 0.;
+  // 	//Lb (newAux -> Index ()) = 
+  // 	//Ub (newAux -> Index ()) = 0.;
 
-	DefVarDiffSet. insert (newAux -> Index ());
+  // 	DefVarDiffSet. insert (newAux -> Index ());
 
-      } else {
+  //     } else {
 
-	newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
-	//replace (this, initVar, newvar -> Index ());
+  // 	newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
+  // 	//replace (this, initVar, newvar -> Index ());
 
-	auxiliarize (newvar);
+  // 	auxiliarize (newvar);
 
-	//delete variables_ [initVar];
-	variables_ [initVar] = newvar;
+  // 	//delete variables_ [initVar];
+  // 	variables_ [initVar] = newvar;
 
-	graph_ -> insert (newvar);
-	//if (naux) 
-	graph_ -> erase (naux);
-      }
-    }
+  // 	graph_ -> insert (newvar);
+  // 	//if (naux) 
+  // 	graph_ -> erase (naux);
+  //     }
+  //   }
 
-    //variables_ . erase (variables_ . end () - 1);
+  //   //variables_ . erase (variables_ . end () - 1);
 
-    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      if (naux) {
-	printf ("done: "); fflush (stdout);
-	naux -> print ();
-	printf (" := "); fflush (stdout);
-	naux -> Image () -> print (); printf ("\n..."); fflush (stdout);
-      } else if (*i) {
-	(*i) -> print ();
-	//printf (" := "); fflush (stdout);
-	//aux -> Image () -> print (); 
-	printf ("\n");
-      } else printf ("[n]aux NULL!\n");
-    }
+  //   if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+  //     if (naux) {
+  // 	printf ("done: "); fflush (stdout);
+  // 	naux -> print ();
+  // 	printf (" := "); fflush (stdout);
+  // 	naux -> Image () -> print (); printf ("\n..."); fflush (stdout);
+  //     } else if (*i) {
+  // 	(*i) -> print ();
+  // 	//printf (" := "); fflush (stdout);
+  // 	//aux -> Image () -> print (); 
+  // 	printf ("\n");
+  //     } else printf ("[n]aux NULL!\n");
+  //   }
 
-    initVar++;
-  }
+  //   initVar++;
+  // }
 
   // OBJECTIVES ------------------------------------------------------------------------------
 
@@ -395,11 +395,11 @@ bool CouenneProblem::standardize () {
       domain_.lb (ord) = (*(variables_ [ord] -> Lb    ())) ();
       domain_.ub (ord) = (*(variables_ [ord] -> Ub    ())) ();
 
-      if (DefVarDiffSet.find (ord) != DefVarDiffSet.end ()) {
+      // if (DefVarDiffSet.find (ord) != DefVarDiffSet.end ()) {
 
-	domain_.lb (ord) =
-	domain_.ub (ord) = 0.;
-      }
+      // 	domain_.lb (ord) =
+      // 	domain_.ub (ord) = 0.;
+      // }
 
       if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
 	printf (" --> %10g [%10g, %10g] [", 

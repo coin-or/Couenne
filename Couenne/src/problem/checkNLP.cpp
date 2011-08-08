@@ -27,14 +27,14 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
     printf ("Checking solution: %.12e (", obj);
 
-    for (int i=0; i<nOrigVars_; i++)
+    for (int i=0; i<nOrigVars_ - ndefined_; i++)
       printf ("%g ", solution [i]);
     printf (")\n");
   }
 
   // pre-check on original variables --- this is done after every LP,
   // and should be efficient
-  for (register int i=0; i < nOrigVars_; i++) {
+  for (register int i=0; i < nOrigVars_ - ndefined_; i++) {
 
     if (variables_ [i] -> Multiplicity () <= 0) 
       continue;
@@ -46,7 +46,7 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
     exprVar *v = variables_ [i];
 
     if ((v -> Type ()      == VAR) &&
-	(v -> isInteger ())        &&
+	(v -> isDefinedInteger ()) &&
 	(v -> Multiplicity () > 0) &&
 	(fabs (val - COUENNE_round (val)) > feas_tolerance_)) {
 
@@ -63,13 +63,13 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
   const int infeasible = 1;
   const int wrong_obj  = 2;
 
-  CouNumber *sol = new CouNumber [nVars ()];
-
   // copy solution, evaluate the corresponding aux, and then replace
   // the original variables again for checking
-  CoinCopyN (solution, nOrigVars_, sol);
+  CouNumber *sol = new CouNumber [nVars ()];
+  CoinZeroN (sol     + nOrigVars_ - ndefined_, nVars() - (nOrigVars_ - ndefined_));
+  CoinCopyN (solution, nOrigVars_ - ndefined_, sol);
   getAuxs (sol);
-  CoinCopyN (solution, nOrigVars_, sol);
+  CoinCopyN (solution, nOrigVars_ - ndefined_, sol);
 
   // install NL solution candidate in evaluation structure
   domain_.push (nVars (), sol, domain_.lb (), domain_.ub (), false);
@@ -125,7 +125,7 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
     if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM))
       printf ("  recomputed: %.12e\n", obj);
 
-    for (int i=0; i < nOrigVars_; i++) {
+    for (int i=0; i < nOrigVars_ - ndefined_; i++) {
 
       if (variables_ [i] -> Multiplicity () <= 0) 
 	continue;
@@ -147,7 +147,7 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
       // check (original and auxiliary) variables' integrality
 
-      if (variables_ [i] -> isInteger () &&
+      if (variables_ [i] -> isDefinedInteger () &&
 	  (fabs (val - COUENNE_round (val)) > feas_tolerance_)) {
 
 	Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_PROBLEM,
@@ -217,9 +217,9 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
       // printf ("]\n");
 
       if ((delta > 0.) &&
-	  ((ratio > 2.)  ||  // check delta > 0 to take into account semi-auxs
-	   (ratio <  .5)) ||
-	  ((delta /= denom) > CoinMin (COUENNE_EPS, feas_tolerance_))) {
+	  (((ratio > 2.)  ||  // check delta > 0 to take into account semi-auxs
+	    (ratio <  .5)) ||
+	   ((delta /= denom) > CoinMin (COUENNE_EPS, feas_tolerance_)))) {
 
 	Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM,
 			    "  checkNLP: auxiliary %d violates tolerance %g by %g/%g = %g\n", 
@@ -378,7 +378,7 @@ bool CouenneProblem::checkBounds(const CouNumber *sol,
 				 const double precision, double &maxViol) const {
 
   bool isFeas = true;
-  for(int i=0; i<nOrigVars_; i++) {
+  for(int i=0; i<nOrigVars_ - ndefined_; i++) {
     
     if (variables_[i]-> Multiplicity () <= 0) 
       continue;
@@ -480,9 +480,9 @@ bool CouenneProblem::checkAux(const CouNumber *sol,
     maxViol = (maxViol > deldenom ? maxViol : deldenom);
 
     if ((delta > 0.) &&
-	((ratio > 2.)  ||  // check delta > 0 to take into account semi-auxs
-	 (ratio <  .5)) ||
-	((delta /= denom) > CoinMin (COUENNE_EPS, feas_tolerance_))) {
+	(((ratio > 2.)  ||  // check delta > 0 to take into account semi-auxs
+	  (ratio <  .5)) ||
+	 ((delta /= denom) > CoinMin (COUENNE_EPS, feas_tolerance_)))) {
 
       Jnlst () -> Printf (Ipopt::J_MOREVECTOR, J_PROBLEM,
 			  "checkAux(): auxiliary %d violates tolerance %g by %g (deldenom: %g ratio %g)\n", 
@@ -674,7 +674,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 
     printf ("checking solution:\n");
 
-    for (int i=0; i<nOrigVars_; i++)
+    for (int i=0; i<nOrigVars_ - ndefined_; i++)
       printf ("%.12e ", solution [i]);
     printf ("\n");
   }
@@ -684,7 +684,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 #endif
 
   int from = 0;
-  bool isFeasRec = checkInt(solution, from, nOrigVars_, listInt,
+  bool isFeasRec = checkInt(solution, from, nOrigVars_ - ndefined_, listInt,
 			    false, stopAtFirstViol,
 			    precision, maxViolRecSol);
   bool isFeasCou = isFeasRec;
@@ -716,7 +716,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 	       getRecordBestSol()->getInitDomUb(), false);
 
   CouNumber *couRecSol = new CouNumber[nVars()];
-  CoinCopyN (solution, nOrigVars_, couRecSol);
+  CoinCopyN (solution, nOrigVars_ - ndefined_, couRecSol);
   getAuxs(couRecSol);
   //CoinCopyN (solution, nOrigVars_, couRecSol);
 
@@ -744,7 +744,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 
   if(checkAll) {
     if(!stopAtFirstViol || isFeasRec) {
-      bool isFeasInt = checkInt(couRecSol, nOrigVars_, nVars(), listInt,
+      bool isFeasInt = checkInt(couRecSol, nOrigVars_ - ndefined_, nVars(), listInt,
 				false, stopAtFirstViol,
 				precision, maxViolRecSol);
       if(!isFeasInt) {
@@ -854,7 +854,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
       }
       
       if(!stopAtFirstViol || isFeasCou) {
-	bool isFeasInt = checkInt(couSol, nOrigVars_, nVars(), listInt,
+	bool isFeasInt = checkInt(couSol, nOrigVars_ - ndefined_, nVars(), listInt,
 				  false, stopAtFirstViol,
 				  precision, maxViolCouSol);
 	if(!isFeasInt) {

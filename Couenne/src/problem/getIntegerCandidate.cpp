@@ -58,14 +58,14 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
   CoinCopyN (Ub (), ncols, oub);
 
   // for now save fractional point into integer point
-  CoinCopyN (xFrac, nOrigVars_, xInt);
+  CoinCopyN (xFrac, nOrigVars_ - ndefined_, xInt);
 
   domain_.push (nVars (), xInt, lb, ub);
 
-  enum fixType *fixed = new enum fixType [nOrigVars_]; // integer variables that were fixed
+  enum fixType *fixed = new enum fixType [nOrigVars_ - ndefined_]; // integer variables that were fixed
 
-  for (int i=0; i<nOrigVars_; i++) 
-    fixed [i] = (Var (i) -> isInteger () &&        // work on integer variables only
+  for (int i=0; i<nOrigVars_ - ndefined_; i++) 
+    fixed [i] = (Var (i) -> isDefinedInteger () && // work on integer variables only
 		 Var (i) -> Multiplicity () > 0) ? // don't care if unused variable
       UNFIXED : CONTINUOUS;
 
@@ -137,7 +137,6 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       printf ("===================================================\n");
     }
 
-
     const int 
       N_VARS_HUGE   = 10000,
       N_VARS_LARGE  = 1000,
@@ -171,9 +170,9 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	// *rNum is the number of variable with integer rank equal to rank
 
 	// start restricting around current integer box
-	for (int i=0; i<nOrigVars_; i++) 
+	for (int i=0; i<nOrigVars_ - ndefined_; i++) 
 	  if ((Var (i) -> Multiplicity () > 0) && // alive variable
-	      (Var (i) -> isInteger    ())     && // integer, may fix if independent of other integers
+	      (Var (i) -> isDefinedInteger ()) && // integer, may fix if independent of other integers
 	      (integerRank_ [i] == rank)) {
 
 	    Lb (i) = CoinMax (Lb (i), floor (xFrac [i] - COUENNE_EPS)); 
@@ -210,12 +209,12 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
 	  bool one_fixed = false;
 
-	  for (int i=0; i<nOrigVars_; i++) 
+	  for (int i=0; i<nOrigVars_ - ndefined_; i++) 
 
 	    if ((Var (i) -> Multiplicity () > 0) && // alive 
 		(integerRank_ [i] == rank)       && // at this rank
 		(fixed [i] == UNFIXED)           && // still to be fixed
-		Var (i) -> isInteger ()) {          // and integer
+		Var (i) -> isDefinedInteger ()) {   // and integer
 
 	      if (CoinCpuTime () > maxCpuTime_)
 		break;
@@ -231,7 +230,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 		continue;
 	      }
 
-	      // if variable already integer values, fix it (TODO: do
+	      // if variable already integer valued, fix it (TODO: do
 	      // this only if impatient, e.g. if #variables huge)
 	      if (ceil (xInt [i] - COUENNE_EPS) - COUENNE_EPS <= xInt [i]) {
 
@@ -263,13 +262,13 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	    int index = 0;
 
 	    // find first unfixed integer at this rank
-	    while ((index < nOrigVars_) && 
+	    while ((index < nOrigVars_ - ndefined_) && 
 		   (!(Var (index) -> isInteger ()) ||
 		    (integerRank_ [index] != rank) ||
 		    (fixed [index] != UNFIXED)))
-	      index++;
+	      ++index;
 
-	    assert (index < nOrigVars_);
+	    assert (index < nOrigVars_ - ndefined_);
 
 	    jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, 
 			      "none fixed, fix %d from %g [%g,%g] [L=%g, R=%g]", 
@@ -311,7 +310,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       } // for
 
     // save tightened bounds in NLP space. Sanity check
-    for (int i = nOrigVars_; i--;)
+    for (int i = nOrigVars_ - ndefined_; i--;)
       if (Var (i) -> Multiplicity () > 0) {
 
 	if (fixed [i] == FIXED)       // integer point, fixed

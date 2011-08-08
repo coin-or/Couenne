@@ -155,6 +155,16 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
   // set point at x, don't copy
   domain_.push (nVars (), x, domain_.lb (), domain_.ub (), false);
 
+  // if there are common expressions, set them (they usually don't get
+  // set by the AMPL interface as they are not really variables)
+  if (ndefined_ > 0)
+    for (int i = 0; i < nVars (); ++i) {
+      int ii = numbering_ [i];
+      if (ii >= nOrigVars_ - ndefined_ && 
+	  ii <  nOrigVars_)
+	X (ii) = (*(commonexprs_ [ii - nOrigVars_ + ndefined_])) ();
+    }
+
   // set auxiliary w to f(x). This procedure is exact even though the
   // auxiliary variables have an incomplete image, i.e. they have been
   // decomposed previously, since they are updated with increasing
@@ -180,19 +190,23 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 
 	CouNumber &x = X (index);
 
-	bool isInt = var -> isInteger ();
+	bool isInt = var -> isDefinedInteger ();
 
 	/*printf ("checking "); var -> print ();
 	printf (" = %g = %g. Sign: %d, int: %d, [%g,%g]", 
 		X (index), (*(var -> Image ())) (),
 		var -> sign (), isInt, l, u);*/
 
-	if (var -> sign () == expression::AUX_EQ)
+	if ((var -> sign () == expression::AUX_EQ) &&
+	    ((index >= nOrigVars_) ||
+	     (index  < nOrigVars_ - ndefined_)))
 	  x = (*(var -> Image ())) ();  // addresses of x[] and X() are equal
     
 	x = 
 	  CoinMax ((var -> sign () != expression::AUX_LEQ) ? (isInt ? ceil  (l - COUENNE_EPS) : l) : -COIN_DBL_MAX, 
 	  CoinMin ((var -> sign () != expression::AUX_GEQ) ? (isInt ? floor (u + COUENNE_EPS) : u) :  COIN_DBL_MAX, x));
+
+	// heuristic feasibility heuristic: if semiaux, round value to nearest integer if variable is integer
 
 	if (isInt) {
 	  if (var -> sign () == expression::AUX_GEQ) x = ceil  (x - COUENNE_EPS);
@@ -248,7 +262,7 @@ void CouenneProblem::fillObjCoeff (double *&obj) {
     //    if (sense == MINIMIZE) while (*index >= 0) obj [*index++] =  *coeff++;
     //    else                   while (*index >= 0) obj [*index++] = -*coeff++;      
 
-    for (int n = lcoe.size (), i=0; n--; i++)
+    for (int n = (int) lcoe.size (), i=0; n--; i++)
       //exprGroup::lincoeff::iterator el = lcoe.begin (); el != lcoe.end (); ++el)
       obj [lcoe [i]. first -> Index ()] = lcoe [i]. second;
     //(sense == MINIMIZE) ? 

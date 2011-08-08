@@ -219,7 +219,7 @@ void CouenneProblem::fillIntegerRank () const {
     jnlst_->Printf (Ipopt::J_VECTOR, J_PROBLEM, "%d: %d\n", i, integerRank_ [i]);
 
   // fill in numberInRank_
-  for (int i=0; i<nOrigVars_; i++)
+  for (int i=0; i<nOrigVars_ - ndefined_; i++)
     if ((variables_ [i] -> isDefinedInteger ()) &&
 	(variables_ [i] -> Multiplicity () > 0)) {
 

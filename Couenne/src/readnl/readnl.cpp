@@ -29,6 +29,7 @@
 #include "CouenneExprSum.hpp"
 #include "CouenneExprOpp.hpp"
 #include "CouenneExprMul.hpp"
+#include "CouenneExprSub.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouenneExprGroup.hpp"
 
@@ -50,6 +51,8 @@ inline bool is_expr_zero (expr* e)
 			  //  && (fabs (e -> dL) < COUENNE_EPS)
 			  // *** CHECK THIS! dL is the derivative
 			  )));} 
+
+void createCommonExpr (CouenneProblem *p, const ASL *asl, int i, int which);
 
 // Reads a MINLP from an AMPL .nl file through the ASL methods
 int CouenneProblem::readnl (const ASL *asl) {
@@ -112,120 +115,13 @@ int CouenneProblem::readnl (const ASL *asl) {
   // Each has a linear and a nonlinear part (thanks to Dominique
   // Orban: http://www.gerad.ca/~orban/drampl/def-vars.html)
 
-  for (int i = 0; i < como + comc + comb; i++) {
+  for (int i = 0; i < como + comc + comb; i++)
+    createCommonExpr (this, asl, i, 0);
 
-    struct cexp *common = ((const ASL_fg *) asl) -> I.cexps_ + i;
-    expression *nle = nl2e (common -> e, asl);
+  for (int i = 0; i < como1 + comc1; i++)
+    createCommonExpr (this, asl, i, 1);
 
-#ifdef DEBUG
-    printf ("cexp  %d [%d]: ", i, variables_ . size ()); nle -> print ();  printf ("\n");
-#endif
-
-    int nlin = common -> nlin;  // Number of linear terms
-
-    if (nlin > 0) {
-
-      linpart *L = common -> L;
-
-      std::vector <std::pair <exprVar *, CouNumber> > lcoeff;
-
-      for (int j = 0; j < nlin; j++) {
-	//vp = (expr_v *)((char *)L->v.rp - ((char *)&ev.v - (char *)&ev));
-	//Printf( " %-g x[%-d]", L->fac, (int)(vp - VAR_E) );	
-	int indVar = ((uintptr_t) (L [j].v.rp) - (uintptr_t) VAR_E) / sizeof (expr_v);
-	CouNumber coeff = L [j]. fac;
-
-	lcoeff.push_back (std::pair <exprVar *, CouNumber> (variables_ [indVar], coeff));
-
-#ifdef DEBUG
-	Printf( " %+g x_%d [%-3d]", L [j]. fac, indVar,
-		(expr_v *) (L [j].v.rp) - VAR_E //((const ASL_fg *) asl) -> I.cexps_
-		//L [j]. v.i
-		);
-#endif
-      }
-
-      expression **al = new expression * [1];
-      *al = nle;
-
-      expression *eg;
-
-      if (lcoeff.size  () == 1 && 
-	  nle -> Type  () == CONST && 
-	  nle -> Value () == 0.) {
-
-	CouNumber coeff = lcoeff [0].second;
-
-	if      (coeff ==  1.) eg =                                     new exprClone (lcoeff [0].first);
-	else if (coeff == -1.) eg = new exprOpp                        (new exprClone (lcoeff [0].first));
-	else                   eg = new exprMul (new exprConst (coeff), new exprClone (lcoeff [0].first));
-      } else                   eg = exprGroup::genExprGroup (0, lcoeff, al, 1);
-
-      commonexprs_ . push_back (eg);
-    } 
-    else commonexprs_ . push_back (nle);
-#ifdef DEBUG
-    printf ("\n");
-#endif
-  }
-
-  for (int i = 0; i < como1 + comc1; i++) {
-
-    struct cexp1 *common = ((const ASL_fg *) asl) -> I.cexps1_ + i;
-    expression *nle = nl2e (common -> e, asl);
-
-#ifdef DEBUG
-    printf ("cexp1 %d [%d]: ", i, variables_ . size ()); nle -> print ();  printf (" ||| ");
-#endif
-
-    int nlin = common -> nlin;  // Number of linear terms
-
-    if (nlin > 0) {
-
-      std::vector <std::pair <exprVar *, CouNumber> > lcoeff;
-
-      linpart *L = common -> L;
-
-      for (int j = 0; j < nlin; j++) {
-	//vp = (expr_v *)((char *)L->v.rp - ((char *)&ev.v - (char *)&ev));
-
-	int indVar = ((uintptr_t) (L [j].v.rp) - (uintptr_t) VAR_E) / sizeof (expr_v);
-	CouNumber coeff = L [j]. fac;
-
-	lcoeff.push_back (std::pair <exprVar *, CouNumber> (variables_ [indVar], coeff));
-
-#ifdef DEBUG
-	Printf( " %+g x_%d (%-3d)", L [j]. fac, indVar,
-		(expr_v *) (L [j].v.rp) - VAR_E //((const ASL_fg *) asl) -> I.cexps_
-		//L [j]. v.i
-		);
-#endif
-      }
-
-      expression **al = new expression * [1];
-      *al = nle;
-
-      expression *eg;
-
-      if (lcoeff.size  () == 1 && 
-	  nle -> Type  () == CONST && 
-	  nle -> Value () == 0.) {
-
-	CouNumber coeff = lcoeff [0].second;
-
-	if      (coeff ==  1.) eg =                                     new exprClone (lcoeff [0].first);
-	else if (coeff == -1.) eg = new exprOpp                        (new exprClone (lcoeff [0].first));
-	else                   eg = new exprMul (new exprConst (coeff), new exprClone (lcoeff [0].first));
-      } else                   eg = exprGroup::genExprGroup (0, lcoeff, al, 1);
-
-      commonexprs_ . push_back (eg);
-    } 
-    else commonexprs_ . push_back (nle);
-#ifdef DEBUG
-    printf ("\n");
-#endif
-    //    addAuxiliary (nl2e (((const ASL_fg *) asl) -> I.cexps1_ [i] . e, asl));
-  }
+  //commonexprs_ . erase (commonexprs_ . begin (), commonexprs_ . end ());
 
   // objective functions /////////////////////////////////////////////////////////////
 
@@ -557,4 +453,89 @@ int CouenneProblem::readnl (const ASL *asl) {
   }
 
   return 0;
+}
+
+
+// 
+// Common code for common expressions (aka defined variables)
+//
+
+void createCommonExpr (CouenneProblem *p, const ASL *asl, int i, int which) {
+
+  struct cexp  *common  = ((const ASL_fg *) asl) -> I.cexps_  + i;
+  struct cexp1 *common1 = ((const ASL_fg *) asl) -> I.cexps1_ + i;
+
+  expression *nle = p -> nl2e (which ? common1 -> e : common -> e, asl);
+
+#ifdef DEBUG
+  printf ("cexp1 %d [%d]: ", i, p -> Variables () . size ()); nle -> print ();  printf (" ||| ");
+#endif
+
+  int nlin = which ? common1 -> nlin : common -> nlin;  // Number of linear terms
+
+  if (nlin > 0) {
+
+    linpart *L = which ? common1 -> L : common -> L;
+
+    std::vector <std::pair <exprVar *, CouNumber> > lcoeff;
+
+    for (int j = 0; j < nlin; j++) {
+      //vp = (expr_v *)((char *)L->v.rp - ((char *)&ev.v - (char *)&ev));
+
+      int indVar = ((uintptr_t) (L [j].v.rp) - (uintptr_t) VAR_E) / sizeof (expr_v);
+      CouNumber coeff = L [j]. fac;
+
+      lcoeff.push_back (std::pair <exprVar *, CouNumber> (p -> Var (indVar), coeff));
+
+#ifdef DEBUG
+      Printf( " %+g x_%d (%-3d)", L [j]. fac, indVar,
+	      (expr_v *) (L [j].v.rp) - VAR_E //((const ASL_fg *) asl) -> I.cexps_
+	      //L [j]. v.i
+	      );
+#endif
+    }
+
+    expression **al = new expression * [1];
+    *al = nle;
+
+    expression *eg;
+
+    if (lcoeff.size  () == 1 && 
+	nle -> Type  () == CONST && 
+	nle -> Value () == 0.) {
+
+      CouNumber coeff = lcoeff [0].second;
+
+      if      (coeff ==  1.) eg =                                     new exprClone (lcoeff [0].first);
+      else if (coeff == -1.) eg = new exprOpp                        (new exprClone (lcoeff [0].first));
+      else                   eg = new exprMul (new exprConst (coeff), new exprClone (lcoeff [0].first));
+    } else                   eg = exprGroup::genExprGroup (0, lcoeff, al, 1);
+
+    int indVar = p -> nVars () - p -> nDefVars () + p -> commonExprs () . size ();
+
+    if (eg -> Index () != indVar) {
+
+      expression *body = new exprSub (eg, new exprClone (p -> Var (indVar)));
+      p -> addEQConstraint (body, new exprConst (0.));
+    }
+
+    p -> commonExprs () . push_back (new exprClone (eg));
+  } 
+  else {
+
+    int indVar = p -> nVars () - p -> nDefVars () + p -> commonExprs () . size ();
+
+    if (nle -> Index () != indVar) {
+
+      expression *body = new exprSub (nle, new exprClone (p -> Var (indVar)));
+      p -> addEQConstraint (body, new exprConst (0.));
+    }
+
+    p -> commonExprs () . push_back (new exprClone (nle));
+  }
+
+#ifdef DEBUG
+  printf ("\n");
+#endif
+  //    addAuxiliary (nl2e (((const ASL_fg *) asl) -> I.cexps1_ [i] . e, asl));
 }
