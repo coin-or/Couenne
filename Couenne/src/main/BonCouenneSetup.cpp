@@ -48,17 +48,17 @@
 #include "BonInitHeuristic.hpp"
 #include "BonNlpHeuristic.hpp"
 
-#include "BonFixAndSolveHeuristic.hpp"
-#include "BonDummyPump.hpp"
-#include "BonPumpForMinlp.hpp"
-#include "BonHeuristicRINS.hpp"
-#include "BonHeuristicLocalBranching.hpp"
-#include "BonHeuristicFPump.hpp"
-#include "BonHeuristicDiveFractional.hpp"
-#include "BonHeuristicDiveVectorLength.hpp"
-#include "BonHeuristicDiveMIPFractional.hpp"
-#include "BonHeuristicDiveMIPVectorLength.hpp"
-#include "BonMilpRounding.hpp"
+// #include "BonFixAndSolveHeuristic.hpp"
+// #include "BonDummyPump.hpp"
+// #include "BonPumpForMinlp.hpp"
+// #include "BonHeuristicRINS.hpp"
+// #include "BonHeuristicLocalBranching.hpp"
+// #include "BonHeuristicFPump.hpp"
+// #include "BonHeuristicDiveFractional.hpp"
+// #include "BonHeuristicDiveVectorLength.hpp"
+// #include "BonHeuristicDiveMIPFractional.hpp"
+// #include "BonHeuristicDiveMIPVectorLength.hpp"
+// #include "BonMilpRounding.hpp"
 
 #include "BonGuessHeuristic.hpp"
 #include "CbcCompareActual.hpp"
@@ -570,8 +570,8 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     heuristics_. push_back (h);
   }
 
-
-  if (0) { // inactive as of yet -- segfaults 
+#if 0
+  { // inactive as of yet -- segfaults 
 
     Ipopt::Index doHeuristicDiveFractional = false;
     options()->GetEnumValue("heuristic_dive_fractional",doHeuristicDiveFractional,prefix_.c_str());
@@ -689,7 +689,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
       h.id = "MILP Rounding";
       heuristics_.push_back(h);
     }
-  }
+#endif
 
   // Add Branching rules ///////////////////////////////////////////////////////
 
@@ -808,6 +808,7 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   BabSetupBase        ::registerAllOptions (roptions);
   Bonmin::BonCbcFullNodeInfo  ::registerOptions (roptions);
 
+#if 0
   /// Heuristics
   Bonmin::LocalSolverBasedHeuristic    ::registerOptions (roptions);
   Bonmin::FixAndSolveHeuristic         ::registerOptions (roptions);
@@ -821,6 +822,7 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   Bonmin::HeuristicDiveVectorLength    ::registerOptions (roptions);
   Bonmin::HeuristicDiveMIPFractional   ::registerOptions (roptions);
   Bonmin::HeuristicDiveMIPVectorLength ::registerOptions (roptions);  
+#endif
 
   roptions -> AddStringOption3 ("milp_solver",
 				"Choose the subsolver to solve MILP sub-problems in OA decompositions.",
