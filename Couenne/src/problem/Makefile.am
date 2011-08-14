@@ -54,7 +54,7 @@ libCouenneProblem_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) \
+AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/..` \
 	-I`$(CYGPATH_W) $(srcdir)/../convex` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression` \
@@ -62,7 +62,8 @@ AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) \
 	-I`$(CYGPATH_W) $(srcdir)/../standardize` \
 	-I`$(CYGPATH_W) $(srcdir)/../branch` \
 	-I`$(CYGPATH_W) $(srcdir)/../problem` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem/depGraph`
+	-I`$(CYGPATH_W) $(srcdir)/../problem/depGraph` \
+	$(COUENNELIB_CFLAGS) $(ASL_CFLAGS)
 
 if COIN_HAS_NTY
 AM_CPPFLAGS += \

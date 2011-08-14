@@ -26,20 +26,21 @@ couenne_DEPENDENCIES  = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneRe
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-AM_CPPFLAGS = $(COUENNELIB_CFLAGS) $(ASL_CFLAGS) \
+AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/..` \
 	-I`$(CYGPATH_W) $(srcdir)/../convex` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
 	-I`$(CYGPATH_W) $(srcdir)/../interfaces` \
 	-I`$(CYGPATH_W) $(srcdir)/../heuristics` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch`\
+	-I`$(CYGPATH_W) $(srcdir)/../branch` \
 	-I`$(CYGPATH_W) $(srcdir)/../problem` \
 	-I`$(CYGPATH_W) $(srcdir)/../cut/crossconv` \
 	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
 	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening/twoImpliedBT` \
 	-I`$(CYGPATH_W) $(srcdir)/../disjunctive` \
-	-I`$(CYGPATH_W) $(srcdir)/../readnl`
+	-I`$(CYGPATH_W) $(srcdir)/../readnl` \
+	$(COUENNELIB_CFLAGS) $(ASL_CFLAGS) 
 
 # This line is necessary to allow VPATH compilation
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

@@ -51,7 +51,7 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 AM_CPPFLAGS =
 
-# AM_CPPFLAGS = $(COUENNELIB_CFLAGS) \
+# AM_CPPFLAGS = \
 # 	-I`$(CYGPATH_W) $(srcdir)/convex` \
 # 	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
 # 	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
@@ -63,7 +63,8 @@ AM_CPPFLAGS =
 # 	-I`$(CYGPATH_W) $(srcdir)/branch` \
 # 	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
 # 	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
-# 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt`
+# 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt` \
+#       $(COUENNELIB_CFLAGS)
 
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
 

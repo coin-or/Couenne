@@ -88,7 +88,7 @@ if COIN_HAS_PKGCONFIG
 	$(PKG_CONFIG) --libs couenne > $(addlibsdir)/couenne_addlibs.txt
 else
 if COIN_CXX_IS_CL
-	echo "/libpath:`$(CYGPATH_W) @abs_lib_dir@` libBonCouenne.lib libCouenne.lib @COUENNELIB_LIBS_INSTALLED@" > $(addlibsdir)/couenne_addlibs_cpp.txt
+	echo "-libpath:`$(CYGPATH_W) @abs_lib_dir@` libBonCouenne.lib libCouenne.lib @COUENNELIB_LIBS_INSTALLED@" > $(addlibsdir)/couenne_addlibs_cpp.txt
 else
 	echo -L@abs_lib_dir@ -lBonCouenne -lCouenne @COUENNELIB_LIBS_INSTALLED@ > $(addlibsdir)/couenne_addlibs.txt
 endif
