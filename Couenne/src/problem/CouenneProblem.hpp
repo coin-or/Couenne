@@ -314,6 +314,9 @@ class CouenneProblem {
   /// return type of decomposition of quadrilinear terms    
   enum TrilinDecompType trilinDecompType_;
 
+  /// constant value of the objective if no variable is declared in it
+  double constObjVal_;
+
  public:
 
   CouenneProblem  (ASL * = NULL,
@@ -686,6 +689,9 @@ class CouenneProblem {
 
   /// options
   Bonmin::BabSetupBase *bonBase () const {return bonBase_;}
+
+  /// returns constant objective value if it contains no variables
+  inline double constObjVal () const {return constObjVal_;}
 
 protected:
 

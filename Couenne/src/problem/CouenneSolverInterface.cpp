@@ -73,7 +73,7 @@ void CouenneSolverInterface<T>::initialSolve () {
   // 	    T::getColUpper    () [i]);
   // printf (")\n");
 
-  if (T::getObjValue () <= - Couenne_large_bound)
+  if (getObjValue () <= - Couenne_large_bound)
     knowDualInfeasible_ = true;
 
   // some originals may be unused due to their zero multiplicity (that
@@ -139,7 +139,7 @@ void CouenneSolverInterface<T>::resolve () {
   //   printf ("%g ", T::getColSolution () [i]);
   // printf (")\n");
 
-  if (T::getObjValue () <= - Couenne_large_bound)
+  if (getObjValue () <= - Couenne_large_bound)
     knowDualInfeasible_ = true;
 
   CouNumber 
@@ -150,7 +150,7 @@ void CouenneSolverInterface<T>::resolve () {
   // check if resolve found new integer solution
   bool isChecked = false;  
 #ifdef FM_CHECKNLP2
-  double curBestVal = 1e50;                                                    
+  double curBestVal = 1.e50;
   if(cutgen_->Problem()->getRecordBestSol()->getHasSol()) { 
     curBestVal =  cutgen_->Problem()->getRecordBestSol()->getVal(); 
   }
@@ -264,12 +264,12 @@ void CouenneSolverInterface<T>::resolve () {
 	(!(csi -> isProvenOptimal ()) && !isProvenOptimal ())) {
 
       if (csi -> isProvenOptimal () &&
-	  (fabs (csi -> getObjValue () - T::getObjValue ()) / 
-	   (1. + fabs (csi -> getObjValue ()) + fabs (T::getObjValue ())) > 1e-2))
+	  (fabs (csi -> getObjValue () - getObjValue ()) / 
+	   (1. + fabs (csi -> getObjValue ()) + fabs (getObjValue ())) > 1e-2))
 
 	printf ("Warning: discrepancy between cloned %g and current %g [%g]\n", 
-		csi -> getObjValue (),  T::getObjValue (),
-		csi -> getObjValue () - T::getObjValue ());
+		csi -> getObjValue (),  getObjValue (),
+		csi -> getObjValue () - getObjValue ());
     }
 
     delete nsi;
@@ -305,7 +305,7 @@ void CouenneSolverInterface<T>::solveFromHotStart () {
 
   resolve();
 
-  if (T::getObjValue () <= - Couenne_large_bound)
+  if (getObjValue () <= - Couenne_large_bound)
     knowDualInfeasible_ = true;
 
   // some originals may be unused due to their zero multiplicity (that
@@ -322,5 +322,13 @@ void CouenneSolverInterface<T>::solveFromHotStart () {
   if (isProvenOptimal          ()) knowOptimal_        = true;
   if (isProvenDualInfeasible   ()) knowDualInfeasible_ = true;
 }
+
+/// Get the objective function value. Modified due to possible
+/// constant objectives passed to Couenne
+template <class T> 
+inline double CouenneSolverInterface<T>::getObjValue() const {
+  return cutgen_ -> Problem () -> constObjVal () + T::getObjValue();
+}
+
 
 }
