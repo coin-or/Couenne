@@ -78,7 +78,8 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   nUnusedOriginals_ (-1),
   multilinSep_ (CouenneProblem::MulSepNone),
   max_fbbt_iter_ (MAX_FBBT_ITER),
-  orbitalBranching_ (false) {
+  orbitalBranching_ (false),
+  constObjVal_ (0.) {
 
   double now = CoinCpuTime ();
 
@@ -152,7 +153,8 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   nUnusedOriginals_ (p.nUnusedOriginals_),
   multilinSep_  (p.multilinSep_),
   max_fbbt_iter_  (p.max_fbbt_iter_),
-  orbitalBranching_  (p.orbitalBranching_) {
+  orbitalBranching_  (p.orbitalBranching_),
+  constObjVal_       (p.constObjVal_) {
 
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);

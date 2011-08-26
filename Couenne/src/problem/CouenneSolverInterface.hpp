@@ -94,6 +94,10 @@ public:
   bool isProvenDualInfeasible () const;
   //{return knowDualInfeasible_;}
 
+  /// Get the objective function value. Modified due to possible
+  /// constant objectives passed to Couenne
+  virtual double getObjValue() const;
+
 protected:
 
   /// Copy of the Clp version --- not light version

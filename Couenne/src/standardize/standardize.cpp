@@ -179,20 +179,34 @@ bool CouenneProblem::standardize () {
       (*i) -> print ();
     }
 
-    exprAux *aux = (*i) -> standardize (this);
+    // check for constant objective
 
-    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf (" objective "); (*i) -> print (); 
-      if (aux) {printf (" admits aux "); aux -> print ();}
-    }
+    std::set <int> deplist;
 
-    if (aux) {
-      //delete ((*i) -> Body ());
-      (*i) -> Body (new exprClone (aux));
-    }
+    if (0 == (*i) -> Body () -> DepList (deplist,  TAG_AND_RECURSIVE)) {
 
-    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf (". New obj: "); (*i) -> print (); printf ("\n");
+      // This objective is constant. Store the value and use it in
+      // CouenneSolverInterface.
+
+      constObjVal_ = (*i) -> Body () -> Value ();
+
+    } else {
+
+      exprAux *aux = (*i) -> standardize (this);
+
+      if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	printf (" objective "); (*i) -> print (); 
+	if (aux) {printf (" admits aux "); aux -> print ();}
+      }
+
+      if (aux) {
+	//delete ((*i) -> Body ());
+	(*i) -> Body (new exprClone (aux));
+      }
+
+      if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
+	printf (". New obj: "); (*i) -> print (); printf ("\n");
+      }
     }
   }
 
