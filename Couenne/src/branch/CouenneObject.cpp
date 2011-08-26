@@ -275,7 +275,7 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
     int objInd = problem_ -> Obj (0) -> Body () -> Index ();
 
     double
-      lb = info -> lower_ [objInd],
+      lb = objInd >= 0 ? info -> lower_ [objInd] : problem_ -> Obj (0) -> Body () -> Value (),
       ub = problem_ -> getCutOff (),
       currentGap = 
       (ub >  COUENNE_INFINITY    / 10 ||

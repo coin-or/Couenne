@@ -110,7 +110,8 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   // check for initial solution given to Couenne. If feasible, set cutoff
 
 #ifdef FM_CHECKNLP2
-  cutoff = X (objectives_ [0] -> Body () -> Index ());
+  int objind = objectives_ [0] -> Body () -> Index ();
+  cutoff = objind >= 0 ? X (objind) : objectives_ [0] -> Body () -> Value ();
   if(checkNLP2(X(), cutoff, false, // do not care about obj value
 	       true, // stop at first viol 
 	       false, // checkAll
@@ -135,7 +136,10 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
   }
 #else /* not FM_CHECKNLP2 */
-  if (checkNLP (X (), cutoff = X (objectives_ [0] -> Body () -> Index ()), true)) {
+  int objind = objectives_ [0] -> Body () -> Index ();
+  cutoff = objind >= 0 ? X (objind) : objectives_ [0] -> Body () -> Value ();
+
+  if (checkNLP (X (), cutoff, true)) {
     jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM,
 		      "Couenne: initial solution (value %g) is MINLP feasible\n",
 		      cutoff);

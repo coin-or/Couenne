@@ -1,8 +1,9 @@
+## $Id$
+#
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
 # This file is distributed under the Eclipse Public License.
 #
-## $Id$
 #
 # Authors:  Andreas Waechter           IBM    2006-04-13
 #           Pietro Belotti

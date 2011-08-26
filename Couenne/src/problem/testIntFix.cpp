@@ -33,7 +33,8 @@ int CouenneProblem::testIntFix (int index,
 
   double
     *llb = new double [ncols], *lub = new double [ncols],  // new bounds when rounding down
-    *rlb = new double [ncols], *rub = new double [ncols];  //                          up
+    *rlb = new double [ncols], *rub = new double [ncols],  //                          up
+    dualBound = objind >= 0 ? Lb (objind) : Obj (0) -> Body () -> Value ();
 
   // try rounding down ///////////////////////////////////////////////////////////////////////
 
@@ -50,7 +51,7 @@ int CouenneProblem::testIntFix (int index,
 
   bool feasLeft = btCore (f_chg); // true if feasible with fake bound
 
-  dualL [index] = Lb (objind);
+  dualL [index] = dualBound;
 
   // save new bounds 
   CoinCopyN (Lb (), ncols, llb);
@@ -74,7 +75,7 @@ int CouenneProblem::testIntFix (int index,
 
   bool feasRight = btCore (f_chg); // true if feasible with fake bound
 
-  dualR [index] = Lb (objind);
+  dualR [index] = dualBound;
 
   // save new bounds
   CoinCopyN (Lb (), ncols, rlb);

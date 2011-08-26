@@ -340,10 +340,11 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
     initAuxs ();
     int objind = Obj (0) -> Body () -> Index ();
 
-    if (X (objind) < getCutOff ()) {
+    CouNumber xp = objind >= 0 ? X (objind) : Obj (0) -> Body () -> Value ();
+
+    if (xp < getCutOff ()) {
 
       const CouNumber *x = X ();
-      CouNumber xp = x [objind];
 
       if 
 #ifdef FM_CHECKNLP2

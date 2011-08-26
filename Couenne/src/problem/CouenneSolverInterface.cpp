@@ -142,10 +142,12 @@ void CouenneSolverInterface<T>::resolve () {
   if (T::getObjValue () <= - Couenne_large_bound)
     knowDualInfeasible_ = true;
 
+  int objind = cutgen_ -> Problem () -> Obj (0) -> Body () -> Index ();
+
   CouNumber 
     //objval     = T::getObjValue (),
     curCutoff  = cutgen_ -> Problem () -> getCutOff (),
-    objvalGlob = T::getColSolution () [cutgen_ -> Problem () -> Obj (0) -> Body () -> Index ()];  
+    objvalGlob = objind >= 0 ? T::getColSolution () [objind] : cutgen_ -> Problem () -> Obj (0) -> Body () -> Value ();
 
   // check if resolve found new integer solution
   bool isChecked = false;  
