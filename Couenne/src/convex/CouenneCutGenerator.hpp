@@ -19,27 +19,8 @@
 #include "BonAuxInfos.hpp"
 #include "BonBabInfos.hpp"
 #include "OsiSolverInterface.hpp"
-
-#undef PACKAGE
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_VERSION
-#undef PACKAGE_TARNAME
-#undef PACKAGE_NAME
-#undef PACKAGE_STRING
-#undef VERSION
-
+#include "CouenneConfig.h"
 #include "CouenneJournalist.hpp"
-
-#undef PACKAGE
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_VERSION
-#undef PACKAGE_TARNAME
-#undef PACKAGE_NAME
-#undef PACKAGE_STRING
-#undef VERSION
-
-#include "config_couenne.h"
-
 #include "CouenneTypes.hpp"
 
 namespace Ipopt {
