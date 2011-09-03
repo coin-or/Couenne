@@ -290,7 +290,7 @@ class CouenneProblem {
   int lastPrioSort_;
 
   // to record best solution found
-  struct Couenne::CouenneRecordBestSol *recBSol;
+  CouenneRecordBestSol *recBSol;
 
   /// Type of Multilinear separation
   enum multiSep multilinSep_;
