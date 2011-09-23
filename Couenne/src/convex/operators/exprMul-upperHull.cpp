@@ -396,7 +396,7 @@ int genMulCoeff (CouNumber x1, CouNumber y1,
 
   // Now the hard part: lift it so that it touches the other curve
 
-  if (fabs (xO*yO - xD*xD) < COUENNE_EPS) 
+  if (fabs (xO*yO - xD*yD) < COUENNE_EPS) 
     return 1; // no cut if the two points are on the same curve
 
   // should ALWAYS be negative
