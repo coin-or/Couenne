@@ -377,11 +377,13 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
    conshdlrdata->milp = milp;
    conshdlrdata->ncuttingrounds = 0;
 
+#ifdef SCIP_PROPTIMING_BEFORELP
    /* include constraint handler */
    SCIP_CALL( SCIPincludeConshdlr(scip, CONSHDLR_NAME, CONSHDLR_DESC,
          CONSHDLR_SEPAPRIORITY, CONSHDLR_ENFOPRIORITY, CONSHDLR_CHECKPRIORITY,
          CONSHDLR_SEPAFREQ, CONSHDLR_PROPFREQ, CONSHDLR_EAGERFREQ, CONSHDLR_MAXPREROUNDS, 
          CONSHDLR_DELAYSEPA, CONSHDLR_DELAYPROP, CONSHDLR_DELAYPRESOL, CONSHDLR_NEEDSCONS,
+         SCIP_PROPTIMING_BEFORELP,
          conshdlrCopyRowcuts,
          consFreeRowcuts, consInitRowcuts, consExitRowcuts, 
          consInitpreRowcuts, consExitpreRowcuts, consInitsolRowcuts, consExitsolRowcuts,
@@ -392,6 +394,24 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
          consEnableRowcuts, consDisableRowcuts,
          consPrintRowcuts, consCopyRowcuts, consParseRowcuts,
          conshdlrdata) );
+#else
+   /* include constraint handler */
+   SCIP_CALL( SCIPincludeConshdlr(scip, CONSHDLR_NAME, CONSHDLR_DESC,
+         CONSHDLR_SEPAPRIORITY, CONSHDLR_ENFOPRIORITY, CONSHDLR_CHECKPRIORITY,
+         CONSHDLR_SEPAFREQ, CONSHDLR_PROPFREQ, CONSHDLR_EAGERFREQ, CONSHDLR_MAXPREROUNDS,
+         CONSHDLR_DELAYSEPA, CONSHDLR_DELAYPROP, CONSHDLR_DELAYPRESOL, CONSHDLR_NEEDSCONS,
+         SCIP_PROPTIMING_BEFORELP,
+         conshdlrCopyRowcuts,
+         consFreeRowcuts, consInitRowcuts, consExitRowcuts,
+         consInitpreRowcuts, consExitpreRowcuts, consInitsolRowcuts, consExitsolRowcuts,
+         consDeleteRowcuts, consTransRowcuts, consInitlpRowcuts,
+         consSepalpRowcuts, consSepasolRowcuts, consEnfolpRowcuts, consEnfopsRowcuts, consCheckRowcuts,
+         consPropRowcuts, consPresolRowcuts, consRespropRowcuts, consLockRowcuts,
+         consActiveRowcuts, consDeactiveRowcuts,
+         consEnableRowcuts, consDisableRowcuts,
+         consPrintRowcuts, consCopyRowcuts, consParseRowcuts,
+         conshdlrdata) );
+#endif
 
    /* add rowcuts constraint handler parameters */
    SCIP_CALL( SCIPaddIntParam(scip,
