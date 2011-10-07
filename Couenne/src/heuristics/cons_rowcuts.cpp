@@ -377,7 +377,7 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
    conshdlrdata->milp = milp;
    conshdlrdata->ncuttingrounds = 0;
 
-#ifdef SCIP_PROPTIMING_BEFORELP
+#if SCIP_VERSION >= 210
    /* include constraint handler */
    SCIP_CALL( SCIPincludeConshdlr(scip, CONSHDLR_NAME, CONSHDLR_DESC,
          CONSHDLR_SEPAPRIORITY, CONSHDLR_ENFOPRIORITY, CONSHDLR_CHECKPRIORITY,
@@ -391,7 +391,7 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
          consSepalpRowcuts, consSepasolRowcuts, consEnfolpRowcuts, consEnfopsRowcuts, consCheckRowcuts, 
          consPropRowcuts, consPresolRowcuts, consRespropRowcuts, consLockRowcuts,
          consActiveRowcuts, consDeactiveRowcuts, 
-         consEnableRowcuts, consDisableRowcuts,
+         consEnableRowcuts, consDisableRowcuts, NULL,
          consPrintRowcuts, consCopyRowcuts, consParseRowcuts,
          conshdlrdata) );
 #else
