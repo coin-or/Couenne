@@ -33,8 +33,6 @@ namespace Couenne{
       number of iterations, or until a better solution is found.
   */
 
-  using Couenne::CouenneProblem;
-
   class CouenneIterativeRounding : public CbcHeuristic{
 
   public:
