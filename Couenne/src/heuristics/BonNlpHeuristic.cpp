@@ -403,23 +403,28 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   }
   catch (int &e) {
 
+    // forget about using the global cutoff. That has to trickle up to
+    // Cbc some other way
+
+    return 0;
+
     // no solution available? Use the one from the global cutoff
 
     if ((couenne_ -> getCutOff () < objectiveValue) &&
-	couenne_ -> getCutOffSol ()) {
+    	couenne_ -> getCutOffSol ()) {
 
       objectiveValue = couenne_ -> getCutOff    ();
       CoinCopyN       (couenne_ -> getCutOffSol (), couenne_ -> nVars (), newSolution);
 
       if (depth <= 0)
-	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "solution found, obj. %g\n", objectiveValue);
+    	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "solution found, obj. %g\n", objectiveValue);
 
       return 1;
 
     } else {
 
       if (depth <= 0 && e==noSolution)
-	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "no solution.\n", objectiveValue);
+    	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "no solution.\n", objectiveValue);
 
       return 0;
     }
