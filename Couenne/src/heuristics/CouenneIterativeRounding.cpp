@@ -1170,14 +1170,14 @@ namespace Couenne{
        "If enabled, a heuristic based on Iterative Rounding is used "
        "to find feasible solutions for the problem. "
        "The heuristic may take some time, but usually finds good solutions. "
-       "Recommended if you want good upper bounds and have Cplex."
+       "Recommended if you want good upper bounds and have Cplex. "
        "Not recommended if you do not have Cplex");
 
     roptions -> AddNumberOption
       ("iterative_rounding_time",
        "Specify the maximum time allowed for the Iterative Rounding heuristic",
        -1, "Maximum CPU time employed by the Iterative Rounding heuristic; "
-       "if no solution found in this time, failure is reported."
+       "if no solution found in this time, failure is reported. "
        "This overrides the CPU time set by Aggressiveness if positive.");
 
     roptions -> AddNumberOption
@@ -1194,34 +1194,34 @@ namespace Couenne{
        "Aggressiveness of the Iterative Rounding heuristic",
        0, 2, 1,
        "Set the aggressiveness of the heuristic; i.e., how many iterations "
-       "should be run, and with which parameters. The maximum time can be"
-       "overridden by setting the _time and _time_firstcall options."
+       "should be run, and with which parameters. The maximum time can be "
+       "overridden by setting the _time and _time_firstcall options. "
        "0 = non aggressive, 1 = standard (default), 2 = aggressive.");
 
     roptions -> AddLowerBoundedIntegerOption 
       ("iterative_rounding_num_fir_points",
        "Max number of points rounded at the beginning of Iterative Rounding",
        1, 5,
-       "Number of different points (obtained solving a log-barrier problem)"
-       "that the heuristic will try to round at most, during its execution"
+       "Number of different points (obtained solving a log-barrier problem) "
+       "that the heuristic will try to round at most, during its execution "
        "at the root node (i.e. the F-IR heuristic). Default 5.");
 
     roptions -> AddBoundedNumberOption 
       ("iterative_rounding_omega",
        "Omega parameter of the Iterative Rounding heuristic",
        0, true, 1, true, 0.2,
-       "Set the omega parameter of the heuristic, which represents a"
-       "multiplicative factor for the minimum log-barrier parameter"
-       "of the NLP which is solved to obtain feasible points. This"
-       "corresponds to \\omega' in the paper. Default 0.2.");
+       "Set the omega parameter of the heuristic, which represents a "
+       "multiplicative factor for the minimum log-barrier parameter "
+       "of the NLP which is solved to obtain feasible points. This "
+       "corresponds to $\\omega'$ in the paper. Default 0.2.");
 
     roptions -> AddLowerBoundedIntegerOption 
       ("iterative_rounding_base_lbrhs",
        "Base rhs of the local branching constraint for Iterative Rounding",
        0, 15,
-       "Base rhs for the local branching constraint that defines a"
-       "neighbourhood of the local incumbent. The base rhs is modified by"
-       "the algorithm according to variable bounds. This corresponds to"
+       "Base rhs for the local branching constraint that defines a "
+       "neighbourhood of the local incumbent. The base rhs is modified by "
+       "the algorithm according to variable bounds. This corresponds to "
        "k' in the paper. Default 15.");
 
   }
