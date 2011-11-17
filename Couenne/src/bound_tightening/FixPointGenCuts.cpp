@@ -334,10 +334,13 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     perfIndicator_. update (problem_ -> Lb (), problem_ -> Ub (), treeInfo.level);
     perfIndicator_. addToTimer (CoinCpuTime () - startTime);
 
-  } else
+  } else {
     if (treeInfo.inTree && 
 	treeInfo.level <= 0)
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP infeasible or unbounded.\n");
+
+    WipeMakeInfeas (cs);
+  }
 
   delete fplp;
 
