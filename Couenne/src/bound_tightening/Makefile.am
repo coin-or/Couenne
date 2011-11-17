@@ -20,6 +20,9 @@ libCouenneBoundTightening_la_SOURCES = \
 	FixPointConstructors.cpp \
 	FixPointGenCuts.cpp \
 	CouenneInfeasCut.cpp \
+	obbt_supplement.cpp \
+	BTPerfIndicator.cpp \
+	BTPerfIndicatorConstr.cpp \
 	operators/impliedBounds-mul.cpp \
 	operators/impliedBounds-sum.cpp \
 	operators/impliedBounds-exprSum.cpp \

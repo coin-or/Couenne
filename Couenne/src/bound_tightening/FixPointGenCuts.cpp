@@ -52,6 +52,10 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
       treeInfo.pass > 1)
     return;
 
+  double startTime = CoinCpuTime ();
+
+  perfIndicator_. setOldBounds (si. getColLower (), si. getColUpper ());
+
   int nInitTightened = nTightened_;
 
   if (treeInfo.inTree && 
@@ -326,6 +330,9 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "%d bounds tightened (%g seconds)\n", 
 				      nTightened_ - nInitTightened, CoinCpuTime () - now); 
     }
+
+    perfIndicator_. update (problem_ -> Lb (), problem_ -> Ub (), treeInfo.level);
+    perfIndicator_. addToTimer (CoinCpuTime () - startTime);
 
   } else
     if (treeInfo.inTree && 

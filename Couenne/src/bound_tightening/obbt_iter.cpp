@@ -23,11 +23,20 @@ using namespace Couenne;
 // explicit bounds around 1e200 or so. For now simply use fictitious
 // bounds around 1e14. Fix.
 
+int obbt_supplement (const OsiSolverInterface *csi, /// interface to use as a solver
+		     int index,                     /// variable being looked at
+		     int sense);                    /// 1: minimize, -1: maximize
+
 /// reoptimize and change bound of a variable if needed
 static bool obbt_updateBound (OsiSolverInterface *csi, /// interface to use as a solver
 			      int sense,               /// 1: minimize, -1: maximize
 			      CouNumber &bound,        /// bound to be updated
 			      bool isint) {            /// is this variable integer
+
+
+  // NEW: TODO: save min x^\star_i to check at every iteration
+  // (comparison each iteration is less advtgs) when checking if x_i
+  // needs minz for obbt
 
   //csi -> deleteScaleFactors ();
   csi -> setDblParam (OsiDualObjectiveLimit, COIN_DBL_MAX); 
@@ -244,7 +253,11 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
     //"obbt___ index = %d [sen=%d,bd=%g,int=%d]\n", 
     //index, sense, bound, isInt);
 
+    bool has_updated = false;
+
     if (obbt_updateBound (csi, sense, bound, isInt)) {
+
+      has_updated = true;
 
       if (knownOptimum) {
 	if (sense == 1) {
@@ -284,17 +297,6 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
       if (sense==1) {csi -> setColLower (index, bound); chg_bds [index].lower |= CHANGED | EXACT;}
       else          {csi -> setColUpper (index, bound); chg_bds [index].upper |= CHANGED | EXACT;}
       */
-
-      // check value and bounds of other variables
-
-      const double *sol = csi -> getColSolution ();
-
-      for (int j=0; j<ncols; j++) 
-	if ((j!=index) && (j!=objind)) {
-
-	  if (sol [j] <= Lb (j) + COUENNE_EPS) chg_bds [j].setLowerBits(t_chg_bounds::EXACT);
-	  if (sol [j] >= Ub (j) - COUENNE_EPS) chg_bds [j].setUpperBits(t_chg_bounds::EXACT);
-	}
 
 #if 0
       // re-check considering reduced costs (more expensive)
@@ -342,6 +344,35 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 
       nImprov++;
     }
+
+    // Check value and bounds of other variables. Do this regardless
+    // of the i-th variable being tightened in this iteration
+
+    const double *sol = csi -> getColSolution ();
+
+    for (int j=0; j<ncols; j++) 
+      if ((j!=index) && (j!=objind)) {
+
+	if (sol [j] <= Lb (j) + COUENNE_EPS) {
+
+	  // if (!(chg_bds [j].lower() & t_chg_bounds::EXACT) && (!has_updated))
+	  //   printf ("told you it would be useful: l_i: %g\n", j, Lb (j));
+	  
+	  chg_bds [j].setLowerBits(t_chg_bounds::EXACT);
+	}
+
+	if (sol [j] >= Ub (j) - COUENNE_EPS) {
+
+	  // if (!(chg_bds [j].upper() & t_chg_bounds::EXACT) && (!has_updated))
+	  //   printf ("told you it would be useful: u_i: %g\n", j, Ub (j));
+	  
+	  chg_bds [j].setUpperBits(t_chg_bounds::EXACT);
+	}
+      }
+
+    // check for bounds using dual info
+
+    int result = obbt_supplement (csi, index, sense);
 
     // if we solved the problem on the objective function's
     // auxiliary variable (that is, we re-solved the extended

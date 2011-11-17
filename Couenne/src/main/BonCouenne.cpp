@@ -146,7 +146,7 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
     else {
       printf ("main(): ### ERROR: Can not get CouenneCutGenerator\n");
-      exit (1);
+      exit (-1);
     }
 
     // initial printout

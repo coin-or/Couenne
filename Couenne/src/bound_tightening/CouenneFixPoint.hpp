@@ -18,6 +18,8 @@
 #include "OsiRowCut.hpp"
 #include "OsiSolverInterface.hpp"
 
+#include "CouenneBTPerfIndicator.hpp"
+
 namespace Couenne {
 
   class CouenneProblem;
@@ -80,6 +82,9 @@ namespace Couenne {
 		    const int,
 		    bool,
 		    int, int) const;
+
+    /// Performance indicator
+    CouenneBTPerfIndicator perfIndicator_;
   };
 }
 

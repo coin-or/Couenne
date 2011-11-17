@@ -15,7 +15,7 @@
 
 namespace Couenne {
 
-//#define DEBUG
+  //#define DEBUG
 
 int findIntersection (CouNumber  x0, CouNumber  y0,
 		      CouNumber  x1, CouNumber  y1,
@@ -47,6 +47,9 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
   //
   // See forthcoming paper for explanation ;-)
   //
+  // Summarized version available at
+  //
+  // http://www.neos-guide.org/NEOS/images/a/aa/ViewsAndNews-22%281%29.pdf
 
 #ifdef DEBUG
   printf ("entering points: ===================================================\n");
@@ -175,10 +178,10 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
     if (yUpp > yu) { // upper intersect is North; place it within box
       yUpp = yu;
-      xUpp = wu / yu;
+      xUpp = CoinMin (xu, wu / yu);
     } else {         //                    East
       xUpp = xu;
-      yUpp = wu / xu;
+      yUpp = CoinMin (yu, wu / xu);
     }
 
     // find intersection on low curve on half line through new point and (x0,y0)
@@ -202,21 +205,16 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
     if (yLow < yl) { // upper intersect is South; place it within box
       yLow = yl;
-      xLow = wl / yl;
+      xLow = CoinMax (xl, wl / yl);
     } else {         //                    West
       xLow = xl;
-      yLow = wl / xl;
+      yLow = CoinMax (yl, wl / xl);
     }
 
     // find intersection on low curve on half line through new point and (x0,y0)
-    if (findIntersection (xLow, yLow, x0, y0, NULL, &wu, NULL, NULL, &xUpp, &yUpp))
-      return;
-
-    if (xUpp > xu || yUpp > yu) // McCormick's suffice
-      return;
-
-    // Otherwise, lift inequality on UPPER point
-    if (genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cX, cY, cW))
+    if ((findIntersection (xLow, yLow, x0, y0, NULL, &wu, NULL, NULL, &xUpp, &yUpp)) ||
+	(xUpp > xu || yUpp > yu)  ||                           // McCormick's suffice
+	(genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cX, cY, cW))) // Otherwise, lift inequality on UPPER point
       return;
 
     c0X = cX * xUpp;
@@ -234,11 +232,11 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
     //         E. Separate both from lower and from upper
 
     if (yLow < yl) { // upper intersect is South; place it within box
-      yLow = yl;      xLow = wl / yl;
-      yUpp = yu;      xUpp = wu / yu;
+      yLow = yl;      xLow = CoinMax (xl, wl / yl);
+      yUpp = yu;      xUpp = CoinMin (xu, wu / yu);
     } else {         //                    West
-      xLow = xl;      yLow = wl / xl;
-      xUpp = xu;      yUpp = wu / xu;
+      xLow = xl;      yLow = CoinMax (yl, wl / xl);
+      xUpp = xu;      yUpp = CoinMax (yu, wu / xu);
     }
 
 #ifdef DEBUG
@@ -258,10 +256,10 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
     // intersect on the lower (upper) curve on the line through xLP
     // and the upper (lower) point
 
-    CouNumber xLow2, yLow2, xUpp2, yUpp2;
+    CouNumber xLow2 = xLow, yLow2 = yLow, xUpp2, yUpp2;
 
-    if ((findIntersection (xLow, yLow, x0, y0, NULL, &wu, NULL,   NULL,   &xUpp2, &yUpp2) || genMulCoeff (xLow, yLow, xUpp, yUpp, 0, cX, cY, cW)) &&
-	(findIntersection (xUpp, yUpp, x0, y0, &wl, NULL, &xLow2, &yLow2, NULL,   NULL)   || genMulCoeff (xLow, yLow, xUpp, yUpp, 1, cX, cY, cW)))
+    if ((findIntersection (xLow, yLow, x0, y0, NULL, &wu, NULL,   NULL,   &xUpp2, &yUpp2) || genMulCoeff (xLow,  yLow,  xUpp2, yUpp2, 0, cX, cY, cW)) &&
+	(findIntersection (xUpp, yUpp, x0, y0, &wl, NULL, &xLow2, &yLow2, NULL,   NULL)   || genMulCoeff (xLow2, yLow2, xUpp,  yUpp,  1, cX, cY, cW)))
       return;
 
 #ifdef DEBUG
@@ -269,9 +267,9 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 	    cX,cY,cW);
 #endif
 
-    c0X = cX * xLow; //   c0Xp = cXp * xUpp;
-    c0Y = cY * yLow; //   c0Yp = cYp * yUpp;
-    c0W = cW * wl;   //   c0Wp = cWp * wu;  
+    c0X = cX * xLow2; //   c0Xp = cXp * xUpp;
+    c0Y = cY * yLow2; //   c0Yp = cYp * yUpp;
+    c0W = cW * wl;    //   c0Wp = cWp * wu;  
 
 //     twoIneqs = true;
 

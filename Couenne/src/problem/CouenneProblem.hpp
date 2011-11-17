@@ -5,7 +5,7 @@
  *          Andreas Waechter, IBM
  * Purpose: define the class CouenneProblem
  *
- * (C) Carnegie-Mellon University, 2006-10.
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -126,6 +126,7 @@ namespace Couenne {
   class CouenneConstraint;
   class CouenneObjective;
   class GlobalCutOff;
+  class CouenneBTPerfIndicator;
   //  class JnlstPtr;
   //  class ConstJnlstPtr;
   class CouenneRecordBestSol;
@@ -317,6 +318,10 @@ class CouenneProblem {
   /// constant value of the objective if no variable is declared in it
   double constObjVal_;
 
+  /// Performance indicator for FBBT -- to be moved away from
+  /// CouenneProblem when we do it with FBBT
+  CouenneBTPerfIndicator *perfIndicator_;
+
  public:
 
   CouenneProblem  (ASL * = NULL,
@@ -498,7 +503,8 @@ class CouenneProblem {
   void getAuxs (CouNumber *) const;
 
   /// tighten bounds using propagation, implied bounds and reduced costs
-  bool boundTightening (t_chg_bounds *, 
+  bool boundTightening (t_chg_bounds *,
+			const CglTreeInfo info, 
 			Bonmin::BabInfo * = NULL) const;
 
   /// core of the bound tightening procedure

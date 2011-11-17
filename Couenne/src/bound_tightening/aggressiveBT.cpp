@@ -204,9 +204,10 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	Jnlst()->Printf(J_MOREVECTOR, J_BOUNDTIGHTENING,
 			"   %2d %+20g [%+20g %+20g]\n",
 			i, X [i], Lb (i), Ub (i));
-      Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
-		      "-------------\nAggressive BT. Current bound = %g, cutoff = %g, %d vars\n", 
-		      Lb (objind), getCutOff (), ncols);
+      if (objind >= 0)
+	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
+			"-------------\nAggressive BT. Current bound = %g, cutoff = %g, %d vars\n", 
+			Lb (objind), getCutOff (), ncols);
     }
 
     int improved, second, iter = 0;
@@ -308,9 +309,10 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
       int objind = Obj (0) -> Body  () -> Index ();
 
-      Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
-		      "-------------\ndone Aggressive BT. Current bound = %g, cutoff = %g, %d vars\n", 
-		      Lb (objind), getCutOff (), ncols);
+      if (objind >= 0)
+	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
+			"-------------\ndone Aggressive BT. Current bound = %g, cutoff = %g, %d vars\n", 
+			Lb (objind), getCutOff (), ncols);
 
       if (Jnlst()->ProduceOutput(J_DETAILED, J_BOUNDTIGHTENING))
 	for (int i=0; i<nOrigVars_; i++)

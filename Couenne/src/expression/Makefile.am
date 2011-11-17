@@ -92,6 +92,7 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/../standardize` \
 	-I`$(CYGPATH_W) $(srcdir)/../util` \
 	-I`$(CYGPATH_W) $(srcdir)/../branch` \
+	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
 	-I`$(CYGPATH_W) $(srcdir)/../problem` \
 	-I`$(CYGPATH_W) $(srcdir)/../problem/depGraph` \
 	$(COUENNELIB_CFLAGS)

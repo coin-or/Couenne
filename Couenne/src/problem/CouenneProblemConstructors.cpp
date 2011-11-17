@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: Constructors and destructors of the class CouenneProblem
  *
- * (C) Carnegie-Mellon University, 2009-10.
+ * (C) Carnegie-Mellon University, 2009-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -34,6 +34,7 @@
 #include "CouenneObject.hpp"
 
 #include "CouenneRecordBestSol.hpp"
+#include "CouenneBTPerfIndicator.hpp"
 
 using namespace Couenne;
 
@@ -79,7 +80,8 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   multilinSep_ (CouenneProblem::MulSepNone),
   max_fbbt_iter_ (MAX_FBBT_ITER),
   orbitalBranching_ (false),
-  constObjVal_ (0.) {
+  constObjVal_ (0.),
+  perfIndicator_ (new CouenneBTPerfIndicator (this, "FBBT")) {
 
   double now = CoinCpuTime ();
 
@@ -154,7 +156,8 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   multilinSep_  (p.multilinSep_),
   max_fbbt_iter_  (p.max_fbbt_iter_),
   orbitalBranching_  (p.orbitalBranching_),
-  constObjVal_       (p.constObjVal_) {
+  constObjVal_       (p.constObjVal_),
+  perfIndicator_     (new CouenneBTPerfIndicator (*(p.perfIndicator_))) {
 
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);
@@ -205,6 +208,9 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
 /// Destructor
 
 CouenneProblem::~CouenneProblem () {
+
+  if (perfIndicator_)
+    delete perfIndicator_;
 
   // delete optimal solution (if any)
   if (optimum_)

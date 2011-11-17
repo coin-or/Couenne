@@ -58,12 +58,13 @@ libCouenneBoundTightening_la_LIBADD =
 am_libCouenneBoundTightening_la_OBJECTS = boundTightening.lo \
 	aggressiveBT.lo fake_tightening.lo obbt.lo obbt_iter.lo \
 	tightenBounds.lo impliedBounds.lo FixPointConstructors.lo \
-	FixPointGenCuts.lo CouenneInfeasCut.lo impliedBounds-mul.lo \
-	impliedBounds-sum.lo impliedBounds-exprSum.lo \
-	impliedBounds-exprDiv.lo impliedBounds-exprMul.lo \
-	impliedBounds-exprTrilinear.lo impliedBounds-exprQuad.lo \
-	impliedBounds-exprPow.lo BonCouenneInfo.lo \
-	CouenneAggrProbing.lo
+	FixPointGenCuts.lo CouenneInfeasCut.lo obbt_supplement.lo \
+	BTPerfIndicator.lo BTPerfIndicatorConstr.lo \
+	impliedBounds-mul.lo impliedBounds-sum.lo \
+	impliedBounds-exprSum.lo impliedBounds-exprDiv.lo \
+	impliedBounds-exprMul.lo impliedBounds-exprTrilinear.lo \
+	impliedBounds-exprQuad.lo impliedBounds-exprPow.lo \
+	BonCouenneInfo.lo CouenneAggrProbing.lo
 libCouenneBoundTightening_la_OBJECTS =  \
 	$(am_libCouenneBoundTightening_la_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -323,6 +324,9 @@ libCouenneBoundTightening_la_SOURCES = \
 	FixPointConstructors.cpp \
 	FixPointGenCuts.cpp \
 	CouenneInfeasCut.cpp \
+	obbt_supplement.cpp \
+	BTPerfIndicator.cpp \
+	BTPerfIndicatorConstr.cpp \
 	operators/impliedBounds-mul.cpp \
 	operators/impliedBounds-sum.cpp \
 	operators/impliedBounds-exprSum.cpp \
@@ -405,6 +409,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BTPerfIndicator.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BTPerfIndicatorConstr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneInfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneAggrProbing.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneInfeasCut.Plo@am__quote@
@@ -424,6 +430,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/impliedBounds.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/obbt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/obbt_iter.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/obbt_supplement.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tightenBounds.Plo@am__quote@
 
 .cpp.o:

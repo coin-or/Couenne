@@ -216,7 +216,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // start with FBBT, should take advantage of cutoff found by NLP
     // run AFTER initial FBBT...
     if (problem_ -> doFBBT () &&
-	(! (problem_ -> boundTightening (chg_bds, babInfo))))
+	(! (problem_ -> boundTightening (chg_bds, info, babInfo))))
           jnlst_ -> Printf (J_STRONGWARNING, J_CONVEXIFYING,
             "Couenne: WARNING, first convexification is infeasible\n");
 
@@ -405,7 +405,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // FBBT
     if (problem_ -> doFBBT () && 
 	//(info.pass <= 0) && // do it in subsequent rounds too
-	(! (problem_ -> boundTightening (chg_bds, babInfo))))
+	(! (problem_ -> boundTightening (chg_bds, info, babInfo))))
       throw infeasible;
 
     // OBBT

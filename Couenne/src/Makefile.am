@@ -104,6 +104,7 @@ includecoin_HEADERS = \
 	branch/CouenneSOSObject.hpp \
 	branch/CouenneProjections.hpp \
 	standardize/CouenneLQelems.hpp \
+	bound_tightening/CouenneBTPerfIndicator.hpp \
 	bound_tightening/CouenneFixPoint.hpp \
 	bound_tightening/CouenneAggrProbing.hpp \
 	bound_tightening/twoImpliedBT/CouenneTwoImplied.hpp \

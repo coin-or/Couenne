@@ -12,6 +12,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneExprVar.hpp"
 #include "CouenneProblemElem.hpp"
+#include "CouenneBTPerfIndicator.hpp"
 #include "BonBabInfos.hpp"
 #include "BonCbc.hpp"
 
@@ -166,9 +167,13 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 /// turns out to be infeasible with given bounds, true otherwise.
 
 bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds, 
+				      const CglTreeInfo info, 
 				      Bonmin::BabInfo * babInfo) const {
 
-  //  double startTime = CoinCpuTime ();
+  double startTime = CoinCpuTime ();
+
+  perfIndicator_ -> setOldBounds (Lb (), Ub ());
+
   //
   // #define SMALL_BOUND 1e4
   //   for (int i=nOrigVars (); i--;) {
@@ -207,7 +212,12 @@ bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds,
     }
   }
 
-  return btCore (chg_bds);
+  bool retval = btCore (chg_bds);
+
+  perfIndicator_ -> update     (Lb (), Ub (), info.level);
+  perfIndicator_ -> addToTimer (CoinCpuTime () - startTime);
+
+  return retval;
 
   //printf ("Total cpu time = %e\n", CoinCpuTime () - startTime);
   //exit (-1);
@@ -223,7 +233,8 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
     nchanges = 0,
     objind   = Obj (0) -> Body () -> Index ();
 
-  assert (objind >= 0);
+  if (objind < 0) 
+    return 0;
 
   CouNumber
     UB = getCutOff (), //babInfo -> babPtr () -> model (). getObjValue(),

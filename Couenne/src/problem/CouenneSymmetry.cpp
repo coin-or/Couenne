@@ -347,9 +347,9 @@ void CouenneProblem::Print_Orbits () const {
 
   std::vector<std::vector<int> > *new_orbits = nauty_info->getOrbits();
 
-  //printf("There were %d orbits and %d generators\n",
-  //nauty_info->getNumOrbits(),
-  //nauty_info->getNumGenerators());
+  printf("There were %d orbits and %d generators\n",
+  nauty_info->getNumOrbits(),
+  nauty_info->getNumGenerators());
 
   int nNonTrivialOrbits = 0;
 

@@ -94,7 +94,7 @@ fake_tighten (char direction,  // 0: left, 1: right
     ncols    = nVars (),
     objind   = Obj (0) -> Body  () -> Index ();
 
-  assert (objind >= 0);
+  //assert (objind >= 0);
 
   bool 
     tightened = false,
@@ -112,7 +112,7 @@ fake_tighten (char direction,  // 0: left, 1: right
 
   jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING, 
 		    "  x_%d.  x = %10g, lb = %g, cutoff = %g-----------------\n", 
-		    index,xcur,Lb (objind),getCutOff());
+		    index,xcur,objind >= 0 ? Lb (objind) : 0., getCutOff());
 
   /*if (index == objind)
     printf ("  x_%d [%g,%g].  x = %10g, break at %g, cutoff = %g-----------------\n", 
@@ -173,11 +173,11 @@ fake_tighten (char direction,  // 0: left, 1: right
 
     bool
       feasible  = btCore (f_chg),                           // true if feasible with fake bound
-      betterbds = Lb (objind) > getCutOff () + COUENNE_EPS; // true if over cutoff
+      betterbds = objind >= 0 && (Lb (objind) > getCutOff () + COUENNE_EPS); // true if over cutoff
 
     jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING,
 		      " [%10g,%10g] lb = %g {fea=%d,btr=%d} ",
-		      Lb (index), Ub (index), Lb (objind),feasible,betterbds);
+		      Lb (index), Ub (index), objind >= 0 ? Lb (objind) : 0., feasible,betterbds);
 
     if (feasible && !betterbds) {
 
@@ -327,7 +327,7 @@ fake_tighten (char direction,  // 0: left, 1: right
     Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING, 
 		    "  [x%2d] pruned %s [%g, %g] -- lb = %g cutoff = %g\n", 
 		    index,direction?"right":"left",
-		    olb[index],oub[index], Lb (objind), getCutOff ());
+		    olb[index],oub[index], objind >= 0 ? Lb (objind) : 0., getCutOff ());
 
   return tightened ? 1 : 0;
 }

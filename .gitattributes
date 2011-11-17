@@ -20,8 +20,11 @@ Couenne/missing -text
 Couenne/src/CouenneConfig.h -text
 Couenne/src/Makefile.am -text
 Couenne/src/Makefile.in -text
+Couenne/src/bound_tightening/BTPerfIndicator.cpp -text
+Couenne/src/bound_tightening/BTPerfIndicatorConstr.cpp -text
 Couenne/src/bound_tightening/CouenneAggrProbing.cpp -text
 Couenne/src/bound_tightening/CouenneAggrProbing.hpp -text
+Couenne/src/bound_tightening/CouenneBTPerfIndicator.hpp -text
 Couenne/src/bound_tightening/CouenneFixPoint.hpp -text
 Couenne/src/bound_tightening/CouenneInfeasCut.cpp -text
 Couenne/src/bound_tightening/CouenneInfeasCut.hpp -text
@@ -33,6 +36,7 @@ Couenne/src/bound_tightening/fake_tightening.cpp -text
 Couenne/src/bound_tightening/impliedBounds.cpp -text
 Couenne/src/bound_tightening/obbt.cpp -text
 Couenne/src/bound_tightening/obbt_iter.cpp -text
+Couenne/src/bound_tightening/obbt_supplement.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-exprDiv.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-exprMul.cpp -text
 Couenne/src/bound_tightening/operators/impliedBounds-exprPow.cpp -text

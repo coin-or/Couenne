@@ -116,7 +116,7 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
   int indobj = problem->Obj(0)->Body()->Index();
 
   // Initial cutoff value
-  double initCutoff = problem->Ub()[indobj];
+  double initCutoff = problem->getCutOff (); //Ub()[indobj];
 
   double* initCutoffSol = NULL; 
 
@@ -191,7 +191,8 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
 
     if (restoreCutoff_){
       problem->resetCutOff(initCutoff);
-      problem->Ub()[indobj] = initCutoff;
+      if (indobj >= 0)
+	problem->Ub(indobj) = initCutoff;
       problem->installCutOff();
     }
 
@@ -282,7 +283,8 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
     					 maxTime_*0.5));
 
     if (restoreCutoff_){
-      problem->Ub()[indobj] = initCutoff;
+      if (indobj >= 0)
+	problem->Ub(indobj) = initCutoff;
       problem->resetCutOff(initCutoff);
       problem->installCutOff();
     }
@@ -352,7 +354,8 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
 
     // Reset cutoff
     if (restoreCutoff_){
-      problem->Ub()[indobj] = initCutoff;
+      if (indobj >= 0)
+	problem->Ub(indobj) = initCutoff;
       problem->resetCutOff(initCutoff);
       problem->installCutOff();
     }

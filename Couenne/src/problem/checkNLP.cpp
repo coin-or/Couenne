@@ -305,7 +305,7 @@ double CouenneProblem::checkObj(const CouNumber *sol, const double &precision)
 #endif
 	(Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM))) {
       printf ("%.12e %.12e %.12e ------------------------------\n", 
-	      realObj, sol[objBody -> Index ()], 
+	      realObj, objBody -> Index () >= 0 ? sol[objBody -> Index ()] : 0., 
 	      (*(objBody -> Image () ? objBody -> Image () : objBody)) ());
     }
   } 
