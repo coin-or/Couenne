@@ -156,18 +156,6 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
     }
   }
 
-#ifdef COIN_HAS_NTY
-
-  if (problem_ -> orbitalBranching ()) {
-    std::vector< int > *branch_orbit = problem_ -> Find_Orbit (vInd);
-    std::vector<int>::iterator it = branch_orbit -> begin (); 
-
-    printf("cand %d orbit rep %d \n", *it, vInd);
-    //    if(*it != vInd)
-    // goodCand = 1;
-
-  }
-#endif
     
   return(goodCand);
 } /* goodCandidate */
