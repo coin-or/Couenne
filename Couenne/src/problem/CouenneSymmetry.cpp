@@ -303,7 +303,7 @@ void CouenneProblem::sym_setup (){
 
 void CouenneProblem::Compute_Symmetry() const{
 
-  ChangeBounds (Lb (), Ub (), nVars ());
+   //  ChangeBounds (Lb (), Ub (), nVars ());
 
   // jnlst_ -> Printf(Ipopt::J_VECTOR, J_BRANCHING,"== Computing Symmetry\n");
   // for (int i = 0; i < nVars (); i++)

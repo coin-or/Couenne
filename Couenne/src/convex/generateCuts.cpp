@@ -383,7 +383,11 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     //		  psi -> getColUpper (), 
     //		  psi -> getNumCols ());
     if (problem_ -> orbitalBranching ())
-      problem_ -> Compute_Symmetry ();
+
+     problem_ -> ChangeBounds (problem_ -> Lb (),
+			       problem_ -> Ub (),
+			       problem_ -> nVars ());
+     problem_ -> Compute_Symmetry ();
 #endif
 
     // Bound tightening ////////////////////////////////////
