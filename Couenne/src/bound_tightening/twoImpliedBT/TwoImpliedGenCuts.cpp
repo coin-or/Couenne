@@ -401,8 +401,8 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
   // TODO: no need for copy, though we need it to compare to old problem's bounds
 
   double
-    *clb = CoinCopyOfArray (problem_ -> Lb (), n),
-    *cub = CoinCopyOfArray (problem_ -> Ub (), n),
+    *clb   = CoinCopyOfArray (problem_ -> Lb (), n),
+    *cub   = CoinCopyOfArray (problem_ -> Ub (), n),
     *oldLB = CoinCopyOfArray (problem_ -> Lb (), n),
     *oldUB = CoinCopyOfArray (problem_ -> Ub (), n);
 

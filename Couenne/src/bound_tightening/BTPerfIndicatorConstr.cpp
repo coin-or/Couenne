@@ -27,22 +27,25 @@ CouenneBTPerfIndicator::CouenneBTPerfIndicator (CouenneProblem *p, const std::st
   oldUB_           (NULL),
   totalTime_       (0.),
   nRuns_           (0),
-  problem_         (p) {}
+  problem_         (p),
+  stats_           (p != NULL && 
+		    p -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_BOUNDTIGHTENING)) {}
 
 
 ///
 CouenneBTPerfIndicator::~CouenneBTPerfIndicator () {
 
-  //  if (totalTime_ > 0.) 
+  if (totalTime_ > 0. &&
+      nRuns_ && 
+      problem_)
 
-  if (nRuns_ && problem_)
-    //problem_ -> Jnlst () -> 
-    printf (//Ipopt::J_ERROR, J_BOUNDTIGHTENING, 
-				    "Performance of %30s:\t %10gs, %8d runs fix:%10g shrink:%10g ubd:%10g 2ubd:%10g infeas:%10g\n", 
-				    name_.c_str (),
-				    totalTime_, 
-				    nRuns_,
-				    nFixed_, boundRatio_, shrunkInf_, shrunkDoubleInf_, nProvedInfeas_);
+    if (stats_)
+      printf ("Performance of %30s:\t %10gs, %8d runs fix:%10g shrink:%10g ubd:%10g 2ubd:%10g infeas:%10g\n", 
+	      name_.c_str (),
+	      totalTime_, 
+	      nRuns_,
+	      nFixed_, boundRatio_, shrunkInf_, shrunkDoubleInf_, nProvedInfeas_);
+
   //weightSum_ * nFixed_, weightSum_ * boundRatio_, weightSum_ * shrunkInf_, weightSum_ * shrunkDoubleInf_, weightSum_ * nProvedInfeas_);
 
   if (oldLB_) delete [] oldLB_;
@@ -64,7 +67,8 @@ CouenneBTPerfIndicator::CouenneBTPerfIndicator (const CouenneBTPerfIndicator &rh
   oldUB_           (!rhs.problem_ || rhs.oldUB_ ? NULL : CoinCopyOfArray (rhs.oldUB_, rhs.problem_ -> nVars ())),
   totalTime_       (rhs.totalTime_),
   nRuns_           (rhs.nRuns_),
-  problem_         (rhs.problem_) {}
+  problem_         (rhs.problem_),
+  stats_           (rhs.stats_) {}
 
 
 ///
@@ -82,6 +86,7 @@ CouenneBTPerfIndicator &CouenneBTPerfIndicator::operator= (const CouenneBTPerfIn
   totalTime_       = rhs.totalTime_; 
   nRuns_           = rhs.nRuns_;
   problem_         = rhs.problem_;
+  stats_           = rhs.stats_;
 
   return *this;
 }
@@ -91,8 +96,10 @@ CouenneBTPerfIndicator &CouenneBTPerfIndicator::operator= (const CouenneBTPerfIn
 void CouenneBTPerfIndicator::setOldBounds (const CouNumber *lb, const CouNumber *ub) const {
 
   if (problem_) {
+
     oldLB_ = CoinCopyOfArray (lb, problem_ -> nVars ());
     oldUB_ = CoinCopyOfArray (ub, problem_ -> nVars ());
+
   } else {
 
     printf ("CouenneBTPerfIndicator::setOldBounds(): no problem information, exiting\n");

@@ -17,6 +17,8 @@ int obbt_supplement (const OsiSolverInterface *csi, /// interface to use as a so
 		     int index,                     /// variable being looked at
 		     int sense) {                   /// 1: minimize, -1: maximize
 
+  return 0;
+
   if (!(csi -> isProvenOptimal ()))
     return 0;
 
@@ -73,4 +75,6 @@ int obbt_supplement (const OsiSolverInterface *csi, /// interface to use as a so
   for (int j=0; j<n; j++) {
 
   }
+
+  delete [] beta;
 }

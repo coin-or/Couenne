@@ -36,11 +36,40 @@ void CouenneBTPerfIndicator::update (CouNumber *lb, CouNumber *ub, int depth) co
 
   double ratio = 0.;
 
+  CouNumber *optimum = problem_ -> bestSol ();
+
   for (int i=problem_ -> nVars (); i--;) {
 
     CouNumber 
       olb = oldLB_ [i], oub = oldUB_ [i],
       nlb = lb     [i], nub = ub     [i];
+
+    // Check if optimal solution violated
+
+    if (optimum && 
+	((optimum [i] < nlb && optimum [i] > olb) ||
+	 (optimum [i] > nub && optimum [i] < oub)))
+	
+      printf (" %30s cuts optimum at x_%d=%e: [%e,%e] --> [%e,%e], diff:%e\n",
+	      name_.c_str (),
+	      i, optimum [i], 
+	      olb, oub,
+	      nlb, nub,
+	      CoinMax (nlb - optimum [i],
+		       optimum [i] - nub));
+
+    // Check if bound has worsened rather than improved
+
+    if ((nlb < olb - COUENNE_EPS) ||  
+	(nub > oub + COUENNE_EPS))
+	
+      printf (" %30s makes bound worse (x%d): [%e,%e] --> [%e,%e], diff:%e\n",
+	      name_.c_str (),
+	      i, 
+	      olb, oub,
+	      nlb, nub,
+	      CoinMax (olb - nlb,
+		       nub - oub));
 
     if (fabs (nlb - nub) <  COUENNE_EPS) {
 

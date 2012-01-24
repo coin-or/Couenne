@@ -43,6 +43,8 @@ namespace Couenne {
 
     CouenneProblem *problem_;         /// Couenne problem info
 
+    bool stats_;                      /// Should stats be printed at the end? Copied from problem_ -> Jnlst () -> ProduceOutput (ERROR, BOUNDTIGHTENING)
+
   public:
 
 
