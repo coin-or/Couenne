@@ -20,7 +20,7 @@ class CouenneProblem;
 
 template <class T> class CouenneSolverInterface;
 
-class CouenneChooseStrong : public Bonmin::BonChooseVariable  {
+class CouenneChooseStrong : public Bonmin::BonChooseVariable {
 
 public:
 

@@ -157,6 +157,9 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 		jj, 
 		solver -> getColLower () [jj], 
 		solver -> getColUpper () [jj]);*/
+
+    delete branch_orbit;
+
     return;
   }
 

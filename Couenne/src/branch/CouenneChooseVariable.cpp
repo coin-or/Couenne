@@ -17,6 +17,8 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneObject.hpp"
 
+#include "Nauty.h"
+
 using namespace Couenne;
 
 /// Default Constructor 
@@ -51,24 +53,51 @@ CouenneChooseVariable & CouenneChooseVariable::operator= (const CouenneChooseVar
 
 /// Sets up strong list and clears all if initialize is true.
 /// Returns number of infeasibilities. 
-/// If returns -1 then has worked out node is infeasible!
+/// If returns -1 then node is found infeasible
 int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initialize) {
 
+  int n = problem_ -> nVars ();
+
   problem_ -> domain () -> push 
-    (problem_ -> nVars (),
+    (n,
      info -> solution_, 
      info -> lower_, 
      info -> upper_);
 
 #ifdef COIN_HAS_NTY
 
-  if (problem_ -> orbitalBranching ()) {
+  bool useOrbitalBranching = problem_ -> orbitalBranching ();
+
+  int  *whichOrbit    = NULL;
+  bool *orbitIncluded = NULL; // true if one variable from orbit already candidate
+
+  if (useOrbitalBranching) {
 
     problem_ -> ChangeBounds (info -> lower_,
-			      info -> upper_, 
-			      problem_ -> nVars ());
+			      info -> upper_, n);
     
-    problem_ -> Compute_Symmetry();
+    problem_ -> Compute_Symmetry ();
+
+    whichOrbit    = new int  [n];
+    orbitIncluded = new bool [n]; // true if one variable from orbit already candidate
+
+    CoinFillN (whichOrbit,    n, -1);
+    CoinFillN (orbitIncluded, n, false);
+
+    std::vector<std::vector<int> > *orbits = problem_ -> getNtyInfo () -> getOrbits ();
+
+    int orbIndex = 0;
+
+    // Objects in orbits aren't just variables, but also constants.
+    // Variable indices are therefore mixed with others, we need to
+    // consider only variables.
+
+    for   (std::vector <std::vector<int> >::iterator i = orbits -> begin (); i != orbits -> end (); ++i, ++orbIndex)
+      for (             std::vector<int>  ::iterator j = i      -> begin (); j != i      -> end (); ++j)
+	if ((*j < n) && (*j >= 0)) // only save it if it is a variable's index
+	  whichOrbit [*j] = orbIndex;
+
+    delete orbits;
   }
 
 #endif
@@ -98,14 +127,186 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
       }
   }
 
+  int retval;
+
   // Make it stable, in OsiChooseVariable::setupList() numberObjects must be 0.
-  int retval = (solver_ -> numberObjects ()) ? 
-    OsiChooseVariable::setupList (info, initialize) : 0;
+  //  retval = (solver_ -> numberObjects ()) ? 
+  //    OsiChooseVariable::setupList (info, initialize) : 0;
+
+  // Copied OsiChooseVariable::setupList to adjust it to Orbital Branching
+
+  {
+
+    if (initialize) {
+      status_=-2;
+      delete [] goodSolution_;
+      bestObjectIndex_=-1;
+      numberStrongDone_=0;
+      numberStrongIterations_ = 0;
+      numberStrongFixed_ = 0;
+      goodSolution_ = NULL;
+      goodObjectiveValue_ = COIN_DBL_MAX;
+    }
+
+    numberOnList_=0;
+    numberUnsatisfied_=0;
+
+    int numberObjects = solver_ -> numberObjects();
+
+    assert (numberObjects);
+
+    double check = 0.0;
+
+    int
+      checkIndex    = 0,
+      bestPriority  = COIN_INT_MAX,
+      // pretend one strong even if none
+      maximumStrong = numberStrong_ ? CoinMin (numberStrong_, numberObjects) : 1,
+      putOther      = numberObjects; // counts downward from end of list
+
+    // init member list_
+
+    for (int i=0; i < maximumStrong; i++) {
+      list_   [i] = -1;
+      useful_ [i] = 0.;
+    }
+
+    OsiObject ** object = info -> solver_ -> objects ();
+
+    // false when problem found infeasible
+    bool feasible = true;
+
+    for (int i=0; i<numberObjects; i++) {
+
+      int way;
+      double value = object [i] -> infeasibility (info, way); // TODO: use checkInfeasibility instead
+
+      if (value > 0.) {
+
+	numberUnsatisfied_++;
+
+	if (value == COIN_DBL_MAX) { // infeasible
+	  feasible = false;
+	  break;
+	}
+
+	int priorityLevel = object [i] -> priority ();
+
+	// Better priority? Flush choices
+	if (priorityLevel < bestPriority) {
+
+	  // TODO: isn't it "j<putOther"? This overwrites list_
+	  for (int j=0; j<maximumStrong; j++) {
+	    
+	    if (list_ [j] >= 0) {
+
+	      int iObject = list_[j];
+
+	      list_   [j]          = -1;
+	      useful_ [j]          = 0.;
+	      list_   [--putOther] = iObject;
+	    }
+	  }
+
+	  bestPriority = priorityLevel;
+	  check = 0.;
+	} 
+
+	if ((priorityLevel == bestPriority) // only consider those with equal priority
+	    && (value > check)
+
+#ifdef COIN_HAS_NTY
+
+	    // Add further check if Orbital Branching is used: is
+	    // another variable from the same orbit already in the
+	    // list? If so, no need to do add object
+	    && (!useOrbitalBranching                              || 
+		(object [i] -> columnNumber () < 0)              ||
+		(whichOrbit [object [i] -> columnNumber ()] < 0) || 
+		!(orbitIncluded [whichOrbit [object [i] -> columnNumber ()]]))
+#endif
+	    ) {
+
+	  int iObject = list_ [checkIndex];
+	  if (iObject >= 0)
+	    list_ [--putOther] = iObject;  // put former best to end
+
+	  // add to list
+	  list_   [checkIndex] = i;
+	  useful_ [checkIndex] = value;
+
+#ifdef COIN_HAS_NTY
+	  if (useOrbitalBranching && 
+	      (object [i] -> columnNumber () >= 0) && 
+	      (whichOrbit [object [i] -> columnNumber ()] >= 0))
+	    orbitIncluded [whichOrbit [object [i] -> columnNumber ()]] = true;
+#endif
+
+	  // Now find next element to (possibly) replace, i.e., find worst
+	  check=COIN_DBL_MAX;
+	  for (int j=0;j<maximumStrong;j++) {
+	    if (list_[j]>=0) {
+	      if (useful_[j]<check) {
+		check=useful_[j];
+		checkIndex=j;
+	      }
+	    } else {
+	      check=0.0;
+	      checkIndex = j;
+	      break;
+	    }
+	  }
+	} else list_ [--putOther] = i; // greater (weaker) priority or
+				       // not most fractional
+      }
+    }
+
+    // Get list
+    numberOnList_=0;
+
+    if (feasible) {
+      for (int i=0;i<maximumStrong;i++) {
+	if (list_[i]>=0) {
+	  list_[numberOnList_]=list_[i];
+	  useful_[numberOnList_++]=-useful_[i];
+	}
+      }
+      if (numberOnList_) {
+	// Sort 
+	CoinSort_2(useful_,useful_+numberOnList_,list_);
+	// move others
+	int i = numberOnList_;
+	for (;putOther<numberObjects;putOther++) 
+	  list_[i++]=list_[putOther];
+	assert (i==numberUnsatisfied_);
+	if (!numberStrong_)
+	  numberOnList_=0;
+      } 
+    } else {
+      // infeasible
+      numberUnsatisfied_ = -1;
+    }
+
+    retval = numberUnsatisfied_;
+  }
+
+  ////////////////////////////////////////////////////////
+  //
+  // End copy
+  //
+  ////////////////////////////////////////////////////////
 
   problem_ -> domain () -> pop ();
 
   jnlst_ -> Printf (Ipopt::J_ITERSUMMARY, J_BRANCHING, "----------------- setup list done, %d objects\n", 
 		    retval);
+
+#ifdef COIN_HAS_NTY
+  if (useOrbitalBranching) {
+    delete [] whichOrbit;
+    delete [] orbitIncluded;
+  }
+#endif
 
   return retval;
 }
@@ -245,10 +446,13 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
      0.2,
      "Default value is 0.2.");
 
+  // Setting priorities slightly below CbcBranchingObjects' priority,
+  // so that Couenne's integer branching is used
+
   roptions -> AddLowerBoundedIntegerOption
     ("cont_var_priority",
      "Priority of continuous variable branching",
-     1, 2000,
+     1, 99,
      "When branching, this is compared to the priority of integer variables, whose priority is given by int_var_priority, and SOS, whose priority is 10. "
      "Higher values mean smaller priority."
     );
@@ -256,7 +460,7 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
   roptions -> AddLowerBoundedIntegerOption
     ("int_var_priority",
      "Priority of integer variable branching",
-     1, 1000,
+     1, 98,
      "When branching, this is compared to the priority of continuous variables, whose priority is given by cont_var_priority, and SOS, whose priority is 10. "
      "Higher values mean smaller priority."
     );

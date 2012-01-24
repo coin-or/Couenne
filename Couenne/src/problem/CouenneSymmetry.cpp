@@ -314,7 +314,7 @@ void CouenneProblem::Compute_Symmetry() const{
 
   std::sort(node_info. begin (), node_info. end (), node_sort);
 
-  for (std::vector <Node>:: iterator i = node_info. begin ();  i != node_info. end (); ++i) 
+  for (std::vector <Node>:: iterator i = node_info. begin (); i != node_info. end (); ++i) 
     (*i).color_vertex(-1);
   
   int color = 1;
@@ -347,7 +347,7 @@ void CouenneProblem::Print_Orbits () const {
 
   std::vector<std::vector<int> > *new_orbits = nauty_info->getOrbits();
 
-  printf("There were %d orbits and %d generators\n",
+  printf("There are %d orbits and %d generators",
   nauty_info->getNumOrbits(),
   nauty_info->getNumGenerators());
 
@@ -365,7 +365,7 @@ void CouenneProblem::Print_Orbits () const {
     // printf("] \n");
   }
 
-  printf ("%d non-trivial orbits\n", nNonTrivialOrbits);
+  printf (" (%d non-trivial orbits).\n", nNonTrivialOrbits);
 
 #if 0
   if (nNonTrivialOrbits)

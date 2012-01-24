@@ -49,12 +49,14 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
   std::vector <exprVar *>::iterator orig;
 
   for (orig  = variables_.begin ();
-       orig != variables_.end (); ++orig)
+       orig != variables_.end   (); ++orig)
 
-    if ((((*orig) -> Type () == VAR) || !same_var) && 
-	((*orig) -> Index () == index)) // found it
+    if ((((*orig) -> Type  () == VAR) || !same_var) && 
+	 ((*orig) -> Index () == index)) // found it
 
       break;
+
+  assert (orig != variables_ . end ());
 
   if (orig == variables_ . end ()) {
     printf ("CouenneProblem::auxiliarize: no original variables correspond\n");

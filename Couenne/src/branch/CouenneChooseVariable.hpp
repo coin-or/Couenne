@@ -58,7 +58,7 @@ public:
 				 int numberObjects,
 				 const OsiObject ** objects);
 
-  /// choose object to branch based on earlier setup
+  // choose object to branch based on earlier setup
   //   virtual int chooseVariable (OsiSolverInterface * solver, 
   // 			      OsiBranchingInformation *info, 
   // 			      bool fixVariables);

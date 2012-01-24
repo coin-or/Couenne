@@ -36,6 +36,8 @@
 #include "CouenneRecordBestSol.hpp"
 #include "CouenneBTPerfIndicator.hpp"
 
+#include "Nauty.h"
+
 using namespace Couenne;
 
 #define MAX_FBBT_ITER 3
@@ -81,7 +83,9 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   max_fbbt_iter_ (MAX_FBBT_ITER),
   orbitalBranching_ (false),
   constObjVal_ (0.),
-  perfIndicator_ (new CouenneBTPerfIndicator (this, "FBBT")) {
+  perfIndicator_ (new CouenneBTPerfIndicator (this, "FBBT")),
+
+  nauty_info (NULL) {
 
   double now = CoinCpuTime ();
 
@@ -157,7 +161,8 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   max_fbbt_iter_  (p.max_fbbt_iter_),
   orbitalBranching_  (p.orbitalBranching_),
   constObjVal_       (p.constObjVal_),
-  perfIndicator_     (new CouenneBTPerfIndicator (*(p.perfIndicator_))) {
+  perfIndicator_     (new CouenneBTPerfIndicator (*(p.perfIndicator_))),
+  nauty_info         (p.nauty_info) {
 
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);
@@ -246,6 +251,11 @@ CouenneProblem::~CouenneProblem () {
   for (std::vector <CouenneObject *>::iterator i = objects_.begin ();
        i != objects_.end (); ++i)
     delete (*i);
+
+#ifdef COIN_HAS_NTY
+  if (nauty_info)
+    delete nauty_info;
+#endif
 
   delete recBSol;
 }

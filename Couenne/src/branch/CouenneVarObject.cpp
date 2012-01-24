@@ -114,7 +114,7 @@ OsiBranchingObject *CouenneVarObject::createBranch (OsiSolverInterface *si,
     }
 
     obj = new CouenneBranchingObject (si, this, jnlst_, cutGen_, problem_, reference_, 
-							  TWO_LEFT, brpt, doFBBT_, doConvCuts_);
+				      TWO_LEFT, brpt, doFBBT_, doConvCuts_);
   } else {
 
     // now deal with the more complicated branching selections

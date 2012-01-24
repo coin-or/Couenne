@@ -15,6 +15,13 @@
 #include "CouenneExprCopy.hpp"
 #include "CouenneExprStore.hpp"
 
+// TODO: CouenneObject might take expression of the form
+// min(x1,x2,...,xn) and branch it by creating two subsets N1 and N2
+// of N={1,2,...,n} and then impose the constraints
+//
+// (xi <= xj for i in N1, j in N2) OR 
+// (xi >= xj for i in N1, j in N2)
+
 namespace Couenne {
 
 /// class for minima
