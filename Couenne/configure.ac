@@ -13,7 +13,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[0.4.1],[couenne@list.coin-or.org])
+AC_INIT([Couenne],[0.4],[couenne@list.coin-or.org])
 
 AC_COPYRIGHT([
 Copyright 2006 Carnegie Mellon University, International Business Machines and others.
@@ -39,7 +39,7 @@ AC_PREFIX_DEFAULT([`pwd`])
 AC_CANONICAL_BUILD
 
 # Initialization specifically for project main directories
-AC_COIN_PROJECTDIR_INIT(Couenne,4:1:3)
+AC_COIN_PROJECTDIR_INIT(Couenne)
 
 # Check if user wants to produce debugging code
 AC_COIN_DEBUG_COMPILE(Couenne)
