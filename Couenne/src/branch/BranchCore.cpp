@@ -148,16 +148,17 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
   if (!way) {
 
     if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
-      printf ("Branch: x%d <= %g [%g,%g]\n", 
+      printf ("Branch: x%d <= %g [%g,%g] (opt %g)\n", 
 	      indVar, 
 	      integer ? floor (brpt) : brpt,
 	      solver -> getColLower () [indVar], 
-	      solver -> getColUpper () [indVar]);
+	      solver -> getColUpper () [indVar],
+	      problem_ -> bestSol () ? problem_ -> bestSol () [indVar] : 0./0.);
 
       if (problem_ -> bestSol ()) {
 
-	if ((solver  -> getColUpper () [indVar] > problem_ -> bestSol () [indVar]) &&
-	    (brpt                               < problem_ -> bestSol () [indVar]))
+	if ((solver  -> getColUpper () [indVar] >= problem_ -> bestSol () [indVar]) &&
+	    (brpt                               <  problem_ -> bestSol () [indVar]))
 
 	  printf ("Branching EXCLUDES optimal solution\n");
 	else
@@ -166,28 +167,29 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	    if ((solver -> getColLower () [i] > problem_ -> bestSol () [i] + COUENNE_EPS) ||
 		(solver -> getColUpper () [i] < problem_ -> bestSol () [i] - COUENNE_EPS))
 
-	      {printf ("This node does not contain optimal solution\n"); break;}
+	      {printf ("This node does not contain optimal solution: x%d in [%g,%g] (%g)\n", i, solver -> getColLower () [i], solver -> getColUpper () [i], problem_ -> bestSol () [i]); break;}
       }
     }
 
     // BRANCHING RULE -------------------------------------------------------------------------
-    solver -> setColUpper (indVar, integer ? floor (brpt) : brpt); // down branch, x [indVar] <= brpt
+    solver -> setColUpper (indVar, integer ? floor (brpt + COUENNE_EPS) : brpt); // down branch, x [indVar] <= brpt
     if (chg_bds) chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
 
   } else {
 
     if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
 
-      printf (" x%d >= %g [%g,%g]; ", 
+      printf ("Branch: x%d >= %g [%g,%g] (opt %g)\n", 
 	      indVar, 
 	      integer ? ceil (brpt) : brpt,
 	      solver -> getColLower () [indVar], 
-	      solver -> getColUpper () [indVar]);
+	      solver -> getColUpper () [indVar],
+	      problem_ -> bestSol () ? problem_ -> bestSol () [indVar] : 0./0.);
 
       if (problem_ -> bestSol ()) {
 
-	if ((solver  -> getColLower () [indVar] < problem_ -> bestSol () [indVar]) &&
-	    (brpt                               > problem_ -> bestSol () [indVar]))
+	if ((solver  -> getColLower () [indVar] <= problem_ -> bestSol () [indVar]) &&
+	    (brpt                               >  problem_ -> bestSol () [indVar]))
 
 	  printf ("Branching EXCLUDES optimal solution\n");
 
@@ -197,12 +199,12 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	    if ((solver -> getColLower () [indVar] > problem_ -> bestSol () [indVar] + COUENNE_EPS) ||
 		(solver -> getColUpper () [indVar] < problem_ -> bestSol () [indVar] - COUENNE_EPS))
 
-	      {printf ("This node does not contain optimal solution\n"); break;}
+	      {printf ("This node does not contain optimal solution: x%d in [%g,%g] (%g)\n", i, solver -> getColLower () [i], solver -> getColUpper () [i], problem_ -> bestSol () [i]); break;}
       }
     }
 
     // BRANCHING RULE -------------------------------------------------------------------------
-    solver -> setColLower (indVar, integer ? ceil (brpt) : brpt); // up branch, x [indVar] >= brpt
+    solver -> setColLower (indVar, integer ? ceil (brpt - COUENNE_EPS) : brpt); // up branch, x [indVar] >= brpt
     if (chg_bds) chg_bds [indVar].setLower (t_chg_bounds::CHANGED);
   }
 }

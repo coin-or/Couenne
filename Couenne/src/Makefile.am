@@ -81,6 +81,7 @@ includecoindir = $(includedir)/coin
 includecoin_HEADERS = \
 	util/CouenneRootQ.hpp \
 	util/CouenneFunTriplets.hpp \
+	main/CouenneBab.hpp \
 	main/BonCouenneInfo.hpp \
 	main/BonCouenneSetup.hpp \
 	interfaces/BonCouenneInterface.hpp \

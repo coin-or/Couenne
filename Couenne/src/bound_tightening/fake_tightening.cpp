@@ -90,6 +90,7 @@ fake_tighten (char direction,  // 0: left, 1: right
 	      CouNumber *oub,  //      upper
 	      t_chg_bounds *chg_bds,
 	      t_chg_bounds *f_chg) const {
+
   int
     ncols    = nVars (),
     objind   = Obj (0) -> Body  () -> Index ();

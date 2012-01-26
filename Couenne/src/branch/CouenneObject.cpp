@@ -45,6 +45,7 @@ CouenneObject::CouenneObject (CouenneCutGenerator *cutgen,
 			      Bonmin::BabSetupBase *base, 
 			      JnlstPtr jnlst):
   OsiObject (),
+
   cutGen_         (cutgen),
   problem_        (p),  
   reference_      (ref),

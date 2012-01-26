@@ -27,6 +27,7 @@
 #include "BonCouenneSetup.hpp"
 
 #include "BonCbc.hpp"
+#include "CouenneBab.hpp"
 
 #include "CbcCutGenerator.hpp"
 #include "CouenneProblem.hpp"
@@ -89,8 +90,8 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
   try {
 
-    Bonmin::Bab bb;
-    bb.setUsingCouenne (true);
+    CouenneBab bb;
+    //    bb.setUsingCouenne (true);
 
     CouenneProblem *p = NULL;
     CouenneInterface *ci = NULL;
@@ -105,14 +106,10 @@ Instructions: http://www.coin-or.org/Couenne\n",
     p -> addVariable (false, p -> domain ());
 
     p -> addObjective    (new exprSum (new exprClone (p->Var (1)), new exprClone (p->Var (2))), "min");
-    p -> addLEConstraint (new exprSum (new exprClone (p->Var (0)), new exprClone (p->Var (2))), 
-			  new exprConst (1));
-    p -> addEQConstraint (new exprSum (new exprClone (p->Var (1)), new exprClone (p->Var (2))), 
-			  new exprConst (1));
-    p -> addEQConstraint (new exprSum (new exprClone (p->Var (1)), new exprClone (p->Var (3))), 
-			  new exprConst (1));
-    p -> addEQConstraint (new exprSum (new exprClone (p->Var (2)), new exprClone (p->Var (3))), 
-			  new exprConst (1));
+    p -> addLEConstraint (new exprSum (new exprClone (p->Var (0)), new exprClone (p->Var (2))), new exprConst (1));
+    p -> addEQConstraint (new exprSum (new exprClone (p->Var (1)), new exprClone (p->Var (2))), new exprConst (1));
+    p -> addEQConstraint (new exprSum (new exprClone (p->Var (1)), new exprClone (p->Var (3))), new exprConst (1));
+    p -> addEQConstraint (new exprSum (new exprClone (p->Var (2)), new exprClone (p->Var (3))), new exprConst (1));
 #endif
 
     CouenneSetup couenne;
@@ -155,6 +152,8 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
     CouenneProblem *prob = couenne. couennePtr () -> Problem ();
 
+    bb. setProblem (prob);
+
     jnlst -> Printf (J_ERROR, J_COUENNE, "\
 Loaded instance \"%s\"\n\
 Constraints:     %8d\n\
@@ -191,11 +190,8 @@ Auxiliaries:     %8d (%d integer)\n\n",
       printf ("%d orbital nontrivial branchings\n", nOrbBr);
 #endif
 
-    //////////////////////////////////
-
     std::cout.precision (10);
 
-    ////////////////////////////////
     int nr=-1, nt=-1;
     double st=-1;
 
@@ -212,12 +208,12 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
 #ifdef FM_TRACE_OPTSOL
 
-    FILE *fSol = fopen ("bidon.sol", "w");
+    //FILE *fSol = fopen ("bidon.sol", "w");
 
-    if(fSol == NULL) {
-      printf("### ERROR: can not open bidon.sol\n");
-      exit(1);
-    }
+    // if(fSol == NULL) {
+    //   printf("### ERROR: can not open bidon.sol\n");
+    //   exit(1);
+    // }
 
     if(cp != NULL) {
       double cbcObjVal = bb.model().getObjValue();
@@ -285,8 +281,8 @@ Auxiliaries:     %8d (%d integer)\n\n",
 				       modelNvars, cp->getFeasTol());
       switch (retcomp) {
       case -1: printf("No solution found\n"); break;
-      case 0: printf("Best solution found by Cbc  Value: %10.4f  Tolerance: %10g\n", modCbcSolVal, modCbcSolMaxViol); break;
-      case 1: printf("Best solution found by Couenne  Value: %10.4f  Tolerance: %10g\n", modCouenneSolVal, modCouenneSolMaxViol); break;
+      case 0: printf("Best solution found by Cbc. Value: %10.4f. Tolerance: %10g\n", modCbcSolVal, modCbcSolMaxViol); break;
+      case 1: //printf("Best solution found by Couenne  Value: %10.4f  Tolerance: %10g\n", modCouenneSolVal, modCouenneSolMaxViol); break;
       default: break; // never happens
       }
 
@@ -296,12 +292,12 @@ Auxiliaries:     %8d (%d integer)\n\n",
 	  cbcLb = rs->getVal();
 	}
 	printObj = rs->getVal();
-	rs->printSol(fSol);
+	//rs->printSol(fSol);
       }
       delete[] modCbcSol;
       delete[] modCouenneSol;
     }
-    fclose(fSol);
+    //fclose(fSol);
 #endif /* FM_TRACE_OPTSOL */
 
 #ifdef FM_FRES
@@ -345,28 +341,44 @@ Auxiliaries:     %8d (%d integer)\n\n",
     couenne.options () -> GetNumericValue ("couenne_check", global_opt, "couenne.");
 
     double 
-      ub = bb.model (). getObjValue (),
-      lb = bb.model (). getBestPossibleObjValue ();
+      ub = bb. model (). getObjValue (),
+      lb = bb. model (). getBestPossibleObjValue ();
 
-    char *gapstr = new char [80];
+    if (cp -> getRecordBestSol ())              ub = cp -> getRecordBestSol () -> getVal ();
+    if ((fabs (lb) > COUENNE_INFINITY / 1e4) ||
+	(lb > ub))                              lb = ub;
 
-    sprintf (gapstr, "%.2f%%", 100. * (ub - lb) / (1. + fabs (lb)));
+    char 
+      *gapstr = new char [80],
+      *lbstr  = new char [80],
+      *ubstr  = new char [80];
+
+    sprintf (lbstr,  "%10g",     lb);
+    sprintf (ubstr,  "%10g",     ub);
+    sprintf (gapstr, "%.2f%%", fabs (100. * (ub - lb) / (1. + fabs (lb))));
 
     jnlst -> Printf (J_ERROR, J_COUENNE, "\n\
 Linearization cuts added at root node:   %8d\n\
 Linearization cuts added in total:       %8d  (separation time: %gs)\n\
 Total solving time:                      %8gs (%gs in branch-and-bound)\n\
-Lower bound:                           %10g\n\
-Upper bound:                           %10g  (gap: %s)\n\
-Branch-and-bound nodes:                  %8d\n\n",
+Lower bound:                           %s\n\
+Upper bound:                           %s  (gap: %s)\n\
+Branch-and-bound nodes:                  %8d\n",
 		     nr, nt, st, 
 		     CoinCpuTime () - time_start,
 		     cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
-		     lb, 
-		     ub,
-		     (ub > COUENNE_INFINITY/1e4) ? "inf" : gapstr,
+		     (lb < -9e12) ||
+		     (lb > COUENNE_INFINITY/1e4) ? "      -inf" : lbstr,
+		     (ub > COUENNE_INFINITY/1e4) ? "       inf" : ubstr,
+		     (ub > COUENNE_INFINITY/1e4) ? "--" : gapstr,
 		     bb.numNodes ());
 
+    if (fabs (ub - bb. model (). getObjValue ()) > COUENNE_EPS * ub)
+      jnlst -> Printf (J_ERROR, J_COUENNE, 
+		       "Warning: upper bounds differ between Couenne and Cbc. Saving Couenne's (more reliable).\n");
+
+    delete [] lbstr;
+    delete [] ubstr;
     delete [] gapstr;
 
     if (global_opt < COUENNE_INFINITY) { // some value found in couenne.opt
@@ -399,8 +411,8 @@ Branch-and-bound nodes:                  %8d\n\n",
 		nr, nt, st, 
 		CoinCpuTime () - time_start,
 		cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
-		bb.model (). getBestPossibleObjValue (),
-		bb.model (). getObjValue (),
+		lb, //bb.model (). getBestPossibleObjValue (),
+		ub, //bb.model (). getObjValue (),
 		//bb.bestBound (),
 		//bb.bestObj (),
 		bb.numNodes ());

@@ -65,7 +65,8 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libBonCouenne_la_LIBADD =
-am_libBonCouenne_la_OBJECTS = BonCouenneSetup.lo SmartAslDestr.lo
+am_libBonCouenne_la_OBJECTS = CouenneBab.lo BonCouenneSetup.lo \
+	SmartAslDestr.lo
 libBonCouenne_la_OBJECTS = $(am_libBonCouenne_la_OBJECTS)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
@@ -319,6 +320,7 @@ AUTOMAKE_OPTIONS = foreign
 # what is built at this level
 lib_LTLIBRARIES = libBonCouenne.la
 libBonCouenne_la_SOURCES = \
+	CouenneBab.cpp \
 	BonCouenneSetup.cpp \
 	SmartAslDestr.cpp
 
@@ -449,6 +451,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenne.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneBab.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SmartAslDestr.Plo@am__quote@
 
 .cpp.o:
