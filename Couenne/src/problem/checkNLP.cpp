@@ -747,6 +747,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
       bool isFeasInt = checkInt(couRecSol, nOrigVars_ - ndefined_, nVars(), listInt,
 				false, stopAtFirstViol,
 				precision, maxViolRecSol);
+
       if(!isFeasInt) {
 	
 #ifdef FM_TRACE_NLP
@@ -765,6 +766,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
     if(!stopAtFirstViol || isFeasRec) {
       bool isFeasBnd = checkBounds(couRecSol, stopAtFirstViol, 
 				   precision, maxViolRecSol);
+
       if(!isFeasBnd) {
 	
 #ifdef FM_TRACE_NLP
@@ -780,7 +782,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
     if(!stopAtFirstViol || isFeasRec) {
       bool isFeasAux = checkAux(couRecSol, stopAtFirstViol, 
 				precision, maxViolRecSol);
-      
+
       if(!isFeasAux) {
 	
 #ifdef FM_TRACE_NLP
@@ -795,6 +797,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
   if(!stopAtFirstViol || isFeasRec) {
     bool isFeasCons = checkCons(couRecSol, stopAtFirstViol, 
 				precision, maxViolRecSol);
+
     if(!isFeasCons) {
 
 #ifdef FM_TRACE_NLP
@@ -821,7 +824,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
     isFeas = true;
   }
   else {
-  
+
     if(checkAll) { // otherwise duplicates above calculations
 
     

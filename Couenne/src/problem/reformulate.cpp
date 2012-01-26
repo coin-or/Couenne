@@ -114,7 +114,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   cutoff = objind >= 0 ? X (objind) : objectives_ [0] -> Body () -> Value ();
   if(checkNLP2(X(), cutoff, false, // do not care about obj value
 	       true, // stop at first viol 
-	       false, // checkAll
+	       true, // checkAll
 	       getFeasTol())) {
     
     jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM,
