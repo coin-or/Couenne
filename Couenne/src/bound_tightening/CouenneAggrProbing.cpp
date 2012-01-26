@@ -12,7 +12,8 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneExprVar.hpp"
 #include "CouenneExprOpp.hpp"
-#include "BonCbc.hpp"
+//#include "BonCbc.hpp"
+#include "CouenneBab.hpp"
 #include "CouenneCutGenerator.hpp"
 #include <string>
 
@@ -200,8 +201,11 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
 	      << ", try bound " << tryBound << std::endl;
 
     /// Now do Branch-and-Bound and see if probing succeeded
-    Bonmin::Bab bb;
-    bb.setUsingCouenne(true);
+    // Bonmin::Bab bb;
+    // bb.setUsingCouenne(true);
+
+    CouenneBab bb;
+
     bb(couenne_);
     if (bb.model().isProvenInfeasible()){
       /// Problem is infeasible; therefore, probing was successful.
@@ -293,8 +297,10 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
 	      << ", try bound " << tryBound << std::endl;
 
     /// Now do Branch-and-Bound and see if probing succeeded
-    Bonmin::Bab bb;
-    bb.setUsingCouenne(true);
+    // Bonmin::Bab bb;
+    // bb.setUsingCouenne(true);
+
+    CouenneBab bb;
     bb(couenne_);
 
     problem->domain()->pop();
@@ -497,8 +503,10 @@ double CouenneAggrProbing::probeVariable2(int index, bool probeLower){
   couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime, 
 			       maxTime_);
 
-  Bonmin::Bab bb;
-  bb.setUsingCouenne(true);
+  // Bonmin::Bab bb;
+  // bb.setUsingCouenne(true);
+
+  CouenneBab bb;
   bb(couenne_);
 
   double bestBound = bb.model().getBestPossibleObjValue();

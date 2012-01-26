@@ -91,9 +91,9 @@ LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 SOURCES = $(libCouenne_la_SOURCES)
 DIST_SOURCES = $(libCouenne_la_SOURCES)
 am__includecoin_HEADERS_DIST = util/CouenneRootQ.hpp \
-	util/CouenneFunTriplets.hpp main/BonCouenneInfo.hpp \
-	main/BonCouenneSetup.hpp interfaces/BonCouenneInterface.hpp \
-	interfaces/CouenneTNLP.hpp \
+	util/CouenneFunTriplets.hpp main/CouenneBab.hpp \
+	main/BonCouenneInfo.hpp main/BonCouenneSetup.hpp \
+	interfaces/BonCouenneInterface.hpp interfaces/CouenneTNLP.hpp \
 	interfaces/CouenneMINLPInterface.hpp \
 	heuristics/BonNlpHeuristic.hpp heuristics/BonInitHeuristic.hpp \
 	heuristics/CouenneFeasPump.hpp branch/CouenneObject.hpp \
@@ -453,9 +453,9 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)`
 # and that therefore should be installed in 'include/coin'
 includecoindir = $(includedir)/coin
 includecoin_HEADERS = util/CouenneRootQ.hpp \
-	util/CouenneFunTriplets.hpp main/BonCouenneInfo.hpp \
-	main/BonCouenneSetup.hpp interfaces/BonCouenneInterface.hpp \
-	interfaces/CouenneTNLP.hpp \
+	util/CouenneFunTriplets.hpp main/CouenneBab.hpp \
+	main/BonCouenneInfo.hpp main/BonCouenneSetup.hpp \
+	interfaces/BonCouenneInterface.hpp interfaces/CouenneTNLP.hpp \
 	interfaces/CouenneMINLPInterface.hpp \
 	heuristics/BonNlpHeuristic.hpp heuristics/BonInitHeuristic.hpp \
 	heuristics/CouenneFeasPump.hpp branch/CouenneObject.hpp \

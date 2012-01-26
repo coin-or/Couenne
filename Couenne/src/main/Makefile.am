@@ -13,6 +13,7 @@ AUTOMAKE_OPTIONS = foreign
 lib_LTLIBRARIES = libBonCouenne.la
 
 libBonCouenne_la_SOURCES = \
+	CouenneBab.cpp \
 	BonCouenneSetup.cpp \
 	SmartAslDestr.cpp
 

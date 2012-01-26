@@ -12,6 +12,9 @@
 #ifndef COUENNE_PROBLEM_HPP
 #define COUENNE_PROBLEM_HPP
 
+#define FM_TRACE_OPTSOL
+#define FM_CHECKNLP2
+
 #include <vector>
 #include <map>
 
@@ -67,39 +70,51 @@ class Nauty;
     inline void bounds(register double a, register double b){ lb = a; ub = b;}
   };
 
+#define COUENNE_EPS_SYMM 1e-8
+
   struct myclass0 {
     inline bool operator() (register const Node &a, register const Node &b) {
 
-      bool is_less = 0;
-      
-      if(a.get_code() < b.get_code() )
-	is_less = 1;
-      else {
-	if(a.get_code() == b.get_code() ) {
-	  if(a.get_coeff() < b.get_coeff() )
-	    is_less = 1;
-	  else{
-	    if(a.get_coeff() ==  b.get_coeff() ) {
-	      if(a.get_lb() < b.get_lb())
-		is_less = 1;
-	      else{
-		if(a.get_lb() == b.get_lb()) {
-		  if(a.get_ub() < b.get_ub())
-		    is_less = 1;
-		  else{
-		    if(a.get_ub() == b.get_ub()) {
+      return ((              a.get_code  () <  b.get_code  ())                     ||
+	      ((             a.get_code  () == b.get_code  ()                      &&
+		((           a.get_coeff () <  b.get_coeff ()  - COUENNE_EPS_SYMM) ||
+		 ((fabs     (a.get_coeff () -  b.get_coeff ()) < COUENNE_EPS_SYMM) &&
+		  ((         a.get_lb    () <  b.get_lb    ()  - COUENNE_EPS_SYMM) ||
+		   ((fabs   (a.get_lb    () -  b.get_lb    ()) < COUENNE_EPS_SYMM) &&
+		    ((       a.get_ub    () <  b.get_ub    ()  - COUENNE_EPS_SYMM) ||
+		     ((fabs (a.get_ub    () -  b.get_ub    ()) < COUENNE_EPS_SYMM) &&
+		      ((     a.get_index () <  b.get_index ()))))))))))) ? 1 : 0;
+
+    //   bool is_less = 0;
+    //   if(a.get_code() < b.get_code() )
+    // 	is_less = 1;
+    //   else {
+    // 	if(a.get_code() == b.get_code() ) {
+    // 	  if(a.get_coeff() < b.get_coeff() )
+    // 	    is_less = 1;
+    // 	  else{
+    // 	    if(a.get_coeff() ==  b.get_coeff() ) {
+    // 	      if(a.get_lb() < b.get_lb())
+    // 		is_less = 1;
+    // 	      else{
+    // 		if(a.get_lb() == b.get_lb()) {
+    // 		  if(a.get_ub() < b.get_ub())
+    // 		    is_less = 1;
+    // 		  else{
+    // 		    if(a.get_ub() == b.get_ub()) {
 		    
-		      if(a.get_index() < b.get_index())
-			is_less = 1;
-		    }
-		  }
-		}
-	      }
-	    }
-	  }
-	}
-      }
-    return is_less;
+    // 		      if(a.get_index() < b.get_index())
+    // 			is_less = 1;
+    // 		    }
+    // 		  }
+    // 		}
+    // 	      }
+    // 	    }
+    // 	  }
+    // 	}
+    //   }
+    // return is_less;
+
     }
   } ;
     

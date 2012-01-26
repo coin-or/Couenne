@@ -170,6 +170,10 @@ public:
   CouNumber lp_clamp () const
   {return lp_clamp_;}
 
+  /// Returns the column index
+  virtual int columnNumber () const
+  {return (reference_ ? reference_ -> Index () : -1);}
+
 protected:
 
   /// pointer to cut generator (not necessary, can be NULL)

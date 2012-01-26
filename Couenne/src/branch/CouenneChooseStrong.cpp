@@ -155,7 +155,6 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
       }
     }
   }
-
     
   return(goodCand);
 } /* goodCandidate */
@@ -689,6 +688,10 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
       printObjViol(info);
     }
 #endif
+
+    //
+    // Real list setup
+    //
 
     int retval = gutsOfSetupList(info, initialize);
 

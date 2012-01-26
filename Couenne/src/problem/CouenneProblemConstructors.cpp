@@ -109,7 +109,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   if (base)
     initOptions (base -> options());
 
-  recBSol = new struct Couenne::CouenneRecordBestSol();
+  recBSol = new CouenneRecordBestSol();
   lastPrioSort_ = 1000000;
 
   minDepthPrint_ = -1;
@@ -287,9 +287,8 @@ void CouenneProblem::initOptions(Ipopt::SmartPtr<Ipopt::OptionsList> options) {
 		  s == "simple" ? CouenneProblem::MulSepSimple :
                  		  CouenneProblem::MulSepTight);
 
-  options -> GetStringValue ("orbital_branching", s, "couenne."); orbitalBranching_ = (s == "yes");
-
-  options -> GetStringValue ("quadrilinear_decomp",  s, "couenne."); 
+  options -> GetStringValue ("orbital_branching",   s, "couenne."); orbitalBranching_ = (s == "yes");
+  options -> GetStringValue ("quadrilinear_decomp", s, "couenne."); 
 
   if      (s == "rAI")     trilinDecompType_ = rAI;
   else if (s == "tri+bi")  trilinDecompType_ = tri_bi;
