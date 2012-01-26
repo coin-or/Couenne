@@ -377,8 +377,9 @@ Branch-and-bound nodes:                  %8d\n",
       jnlst -> Printf (J_ERROR, J_COUENNE, 
 		       "Warning: upper bounds differ between Couenne and Cbc. Saving Couenne's (more reliable).\n");
 
-    delete [] gapstr;
+    delete [] lbstr;
     delete [] ubstr;
+    delete [] gapstr;
 
     if (global_opt < COUENNE_INFINITY) { // some value found in couenne.opt
 
