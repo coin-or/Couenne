@@ -17,7 +17,9 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneObject.hpp"
 
+#ifdef COIN_HAS_NTY
 #include "Nauty.h"
+#endif
 
 using namespace Couenne;
 

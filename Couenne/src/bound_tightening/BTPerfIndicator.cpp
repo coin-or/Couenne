@@ -60,8 +60,8 @@ void CouenneBTPerfIndicator::update (CouNumber *lb, CouNumber *ub, int depth) co
 
     // Check if bound has worsened rather than improved
 
-    if ((nlb < olb - COUENNE_EPS) ||  
-	(nub > oub + COUENNE_EPS))
+    if (((olb > -COUENNE_INFINITY / 1e4) && (nlb < olb - COUENNE_EPS)) ||  
+	((oub <  COUENNE_INFINITY / 1e4) && (nub > oub + COUENNE_EPS)))
 	
       printf (" %30s makes bound worse (x%d): [%e,%e] --> [%e,%e], diff:%e\n",
 	      name_.c_str (),
