@@ -143,6 +143,9 @@ CouenneInterface::extractLinearRelaxation
       try {
 	options () -> SetNumericValue ("max_cpu_time", CoinMax (0., (p -> getMaxCpuTime () - CoinCpuTime ()) / 2));
 	initialSolve ();
+	if (isDualObjectiveLimitReached() &&
+	    (getNumIntegers () == 0))
+	  *messageHandler () << "Couenne: Warning, NLP is unbounded" << CoinMessageEol;
       }
       catch (Bonmin::TNLPSolver::UnsolvedError *E) {
 	// wrong, if NLP has problems this is not necessarily true...
@@ -229,6 +232,10 @@ CouenneInterface::extractLinearRelaxation
 	    try {
 	      options () -> SetNumericValue ("max_cpu_time", CoinMax (0., p -> getMaxCpuTime () - CoinCpuTime ()));
 	      resolve (); // solve with integer variables fixed
+
+	      if (isDualObjectiveLimitReached() &&
+		  (getNumIntegers () == 0))
+		*messageHandler () << "Couenne: Warning, NLP is is unbounded" << CoinMessageEol;
 	    }
 	    catch (Bonmin::TNLPSolver::UnsolvedError *E) {
 	    }
