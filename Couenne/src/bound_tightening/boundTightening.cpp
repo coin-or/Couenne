@@ -223,7 +223,8 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
     nchanges = 0,
     objind   = Obj (0) -> Body () -> Index ();
 
-  assert (objind >= 0);
+  if (objind < 0) 
+    return 0;
 
   CouNumber
     UB = getCutOff (), //babInfo -> babPtr () -> model (). getObjValue(),
