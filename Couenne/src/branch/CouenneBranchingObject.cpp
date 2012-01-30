@@ -270,7 +270,7 @@ double CouenneBranchingObject::branch (OsiSolverInterface * solver) {
 	  *ub = solver -> getColUpper ();
 
 	//CouNumber newEst = problem_ -> Lb (objind) - lb [objind];
-	estimate = CoinMax (0., problem_ -> Lb (objind) - lb [objind]);
+	estimate = CoinMax (0., objind >= 0 ? (problem_ -> Lb (objind) - lb [objind]) : 0.);
 
 	for (int i=0; i<nvars; i++) {
 	  if (problem_ -> Lb (i) > lb [i]) solver -> setColLower (i, problem_ -> Lb (i));
