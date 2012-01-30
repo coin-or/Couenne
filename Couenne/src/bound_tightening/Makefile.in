@@ -351,6 +351,8 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/../heuristics` \
 	-I`$(CYGPATH_W) $(srcdir)/../main` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression` \
+	-I`$(CYGPATH_W) $(srcdir)/../expression/partial` \
+	-I`$(CYGPATH_W) $(srcdir)/../interfaces` \
 	-I`$(CYGPATH_W) $(srcdir)/../branch` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
 	$(COUENNELIB_CFLAGS) 

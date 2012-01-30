@@ -151,7 +151,8 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     } else {
       assert (couenneProb_ != NULL);
       assert (IsValid (tminlp)); //TODO would be great to setup own TMINLP based on CouenneProblem formulation
-      ci -> initialize (roptions_, options_, journalist_, tminlp);
+      ci -> initialize (roptions_, options_, journalist_,  
+			Ipopt::SmartPtr <Bonmin::TMINLP> (dynamic_cast <Bonmin::TMINLP *> (Ipopt::GetRawPtr (tminlp))));
     }
   }
 
