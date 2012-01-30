@@ -1412,14 +1412,13 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 					      const OsiObject ** objects) {
 
 #ifdef FM_CHECKNLP2
-    bool isFeas = problem_->checkNLP2(solution, 0, false, true, true, 
-				      problem_->getFeasTol());
-    return isFeas;
+    return problem_ -> checkNLP2 (solution, 0, false, true, true, 
+				  problem_->getFeasTol());
 #else
-    double obj = solution [problem_ -> Obj (0) -> Body () -> Index ()];
-    return problem_ -> checkNLP (solution, obj);
+    return problem_ -> checkNLP (solution, solution [problem_ -> Obj (0) -> Body () -> Index ()]);
 #endif
   }
+
 /****************************************************************************/
   void CouenneChooseStrong::printObjViol(OsiBranchingInformation *info) {
 
@@ -1449,6 +1448,5 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
     printf("\nmaxViol: %g  minPosViol: %g\n", maxViol, minPosViol);
 
   } /* printObjViol */
-
 
 //}

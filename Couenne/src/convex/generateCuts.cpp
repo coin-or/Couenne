@@ -111,11 +111,15 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
   if(currCutOff > bestVal) {
     //problem_ -> setCutOff (bestVal - 1e-6); // FIXME: don't add numerical constants
     problem_ -> setCutOff (bestVal);
-    OsiColCut *objCut = new OsiColCut;
+
     int indObj = problem_->Obj(0)->Body()->Index();
-    objCut->setUbs(1, &indObj, &bestVal);
-    cs.insert(objCut);
-    delete objCut;
+
+    if (indObj >= 0) {
+      OsiColCut *objCut = new OsiColCut;
+      objCut->setUbs(1, &indObj, &bestVal);
+      cs.insert(objCut);
+      delete objCut;
+    }
   }
 #endif
 

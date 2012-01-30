@@ -112,12 +112,9 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
     //case OPround:  notimpl ("round");
     //case OPtrunc:  notimpl ("trunc");
 
-  case OP1POW: return new exprPow (nl2e (e -> L.e, asl), 
-				   new exprConst (((expr_n *)e->R.e)->v));
-  case OP2POW: return new exprPow (nl2e (e -> L.e, asl), 
-				   new exprConst (2.));
-  case OPCPOW: return new exprPow (new exprConst (((expr_n *)e->L.e)->v),
-				   nl2e (e -> R.e, asl));
+  case OP1POW: return new exprPow (nl2e (e -> L.e, asl), 		   new exprConst (((expr_n *)e->R.e)->v));
+  case OP2POW: return new exprPow (nl2e (e -> L.e, asl), 		   new exprConst (2.));
+  case OPCPOW: return new exprPow (new exprConst (((expr_n *)e->L.e)->v),  nl2e (e -> R.e, asl));
     //case OPFUNCALL: notimpl ("function call");
   case OPNUM:     return new exprConst (((expr_n *)e)->v);
     //case OPPLTERM:  notimpl ("plterm");
@@ -143,7 +140,7 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
   }
 
   default: 
-    printf ("ERROR: unknown operator (address %p), aborting.\n", Intcast (e -> op));
+    printf ("Couenne error: unknown operator (address %p), aborting.\n", Intcast (e -> op));
     exit (-1);
     //return new exprConst (0);
   }
