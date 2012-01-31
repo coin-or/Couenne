@@ -267,7 +267,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 
 #ifdef USE_SMALL_GAP
       int objInd = problem_ -> Obj (0) -> Body () -> Index ();
-      double lbGap = info -> lower_ [objInd];
+      double lbGap = objInd >= 0 ? info -> lower_ [objInd] : problem_ -> Obj (0) -> Body () -> Value ();
       double ubGap = problem_ -> getCutOff ();
       double currentGap = 
 	(ubGap >  COUENNE_INFINITY    / 10 ||
@@ -1412,14 +1412,14 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 					      const OsiObject ** objects) {
 
 #ifdef FM_CHECKNLP2
-    bool isFeas = problem_->checkNLP2(solution, 0, false, true, true, 
-				      problem_->getFeasTol());
-    return isFeas;
+    return problem_ -> checkNLP2 (solution, 0, false, true, true, 
+				  problem_->getFeasTol());
 #else
-    double obj = solution [problem_ -> Obj (0) -> Body () -> Index ()];
-    return problem_ -> checkNLP (solution, obj);
+    int indobj = problem_ -> Obj (0) -> Body () -> Index ();
+    return problem_ -> checkNLP (solution, indobj >= 0 ? solution [indobj] : problem_ -> Obj (0) -> Body () -> Value ());
 #endif
   }
+
 /****************************************************************************/
   void CouenneChooseStrong::printObjViol(OsiBranchingInformation *info) {
 
@@ -1449,6 +1449,5 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
     printf("\nmaxViol: %g  minPosViol: %g\n", maxViol, minPosViol);
 
   } /* printObjViol */
-
 
 //}

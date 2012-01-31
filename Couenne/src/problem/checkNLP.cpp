@@ -97,11 +97,9 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
       sol [objBody -> Index ()] : 
       (*(objBody -> Image () ? objBody -> Image () : objBody)) ();
 
-  if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
-    printf ("  Objective: %.12e %.12e %.12e\n", 
-	    realobj, sol [objBody -> Index ()], 
-	    (*(objBody -> Image () ? objBody -> Image () : objBody)) ());
-  }
+  Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "  Objective: %.12e %.12e %.12e\n", 
+		      realobj, objBody -> Index () >= 0 ? sol [objBody -> Index ()] : objBody -> Value (), 
+		      (*(objBody -> Image () ? objBody -> Image () : objBody)) ());
 
   bool retval = true;
 
