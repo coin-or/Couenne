@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    genColCuts.cpp
  * Author:  Pietro Belotti
  * Purpose: generate Column Cuts for improved bounds
@@ -48,7 +48,7 @@ void CouenneCutGenerator::genColCuts (const OsiSolverInterface &si,
     if ((newLow [i] > oldLow [i] + COUENNE_EPS) ||
 	(newUpp [i] < oldUpp [i] - COUENNE_EPS))
       printf ("x%-3d. [%-10g , %10g] ---> [%-10g , %10g]\n",
-      i, oldLow [i], oldUpp [i], newLow [i], newUpp [i]);*/
+      i, oldLow [i], oldUpp [i], newLow [i], newUpp [i]);
 #endif
 
   // check all changed bounds

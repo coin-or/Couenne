@@ -85,7 +85,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
     return;
   }
 
-  // clear all spurious variables pointers not referring to the variables_ vector
+  // clear all spurious variable pointers not referring to the variables_ vector
   realign ();
 
   // give a value to all auxiliary variables. Do it now to be able to

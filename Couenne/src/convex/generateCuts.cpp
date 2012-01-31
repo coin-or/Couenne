@@ -114,7 +114,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
     int indObj = problem_->Obj(0)->Body()->Index();
 
-    if (indObj >= 0) {
+    if ((indObj >= 0) && (si. getColUpper () [indObj] > bestVal)) {
       OsiColCut *objCut = new OsiColCut;
       objCut->setUbs(1, &indObj, &bestVal);
       cs.insert(objCut);

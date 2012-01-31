@@ -356,7 +356,10 @@ void CouenneProblem::installCutOff () const {
 
   int indobj = objectives_ [0] -> Body () -> Index ();
 
-  assert (indobj >= 0);
+  //assert (indobj >= 0);
+
+  if (indobj < 0) 
+    return;
 
   //Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
   //"installing cutoff %.10e vs current ub %.10e\n",
