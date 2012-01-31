@@ -267,7 +267,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 
 #ifdef USE_SMALL_GAP
       int objInd = problem_ -> Obj (0) -> Body () -> Index ();
-      double lbGap = info -> lower_ [objInd];
+      double lbGap = objInd >= 0 ? info -> lower_ [objInd] : problem_ -> Obj (0) -> Body () -> Value ();
       double ubGap = problem_ -> getCutOff ();
       double currentGap = 
 	(ubGap >  COUENNE_INFINITY    / 10 ||
@@ -1415,7 +1415,8 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
     return problem_ -> checkNLP2 (solution, 0, false, true, true, 
 				  problem_->getFeasTol());
 #else
-    return problem_ -> checkNLP (solution, solution [problem_ -> Obj (0) -> Body () -> Index ()]);
+    int indobj = problem_ -> Obj (0) -> Body () -> Index ();
+    return problem_ -> checkNLP (solution, indobj >= 0 ? solution [indobj] : problem_ -> Obj (0) -> Body () -> Value ());
 #endif
   }
 

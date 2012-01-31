@@ -239,14 +239,14 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       CouenneConstraint *con = problem_ -> Con (i);
 
       // (which has an aux as its body)
-      int index = con -> Body () -> Index ();
+      int objindex = con -> Body () -> Index ();
 
-      if ((index >= 0) && 
+      if ((objindex >= 0) && 
 	  ((con -> Body () -> Type () == AUX) ||
 	   (con -> Body () -> Type () == VAR))) {
 
 	// get the auxiliary that is at the lhs
-	exprVar *conaux = problem_ -> Var (index);
+	exprVar *conaux = problem_ -> Var (objindex);
 
 	if (conaux &&
 	    (conaux -> Type () == AUX) &&
@@ -261,8 +261,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	    ub = (*(con -> Ub ())) ();
 
 	  OsiColCut newBound;
-	  if (lb > -COUENNE_INFINITY) newBound.setLbs (1, &index, &lb);
-	  if (ub <  COUENNE_INFINITY) newBound.setUbs (1, &index, &ub);
+	  if (lb > -COUENNE_INFINITY) newBound.setLbs (1, &objindex, &lb);
+	  if (ub <  COUENNE_INFINITY) newBound.setUbs (1, &objindex, &ub);
 
 	  cs.insert (newBound);
 
@@ -347,9 +347,9 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     CouenneConstraint *con = problem_ -> Con (i);
 
     // (which has an aux as its body)
-    int index = con -> Body () -> Index ();
+    int objindex = con -> Body () -> Index ();
 
-    if ((index >= 0) && 
+    if ((objindex >= 0) && 
 	((con -> Body () -> Type () == AUX) ||
 	 (con -> Body () -> Type () == VAR))) {
 
@@ -359,8 +359,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	u = con -> Ub () -> Value ();
 
       // tighten bounds in Couenne's problem representation
-      problem_ -> Lb (index) = CoinMax (l, problem_ -> Lb (index));
-      problem_ -> Ub (index) = CoinMin (u, problem_ -> Ub (index));
+      problem_ -> Lb (objindex) = CoinMax (l, problem_ -> Lb (objindex));
+      problem_ -> Ub (objindex) = CoinMin (u, problem_ -> Ub (objindex));
     }
   }
 

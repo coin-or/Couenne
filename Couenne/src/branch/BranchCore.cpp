@@ -170,12 +170,13 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
   if (!way) {
 
     if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
+
       printf ("Branch: x%d <= %g [%g,%g] (opt %g)\n", 
 	      indVar, 
 	      integer ? floor (brpt) : brpt,
 	      solver -> getColLower () [indVar], 
 	      solver -> getColUpper () [indVar],
-	      problem_ -> bestSol () ? problem_ -> bestSol () [indVar] : 0./0.);
+	      problem_ -> bestSol () ? problem_ -> bestSol () [indVar] : 0.);
 
       if (problem_ -> bestSol ()) {
 
@@ -189,7 +190,8 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	    if ((solver -> getColLower () [i] > problem_ -> bestSol () [i] + COUENNE_EPS) ||
 		(solver -> getColUpper () [i] < problem_ -> bestSol () [i] - COUENNE_EPS))
 
-	      {printf ("This node does not contain optimal solution: x%d in [%g,%g] (%g)\n", i, solver -> getColLower () [i], solver -> getColUpper () [i], problem_ -> bestSol () [i]); break;}
+	      {printf ("This node does not contain optimal solution: x%d in [%g,%g] (%g)\n", 
+		       i, solver -> getColLower () [i], solver -> getColUpper () [i], problem_ -> bestSol () [i]); break;}
       }
     }
 
@@ -206,7 +208,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	      integer ? ceil (brpt) : brpt,
 	      solver -> getColLower () [indVar], 
 	      solver -> getColUpper () [indVar],
-	      problem_ -> bestSol () ? problem_ -> bestSol () [indVar] : 0./0.);
+	      problem_ -> bestSol () ? problem_ -> bestSol () [indVar] : 0.);
 
       if (problem_ -> bestSol ()) {
 
@@ -221,7 +223,8 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	    if ((solver -> getColLower () [indVar] > problem_ -> bestSol () [indVar] + COUENNE_EPS) ||
 		(solver -> getColUpper () [indVar] < problem_ -> bestSol () [indVar] - COUENNE_EPS))
 
-	      {printf ("This node does not contain optimal solution: x%d in [%g,%g] (%g)\n", i, solver -> getColLower () [i], solver -> getColUpper () [i], problem_ -> bestSol () [i]); break;}
+	      {printf ("This node does not contain optimal solution: x%d in [%g,%g] (%g)\n", 
+		       i, solver -> getColLower () [i], solver -> getColUpper () [i], problem_ -> bestSol () [i]); break;}
       }
     }
 

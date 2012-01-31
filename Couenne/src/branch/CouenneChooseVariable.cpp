@@ -340,7 +340,8 @@ bool CouenneChooseVariable::feasibleSolution (const OsiBranchingInformation * in
 					      int numberObjects,
 					      const OsiObject ** objects) {
 
-  double obj = solution [problem_ -> Obj (0) -> Body () -> Index ()];
+  int indobj = problem_ -> Obj (0) -> Body () -> Index ();
+  double obj = indobj >= 0 ? solution [indobj] : problem_ -> Obj (0) -> Body () -> Value ();
 
 #ifdef FM_CHECKNLP2
   bool isFeas = problem_->checkNLP2(solution,
@@ -351,7 +352,7 @@ bool CouenneChooseVariable::feasibleSolution (const OsiBranchingInformation * in
   
   return isFeas;
 #else
-  return problem_ -> checkNLP(solution, obj);
+  return problem_ -> checkNLP (solution, obj);
 #endif
 }
 
