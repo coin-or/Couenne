@@ -345,9 +345,151 @@ bool CouenneProblem::standardize () {
 
   if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) { 
     // Use with caution. Bounds on auxs are not defined yet, so valgrind complains
-    printf ("done with standardization: (careful, bounds below can be nonsense)\n");
+    printf ("Done with standardization (careful, bounds below can be nonsense):\n");
     print (); 
   }
+
+  // TODO: move redundancy elimination here. Then add another round of simplification
+
+#define ANTICIPATE_DELETE_REDUND
+#ifdef  ANTICIPATE_DELETE_REDUND
+
+  bool has_changed;
+
+  do {
+
+    has_changed = false;
+
+    // TODO: resolve duplicate index in exprQuad before restoring this
+
+    // remove duplicates
+
+    std::string delete_redund;
+
+    if (bonBase_) bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne."); 
+    else  delete_redund = "yes";
+
+    if (delete_redund == "yes")
+
+      // Look for auxiliaries of the form w:=x and replace each occurrence of w with x
+      for (std::vector <exprVar *>::iterator i = variables_.begin (); 
+	   i != variables_.end (); ++i)
+
+	if (((*i) -> Type () == AUX) && ((*i) -> sign () == expression::AUX_EQ)) {
+
+	  int type = (*i) -> Image () -> Type ();
+
+	  if ((type == VAR) || (type == AUX)) {
+
+	    // found w_k = x_h. 
+	    // 
+	    // Check if either is integer, the survivor will be integer too
+	    // Replace all occurrences of w_k with x_h
+
+	    /*printf ("redundancy: "); 
+	      (*i)             -> print (); printf (" := "); 
+	      (*i) -> Image () -> print (); printf ("\n");*/
+
+	    // use the info on the variable to be discarded: tighter
+	    // bounds and integrality that the replacement might not have.
+
+	    int 
+	      indStays  = (*i) -> Image () -> Index (), // index h
+	      indLeaves = (*i)             -> Index (); // index k
+
+	    if (indStays == indLeaves)  // very strange case, w_h = x_h
+	      continue;
+
+	    // do not swap! x_h could be in turn an auxiliary...
+	    //
+	    //if (indStays > indLeaves) 
+	    //{int swap = indStays; indStays = indLeaves; indLeaves = swap;} // swap
+
+	    exprVar 
+	      *varStays  = variables_ [indStays],
+	      *varLeaves = variables_ [indLeaves];
+
+	    // intersect features of the two variables (integrality, bounds)
+
+	    varStays -> lb () = varLeaves -> lb () = CoinMax (varStays -> lb (), varLeaves -> lb ());
+	    varStays -> ub () = varLeaves -> ub () = CoinMin (varStays -> ub (), varLeaves -> ub ());
+
+	    if (varStays  -> isInteger () ||
+		varLeaves -> isInteger ()) {
+
+	      varStays -> lb () = ceil  (varStays -> lb ());
+	      varStays -> ub () = floor (varStays -> ub ());
+
+	      if (varStays -> Type () == AUX)
+		varStays -> setInteger (true);
+	      else {
+		//expression *old = varStays; // !!! leak
+		variables_ [indStays] = varStays = new exprIVar (indStays, &domain_);
+		auxiliarize (varStays); // replace it everywhere in the problem
+		//delete old;
+	      }
+	    }
+
+	    auxiliarize (varLeaves, varStays); // now replace occurrences of w_k with x_h
+
+	    //if (varLeaves -> Index () >= nOrigVars_) // why check? It's not there anymore.
+	    varLeaves -> zeroMult (); // disable this variable
+	  }
+	}
+
+    // realignment and cleanup of variable might have introduced
+    // variable duplication, e.g. x0*x0. Do one round of
+    // simplification and reformulate what is simplified.
+
+    for (std::vector <exprVar *>::iterator i = variables_. begin ();
+	 i != variables_. end (); ++i) 
+
+      if (((*i) -> Multiplicity () > 0) &&
+	  ((*i) -> Type () == AUX)) {
+
+	expression
+	  *image = (*i) -> Image (),
+	  *simpl = image -> simplify ();
+
+	// printf ("SCANNING ");  fflush (stdout);
+
+	// image -> print (); fflush (stdout);
+
+	// if (simpl) {
+	//   printf (" --> "); fflush(stdout);
+	//   simpl -> print (); fflush(stdout);
+	// } 
+
+	exprVar *subst = NULL;
+
+	if (simpl &&
+	    (subst = simpl -> standardize (this))) {
+	  if ((subst -> Type () == VAR) ||
+	      (subst -> Type () == AUX))
+	    simpl = new exprClone (subst);
+	  else simpl = subst;
+	}
+
+	// if (subst) {
+	//   printf (" ==> "); 
+	//   subst -> print ();
+	// }
+
+	// printf ("\n");
+
+	if (simpl) {
+
+	  has_changed = true;
+
+	  delete (*i) -> Image ();
+	  (*i) -> Image (simpl);
+	}
+      }
+
+  } while (has_changed); // should repeat this while there have been
+                         // simplifications or duplicates have been
+                         // cut
+#endif
 
   delete auxSet_;
 
@@ -431,6 +573,8 @@ bool CouenneProblem::standardize () {
     }
   }
 
+#ifndef ANTICIPATE_DELETE_REDUND
+
   // TODO: resolve duplicate index in exprQuad before restoring this
 
   // remove duplicates
@@ -507,6 +651,8 @@ bool CouenneProblem::standardize () {
 	varLeaves -> zeroMult (); // disable this variable
       }
     }
+
+#endif
 
   /// re-check integrality. This is necessary as the initial
   /// integrality check is done on some continuous variables, which

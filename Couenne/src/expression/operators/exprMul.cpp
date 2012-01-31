@@ -13,6 +13,7 @@
 
 #include "CouenneExprMul.hpp"
 #include "CouenneExprSum.hpp"
+#include "CouenneExprPow.hpp"
 #include "CouenneExprConst.hpp"
 #include "CouenneExprClone.hpp"
 #include "CouennePrecisions.hpp"
@@ -58,15 +59,53 @@ expression *exprMul::simplify () {
     return ret;
   }
 
-  CouNumber prod = 1;
+  CouNumber prod = 1.;
 
   bool found_one = false;
+
+  /// Factors are sorted. Find factors that are identical and create
+  /// power
+
+  for (int i=0; i < nargs_ - 1; i++) {
+
+    if ((arglist_ [i])   && 
+	(arglist_ [i+1]) &&
+	(compareExpr (arglist_ + i, arglist_ + i + 1) == 0)) {
+
+      int
+	j = i+2,
+	exponent = 2;
+
+      delete arglist_ [i+1];
+      arglist_ [i+1] = NULL;
+
+      found_one = true;
+
+      for (; j < nargs_; ++j) {
+
+	if ((arglist_ [j]) &&
+	    (compareExpr (arglist_ + i, arglist_ + j) == 0))
+	  ++exponent;
+	else break;
+
+	delete arglist_ [j];
+	arglist_ [j] = NULL;
+      }
+
+      arglist_ [i] = new exprPow (arglist_ [i], new exprConst ((CouNumber) exponent));
+
+      i=j;
+    }
+
+    // TODO
+  }
 
   for (register int i=0; i<nargs_; i++) {
 
     // check for null operands in multiplications
 
-    if (arglist_ [i] -> Type () == CONST) {
+    if (arglist_ [i] &&
+	(arglist_ [i] -> Type () == CONST)) {
 
       found_one = true;
 
@@ -90,16 +129,17 @@ expression *exprMul::simplify () {
       arglist_ [i] = NULL;
     }
   }
+
   /*
   if (found_one && shrink_arglist (prod, 1))
     return new exprConst (arglist_ [0] -> Value ());
   */
+
   if (found_one && shrink_arglist (prod, 1)) {
     expression *ret = arglist_ [0];
     arglist_ [0] = NULL;
     return ret;
-  }
-  else return NULL;
+  } else return NULL;
 }
 
 
