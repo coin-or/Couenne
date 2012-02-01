@@ -344,9 +344,11 @@ Auxiliaries:     %8d (%d integer)\n\n",
       ub = bb. model (). getObjValue (),
       lb = bb. model (). getBestPossibleObjValue ();
 
-    if (cp -> getRecordBestSol ())              ub = cp -> getRecordBestSol () -> getVal ();
+    if (cp -> getRecordBestSol () &&
+	(ub > cp -> getRecordBestSol () -> getVal ())) ub = cp -> getRecordBestSol () -> getVal ();
+
     if ((fabs (lb) > COUENNE_INFINITY / 1e4) ||
-	(lb > ub))                              lb = ub;
+	(lb > ub))                                     lb = ub;
 
     char 
       *gapstr = new char [80],
@@ -373,7 +375,7 @@ Branch-and-bound nodes:                  %8d\n",
 		     (ub > COUENNE_INFINITY/1e4) ? "--" : gapstr,
 		     bb.numNodes ());
 
-    if (fabs (ub - bb. model (). getObjValue ()) > COUENNE_EPS * ub)
+    if (fabs (ub - bb. model (). getObjValue ()) > COUENNE_EPS * fabs (ub))
       jnlst -> Printf (J_ERROR, J_COUENNE, 
 		       "Warning: upper bounds differ between Couenne and Cbc. Saving Couenne's (more reliable).\n");
 
