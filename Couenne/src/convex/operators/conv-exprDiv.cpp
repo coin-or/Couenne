@@ -120,5 +120,5 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
 		   chg, 
 		   ineqFullOrthantF ? expression::AUX_GEQ :
 		   ineqFullOrthantB ? expression::AUX_LEQ : 
- 	 	                      expression::AUX_EQ);
+		                      expression::AUX_EQ);
 }

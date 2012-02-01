@@ -18,7 +18,7 @@
 #include "CouenneExprPow.hpp"
 #include "CouenneFunTriplets.hpp"
 
-namespace Couenne {
+using namespace Couenne;
 
 /// Add cut around curve x*y=k 
 
@@ -93,11 +93,11 @@ void contourCut (const CouenneCutGenerator *cg,
 
 
 // Unified procedure to create convexification cuts for an expression of the form w = x*y
-void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs, 
-		      int xi, CouNumber x0, CouNumber xl, CouNumber xu,
-		      int yi, CouNumber y0, CouNumber yl, CouNumber yu,
-		      int wi, CouNumber w0, CouNumber wl, CouNumber wu,
-		      t_chg_bounds *chg, enum expression::auxSign sign) {
+void Couenne::unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs, 
+			       int xi, CouNumber x0, CouNumber xl, CouNumber xu,
+			       int yi, CouNumber y0, CouNumber yl, CouNumber yu,
+			       int wi, CouNumber w0, CouNumber wl, CouNumber wu,
+			       t_chg_bounds *chg, enum expression::auxSign sign) {
 
   bool cLX,  cRX,  cLY,  cRY,  cLW,  cRW = 
        cLX = cRX = cLY = cRY = cLW = true;
@@ -192,6 +192,4 @@ void unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
 		    xi, x0, xl, xu, 
 		    yi, y0, yl, yu,
 		    wi, w0, wl, wu);
-}
-
 }

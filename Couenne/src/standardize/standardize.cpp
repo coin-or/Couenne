@@ -451,15 +451,6 @@ bool CouenneProblem::standardize () {
 	  *image = (*i) -> Image (),
 	  *simpl = image -> simplify ();
 
-	// printf ("SCANNING ");  fflush (stdout);
-
-	// image -> print (); fflush (stdout);
-
-	// if (simpl) {
-	//   printf (" --> "); fflush(stdout);
-	//   simpl -> print (); fflush(stdout);
-	// } 
-
 	exprVar *subst = NULL;
 
 	if (simpl &&
@@ -469,13 +460,6 @@ bool CouenneProblem::standardize () {
 	    simpl = new exprClone (subst);
 	  else simpl = subst;
 	}
-
-	// if (subst) {
-	//   printf (" ==> "); 
-	//   subst -> print ();
-	// }
-
-	// printf ("\n");
 
 	if (simpl) {
 

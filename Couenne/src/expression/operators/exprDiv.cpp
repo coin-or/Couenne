@@ -73,7 +73,10 @@ expression *exprDiv::simplify () {
       expression *ret = new exprMul (new exprConst (1. / (arglist_ [1] -> Value ())), 
 				     arglist_ [0]);
       delete arglist_ [1];
-      arglist_ = NULL;
+      arglist_ [0] = arglist_ [1] = NULL;
+      //delete arglist_;
+      //arglist_ = NULL;
+
       return ret;
     }
 

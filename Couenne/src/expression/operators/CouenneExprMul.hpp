@@ -17,6 +17,8 @@
 
 namespace Couenne {
 
+class CouenneCutGenerator;
+
 /// class for multiplications, \f$ \prod_{i=1}^n f_i(x) \f$
 
 class exprMul: public exprOp {
