@@ -675,10 +675,17 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
     status = TMINLP::MINLP_ERROR;
   }
 
-  s.nonlinearSolver()->model()->finalize_solution(status,
-						  s.nonlinearSolver()->getNumCols(),
-						  problem_ -> getRecordBestSol () -> getSol (),
-						  problem_ -> getRecordBestSol () -> getVal ());
+  // Which solution should we use? false if RBS's, true if Cbc's
+  bool use_RBS_Cbc = 
+    !(problem_ -> getRecordBestSol ()) ||
+    (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) && 
+      (problem_ -> getRecordBestSol () -> getVal () > bestObj_)));
+
+  s.nonlinearSolver () -> model () -> finalize_solution 
+    (status,
+     s.nonlinearSolver () -> getNumCols (),
+     use_RBS_Cbc ? bestSolution_ : problem_ -> getRecordBestSol () -> getSol (),
+     use_RBS_Cbc ? bestObj_      : problem_ -> getRecordBestSol () -> getVal ());
 }
 
 
