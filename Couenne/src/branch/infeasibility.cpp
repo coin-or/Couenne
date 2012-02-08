@@ -47,7 +47,7 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
      info -> solution_, 
      info -> lower_, 
      info -> upper_,
-     false);
+     false); // point is not copied, only its pointer
 
   //////////////////////////////////////////////
 
@@ -127,32 +127,38 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
 /// the auxiliary variable defined as w = f(x)
 double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * info) const {
 
-  int index = reference_ -> Index ();
+  int indexVar = reference_ -> Index ();
 
-  const std::set <int> &dependence = problem_ -> Dependence () [index];
+  const std::set <int> &dependence = problem_ -> Dependence () [indexVar];
 
   if (dependence.size () == 0) { // this is a top level auxiliary,
 				 // nowhere an independent
 
     // check first if this variable is fixed. If so, it's useless to branch on it
-    if (fabs (info -> upper_ [index] - 
-	      info -> lower_ [index]) / 
-	(1. + fabs (info -> solution_ [index])) < COUENNE_EPS)
-      return 0.;
+    if (fabs (info -> upper_ [indexVar] - 
+	      info -> lower_ [indexVar]) / 
+	(1. + fabs (info -> solution_ [indexVar])) < COUENNE_EPS)
+
+      return (reference_ -> isInteger ()) ? 
+	intInfeasibility (info -> solution_ [indexVar],
+			  info -> lower_    [indexVar],
+			  info -> upper_    [indexVar]) : 0;
 
     // otherwise, return a nonzero infeasibility, if necessary. It
     // might make sense to branch on it
     const CouenneObject *obj = problem_ -> Objects () [reference_ -> Index ()];
 
     double retval = (obj -> Reference ()) ? 
-      (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) *
+      (1. - 1. / (1. + info -> upper_ [indexVar] - info -> lower_ [indexVar])) *
       weiSum * obj -> checkInfeasibility (info) : 0.;
 
-    return retval;
+    //return retval;
 
-    /*return (reference_ -> isInteger ()) ? 
-      CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
-      retval;*/
+    return (reference_ -> isInteger ()) ? 
+      CoinMax (retval, intInfeasibility (info -> solution_ [indexVar],
+					 info -> lower_    [indexVar],
+					 info -> upper_    [indexVar])) :
+      retval;
 
   } else {
 
@@ -186,17 +192,19 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
 
       // neglect it if variable has small bound interval (check
       // x84=x83/x5 in csched1.nl)
-       (1. - 1. / (1. + info -> upper_ [index] - info -> lower_ [index])) : 1.) *
+       (1. - 1. / (1. + info -> upper_ [indexVar] - info -> lower_ [indexVar])) : 1.) *
       // to consider maximum, minimum, and sum/avg of the infeasibilities
       (weiSum * infsum + 
        weiAvg * (infsum / CoinMax (1., (CouNumber) dependence.size ())) + 
        weiMin * infmin + 
        weiMax * infmax);
 
-    return retval;
+    //return retval;
 
-    /*return (reference_ -> isInteger ()) ? 
-      CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
-      retval;*/
+    return (reference_ -> isInteger ()) ? 
+      CoinMax (retval, intInfeasibility (info -> solution_ [indexVar],
+					 info -> lower_    [indexVar],
+					 info -> upper_    [indexVar])) :
+      retval;
   }
 }

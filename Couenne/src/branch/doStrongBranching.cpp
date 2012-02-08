@@ -140,6 +140,10 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
 
+      // printf ("doStrongBranching: object %d -> x%d\n", 
+      // 	      result -> whichObject (), 
+      // 	      solver_ -> objects () [result -> whichObject ()] -> columnNumber ());
+
       // TODO: apply isCuttable()     
 
       // TODO: set a cutoff for dual bound in dual simplex
@@ -193,7 +197,9 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 	}
       }
 
+      // Left branch
       status0 = simulateBranch (Object, info, branch, solver, result, -1);
+
       if(isInf0) {
 	status0 = 1; // branch was known to be infeasible
 	result->setDownStatus(1);
@@ -223,6 +229,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       /* second direction */
 
       status1 = simulateBranch (Object, info, branch, solver, result, +1);
+
       if(isInf1) {
 	status1 = 1; // branch was known to be infeasible
 	result->setUpStatus(1);
@@ -312,8 +319,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       delete [] chg_bds;
 
-
-      if((status0 != 1) || (status1 != 1)) {
+      if ((status0 != 1) || (status1 != 1)) {
 
 	// set new bounding box as the possibly tightened one (a subset
 	// of the initial)
@@ -411,6 +417,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
     return returnCode;
   }
 
+
 // Do one side of strong branching
 int CouenneChooseStrong::simulateBranch (OsiObject *Object,
 					 OsiBranchingInformation *info,
@@ -422,6 +429,8 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
   bool boundBranch = branch -> boundBranch ();
 
   int status = -1;
+
+  // TODO: avoid cloning solver all the time
 
   OsiSolverInterface *thisSolver = 
     boundBranch ? solver : solver -> clone ();
@@ -439,7 +448,7 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
     else               result -> setUpStatus   (1);
 
   } else {
-
+    
     if (boundBranch) // branching rule is a variable bound, can use hotstart
 
       thisSolver -> solveFromHotStart ();
@@ -451,11 +460,14 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
       thisSolver -> setIntParam (OsiMaxNumIteration,         limit); 
 
       thisSolver -> resolve ();
+
+      CouObj -> setEstimate (COUENNE_EPS, direction < 0 ? 0 : 1);
     }
 
     if (pseudoUpdateLP_ && CouObj && thisSolver -> isProvenOptimal ()) {
       CouNumber dist = distance (info -> solution_, thisSolver -> getColSolution (), 
 				 problem_ -> nVars ());
+
       if (dist > COUENNE_EPS)
 	CouObj -> setEstimate (dist, direction < 0 ? 0 : 1);
     }
@@ -467,7 +479,7 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
   // only update information if this branch is feasible
   if (status < 0)
     status = result -> updateInformation (thisSolver, info, this);
-
+  
   numberStrongIterations_ += thisSolver -> getIterationCount ();
 
   if ((status == 3) && (trustStrongForSolution_)) {

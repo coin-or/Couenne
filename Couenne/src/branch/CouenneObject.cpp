@@ -19,6 +19,8 @@
 using namespace Ipopt;
 using namespace Couenne;
 
+static const double init_estimate = COUENNE_EPS;
+
 /// Empty constructor
 CouenneObject::CouenneObject ():
 
@@ -33,8 +35,8 @@ CouenneObject::CouenneObject ():
   feas_tolerance_  (feas_tolerance_default),
   doFBBT_          (true),
   doConvCuts_      (true),
-  downEstimate_    (0.),
-  upEstimate_      (0.),
+  downEstimate_    (init_estimate),
+  upEstimate_      (init_estimate),
   pseudoMultType_  (INFEASIBILITY) {}
 
 
@@ -56,8 +58,8 @@ CouenneObject::CouenneObject (CouenneCutGenerator *cutgen,
   feas_tolerance_ (feas_tolerance_default),
   doFBBT_         (true),
   doConvCuts_     (true),
-  downEstimate_   (0.),
-  upEstimate_     (0.),
+  downEstimate_   (init_estimate),
+  upEstimate_     (init_estimate),
   pseudoMultType_ (INFEASIBILITY) {
 
   // read options
@@ -104,8 +106,8 @@ CouenneObject::CouenneObject (exprVar *ref,
   feas_tolerance_ (feas_tolerance_default),
   doFBBT_         (true),
   doConvCuts_     (true),
-  downEstimate_   (0.),
-  upEstimate_     (0.),
+  downEstimate_   (init_estimate),
+  upEstimate_     (init_estimate),
   pseudoMultType_ (INFEASIBILITY) {
 
   // read options
@@ -361,8 +363,10 @@ CouNumber CouenneObject::getBrPoint (funtriplet *ft, CouNumber x0, CouNumber l, 
 /// non-linear infeasibility -- not called by independent's CouenneVarObject
 double CouenneObject::infeasibility (const OsiBranchingInformation *info, int &way) const {
 
-  if (strategy_ == NO_BRANCH) 
-    return (upEstimate_ = downEstimate_ = 0.);
+  if (strategy_ == NO_BRANCH) {
+    upEstimate_ = downEstimate_ = init_estimate;
+    return 0;
+  }
 
   problem_ -> domain () -> push 
     (problem_ -> nVars (),
@@ -632,8 +636,10 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   switch (pseudoMultType_) {
 
   case INFEASIBILITY: 
+
     if (infeasibility) 
       upEstimate_ = downEstimate_ = *infeasibility;
+
     break;
 
   case INTERVAL_LP:
@@ -641,8 +647,8 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   case INTERVAL_BR:
   case INTERVAL_BR_REV:
     assert (info);
-    *up   = CoinMin (max_pseudocost, 1e-3 + fabs (upper - point));
-    *down = CoinMin (max_pseudocost, 1e-3 +         fabs (point - lower));
+    *up   = CoinMin (max_pseudocost, COUENNE_EPS + fabs (upper - point));
+    *down = CoinMin (max_pseudocost, COUENNE_EPS + fabs (        point - lower));
     break;
 
   case PROJECTDIST: // taken care of in selectBranch procedure
