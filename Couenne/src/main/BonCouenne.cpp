@@ -344,10 +344,13 @@ Auxiliaries:     %8d (%d integer)\n\n",
       lb = bb. model (). getBestPossibleObjValue ();
 
     if (cp -> getRecordBestSol () &&
-	(ub > cp -> getRecordBestSol () -> getVal ())) ub = cp -> getRecordBestSol () -> getVal ();
+	cp       -> getRecordBestSol () -> getHasSol () &&
+	(ub > cp -> getRecordBestSol () -> getVal    ()))   
+      ub = cp -> getRecordBestSol () -> getVal ();
 
-    if ((fabs (lb) > COUENNE_INFINITY / 1e4) ||
-	(lb > ub))                                     lb = ub;
+    if (false || //(fabs (lb) > COUENNE_INFINITY / 1e4) ||
+	(lb > ub))
+      lb = ub;
 
     char 
       *gapstr = new char [80],
