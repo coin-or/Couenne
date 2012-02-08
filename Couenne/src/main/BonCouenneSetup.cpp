@@ -100,6 +100,8 @@ CouenneSetup::~CouenneSetup(){
 #endif
 }
 
+//void eliminateIntegerObjects (OsiSolverInterface *model);
+
 bool CouenneSetup::InitializeCouenne (char ** argv,
 				      CouenneProblem *couenneProb,
 				      Ipopt::SmartPtr<Bonmin::TMINLP> tminlp,
@@ -318,6 +320,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     nSOS = couenneProb_ -> findSOS (&(bb -> model()), dynamic_cast <OsiSolverInterface *> (nonlinearSolver ()), objects);
 
     nonlinearSolver () -> addObjects (nSOS, objects);
+    //eliminateIntegerObjects (nonlinearSolver ());
+
+    //printf ("boncouennesetup 1: %d SOS objects --> %d\n", nSOS, nonlinearSolver () -> numberObjects ());
 
     //printf ("==================== found %d SOS\n", nSOS);
     //nonlinearSolver () -> addObjects (nSOS, objects);
@@ -456,6 +461,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   // Add objects /////////////////////////////////
 
   continuousSolver_ -> addObjects (nobj, objects);
+  //eliminateIntegerObjects (continuousSolver_);
+
+  //printf ("boncouennesetup: %d objects --> %d\n", nobj, continuousSolver_ -> numberObjects ());
 
   for (int i = 0 ; i < nobj ; i++)
     delete objects [i];

@@ -91,7 +91,6 @@ Instructions: http://www.coin-or.org/Couenne\n",
   try {
 
     CouenneBab bb;
-    //    bb.setUsingCouenne (true);
 
     CouenneProblem *p = NULL;
     CouenneInterface *ci = NULL;

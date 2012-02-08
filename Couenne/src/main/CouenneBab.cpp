@@ -35,12 +35,10 @@
 // sets cutoff a bit above real one, to avoid single-point feasible sets
 #define CUTOFF_TOL 1e-6
 
-// TODO: signal handler
-
 // Code to enable user interruption
-static CbcModel * currentBranchModel = NULL; //pointer to the main b&b
-Bonmin::OACutGenerator2 * currentOA = NULL; //pointer to the OA generator
-CbcModel * OAModel; // pointer to the submip if using Cbc
+static CbcModel * currentBranchModel = NULL; // pointer to the main b&b
+extern Bonmin::OACutGenerator2 *currentOA;   // pointer to the OA generator
+extern CbcModel                *OAModel;     // pointer to the submip if using Cbc
 
 #define SIGNAL
 #ifdef SIGNAL
@@ -48,21 +46,19 @@ CbcModel * OAModel; // pointer to the submip if using Cbc
 
 extern "C" {
 
-  //  static bool BonminAbortAll;
-
   static bool BonminInterruptedOnce = false;
 
   static void couenne_signal_handler (int whichSignal) {
 
     if (BonminInterruptedOnce) {
       //std::cerr<<"User-forced interruption"<<std::endl;
-      exit(0);
+      exit (0);
     }
-    if (currentBranchModel)       currentBranchModel->setMaximumNodes(0); // stop at next node
-    if (OAModel)                  OAModel->setMaximumNodes(0); // stop at next node
-    if (currentOA)                currentOA->parameter().maxLocalSearchTime_ = 0.; // stop OA
 
-    //BonminAbortAll        = true;
+    if (currentBranchModel) currentBranchModel -> setMaximumNodes (0);          // stop at next node
+    if (OAModel)            OAModel -> setMaximumNodes (0);                     // stop at next node
+    if (currentOA)          currentOA -> parameter ().maxLocalSearchTime_ = 0.; // stop OA
+
     BonminInterruptedOnce = true;
   }
 }
@@ -71,44 +67,13 @@ extern "C" {
 using namespace Couenne;
 using namespace Bonmin;
 
+//void eliminateIntegerObjects (CbcModel *model);
+
 /** Constructor.*/
-CouenneBab::CouenneBab ():
-
-  Bab () //,
-  // bestSolution_(NULL),
-  // mipStatus_(),
-  // bestObj_(1e200),
-  // bestBound_(-1e200),
-  // continuousRelaxation_(-COIN_DBL_MAX),
-  // numNodes_(0),
-  // mipIterationCount_(0),
-  // model_(),
-  // modelHandler_(NULL),
-  // objects_(0),
-  // nObjects_(0),
-  // usingCouenne_(false)
-{}
-
+CouenneBab::CouenneBab (): Bab () {}
 
 /** Destructor.*/
-CouenneBab::~CouenneBab () {
-
-  // if (bestSolution_) delete [] bestSolution_;
-  // bestSolution_ = NULL;
-  // for ( int i = 0 ; i < nObjects_ ; i++) {
-  //   delete objects_[i];
-  // }
-  // delete [] objects_;
-  // delete modelHandler_;
-}
-
-// /**operator() performs the branchAndBound*/
-// void
-// CouenneBab::operator()(CouenneBabSetupBase & s)
-// {
-//   branchAndBound(s);
-// }
-
+CouenneBab::~CouenneBab () {}
 
 void CouenneBab::setProblem (CouenneProblem *p)
 {problem_ = p;}
@@ -118,16 +83,19 @@ void CouenneBab::setProblem (CouenneProblem *p)
 void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 
   double remaining_time = s.getDoubleParameter(Bonmin::BabSetupBase::MaxTime) + CoinCpuTime();
+
   /* Put a link to this into solver.*/
   OsiBabSolver *  babInfo = dynamic_cast<OsiBabSolver *>(s.continuousSolver()->getAuxiliaryInfo());
   assert(babInfo);
   Bonmin::BabInfo *  bonBabInfoPtr = dynamic_cast<Bonmin::BabInfo*>(babInfo);
-  if (bonBabInfoPtr == NULL) {//Replace with a Bonmin::babInfo
+
+  if (bonBabInfoPtr == NULL) { //Replace with a Bonmin::babInfo
     bonBabInfoPtr = new Bonmin::BabInfo(*babInfo);
     s.continuousSolver()->setAuxiliaryInfo(bonBabInfoPtr);
     delete bonBabInfoPtr;
     bonBabInfoPtr = dynamic_cast<Bonmin::BabInfo*>(s.continuousSolver()->getAuxiliaryInfo());
   }
+
   bonBabInfoPtr->setBabPtr(this);
 
   s.nonlinearSolver()->solver()->setup_global_time_limit(s.getDoubleParameter(Bonmin::BabSetupBase::MaxTime));
@@ -223,11 +191,14 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
     }
 
 #if 1
+
     // Now pass user set Sos constraints (code inspired from CoinSolve.cpp)
     const TMINLP::SosInfo * sos = s.nonlinearSolver()->model()->sosConstraints();
-    if (!s.getIntParameter(Bonmin::BabSetupBase::DisableSos) && sos && sos->num > 0) 
-      //we have some sos constraints
-      {
+
+    if (!s.getIntParameter(Bonmin::BabSetupBase::DisableSos) && sos && sos->num > 0) {
+
+      // we have some sos constraints
+
         const OsiTMINLPInterface * nlpSolver = s.nonlinearSolver();
         const int & numSos = sos->num;
 	(*nlpSolver->messageHandler())<<"Adding "<<sos->num<<" sos constraints."
@@ -279,7 +250,8 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 	      objects[i]->setPriority(sosPriorities[i]);
 	    }
 	  }
-        model_.addObjects(numSos, objects);
+        model_.addObjects (numSos, objects);
+	//eliminateIntegerObjects (&model_);
         for (int i = 0 ; i < numSos ; i++)
           delete objects[i];
         delete [] objects;
@@ -294,27 +266,26 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 	objects[i]->setModel(&model_);
       }
       model_.addObjects(s.objects().size(), objects);
+      //eliminateIntegerObjects (&model_);
       delete [] objects;
     }
 
     replaceIntegers(model_.objects(), model_.numberObjects());
-  }
-  else {//Pass in objects to Cbc
+
+  } else { // Pass in objects to Cbc
+
     // Redundant definition of default branching (as Default == User)
     assert (s.branchingMethod() != NULL);
 
-    // if (!usingCouenne_)
-    //   model_.addObjects (s.continuousSolver()->numberObjects(),
-    // 			 s.continuousSolver()->objects());
-    // else {
-      // add nonlinear and integer objects (need to add OsiSOS)
-      int nco = s.continuousSolver () -> numberObjects ();
-      OsiObject **objs = new OsiObject * [nco];
-      for (int i=0; i<nco; i++) 
-	objs [i] = s.continuousSolver () -> objects () [i];
-      model_.addObjects (nco, objs);
-      delete [] objs;
-    // }
+    // Add nonlinear and integer objects (need to add OsiSOS)
+    model_.addObjects (s.continuousSolver () -> numberObjects (), s.continuousSolver () -> objects ());
+    //eliminateIntegerObjects (&model_);
+
+    // Now model_ has only CouenneObjects and SOS objects
+
+    // for (int i=0; i<nco; i++) 
+    //   if (!(dynamic_cast <CbcSimpleInteger *> (s.continuousSolver () -> objects () [i])))
+    // 	model_ . objects () [nRealObj++] = s.continuousSolver () -> objects () [i] -> clone ();
 
     CbcBranchDefaultDecision branch;
     s.branchingMethod()->setSolver(model_.solver());
@@ -413,11 +384,13 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
   //Get objects from model_ if it is not null means there are some sos constraints or non-integer branching object
   // pass them to cut generators.
   OsiObject ** objects = model_.objects();
+
   if (specOpt!=16 && objects) {
+
     int numberObjects = model_.numberObjects();
     if (objects_ != NULL) {
       for (int i = 0 ; i < nObjects_; i++)
-	delete objects_[i];
+  	delete objects_[i];
     }
     delete [] objects_;
     objects_ = new OsiObject*[numberObjects];
@@ -426,51 +399,76 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
       OsiObject * obj = objects[i];
       CbcSimpleInteger * intObj = dynamic_cast<CbcSimpleInteger *> (obj);
       if (intObj) {
-	objects_[i] = intObj->osiObject();
+  	objects_[i] = intObj->osiObject();
       }
       else {
-	CbcSOS * sosObj = dynamic_cast<CbcSOS *>(obj);
-	if (sosObj) objects_[i] = sosObj->osiObject(model_.solver());
-	else {//Maybe an unsupported CbcObject
-	  CbcObject * cbcObj = dynamic_cast<CbcObject *>(obj);
-	  if (cbcObj) {
-	    std::cerr<<"Unsupported CbcObject appears in the code"<<std::endl;
-	    throw UNSUPPORTED_CBC_OBJECT;
-	  }
-	  else {//It has to be an OsiObject.
-	    objects_[i]=obj->clone();
-	  }
-	}
+  	CbcSOS * sosObj = dynamic_cast<CbcSOS *>(obj);
+  	if (sosObj) objects_[i] = sosObj->osiObject(model_.solver());
+  	else {//Maybe an unsupported CbcObject
+  	  CbcObject * cbcObj = dynamic_cast<CbcObject *>(obj);
+  	  if (cbcObj) {
+  	    std::cerr<<"Unsupported CbcObject appears in the code"<<std::endl;
+  	    throw UNSUPPORTED_CBC_OBJECT;
+  	  }
+  	  else {//It has to be an OsiObject.
+  	    objects_[i]=obj->clone();
+  	  }
+  	}
       }
     }
     CbcCutGenerator ** gen = model_.cutGenerators();
     int numGen = model_.numberCutGenerators();
     for (int i = 0 ; i < numGen ; i++) {
       Bonmin::OaDecompositionBase * oa = dynamic_cast<Bonmin::OaDecompositionBase * >(gen[i]->generator());
-      if (oa)//pass objects
-	oa->setObjects(objects_,nObjects_);
+      // if (oa)
+      // 	printf ("\n\n\nat least one OADecompBase\n\n\n");
+      if (oa) // pass objects
+  	oa->setObjects(objects_,nObjects_);
     }
   }
 
+  // if (objects_) {
+
+  //   for (int i = 0 ; i < nObjects_; i++)
+  //     delete objects_ [i];
+
+  //   delete [] objects_;
+  // }
+
+  // OsiObject ** objects = model_.objects();
+  // int numObjects = model_.numberObjects();
+
+  // nObjects_ = 0;
+  // objects_ = new OsiObject* [numObjects];
+
+  // for (int i=0; i < numObjects; ++i)
+  //   if (objects [i])
+  //     objects_ [nObjects_++] = objects [i] -> clone ();
 
   try {
+
     //Get the time and start.
+
     {
       OsiTMINLPInterface * tmpOsi = NULL;
       if(s.nonlinearSolver() == s.continuousSolver()){
         tmpOsi = dynamic_cast<OsiTMINLPInterface *> (model_.solver());
         tmpOsi->forceSolverOutput(s.getIntParameter(Bonmin::BabSetupBase::RootLogLevel)); 
       }
+
       model_.initialSolve();
+
       if(tmpOsi != NULL){
         tmpOsi->setSolverOutputToDefault(); 
       }
     }
 
     int ival;
+
     s.options()->GetEnumValue("enable_dynamic_nlp", ival, "bonmin.");
-    if(s.nonlinearSolver() == s.continuousSolver() && ival)
-      {
+
+    if(s.nonlinearSolver() == s.continuousSolver() && ival) {
+
 	if(!model_.solver()->isProvenOptimal() ){//Something went wrong check if objective is linear and alternate model
 	  // can be solved
 	  OsiTMINLPInterface * tmpOsi = dynamic_cast<OsiTMINLPInterface *> (model_.solver());
@@ -496,11 +494,9 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
           model_.setDblParam(CbcModel::CbcCutoffIncrement, nlpSolver->getNewCutoffDecr());
 
 	model_.solver()->resolve();
-
       }
 
     // for Couenne
-    //    if (usingCouenne_)
     model_.passInSolverCharacteristics (bonBabInfoPtr);
 
     continuousRelaxation_ =model_.solver()->getObjValue();
@@ -545,14 +541,13 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
     if(remaining_time > 0.)
       model_.branchAndBound();
   }
+
   catch(TNLPSolver::UnsolvedError *E){
-    s.nonlinearSolver()->model()->finalize_solution(TMINLP::MINLP_ERROR,
-						    0,
-						    NULL,
-						    DBL_MAX);
+    s.nonlinearSolver()->model()->finalize_solution
+      (TMINLP::MINLP_ERROR, 0, NULL, DBL_MAX);
     throw E;
-   
   }
+
   numNodes_ = model_.getNodeCount();
   bestObj_ = model_.getObjValue();
   bestBound_ = model_.getBestPossibleObjValue();
@@ -662,8 +657,10 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
   }
 
   // Which solution should we use? false if RBS's, true if Cbc's
-  bool use_RBS_Cbc = ((fabs (bestObj_) < COUENNE_INFINITY / 1e4) && 
-		      problem_ -> getRecordBestSol () -> getVal () > bestObj_);
+  bool use_RBS_Cbc = 
+    !(problem_ -> getRecordBestSol ()) ||
+    (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) && 
+      (problem_ -> getRecordBestSol () -> getVal () > bestObj_)));
 
   s.nonlinearSolver () -> model () -> finalize_solution 
     (status,
@@ -673,10 +670,52 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 }
 
 
-// /** return the best known lower bound on the objective value*/
-// double CouenneBab::bestBound () {
+// Cbc adds automatically objects for integer variables, but we did
+// not ask for it. In order to overcome this, we add objects the usual
+// way and then eliminate the CbcSimpleInteger objects one by one.
 
-//   return 
-//     (mipStatus_ == FeasibleOptimal)  ? bestObj_ :
-//     (mipStatus_ == ProvenInfeasible) ? 1e200    : bestBound_;
-// }
+int gutsofEIO (OsiObject **objects, int nco) {
+
+  int 
+    nRealObj, 
+    currObj  = 0;
+
+  for (; currObj < nco; ++currObj) 
+
+    if ((NULL != dynamic_cast <CbcSimpleInteger *> (objects [currObj])) ||
+	(NULL != dynamic_cast <OsiSimpleInteger *> (objects [currObj]))) {
+
+      // At [currObj] is a Cbc integer variable object. Kill it! Kill it with fire!
+      delete objects [currObj];
+      objects [currObj] = NULL;
+    }
+
+  // squeeze the sparse vector into a dense one with only non-NULL entries
+
+  for (nRealObj = 0, currObj = -1; nRealObj < nco; ++nRealObj)
+
+    if (NULL == objects [nRealObj]) {
+
+      if (currObj < 0) 
+	currObj = nRealObj + 1;
+
+      while ((currObj < nco) && 
+	     (NULL == objects [currObj]))
+	++currObj;
+
+      if (currObj >= nco)
+	break;
+
+      objects [nRealObj] =
+      objects [currObj];
+
+      objects [currObj] = NULL;
+    }
+
+  //printf ("%d real objects out of %d (s.co %d)\n", nRealObj, currObj, s.continuousSolver () -> numberObjects ());
+
+  return nRealObj;
+}
+
+void eliminateIntegerObjects (OsiSolverInterface *model) {model -> setNumberObjects (gutsofEIO (model -> objects (), model -> numberObjects ()));}
+void eliminateIntegerObjects (CbcModel           *model) {model -> setNumberObjects (gutsofEIO (model -> objects (), model -> numberObjects ()));}
