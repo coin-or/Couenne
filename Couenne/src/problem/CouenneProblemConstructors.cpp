@@ -264,7 +264,7 @@ CouenneProblem::~CouenneProblem () {
 
 
 /// initializes parameters like doOBBT
-void CouenneProblem::initOptions(Ipopt::SmartPtr<Ipopt::OptionsList> options) {
+void CouenneProblem::initOptions (Ipopt::SmartPtr<Ipopt::OptionsList> options) {
 
   assert(IsValid(options));
 
@@ -290,8 +290,8 @@ void CouenneProblem::initOptions(Ipopt::SmartPtr<Ipopt::OptionsList> options) {
                  		  CouenneProblem::MulSepTight);
 
   options -> GetStringValue ("orbital_branching",   s, "couenne."); orbitalBranching_ = (s == "yes");
-  options -> GetStringValue ("quadrilinear_decomp", s, "couenne."); 
 
+  options -> GetStringValue ("quadrilinear_decomp", s, "couenne."); 
   if      (s == "rAI")     trilinDecompType_ = rAI;
   else if (s == "tri+bi")  trilinDecompType_ = tri_bi;
   else if (s == "bi+tri")  trilinDecompType_ = bi_tri;

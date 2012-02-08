@@ -8,21 +8,22 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
-#include <cassert>
-#include <vector>
-#include <algorithm>
-#include <ostream>
-#include <iterator>
 #include <stdio.h>
-
-#include "CouenneExprVar.hpp"
-#include "CouenneExprGroup.hpp"
 
 #include "CouenneProblem.hpp"
 
 using namespace Couenne;
 
 #ifdef COIN_HAS_NTY
+
+#include <cassert>
+#include <vector>
+#include <algorithm>
+#include <ostream>
+#include <iterator>
+
+#include "CouenneExprVar.hpp"
+#include "CouenneExprGroup.hpp"
 
 #include "Nauty.h"
 
@@ -303,7 +304,7 @@ void CouenneProblem::sym_setup (){
 
 void CouenneProblem::Compute_Symmetry() const{
 
-   //  ChangeBounds (Lb (), Ub (), nVars ());
+  //  ChangeBounds (Lb (), Ub (), nVars ());
 
   // jnlst_ -> Printf(Ipopt::J_VECTOR, J_BRANCHING,"== Computing Symmetry\n");
   // for (int i = 0; i < nVars (); i++)
@@ -347,7 +348,7 @@ void CouenneProblem::Print_Orbits () const {
 
   std::vector<std::vector<int> > *new_orbits = nauty_info->getOrbits();
 
-  printf("There are %d orbits and %d generators",
+  printf("Couenne: %d orbits and %d generators",
   nauty_info->getNumOrbits(),
   nauty_info->getNumGenerators());
 
@@ -366,6 +367,26 @@ void CouenneProblem::Print_Orbits () const {
   }
 
   printf (" (%d non-trivial orbits).\n", nNonTrivialOrbits);
+
+#if 0
+  if (nNonTrivialOrbits) {
+
+    int orbCnt = 0;
+
+    std::vector<std::vector<int> > *orbits = nauty_info -> getOrbits ();
+
+    for   (std::vector <std::vector<int> >::iterator i = orbits -> begin ();  i != orbits -> end (); ++i) {
+
+      printf ("Orbit %d: ", orbCnt++);
+
+      for (std::vector<int>::iterator j = i -> begin (); j != i -> end (); ++j)
+	printf (" %d", *j);
+
+      printf ("\n");
+    }
+  }
+#endif
+
 
 #if 0
   if (nNonTrivialOrbits)
@@ -428,12 +449,12 @@ void CouenneProblem::setupSymmetry () {
 #ifdef COIN_HAS_NTY
   sym_setup ();
   Compute_Symmetry ();
-  Print_Orbits ();
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ERROR, J_COUENNE))
+    Print_Orbits ();
 #else
-  if (orbitalBranching_) {
-    printf ("\
+  if (orbitalBranching_) 
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "\
 Couenne: Warning, you have set orbital_branching but Nauty is not available.\n\
 Reconfigure with appropriate options --with-nauty-lib=/path/to/libnauty.* and --with-nauty-incdir=/path/to/nauty/include/files/\n");
-  }
 #endif
 }

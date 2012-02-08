@@ -66,7 +66,8 @@ am__libCouenneBranch_la_SOURCES_DIST = CouenneThreeWayBranchObj.cpp \
 	infeasibility.cpp infeasibilityVT.cpp feasibleRegion.cpp \
 	CouenneComplObject.cpp CouenneComplBranchingObject.cpp \
 	CouenneOrbitObj.cpp CouenneOrbitBranchingObj.cpp \
-	BranchCore.cpp CouenneSOSObject.cpp Nauty.cpp
+	BranchCore.cpp CouenneSOSObject.cpp \
+	StrongBranchingSetupList.cpp Nauty.cpp
 @COIN_HAS_NTY_TRUE@am__objects_1 = Nauty.lo
 am_libCouenneBranch_la_OBJECTS = CouenneThreeWayBranchObj.lo \
 	CouenneBranchingObject.lo CouenneObject.lo CouenneVarObject.lo \
@@ -75,7 +76,7 @@ am_libCouenneBranch_la_OBJECTS = CouenneThreeWayBranchObj.lo \
 	infeasibilityVT.lo feasibleRegion.lo CouenneComplObject.lo \
 	CouenneComplBranchingObject.lo CouenneOrbitObj.lo \
 	CouenneOrbitBranchingObj.lo BranchCore.lo CouenneSOSObject.lo \
-	$(am__objects_1)
+	StrongBranchingSetupList.lo $(am__objects_1)
 libCouenneBranch_la_OBJECTS = $(am_libCouenneBranch_la_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -330,7 +331,8 @@ libCouenneBranch_la_SOURCES = CouenneThreeWayBranchObj.cpp \
 	infeasibility.cpp infeasibilityVT.cpp feasibleRegion.cpp \
 	CouenneComplObject.cpp CouenneComplBranchingObject.cpp \
 	CouenneOrbitObj.cpp CouenneOrbitBranchingObj.cpp \
-	BranchCore.cpp CouenneSOSObject.cpp $(am__append_1)
+	BranchCore.cpp CouenneSOSObject.cpp \
+	StrongBranchingSetupList.cpp $(am__append_1)
 
 # 	operators/branchExprAbs.cpp \
 # 	operators/branchExprExp.cpp \
@@ -422,6 +424,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneThreeWayBranchObj.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneVarObject.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Nauty.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StrongBranchingSetupList.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/doStrongBranching.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/feasibleRegion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/infeasibility.Plo@am__quote@

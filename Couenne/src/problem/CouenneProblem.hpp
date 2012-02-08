@@ -83,7 +83,7 @@ class Nauty;
 		   ((fabs   (a.get_lb    () -  b.get_lb    ()) < COUENNE_EPS_SYMM) &&
 		    ((       a.get_ub    () <  b.get_ub    ()  - COUENNE_EPS_SYMM) ||
 		     ((fabs (a.get_ub    () -  b.get_ub    ()) < COUENNE_EPS_SYMM) &&
-		      ((     a.get_index () <  b.get_index ()))))))))))) ? 1 : 0;
+		      ((     a.get_index () <  b.get_index ())))))))))));
 
     //   bool is_less = 0;
     //   if(a.get_code() < b.get_code() )
@@ -101,8 +101,7 @@ class Nauty;
     // 		  if(a.get_ub() < b.get_ub())
     // 		    is_less = 1;
     // 		  else{
-    // 		    if(a.get_ub() == b.get_ub()) {
-		    
+    // 		    if(a.get_ub() == b.get_ub()) {		    
     // 		      if(a.get_index() < b.get_index())
     // 			is_less = 1;
     // 		    }
@@ -786,17 +785,17 @@ public:
 
   /// 
   inline int getLastPrioSort() const 
-  {return lastPrioSort_;};
+  {return lastPrioSort_;}
 
   ///
   void setLastPrioSort (int givenLastPS);
 
   /// returns recorded best solution
   inline CouenneRecordBestSol *getRecordBestSol() const 
-  {return recBSol;};
+  {return recBSol;}
 
   /// returns feasibility tolerance
-  double getFeasTol() {return feas_tolerance_;};
+  double getFeasTol() {return feas_tolerance_;}
 
   /// Recompute objective value for sol
   double checkObj(const CouNumber *sol, const double &precision) const;

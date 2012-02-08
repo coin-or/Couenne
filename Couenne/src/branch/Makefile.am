@@ -26,7 +26,8 @@ libCouenneBranch_la_SOURCES = \
 	CouenneOrbitObj.cpp \
 	CouenneOrbitBranchingObj.cpp \
 	BranchCore.cpp \
-	CouenneSOSObject.cpp
+	CouenneSOSObject.cpp \
+	StrongBranchingSetupList.cpp
 
 if COIN_HAS_NTY
 libCouenneBranch_la_SOURCES += Nauty.cpp
