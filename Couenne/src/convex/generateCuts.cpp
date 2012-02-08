@@ -93,6 +93,18 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 					OsiCuts &cs, 
 					const CglTreeInfo info) const {
 
+  // if si.lb(objInd) > cutoff,
+  //   return infeasCut
+
+  int indObj = problem_ -> Obj (0) -> Body () -> Index ();
+  
+  if ((indObj >= 0) && 
+      (si.getColLower () [indObj] > problem_ -> getCutOff () + COUENNE_EPS)) {
+
+    WipeMakeInfeas (cs);
+    return;
+  }
+
   // check if out of time or if an infeasibility cut (iis of type 0)
   // was added as a result of, e.g., pruning on BT. If so, no need to
   // run this.
@@ -111,8 +123,6 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
   if(currCutOff > bestVal) {
     //problem_ -> setCutOff (bestVal - 1e-6); // FIXME: don't add numerical constants
     problem_ -> setCutOff (bestVal);
-
-    int indObj = problem_->Obj(0)->Body()->Index();
 
     if ((indObj >= 0) && (si. getColUpper () [indObj] > bestVal)) {
       OsiColCut *objCut = new OsiColCut;
@@ -321,20 +331,19 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
   } else {
 
     // use new optimum as lower bound for variable associated w/objective
-    int indobj = problem_ -> Obj (0) -> Body () -> Index ();
 
     // transmit solution from OsiSolverInterface to problem
     problem_ -> domain () -> push (&si, &cs);
 
-    if (indobj >= 0) {
+    if (indObj >= 0) {
 
       // Use current value of objvalue's x as a lower bound for bound
       // tightening
-      double lp_bound = problem_ -> domain () -> x (indobj);
+      double lp_bound = problem_ -> domain () -> x (indObj);
 
       //if (problem_ -> Obj (0) -> Sense () == MINIMIZE) 
-      {if (lp_bound > problem_ -> Lb (indobj)) problem_ -> Lb (indobj) = lp_bound;}
-	   //else {if (lp_bound < problem_ -> Ub (indobj)) problem_ -> Ub (indobj) = lp_bound;}
+      {if (lp_bound > problem_ -> Lb (indObj)) problem_ -> Lb (indObj) = lp_bound;}
+	   //else {if (lp_bound < problem_ -> Ub (indObj)) problem_ -> Ub (indObj) = lp_bound;}
     }
 
     updateBranchInfo (si, problem_, chg_bds, info); // info.depth >= 0 || info.pass >= 0
