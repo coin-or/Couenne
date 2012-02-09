@@ -108,6 +108,8 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 				      CouenneInterface *ci,
 				      Bonmin::Bab *bb) {
 
+  bool retval = true;
+
   std::string s;
 
   if (couenneProb) {
@@ -148,7 +150,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
       std::cerr << 
 	"Couenne was compiled without AMPL Solver Library. Cannot initialize from AMPL NL File." 
 		<< std::endl;
-      return false;
+      exit (-1);
 #endif
     } else {
       assert (couenneProb_ != NULL);
@@ -167,10 +169,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   int i;
 
   /// trying to avoid repetitions here...
-
-  // FIXME: doesn't work if suppress_all_output is true (gives
-  // segfault on options(), but checking options()!=NULL won't work as
-  // options() is a SmartPtr
 
 #define addJournalist(optname,jlevel) {				\
     options    () -> GetIntegerValue ((optname), i, "couenne."); \
@@ -213,7 +211,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     CSI -> setCutGenPtr (couenneCg);
 #else
     journalist()->Printf(J_ERROR, J_INITIALIZATION, "Couenne was compiled without CPLEX interface. Please reconfigure, recompile, and try again.\n");
-    return false;
+    exit (-1);
 #endif
   } else if (s == "xpress-mp") {
 
@@ -223,7 +221,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     CSI -> setCutGenPtr (couenneCg);
 #else
     journalist()->Printf(J_ERROR, J_INITIALIZATION, "Couenne was compiled without Xpress-MP interface. Please reconfigure, recompile, and try again.\n");
-    return false;
+    exit (-1);
 #endif
   } else if (s == "gurobi") {
 
@@ -233,7 +231,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     CSI -> setCutGenPtr (couenneCg);
 #else
     journalist()->Printf(J_ERROR, J_INITIALIZATION, "Couenne was compiled without GUROBI interface. Please reconfigure, recompile, and try again.\n");
-    return false;
+    exit (-1);
 #endif
   } else if (s == "soplex") {
 
@@ -243,11 +241,11 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     CSI -> setCutGenPtr (couenneCg);
 #else
     journalist()->Printf(J_ERROR, J_INITIALIZATION, "Couenne was compiled without Soplex. Please reconfigure, recompile, and try again.\n");
-    return false;
+    exit (-1);
 #endif
   } else {
     journalist ()-> Printf (J_ERROR, J_INITIALIZATION, "The LP solver you specified hasn't been added to Couenne yet.\n");
-    return false;
+    exit (-1);
   }
 
   continuousSolver_ -> passInMessageHandler(ci -> messageHandler());
@@ -295,8 +293,8 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   }
 
   if (extraStuff -> infeasibleNode ()){
-    journalist() -> Printf(J_SUMMARY, J_PROBLEM, "Initial linear relaxation constructed by Couenne is infeasible, exiting...\n");
-    return false;
+    journalist() -> Printf (J_SUMMARY, J_PROBLEM, "Linear relaxation infeasible, the problem is infeasible.\n");
+    retval = false;
   }
 
   //continuousSolver_ -> findIntegersAndSOS (false);
@@ -803,7 +801,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   //   cutGenerators (). push_back(cg);
   // }
 
-  return true;
+  return retval;
 }
  
 void CouenneSetup::registerOptions ()

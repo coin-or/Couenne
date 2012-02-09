@@ -344,8 +344,8 @@ bool CouenneProblem::checkInt(const CouNumber *sol,
     if ((!origVarOnly) || (v -> Type () == VAR)) {
 
       double viol = fabs (val - COUENNE_round (val));
-      maxViol = (viol > maxViol ? viol : maxViol);
-      if(viol > precision) {
+      if (viol > maxViol) maxViol = viol;
+      if (viol > precision) {
 
       Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_PROBLEM,
 		      "checkInt(): integrality %d violated: %.6f [%g,%g]: integer distance %e > %e (by %e)\n", 

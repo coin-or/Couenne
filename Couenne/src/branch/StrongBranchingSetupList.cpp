@@ -13,18 +13,14 @@
 #include "BonChooseVariable.hpp"
 #include "CouenneChooseStrong.hpp"
 #include "CouenneProblem.hpp"
-//#include "CouenneProblemElem.hpp"
-//#include "CouenneBranchingObject.hpp"
-
-//#include "CouenneRecordBestSol.hpp"
 
 //The recommended ones:
 #define FM_SORT_STRONG
 #define FM_SEC_SORT_USEFUL
 #define USE_NOT_TRUSTED
 
-//#define TRACE_STRONG
-//#define TRACE_STRONG2
+#define TRACE_STRONG
+#define TRACE_STRONG2
 //#define FM_ALWAYS_SORT
 //#define USE_SMALL_GAP
 //#define OLD_STYLE

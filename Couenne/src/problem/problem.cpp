@@ -206,7 +206,7 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 	  CoinMax ((var -> sign () != expression::AUX_LEQ) ? (isInt ? ceil  (l - COUENNE_EPS) : l) : -COIN_DBL_MAX, 
 	  CoinMin ((var -> sign () != expression::AUX_GEQ) ? (isInt ? floor (u + COUENNE_EPS) : u) :  COIN_DBL_MAX, x));
 
-	// heuristic feasibility heuristic: if semiaux, round value to nearest integer if variable is integer
+	// feasibility heuristic: if semiaux, round value to nearest integer if variable is integer
 
 	if (isInt) {
 	  if (var -> sign () == expression::AUX_GEQ) x = ceil  (x - COUENNE_EPS);
@@ -321,7 +321,7 @@ void CouenneProblem::setCutOff (CouNumber cutoff, const double *s) const {
   if ((indobj >= 0) && (cutoff < pcutoff_ -> getCutOff () - COUENNE_EPS)) {
 
     //if (fabs (cutoff - pcutoff_ -> getCutOff ()) > (1 + fabs (cutoff)) * 2 * SafeCutoff) // avoid too many printouts
-    Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM, "Couenne: new MINLP solution, value %.10e\n", cutoff);
+    Jnlst () -> Printf (Ipopt::J_ERROR, J_PROBLEM, "New feasible solution, value: %.10e\n", cutoff);
 			//pcutoff_ -> getCutOff ());
 
     if (Var (indobj) -> isInteger ())

@@ -24,8 +24,8 @@
 #define FM_SEC_SORT_USEFUL
 #define USE_NOT_TRUSTED
 
-#define TRACE_STRONG
-#define TRACE_STRONG2
+//#define TRACE_STRONG
+//#define TRACE_STRONG2
 //#define FM_ALWAYS_SORT
 //#define USE_SMALL_GAP
 //#define OLD_STYLE
@@ -105,10 +105,9 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
 
   int vInd = object [iObject] -> columnNumber ();
 
-  bool varIsInt = false;
+  if (vInd < 0) return 3;  // not a variable object, so deem it good
 
-  if (vInd >= 0) varIsInt = solver -> isInteger (vInd);
-  else return 3; // not a variable object, so deem it good
+  bool varIsInt = solver -> isInteger (vInd);
 
   // all object now are CouenneObjects or derivates (CouenneVarObject,
   // CouenneSOSObject, etc.)

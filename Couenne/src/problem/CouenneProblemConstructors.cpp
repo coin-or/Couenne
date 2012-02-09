@@ -187,7 +187,7 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
 
   if (p.optimum_) 
     optimum_ = CoinCopyOfArray (p.optimum_, nVars ());
-    
+
   // clear all spurious variables pointers not referring to the variables_ vector
   realign ();
 
@@ -203,7 +203,9 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
     CoinCopyN (p.unusedOriginalsIndices_, nUnusedOriginals_, unusedOriginalsIndices_);
   }
 
-  recBSol = new CouenneRecordBestSol(*(p.recBSol));
+  if (p.recBSol) recBSol = new CouenneRecordBestSol (*(p.recBSol));
+  else           recBSol = new CouenneRecordBestSol ();
+
   lastPrioSort_ = p.lastPrioSort_;
 
   minDepthPrint_ = p.minDepthPrint_;

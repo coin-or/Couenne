@@ -19,6 +19,8 @@
 
 using namespace Couenne;
 
+//#define TRACE
+
 /*************************************************************/
 /** Default constructor. */
 CouenneRecordBestSol::CouenneRecordBestSol() {
@@ -39,6 +41,7 @@ CouenneRecordBestSol::CouenneRecordBestSol() {
   modSolVal = -1;
   modSolMaxViol = -1;
 }
+
 /*************************************************************/
 // copy constructor
 CouenneRecordBestSol::CouenneRecordBestSol(const CouenneRecordBestSol &other) {
@@ -230,7 +233,7 @@ void CouenneRecordBestSol::setVal(const double givenVal) {
 /*****************************************************************************/
 void CouenneRecordBestSol::update(const double *givenSol, const int givenCard, 
 			   const double givenVal, const double givenMaxViol) {
-  if((!hasSol) || ((hasSol) && (givenVal < val))) {
+  if (!hasSol || (givenVal < val)) {
     setSol(givenSol, givenCard, givenMaxViol);
     setVal(givenVal);
   }
@@ -242,6 +245,7 @@ void CouenneRecordBestSol::update() {
     printf(" CouenneRecordBestSol::update(): ### ERROR: modSol == NULL\n");
     exit(1);
   }
+
   update(modSol, cardModSol, modSolVal, modSolMaxViol);
 } /* update */
 

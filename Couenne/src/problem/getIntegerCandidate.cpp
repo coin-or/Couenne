@@ -361,9 +361,10 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	    recBSol->update();
 	    xp = recBSol->getVal();
 #else
-	    recBSol->update(x, nVars(), xp, feas_tolerance_);
+	    recBSol -> update (x, nVars(), xp, feas_tolerance_);
 #endif
 #endif
+
 	    setCutOff (xp, x);
 	    jnlst_ -> Printf (Ipopt::J_DETAILED, J_NLPHEURISTIC, 
 			      "new cutoff from getIntCand: %g\n", xp);

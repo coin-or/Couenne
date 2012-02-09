@@ -20,6 +20,8 @@
 
 #include "CouenneRecordBestSol.hpp"
 
+//#define FM_PRINT_INFO
+
 #ifdef COIN_HAS_NTY
 #include "Nauty.h"
 #endif

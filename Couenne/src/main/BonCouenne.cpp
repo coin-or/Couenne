@@ -86,7 +86,7 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
   char * pbName = NULL;
 
-  const int infeasible = 1;
+  bool infeasible = false;
 
   try {
 
@@ -112,12 +112,11 @@ Instructions: http://www.coin-or.org/Couenne\n",
 #endif
 
     CouenneSetup couenne;
-
-    if (!couenne.InitializeCouenne (argv, p, NULL, ci, &bb))
-      throw infeasible;
-
-    //////////////////////////////
     CouenneCutGenerator *cg = NULL;
+    ConstJnlstPtr jnlst;
+    CouenneProblem *prob = NULL;
+
+    infeasible =  !(couenne.InitializeCouenne (argv, p, NULL, ci, &bb));
 
     // there is only one CouenneCutGenerator object; scan array until
     // dynamic_cast returns non-NULL
@@ -125,7 +124,7 @@ Instructions: http://www.coin-or.org/Couenne\n",
     if (couenne. cutGenerators () . size () > 0) {
 
       for (std::list <Bonmin::BabSetupBase::CuttingMethod>::iterator 
-	           i  = couenne.cutGenerators () . begin ();
+	     i  = couenne.cutGenerators () . begin ();
 	   !cg && (i != couenne.cutGenerators () . end ()); 
 	   ++i) 
 
@@ -140,18 +139,20 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
       cg -> setBabPtr (&bb);
 
-    else {
+    else if (!infeasible) {
+
       printf ("main(): ### ERROR: Can not get CouenneCutGenerator\n");
       exit (-1);
     }
 
     // initial printout
 
-    ConstJnlstPtr jnlst = couenne. couennePtr () -> Jnlst ();
-
-    CouenneProblem *prob = couenne. couennePtr () -> Problem ();
+    jnlst = couenne. couennePtr () -> Jnlst ();
+    prob  = couenne. couennePtr () -> Problem ();
 
     bb. setProblem (prob);
+
+    int retcomp = 2; // unspecified.
 
     jnlst -> Printf (J_ERROR, J_COUENNE, "\
 Loaded instance \"%s\"\n\
@@ -182,7 +183,8 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
     //////////////////////////////////
 
-    bb (couenne); // do branch and bound
+    if (!infeasible)
+      bb (couenne); // do branch and bound
 
 #ifdef COIN_HAS_NTY
     if (nOrbBr)
@@ -200,7 +202,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
     CouenneProblem *cp = cg ? cg -> Problem () : NULL;
 
 #if defined (FM_TRACE_OPTSOL) || defined (FM_FRES)
-    double cbcLb = bb.model ().getBestPossibleObjValue();
+    double cbcLb = (infeasible ? -COIN_DBL_MAX : bb.model (). getBestPossibleObjValue ());
     double printObj = 0;
     bool foundSol = false;
 #endif
@@ -215,11 +217,11 @@ Auxiliaries:     %8d (%d integer)\n\n",
     // }
 
     if(cp != NULL) {
-      double cbcObjVal = bb.model().getObjValue();
-      int modelNvars = bb.model().getNumCols();
+      double cbcObjVal = infeasible ? COIN_DBL_MAX : bb.model().getObjValue();
+      int modelNvars = prob -> nVars ();//bb.model().getNumCols();
 
       CouenneRecordBestSol *rs = cp->getRecordBestSol(); 
-      const double *cbcSol = bb.model().getColSolution();
+      const double *cbcSol = infeasible ? NULL : bb.model().getColSolution();
       double *modCbcSol = new double[modelNvars];
       double modCbcSolVal= 1e100, modCbcSolMaxViol = 0;
       bool cbcSolIsFeas = false;
@@ -230,7 +232,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
 	exit(1);
       }
 
-      if(cbcObjVal < 1e49) {
+      if (cbcObjVal < 1e49 && !infeasible) {
 
 #ifdef FM_CHECKNLP2
 	int cMS = rs->getCardModSol();
@@ -273,17 +275,17 @@ Auxiliaries:     %8d (%d integer)\n\n",
 	foundSol = true;
       }
 
-      int retcomp = rs->compareAndSave(modCbcSol, modCbcSolVal, 
+      retcomp = rs->compareAndSave(modCbcSol, modCbcSolVal, 
 				       modCbcSolMaxViol, cbcSolIsFeas,
 				       modCouenneSol, modCouenneSolVal, 
 				       modCouenneSolMaxViol, couenneSolIsFeas, 
 				       modelNvars, cp->getFeasTol());
-      switch (retcomp) {
-      case -1: printf("No solution found\n"); break;
-      case 0: printf("Best solution found by Cbc. Value: %10.4f. Tolerance: %10g\n", modCbcSolVal, modCbcSolMaxViol); break;
-      case 1: //printf("Best solution found by Couenne  Value: %10.4f  Tolerance: %10g\n", modCouenneSolVal, modCouenneSolMaxViol); break;
-      default: break; // never happens
-      }
+      // switch (retcomp) {
+      // case -1: printf("No solution found\n"); break;
+      // case 0: printf("Best solution found by Cbc. Value: %10.4f. Tolerance: %10g\n", modCbcSolVal, modCbcSolMaxViol); break;
+      // case 1: //printf("Best solution found by Couenne  Value: %10.4f  Tolerance: %10g\n", modCouenneSolVal, modCouenneSolMaxViol); break;
+      // default: break; // never happens
+      // }
 
       if(rs->getHasSol()) {
 	if(cbcLb > rs->getVal()) { // Best sol found by Couenne and not
@@ -329,7 +331,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
       else {
 	fprintf(f_res, "         *");
       }
-      fprintf(f_res, " %10d %10.4f\n", bb.numNodes (),
+      fprintf(f_res, " %10d %10.4f\n", infeasible ? 0 : bb.numNodes (),
 	      CoinCpuTime () - time_start);
       fclose(f_res);
     }
@@ -340,8 +342,8 @@ Auxiliaries:     %8d (%d integer)\n\n",
     couenne.options () -> GetNumericValue ("couenne_check", global_opt, "couenne.");
 
     double 
-      ub = bb. model (). getObjValue (),
-      lb = bb. model (). getBestPossibleObjValue ();
+      ub = infeasible ?  COIN_DBL_MAX : bb. model (). getObjValue (),
+      lb = infeasible ? -COIN_DBL_MAX : bb. model (). getBestPossibleObjValue ();
 
     if (cp -> getRecordBestSol () &&
 	cp       -> getRecordBestSol () -> getHasSol () &&
@@ -353,33 +355,38 @@ Auxiliaries:     %8d (%d integer)\n\n",
       lb = ub;
 
     char 
-      *gapstr = new char [80],
-      *lbstr  = new char [80],
-      *ubstr  = new char [80];
+      *gapstr = new char [40],
+      *lbstr  = new char [40],
+      *ubstr  = new char [40];
 
     sprintf (lbstr,  "%10g",     lb);
     sprintf (ubstr,  "%10g",     ub);
     sprintf (gapstr, "%.2f%%", fabs (100. * (ub - lb) / (1. + fabs (lb))));
 
-    jnlst -> Printf (J_ERROR, J_COUENNE, "\n\
+    if (!infeasible)
+      jnlst -> Printf (J_ERROR, J_COUENNE, "\n\
 Linearization cuts added at root node:   %8d\n\
-Linearization cuts added in total:       %8d  (separation time: %gs)\n\
-Total solving time:                      %8gs (%gs in branch-and-bound)\n\
+Linearization cuts added in total:       %8d  (separation time: %gs)\n",
+		       nr, nt, st);
+
+    else jnlst -> Printf (J_ERROR, J_COUENNE, "Problem infeasible\n");
+
+    jnlst -> Printf (J_NONE, J_COUENNE, "\
+Total time:                              %8gs (%gs in branch-and-bound)\n\
 Lower bound:                           %s\n\
 Upper bound:                           %s  (gap: %s)\n\
 Branch-and-bound nodes:                  %8d\n",
-		     nr, nt, st, 
 		     CoinCpuTime () - time_start,
 		     cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
-		     (lb < -9e12) ||
-		     (lb > COUENNE_INFINITY/1e4) ? "      -inf" : lbstr,
-		     (ub > COUENNE_INFINITY/1e4) ? "       inf" : ubstr,
-		     (ub > COUENNE_INFINITY/1e4) ? "--" : gapstr,
-		     bb.numNodes ());
+		     (lb <= -9e12) ||
+		     (                 infeasible ||          (fabs (lb)             > COUENNE_INFINITY/1e4)) ? "      -inf" : lbstr,
+		     ((retcomp < 0) || infeasible ||                            (ub  > COUENNE_INFINITY/1e4)) ? "       inf" : ubstr,
+		     (                 infeasible || (CoinMax (fabs (lb), fabs (ub)) > COUENNE_INFINITY/1e4)) ? "--"         : gapstr,
+		     infeasible ? 0 : bb.numNodes ());
 
-    if (fabs (ub - bb. model (). getObjValue ()) > COUENNE_EPS * fabs (ub))
-      jnlst -> Printf (J_ERROR, J_COUENNE, 
-		       "Warning: upper bounds differ between Couenne and Cbc. Saving Couenne's (more reliable).\n");
+    // if (fabs (ub - bb. model (). getObjValue ()) > COUENNE_EPS * fabs (ub))
+    //   jnlst -> Printf (J_ERROR, J_COUENNE, 
+    // 		       "Warning: upper bounds differ between Couenne and Cbc. Saving Couenne's (more reliable).\n");
 
     delete [] lbstr;
     delete [] ubstr;
@@ -387,7 +394,7 @@ Branch-and-bound nodes:                  %8d\n",
 
     if (global_opt < COUENNE_INFINITY) { // some value found in couenne.opt
 
-      double opt = bb.model (). getBestPossibleObjValue ();
+      double opt = infeasible ? -COIN_DBL_MAX : bb.model (). getBestPossibleObjValue ();
 
       printf ("Global Optimum Test on %-40s %s\n", 
 	      cp ? cp -> problemName ().c_str () : "unknown", 
@@ -419,7 +426,7 @@ Branch-and-bound nodes:                  %8d\n",
 		ub, //bb.model (). getObjValue (),
 		//bb.bestBound (),
 		//bb.bestObj (),
-		bb.numNodes ());
+		infeasible ? 0 : bb.numNodes ());
 		//bb.iterationCount ());
 		//status.c_str (), message.c_str ());
     }
@@ -448,10 +455,10 @@ Branch-and-bound nodes:                  %8d\n",
   {
    std::cerr<<"Ipopt exception : "<<E.Message()<<std::endl;
   }
-  catch (int generic_error) {
-    if (generic_error == infeasible)
-      printf ("problem infeasible\n");
-  }
+  // catch (int generic_error) {
+  //   // if (generic_error == infeasible)
+  //   //   printf ("problem infeasible\n");
+  // }
 
 //  catch(...) {
 //    std::cerr<<pbName<<" unrecognized excpetion"<<std::endl;
