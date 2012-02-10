@@ -62,7 +62,7 @@ void CouenneBTPerfIndicator::update (CouNumber *lb, CouNumber *ub, int depth) co
 
     if ((((olb > -COUENNE_INFINITY / 1e4) && (nlb < olb - COUENNE_EPS)) ||  
 	 ((oub <  COUENNE_INFINITY / 1e4) && (nub > oub + COUENNE_EPS))) && 
-	((nlb <= nub + 2 - 1e-5) || i != 0)) // check this is not a wiping cut
+	((nlb >= nub + 2 - 1e-5) && i == 0)) // check this is not a wiping cut
 	
       printf (" %30s makes bound worse (x%d): [%e,%e] --> [%e,%e], diff:%e\n",
 	      name_.c_str (),
