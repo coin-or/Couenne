@@ -25,9 +25,13 @@ void WipeMakeInfeas (OsiCuts &cs) {
 
   if (infeascut) {
     int i=0;
-    double upper = -1., lower = +1.;
+    double 
+      upper = -1., 
+      lower =  1.;
+
     infeascut -> setLbs (1, &i, &lower);
     infeascut -> setUbs (1, &i, &upper);
+
     cs.insert (infeascut);
     delete infeascut;
   }

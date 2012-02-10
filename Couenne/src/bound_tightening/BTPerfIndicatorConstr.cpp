@@ -10,6 +10,8 @@
 
 #include "CouenneBTPerfIndicator.hpp"
 #include "CouenneProblem.hpp"
+#include "IpSmartPtr.hpp"
+
 
 using namespace Couenne;
 
@@ -28,8 +30,9 @@ CouenneBTPerfIndicator::CouenneBTPerfIndicator (CouenneProblem *p, const std::st
   totalTime_       (0.),
   nRuns_           (0),
   problem_         (p),
-  stats_           (p != NULL && 
-		    p -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_BOUNDTIGHTENING)) {}
+  stats_           ((p             != NULL) && 
+		    (GetRawPtr (p -> Jnlst ()) != NULL) && 
+		    (p -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_BOUNDTIGHTENING))) {}
 
 
 ///
