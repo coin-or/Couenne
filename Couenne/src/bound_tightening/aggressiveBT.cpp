@@ -54,7 +54,7 @@ static double distanceToBound (register int n,
 }
 
 
-// Probing: for each variable, fake new bounds [l,b] or [b,u], with
+// PROBING: for each variable, fake new bounds [l,b] or [b,u], with
 // given b, and apply bound tightening. If the interval is fathomed on
 // bounds or on infeasibility, the complementary bound interval is a
 // valid tightening.
@@ -198,16 +198,9 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     t_chg_bounds *f_chg = new t_chg_bounds [ncols];
 
     if (Jnlst()->ProduceOutput(J_ITERSUMMARY, J_BOUNDTIGHTENING)) {
-      //    CouNumber cutoff = getCutOff ();
       int       objind = Obj (0) -> Body  () -> Index ();
-      for (int i=0; i<nOrigVars_ - ndefined_; i++)
-	Jnlst()->Printf(J_MOREVECTOR, J_BOUNDTIGHTENING,
-			"   %2d %+20g [%+20g %+20g]\n",
-			i, X [i], Lb (i), Ub (i));
-      if (objind >= 0)
-	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
-			"-------------\nAggressive BT. Current bound = %g, cutoff = %g, %d vars\n", 
-			Lb (objind), getCutOff (), ncols);
+      for (int i=0; i<nOrigVars_ - ndefined_; i++) Jnlst()->Printf(J_MOREVECTOR, J_BOUNDTIGHTENING, "   %2d %+20g [%+20g %+20g]\n",i, X [i], Lb (i), Ub (i));
+      if (objind >= 0) Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "-------------\nAggressive BT. Current bound = %g, cutoff = %g, %d vars\n", Lb (objind), getCutOff (), ncols);
     }
 
     int improved, second, iter = 0;
@@ -261,9 +254,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	  if ((variables_ [index] -> sign () != expression::AUX_GEQ) &&
 	      (X [index] >= Lb (index) + COUENNE_EPS)) {
 
-	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-			    "------------- tighten left %d-th = x%d @%g [%g,%g]\n", 
-			    i, index, X [index], olb [index], oub [index]);
+	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING, "------------- tighten left %d-th = x%d @%g [%g,%g]\n", i, index, X [index], olb [index], oub [index]);
 
 	    // tighten on left
 	    if ((improved = fake_tighten (0, index, X, olb, oub, chg_bds, f_chg)) < 0) {
@@ -278,12 +269,11 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	  if (retval && (variables_ [index] -> sign () != expression::AUX_LEQ) &&
 	      (X [index] <= Ub (index) - COUENNE_EPS)) {
 
-	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-			    "------------- tighten right %d-th = x%d @%g [%g,%g]\n", 
-			    i, index, X [index], olb [index], oub [index]);
+	    Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING, "------------- tighten right %d-th = x%d @%g [%g,%g]\n", i, index, X [index], olb [index], oub [index]);
 
 	    // tighten on right
 	    if ((second = fake_tighten (1, index, X, olb, oub, chg_bds, f_chg) < 0)) {
+
 	      retval = false;
 	      break;
 	    }
@@ -294,7 +284,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 	}
       }
 
-    } while (!maxTimeReached && retval && (improved > THRES_ABT_IMPROVED) && (iter++ < MAX_ABT_ITER));
+    } while (!retval && (improved > THRES_ABT_IMPROVED) && (iter++ < MAX_ABT_ITER));
 
     // store new valid bounds, or restore old ones if none changed
     CoinCopyN (olb, ncols, Lb ());
@@ -303,25 +293,13 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     if (Jnlst()->ProduceOutput(J_ITERSUMMARY, J_BOUNDTIGHTENING)) {
 
       Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,"------------------\n");
-
-      if (!retval) Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
-				   "Couenne infeasible node from aggressive BT\n");
+      if (!retval) Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "Couenne infeasible node from aggressive BT\n");
 
       int objind = Obj (0) -> Body  () -> Index ();
 
-      if (objind >= 0)
-	Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING,
-			"-------------\ndone Aggressive BT. Current bound = %g, cutoff = %g, %d vars\n", 
-			Lb (objind), getCutOff (), ncols);
-
-      if (Jnlst()->ProduceOutput(J_DETAILED, J_BOUNDTIGHTENING))
-	for (int i=0; i<nOrigVars_; i++)
-	  printf("   x%02d [%+20g %+20g]  | %+20g\n",
-		 i, Lb (i), Ub (i), X [i]);
-
-      if (Jnlst()->ProduceOutput(J_MOREDETAILED, J_BOUNDTIGHTENING))
-	for (int i=nOrigVars_; i<ncols; i++)
-	  printf ("   w%02d [%+20g %+20g]  | %+20g\n", i, Lb (i), Ub (i), X [i]);
+      if (objind >= 0)Jnlst()->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "-------------\ndone Aggressive BT. Current bound = %g, cutoff = %g, %d vars\n", Lb (objind), getCutOff (), ncols);
+      if (Jnlst()->ProduceOutput(J_DETAILED, J_BOUNDTIGHTENING)) for (int i=0; i<nOrigVars_; i++)  printf ("   x%02d [%+20g %+20g]  | %+20g\n", i, Lb (i), Ub (i), X [i]);
+      if (Jnlst()->ProduceOutput(J_MOREDETAILED, J_BOUNDTIGHTENING)) for (int i=nOrigVars_; i<ncols; i++) printf ("   w%02d [%+20g %+20g]  | %+20g\n", i, Lb (i), Ub (i), X [i]);
     }
 
     if (haveNLPsol)

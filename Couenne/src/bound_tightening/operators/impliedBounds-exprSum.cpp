@@ -145,7 +145,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   int infLo1 = -1, infLo2 = -1,
       infUp1 = -1, infUp2 = -1;
 
-  // upper bound of the sum, considering lower/upper bounds of the
+  // Upper bound of the sum, considering lower/upper bounds of the
   // variables but negliging the infinite ones:
   //
   // lower = $a0 + \sum_{i in I_1: a_i <  \infinity} a_i l_i
@@ -162,10 +162,10 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     upper = a0 + scanBounds (ipos, +1, I1, C1, u, &infUp1)
                + scanBounds (ineg, -1, I2, C2, l, &infLo2);
 
-  // Now compute lower bound for all or for some of the variables:
-  // There is a bound for all variables only if both infUp1 and infLo2
-  // are -1, otherwise there is a bound only for one variable if one
-  // is -1 and the other is nonnegative.
+  // Compute lower bound for all or for some of the variables: There
+  // is a bound for all variables only if both infUp1 and infLo2 are
+  // -1, otherwise there is a bound only for one variable if one is -1
+  // and the other is nonnegative.
 
   bool tighter = false;
 
