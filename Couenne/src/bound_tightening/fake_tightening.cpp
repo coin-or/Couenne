@@ -36,7 +36,9 @@ CouNumber fictBounds (char direction,
   if   (lb < -LARGE_BOUND) {
     if (ub >  LARGE_BOUND) { // ]-inf,+inf[
 
-      return (!direction ? -sqrt (-lb) : sqrt (ub));
+      return (!direction ? -LARGE_BOUND / AGGR_DIV : LARGE_BOUND / AGGR_DIV);
+
+      //return (!direction ? -sqrt (-lb) : sqrt (ub));
 
       //if (fabs (x) < COUENNE_EPS) return (direction ? AGGR_MUL : - AGGR_MUL);
       //else                        return (direction ? AGGR_MUL : - AGGR_MUL) * fabs (x);
@@ -44,7 +46,7 @@ CouNumber fictBounds (char direction,
     } else { // ]-inf,u]
 
       if (!direction)
-	return -sqrt (-lb); // try to tighten interval from a very large value
+	return -LARGE_BOUND / AGGR_DIV; //-sqrt (-lb); // try to tighten interval from a very large value
 
       if      (x < -COUENNE_EPS) return (CoinMin (0., (x+ub)/2));
       else if (x >  COUENNE_EPS) return ((x + (ub-x)/AGGR_DIV));
@@ -59,7 +61,7 @@ CouNumber fictBounds (char direction,
     if (ub >  LARGE_BOUND) { // [l,+inf[
 
       if (direction)
-	return sqrt (ub);
+	return LARGE_BOUND / AGGR_DIV; //sqrt (ub);
 
       if      (x < -COUENNE_EPS) return ((x - (x-lb) / AGGR_DIV));
       else if (x >  COUENNE_EPS) return (CoinMax (0.,(x+lb)/2));
@@ -111,9 +113,7 @@ fake_tighten (char direction,  // 0: left, 1: right
   // outer, on a monotone function of which we can compute the value
   // (with relative expense) but not the derivative.
 
-  jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING, 
-		    "  x_%d.  x = %10g, lb = %g, cutoff = %g-----------------\n", 
-		    index,xcur,objind >= 0 ? Lb (objind) : 0., getCutOff());
+  jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING, "  x_%d.  x = %10g, lb = %g, cutoff = %g-----------------\n", index,xcur,objind >= 0 ? Lb (objind) : 0., getCutOff());
 
   /*if (index == objind)
     printf ("  x_%d [%g,%g].  x = %10g, break at %g, cutoff = %g-----------------\n", 
@@ -173,12 +173,10 @@ fake_tighten (char direction,  // 0: left, 1: right
     }
 
     bool
-      feasible  = btCore (f_chg),                           // true if feasible with fake bound
+      feasible  = btCore (f_chg),                                            // true if feasible with fake bound
       betterbds = objind >= 0 && (Lb (objind) > getCutOff () + COUENNE_EPS); // true if over cutoff
 
-    jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING,
-		      " [%10g,%10g] lb = %g {fea=%d,btr=%d} ",
-		      Lb (index), Ub (index), objind >= 0 ? Lb (objind) : 0., feasible,betterbds);
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_BOUNDTIGHTENING, " [%10g,%10g] lb = %g {fea=%d,btr=%d} ", Lb (index), Ub (index), objind >= 0 ? Lb (objind) : 0., feasible,betterbds);
 
     if (feasible && !betterbds) {
 
@@ -324,11 +322,7 @@ fake_tighten (char direction,  // 0: left, 1: right
   }
 
   Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING, "\n");
-  if (tightened) 
-    Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING, 
-		    "  [x%2d] pruned %s [%g, %g] -- lb = %g cutoff = %g\n", 
-		    index,direction?"right":"left",
-		    olb[index],oub[index], objind >= 0 ? Lb (objind) : 0., getCutOff ());
+  if (tightened) Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING, "  [x%2d] pruned %s [%g, %g] -- lb = %g cutoff = %g\n", index,direction?"right":"left", olb[index],oub[index], objind >= 0 ? Lb (objind) : 0., getCutOff ());
 
   return tightened ? 1 : 0;
 }
