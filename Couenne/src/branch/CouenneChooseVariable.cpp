@@ -11,6 +11,9 @@
 
 #include "OsiSolverInterface.hpp"
 
+#include "CbcBranchActual.hpp"
+#include "CbcModel.hpp"
+
 #include "CouenneChooseVariable.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
@@ -543,3 +546,54 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
       "yes", "",
       "no", "");
 }
+
+
+// Cbc adds automatically objects for integer variables, but we did
+// not ask for it. In order to overcome this, we add objects the usual
+// way and then eliminate the CbcSimpleInteger objects one by one.
+
+int gutsofEIO (OsiObject **objects, int nco) {
+
+  int 
+    nRealObj, 
+    currObj  = 0;
+
+  for (; currObj < nco; ++currObj) 
+
+    if ((NULL != dynamic_cast <CbcSimpleInteger *> (objects [currObj])) ||
+	(NULL != dynamic_cast <OsiSimpleInteger *> (objects [currObj]))) {
+
+      // At [currObj] is a Cbc integer variable object. Kill it! Kill it with fire!
+      delete objects [currObj];
+      objects [currObj] = NULL;
+    }
+
+  // squeeze the sparse vector into a dense one with only non-NULL entries
+
+  for (nRealObj = 0, currObj = -1; nRealObj < nco; ++nRealObj)
+
+    if (NULL == objects [nRealObj]) {
+
+      if (currObj < 0) 
+	currObj = nRealObj + 1;
+
+      while ((currObj < nco) && 
+	     (NULL == objects [currObj]))
+	++currObj;
+
+      if (currObj >= nco)
+	break;
+
+      objects [nRealObj] =
+      objects [currObj];
+
+      objects [currObj] = NULL;
+    }
+
+  //printf ("%d real objects out of %d (s.co %d)\n", nRealObj, currObj, s.continuousSolver () -> numberObjects ());
+
+  return nRealObj;
+}
+
+void eliminateIntegerObjects (OsiSolverInterface *model) {model -> setNumberObjects (gutsofEIO (model -> objects (), model -> numberObjects ()));}
+void eliminateIntegerObjects (CbcModel           *model) {model -> setNumberObjects (gutsofEIO (model -> objects (), model -> numberObjects ()));}

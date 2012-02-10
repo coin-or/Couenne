@@ -2,6 +2,7 @@
  *
  * Name:    checkNLP.cpp
  * Author:  Pietro Belotti
+ *          Francois Margot
  * Purpose: check NLP feasibility of incumbent integer solution
  *
  * (C) Carnegie-Mellon University, 2006-11.
@@ -354,9 +355,7 @@ bool CouenneProblem::checkInt(const CouNumber *sol,
 		      fabs (val - COUENNE_round (val)) - feas_tolerance_);
 
 #ifdef FM_TRACE_NLP
-	printf("CouenneProblem::checkInt(): integrality %d violated: %.6f [%g,%g]\n", 
-	       ind, val, domain_.lb (ind), domain_.ub (ind));
-
+	printf("CouenneProblem::checkInt(): integrality %d violated: %.6f [%g,%g]\n", ind, val, domain_.lb (ind), domain_.ub (ind));
 #endif
 
 	isFeas = false;
@@ -1006,6 +1005,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
     
 #ifdef FM_TRACE_NLP
   if(isFeas) {
+
     printf ("checkNLP2(): RETURN: selected solution is feasible (maxViol: %g)\n", maxViol);
   }
   else {
