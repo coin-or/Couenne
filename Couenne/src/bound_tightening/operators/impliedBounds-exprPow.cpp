@@ -52,8 +52,8 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     isinvint = !isint && (k != 0. && (fabs (1./k - (intk = COUENNE_round (1./k))) < COUENNE_EPS)); // 1/k integer
 
   CouNumber 
-    wl = ((sign == expression::AUX_LEQ) ? -COIN_DBL_MAX : l [wind]), // lower w
-    wu = ((sign == expression::AUX_GEQ) ?  COIN_DBL_MAX : u [wind]); // upper w
+    wl = ((sign == expression::AUX_GEQ) ? -COIN_DBL_MAX : l [wind]), // lower w
+    wu = ((sign == expression::AUX_LEQ) ?  COIN_DBL_MAX : u [wind]); // upper w
 
   if ((isint || isinvint) && (intk % 2)) { 
 
@@ -91,12 +91,16 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
       bound = (k>0) ? wl : wu;
 
-      CouNumber xl = l [index], 
-	        xu = u [index],
-                xb = safe_pow (bound, 1./k);
+      if (bound > 0.) {
 
-      if      (xl > - xb + COUENNE_EPS) resL = updateBound (-1, l + index,   xb) || resL;
-      else if (xu <   xb - COUENNE_EPS) resU = updateBound ( 1, u + index, - xb) || resU;
+	CouNumber
+	  xl = l [index], 
+	  xu = u [index],
+	  xb = safe_pow (bound, 1./k);
+
+	if      (xl > - xb + COUENNE_EPS) resL = updateBound (-1, l + index,   xb) || resL;
+	else if (xu <   xb - COUENNE_EPS) resU = updateBound ( 1, u + index, - xb) || resU;
+      }
 
     } else { 
 
