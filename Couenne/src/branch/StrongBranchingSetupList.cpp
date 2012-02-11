@@ -14,7 +14,7 @@
 #include "CouenneChooseStrong.hpp"
 #include "CouenneProblem.hpp"
 
-//The recommended ones:
+// The recommended ones:
 #define FM_SORT_STRONG
 #define FM_SEC_SORT_USEFUL
 #define USE_NOT_TRUSTED

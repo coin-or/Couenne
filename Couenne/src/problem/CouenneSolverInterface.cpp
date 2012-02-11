@@ -30,8 +30,10 @@ CouenneSolverInterface<T>::CouenneSolverInterface
   cutgen_ (cg),
   knowInfeasible_(false),
   knowOptimal_(false),
-  knowDualInfeasible_(false) {}
-//  doingResolve_ (true) {}
+  knowDualInfeasible_(false)
+  // ,beforeFirstRootLP_ (true)
+  // ,rootLB_            (-COIN_DBL_MAX)
+{}
 
 
 /// copy constructor
@@ -44,8 +46,11 @@ CouenneSolverInterface<T>::CouenneSolverInterface
   cutgen_               (src.cutgen_),
   knowInfeasible_       (src.knowInfeasible_),
   knowOptimal_          (src.knowOptimal_),
-  knowDualInfeasible_   (src.knowDualInfeasible_) {}
-//doingResolve_         (src.doingResolve_) {}
+  knowDualInfeasible_   (src.knowDualInfeasible_)
+  // ,beforeFirstRootLP_    (src.beforeFirstRootLP_)
+  // ,rootLB_               (src.rootLB_) 
+{}
+
 
 /// Destructor
 template <class T> 
@@ -64,6 +69,12 @@ void CouenneSolverInterface<T>::initialSolve () {
   knowDualInfeasible_ = false;
 
   T::initialSolve ();
+
+  // if (beforeFirstRootLP_ && T::isProvenOptimal ()) {
+  //   printf ("\n\nGot first LP: %g\n\n", getObjValue ());
+  //   beforeFirstRootLP_ = false;
+  //   rootLB_ = getObjValue ();
+  // }
 
   // printf ("init solution: (");
   // for (int i=0; i< T::getNumCols (); i++)
@@ -331,6 +342,5 @@ template <class T>
 inline double CouenneSolverInterface<T>::getObjValue() const {
   return cutgen_ -> Problem () -> constObjVal () + T::getObjValue();
 }
-
 
 }

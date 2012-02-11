@@ -98,6 +98,10 @@ public:
   /// constant objectives passed to Couenne
   virtual double getObjValue() const;
 
+  // /// returns LP optimum at root node
+  // double rootLB () const
+  // {return rootLB_;}
+
 protected:
 
   /// Copy of the Clp version --- not light version
@@ -120,9 +124,12 @@ protected:
   /// Flag indicating this problem's continuous relaxation is unbounded
   bool knowDualInfeasible_;
 
-  /// flag to indicate this is an LP for the BB, not for (e.g.) strong
-  /// branching or OBBT
-  //bool doingResolve_;
+  // /// First (root) LP not solved yet -- use this flag to obtain root
+  // /// lower bound and print an alternative gap
+  // bool beforeFirstRootLP_;
+
+  // /// First (root) LP bound -- used to get an alternative gap
+  // double rootLB_;
 };
 
 }

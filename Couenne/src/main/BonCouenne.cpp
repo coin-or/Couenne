@@ -116,7 +116,7 @@ Instructions: http://www.coin-or.org/Couenne\n",
     ConstJnlstPtr jnlst;
     CouenneProblem *prob = NULL;
 
-    infeasible =  !(couenne.InitializeCouenne (argv, p, NULL, ci, &bb));
+    infeasible = !(couenne.InitializeCouenne (argv, p, NULL, ci, &bb));
 
     // there is only one CouenneCutGenerator object; scan array until
     // dynamic_cast returns non-NULL
@@ -358,6 +358,10 @@ Auxiliaries:     %8d (%d integer)\n\n",
       *gapstr = new char [40],
       *lbstr  = new char [40],
       *ubstr  = new char [40];
+
+    // CouenneSolverInterface <OsiClpSolverInterface> *csi = dynamic_cast <CouenneSolverInterface *> (couenne.continuousSolver ());
+
+    // double rootLB = csi -> rootLB ();
 
     sprintf (lbstr,  "%10g",     lb);
     sprintf (ubstr,  "%10g",     ub);
