@@ -478,9 +478,6 @@ class CouenneProblem {
 
   /// Generate a Couenne expression from an ASL expression
   expression *nl2e (struct expr *, const ASL *asl);
-
-  /// Generate a Couenne expression from an ASL expression -- prior to simplification
-  expression *nl2eCore (struct expr *e, const ASL *asl);
 #endif
 
   // bound tightening parameters
