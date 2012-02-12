@@ -97,3 +97,29 @@ bool exprUnary::isInteger () {
 
   return false;
 }
+
+
+// simplify unary operators
+expression *exprUnary:: simplify () {
+
+  register expression *subst;
+
+  // Simplify argument g(x) of this expression f(g(x))
+  if ((subst = argument_ -> simplify ())) {
+
+    delete argument_;
+    argument_ = subst;
+
+    // g(x) is a constant k, therefore return f (k)
+    if (subst -> Type () == CONST) {
+
+      expression *ret = new exprConst (operator () ());
+      argument_ = NULL;
+      delete subst;
+
+      return ret;
+    } 
+  }
+
+  return NULL;
+}
