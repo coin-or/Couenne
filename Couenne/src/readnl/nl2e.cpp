@@ -43,8 +43,23 @@ void notimpl (const std::string &fname) {
 }
 
 
-// converts an AMPL expression (sub)tree into an expression* (sub)tree
 expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
+
+  expression
+    *retval = nl2eCore (e, asl),
+    *simpl  = retval -> simplify (); 
+
+  if (simpl) {
+    delete retval; 
+    retval = simpl;
+  } 
+
+  return retval;
+}
+
+
+// converts an AMPL expression (sub)tree into an expression* (sub)tree
+expression *CouenneProblem::nl2eCore (expr *e, const ASL *asl) {
 
   switch (getOperator (e -> op)) {
 
