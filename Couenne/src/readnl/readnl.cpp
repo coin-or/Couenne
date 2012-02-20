@@ -148,7 +148,13 @@ int CouenneProblem::readnl (const ASL *asl) {
 
     expression 
       *body,
-      *nl = nl2e (OBJ_DE [i] . e, asl);
+      *nl = nl2e (OBJ_DE [i] . e, asl),
+      *nls = nl -> simplify ();
+
+    if (nls) {
+      delete nl;
+      nl = nls;
+    }
 
     if (nterms) { // have linear terms
 
@@ -321,10 +327,19 @@ int CouenneProblem::readnl (const ASL *asl) {
     if (fabs (lb - ub) < COUENNE_EPS)
       sign = COUENNE_EQ;
 
-    expression *body;
+    expression 
+       *body,
+      **nll = new expression * [1],
+       *nls;
 
-    expression **nll = new expression * [1];
     *nll = nl2e (CON_DE [i] . e, asl);
+
+    nls = (*nll) -> simplify ();
+
+    if (nls) {
+      delete *nll;
+      *nll = nls;
+    }
 
     if (indexL [i] && (*(indexL [i]) >= 0)) {
 
@@ -465,7 +480,14 @@ void createCommonExpr (CouenneProblem *p, const ASL *asl, int i, int which) {
   struct cexp  *common  = ((const ASL_fg *) asl) -> I.cexps_  + i;
   struct cexp1 *common1 = ((const ASL_fg *) asl) -> I.cexps1_ + i;
 
-  expression *nle = p -> nl2e (which ? common1 -> e : common -> e, asl);
+  expression
+    *nle = p -> nl2e (which ? common1 -> e : common -> e, asl),
+    *nls = nle -> simplify ();
+
+  if (nls) {
+    delete nle;
+    nle = nls;
+  }
 
 #ifdef DEBUG
   printf ("cexp1 %d [%d]: ", i, p -> Variables () . size ()); nle -> print ();  printf (" ||| ");
