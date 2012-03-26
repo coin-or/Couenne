@@ -346,12 +346,12 @@ Auxiliaries:     %8d (%d integer)\n\n",
       lb = infeasible ? -COIN_DBL_MAX : bb. model (). getBestPossibleObjValue ();
 
     if (cp -> getRecordBestSol () &&
-	cp       -> getRecordBestSol () -> getHasSol () &&
-	(ub > cp -> getRecordBestSol () -> getVal    ()))   
+    	cp       -> getRecordBestSol () -> getHasSol () &&
+    	(ub > cp -> getRecordBestSol () -> getVal    ()))   
       ub = cp -> getRecordBestSol () -> getVal ();
 
     if (false || //(fabs (lb) > COUENNE_INFINITY / 1e4) ||
-	(lb > ub))
+    	(lb > ub))
       lb = ub;
 
     char 
@@ -381,7 +381,7 @@ Lower bound:                           %s\n\
 Upper bound:                           %s  (gap: %s)\n\
 Branch-and-bound nodes:                  %8d\n",
 		     CoinCpuTime () - time_start,
-		     cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
+		     cg ? (CoinCpuTime () - CoinMax (time_start, cg -> rootTime ())) : CoinCpuTime () - time_start,
 		     (lb <= -9e12) ||
 		     (                 infeasible ||          (fabs (lb)             > COUENNE_INFINITY/1e4)) ? "      -inf" : lbstr,
 		     ((retcomp < 0) || infeasible ||                            (ub  > COUENNE_INFINITY/1e4)) ? "       inf" : ubstr,
