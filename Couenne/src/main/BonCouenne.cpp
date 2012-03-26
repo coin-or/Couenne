@@ -366,7 +366,7 @@ Upper bound:                           %s  (gap: %s)\n\
 Branch-and-bound nodes:                  %8d\n",
 		     nr, nt, st, 
 		     CoinCpuTime () - time_start,
-		     cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
+		     cg ? (CoinCpuTime () - CoinMax (time_start, cg -> rootTime ())) : CoinCpuTime () - time_start,
 		     (lb < -9e12) ||
 		     (lb > COUENNE_INFINITY/1e4) ? "      -inf" : lbstr,
 		     (ub > COUENNE_INFINITY/1e4) ? "       inf" : ubstr,
