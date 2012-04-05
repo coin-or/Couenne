@@ -52,6 +52,7 @@ extern "C" {
 
     if (BonminInterruptedOnce) {
       //std::cerr<<"User-forced interruption"<<std::endl;
+      abort ();
       exit (0);
     }
 

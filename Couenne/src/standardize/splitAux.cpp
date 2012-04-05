@@ -499,7 +499,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     //rest = aux -> Image () -> clone (&domain_);
     rest = aux -> Image (); // -> clone (&domain_);
     aux -> Image (NULL);
-    delete aux;
+    delete aux; // gives segfault in [min {y: y>=x*x}]
   }
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
