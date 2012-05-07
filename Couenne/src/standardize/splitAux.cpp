@@ -486,12 +486,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
   exprAux *aux = rest -> standardize (this, false);
 
-  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-
-    if (aux) {
+  if (aux && jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
       printf ("  Aux: "); aux -> print ();
       printf (" := ");    aux -> Image () -> print ();
-    }
   }
 
   if (aux) {
@@ -499,14 +496,11 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     //rest = aux -> Image () -> clone (&domain_);
     rest = aux -> Image (); // -> clone (&domain_);
     aux -> Image (NULL);
-    delete aux;
+    //delete aux; // segfaults on simplified expressions? (see test/simple.nl)
   }
 
-  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf (" ==> "); 
-    rest -> print ();
-    printf ("\n");
-  }
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) 
+    {printf (" ==> "); rest -> print (); printf ("\n");}
 
   return auxInd;
 }

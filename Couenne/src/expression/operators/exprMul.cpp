@@ -58,7 +58,7 @@ expression *exprMul::simplify () {
     return ret;
   }
 
-  CouNumber prod = 1;
+  CouNumber prod = 1.;
 
   bool found_one = false;
 
@@ -73,13 +73,13 @@ expression *exprMul::simplify () {
       CouNumber c = arglist_ [i] -> Value ();
       prod *= c;
 
-      if (fabs (c) < COUENNE_EPS_SIMPL) {
+      if (fabs (c) == 0.) {
 
-	for (int j=0; j<nargs_; j++)
-	  if (arglist_ [j]) {
-	    delete arglist_ [j];
-	    arglist_ [j] = NULL;
-	  }
+	// for (int j=0; j<nargs_; j++)
+	//   if (arglist_ [j]) {
+	//     delete arglist_ [j];
+	//     arglist_ [j] = NULL;
+	//   }
 
 	return new exprConst (0.);
       }
@@ -94,7 +94,7 @@ expression *exprMul::simplify () {
   if (found_one && shrink_arglist (prod, 1))
     return new exprConst (arglist_ [0] -> Value ());
   */
-  if (found_one && shrink_arglist (prod, 1)) {
+  if (found_one && shrink_arglist (prod, 1.)) {
     expression *ret = arglist_ [0];
     arglist_ [0] = NULL;
     return ret;

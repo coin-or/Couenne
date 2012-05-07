@@ -53,18 +53,18 @@ class exprUnary: public expression {
   {return zero_fun;}
 
   /// Destructor
-  ~exprUnary ()
+  virtual ~exprUnary ()
   {if (argument_) delete argument_;}
 
   /// return number of arguments
   inline int nArgs () const
   {return 1;}
 
-  /// return argument (when applicable, i.e., with univariate functions)
+  /// return argument
   virtual inline expression *Argument () const
   {return argument_;}
 
-  /// return pointer to argument (when applicable, i.e., with univariate functions)
+  /// return pointer to argument
   virtual inline expression **ArgPtr () 
   {return &argument_;}
 

@@ -52,6 +52,7 @@ exprAux *exprUnary::standardize (CouenneProblem *p, bool addAux) {
   exprAux *subst;
 
   if ((subst = argument_ -> standardize (p))) {
+
     if ((subst -> Type () == AUX) ||
 	(subst -> Type () == VAR)) 
       argument_ = new exprClone (subst);
@@ -75,7 +76,7 @@ void exprUnary::replace (exprVar *x, exprVar *w) {
 
 
 /// is this expression integer?
-bool exprUnary::isInteger () {
+inline bool exprUnary::isInteger () {
 
   // only check if argument is, *at this point in the algorithm*,
   // constant -- due to branching rules, for instance. If so, check if

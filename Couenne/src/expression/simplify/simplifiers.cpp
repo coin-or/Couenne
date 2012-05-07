@@ -1,5 +1,5 @@
-/* $Id$ */
-/*
+/* $Id$
+ *
  * Name:    simplifiers.cpp
  * Author:  Pietro Belotti
  * Purpose: simplifiers for main operators (+,*,-)
@@ -60,11 +60,11 @@ int exprOp::shrink_arglist (CouNumber c, CouNumber null_element) {
   bool one_fun = false;
 
   // find first NULL spot (left by some constant)
-  while ((i < nargs_) && (arglist_ [i])) 
-    i++; 
+  while ((i < nargs_) && (arglist_ [i]))
+    ++i; 
 
   // no spots, leave
-  if (i==nargs_) 
+  if (i==nargs_)
     return 0;
 
   // check if there is at least one non-constant expression
@@ -85,16 +85,23 @@ int exprOp::shrink_arglist (CouNumber c, CouNumber null_element) {
   while (i < nargs_) {
 
     while ((i < nargs_) && !(arglist_ [i])) 
-      i++;
+      ++i;
 
     if (i < nargs_) 
       one_fun = true;
 
-    while ((i < nargs_) && (arglist_ [i]))
-      arglist_ [j++] = arglist_ [i++]; 
+    while ((i < nargs_) && (arglist_ [i])) {
+
+      //if (i != j) {
+      arglist_ [j++] = arglist_ [i++];
+	// arglist_ [i] = NULL; // useless
+	//}
+
+      //++i; ++j;
+    }
   }
 
-  nargs_ = j;
+  nargs_ = j; // doesn't change the size of the malloc'd array
 
   // only say shrinking simplified arg list if there is just the
   // constant
