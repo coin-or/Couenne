@@ -244,13 +244,15 @@ void exprGroup::generateCuts (expression *w,
   // now add linear terms
   lincoeff::iterator el = lcoeff_.begin ();
 
-  for (int i=0; el != lcoeff_.end (); ++el) 
+  nterms = displacement;
+
+  for (; el != lcoeff_.end (); ++el) 
 
     if (fabs (el -> second) > 1.0e-21) { 
       // why 1.0e-21? Look at CoinPackedMatrix.cpp:2237
 
-      coeff [i   + displacement] = el -> second; 
-      index [i++ + displacement] = el -> first -> Index ();
+      coeff [nterms]   = el -> second; 
+      index [nterms++] = el -> first -> Index ();
     }
 
   // scan arglist for (aux) variables and constants
@@ -263,12 +265,12 @@ void exprGroup::generateCuts (expression *w,
       ub -= curr -> Value ();
     }
     else {                        // variable
-      coeff [++nterms] = 1.; 
-      index   [nterms] = curr -> Index ();
+      coeff [nterms]   = 1.; 
+      index [nterms++] = curr -> Index ();
     }
   }
 
-  cut -> setRow (nterms + displacement, index, coeff);
+  cut -> setRow (nterms, index, coeff);
 
   delete [] index;
   delete [] coeff;
