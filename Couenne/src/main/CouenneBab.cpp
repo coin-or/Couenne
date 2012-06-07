@@ -58,9 +58,9 @@
 //       exit(0);
 //     }
 //     if (currentBranchModel!=NULL)
-//       currentBranchModel->setMaximumNodes(0); // stop at next node
+//       currentBranchModel->sayEventHappened(); // stop at next node
 //     if (OAModel!=NULL)
-//       OAModel->setMaximumNodes(0); // stop at next node
+//       OAModel->sayEventHappened(); // stop at next node
 //     if (currentOA!=NULL)
 //       currentOA->parameter().maxLocalSearchTime_ = 0.; // stop OA
 //     BonminAbortAll = true;
@@ -76,7 +76,8 @@ using namespace Bonmin;
 /** Constructor.*/
 CouenneBab::CouenneBab ():
 
-  Bab () //,
+  Bab (),
+  problem_(NULL) //,
   // bestSolution_(NULL),
   // mipStatus_(),
   // bestObj_(1e200),
@@ -646,6 +647,9 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
     if (bestSolution_) {
       mipStatus_ = Feasible;
     }
+    else {
+      mipStatus_ = NoSolutionKnown;
+    }
   }
   else if (model_.status() == 0) {
     if(model_.isContinuousUnbounded()){
@@ -662,8 +666,12 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
         mipStatus_ = ProvenInfeasible;
       }
   }
-  else if (model_.status() == 1) {
+  else if (model_.status() == 1 || model_.status() == 5) {
+#if (BONMIN_VERSION_MAJOR > 1) || (BONMIN_VERSION_MINOR > 6)
+    status = model_.status() == 1 ? TMINLP::LIMIT_EXCEEDED : TMINLP::USER_INTERRUPT;
+#else
     status = TMINLP::LIMIT_EXCEEDED;
+#endif
     if (bestSolution_) {
       mipStatus_ = Feasible;
     }
@@ -677,6 +685,7 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 
   // Which solution should we use? false if RBS's, true if Cbc's
   bool use_RBS_Cbc = 
+    !problem_ ||
     !(problem_ -> getRecordBestSol ()) ||
     (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) && 
       (problem_ -> getRecordBestSol () -> getVal () > bestObj_)));
@@ -699,3 +708,20 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 
 
 
+const double * CouenneBab::bestSolution() const {
+  if(!problem_ ||
+     !(problem_ -> getRecordBestSol ()) ||
+     (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) &&
+       (problem_ -> getRecordBestSol () -> getVal () > bestObj_))))
+    return bestSolution_;
+  return problem_ -> getRecordBestSol () -> getSol ();
+}
+
+double CouenneBab::bestObj() const {
+  if(!problem_ ||
+     !(problem_ -> getRecordBestSol ()) ||
+     (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) &&
+       (problem_ -> getRecordBestSol () -> getVal () > bestObj_))))
+    return bestObj_;
+  return problem_ -> getRecordBestSol () -> getVal ();
+}

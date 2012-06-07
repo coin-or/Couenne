@@ -38,6 +38,8 @@ namespace Couenne {
 
     virtual ~CouenneBab(); ///< Destructor
 
+    void setProblem (CouenneProblem *p);
+
     virtual void branchAndBound (Bonmin::BabSetupBase &s); ///< Carry out branch and bound
 
     // /**operator() performs the branchAndBound*/
@@ -49,18 +51,10 @@ namespace Couenne {
 
     /** get the best solution known to the problem (is optimal if MipStatus is FeasibleOptimal).
 	if no solution is known returns NULL.*/
-    const double * bestSolution() const
-    {
-      return bestSolution_;
-    }
-
-    void setProblem (CouenneProblem *p);
+    const double * bestSolution() const;
 
     /** return objective value of the bestSolution */
-    double bestObj() const
-    {
-      return bestObj_;
-    }
+    double bestObj() const;
 
     // /** return Mip Status */
     // MipStatuses mipStatus() const
