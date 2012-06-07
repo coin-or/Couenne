@@ -76,7 +76,7 @@ void exprUnary::replace (exprVar *x, exprVar *w) {
 
 
 /// is this expression integer?
-inline bool exprUnary::isInteger () {
+bool exprUnary::isInteger () {
 
   // only check if argument is, *at this point in the algorithm*,
   // constant -- due to branching rules, for instance. If so, check if
