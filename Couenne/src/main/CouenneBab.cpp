@@ -69,7 +69,7 @@ using namespace Couenne;
 using namespace Bonmin;
 
 /** Constructor.*/
-CouenneBab::CouenneBab (): Bab () {}
+CouenneBab::CouenneBab (): Bab (), problem_(NULL) {}
 
 /** Destructor.*/
 CouenneBab::~CouenneBab () {}
@@ -654,6 +654,7 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 
   // Which solution should we use? false if RBS's, true if Cbc's
   bool use_RBS_Cbc = 
+    !problem_ ||
     !(problem_ -> getRecordBestSol ()) ||
     (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) && 
       (problem_ -> getRecordBestSol () -> getVal () > bestObj_)));
