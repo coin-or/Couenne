@@ -56,8 +56,8 @@ extern "C" {
       exit (0);
     }
 
-    if (currentBranchModel) currentBranchModel -> setMaximumNodes (0);          // stop at next node
-    if (OAModel)            OAModel -> setMaximumNodes (0);                     // stop at next node
+    if (currentBranchModel) currentBranchModel -> sayEventHappened();          // stop at next node
+    if (OAModel)            OAModel -> sayEventHappened();                     // stop at next node
     if (currentOA)          currentOA -> parameter ().maxLocalSearchTime_ = 0.; // stop OA
 
     BonminInterruptedOnce = true;
@@ -623,6 +623,9 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
     if (bestSolution_) {
       mipStatus_ = Feasible;
     }
+    else {
+      mipStatus_ = NoSolutionKnown;
+    }
   }
   else if (model_.status() == 0) {
     if(model_.isContinuousUnbounded()){
@@ -639,8 +642,12 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
         mipStatus_ = ProvenInfeasible;
       }
   }
-  else if (model_.status() == 1) {
+  else if (model_.status() == 1 || model_.status() == 5) {
+#if (BONMIN_VERSION_MAJOR > 1) || (BONMIN_VERSION_MINOR > 6)
+    status = model_.status() == 1 ? TMINLP::LIMIT_EXCEEDED : TMINLP::USER_INTERRUPT;
+#else
     status = TMINLP::LIMIT_EXCEEDED;
+#endif
     if (bestSolution_) {
       mipStatus_ = Feasible;
     }
