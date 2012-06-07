@@ -665,3 +665,21 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
      use_RBS_Cbc ? bestSolution_ : problem_ -> getRecordBestSol () -> getSol (),
      use_RBS_Cbc ? bestObj_      : problem_ -> getRecordBestSol () -> getVal ());
 }
+
+const double * CouenneBab::bestSolution() const {
+  if(!problem_ ||
+     !(problem_ -> getRecordBestSol ()) ||
+     (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) &&
+       (problem_ -> getRecordBestSol () -> getVal () > bestObj_))))
+    return bestSolution_;
+  return problem_ -> getRecordBestSol () -> getSol ();
+}
+
+double CouenneBab::bestObj() const {
+  if(!problem_ ||
+     !(problem_ -> getRecordBestSol ()) ||
+     (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) &&
+       (problem_ -> getRecordBestSol () -> getVal () > bestObj_))))
+    return bestObj_;
+  return problem_ -> getRecordBestSol () -> getVal ();
+}
