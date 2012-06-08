@@ -216,7 +216,7 @@ namespace Couenne {
     /// Stores the values of the Hessian of the Lagrangian at optimum for later use
     CouenneSparseMatrix *optHessian_;
 
-    /// flag to be set to save this solution's Lagrangian hessian in above structure
+    /// Flag to be set to save this solution's Lagrangian Hessian in above structure
     bool saveOptHessian_;
   };
 }

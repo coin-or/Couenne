@@ -35,40 +35,33 @@
 // sets cutoff a bit above real one, to avoid single-point feasible sets
 #define CUTOFF_TOL 1e-6
 
-// TODO: signal handler
+// Code to enable user interruption
+static CbcModel * currentBranchModel = NULL; //pointer to the main b&b
+Bonmin::OACutGenerator2 * currentOA = NULL; //pointer to the OA generator
+CbcModel * OAModel; // pointer to the submip if using Cbc
 
-// // Code to enable user interuption
-// static CbcModel * currentBranchModel = NULL; //pointer to the main b&b
-// Bonmin::OACutGenerator2 * currentOA = NULL; //pointer to the OA generator
-// CbcModel * OAModel; // pointer to the submip if using Cbc
-// bool BonminAbortAll;
+#define SIGNAL
+#ifdef SIGNAL
+#include "CoinSignal.hpp"
 
-// #define SIGNAL
-// #ifdef SIGNAL
-// #include "CoinSignal.hpp"
+extern "C" {
 
-// extern "C"
-// {
+  static bool BonminInterruptedOnce = false;
 
-//   static bool BonminInteruptedOnce =false;
+  static void couenne_signal_handler (int whichSignal) {
 
-//   static void signal_handler(int whichSignal) {
-//     if (BonminInteruptedOnce) {
-//       std::cerr<<"User forced interuption"<<std::endl;
-//       exit(0);
-//     }
-//     if (currentBranchModel!=NULL)
-//       currentBranchModel->sayEventHappened(); // stop at next node
-//     if (OAModel!=NULL)
-//       OAModel->sayEventHappened(); // stop at next node
-//     if (currentOA!=NULL)
-//       currentOA->parameter().maxLocalSearchTime_ = 0.; // stop OA
-//     BonminAbortAll = true;
-//     BonminInteruptedOnce = true;
-//     return;
-//   }
-// }
-// #endif
+    if (BonminInterruptedOnce) {
+      //std::cerr<<"User-forced interruption"<<std::endl;
+      exit(0);
+    }
+    if (currentBranchModel)       currentBranchModel->sayEventHappened(); // stop at next node
+    if (OAModel)                  OAModel->sayEventHappened(); // stop at next node
+    if (currentOA)                currentOA->parameter().maxLocalSearchTime_ = 0.; // stop OA
+
+    BonminInterruptedOnce = true;
+  }
+}
+#endif
 
 using namespace Couenne;
 using namespace Bonmin;
@@ -514,7 +507,7 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 	const double * duals = model_.solver()->getRowPrice();
 
 	OsiTMINLPInterface * tnlpSolver = dynamic_cast<OsiTMINLPInterface *>(model_.solver());
-	// Primal dual point is not copied if one (supposedely a better one) has already been put into the solver.
+	// Primal dual point is not copied if one (supposedly a better one) has already been put into the solver.
 	if(tnlpSolver->problem()->has_x_init() != 2){
 	  model_.solver()->setColSolution(colsol);
 	  model_.solver()->setRowPrice(duals);
@@ -533,13 +526,12 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 #endif 
       }
 
-// #ifdef SIGNAL
-//     CoinSighandler_t saveSignal=SIG_DFL;
-//     // register signal handler
-//     if (!usingCouenne_)
-//       saveSignal = signal(SIGINT,signal_handler);
-//    currentBranchModel = &model_;
-// #endif
+#ifdef SIGNAL
+    CoinSighandler_t saveSignal = SIG_DFL;
+    // register signal handler
+    saveSignal = signal (SIGINT,couenne_signal_handler);
+    currentBranchModel = &model_;
+#endif
 
 
     // to get node parent info in Cbc, pass parameter 3.
@@ -599,17 +591,6 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
       // }
     }
   }
-
-  // if (hasFailed && !usingCouenne_) {
-  // 	*model_.messageHandler()
-  //   << "************************************************************" << CoinMessageEol
-  //   << "WARNING : Optimization failed on an NLP during optimization"  << CoinMessageEol
-  //   << "  (no optimal value found within tolerances)."  << CoinMessageEol
-  //   << "  Optimization was not stopped because option"  << CoinMessageEol
-  //   << "\"nlp_failure_behavior\" has been set to fathom but"  << CoinMessageEol
-  //   << " beware that reported solution may not be optimal"  << CoinMessageEol
-  //   << "************************************************************" << CoinMessageEol;
-  // }
 
   TMINLP::SolverReturn status = TMINLP::MINLP_ERROR;
 

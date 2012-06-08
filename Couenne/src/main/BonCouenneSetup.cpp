@@ -96,7 +96,7 @@ CouenneSetup::~CouenneSetup(){
     delete couenneProb_;
 
 #ifdef COIN_HAS_ASL
-  // free (aslfg_ -> asl); // triggers segfault
+  // free (aslfg_ -> asl); // triggers segfault -- apparently freed in ancestor class
 #endif
 }
 
