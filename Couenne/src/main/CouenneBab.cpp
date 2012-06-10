@@ -663,8 +663,12 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
   bool use_RBS_Cbc = 
     !problem_ ||
     !(problem_ -> getRecordBestSol ()) ||
+    !(problem_ -> getRecordBestSol () -> getHasSol()) ||
     (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) && 
       (problem_ -> getRecordBestSol () -> getVal () > bestObj_)));
+
+  /* if we do not pass the cbc solution and problem_ -> getRecordBestSol () -> getHasSol() is true, then there should be a solution vector in problem_ -> getRecordBestSol () */
+  assert(use_RBS_Cbc || problem_ -> getRecordBestSol () -> getSol() != NULL);
 
   s.nonlinearSolver () -> model () -> finalize_solution 
     (status,
@@ -676,6 +680,7 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 const double * CouenneBab::bestSolution() const {
   if(!problem_ ||
      !(problem_ -> getRecordBestSol ()) ||
+     !(problem_ -> getRecordBestSol () -> getHasSol()) ||
      (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) &&
        (problem_ -> getRecordBestSol () -> getVal () > bestObj_))))
     return bestSolution_;
@@ -685,6 +690,7 @@ const double * CouenneBab::bestSolution() const {
 double CouenneBab::bestObj() const {
   if(!problem_ ||
      !(problem_ -> getRecordBestSol ()) ||
+     !(problem_ -> getRecordBestSol () -> getHasSol()) ||
      (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) &&
        (problem_ -> getRecordBestSol () -> getVal () > bestObj_))))
     return bestObj_;
