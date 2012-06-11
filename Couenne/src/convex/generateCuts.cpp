@@ -480,7 +480,6 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	    printf ("x_%d [%g,%g] ", orbit[j], lb [orbit [j]], ub [orbit [j]]);
 	    fflush (stdout);
 	  }
-	  printf ("\n");
 	}
 
 	for (int j = 0; j < orbit.size (); j++) {

@@ -336,7 +336,7 @@ void CouenneProblem::Compute_Symmetry() const{
     }
   }
 
-  //Print_Orbits ();
+  // Print_Orbits ();
 
   nauty_info -> computeAuto();
 }
@@ -348,9 +348,9 @@ void CouenneProblem::Print_Orbits () const {
 
   std::vector<std::vector<int> > *new_orbits = nauty_info->getOrbits();
 
-  printf("Couenne: %d orbits and %d generators",
-  nauty_info->getNumOrbits(),
-  nauty_info->getNumGenerators());
+  printf ("Couenne: %d generators",
+	  //  nauty_info->getNumOrbits(),
+	  nauty_info->getNumGenerators());
 
   int nNonTrivialOrbits = 0;
 

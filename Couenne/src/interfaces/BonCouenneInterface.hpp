@@ -63,7 +63,7 @@ namespace Couenne {
      * The put everything in an OsiSolverInterface.
      */
     virtual void extractLinearRelaxation
-    (OsiSolverInterface &si,  CouenneCutGenerator & couenneCg, bool getObj = 1, bool solveNlp = 1);
+    (OsiSolverInterface &si, CouenneCutGenerator & couenneCg, bool getObj = 1, bool solveNlp = 1);
 
   
     /** To set some application specific defaults. */

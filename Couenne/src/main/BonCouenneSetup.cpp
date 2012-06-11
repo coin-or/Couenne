@@ -273,7 +273,10 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   couenneCg -> Problem () -> setMaxCpuTime (getDoubleParameter (BabSetupBase::MaxTime));
 
-  ci -> extractLinearRelaxation (*continuousSolver_, *couenneCg);
+  std::string doHeuristic;
+  options () -> GetStringValue ("local_optimization_heuristic", doHeuristic, "couenne.");
+
+  ci -> extractLinearRelaxation (*continuousSolver_, *couenneCg, true, doHeuristic == "yes");
 
   // In case there are no discrete variables, we have already a
   // heuristic solution for which create a initialization heuristic
@@ -525,10 +528,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   // check branch variable selection for disjunctive cuts
 
   // Setup heuristic to solve MINLP problems. /////////////////////////////////
-
-  std::string doHeuristic;
-
-  options () -> GetStringValue ("local_optimization_heuristic", doHeuristic, "couenne.");
 
   if (doHeuristic == "yes") {
 
