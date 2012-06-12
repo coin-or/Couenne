@@ -297,7 +297,7 @@ Nauty::isMixedFreeZeroOrbit(const std::vector<int> &orbit) const
   return (containsFree && containsZero);
 }
 */
-/*
+
 void 
 Nauty::setWriteAutoms(const std::string &fname)
 {
@@ -314,4 +314,4 @@ Nauty::unsetWriteAutoms()
   fclose(afp_);
   options_->writeautoms = FALSE;
 }
-*/
+

@@ -107,7 +107,6 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
   // Copied OsiChooseVariable::setupList to adjust it to Orbital Branching
 
   {
-
     if (initialize) {
       status_=-2;
       delete [] goodSolution_;
@@ -391,9 +390,7 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
 //      info -> upper_);
 
 //   int retval = OsiChooseVariable::chooseVariable (solver, info, fixVariables);
-
 //   problem_ -> domain () -> pop ();
-
 //   return retval;
 // }
 

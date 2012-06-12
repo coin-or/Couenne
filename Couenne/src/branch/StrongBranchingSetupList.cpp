@@ -228,8 +228,8 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 
       int n = problem_ -> nVars ();
 
-      problem_ -> ChangeBounds (info -> lower_, info -> upper_, n);
-      problem_ -> Compute_Symmetry ();
+      // problem_ -> ChangeBounds (info -> lower_, info -> upper_, n);
+      // problem_ -> Compute_Symmetry ();
 
       //problem_ -> Print_Orbits ();
 

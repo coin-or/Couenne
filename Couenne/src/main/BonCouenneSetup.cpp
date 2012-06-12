@@ -456,6 +456,10 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   //   objects [nobj++] -> setPriority (contObjPriority);
   // }
 
+  couenneProb_ -> ChangeBounds (couenneProb_ -> Lb (), couenneProb_ -> Ub (), couenneProb_ -> nVars ());
+  couenneProb_ -> Compute_Symmetry ();
+  //couenneProb_ -> Print_Orbits ();
+
   // Add objects /////////////////////////////////
 
   continuousSolver_ -> addObjects (nobj, objects);

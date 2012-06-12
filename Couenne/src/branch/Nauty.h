@@ -18,6 +18,7 @@ extern "C" {
 #include <cstdio>
 #include <map>
 #include <vector>
+#include <string>
 
 class Nauty
 {
@@ -58,8 +59,9 @@ public:
   //bool isConstraintOrbit(const std::vector<int> &orbit) const;
   //bool isMixedFreeZeroOrbit(const std::vector<int> &orbit) const;
   //void makeFree(int ix) { vstat_[ix] = FREE; }  
-  //  void setWriteAutoms(const std::string &afilename);
-  //void unsetWriteAutoms();
+
+  void setWriteAutoms (const std::string &afilename);
+  void unsetWriteAutoms();
 
 private:
 

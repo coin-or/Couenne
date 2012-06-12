@@ -449,8 +449,11 @@ void CouenneProblem::setupSymmetry () {
 #ifdef COIN_HAS_NTY
   sym_setup ();
   Compute_Symmetry ();
-  if (jnlst_ -> ProduceOutput (Ipopt::J_ERROR, J_COUENNE))
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ERROR, J_COUENNE)) {
     Print_Orbits ();
+    //nauty_info -> setWriteAutoms ("couenne-generators.txt");
+  }
+
 #else
   if (orbitalBranching_) 
     jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "\

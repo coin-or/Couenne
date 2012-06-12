@@ -393,18 +393,20 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // tightening is done, we can apply further tightening using orbit
     // information.
 
-#ifdef COIN_HAS_NTY
-    //    ChangeBounds (psi -> getColLower (),  
-    //		  psi -> getColUpper (), 
-    //		  psi -> getNumCols ());
-    if (problem_ -> orbitalBranching ()){
+// #ifdef COIN_HAS_NTY
+//     //    ChangeBounds (psi -> getColLower (),  
+//     //		  psi -> getColUpper (), 
+//     //		  psi -> getNumCols ());
 
-     problem_ -> ChangeBounds (problem_ -> Lb (),
-			       problem_ -> Ub (),
-			       problem_ -> nVars ());
-     problem_ -> Compute_Symmetry ();
-    }
-#endif
+//     if (problem_ -> orbitalBranching ()){
+
+//       problem_ -> ChangeBounds (problem_ -> Lb (),
+// 				problem_ -> Ub (),
+// 				problem_ -> nVars ());
+
+//       problem_ -> Compute_Symmetry ();
+//     }
+// #endif
 
     // Bound tightening ////////////////////////////////////
 
@@ -494,7 +496,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	}
 
 	jnlst_ -> Printf (J_VECTOR, J_BOUNDTIGHTENING, 
-			  " --> new common lower bounds: [%g,--]\n", ll);
+			  " --> new common bounds: [%g,%g]\n", ll, uu);
 
 	for(int j = 0; j < orbit.size (); j++) {
 

@@ -37,16 +37,8 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 #ifdef COIN_HAS_NTY
 
   if (problem_ -> orbitalBranching ()) {
-    
-    problem_ -> ChangeBounds (solver -> getColLower(),
-			      solver -> getColUpper(),
-				problem_ -> nVars ());
-    
 
-    
-    problem_ -> Compute_Symmetry();
-
-    std::vector< int > *branch_orbit = problem_ -> Find_Orbit (indVar);
+    //problem_ -> Print_Orbits ();
 
     // if(branch_orbit -> size() >= 2){
     //   printf("branching on orbit of size %i \n", branch_orbit -> size());
@@ -84,6 +76,19 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
       // BRANCHING RULE -------------------------------------------------------------------------
 
       solver -> setColUpper (indVar, integer ? floor (brpt) : brpt); // down branch, x [indVar] <= brpt
+
+      if (!simulate_ && (problem_ -> orbitalBranching ())){
+
+	//printf ("LEFT BRANCH: x10 in [%g,%g]\n", solver -> getColLower() [10], solver -> getColUpper() [10]);
+
+	problem_ -> ChangeBounds (solver -> getColLower (),  
+				  solver -> getColUpper (),  
+				  problem_ -> nVars ());
+
+	problem_ -> Compute_Symmetry ();
+	//problem_ -> Print_Orbits ();
+      }
+
       if (chg_bds) chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
       /*
       for (int jj = 0; jj < 	problem_ -> nVars (); jj++) 
@@ -97,9 +102,21 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
       
       // UP BRANCH: xi >= brpt for all i in symmetry group
 
+      if (!simulate_ && (problem_ -> orbitalBranching ())){
+
+	problem_ -> ChangeBounds (solver -> getColLower (),  
+				  solver -> getColUpper (),  
+				  problem_ -> nVars ());
+
+	problem_ -> Compute_Symmetry ();
+	//problem_ -> Print_Orbits ();
+      }
+
+      std::vector< int > *branch_orbit = problem_ -> Find_Orbit (indVar);
+
       jnlst_ -> Printf (J_ERROR, J_BRANCHING, "Branch Symm (%d vars):", branch_orbit -> size ());
 
-      if (branch_orbit -> size () > 1)
+      if (!simulate_ && (branch_orbit -> size () > 1))
 	nOrbBr ++;
 
       bool 
@@ -150,6 +167,8 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	if (nodeExclude) printf (" (This node does not contain optimal solution)");
 	printf ("\n");
       }
+
+      delete branch_orbit;
     }
     /*
           for (int jj = 0; jj < 	problem_ -> nVars (); jj++) 
@@ -157,8 +176,6 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 		jj, 
 		solver -> getColLower () [jj], 
 		solver -> getColUpper () [jj]);*/
-
-    delete branch_orbit;
 
     return;
   }
