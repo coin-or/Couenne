@@ -47,9 +47,10 @@ using namespace Couenne;
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneJournalist.hpp"
-#include "Nauty.h"
 
 #ifdef COIN_HAS_NTY
+#include "Nauty.h"
+
 int nOrbBr = 0; // FIXME: horrible global variable. Brrr.
 int maxDepthOrbBranch = -1; // FIXME: horrible global variable. Brrr.
 int nSGcomputations = 0; // FIXME: horrible global variable. Brrr.
@@ -186,7 +187,9 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
     //////////////////////////////////
 
-    double symmGroupSize = prob -> getNtyInfo () -> getGroupSize ();
+#ifdef COIN_HAS_NTY
+    double symmGroupSize = prob -> orbitalBranching () ? prob -> getNtyInfo () -> getGroupSize () : -1;
+#endif
 
     if (!infeasible)
       bb (couenne); // do branch and bound
@@ -436,8 +439,13 @@ Branch-and-bound nodes:                  %8d\n",
 		//bb.bestBound (),
 		//bb.bestObj (),
 		infeasible ? 0 : bb.numNodes (),
+#ifdef COIN_HAS_NTY
 		symmGroupSize,
-		nSGcomputations);
+		nSGcomputations
+#else
+		-1,-1
+#endif
+);
 		//bb.iterationCount ());
 		//status.c_str (), message.c_str ());
     }

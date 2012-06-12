@@ -44,6 +44,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @COIN_HAS_ASL_TRUE@bin_PROGRAMS = couenne$(EXEEXT)
+@COIN_HAS_NTY_TRUE@am__append_1 = \
+@COIN_HAS_NTY_TRUE@	-I`$(CYGPATH_W) $(NTYINCDIR)/`
+
 subdir = src/main
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -330,23 +333,18 @@ couenne_DEPENDENCIES = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneRea
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
-AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../convex` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
+AM_CPPFLAGS = -I`$(CYGPATH_W) $(srcdir)/..` -I`$(CYGPATH_W) \
+	$(srcdir)/../convex` -I`$(CYGPATH_W) $(srcdir)/../expression` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
 	-I`$(CYGPATH_W) $(srcdir)/../expression/partial` \
-	-I`$(CYGPATH_W) $(srcdir)/../interfaces` \
-	-I`$(CYGPATH_W) $(srcdir)/../heuristics` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem` \
-	-I`$(CYGPATH_W) $(srcdir)/../cut/crossconv` \
-	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
-	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening/twoImpliedBT` \
-	-I`$(CYGPATH_W) $(srcdir)/../disjunctive` \
-	-I`$(CYGPATH_W) $(srcdir)/../readnl` \
-	$(COUENNELIB_CFLAGS) $(ASL_CFLAGS) 
-
+	-I`$(CYGPATH_W) $(srcdir)/../interfaces` -I`$(CYGPATH_W) \
+	$(srcdir)/../heuristics` -I`$(CYGPATH_W) $(srcdir)/../branch` \
+	-I`$(CYGPATH_W) $(srcdir)/../problem` -I`$(CYGPATH_W) \
+	$(srcdir)/../cut/crossconv` -I`$(CYGPATH_W) \
+	$(srcdir)/../bound_tightening` -I`$(CYGPATH_W) \
+	$(srcdir)/../bound_tightening/twoImpliedBT` -I`$(CYGPATH_W) \
+	$(srcdir)/../disjunctive` -I`$(CYGPATH_W) $(srcdir)/../readnl` \
+	$(COUENNELIB_CFLAGS) $(ASL_CFLAGS) $(am__append_1)
 
 # This line is necessary to allow VPATH compilation
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

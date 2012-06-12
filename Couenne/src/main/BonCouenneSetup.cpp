@@ -456,8 +456,13 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   //   objects [nobj++] -> setPriority (contObjPriority);
   // }
 
-  couenneProb_ -> ChangeBounds (couenneProb_ -> Lb (), couenneProb_ -> Ub (), couenneProb_ -> nVars ());
-  couenneProb_ -> Compute_Symmetry ();
+#ifdef COIN_HAS_NTY
+  if (couenneProb_ -> orbitalBranching ()) {
+
+    couenneProb_ -> ChangeBounds (couenneProb_ -> Lb (), couenneProb_ -> Ub (), couenneProb_ -> nVars ());
+    couenneProb_ -> Compute_Symmetry ();
+  }
+#endif
 
   //couenneProb_ -> Print_Orbits ();
 

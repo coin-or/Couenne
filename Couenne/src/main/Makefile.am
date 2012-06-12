@@ -44,5 +44,10 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/../readnl` \
 	$(COUENNELIB_CFLAGS) $(ASL_CFLAGS) 
 
+if COIN_HAS_NTY
+AM_CPPFLAGS += \
+	-I`$(CYGPATH_W) $(NTYINCDIR)/`
+endif
+
 # This line is necessary to allow VPATH compilation
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..
