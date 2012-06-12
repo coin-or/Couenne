@@ -47,9 +47,12 @@ using namespace Couenne;
 #include "CouenneProblemElem.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneJournalist.hpp"
+#include "Nauty.h"
 
 #ifdef COIN_HAS_NTY
 int nOrbBr = 0; // FIXME: horrible global variable. Brrr.
+int maxDepthOrbBranch = -1; // FIXME: horrible global variable. Brrr.
+int nSGcomputations = 0; // FIXME: horrible global variable. Brrr.
 #endif
 
 #include "CoinSignal.hpp"
@@ -182,6 +185,8 @@ Auxiliaries:     %8d (%d integer)\n\n",
     //jnlst -> Printf (J_ERROR, J_COUENNE, "Starting branch-and-bound\n");
 
     //////////////////////////////////
+
+    double symmGroupSize = prob -> getNtyInfo () -> getGroupSize ();
 
     if (!infeasible)
       bb (couenne); // do branch and bound
@@ -416,7 +421,7 @@ Branch-and-bound nodes:                  %8d\n",
       else
 	printf ("Stats: %-15s %4d [var] %4d [int] %4d [con] %4d [aux] "
 		"%6d [root] %8d [tot] %6g [sep] %8g [time] %8g [bb] "
-		"%20e [lower] %20e [upper] %7d [nodes]\n",// %s %s\n",
+		"%20e [lower] %20e [upper] %7d [nodes] %.0g [sg] %d [sgc]\n",// %s %s\n",
 		cp ? cp -> problemName (). c_str () : "unknown",
 		(cp) ? cp -> nOrigVars     () : -1, 
 		(cp) ? cp -> nOrigIntVars  () : -1, 
@@ -430,7 +435,9 @@ Branch-and-bound nodes:                  %8d\n",
 		ub, //bb.model (). getObjValue (),
 		//bb.bestBound (),
 		//bb.bestObj (),
-		infeasible ? 0 : bb.numNodes ());
+		infeasible ? 0 : bb.numNodes (),
+		symmGroupSize,
+		nSGcomputations);
 		//bb.iterationCount ());
 		//status.c_str (), message.c_str ());
     }

@@ -13,9 +13,13 @@
 #include "CouenneProblem.hpp"
 
 extern int nOrbBr;
+extern int maxDepthOrbBranch;
+extern int nSGcomputations;
 
 using namespace Ipopt;
 using namespace Couenne;
+
+#define OB_WEIGHT 0.6
 
 /** \brief Execute the core of the branch --- need to separate code
     because of include conflicts with other packages' config_*.h
@@ -28,7 +32,6 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
   /// 1) Nauty has been made available through configure
   /// 2) The orbital_branching option has been set to yes
   // printf("branchCore \n");
-
   
   if ((doFBBT_ && problem_ -> doFBBT ()) ||
       (doConvCuts_ && simulate_ && cutGen_))
@@ -74,6 +77,18 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
       }
       
       // BRANCHING RULE -------------------------------------------------------------------------
+
+      // change branching point to reflect unbalancedness of BB subtrees.
+
+      std::vector< int > *branch_orbit = problem_ -> Find_Orbit (indVar);
+
+      double
+	lb = solver -> getColLower () [indVar],
+	ub = solver -> getColUpper () [indVar],
+	ob_brpt = lb + (ub-lb) / (branch_orbit -> size () + 1),
+	OB_weight = OB_WEIGHT;
+
+      brpt = OB_weight * ob_brpt + (1-OB_weight) * brpt;
 
       solver -> setColUpper (indVar, integer ? floor (brpt) : brpt); // down branch, x [indVar] <= brpt
 
@@ -153,6 +168,16 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	      }
 	  }
 	}
+
+	double
+	  lb = solver -> getColLower () [indVar],
+	  ub = solver -> getColUpper () [indVar],
+	  ob_brpt = lb + (ub-lb) / (branch_orbit -> size () + 1),
+	  OB_weight = OB_WEIGHT;
+
+	// change branching point to reflect unbalancedness of BB subtrees.
+
+	brpt = OB_weight * ob_brpt + (1-OB_weight) * brpt;
 
 	// BRANCHING RULE -------------------------------------------------------------------------
 	if ((integer ? ceil  (brpt) : brpt) > solver -> getColLower () [*it]) {

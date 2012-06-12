@@ -536,12 +536,18 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
      "no", "Use Violation Transfer with $\\sum |\\pi_i a_{ij}|$",
      "yes","Use Reduced cost branching with $|\\sum \\pi_i a_{ij}|$");
 
-    roptions -> AddStringOption2 (
-      "orbital_branching",
-      "detect symmetries and apply orbital branching",
-      "no",
-      "yes", "",
-      "no", "");
+  roptions -> AddStringOption2 
+    ("orbital_branching",
+     "detect symmetries and apply orbital branching",
+     "no",
+     "yes", "",
+     "no", "");
+
+  roptions -> AddLowerBoundedIntegerOption
+    ("orbital_branching_depth",
+     "Maximum depth at which the symmetry group is computed",
+     -1, 10,
+     "Select -1 if you want to compute the symmetry group at all nodes");
 }
 
 

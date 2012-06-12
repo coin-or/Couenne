@@ -349,6 +349,18 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
         returnCode=-1;
         break; // exit loop
       } else if (status0==1 || status1==1) {
+
+	if (problem_ -> orbitalBranching () && 
+	    (Object -> columnNumber () >= 0) &&
+	    (problem_ -> Find_Orbit (Object -> columnNumber ()) -> size () > 1)) {
+
+	  problem_ -> ChangeBounds (solver -> getColLower (),  
+				    solver -> getColUpper (),  
+				    problem_ -> nVars ());
+
+	  problem_ -> Compute_Symmetry ();
+	}
+
         numberStrongFixed_++;
         if (!returnCriterion) {
 	  returnCode=1;

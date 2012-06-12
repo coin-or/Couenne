@@ -90,7 +90,7 @@
 
 using namespace Ipopt;
 using namespace Couenne;
-  
+
 CouenneSetup::~CouenneSetup(){
   if (couenneProb_ && couenneProb_is_own_)
     delete couenneProb_;
@@ -458,6 +458,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   couenneProb_ -> ChangeBounds (couenneProb_ -> Lb (), couenneProb_ -> Ub (), couenneProb_ -> nVars ());
   couenneProb_ -> Compute_Symmetry ();
+
   //couenneProb_ -> Print_Orbits ();
 
   // Add objects /////////////////////////////////

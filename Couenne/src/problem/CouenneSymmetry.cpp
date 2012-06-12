@@ -27,6 +27,8 @@ using namespace Couenne;
 
 #include "Nauty.h"
 
+extern int nSGcomputations;
+
 void Node::node(int i, double c , double l, double u, int cod, int s){
   index = i;
   coeff = c;
@@ -339,6 +341,8 @@ void CouenneProblem::Compute_Symmetry() const{
   // Print_Orbits ();
 
   nauty_info -> computeAuto();
+
+  ++nSGcomputations;
 }
 
   
@@ -348,9 +352,10 @@ void CouenneProblem::Print_Orbits () const {
 
   std::vector<std::vector<int> > *new_orbits = nauty_info->getOrbits();
 
-  printf ("Couenne: %d generators",
+  printf ("Couenne: %d generators, group size: %.0g",
 	  //  nauty_info->getNumOrbits(),
-	  nauty_info->getNumGenerators());
+	  nauty_info -> getNumGenerators () ,
+	  nauty_info -> getGroupSize ());
 
   int nNonTrivialOrbits = 0;
 
