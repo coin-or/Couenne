@@ -37,6 +37,8 @@
 
 // Code to enable user interruption
 static CbcModel * currentBranchModel = NULL; //pointer to the main b&b
+extern Bonmin::OACutGenerator2 * currentOA = NULL; //pointer to the OA generator
+extern CbcModel * OAModel; // pointer to the submip if using Cbc
 
 #define SIGNAL
 #ifdef SIGNAL
@@ -53,6 +55,8 @@ extern "C" {
       exit(0);
     }
     if (currentBranchModel)       currentBranchModel->sayEventHappened(); // stop at next node
+    if (OAModel)                  OAModel->sayEventHappened(); // stop at next node
+    if (currentOA)                currentOA->parameter().maxLocalSearchTime_ = 0.; // stop OA
 
     BonminInterruptedOnce = true;
   }
