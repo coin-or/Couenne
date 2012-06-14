@@ -52,6 +52,16 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
       // DOWN BRANCH: xi <= brpt
 
+      std::vector< int > *branch_orbit = problem_ -> Find_Orbit (indVar);
+
+      double
+	lb = solver -> getColLower () [indVar],
+	ub = solver -> getColUpper () [indVar],
+	ob_brpt = lb + (ub-lb) / (branch_orbit -> size () + 1),
+	OB_weight = OB_WEIGHT;
+
+      brpt = OB_weight * ob_brpt + (1-OB_weight) * brpt;
+
       if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
 
 	printf ("Branch: x%d <= %g [%g,%g]\n", 
@@ -79,16 +89,6 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
       // BRANCHING RULE -------------------------------------------------------------------------
 
       // change branching point to reflect unbalancedness of BB subtrees.
-
-      std::vector< int > *branch_orbit = problem_ -> Find_Orbit (indVar);
-
-      double
-	lb = solver -> getColLower () [indVar],
-	ub = solver -> getColUpper () [indVar],
-	ob_brpt = lb + (ub-lb) / (branch_orbit -> size () + 1),
-	OB_weight = OB_WEIGHT;
-
-      brpt = OB_weight * ob_brpt + (1-OB_weight) * brpt;
 
       solver -> setColUpper (indVar, integer ? floor (brpt) : brpt); // down branch, x [indVar] <= brpt
 
@@ -138,6 +138,16 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	brExclude   = false, 
 	nodeExclude = false;
 
+      double
+	lb = solver -> getColLower () [indVar],
+	ub = solver -> getColUpper () [indVar],
+	ob_brpt = lb + (ub-lb) / ((double) branch_orbit -> size () + 1),
+	OB_weight = OB_WEIGHT;
+
+      // change branching point to reflect unbalancedness of BB subtrees.
+      
+      brpt = OB_weight * ob_brpt + (1-OB_weight) * brpt;
+
       for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it)  {
 	assert (*it < problem_ -> nVars ());
 	//if (*it >= problem_ -> nVars ()) 
@@ -168,16 +178,6 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	      }
 	  }
 	}
-
-	double
-	  lb = solver -> getColLower () [indVar],
-	  ub = solver -> getColUpper () [indVar],
-	  ob_brpt = lb + (ub-lb) / (branch_orbit -> size () + 1),
-	  OB_weight = OB_WEIGHT;
-
-	// change branching point to reflect unbalancedness of BB subtrees.
-
-	brpt = OB_weight * ob_brpt + (1-OB_weight) * brpt;
 
 	// BRANCHING RULE -------------------------------------------------------------------------
 	if ((integer ? ceil  (brpt) : brpt) > solver -> getColLower () [*it]) {
