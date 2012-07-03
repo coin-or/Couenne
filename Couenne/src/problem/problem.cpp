@@ -403,6 +403,8 @@ void CouenneProblem::realign () {
 /// Add list of options to be read from file
 void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
 
+  roptions -> SetRegisteringCategory ("Couenne options", Bonmin::RegisteredOptions::CouenneCategory);
+
   roptions -> AddNumberOption
     ("art_cutoff",
      "Artificial cutoff",

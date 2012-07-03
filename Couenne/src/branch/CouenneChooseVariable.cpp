@@ -466,7 +466,7 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
     char optname [40], optname2 [40], description [90];
     sprintf (optname,  "branch_pt_select_%s", br_ops [i].c_str ());
     sprintf (optname2, "branch_lp_clamp_%s",  br_ops [i].c_str ());
-    sprintf (description, "Chooses branching point selection strategy for operator %s", 
+    sprintf (description, "Chooses branching point selection strategy for operator %s.",
 	     br_ops [i].c_str ());
 
     roptions -> AddStringOption7
@@ -486,11 +486,10 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
 
     roptions -> AddBoundedNumberOption
       (optname2,
-       "Defines safe interval percentage [0,0.5] for using LP point as a branching point",
+       "Defines safe interval percentage [0,0.5] for using LP point as a branching point.",
        0.,false,
        0.5,false,
-       0.2,
-       "Default value is 0.2.");
+       0.2);
   }
 
   roptions -> AddBoundedNumberOption
@@ -499,16 +498,14 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
      "b = alpha x_lp + (1-alpha) (lb+ub)/2.",
      0.,false,
      1.,false,
-     default_alpha,
-     "Default value is 0.25.");
+     default_alpha);
 
   roptions -> AddBoundedNumberOption
     ("branch_lp_clamp",
-     "Defines safe interval percentage for using LP point as a branching point",
+     "Defines safe interval percentage for using LP point as a branching point.",
      0.,false,
      1.,false,
-     0.2,
-     "Default value is 0.2.");
+     0.2);
 
   // Setting priorities slightly below CbcBranchingObjects' priority,
   // so that Couenne's integer branching is used
