@@ -377,7 +377,24 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
    conshdlrdata->milp = milp;
    conshdlrdata->ncuttingrounds = 0;
 
-#if SCIP_VERSION >= 210
+#if SCIP_VERSION >= 300
+   /* include constraint handler */
+   SCIP_CALL( SCIPincludeConshdlr(scip, CONSHDLR_NAME, CONSHDLR_DESC,
+         CONSHDLR_SEPAPRIORITY, CONSHDLR_ENFOPRIORITY, CONSHDLR_CHECKPRIORITY,
+         CONSHDLR_SEPAFREQ, CONSHDLR_PROPFREQ, CONSHDLR_EAGERFREQ, CONSHDLR_MAXPREROUNDS,
+         CONSHDLR_DELAYSEPA, CONSHDLR_DELAYPROP, CONSHDLR_DELAYPRESOL, CONSHDLR_NEEDSCONS,
+         SCIP_PROPTIMING_BEFORELP,
+         conshdlrCopyRowcuts,
+         consFreeRowcuts, consInitRowcuts, consExitRowcuts,
+         consInitpreRowcuts, consExitpreRowcuts, consInitsolRowcuts, consExitsolRowcuts,
+         consDeleteRowcuts, consTransRowcuts, consInitlpRowcuts,
+         consSepalpRowcuts, consSepasolRowcuts, consEnfolpRowcuts, consEnfopsRowcuts, consCheckRowcuts,
+         consPropRowcuts, consPresolRowcuts, consRespropRowcuts, consLockRowcuts,
+         consActiveRowcuts, consDeactiveRowcuts,
+         consEnableRowcuts, consDisableRowcuts, NULL,
+         consPrintRowcuts, consCopyRowcuts, consParseRowcuts, NULL, NULL,
+         conshdlrdata) );
+#elif SCIP_VERSION >= 210
    /* include constraint handler */
    SCIP_CALL( SCIPincludeConshdlr(scip, CONSHDLR_NAME, CONSHDLR_DESC,
          CONSHDLR_SEPAPRIORITY, CONSHDLR_ENFOPRIORITY, CONSHDLR_CHECKPRIORITY,
