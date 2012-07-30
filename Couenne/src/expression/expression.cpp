@@ -218,7 +218,7 @@ void exprCopy::realign (const CouenneProblem *p) {
     expression *trash = copy_;
 
     copy_ = p -> Var (copy_ -> Index ());
-    delete trash;
+    //delete trash; // Otherwise ticket 13
   } else copy_ -> realign (p);
 }
 
