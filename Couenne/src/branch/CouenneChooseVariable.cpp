@@ -77,8 +77,6 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_DETAILED, J_BRANCHING)) {
 
-    printf ("----------------- setup list\n");
-
     for (int i=0; i<problem_ -> domain () -> current () -> Dimension (); i++) 
 
       if (problem_ -> Var (i) -> Multiplicity () > 0) {
@@ -104,8 +102,7 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
 
   problem_ -> domain () -> pop ();
 
-  jnlst_ -> Printf (Ipopt::J_ITERSUMMARY, J_BRANCHING, "----------------- setup list done, %d objects\n", 
-		    retval);
+  jnlst_ -> Printf (Ipopt::J_ITERSUMMARY, J_BRANCHING, "----------------- setup list done, %d objects\n", retval);
 
   return retval;
 }

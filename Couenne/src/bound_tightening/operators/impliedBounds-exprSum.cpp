@@ -146,7 +146,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       infUp1 = -1, infUp2 = -1;
 
   // upper bound of the sum, considering lower/upper bounds of the
-  // variables but negliging the infinite ones:
+  // variables but neglecting the infinite ones:
   //
   // lower = $a0 + \sum_{i in I_1: a_i <  \infinity} a_i l_i
   //             + \sum_{i in I_2: a_i > -\infinity} a_i u_i$
@@ -177,9 +177,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       slackU = wu - upper; // 
 
     // if lower < wl or upper > wu, some bounds can be tightened.
-    // 
-    // otherwise, there is no implication, but if lower
-    //
+    // Otherwise, there is no implication, but if lower
     // steal some work to bound propagation... 
 
     if ((slackL > 0.) &&
