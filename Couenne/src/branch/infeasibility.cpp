@@ -79,19 +79,27 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
 
   CouNumber brkPt = computeBranchingPoint (info, way, obj_ignored);
 
-  if (pseudoMultType_ != PROJECTDIST)
-    setEstimates (info, &retval, &brkPt);
+  if (fabs (brkPt) > 1e27) // why 1e27? Check ClpModel.cpp:613
 
-  if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
-    printf("index = %d up = %e down = %e bounds [%e,%e] brpt = %e inf = %e\n", 
-	   index, upEstimate_, downEstimate_, 
-	   info -> lower_ [index],
-	   info -> upper_ [index], brkPt, retval);
+    retval = 1e-4; // set infeasibility to a small value hoping it
+		   // will be beaten by another variable
+  else {
+
+    if (pseudoMultType_ != PROJECTDIST)
+      setEstimates (info, &retval, &brkPt);
+
+    if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
+      printf("index = %d up = %e down = %e bounds [%e,%e] brpt = %e inf = %e\n", 
+  	     index, upEstimate_, downEstimate_, 
+ 	     info -> lower_ [index],
+	     info -> upper_ [index], brkPt, retval);
+    }
+
+    if (retval <= CoinMin (COUENNE_EPS, feas_tolerance_))
+      retval = 0;
   }
 
   problem_ -> domain () -> pop (); // domain not used below
-
-  retval = ((retval <= CoinMin (COUENNE_EPS, feas_tolerance_)) ? 0. : retval);
 
   int refInd = reference_ -> Index ();  
 

@@ -35,14 +35,15 @@
 // sets cutoff a bit above real one, to avoid single-point feasible sets
 #define CUTOFF_TOL 1e-6
 
+#define SIGNAL
+#ifdef SIGNAL
+
+#include "CoinSignal.hpp"
+
 // Code to enable user interruption
 static CbcModel * currentBranchModel = NULL; // pointer to the main b&b
 extern Bonmin::OACutGenerator2 *currentOA;   // pointer to the OA generator
 extern CbcModel                *OAModel;     // pointer to the submip if using Cbc
-
-#define SIGNAL
-#ifdef SIGNAL
-#include "CoinSignal.hpp"
 
 extern "C" {
 

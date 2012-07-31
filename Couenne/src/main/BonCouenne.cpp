@@ -283,11 +283,12 @@ Auxiliaries:     %8d (%d integer)\n\n",
 	foundSol = true;
       }
 
-      retcomp = rs->compareAndSave(modCbcSol, modCbcSolVal, 
-				       modCbcSolMaxViol, cbcSolIsFeas,
-				       modCouenneSol, modCouenneSolVal, 
-				       modCouenneSolMaxViol, couenneSolIsFeas, 
-				       modelNvars, cp->getFeasTol());
+      retcomp = rs -> compareAndSave (modCbcSol, modCbcSolVal, 
+				      modCbcSolMaxViol, cbcSolIsFeas,
+				      modCouenneSol, modCouenneSolVal, 
+				      modCouenneSolMaxViol, couenneSolIsFeas, 
+				      modelNvars, cp->getFeasTol());
+
       // switch (retcomp) {
       // case -1: printf("No solution found\n"); break;
       // case 0: printf("Best solution found by Cbc. Value: %10.4f. Tolerance: %10g\n", modCbcSolVal, modCbcSolMaxViol); break;

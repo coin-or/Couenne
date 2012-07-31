@@ -10,7 +10,7 @@
 
 #include <math.h>
 
-#include "CouenneTypes.hpp"
+#include "CouenneFunTriplets.hpp"
 
 #define MAX_ITER 10
 #define COU_POW_TOLERANCE 1e-12
@@ -18,7 +18,7 @@
 //#define DEBUG_POWNEW
 
 #ifndef DEBUG_POWNEW
-#include "CouenneFunTriplets.hpp"
+#include "CouenneTypes.hpp"
 #else
 #include <stdlib.h>
 #include <stdio.h>

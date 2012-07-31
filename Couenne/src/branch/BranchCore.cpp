@@ -239,6 +239,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
     // BRANCHING RULE -------------------------------------------------------------------------
     solver -> setColUpper (indVar, integer ? floor (brpt + COUENNE_EPS) : brpt); // down branch, x [indVar] <= brpt
+    assert (solver -> getColUpper () [indVar] <= brpt + COUENNE_EPS);
     if (chg_bds) chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
 
   } else {
