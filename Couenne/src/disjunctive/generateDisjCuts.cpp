@@ -258,15 +258,14 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 
     int ncols = si.getNumCols ();
 
-    bool tightened = false;
-
     for (int i=0; i<ncols; i++, newLo++, newUp++) {
 
-      if (*newLo > *oldLo++ + COUENNE_EPS) {tighterLower.insert (i, *newLo); tightened = true;}
-      if (*newUp < *oldUp++ - COUENNE_EPS) {tighterUpper.insert (i, *newUp); tightened = true;}
+      if (*newLo > *oldLo++ + COUENNE_EPS) tighterLower.insert (i, *newLo);
+      if (*newUp < *oldUp++ - COUENNE_EPS) tighterUpper.insert (i, *newUp);
     }
 
-    if (tightened) {
+    if ((tighterLower.getNumElements () > 0) || 
+	(tighterUpper.getNumElements () > 0)) {
       OsiColCut tighter;
       tighter.setLbs (tighterLower);
       tighter.setUbs (tighterUpper);
