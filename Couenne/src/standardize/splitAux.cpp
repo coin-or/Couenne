@@ -477,7 +477,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf   ("  Standardize rest (2nd level). Rest: "); fflush (stdout); rest -> print (); 
-    printf ("\n                                Body: "); fflush (stdout); body -> print (); printf ("]\n");
+    printf ("\n                                Body: "); fflush (stdout); body -> print (); 
   }
 
   // second argument is set to false so as to instruct standardize not
@@ -486,12 +486,9 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
   exprAux *aux = rest -> standardize (this, false);
 
-  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-
-    if (aux) {
+  if (aux && jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
       printf ("  Aux: "); aux -> print ();
       printf (" := ");    aux -> Image () -> print ();
-    }
   }
 
   if (aux) {
@@ -499,14 +496,11 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     //rest = aux -> Image () -> clone (&domain_);
     rest = aux -> Image (); // -> clone (&domain_);
     aux -> Image (NULL);
-    delete aux; // gives segfault in [min {y: y>=x*x}]
+    //delete aux; // segfaults on simplified expressions? (see test/simple.nl)
   }
 
-  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf (" ==> "); 
-    rest -> print ();
-    printf ("\n");
-  }
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) 
+    {printf (" ==> (%d)", auxInd); rest -> print (); printf ("\n");}
 
   return auxInd;
 }

@@ -90,7 +90,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
     //printf ("REST [%d] [%g,%g]: ", wind, p -> Lb (wind), p -> Ub (wind)); rest -> print (); printf ("\n");
 
-    if (wind >= 0) { // this IS the definition of an auxiliary variable w = f(x)
+    if (wind >= 0) { // this IS the definition of an auxiliary variable, w [ <= | >= | = ] f(x)
 
       // simplify expression (you never know)
 
@@ -111,7 +111,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	if (aSign != expression::AUX_LEQ) p -> Var (wind) -> lb () = constRHS;
 	if (aSign != expression::AUX_GEQ) p -> Var (wind) -> ub () = constRHS;
 
-	delete rest;
+	//delete rest;
 	return NULL;
       }
 
