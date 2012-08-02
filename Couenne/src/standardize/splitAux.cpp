@@ -477,7 +477,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf   ("  Standardize rest (2nd level). Rest: "); fflush (stdout); rest -> print (); 
-    printf ("\n                                Body: "); fflush (stdout); body -> print (); printf ("]\n");
+    printf ("\n                                Body: "); fflush (stdout); body -> print (); 
   }
 
   // second argument is set to false so as to instruct standardize not
@@ -500,7 +500,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
   }
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) 
-    {printf (" ==> "); rest -> print (); printf ("\n");}
+    {printf (" ==> (%d)", auxInd); rest -> print (); printf ("\n");}
 
   return auxInd;
 }
