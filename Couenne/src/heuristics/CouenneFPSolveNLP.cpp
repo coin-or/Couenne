@@ -72,7 +72,7 @@ CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
   problem_ -> setObjective (0, newObj);
   nlp_     -> setObjective (newObj);
 
-  if (problem_ -> Jnlst () -> ProduceOutput (J_STRONGWARNING, J_NLPHEURISTIC)) {
+  if (problem_ -> Jnlst () -> ProduceOutput (J_ALL, J_NLPHEURISTIC)) {
     printf ("now solving NLP:\n");
     problem_ -> print ();
     printf ("-----------------------\n");

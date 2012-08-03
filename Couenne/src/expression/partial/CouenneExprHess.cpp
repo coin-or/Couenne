@@ -189,6 +189,9 @@ ExprHess::ExprHess (CouenneProblem *p):
   /// for each variable, fill a row of the hessian
   for (int i=0; i < nVars; i++) {
 
+    if (p -> Var (i) -> Multiplicity () <= 0)
+      continue;
+
     // create dense row. These will become numL later
     int          *rnz = (int          *) malloc (nVars * sizeof (int));   // row's number of nonzero
     int         **lam = (int         **) malloc (nVars * sizeof (int *)); // row's vectors of indices of nonzeros

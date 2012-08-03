@@ -159,6 +159,9 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 
     for (int i = 0; i < problem_ -> nVars (); ++i) {
 
+      if (problem_ -> Var (i) -> Multiplicity () <= 0)
+	continue;
+
       if (problem_ -> Var (i) -> isInteger () &&
 	  (fabs (iSol [i] - ceil (iSol [i] - .5)) > 1e-4))
 	++nNonint;
@@ -228,7 +231,10 @@ CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int ni
 	// fix integer variables
 
 	for (int i = problem_ -> nVars (); i--;)
-	  if (milp_ -> isInteger (i))
+
+	  if ((problem_ -> Var (i) -> Multiplicity () > 0) &&
+	      (milp_ -> isInteger (i)))
+
 	    newLB [i] = newUB [i] = iSol [i];
 
 	postlp_ -> setColLower (newLB);

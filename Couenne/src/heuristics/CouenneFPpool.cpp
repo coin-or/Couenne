@@ -48,11 +48,11 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x, bool copi
        i != p -> Variables (). end ();
        ++i) {
 
-    CouNumber 
-      vval = (**i) ();
-
     if ((*i) -> Multiplicity () <= 0)
       continue;
+
+    CouNumber 
+      vval = (**i) ();
 
     if ((*i) -> isInteger ()) {
 
@@ -148,9 +148,18 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
 
   switch (comparedTerm) {
 
-  case SUM_NINF: return (nNLinf_   + nIinf_   < other.nNLinf_   + other.nIinf_);
-  case SUM_INF:  return (maxNLinf_ + maxIinf_ < other.maxNLinf_ + other.maxIinf_);
-  case OBJVAL:   return (objVal_              < other.objVal_);
+  case SUM_NINF:     return (nNLinf_   + nIinf_   < other.nNLinf_   + other.nIinf_);
+  case SUM_INF:      return (maxNLinf_ + maxIinf_ < other.maxNLinf_ + other.maxIinf_);
+  case OBJVAL:       return (objVal_              < other.objVal_);
+  case INTEGER_VARS: {
+
+    // lexicographical comparison
+
+    for (int i=0; i<n_; ++i)
+      if (x_ [i] < other.x_ [i])
+	return true;
+    return false;
+  }
   }
 
   printf ("CouenneFPsolution::compare: bad compared term\n");
@@ -216,6 +225,8 @@ void CouenneFPpool::findClosestAndReplace (double *sol, double *nSol, int nvars)
 
 	  delta = *x++ - *s++;
 
+	  // TODO: check multiplicity () > 0)
+
 	  dist += delta * delta;
 
 	  if (dist >= bestdist) { // interrupt check of this solution
@@ -228,8 +239,8 @@ void CouenneFPpool::findClosestAndReplace (double *sol, double *nSol, int nvars)
 	if (move_on) 
 	  continue;
 
-         //update best solution
-         if( dist < bestdist )
+	//update best solution
+	if( dist < bestdist )
          {
             bestdist = dist;
             bestsol = i;

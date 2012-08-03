@@ -25,7 +25,7 @@ namespace Couenne {
 
   /// what term to compare: the sum of infeasibilities, the sum of
   /// numbers of infeasible terms, or the objective function
-  static enum what_to_compare {SUM_NINF = 0, SUM_INF, OBJVAL} comparedTerm_;
+  static enum what_to_compare {SUM_NINF = 0, SUM_INF, OBJVAL, INTEGER_VARS} comparedTerm_;
 
   /// Class containing a solution with infeasibility evaluation
   class CouenneFPsolution {
@@ -33,7 +33,7 @@ namespace Couenne {
   protected:
 
     CouNumber *x_;        ///< solution
-    int        n_;        ///< number of variables (for independence from CouenneProblem
+    int        n_;        ///< number of variables (for independence from CouenneProblem)
     int        nNLinf_;   ///< number of NL      infeasibilities
     int        nIinf_;    ///< number of integer infeasibilities
     CouNumber  objVal_;   ///< objective function value

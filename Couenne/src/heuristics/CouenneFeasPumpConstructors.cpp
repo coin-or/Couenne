@@ -46,6 +46,9 @@ void CouenneFeasPump::initIpoptApp () {
 
   app_ -> Options () -> SetStringValue ("fixed_variable_treatment", "make_parameter");
 
+  // Suppress iteration output from nonlinear solver
+  app_ -> Options () -> SetStringValue ("sb", "yes", false, true);
+
   if (status != Solve_Succeeded)
     printf ("FP: Error in initialization\n");
 }
@@ -140,7 +143,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 #endif
 
   } else
-    pool_ = new CouenneFPpool (SUM_NINF);
+    //pool_ = new CouenneFPpool (SUM_NINF);
+    pool_ = new CouenneFPpool (INTEGER_VARS);
 
   setHeuristicName ("Couenne Feasibility Pump");
 
@@ -280,6 +284,9 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     // create the argument list (x_i - x_i^0)^2 for all i's
     for (int i=0; i<problem_ -> nVars (); i++) {
 
+      if (problem_ -> Var (i) -> Multiplicity () <= 0)
+	continue;
+
       if (compDistInt_ == FP_DIST_INT && 
 	  !(problem_ -> Var (i) -> isInteger ()))
 	continue;
@@ -327,6 +334,10 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
     // Add Hessian part -- only lower triangular part
     for (int i=0; i<num; ++i, ++row, ++col, ++val) {
+
+      if ((problem_ -> Var (*row) -> Multiplicity () <= 0) ||
+	  (problem_ -> Var (*col) -> Multiplicity () <= 0))
+	continue;
 
       // check if necessary given options
 
@@ -379,6 +390,9 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
       // create the argument list (x_i - x_i^0)^2 for all i's
       for (int i=0; i<problem_ -> nVars (); i++) {
+
+	if (problem_ -> Var (i) -> Multiplicity () <= 0)
+	  continue;
 	  
 	if ((compDistInt_ == FP_DIST_INT && 
 	     !(problem_ -> Var (i) -> isInteger ())) ||
@@ -424,7 +438,8 @@ void CouenneFeasPump::fixIntVariables (double *sol) {
 
   for (int i = problem_ -> nVars (); i--;)
 
-    if (problem_ -> Var (i) -> isInteger ()) {
+    if ((problem_ -> Var (i) -> isInteger ()) &&
+	(problem_ -> Var (i) -> Multiplicity () > 0)) {
 
       double 
 	value = sol [i],

@@ -32,8 +32,8 @@
 using namespace Ipopt;
 using namespace Couenne;
 
-void printDist (CouenneProblem *p, double *iSol, double *nSol);
-void printCmpSol (int n, double *iSol, double *nSol, int direction);
+void printDist   (CouenneProblem *p, double *iSol, double *nSol);
+void printCmpSol (CouenneProblem *p, double *iSol, double *nSol, int direction);
 
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
@@ -78,7 +78,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     nlp_ -> getSaveOptHessian () = true;
 
   if (problem_ -> Jnlst () -> ProduceOutput  
-      (J_WARNING, J_NLPHEURISTIC)) {
+      (J_ALL, J_NLPHEURISTIC)) {
 
     printf ("initial NLP:\n");
     problem_ -> print ();
@@ -174,11 +174,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // if no MILP solution was found, bail out
 
     if (!iSol || z >= COIN_DBL_MAX/2) {
-
       problem_ -> Jnlst () -> Printf 
 	(Ipopt::J_ERROR, J_NLPHEURISTIC,
-	 "FP: breaking out of loop upon %p==NULL or %.3f large\n", iSol, z);
-
+	 "FP: breaking out of loop upon %p==NULL or z large (z=%.3f)\n", iSol, z);
       break;
     }
 
@@ -255,9 +253,12 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	int startIndex = (int) floor (CoinDrand48 () * problem_ -> nOrigVars ());
 
-	for (int ii=problem_ -> nOrigVars (); ii--; lb++, ub++) {
+	for (int ii = problem_ -> nOrigVars (); ii--; lb++, ub++) {
 
-	  // make perturbation start from random points
+	  if (problem_ -> Var (ii) -> Multiplicity () <= 0)
+	    continue;
+
+	  // make perturbation start from pseudo-random points
 
 	  int i = (startIndex + ii) % problem_ -> nOrigVars ();
 
@@ -282,7 +283,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  }
 	}
       }
-
     } else tabuPool_. insert (CouenneFPsolution (problem_, iSol));
 
 #ifdef FM_CHECKNLP2
@@ -290,7 +290,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 				       true, // stopAtFirstViol
 				       true, // checkALL
 				       problem_->getFeasTol());
-    if(isChecked) {
+    if (isChecked) {
       z = problem_->getRecordBestSol()->getModSolVal();
     }
 
@@ -298,37 +298,67 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     isChecked = problem_ -> checkNLP (iSol, z, true);
 #endif  /* not FM_CHECKNLP2 */
 
+    // Possible improvement: if IP-infeasible or if z does not improve
+    // the best solution found so far, then try the following:
+    //
+    // 1) Fix integer variables to IP solution's corresponding components
+    // 2) Solve restriction with original obj
+    // 3) If still MINLP infeasible or z not better
+    // 4)   Repeat 
+    // 5)     Get solution x* from pool
+    // 6)     Solve with original object
+    // 7)   Until MINLP feasible and z better or no more solutions in the pool
+    // 8) If found solution, set it, otherwise keep previously found (IP-feasible) one
+
+    if (!isChecked || z > problem_ -> getCutOff ()) {
+
+      
+
+    }
+
+    // Whatever the previous block yielded, we are now going to check
+    // if we have a new solution, and if so we save it.
+
     if (isChecked) {
 
-      problem_ -> Jnlst () -> Printf 
-	(Ipopt::J_ERROR, J_NLPHEURISTIC, 
-	 "FP: IP solution is MINLP feasible\n");
+      problem_ -> Jnlst () -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC, "FP: IP solution is MINLP feasible\n");
 
       // solution is MINLP feasible! Save it.
 
       retval = 1;
       objVal = z;
 
-#ifdef FM_CHECKNLP2
-#ifdef FM_TRACE_OPTSOL
-      problem_->getRecordBestSol()->update();
-      best = problem_->getRecordBestSol()->getSol();
-      objVal = problem_->getRecordBestSol()->getVal();
-#else /* not FM_TRACE_OPTSOL */
-      best = problem_->getRecordBestSol()->getModSol(problem_->nVars());
-      objVal = z;
-#endif /* not FM_TRACE_OPTSOL */
-#else /* not FM_CHECKNLP2 */
-#ifdef FM_TRACE_OPTSOL
-      problem_->getRecordBestSol()->update(iSol, problem_->nVars(),
-					   z, problem_->getFeasTol());
-      best = problem_->getRecordBestSol()->getSol();
-      objVal = problem_->getRecordBestSol()->getVal();
-#else /* not FM_TRACE_OPTSOL */
+      // Found a MINLP-feasible solution, but to keep diversity do not
+      // use the best available. Just use this.
+      //
+      // #ifdef FM_CHECKNLP2
+      // #  ifdef FM_TRACE_OPTSOL
+      //       problem_->getRecordBestSol()->update();
+      //       best = problem_->getRecordBestSol()->getSol();
+      //       objVal = problem_->getRecordBestSol()->getVal();
+      // #  else /* not FM_TRACE_OPTSOL */
+      //       best = problem_->getRecordBestSol()->getModSol(problem_->nVars());
+      //       objVal = z;
+      // #  endif /* not FM_TRACE_OPTSOL */
+      // #else /* not FM_CHECKNLP2 */
+      // #  ifdef FM_TRACE_OPTSOL
+      //       problem_->getRecordBestSol()->update(iSol, problem_->nVars(),
+      // 					   z, problem_->getFeasTol());
+      //       best = problem_->getRecordBestSol()->getSol();
+      //       objVal = problem_->getRecordBestSol()->getVal();
+      // #  else /* not FM_TRACE_OPTSOL */
+
       best   = iSol;
       objVal = z;
-#endif /* not FM_TRACE_OPTSOL */
-#endif /* not FM_CHECKNLP2 */
+
+      // #  ifdef FM_TRACE_OPTSOL
+      //       problem_->getRecordBestSol()->update();
+      //       best = problem_->getRecordBestSol()->getSol();
+      //       objVal = problem_->getRecordBestSol()->getVal();
+
+
+      // #  endif /* not FM_TRACE_OPTSOL */
+      // #endif /* not FM_CHECKNLP2 */
 
       if (z < problem_ -> getCutOff ()) {
 
@@ -337,7 +367,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	t_chg_bounds *chg_bds = NULL;
 
 	if (objInd >= 0) {
-	
 	  chg_bds = new t_chg_bounds [problem_ -> nVars ()];
 	  chg_bds [objInd].setUpper (t_chg_bounds::CHANGED); 
 	}
@@ -345,10 +374,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	// if bound tightening clears the whole feasible set, stop
 	bool is_still_feas = problem_ -> btCore (chg_bds);
 
-	// don't tighten MILP if BT says it's infeasible
-
-	if (chg_bds) 
+	if (chg_bds)
 	  delete [] chg_bds;
+
+	// don't tighten MILP if BT says it's infeasible
 
 	if (!is_still_feas)
 	  break;
@@ -361,9 +390,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  *mub = milp_    -> getColUpper ();
 
 	for (int i=problem_ -> nVars (), j=0; i--; ++j, ++plb, ++pub) {
-	    
-	  if (*plb > *mlb++) milp_ -> setColLower (j, *plb);
-	  if (*pub < *mub++) milp_ -> setColUpper (j, *pub);
+
+	  bool neglect = problem_ -> Var (j) -> Multiplicity () <= 0;
+
+	  if (*plb > *mlb++) milp_ -> setColLower (j, neglect ? 0. : *plb);
+	  if (*pub < *mub++) milp_ -> setColUpper (j, neglect ? 0. : *pub);
 	}
       }
 
@@ -372,7 +403,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     } else if (milpCuttingPlane_ == FP_CUT_EXTERNAL || 
 	       milpCuttingPlane_ == FP_CUT_POST) {
 
-      // solution is not MINLP feasible, it might get cut by
+      // Solution is IP- but not MINLP feasible: it might get cut by
       // linearization cuts. If so, add a round of cuts and repeat.
 
       OsiCuts cs;
@@ -415,7 +446,12 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       for (int i = 0; i < problem_ -> nVars (); ++i) {
 
-	if (problem_ -> Var (i) -> isInteger () &&
+	exprVar *e = problem_ -> Var (i);
+
+	if (e -> Multiplicity () <= 0)
+	  continue;
+
+	if (e -> isInteger () &&
 	    (fabs (iSol [i] - ceil (iSol [i] - .5)) > 1e-4))
 	  ++nNonint;
 
@@ -430,7 +466,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC)) {
 
       printDist   (problem_,             iSol, nSol);
-      printCmpSol (problem_ -> nVars (), iSol, nSol, 0);
+      printCmpSol (problem_, iSol, nSol, 0);
     }
 
     if (z > COIN_DBL_MAX/2) // something went wrong in the NLP, bail out
@@ -570,7 +606,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       }
 
 #else /* not FM_CHECKNLP2 */
-    isChecked = problem_ -> checkNLP (nSol, z, true);
+      isChecked = problem_ -> checkNLP (nSol, z, true);
 #endif  /* not FM_CHECKNLP2 */
     }
 
@@ -604,13 +640,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   }
 
   if (retval > 0) {
-
     if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC)) {
-
       printf ("FP: returning MINLP feasible solution:\n");
       printDist (problem_, best, nSol);
     }
-
     CoinCopyN (best, problem_ -> nVars (), newSolution);
   }
 
@@ -660,11 +693,11 @@ void compDistSingle (CouenneProblem *p,
        i != p -> Variables (). end ();
        ++i) {
 
-    CouNumber 
-      vval = (**i) ();
-
     if ((*i) -> Multiplicity () <= 0)
       continue;
+
+    CouNumber 
+      vval = (**i) ();
 
     if ((*i) -> isInteger ()) {
 
@@ -715,10 +748,15 @@ void printDist (CouenneProblem *p, double *iSol, double *nSol) {
 
     dist = 0.;
 
-    for (int i = p -> nVars (); i--;)
+    for (int i = p -> nVars (); i--;) {
+
+      if (p -> Var (i) -> Multiplicity () <= 0)
+	continue;
+
       dist += 
 	(iSol [i] - nSol [i]) * 
 	(iSol [i] - nSol [i]);
+    }
 
     dist = sqrt (dist);
   }
@@ -735,8 +773,10 @@ void printDist (CouenneProblem *p, double *iSol, double *nSol) {
 
 #define WRAP 3
 
-void printCmpSol (int n, double *iSol, double *nSol, int direction) {
-  
+void printCmpSol (CouenneProblem *p, double *iSol, double *nSol, int direction) {
+
+  int n = p -> nVars ();
+
   printf ("i:%p n:%p\nFP # ", 
 	  (void *) iSol, (void *) nSol);
 
@@ -750,11 +790,14 @@ void printCmpSol (int n, double *iSol, double *nSol, int direction) {
 
   for (int i=0; i<n; i++) {
 
+    if (p -> Var (i) -> Multiplicity () <= 0)
+      continue;
+
     if (i && !(i % WRAP))
       printf ("\nFP # ");
 
     double 
-      iS = iSol ? iSol [i] : 12345.,
+      iS = iSol ? iSol [i] : 12345., // flag values, to be seen if something is wrong
       nS = nSol ? nSol [i] : 54321.;
 
     printf ("[%4d %+e -%c- %+e (%e)] ", 

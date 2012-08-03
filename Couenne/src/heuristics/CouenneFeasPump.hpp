@@ -23,6 +23,10 @@
 
 #include "IpOptionsList.hpp"
 
+#ifdef COIN_HAS_SCIP
+#include "scip/scip.h"
+#endif
+
 struct Scip;
 class OsiSolverInterface;
 
@@ -94,10 +98,10 @@ namespace Couenne {
     /// find integer (possibly NLP-infeasible) point isol closest
     /// (according to the l-1 norm of the hessian) to the current
     /// NLP-feasible (but fractional) solution nsol
-    CouNumber solveMILP (CouNumber *nSol, CouNumber *&iSol, int niter, int* nsuciter); 
+    virtual CouNumber solveMILP (CouNumber *nSol, CouNumber *&iSol, int niter, int* nsuciter); 
 
     /// obtain solution to NLP
-    CouNumber solveNLP  (CouNumber *nSol, CouNumber *&iSol);
+    virtual CouNumber solveNLP  (CouNumber *nSol, CouNumber *&iSol);
 
     /// set new expression as the NLP objective function using
     /// argument as point to minimize distance from. Return new
@@ -143,6 +147,10 @@ namespace Couenne {
     /// return NLP
     CouenneTNLP *nlp () const
     {return nlp_;}
+
+#ifdef COIN_HAS_SCIP
+    SCIP_RETCODE ScipSolve (double* &sol, int niter, int* nsuciter);
+#endif
 
   private:
 

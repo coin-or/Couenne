@@ -19,7 +19,8 @@ libCouenneHeuristics_la_SOURCES = \
 	CouenneFPSolveNLP.cpp \
 	CouenneFPFindSolution.cpp \
 	CouenneFPpool.cpp \
-	CouenneIterativeRounding.cpp
+	CouenneFPscipSolve.cpp \
+	CouenneIterativeRounding.cpp 
 
 if COIN_HAS_SCIP
 libCouenneHeuristics_la_SOURCES += cons_rowcuts.cpp

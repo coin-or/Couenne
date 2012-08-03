@@ -17,6 +17,7 @@
 #include "CouenneFeasPump.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
+#include "CouenneExprVar.hpp"
 
 #define COUENNE_EIG_RATIO .1 // how much smaller than the largest eigenvalue should the minimum be set at?
 
@@ -50,7 +51,7 @@ OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model,
 	||
 	(!isMILP && !intVar))
       // (empty) coeff col vector, lb = 0, ub = inf, obj coeff
-      lp -> addCol (vec, 0., COIN_DBL_MAX, 1.); 
+      lp -> addCol (vec, 0., (fp -> Problem () -> Var (j) -> Multiplicity () <= 0) ? 0. : COIN_DBL_MAX, 1.); 
   }
 
   // Set to zero all other variables' obj coefficient. This means we
@@ -129,12 +130,16 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
     // simply set P = I
 
     for (int i=0; i<n; i++)
-      P[i].insert (i, 1.); 
+      if (fp -> Problem () -> Var (i) -> Multiplicity () > 0)
+        P[i].insert (i, 1.); 
   }
 
   // Add 2q inequalities
 
-  for (int i = 0, j = n, k = j; k--; ++i) {
+  for (int i = 0, j = n, k = n; k--; ++i) {
+
+    if (fp -> Problem () -> Var (i) -> Multiplicity () <= 0)
+      continue;
 
     // two rows have to be added if:
     //
@@ -232,7 +237,8 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   // Add distance part
   for (int i=0; i<n; ++i)
-    A [i * (n+1)] += fp -> multDistMILP ();
+    if (fp -> Problem () -> Var (i) -> Multiplicity () > 0)
+      A [i * (n+1)] += fp -> multDistMILP ();
 
   // Add gradient-parallel term to the hessian, (x_z - x_z_0)^2. This
   // amounts to setting the diagonal element to GRADIENT_WEIGHT. Don't
@@ -330,14 +336,10 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 	P [i]. insert (j, elem);
     }
 
-  if (fp -> Problem () -> Jnlst () -> ProduceOutput (Ipopt::J_STRONGWARNING, J_NLPHEURISTIC)) {
-
-    printf ("P:\n");
-
-
-    printf ("P^{1/2}:\n");
-
-  }
+  // if (fp -> Problem () -> Jnlst () -> ProduceOutput (Ipopt::J_STRONGWARNING, J_NLPHEURISTIC)) {
+  //   printf ("P:\n");
+  //   printf ("P^{1/2}:\n");
+  // }
 
   free (eigenval);
   free (A);
