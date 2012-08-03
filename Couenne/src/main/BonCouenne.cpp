@@ -444,7 +444,7 @@ Branch-and-bound nodes:                  %8d\n",
 		symmGroupSize,
 		nSGcomputations
 #else
-		-1,-1
+		-1., -1
 #endif
 );
 		//bb.iterationCount ());

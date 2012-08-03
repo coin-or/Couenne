@@ -264,7 +264,7 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 	assert(objects[i]);
 	objects[i]->setModel(&model_);
       }
-      model_.addObjects(s.objects().size(), objects);
+      model_.addObjects ((int) s.objects().size(), objects);
       delete [] objects;
     }
 
@@ -478,11 +478,11 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 	  cgl.initialize(s); 
 	  OsiCuts cuts;
 	  cgl.generateCuts(*model_.solver(), cuts);
-	  std::vector<OsiRowCut *> mycuts(cuts.sizeRowCuts());
+	  std::vector<const OsiRowCut *> mycuts(cuts.sizeRowCuts());
 	  for(int i = 0 ; i < cuts.sizeRowCuts() ; i++){
 	    mycuts[i] = cuts.rowCutPtr(i);
 	  }
-	  model_.solver()->applyRowCuts(mycuts.size(), (const OsiRowCut **) &mycuts[0]);
+	  model_. solver () -> applyRowCuts ((int) mycuts.size(), (const OsiRowCut **) &mycuts[0]);
 	}
 
 	//Added by Claudia
