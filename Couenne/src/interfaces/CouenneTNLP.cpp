@@ -221,13 +221,18 @@ bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
 
     exprVar *e = problem_ -> Var (i);
 
-    CouNumber
-      lb = e -> lb (),
-      ub = e -> ub ();
+    if (e -> Multiplicity () <= 0) 
+      *x_l++ = *x_u++ = 0.;
+    else {
 
-    // prevent ipopt from exiting on inconsistent bounds
-    if (lb <= ub) {*x_l++ = lb; *x_u++ = ub;} 
-    else          {*x_l++ = ub; *x_u++ = lb;}
+      CouNumber
+	lb = e -> lb (),
+	ub = e -> ub ();
+
+      // prevent ipopt from exiting on inconsistent bounds
+      if (lb <= ub) {*x_l++ = lb; *x_u++ = ub;} 
+      else          {*x_l++ = ub; *x_u++ = lb;}
+    }
 
     if ((e -> Type () != AUX) ||
 	(e -> Multiplicity () <= 0))
@@ -277,7 +282,7 @@ bool CouenneTNLP::get_constraints_linearity (Index m, Ipopt::TNLP::LinearityType
       (b -> Linearity () > LINEAR) ? 
       Ipopt::TNLP::NON_LINEAR : 
       Ipopt::TNLP::LINEAR;
- }
+  }
 
   // auxiliaries
 
