@@ -156,45 +156,6 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other) {
 
   operator= (other);
-
-  // CbcHeuristic         (other),
-
-  // problem_             (other. problem_),
-  // couenneCG_           (other. couenneCG_),
-  // nlp_                 (other. nlp_),
-  // app_                 (NULL),
-  // milp_                (other.milp_   ? other. milp_   -> clone () : NULL),
-  // postlp_              (other.postlp_ ? other. postlp_ -> clone () : NULL),
-  // pool_                (NULL),
-
-  // numberSolvePerLevel_ (other. numberSolvePerLevel_),
-
-  // multDistNLP_         (other. multDistNLP_),
-  // multHessNLP_         (other. multHessNLP_),
-  // multObjFNLP_         (other. multObjFNLP_),
-			       	       
-  // multDistMILP_        (other. multDistMILP_),
-  // multHessMILP_        (other. multHessMILP_),
-  // multObjFMILP_        (other. multObjFMILP_),
-
-  // compDistInt_         (other. compDistInt_),
-  // milpCuttingPlane_    (other. milpCuttingPlane_),
-  // nSepRounds_          (other. nSepRounds_),
-
-  // maxIter_             (other. maxIter_),
-  // useSCIP_             (other. useSCIP_),
-  // milpMethod_          (other. milpMethod_),
-  // tabuMgt_             (other. tabuMgt_) {
-
-  // if (other. pool_)
-  //   pool_ = new CouenneFPpool (*(other. pool_));
-
-  // for (std::set <CouenneFPsolution, compareSol>::const_iterator i = other.tabuPool_.begin (); 
-  //      i != other.tabuPool_.end ();
-  //      ++i)
-  //   tabuPool_. insert (CouenneFPsolution (*i));
-
-  // initIpoptApp ();
 }
 
 
@@ -430,7 +391,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
 /// Reads a (possibly fractional) solution and fixes the integer
 /// components in the nonlinear problem for later re-solve
-void CouenneFeasPump::fixIntVariables (double *sol) {
+bool CouenneFeasPump::fixIntVariables (double *sol) {
 
   assert (sol);
 
@@ -464,9 +425,11 @@ void CouenneFeasPump::fixIntVariables (double *sol) {
   // Now, to restrict the bounding box even more (and hopefully make
   // it easier) apply BT
 
-  problem_ -> btCore (chg_bds);
+  bool retval = problem_ -> btCore (chg_bds); // maybe fixing makes the nlp infeasible
 
   delete [] chg_bds;
+
+  return retval;
 }
 
 

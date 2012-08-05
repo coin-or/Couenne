@@ -151,7 +151,8 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
     //if (CoinDrand48 () > pow (2., numberSolvePerLevel_ - depth))
     if (CoinDrand48 () > 1. / CoinMax 
-	(1., (double) ((depth - numberSolvePerLevel_) * (depth - numberSolvePerLevel_))))
+	(1., (double) ((depth - numberSolvePerLevel_) * 
+		       (depth - numberSolvePerLevel_))))
       too_deep = true;
   }
 
@@ -380,8 +381,8 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
       delete [] tmpSolution;
     }
 
-    nlp_->setColLower (saveColLower);
-    nlp_->setColUpper (saveColUpper);
+    nlp_ -> setColLower (saveColLower);
+    nlp_ -> setColUpper (saveColUpper);
 
     delete [] saveColLower;
     delete [] saveColUpper;
@@ -392,10 +393,10 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   delete [] lower;
   delete [] upper;
 
-  if (depth <= 0) {
+  if (couenne_ -> Jnlst () -> ProduceOutput (J_ERROR, J_COUENNE) && (depth <= 0)) {
 
-    if (foundSolution) couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "solution found, obj. %g\n", objectiveValue);
-    else               couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "no solution.\n");
+    if (foundSolution) printf ("solution found, obj. %g\n", objectiveValue);
+    else               printf ("no solution.\n");
   }
 
   return foundSolution;
@@ -406,28 +407,25 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
     // forget about using the global cutoff. That has to trickle up to
     // Cbc some other way
 
-    return 0;
+    bool output = couenne_ -> Jnlst () -> ProduceOutput (J_ERROR, J_COUENNE) && (depth <= 0);
 
-    // no solution available? Use the one from the global cutoff
+    if      (e==noSolution) {if (output) printf ("no solution.\n");                            return 0;}
+    else if (e==maxTime)    {if (output) printf ("time limit reached.\n");                     return 0;}
+    else                    {if (output) printf ("solution found, obj. %g\n", objectiveValue); return 1;}
 
-    if ((couenne_ -> getCutOff () < objectiveValue) &&
-    	couenne_ -> getCutOffSol ()) {
-
-      objectiveValue = couenne_ -> getCutOff    ();
-      CoinCopyN       (couenne_ -> getCutOffSol (), couenne_ -> nVars (), newSolution);
-
-      if (depth <= 0)
-    	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "solution found, obj. %g\n", objectiveValue);
-
-      return 1;
-
-    } else {
-
-      if (depth <= 0 && e==noSolution)
-    	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "no solution.\n", objectiveValue);
-
-      return 0;
-    }
+    // // no solution available? Use the one from the global cutoff
+    // if ((couenne_ -> getCutOff () < objectiveValue) &&
+    // 	couenne_ -> getCutOffSol ()) {
+    //   objectiveValue = couenne_ -> getCutOff    ();
+    //   CoinCopyN       (couenne_ -> getCutOffSol (), couenne_ -> nVars (), newSolution);
+    //   if (depth <= 0)
+    // 	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "solution found, obj. %g\n", objectiveValue);
+    //   return 1;
+    // } else {
+    //   if (depth <= 0 && e==noSolution)
+    // 	couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "no solution.\n", objectiveValue);
+    //   return 0;
+    // }
   }
 }
 

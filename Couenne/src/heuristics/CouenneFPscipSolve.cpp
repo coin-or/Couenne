@@ -85,8 +85,6 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter)
   indices    = matrix -> getIndices();
      
   // access tabuPool_ in this class
-  //     std::set <CouenneFPsolution, compareSol> tabuPool_;
-
 
   if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC)) {
     SCIPdebugMessage("create SCIP problem instance with %d variables and %d constraints.\n", nvars, nconss);

@@ -25,14 +25,15 @@ InitHeuristic::InitHeuristic (double objValue, const double* sol,
   setHeuristicName("InitHeuristic");
   nVars_ = cp.nVars();
 
-  if 
-#ifdef FM_CHECKNLP2
-    (cp.checkNLP2(sol, 0, false, true, true, cp.getFeasTol()))
-#else
-    (cp.checkNLP (sol, objValue, true)) // true for recomputing objValue 
-#endif
-      { 	
-	sol_ = new double [nVars_];
+  if (cp.checkNLP0 (sol, objValue, true, false, true, true)) {
+
+// #ifdef FM_CHECKNLP2
+//     (cp.checkNLP2(sol, 0, false, true, true, cp.getFeasTol()))
+// #else
+//     (cp.checkNLP (sol, objValue, true)) // true for recomputing objValue 
+// #endif
+
+      sol_ = new double [nVars_];
 
 #ifdef FM_CHECKNLP2
       CouenneRecordBestSol *rs = cp.getRecordBestSol();

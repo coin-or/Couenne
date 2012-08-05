@@ -555,17 +555,23 @@ namespace Couenne{
 	// if we have a new incumbent we are done, otherwise we iterate
 
 	bool isChecked = false;
-#ifdef FM_CHECKNLP2
-	isChecked = couenne_->checkNLP2(tmpSolution, 0, false, // do not care about obj
-					true, // stopAtFirstViol
-					false, // checkALL
-					couenne_->getFeasTol());
-	if(isChecked) {
-	  obj = couenne_->getRecordBestSol()->getModSolVal();
-	}
-#else /* not FM_CHECKNLP2 */
-	isChecked = couenne_->checkNLP(tmpSolution, obj, true);
-#endif  /* not FM_CHECKNLP2 */
+
+	isChecked = couenne_ -> checkNLP0 (tmpSolution, obj, true,
+					   false,
+					   true,
+					   false);
+
+// #ifdef FM_CHECKNLP2
+// 	isChecked = couenne_->checkNLP2(tmpSolution, 0, false, // do not care about obj
+// 					true, // stopAtFirstViol
+// 					false, // checkALL
+// 					couenne_->getFeasTol());
+// 	if(isChecked) {
+// 	  obj = couenne_->getRecordBestSol()->getModSolVal();
+// 	}
+// #else /* not FM_CHECKNLP2 */
+// 	isChecked = couenne_->checkNLP(tmpSolution, obj, true);
+// #endif  /* not FM_CHECKNLP2 */
 	
 	if (cinlp_->isProvenOptimal () &&
 	    isChecked &&
@@ -891,17 +897,23 @@ namespace Couenne{
       // if we have a new incumbent we are done, otherwise we iterate
 
       bool isChecked = false;
-#ifdef FM_CHECKNLP2
-      isChecked = couenne_->checkNLP2(tmpSolution, 0, false, // do not care about obj
-				      true, // stopAtFirstViol
-				      false, // checkALL
-				      couenne_->getFeasTol());
-      if(isChecked) {
-	obj = couenne_->getRecordBestSol()->getModSolVal();
-      }
-#else /* not FM_CHECKNLP2 */
-      isChecked = couenne_->checkNLP(tmpSolution, obj, true);
-#endif  /* not FM_CHECKNLP2 */
+
+      isChecked = couenne_ -> checkNLP0 (tmpSolution, obj, true,
+					 false,
+					 true,
+					 false);
+
+// #ifdef FM_CHECKNLP2
+//       isChecked = couenne_->checkNLP2(tmpSolution, 0, false, // do not care about obj
+// 				      true, // stopAtFirstViol
+// 				      false, // checkALL
+// 				      couenne_->getFeasTol());
+//       if(isChecked) {
+// 	obj = couenne_->getRecordBestSol()->getModSolVal();
+//       }
+// #else /* not FM_CHECKNLP2 */
+//       isChecked = couenne_->checkNLP(tmpSolution, obj, true);
+// #endif  /* not FM_CHECKNLP2 */
       
       if (cinlp_->isProvenOptimal () &&
 	  isChecked &&

@@ -31,7 +31,8 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x, bool copi
   objVal_   (0.),
   maxNLinf_ (0.),
   maxIinf_  (0.),
-  copied_   (copied) {
+  copied_   (copied),
+  problem_  (p) {
 
   /// NOTE: the copied flag means we won't use this solution for
   /// anything but testing it against a tabu list, so we don't need to
@@ -90,25 +91,6 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x, bool copi
 }
 
 
-/// independent constructor --- must provide other data as no
-/// CouenneProblem to compute them
-CouenneFPsolution::CouenneFPsolution (CouNumber *x, 
-				      int n, 
-				      int nNLinf,
-				      int nIinf,
-				      CouNumber objVal,
-				      CouNumber maxNLinf,
-				      CouNumber maxIinf):
-
-  x_          (CoinCopyOfArray (x, n)),
-  n_          (n),
-  nNLinf_     (nNLinf),
-  nIinf_      (nIinf),
-  objVal_     (objVal),
-  maxNLinf_   (maxNLinf),
-  maxIinf_    (maxIinf),
-  copied_     (false) {}
-
 /// copy constructor
 CouenneFPsolution::CouenneFPsolution (const CouenneFPsolution &src):
   x_          (src.x_ ? CoinCopyOfArray (src.x_, src.n_) : NULL),
@@ -118,7 +100,8 @@ CouenneFPsolution::CouenneFPsolution (const CouenneFPsolution &src):
   objVal_     (src.objVal_),
   maxNLinf_   (src.maxNLinf_),
   maxIinf_    (src.maxIinf_),
-  copied_     (false) {}
+  copied_     (false),
+  problem_    (src.problem_) {}
 
 
 /// assignment
@@ -132,6 +115,7 @@ CouenneFPsolution &CouenneFPsolution::operator= (const CouenneFPsolution &src) {
   maxNLinf_  = src.maxNLinf_;
   maxIinf_   = src.maxIinf_;
   copied_    = false;
+  problem_   = src.problem_;
 
   return *this;
 }
@@ -148,18 +132,26 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
 
   switch (comparedTerm) {
 
-  case SUM_NINF:     return (nNLinf_   + nIinf_   < other.nNLinf_   + other.nIinf_);
-  case SUM_INF:      return (maxNLinf_ + maxIinf_ < other.maxNLinf_ + other.maxIinf_);
-  case OBJVAL:       return (objVal_              < other.objVal_);
-  case INTEGER_VARS: {
+    case SUM_NINF:     return (nNLinf_   + nIinf_   < other.nNLinf_   + other.nIinf_);
+    case SUM_INF:      return (maxNLinf_ + maxIinf_ < other.maxNLinf_ + other.maxIinf_);
+    case OBJVAL:       return (objVal_              < other.objVal_);
+    case INTEGER_VARS: {
 
-    // lexicographical comparison
+      // lexicographical comparison: unless the two solutions have the
+      // same integer subvector, comparison will tell them apart
 
-    for (int i=0; i<n_; ++i)
-      if (x_ [i] < other.x_ [i])
-	return true;
-    return false;
-  }
+      for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
+	   i != problem_ -> Variables (). end ();
+	   ++i)
+
+	if (((*i) -> Multiplicity () > 0) &&
+	    ((*i) -> isInteger ())        &&
+	    (x_ [(*i) -> Index ()] < other.x_ [(*i) -> Index ()] - COUENNE_EPS))
+
+	  return true;
+
+      return false;
+    }
   }
 
   printf ("CouenneFPsolution::compare: bad compared term\n");
@@ -197,7 +189,7 @@ bool compareSol::operator() (const CouenneFPsolution &one,
   return false;
 }
 
-/// finds, in pool, solution x closest to sol; removes it from the
+/// finds, in pool, solution x closest to nSol; removes it from the
 /// pool and overwrites it to sol
 void CouenneFPpool::findClosestAndReplace (double *sol, double *nSol, int nvars)  {
 

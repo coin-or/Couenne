@@ -675,7 +675,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 
 #ifdef CHECK
   if(getRecordBestSol()->getCardInitDom() != nVars()) {
-    printf("CouenneProblem::checkNLP2(): ### ERROR: cardInitDom: %d  nVars: %d\n", (getRecordBestSol()->getCardInitDom(), nVars());
+    printf("CouenneProblem::checkNLP2(): ### ERROR: cardInitDom: %d  nVars: %d\n", getRecordBestSol()->getCardInitDom(), nVars());
     exit(1);
   }
   if(getInitDomLb() == NULL) {
@@ -1000,4 +1000,36 @@ bool CouenneProblem::checkNLP2(const double *solution,
   domain_.pop (); // pop bounds
     
   return isFeas;
+}
+
+// comprehensive method to call one of the two variants
+bool CouenneProblem::checkNLP0 (const double *solution, 
+			       double &obj,
+			       bool recompute_obj, 
+			       const bool careAboutObj,
+			       const bool stopAtFirstViol,
+			       const bool checkAll,
+			       const double precision) const {
+
+  bool retval;
+
+#ifdef FM_CHECKNLP2
+
+  retval = checkNLP2 (solution,
+		      obj,
+		      careAboutObj,
+		      stopAtFirstViol,
+		      checkAll,
+		      (precision < 0.) ? feas_tolerance_ : precision);
+
+  if (retval)
+    obj = getRecordBestSol () -> getModSolVal ();
+
+#else 
+
+  retval = checkNLP1 (solution, obj, recompute_obj);
+
+#endif
+
+  return retval;
 }

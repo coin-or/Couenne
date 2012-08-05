@@ -75,15 +75,15 @@ class Nauty;
   struct myclass0 {
     inline bool operator() (register const Node &a, register const Node &b) {
 
-      return ((              a.get_code  () <  b.get_code  ())                     ||
-	      ((             a.get_code  () == b.get_code  ()                      &&
-		((           a.get_coeff () <  b.get_coeff ()  - COUENNE_EPS_SYMM) ||
-		 ((fabs     (a.get_coeff () -  b.get_coeff ()) < COUENNE_EPS_SYMM) &&
-		  ((         a.get_lb    () <  b.get_lb    ()  - COUENNE_EPS_SYMM) ||
-		   ((fabs   (a.get_lb    () -  b.get_lb    ()) < COUENNE_EPS_SYMM) &&
-		    ((       a.get_ub    () <  b.get_ub    ()  - COUENNE_EPS_SYMM) ||
-		     ((fabs (a.get_ub    () -  b.get_ub    ()) < COUENNE_EPS_SYMM) &&
-		      ((     a.get_index () <  b.get_index ())))))))))));
+      return ((               a.get_code  () <  b.get_code  ())                     ||
+	      ((              a.get_code  () == b.get_code  ()                      &&
+		((            a.get_coeff () <  b.get_coeff ()  - COUENNE_EPS_SYMM) ||
+		 ((     fabs (a.get_coeff () -  b.get_coeff ()) < COUENNE_EPS_SYMM) &&
+		  ((          a.get_lb    () <  b.get_lb    ()  - COUENNE_EPS_SYMM) ||
+		   ((   fabs (a.get_lb    () -  b.get_lb    ()) < COUENNE_EPS_SYMM) &&
+		    ((        a.get_ub    () <  b.get_ub    ()  - COUENNE_EPS_SYMM) ||
+		     (( fabs (a.get_ub    () -  b.get_ub    ()) < COUENNE_EPS_SYMM) &&
+		      ((      a.get_index () <  b.get_index ())))))))))));
 
     //   bool is_less = 0;
     //   if(a.get_code() < b.get_code() )
@@ -141,8 +141,6 @@ namespace Couenne {
   class CouenneObjective;
   class GlobalCutOff;
   class CouenneBTPerfIndicator;
-  //  class JnlstPtr;
-  //  class ConstJnlstPtr;
   class CouenneRecordBestSol;
 
   typedef Ipopt::SmartPtr<Ipopt::Journalist> JnlstPtr;
@@ -849,11 +847,21 @@ public:
 
   /// if careAboutObj is set to true, then stopAtFirstViol must be set to 
   /// false too.
-  bool checkNLP2(const double *solution,
-		 const double obj, const bool careAboutObj,
-		 const bool stopAtFirstViol,
-		 const bool checkAll,
-		 const double precision) const;
+  bool checkNLP2 (const double *solution,
+		  const double obj, 
+		  const bool careAboutObj,
+		  const bool stopAtFirstViol,
+		  const bool checkAll,
+		  const double precision) const;
+
+  /// And finally a method to get both
+  bool checkNLP0 (const double *solution,
+		 double &obj,
+		 bool recompute_obj         = false,
+		 const bool careAboutObj    = false,
+		 const bool stopAtFirstViol = true,
+		 const bool checkAll        = false,
+	         const double precision     = -1) const; // if -1 then use feas_tolerance_
 };
 
 }

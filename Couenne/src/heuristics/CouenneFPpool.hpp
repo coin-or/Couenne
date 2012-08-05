@@ -46,19 +46,13 @@ namespace Couenne {
 
     bool       copied_;   
 
+    CouenneProblem *problem_; ///< holds pointer to problem to check
+			      ///< integrality in comparison of integer
+			      ///< variables
+
   public:
 
     CouenneFPsolution (CouenneProblem *p, CouNumber *x, bool copied = false); ///< CouenneProblem-aware constructor
-
-    /// independent constructor --- must provide other data as no
-    /// CouenneProblem to compute them
-    CouenneFPsolution (CouNumber *x,
-		       int n,
-		       int nNLinf         = 1,
-		       int nIinf          = 1,
-		       CouNumber objVal   = COIN_DBL_MAX,
-		       CouNumber maxNLinf = COIN_DBL_MAX,
-		       CouNumber maxIinf  = COIN_DBL_MAX);
 
     CouenneFPsolution (const CouenneFPsolution &src); ///< copy constructor
 

@@ -346,14 +346,14 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
       const CouNumber *x = X ();
 
-      if 
-#ifdef FM_CHECKNLP2
-	(checkNLP2(x, 0, false, true, true, feas_tolerance_)) 
-	// false for not caring about objective value, 
-	// true for stopping at first violation and true for checkAll
-#else
-	(checkNLP (x, xp, true)) // true for recomputing xp
-#endif	 
+      if  (checkNLP0 (x, xp, true, false, true, true))
+// #ifdef FM_CHECKNLP2
+// 	(checkNLP2(x, 0, false, true, true, feas_tolerance_)) 
+// 	// false for not caring about objective value, 
+// 	// true for stopping at first violation and true for checkAll
+// #else
+// 	(checkNLP (x, xp, true)) // true for recomputing xp
+// #endif	 
 	  { 
 	    
 #ifdef FM_TRACE_OPTSOL
