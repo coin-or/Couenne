@@ -38,6 +38,9 @@ namespace Couenne {
     /// Return objective value of the bestSolution
     double bestObj() const;
 
+    /** return the best known lower bound on the objective value*/
+    double bestBound() { return CoinMin(Bonmin::Bab::bestBound(), bestObj()); }
+
   protected:
 
     CouenneProblem *problem_;
