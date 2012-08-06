@@ -62,8 +62,8 @@ namespace Couenne {
     //   return mipStatus_;
     // }
 
-    // /** return the best known lower bound on the objective value*/
-    // double bestBound();
+    /** return the best known lower bound on the objective value*/
+    double bestBound() { return CoinMin(Bonmin::Bab::bestBound(), bestObj()); }
 
     // /** return the total number of nodes explored.*/
     // int numNodes() const
