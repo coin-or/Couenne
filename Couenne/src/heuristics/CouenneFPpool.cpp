@@ -182,13 +182,15 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
 
 /// copy constructor
 CouenneFPpool::CouenneFPpool (const CouenneFPpool &src):
-  set_ (src.set_) {}
+  set_     (src.set_),
+  problem_ (src.problem_) {}
 
 
 /// assignment
 CouenneFPpool &CouenneFPpool::operator= (const CouenneFPpool &src) {
 
-  set_ = src.set_;
+  set_     = src.set_;
+  problem_ = src.problem_;
 
   return *this;
 }
@@ -214,7 +216,7 @@ bool compareSol::operator() (const CouenneFPsolution &one,
 
 /// finds, in pool, solution x closest to nSol; removes it from the
 /// pool and overwrites it to sol
-void CouenneFPpool::findClosestAndReplace (double *sol, double *nSol, int nvars)  {
+void CouenneFPpool::findClosestAndReplace (double *&sol, double *nSol, int nvars)  {
 
    double bestdist = COIN_DBL_MAX;
    std::set <CouenneFPsolution>::iterator bestsol = set_. end ();
@@ -236,11 +238,14 @@ void CouenneFPpool::findClosestAndReplace (double *sol, double *nSol, int nvars)
 
 	register bool move_on = false;
 
-	for (int j = nvars; j--;) {
+	for (int j = nvars, k=0; j--; ++k) {
 
 	  delta = *x++ - *s++;
 
-	  // TODO: check multiplicity () > 0)
+	  /// forget about this variable if eliminated by
+	  /// reformulation
+	  if (problem_ -> Var (k) -> Multiplicity () <= 0)
+	    continue;
 
 	  dist += delta * delta;
 
@@ -260,14 +265,15 @@ void CouenneFPpool::findClosestAndReplace (double *sol, double *nSol, int nvars)
             bestdist = dist;
             bestsol = i;
          }
-      }   
+      }
    }
    else 
       bestsol = set_. begin ();
 
    if( bestsol != set_. end () )
    {
-      sol = CoinCopyOfArray ((*bestsol).x(), nvars); 
-      set_. erase(bestsol);
+     delete [] sol;
+     sol = CoinCopyOfArray ((*bestsol).x(), nvars); 
+     set_. erase(bestsol);
    }   
 }

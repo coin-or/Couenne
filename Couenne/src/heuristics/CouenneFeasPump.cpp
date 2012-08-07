@@ -48,7 +48,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
    		                   (depth - numberSolvePerLevel_ + 1))))))
     return 0;
 
-  problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "FP: BEGIN\n");
+  problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "==================================================== FP: BEGIN\n");
 
   // Solve NLP once at the beginning ////////////////////////
   //
@@ -61,10 +61,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   if (!nlp_) // first call (in this run of FP). Create NLP
     nlp_ = new CouenneTNLP (problem_);
 
-  problem_ -> domain () -> push (problem_ -> nVars (),
-				 problem_ -> domain () -> x  (),
-				 problem_ -> domain () -> lb (),
-				 problem_ -> domain () -> ub ());
+  problem_ -> domain () -> push (*(problem_ -> domain () -> current ()));
 
   // fix integer coordinates of current (MINLP feasible!) solution
   // and set it as initial (obviously NLP feasible) solution
@@ -80,7 +77,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   if (problem_ -> Jnlst () -> ProduceOutput  
       (J_ALL, J_NLPHEURISTIC)) {
 
-    printf ("initial NLP:\n");
+    printf ("initial NLP:---------\n");
     problem_ -> print ();
     printf ("---------------------\n");
   }
@@ -163,6 +160,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   do {
 
+    problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: loop\n");
+
     // INTEGER PART /////////////////////////////////////////////////////////
 
     // Solve IP using nSol as the initial point to minimize weighted
@@ -173,11 +172,33 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     // if no MILP solution was found, bail out
 
+    bool try_again = false;
+
     if (!iSol || z >= COIN_DBL_MAX/2) {
-      problem_ -> Jnlst () -> Printf 
-	(Ipopt::J_ERROR, J_NLPHEURISTIC,
-	 "FP: breaking out of loop upon %p==NULL or z large (z=%.3f)\n", iSol, z);
-      break;
+
+      problem_ -> Jnlst () -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC, "FP: could not find IP solution\n");
+
+      // find non-tabu solution in the solution pool
+      while (!pool_ -> Set (). empty ()) {
+
+	// EXTRACT the closest (to nSol) IP solution from the pool
+	pool_ -> findClosestAndReplace (iSol, iSol, problem_ -> nVars ());
+
+	CouenneFPsolution newSol (problem_, iSol);
+
+	// we found a solution that is not in the tabu list
+	if (tabuPool_ . find (newSol) == tabuPool_ . end ()) {
+
+	  try_again = true;
+	  break;
+	}
+      }
+ 
+      if (!try_again) { // nothing to do, bail out
+	
+	problem_ -> Jnlst () -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC, "FP: could not find from pool either, bailing out\n");
+	break;
+      }
     }
 
     bool isChecked = false;
@@ -192,7 +213,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     CouenneFPsolution checkedSol (problem_, iSol, false); // false is for not allocating space for this
 
     if (tabuPool_. find (checkedSol) != tabuPool_ . end ()) {
-    
+
+      problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: found solution is tabu\n");
+
       // Current solution was visited before. Replace it with another
       // MILP solution from the pool, if any.
 
@@ -226,7 +249,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	OsiCuts cs;
 
-	problem_   -> domain () -> push (problem_ -> nVars (), iSol, NULL, NULL);
+	problem_   -> domain () -> push (problem_ -> nVars (), iSol, milp_ -> getColLower (), milp_ -> getColUpper (), false); // don't copy vectors
 	couenneCG_ -> genRowCuts (*milp_, cs, 0, NULL); // remaining three arguments NULL by default
 	problem_   -> domain () -> pop ();
 
@@ -271,7 +294,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	    // if there is room on the left (resp. right) of the
 	    // solution, consider moving down (resp. up). Make moves
-	    // less likely as we don't want to perturb too many variables
+	    // less likely as we don't want to perturb too many
+	    // variables
 
 #define RND_DECR_EXPONENT .5
 
@@ -283,24 +307,14 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  }
 	}
       }
-    } else tabuPool_. insert (CouenneFPsolution (problem_, iSol));
+    } else tabuPool_. insert (CouenneFPsolution (problem_, iSol)); // only insertion to tabu pool: we check its feasibility now
+
+    problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: checking IP solution for feasibility\n");
 
     isChecked = problem_ -> checkNLP0 (iSol, z, true, 
 				       false, // don't care about obj
 				       true,  // stop at first violation
 				       true); // checkAll
-
-// #ifdef FM_CHECKNLP2
-//     isChecked = problem_ -> checkNLP2 (iSol, 0, false, // do not care about obj 
-// 				       true, // stopAtFirstViol
-// 				       true, // checkALL
-// 				       problem_->getFeasTol());
-//     if (isChecked) {
-//       z = problem_->getRecordBestSol()->getModSolVal();
-//     }
-// #else /* not FM_CHECKNLP2 */
-//     isChecked = problem_ -> checkNLP (iSol, z, true);
-// #endif  /* not FM_CHECKNLP2 */
 
     // Possible improvement: if IP-infeasible or if z does not improve
     // the best solution found so far, then try the following:
@@ -315,45 +329,66 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // 6) Done
     // 7) If found solution, set it, otherwise keep previously found (IP-feasible) one
 
-    if ((!isChecked || 
-	 z > problem_ -> getCutOff ()) &&
-	fixIntVariables (iSol)) { // don't do this unless nlp is possibly feasible
+    if ((!isChecked ||                     // not MINLP feasible
+	 z > problem_ -> getCutOff ())) {  // not improving
 
-      nlp_ -> setInitSol (iSol);
+      problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: infeasible or non-improving, try looping on pool\n");
 
-      status = app_ -> OptimizeTNLP (nlp_);
+      bool try_again;
 
-      while (1) {
+      do {
 
-	if (nlp_ -> getSolution ()) { // check if non-NULL
-	  if  (nSol)  CoinCopyN       (nlp_ -> getSolution (), problem_ -> nVars (), nSol);
-	  else nSol = CoinCopyOfArray (nlp_ -> getSolution (), problem_ -> nVars ());
-	}
+	try_again = false;
+
+	// Check if fixing integers to those in iSol yields an
+	// infeasible problem. If so, don't optimize
+	if (fixIntVariables (iSol)) {
+
+	  nlp_ -> setInitSol (iSol);
+
+	  status = app_ -> OptimizeTNLP (nlp_);
+
+	  if (nlp_ -> getSolution ()) { // check if non-NULL
+	    if  (nSol)  CoinCopyN       (nlp_ -> getSolution (), problem_ -> nVars (), nSol);
+	    else nSol = CoinCopyOfArray (nlp_ -> getSolution (), problem_ -> nVars ());
+	  }
+
+	  z = nlp_ -> getSolValue ();
+
+	  if (z < problem_ -> getCutOff ()) // don't waste time if not improving
+
+	    isChecked = problem_ -> checkNLP0 (nSol, z, true, 
+					       false, // don't care about obj
+					       true,  // stop at first violation
+					       true); // checkAll
+
+	  if (isChecked && (z < problem_ -> getCutOff ())) 
+	    break;
+	} 
 
 	// find non-tabu solution in the solution pool
 	while (!pool_ -> Set (). empty ()) {
 
-	  // retrieve the closest (to nSol) IP solution from the pool
+	  // EXTRACT the closest (to nSol) IP solution from the pool
 	  pool_ -> findClosestAndReplace (iSol, nSol, problem_ -> nVars ());
 
 	  CouenneFPsolution newSol (problem_, iSol);
 
 	  // we found a solution that is not in the tabu list
-	  if (tabuPool_. find (newSol) == tabuPool_ . end ())
+	  if (tabuPool_ . find (newSol) == tabuPool_ . end ()) {
+	    try_again = true;
 	    break;
+	  }
 	} 
 
-	if (!(fixIntVariables (iSol)))
-	  continue;
-
-	nlp_ -> setInitSol (iSol);
-
-	status = app_ -> OptimizeTNLP (nlp_);
-      }
+      } while (try_again);
     }
 
     // Whatever the previous block yielded, we are now going to check
     // if we have a new solution, and if so we save it.
+
+    if (!isChecked)
+      problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: IP solution NOT MINLP feasible\n");
 
     if (isChecked) {
 
@@ -385,14 +420,12 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       // #  else /* not FM_TRACE_OPTSOL */
 
       best   = iSol;
-      objVal = z;
 
+      //       objVal = z;
       // #  ifdef FM_TRACE_OPTSOL
       //       problem_->getRecordBestSol()->update();
       //       best = problem_->getRecordBestSol()->getSol();
       //       objVal = problem_->getRecordBestSol()->getVal();
-
-
       // #  endif /* not FM_TRACE_OPTSOL */
       // #endif /* not FM_CHECKNLP2 */
 
@@ -407,7 +440,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  chg_bds [objInd].setUpper (t_chg_bounds::CHANGED); 
 	}
 
-	// if bound tightening clears the whole feasible set, stop
+	// If, with new cutoff, bound tightening clears the whole
+	// feasible set, stop
 	bool is_still_feas = problem_ -> btCore (chg_bds);
 
 	if (chg_bds)
@@ -533,7 +567,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     }
 
     if (nSol &&	isChecked) {
-      
+
+      problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: NLP solution is MINLP feasible\n");
+
       retval = 1;
       objVal = z;
 
@@ -601,6 +637,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   } while ((niter++ < maxIter_) && 
 	   (retval == 0));
 
+  problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: out of the FP loop\n");
+
   // OUT OF THE LOOP ////////////////////////////////////////////////////////
 
   // If MINLP solution found,
@@ -614,13 +652,12 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   if (retval > 0) {
 
+    problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: fix integer variables and rerun NLP\n");
+
     if (!nlp_) // first call (in this run of FP). Create NLP
       nlp_ = new CouenneTNLP (problem_);
 
-    problem_ -> domain () -> push (problem_ -> nVars (),
-				   problem_ -> domain () -> x  (),
-				   problem_ -> domain () -> lb (),
-				   problem_ -> domain () -> ub ());
+    problem_ -> domain () -> push (*(problem_ -> domain () -> current ()));
 
     // fix integer coordinates of current (MINLP feasible!) solution
     // and set it as initial (obviously NLP feasible) solution
@@ -654,6 +691,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     if (nSol) {
 
+      problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: found nlp solution, check it\n");
+
       isChecked = problem_ -> checkNLP0 (nSol, z, true,
 					 false,
 					 true,
@@ -676,6 +715,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     if (nSol &&
 	isChecked &&
 	(z < problem_ -> getCutOff ())) {
+
+      problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: feasible solution is improving\n");
 
 #ifdef FM_TRACE_OPTSOL
 

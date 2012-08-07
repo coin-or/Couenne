@@ -122,7 +122,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
     options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_, "couenne."); 
     options -> GetIntegerValue ("feas_pump_poolcomp",   compareTerm, "couenne."); 
 
-    pool_ = new CouenneFPpool ((enum what_to_compare) compareTerm);
+    pool_ = new CouenneFPpool (problem_, (enum what_to_compare) compareTerm);
 
     options -> GetStringValue  ("feas_pump_tabumgt", s, "couenne.");
 
@@ -144,7 +144,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 
   } else
     //pool_ = new CouenneFPpool (SUM_NINF);
-    pool_ = new CouenneFPpool (INTEGER_VARS);
+    pool_ = new CouenneFPpool (problem_, INTEGER_VARS);
 
   setHeuristicName ("Couenne Feasibility Pump");
 

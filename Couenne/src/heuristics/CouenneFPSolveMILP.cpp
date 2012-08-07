@@ -32,8 +32,9 @@ using namespace Couenne;
 
 #ifdef COIN_HAS_SCIP
 void CouenneFeasPump::checkInfinity(SCIP *scip, SCIP_Real val, double infinity){
-   if( SCIPisInfinity(scip, val) && val < infinity)
-      printf("Warning: %g will be considered to be Infinity by SCIP\n", val);
+  if( SCIPisInfinity(scip, val) && val < infinity)
+    problem_ -> Jnlst () -> Printf (Ipopt::J_WARNING, J_NLPHEURISTIC, 
+				    "Warning: %g will be considered to be Infinity by SCIP\n", val);
 }
 #endif
 

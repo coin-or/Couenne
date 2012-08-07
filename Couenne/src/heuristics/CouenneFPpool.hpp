@@ -17,6 +17,7 @@
 
 #include "CouenneTypes.hpp"
 #include "CoinFinite.hpp"
+#include "CouenneProblem.hpp"
 
 namespace Couenne {
 
@@ -44,7 +45,7 @@ namespace Couenne {
     /// result, all the above members are meaningless for copied
     /// solutions
 
-    bool       copied_;   
+    bool copied_;   
 
     CouenneProblem *problem_; ///< holds pointer to problem to check
 			      ///< integrality in comparison of integer
@@ -94,11 +95,14 @@ namespace Couenne {
     /// Pool
     std::set <CouenneFPsolution> set_;
 
+    /// Problem pointer
+    CouenneProblem *problem_;
+
   public:
 
     /// simple constructor (empty pool)
-    CouenneFPpool (enum what_to_compare c)
-    {comparedTerm_ = c;}
+    CouenneFPpool (CouenneProblem *p, enum what_to_compare c):
+      problem_ (p) {comparedTerm_ = c;}
 
     /// copy constructor
     CouenneFPpool (const CouenneFPpool &src);
@@ -110,9 +114,13 @@ namespace Couenne {
     std::set <CouenneFPsolution> &Set ()
     {return set_;}
 
+    /// return the problem pointer
+    CouenneProblem *Problem ()
+    {return problem_;}
+
     /// finds, in pool, solution x closest to sol; removes it from the
     /// pool and overwrites it to sol
-    void findClosestAndReplace (double *sol, double *nSol, int nvars) ;
+    void findClosestAndReplace (double *&sol, double *nSol, int nvars) ;
   };
 }
 
