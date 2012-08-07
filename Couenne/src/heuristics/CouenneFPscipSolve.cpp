@@ -23,13 +23,11 @@ using namespace Couenne;
 #include "scip/scipdefplugins.h"
 #include "scip/cons_bounddisjunction.h"
 
-SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter) {
+SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter, CouNumber &obj) {
 
   static int currentmilpmethod = 0;
 
   int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
-
-  CouNumber obj;
 
   SCIP* scip;
 
@@ -119,17 +117,21 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter)
 
   // create variables 
   for (int i=0; i<nvars; i++) {
-    char varname[SCIP_MAXSTRLEN];  
 
-    // check that all data is in valid ranges
-    assert( 0 <= vartypes[i] && vartypes[i] <= 2);
-    checkInfinity(scip, lbs[i], infinity);
-    checkInfinity(scip, ubs[i], infinity);
+    char varname[SCIP_MAXSTRLEN];  
 
     bool neglect = 
       (i < problem_ -> nVars ()) && 
       (problem_ -> Var (i) -> Multiplicity () <= 0);
-        
+
+    // check that all data is in valid ranges
+    assert( 0 <= vartypes[i] && vartypes[i] <= 2);
+
+    if (!neglect) {
+      checkInfinity(scip, lbs[i], infinity);
+      checkInfinity(scip, ubs[i], infinity);
+    }
+
     // all variables are named x_i
     (void) SCIPsnprintf(varname, SCIP_MAXSTRLEN, "x_%d", i);
     SCIP_CALL( SCIPcreateVar(scip, &vars[i], varname, 

@@ -182,7 +182,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     bool isChecked = false;
 
-    // if a solution was found, but is in the tabu list, two choices:
+    // If a solution was found, but is in the tabu list, two choices:
     //
     // 1) the pool is empty: do a round of cuts and repeat;
     //

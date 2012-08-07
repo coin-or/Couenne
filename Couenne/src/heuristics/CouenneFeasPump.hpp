@@ -151,7 +151,7 @@ namespace Couenne {
     {return nlp_;}
 
 #ifdef COIN_HAS_SCIP
-    SCIP_RETCODE ScipSolve (double* &sol, int niter, int* nsuciter);
+    SCIP_RETCODE ScipSolve (double* &sol, int niter, int* nsuciter, CouNumber &obj);
 #endif
 
   private:

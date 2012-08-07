@@ -25,7 +25,7 @@ namespace Couenne {
 
   /// what term to compare: the sum of infeasibilities, the sum of
   /// numbers of infeasible terms, or the objective function
-  static enum what_to_compare {SUM_NINF = 0, SUM_INF, OBJVAL, INTEGER_VARS} comparedTerm_;
+  static enum what_to_compare {SUM_NINF = 0, SUM_INF, OBJVAL, ALL_VARS, INTEGER_VARS} comparedTerm_;
 
   /// Class containing a solution with infeasibility evaluation
   class CouenneFPsolution {
@@ -82,7 +82,7 @@ namespace Couenne {
 
   public:
     bool operator () (const CouenneFPsolution &one, 
-		      const CouenneFPsolution &two) const;
+  		      const CouenneFPsolution &two) const;
   };
 
 

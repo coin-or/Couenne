@@ -17,7 +17,7 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneExprAux.hpp"
 
-const double COMP_TOLERANCE = COUENNE_EPS;
+static const double COMP_TOLERANCE = COUENNE_EPS; // not global
 
 using namespace Couenne;
 
@@ -135,6 +135,24 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
     case SUM_NINF:     return (nNLinf_   + nIinf_   < other.nNLinf_   + other.nIinf_);
     case SUM_INF:      return (maxNLinf_ + maxIinf_ < other.maxNLinf_ + other.maxIinf_);
     case OBJVAL:       return (objVal_              < other.objVal_);
+    case ALL_VARS: {
+      // lexicographical comparison: unless the two solutions have the
+      // same integer subvector, comparison will tell them apart
+
+      for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
+	   i != problem_ -> Variables (). end ();
+	   ++i) {
+
+	int indVar = (*i) -> Index ();
+
+	if (((*i) -> Multiplicity () > 0) &&
+	    (x_ [indVar] < other.x_ [indVar] - COUENNE_EPS))
+
+	  return true;
+      }
+
+      return false;
+    }
     case INTEGER_VARS: {
 
       // lexicographical comparison: unless the two solutions have the
@@ -142,13 +160,16 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
 
       for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
 	   i != problem_ -> Variables (). end ();
-	   ++i)
+	   ++i) {
+
+	int indVar = (*i) -> Index ();
 
 	if (((*i) -> Multiplicity () > 0) &&
 	    ((*i) -> isInteger ())        &&
-	    (x_ [(*i) -> Index ()] < other.x_ [(*i) -> Index ()] - COUENNE_EPS))
+	    (x_ [indVar] < other.x_ [indVar] - COUENNE_EPS))
 
 	  return true;
+      }
 
       return false;
     }
@@ -176,17 +197,19 @@ CouenneFPpool &CouenneFPpool::operator= (const CouenneFPpool &src) {
 bool compareSol::operator() (const CouenneFPsolution &one, 
 			     const CouenneFPsolution &two) const {
 
-  register const double
-    *x1 = one.x (),
-    *x2 = two.x ();
+  return one. compare (two, comparedTerm_);
 
-  register int n = one.n ();
+  // register const double
+  //   *x1 = one.x (),
+  //   *x2 = two.x ();
 
-  while (n--)
-    if ((*x1++ - *x2++) <= COMP_TOLERANCE)
-      return true;
+  // register int n = one.n ();
 
-  return false;
+  // while (n--)
+  //   if ((*x1++ - *x2++) <= COMP_TOLERANCE)
+  //     return true;
+
+  // return false;
 }
 
 /// finds, in pool, solution x closest to nSol; removes it from the

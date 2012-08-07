@@ -62,12 +62,12 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
 
   if (useSCIP_ && problem_ -> nIntVars () > 0) { // if LP, use Clp below
 
-    SCIP_RETCODE retcode = ScipSolve (sol, niter, nsuciter);
+    SCIP_RETCODE retcode = ScipSolve (sol, niter, nsuciter, obj);
 
     if (retcode != SCIP_OKAY) {
 
       printf ("SCIP did not return successfully\n");
-      return 1.e40;
+      return COIN_DBL_MAX;
     }
   } else
 
