@@ -128,6 +128,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
     assert( 0 <= vartypes[i] && vartypes[i] <= 2);
 
     if (!neglect) {
+
       checkInfinity(scip, lbs[i], infinity);
       checkInfinity(scip, ubs[i], infinity);
     }
@@ -154,14 +155,18 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 
     for (int j = 0; j < i -> n (); ++j) {
 
-      assert (fabs (lbs [j] - problem_ -> Lb (j)) < COUENNE_EPS);
-      assert (fabs (ubs [j] - problem_ -> Ub (j)) < COUENNE_EPS);
-      assert (fabs (x [j] - floor (x [j] + .5))   < COUENNE_EPS);
-
-      assert (nEntries <= 2*nvars - 2);
-
       if (problem_ -> Var (j) -> isInteger () && 
+	  problem_ -> Var (j) -> Multiplicity () > 0 &&
 	  problem_ -> Ub (j) - problem_ -> Lb (j) > .5) {
+
+	printf ("checking bounds x_%d: %e [%e, %e] vs. [%e, %e]\n", 
+		j, x [j], lbs [j], ubs [j], problem_ -> Lb (j), problem_ -> Ub (j));
+
+	assert (fabs (lbs [j] - problem_ -> Lb (j)) < COUENNE_EPS);
+	assert (fabs (ubs [j] - problem_ -> Ub (j)) < COUENNE_EPS);
+	assert (fabs (x [j] - floor (x [j] + .5))   < COUENNE_EPS);
+
+	assert (nEntries <= 2*nvars - 2);
 
 	if        (x [j] >= problem_ -> Ub (j) - COUENNE_EPS) {
 
