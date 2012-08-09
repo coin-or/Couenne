@@ -49,7 +49,6 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
   SCIP_VAR      **tabuvars;
   SCIP_Real      *tabubounds;
   SCIP_BOUNDTYPE *tabuboundtypes;
-  SCIP_CONS      *tabucons;     
 
   double infinity;
   int nvars;
@@ -91,6 +90,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
   // initialize SCIP
   SCIP_CALL( SCIPcreate(&scip) );
   assert(scip != NULL);
+
    
   // include default SCIP plugins
   SCIP_CALL( SCIPincludeDefaultPlugins(scip) );
@@ -153,14 +153,13 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 
     int nEntries = 0;
 
+    SCIP_CONS *tabucons = NULL;
+
     for (int j = 0; j < i -> n (); ++j) {
 
       if (problem_ -> Var (j) -> isInteger () && 
 	  problem_ -> Var (j) -> Multiplicity () > 0 &&
 	  problem_ -> Ub (j) - problem_ -> Lb (j) > .5) {
-
-	printf ("checking bounds x_%d: %e [%e, %e] vs. [%e, %e]\n", 
-		j, x [j], lbs [j], ubs [j], problem_ -> Lb (j), problem_ -> Ub (j));
 
 	assert (fabs (lbs [j] - problem_ -> Lb (j)) < COUENNE_EPS);
 	assert (fabs (ubs [j] - problem_ -> Ub (j)) < COUENNE_EPS);
@@ -193,15 +192,17 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
       } 
     }
 
+    if (nEntries != 0) {
 
-    SCIP_CALL (SCIPcreateConsBounddisjunction (scip, &tabucons, "Tabu Solution", nEntries,
-					       tabuvars, tabuboundtypes, tabubounds,  
-					       TRUE,  TRUE,  TRUE,  TRUE,  TRUE, 
-					       FALSE, FALSE, FALSE, FALSE, FALSE));
+      SCIP_CALL (SCIPcreateConsBounddisjunction (scip, &tabucons, "Tabu Solution", nEntries,
+						 tabuvars, tabuboundtypes, tabubounds,  
+						 TRUE,  TRUE,  TRUE,  TRUE,  TRUE, 
+						 FALSE, FALSE, FALSE, FALSE, FALSE));
+      
+      SCIP_CALL( SCIPaddCons(scip, tabucons) );
 
-    SCIP_CALL( SCIPaddCons(scip, tabucons) );
-
-    SCIP_CALL (SCIPreleaseCons (scip, &tabucons));
+      SCIP_CALL (SCIPreleaseCons (scip, &tabucons));
+    }
   }
 
   // create constraints
