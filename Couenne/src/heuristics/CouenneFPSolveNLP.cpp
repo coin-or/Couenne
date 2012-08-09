@@ -24,7 +24,7 @@ using namespace Ipopt;
 using namespace Couenne;
 
 /// obtain continuous (if fractional) solution
-CouNumber CouenneFeasPump::solveNLP (CouNumber *iSol, CouNumber *&nSol) {
+CouNumber CouenneFeasPump::solveNLP (const CouNumber *iSol, CouNumber *&nSol) {
 
   // Solve the continuous nonlinear programming problem
   //

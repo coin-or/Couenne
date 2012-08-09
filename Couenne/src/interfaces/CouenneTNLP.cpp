@@ -174,7 +174,7 @@ bool CouenneTNLP::get_nlp_info (Index& n,
 
 
 /// set initial solution
-void CouenneTNLP::setInitSol (double *sol) {
+void CouenneTNLP::setInitSol (const double *sol) {
 
   if (sol) {
     if (!sol0_)

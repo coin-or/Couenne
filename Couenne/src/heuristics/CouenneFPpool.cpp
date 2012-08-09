@@ -216,7 +216,7 @@ bool compareSol::operator() (const CouenneFPsolution &one,
 
 /// finds, in pool, solution x closest to nSol; removes it from the
 /// pool and overwrites it to sol
-void CouenneFPpool::findClosestAndReplace (double *&sol, double *nSol, int nvars)  {
+void CouenneFPpool::findClosestAndReplace (double *&sol, const double *nSol, int nvars)  {
 
    double bestdist = COIN_DBL_MAX;
    std::set <CouenneFPsolution>::iterator bestsol = set_. end ();

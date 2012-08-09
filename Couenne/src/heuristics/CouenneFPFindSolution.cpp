@@ -24,7 +24,7 @@
 using namespace Couenne;
 
 /// find a feasible or optimal solution of MILP
-double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
+double CouenneFeasPump::findSolution (double* &iSol, int niter, int* nsuciter) {
 
   /// As found on the notes, these methods can be used, from the most
   /// expensive and accurate (exact) method to a cheap, inexact one:
@@ -62,7 +62,7 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
 
   if (useSCIP_ && problem_ -> nIntVars () > 0) { // if LP, use Clp below
 
-    SCIP_RETCODE retcode = ScipSolve (sol, niter, nsuciter, obj);
+    SCIP_RETCODE retcode = ScipSolve (iSol, niter, nsuciter, obj);
 
     if (retcode != SCIP_OKAY) {
 
@@ -77,16 +77,16 @@ double CouenneFeasPump::findSolution (double* &sol, int niter, int* nsuciter) {
      if (problem_ -> nIntVars () > 0) milp_ -> branchAndBound ();
      else                             milp_ -> initialSolve ();
 
-     if (!sol)
-       sol = new CouNumber [problem_ -> nVars ()];
+     if (!iSol)
+       iSol = new CouNumber [problem_ -> nVars ()];
 
      if (milp_ -> getColSolution ())
-       CoinCopyN (milp_ -> getColSolution (), problem_ -> nVars (), sol);
+       CoinCopyN (milp_ -> getColSolution (), problem_ -> nVars (), iSol);
      else {
 
-       if (sol)
-	 delete [] sol;
-       sol = NULL;
+       if (iSol)
+	 delete [] iSol;
+       iSol = NULL;
      }
 
      obj = milp_ -> getObjValue ();

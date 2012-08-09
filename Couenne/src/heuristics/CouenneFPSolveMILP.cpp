@@ -50,7 +50,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 /// find integer (possibly NLP-infeasible) point isol closest
 /// (according to the l-1 norm of the Hessian) to the current
 /// NLP-feasible (but fractional) solution nsol
-CouNumber CouenneFeasPump::solveMILP (CouNumber *nSol0, CouNumber *&iSol, int niter, int* nsuciter) {
+CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, int niter, int* nsuciter) {
 
   // The problem is of the form
   //

@@ -98,10 +98,10 @@ namespace Couenne {
     /// find integer (possibly NLP-infeasible) point isol closest
     /// (according to the l-1 norm of the hessian) to the current
     /// NLP-feasible (but fractional) solution nsol
-    virtual CouNumber solveMILP (CouNumber *nSol, CouNumber *&iSol, int niter, int* nsuciter); 
+    virtual CouNumber solveMILP (const CouNumber *nSol, CouNumber *&iSol, int niter, int* nsuciter); 
 
     /// obtain solution to NLP
-    virtual CouNumber solveNLP  (CouNumber *nSol, CouNumber *&iSol);
+    virtual CouNumber solveNLP  (const CouNumber *nSol, CouNumber *&iSol);
 
     /// set new expression as the NLP objective function using
     /// argument as point to minimize distance from. Return new
@@ -112,7 +112,7 @@ namespace Couenne {
     /// components in the nonlinear problem for later
     /// re-solve. Returns false if restriction infeasible, true
     /// otherwise
-    bool fixIntVariables (double *sol);
+    bool fixIntVariables (const double *sol);
 
     /// initialize options to be read later
     static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions>);

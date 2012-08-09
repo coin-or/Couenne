@@ -32,8 +32,8 @@
 using namespace Ipopt;
 using namespace Couenne;
 
-void printDist   (CouenneProblem *p, double *iSol, double *nSol);
-void printCmpSol (CouenneProblem *p, double *iSol, double *nSol, int direction);
+void printDist   (CouenneProblem *p, const double *iSol, double *nSol);
+void printCmpSol (CouenneProblem *p, const double *iSol, double *nSol, int direction);
 
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
@@ -522,7 +522,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  continue;
 
 	if (e -> isInteger () &&
-	    (fabs (iSol [i] - ceil (iSol [i] - .5)) > 1e-4))
+	    (fabs (iSol [i] - ceil (iSol [i] - .5)) > COUENNE_EPS))
 	  ++nNonint;
 
 	dist += 
@@ -535,7 +535,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC)) {
 
-      printDist   (problem_,             iSol, nSol);
+      printDist   (problem_, iSol, nSol);
       printCmpSol (problem_, iSol, nSol, 0);
     }
 
@@ -552,18 +552,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 				       false, // do not care about obj 
 				       true, // stopAtFirstViol
 				       true); // checkALL
-
-// #ifdef FM_CHECKNLP2
-//       isChecked = problem_->checkNLP2(nSol, 0, false, // do not care about obj 
-// 				      true, // stopAtFirstViol
-// 				      true, // checkALL
-// 				      problem_->getFeasTol());
-//       if(isChecked) {
-// 	z = problem_->getRecordBestSol()->getModSolVal();
-//       }
-// #else /* not FM_CHECKNLP2 */
-//       isChecked = problem_ -> checkNLP (nSol, z, true);
-// #endif  /* not FM_CHECKNLP2 */
     }
 
     if (nSol &&	isChecked) {
@@ -590,27 +578,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       objVal = z;
 #endif                 // - endif -------------------------
 
-// #ifdef FM_CHECKNLP2
-// #ifdef FM_TRACE_OPTSOL
-//       problem_->getRecordBestSol()->update();
-//       best = problem_->getRecordBestSol()->getSol();
-//       objVal = problem_->getRecordBestSol()->getVal();
-// #else /* not FM_TRACE_OPTSOL */
-//       best = problem_->getRecordBestSol()->getModSol(problem_ -> nVars ());
-//       objVal = z;
-// #endif /* not FM_TRACE_OPTSOL */
-// #else /* not FM_CHECKNLP2 */
-// #ifdef FM_TRACE_OPTSOL
-//       problem_->getRecordBestSol()->update(nSol, problem_->nVars(),
-// 					   z, problem_->getFeasTol());
-//       best = problem_->getRecordBestSol()->getSol();
-//       objVal = problem_->getRecordBestSol()->getVal();
-// #else /* not FM_TRACE_OPTSOL */
-//       best   = nSol;
-//       objVal = z;
-// #endif /* not FM_TRACE_OPTSOL */
-// #endif /* not FM_CHECKNLP2 */
-      
       if (z < problem_ -> getCutOff ()) {
 
 	problem_ -> setCutOff (objVal);
@@ -660,113 +627,81 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     problem_ -> domain () -> push (*(problem_ -> domain () -> current ()));
 
     // fix integer coordinates of current (MINLP feasible!) solution
-    // and set it as initial (obviously NLP feasible) solution
+    // and, if feasible, set it as initial (obviously NLP feasible)
+    // solution
 
-    fixIntVariables (best);
-    nlp_ -> setInitSol (best);
+    if (fixIntVariables (best)) {
 
-    ////////////////////////////////////////////////////////////////
+      nlp_ -> setInitSol (best);
 
-    //app_ -> Options () -> SetStringValue ("fixed_variable_treatment", "make_parameter");
+      ////////////////////////////////////////////////////////////////
 
-    // Solve with original objective function
-    status = app_ -> OptimizeTNLP (nlp_);
+      //app_ -> Options () -> SetStringValue ("fixed_variable_treatment", "make_parameter");
 
-    ////////////////////////////////////////////////////////////////
+      // Solve with original objective function
+      status = app_ -> OptimizeTNLP (nlp_);
 
-    problem_ -> domain () -> pop ();
+      ////////////////////////////////////////////////////////////////
 
-    if ((status != Solve_Succeeded) && 
-	(status != Solved_To_Acceptable_Level))
+      if ((status != Solve_Succeeded) && 
+	  (status != Solved_To_Acceptable_Level))
  
-      problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, 
-				      "Feasibility Pump: error in final NLP problem (due to fixing integer variables?)\n");
+	problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, 
+					"Feasibility Pump: error in final NLP problem (due to fixing integer variables?)\n");
 
-    // if found a solution with the last NLP, check & save it
+      // if found a solution with the last NLP, check & save it
 
-    double z = nlp_ -> getSolValue ();
+      double z = nlp_ -> getSolValue ();
 
-    // check if newly found NLP solution is also integer (unlikely...)
-    bool isChecked = false;
+      // check if newly found NLP solution is also integer (unlikely...)
+      bool isChecked = false;
 
-    if (nSol) {
+      if (nSol) {
 
-      problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: found nlp solution, check it\n");
+	problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: found nlp solution, check it\n");
 
-      isChecked = problem_ -> checkNLP0 (nSol, z, true,
-					 false,
-					 true,
-					 true);
-      
-// #ifdef FM_CHECKNLP2
-//       isChecked = problem_->checkNLP2(nSol, 0, false, // do not care about obj 
-// 				      true, // stopAtFirstViol
-// 				      true, // checkALL
-// 				      problem_->getFeasTol());
-//       if (isChecked) {
-// 	z = problem_->getRecordBestSol()->getModSolVal();
-//       }
-// #else /* not FM_CHECKNLP2 */
-//       isChecked = problem_ -> checkNLP (nSol, z, true);
-// #endif  /* not FM_CHECKNLP2 */
+	isChecked = problem_ -> checkNLP0 (nSol, z, true,
+					   false,
+					   true,
+					   true);
+      }
 
-    }
+      if (nSol &&
+	  isChecked &&
+	  (z < problem_ -> getCutOff ())) {
 
-    if (nSol &&
-	isChecked &&
-	(z < problem_ -> getCutOff ())) {
-
-      problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: feasible solution is improving\n");
+	problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: feasible solution is improving\n");
 
 #ifdef FM_TRACE_OPTSOL
 
 #ifdef FM_CHECKNLP2
-      problem_->getRecordBestSol()->update();
+	problem_->getRecordBestSol()->update();
 #else
-      problem_->getRecordBestSol()->update(nSol, problem_->nVars(), z, problem_->getFeasTol());
+	problem_->getRecordBestSol()->update(nSol, problem_->nVars(), z, problem_->getFeasTol());
 #endif
-      best = problem_->getRecordBestSol()->getSol();
-      objVal = problem_->getRecordBestSol()->getVal();
+	best = problem_->getRecordBestSol()->getSol();
+	objVal = problem_->getRecordBestSol()->getVal();
 #else
 
 #ifdef FM_CHECKNLP2
-      best = problem_->getRecordBestSol()->getModSol(problem_ -> nVars ());
+	best = problem_->getRecordBestSol()->getModSol(problem_ -> nVars ());
 #else
-      best   = nSol;
+	best   = nSol;
 #endif
-      objVal = z;
+	objVal = z;
 #endif
 
-// #ifdef FM_CHECKNLP2
-// #ifdef FM_TRACE_OPTSOL
-//       problem_->getRecordBestSol()->update();
-//       best = problem_->getRecordBestSol()->getSol();
-//       objVal = problem_->getRecordBestSol()->getVal();
-// #else /* not FM_TRACE_OPTSOL */
-//       best = problem_->getRecordBestSol()->getModSol(problem_ -> nVars ());
-//       objVal = z;
-// #endif /* not FM_TRACE_OPTSOL */
-// #else /* not FM_CHECKNLP2 */
-// #ifdef FM_TRACE_OPTSOL
-//       problem_->getRecordBestSol()->update(nSol, problem_->nVars(),
-// 					   z, problem_->getFeasTol());
-//       best = problem_->getRecordBestSol()->getSol();
-//       objVal = problem_->getRecordBestSol()->getVal();
-// #else /* not FM_TRACE_OPTSOL */
-//       best   = nSol;
-//       objVal = z;
-// #endif /* not FM_TRACE_OPTSOL */
-// #endif /* not FM_CHECKNLP2 */
-
-      problem_ -> setCutOff (objVal);
+	problem_ -> setCutOff (objVal);
+      }
     }
-  }
 
-  if (retval > 0) {
+    problem_ -> domain () -> pop ();
+
     if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC)) {
       printf ("FP: returning MINLP feasible solution:\n");
       printDist (problem_, best, nSol);
     }
+
     CoinCopyN (best, problem_ -> nVars (), newSolution);
   }
 
@@ -792,7 +727,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 // gather data on single solution for later printout
 void compDistSingle (CouenneProblem *p,
-		     int n, double *v, 
+		     int n, 
+		     const double *v, 
 		     double &norm, 
 		     int &nInfI, 
 		     int &nInfN, 
@@ -854,7 +790,7 @@ void compDistSingle (CouenneProblem *p,
 
 
 // print solutions and distances
-void printDist (CouenneProblem *p, double *iSol, double *nSol) {
+void printDist (CouenneProblem *p, const double *iSol, double *nSol) {
 
   int nInfII = -1, nInfNI = -1, nInfIN = -1, nInfNN = -1;
 
@@ -892,7 +828,7 @@ void printDist (CouenneProblem *p, double *iSol, double *nSol) {
 
 #define WRAP 3
 
-void printCmpSol (CouenneProblem *p, double *iSol, double *nSol, int direction) {
+void printCmpSol (CouenneProblem *p, const double *iSol, double *nSol, int direction) {
 
   int n = p -> nVars ();
 

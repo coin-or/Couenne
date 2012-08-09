@@ -136,9 +136,9 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
     // all variables are named x_i
     (void) SCIPsnprintf(varname, SCIP_MAXSTRLEN, "x_%d", i);
     SCIP_CALL( SCIPcreateVar(scip, &vars[i], varname, 
-			     neglect ? 0. : lbs  [i], 
-			     neglect ? 0. : ubs  [i], 
-			     neglect ? 0. : objs [i], 
+			     lbs  [i], 
+			     ubs  [i], 
+			     objs [i], 
 			     vartypes[i] == 0 ? SCIP_VARTYPE_CONTINUOUS : (vartypes[i] == 1 ? SCIP_VARTYPE_BINARY : SCIP_VARTYPE_INTEGER),
 			     TRUE, FALSE, NULL, NULL, NULL, NULL, NULL) );
 
@@ -161,9 +161,9 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	  problem_ -> Var (j) -> Multiplicity () > 0 &&
 	  problem_ -> Ub (j) - problem_ -> Lb (j) > .5) {
 
-	assert (fabs (lbs [j] - problem_ -> Lb (j)) < COUENNE_EPS);
-	assert (fabs (ubs [j] - problem_ -> Ub (j)) < COUENNE_EPS);
-	assert (fabs (x [j] - floor (x [j] + .5))   < COUENNE_EPS);
+	assert (fabs (lbs [j] - problem_ -> Lb (j)) < SCIPfeastol (scip));
+	assert (fabs (ubs [j] - problem_ -> Ub (j)) < SCIPfeastol (scip));
+	assert (fabs (x [j] - floor (x [j] + .5))   < SCIPfeastol (scip));
 
 	assert (nEntries <= 2*nvars - 2);
 
@@ -408,7 +408,14 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 #endif
           
     // solve the MILP
-    SCIP_CALL( SCIPsolve(scip) );
+
+    SCIP_RETCODE retcode = SCIPsolve(scip);
+
+    if (retcode != SCIP_OKAY) {
+
+      printf ("SCIPsolve did not succeed\n");
+      goto TERMINATION;
+    }
 
     nscipsols =  SCIPgetNSols(scip);
      
@@ -430,10 +437,10 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	assert(scipsols != NULL);
 
 	if (!sol)
-	  sol = new CouNumber [nvars];
+	  sol = new CouNumber [problem_ -> nVars ()];
 
 	// get solution values and objective of incumbent
-	SCIP_CALL( SCIPgetSolVals(scip, bestsol, nvars, vars, sol) );
+	SCIP_CALL( SCIPgetSolVals(scip, bestsol, problem_ -> nVars (), vars, sol) );
 	obj = SCIPgetSolOrigObj(scip, bestsol);
 
 	nstoredsols = 0;
@@ -450,7 +457,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	  tmpsol = new CouNumber [nvars];
            
 	  // get solution values
-	  SCIP_CALL( SCIPgetSolVals(scip, scipsols[i], nvars, vars, tmpsol) );
+	  SCIP_CALL( SCIPgetSolVals(scip, scipsols[i], problem_ -> nVars (), vars, tmpsol) );
 	  CouenneFPsolution couennesol = CouenneFPsolution (problem_, tmpsol);
 
 	  // add solutions to the pool if they are not in the tabu list
@@ -489,6 +496,10 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
     }
 
   } while (solveagain);
+
+  ////////////////////////////////////////////////////////////////
+
+ TERMINATION:
    
   // release variables before freeing them
   for (int i=0; i<nvars; i++) {

@@ -391,7 +391,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
 /// Reads a (possibly fractional) solution and fixes the integer
 /// components in the nonlinear problem for later re-solve
-bool CouenneFeasPump::fixIntVariables (double *sol) {
+bool CouenneFeasPump::fixIntVariables (const double *sol) {
 
   assert (sol);
 

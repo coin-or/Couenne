@@ -47,7 +47,7 @@ namespace Couenne {
     virtual ~CouenneTNLP ();
 
     /// set initial solution
-    void setInitSol (double *sol);
+    void setInitSol (const double *sol);
 
     /// returns best solution (if it exists)
     CouNumber *getSolution ()

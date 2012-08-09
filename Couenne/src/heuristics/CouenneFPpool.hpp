@@ -120,7 +120,7 @@ namespace Couenne {
 
     /// finds, in pool, solution x closest to sol; removes it from the
     /// pool and overwrites it to sol
-    void findClosestAndReplace (double *&sol, double *nSol, int nvars) ;
+    void findClosestAndReplace (double *&sol, const double *nSol, int nvars) ;
   };
 }
 
