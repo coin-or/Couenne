@@ -136,8 +136,8 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
     // all variables are named x_i
     (void) SCIPsnprintf(varname, SCIP_MAXSTRLEN, "x_%d", i);
     SCIP_CALL( SCIPcreateVar(scip, &vars[i], varname, 
-			     lbs  [i], 
-			     ubs  [i], 
+			     CoinMin (lbs [i], ubs [i]),
+			     CoinMax (lbs [i], ubs [i]),
 			     objs [i], 
 			     vartypes[i] == 0 ? SCIP_VARTYPE_CONTINUOUS : (vartypes[i] == 1 ? SCIP_VARTYPE_BINARY : SCIP_VARTYPE_INTEGER),
 			     TRUE, FALSE, NULL, NULL, NULL, NULL, NULL) );
