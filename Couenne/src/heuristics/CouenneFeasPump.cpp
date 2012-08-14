@@ -74,26 +74,25 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       (multHessMILP_ > 0.))
     nlp_ -> getSaveOptHessian () = true;
 
-  if (problem_ -> Jnlst () -> ProduceOutput  
-      (J_ALL, J_NLPHEURISTIC)) {
-
+  if (problem_ -> Jnlst () -> ProduceOutput (J_ALL, J_NLPHEURISTIC)) {
     printf ("initial NLP:---------\n");
     problem_ -> print ();
     printf ("---------------------\n");
   }
 
+  problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: Initial NLP... "); fflush (stdout);
+
   // Solve with original objective function
   ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
+
+  problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "done\n"); 
 
   ////////////////////////////////////////////////////////////////
 
   problem_ -> domain () -> pop ();
 
-  if ((status != Solve_Succeeded) && 
-      (status != Solved_To_Acceptable_Level))
- 
-    problem_ -> Jnlst () -> Printf 
-      (J_ERROR, J_NLPHEURISTIC, "Feasibility Pump: error in initial NLP problem\n");
+  if ((status != Solve_Succeeded) &&  (status != Solved_To_Acceptable_Level))
+    problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "Feasibility Pump: error in initial NLP problem\n");
 
   if ((multHessNLP_  > 0.) || 
       (multHessMILP_ > 0.))
@@ -179,7 +178,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     if (!iSol || z >= COIN_DBL_MAX/2) {
 
-      problem_ -> Jnlst () -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC, "FP: could not find IP solution\n");
+      problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "FP: could not find IP solution\n");
 
       // find non-tabu solution in the solution pool
       while (!pool_ -> Set (). empty ()) {
@@ -199,7 +198,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
  
       if (!try_again) { // nothing to do, bail out
 	
-	problem_ -> Jnlst () -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC, "FP: could not find from pool either, bailing out\n");
+	problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "FP: could not find from pool either, bailing out\n");
 	break;
       }
     }
@@ -343,6 +342,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	try_again = false;
 
+	if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
+	  break;
+
 	// Check if fixing integers to those in iSol yields an
 	// infeasible problem. If so, don't optimize
 	if (fixIntVariables (iSol)) {
@@ -395,7 +397,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     if (isChecked) {
 
-      problem_ -> Jnlst () -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC, "FP: IP solution is MINLP feasible\n");
+      problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "FP: IP solution is MINLP feasible\n");
 
       // solution is MINLP feasible! Save it.
 
@@ -512,7 +514,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     z = solveNLP (iSol, nSol); 
 
     if ((nSol && iSol) &&
-	(problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC))) {
+	(problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_NLPHEURISTIC))) {
 
       double dist = 0.;
       int nNonint = 0;

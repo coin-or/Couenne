@@ -264,6 +264,10 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
         
     // set time limit
     timelimit = problem_ -> getMaxCpuTime () - CoinCpuTime ();
+
+    if (timelimit < 0) 
+      break;
+
     SCIP_CALL( SCIPsetRealParam(scip, "limits/time", timelimit) );        
 
 
@@ -409,11 +413,10 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
           
     // solve the MILP
 
-    SCIP_RETCODE retcode = SCIPsolve(scip);
+    SCIP_RETCODE retcode = SCIPsolve (scip);
 
     if (retcode != SCIP_OKAY) {
-
-      printf ("SCIPsolve did not succeed\n");
+      problem_ -> Jnlst () -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC, "Couenne FP: SCIPsolve did not succeed\n");
       goto TERMINATION;
     }
 
