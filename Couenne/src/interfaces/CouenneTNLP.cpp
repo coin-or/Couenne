@@ -661,7 +661,7 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 	int indLam = HLa_ -> lamI () [i][j];
 
 	hessMember += (indLam == 0) ? 
-	  (*(elist [j])) () :                  // this is the objective
+	  (*(elist [j])) () :                    // this is the objective
 	  (*(elist [j])) () * lambda [indLam-1]; // this is a constraint
       }
 

@@ -85,7 +85,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   // Solve with original objective function
   ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
 
-  problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "done\n"); 
+  problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "done\n"); fflush (stdout);
 
   ////////////////////////////////////////////////////////////////
 

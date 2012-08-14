@@ -164,7 +164,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 	continue;
 
       if (problem_ -> Var (i) -> isInteger () &&
-	  (fabs (iSol [i] - ceil (iSol [i] - .5)) > 1e-4))
+	  (fabs (iSol [i] - floor (iSol [i] + .5)) > COUENNE_EPS)) // need stricter tolerance
 	++nNonint;
 
       dist += 
@@ -236,7 +236,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 	  if ((problem_ -> Var (i) -> Multiplicity () > 0) &&
 	      (milp_ -> isInteger (i)))
 
-	    newLB [i] = newUB [i] = iSol [i];
+	    newLB [i] = newUB [i] = iSol [i] = floor (iSol [i] + .5);
 
 	postlp_ -> setColLower (newLB);
 	postlp_ -> setColUpper (newUB);

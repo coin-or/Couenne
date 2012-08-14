@@ -391,9 +391,9 @@ Upper bound:                           %s  (gap: %s)\n\
 Branch-and-bound nodes:                  %8d\n",
 		     CoinCpuTime () - time_start,
 		     cg ? (CoinCpuTime () - CoinMax (time_start, cg -> rootTime ())) : CoinCpuTime () - time_start,
-		     (lb <= -9e12) ||
-		     (                 infeasible ||          (fabs (lb)             > COUENNE_INFINITY/1e4)) ? "      -inf" : lbstr,
-		     ((retcomp < 0) || infeasible ||                            (ub  > COUENNE_INFINITY/1e4)) ? "       inf" : ubstr,
+		     ((lb <= -8.9999e12) ||
+                                       infeasible ||          (fabs (lb)             > COUENNE_INFINITY/1e4)) ? "      -inf" : lbstr,
+		     ((retcomp < 0) || infeasible ||                           (ub   > COUENNE_INFINITY/1e4)) ? "       inf" : ubstr,
 		     (                 infeasible || (CoinMax (fabs (lb), fabs (ub)) > COUENNE_INFINITY/1e4)) ? "--"         : gapstr,
 		     infeasible ? 0 : bb.numNodes ());
 
@@ -425,7 +425,11 @@ Branch-and-bound nodes:                  %8d\n",
       else
 	printf ("Stats: %-15s %4d [var] %4d [int] %4d [con] %4d [aux] "
 		"%6d [root] %8d [tot] %6g [sep] %8g [time] %8g [bb] "
-		"%20e [lower] %20e [upper] %7d [nodes] %.0g [sg] %d [sgc]\n",// %s %s\n",
+#ifdef COIN_HAS_NTY
+		"%20e [lower] %20e [upper] %7d [nodes] %.0g [sg] %d [sgc]\n",
+#else
+		"%20e [lower] %20e [upper] %7d [nodes]\n",
+#endif
 		cp ? cp -> problemName (). c_str () : "unknown",
 		(cp) ? cp -> nOrigVars     () : -1, 
 		(cp) ? cp -> nOrigIntVars  () : -1, 
@@ -439,12 +443,10 @@ Branch-and-bound nodes:                  %8d\n",
 		ub, //bb.model (). getObjValue (),
 		//bb.bestBound (),
 		//bb.bestObj (),
-		infeasible ? 0 : bb.numNodes (),
+		infeasible ? 0 : bb.numNodes ()
 #ifdef COIN_HAS_NTY
-		symmGroupSize,
-		nSGcomputations
-#else
-		-1., -1
+		,symmGroupSize
+		,nSGcomputations
 #endif
 );
 		//bb.iterationCount ());
