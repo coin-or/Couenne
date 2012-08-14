@@ -160,6 +160,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   do {
 
+    if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
+      break;
+
     problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: loop\n");
 
     // INTEGER PART /////////////////////////////////////////////////////////
