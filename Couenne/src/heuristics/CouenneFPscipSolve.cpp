@@ -384,13 +384,16 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	    SCIP_CALL( SCIPsetIntParam(scip, "heuristics/feaspump/freq", 0) );
 	    SCIP_CALL( SCIPsetIntParam(scip, "heuristics/feaspump/maxsols", -1) );
 
+	    // Comment next 8 lines as Workaround for mac/conv/batch
+	    // to avoid assertion in stage 3 on nsolutions==0
+
 	    if( SCIPversion() <= 2.01 )
 	      {
-		SCIP_CALL( SCIPsetBoolParam(scip, "heuristics/feaspump2/stage3", TRUE) );
+	    	SCIP_CALL( SCIPsetBoolParam(scip, "heuristics/feaspump2/stage3", TRUE) );
 	      }
 	    else
 	      {
-		SCIP_CALL( SCIPsetBoolParam(scip, "heuristics/feaspump/stage3", TRUE) );
+	    	SCIP_CALL( SCIPsetBoolParam(scip, "heuristics/feaspump/stage3", TRUE) );
 	      }
 	  }
 	if( milpCuttingPlane_ == FP_CUT_INTEGRATED )

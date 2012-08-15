@@ -58,6 +58,11 @@ double CouenneFeasPump::findSolution (double* &iSol, int niter, int* nsuciter) {
 
   /// solve MILP 
 
+  // static int nSolves = 0;
+  // char name [40];
+  // sprintf (name, "fp_milp_%d", nSolves++);
+  // milp_ -> writeLp (name);
+
 #ifdef COIN_HAS_SCIP
 
   if (useSCIP_ && problem_ -> nIntVars () > 0) { // if LP, use Clp below
@@ -66,7 +71,7 @@ double CouenneFeasPump::findSolution (double* &iSol, int niter, int* nsuciter) {
 
     if (retcode != SCIP_OKAY) {
 
-      printf ("SCIP did not return successfully\n");
+      printf ("Couenne Feasibility Pump: SCIP did not return a feasible solution\n");
       return COIN_DBL_MAX;
     }
   } else

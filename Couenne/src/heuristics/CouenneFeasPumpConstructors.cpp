@@ -243,7 +243,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     // here the objective function is ||x-x^0||_2^2
 
     // create the argument list (x_i - x_i^0)^2 for all i's
-    for (int i=0; i<problem_ -> nVars (); i++) {
+    for (int i=0; i<problem_ -> nVars (); ++i, ++iS) {
 
       if (problem_ -> Var (i) -> Multiplicity () <= 0)
 	continue;
@@ -257,8 +257,6 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
       if      (*iS == 0.) base =              new exprClone (problem_ -> Var (i));
       else if (*iS <  0.) base = new exprSum (new exprClone (problem_ -> Var (i)), new exprConst (-*iS));
       else                base = new exprSub (new exprClone (problem_ -> Var (i)), new exprConst  (*iS));
-
-      ++iS;
 
       list [nTerms++] = new exprPow (base, new exprConst (2.));
     }
@@ -335,22 +333,24 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 	if (*val + multDistNLP_ == 1.)
 
 	  list [nTerms++] = new exprPow (new exprSub (new exprClone (problem_ -> Var (*row)), 
-						      new exprConst (iSol [*row])), new exprConst (2.));
+						      new exprConst (iSol [*row])), 
+					 new exprConst (2.));
 
 	else if (fabs (*val + multDistNLP_) > COUENNE_EPS)
 
 	  list [nTerms++] = new exprMul (new exprConst (*val + multDistNLP_),
 					 new exprPow (new exprSub (new exprClone (problem_ -> Var (*row)), 
-								   new exprConst (iSol [*row])), new exprConst (2.)));
+								   new exprConst (iSol [*row])), 
+						      new exprConst (2.)));
       }
     }
 
     // third, add missing diagonal elements
-      
+
     if (multDistNLP_ > 0.) {
 
       // create the argument list (x_i - x_i^0)^2 for all i's
-      for (int i=0; i<problem_ -> nVars (); i++) {
+      for (int i=0; i<problem_ -> nVars (); ++i, ++iS) {
 
 	if (problem_ -> Var (i) -> Multiplicity () <= 0)
 	  continue;
@@ -365,8 +365,6 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 	if      (*iS == 0.) base =              new exprClone (problem_ -> Var (i));
 	else if (*iS <  0.) base = new exprSum (new exprClone (problem_ -> Var (i)), new exprConst (-*iS));
 	else                base = new exprSub (new exprClone (problem_ -> Var (i)), new exprConst  (*iS));
-
-	++iS;
 
 	list [nTerms++] = new exprPow (base, new exprConst (2.));
       }
@@ -385,7 +383,11 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
   list = CoinCopyOfArray (tmp, nTerms);
   delete [] tmp;
 
-  return new exprSum (list, nTerms);
+  expression *retexpr = new exprSum (list, nTerms);
+
+  //printf ("new objective: "); retexpr -> print (); printf ("\n");
+
+  return retexpr;
 }
 
 
@@ -452,7 +454,7 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      3, "Solve as many nlp's at the nodes for each level of the tree. "
      "Nodes are randomly selected. If for a "
      "given level there are less nodes than this number nlp are solved for every nodes. "
-     "For example if parameter is 8, nlp's are solved for all node until level 8, " 
+     "For example, if parameter is 8 NLPs are solved for all node until level 8, " 
      "then for half the node at level 9, 1/4 at level 10.... "
      "Set to -1 to perform at all nodes.");
 

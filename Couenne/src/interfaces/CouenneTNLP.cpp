@@ -633,8 +633,8 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
     if (!optHessian_)
       optHessian_ = new CouenneSparseMatrix;
 
-    problem_ -> domain () -> push (n, x, NULL, NULL);
-
+    problem_ -> domain () -> push (n, x, problem_ -> domain () -> current () -> lb (),
+   				         problem_ -> domain () -> current () -> ub ());
     int nnz = HLa_ -> nnz ();
 
     // resize them to full size (and realloc them to optHessianNum_ later)

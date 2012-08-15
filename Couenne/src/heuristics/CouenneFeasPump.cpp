@@ -75,7 +75,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     nlp_ -> getSaveOptHessian () = true;
 
   if (problem_ -> Jnlst () -> ProduceOutput (J_ALL, J_NLPHEURISTIC)) {
-    printf ("initial NLP:---------\n");
+    printf ("initial: solving NLP:---------\n");
     problem_ -> print ();
     printf ("---------------------\n");
   }
@@ -86,6 +86,15 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
 
   problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "done\n"); fflush (stdout);
+
+  if (nlp_ -> getSolution () && (problem_ -> Jnlst () -> ProduceOutput (J_ALL, J_NLPHEURISTIC))) { // check if non-NULL
+    printf ("######################## NLP solution (init):\n");
+    for (int i=0; i< problem_ -> nVars ();) {
+      printf ("%+e ", nlp_ -> getSolution () [i]);
+      if (!(++i % 15)) printf ("\n");
+    }
+    if ((problem_ -> nVars () - 1) % 5) printf ("\n");
+  }
 
   ////////////////////////////////////////////////////////////////
 
@@ -351,11 +360,25 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	  nlp_ -> setInitSol (iSol);
 
+	  if (problem_ -> Jnlst () -> ProduceOutput (J_ALL, J_NLPHEURISTIC)) {
+	    printf ("----------------------- Solving NLP:\n");
+	    problem_ -> print ();
+	    printf ("-----------------------\n");
+	  }
+
 	  status = app_ -> OptimizeTNLP (nlp_);
 
 	  if (nlp_ -> getSolution ()) { // check if non-NULL
 	    if  (nSol)  CoinCopyN       (nlp_ -> getSolution (), problem_ -> nVars (), nSol);
 	    else nSol = CoinCopyOfArray (nlp_ -> getSolution (), problem_ -> nVars ());
+	  }
+
+	  if (nlp_ -> getSolution () && (problem_ -> Jnlst () -> ProduceOutput (J_ALL, J_NLPHEURISTIC))) { // check if non-NULL
+	    printf ("######################## NLP solution (loop through pool):\n");
+	      for (int i=0; i< problem_ -> nVars ();) {
+		printf ("%+e ", nlp_ -> getSolution () [i]);
+		if (!(++i % 15)) printf ("\n");
+	      }
 	  }
 
 	  z = nlp_ -> getSolValue ();
@@ -653,6 +676,14 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
  
 	problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, 
 					"Feasibility Pump: error in final NLP problem (due to fixing integer variables?)\n");
+
+      if (nlp_ -> getSolution () && (problem_ -> Jnlst () -> ProduceOutput (J_ALL, J_NLPHEURISTIC))) { // check if non-NULL
+	printf ("######################## NLP solution (post):\n");
+	  for (int i=0; i< problem_ -> nVars ();) {
+	    printf ("%+e ", nlp_ -> getSolution () [i]);
+	    if (!(++i % 15)) printf ("\n");
+	  }
+      }
 
       // if found a solution with the last NLP, check & save it
 
