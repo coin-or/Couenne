@@ -771,7 +771,7 @@ void compDistSingle (CouenneProblem *p,
 		     double &infI, 
 		     double &infN) {
 
-  p -> domain () -> push (n, v, NULL, NULL);
+  p -> domain () -> push (n, v, NULL, NULL); // don't care about bounds as not used
 
   norm = infI = infN = 0.;
   nInfI = nInfN = 0;

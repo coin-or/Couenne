@@ -107,8 +107,10 @@ SCIP_RETCODE checkRowcuts(
    conshdlrdata -> milp -> setColSolution(sol);
 
    /* let Couenne generate linearization cuts */
-   problem -> domain () -> push (problem -> nVars (), sol, NULL, NULL);
-   conshdlrdata->cutgenerator->genRowCuts(*(conshdlrdata->milp), cs, 0, NULL);
+   problem -> domain () -> push (problem -> nVars (), sol, 
+				 problem -> domain () -> current () -> lb (), 
+				 problem -> domain () -> current () -> ub ());
+   conshdlrdata -> cutgenerator -> genRowCuts (*(conshdlrdata->milp), cs, 0, NULL);
    problem -> domain () -> pop  ();
 
    if( !addcons )

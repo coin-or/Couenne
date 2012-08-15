@@ -56,7 +56,9 @@ void CouenneProblem::restoreUnusedOriginals (CouNumber *x) const {
   if (nUnusedOriginals_ <= 0) return;
 
   if (x)
-    domain_.push (nVars(), x, NULL, NULL, false); // no need for another copy
+    domain_.push (nVars(), x, 
+		  domain_. current () -> lb (), 
+		  domain_. current () -> ub (), false); // no need for another copy
 
   for (int i=0; i<nUnusedOriginals_; i++) {
 
@@ -67,10 +69,10 @@ void CouenneProblem::restoreUnusedOriginals (CouNumber *x) const {
 
       CouNumber value = (*img) ();
 
-      X  (indVar) = value;
+      X (indVar) = value;
 
       if (x)
-	x  [indVar] = value;
+	x [indVar] = value;
     }
   }
 
