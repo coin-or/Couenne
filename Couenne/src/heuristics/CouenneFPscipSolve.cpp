@@ -161,32 +161,38 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	  problem_ -> Var (j) -> Multiplicity () > 0 &&
 	  problem_ -> Ub (j) - problem_ -> Lb (j) > .5) {
 
+	// if (fabs (x [j] - floor (x [j] + .5)) >= SCIPfeastol (scip)) {
+	//   printf ("integer var x%d not really integer: %e\n", j, x [j]);
+	// }
+
 	assert (fabs (lbs [j] - problem_ -> Lb (j)) < SCIPfeastol (scip));
 	assert (fabs (ubs [j] - problem_ -> Ub (j)) < SCIPfeastol (scip));
-	assert (fabs (x [j] - floor (x [j] + .5))   < SCIPfeastol (scip));
+	assert (fabs (x [j] - floor (x [j] + .5))   < 1e3 * SCIPfeastol (scip));
 
 	assert (nEntries <= 2*nvars - 2);
+
+	double x_rounded = floor (x [j] + .5);
 
 	if        (x [j] >= problem_ -> Ub (j) - COUENNE_EPS) {
 
 	  tabuvars       [nEntries]   = vars [j];
-	  tabubounds     [nEntries]   = x  [j] - 1.;
+	  tabubounds     [nEntries]   = x_rounded - 1.;
 	  tabuboundtypes [nEntries++] = SCIP_BOUNDTYPE_UPPER;
 
 	} else if (x [j] <= problem_ -> Lb (j) + COUENNE_EPS) {
 
 	  tabuvars       [nEntries]   = vars [j];
-	  tabubounds     [nEntries]   = x  [j] + 1.;
+	  tabubounds     [nEntries]   = x_rounded + 1.;
 	  tabuboundtypes [nEntries++] = SCIP_BOUNDTYPE_LOWER;
 
 	} else {
 
 	  tabuvars       [nEntries]   = vars [j];
-	  tabubounds     [nEntries]   = x  [j] - 1.;
+	  tabubounds     [nEntries]   = x_rounded - 1.;
 	  tabuboundtypes [nEntries++] = SCIP_BOUNDTYPE_UPPER;
 
 	  tabuvars       [nEntries]   = vars [j];
-	  tabubounds     [nEntries]   = x  [j] + 1.;
+	  tabubounds     [nEntries]   = x_rounded + 1.;
 	  tabuboundtypes [nEntries++] = SCIP_BOUNDTYPE_LOWER;
 	}
       } 

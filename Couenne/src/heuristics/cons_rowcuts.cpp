@@ -1,6 +1,7 @@
 /* $Id$
  *
  * @file   cons_rowcuts.c
+ * @ingroup CONSHDLRS 
  * @brief  constraint handler for rowcuts constraints
  *         enables separation of convexification cuts during SCIP solution procedure
  * @author Pietro Belotti
@@ -8,13 +9,6 @@
  * @license This file is licensed under the Eclipse Public License (EPL)
  * 
  * This file is licensed under the Eclipse Public License (EPL)
- */
-
-/**@file   cons_rowcuts.c
- * @ingroup CONSHDLRS 
- * @brief  constraint handler for rowcuts constraints
- * @author Pietro Belotti
- * @author Timo Berthold
  */
 
 /*---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+----9----+----0----+----1----+----2*/

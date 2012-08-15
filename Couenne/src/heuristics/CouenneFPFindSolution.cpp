@@ -58,10 +58,10 @@ double CouenneFeasPump::findSolution (double* &iSol, int niter, int* nsuciter) {
 
   /// solve MILP 
 
-  // static int nSolves = 0;
-  // char name [40];
-  // sprintf (name, "fp_milp_%d", nSolves++);
-  // milp_ -> writeLp (name);
+  static int nSolves = 0;
+  char name [40];
+  sprintf (name, "fp_milp_%d", nSolves++);
+  milp_ -> writeLp (name);
 
 #ifdef COIN_HAS_SCIP
 
