@@ -52,7 +52,7 @@ double CouenneFeasPump::findSolution (double* &iSol, int niter, int* nsuciter) {
   // 3) If K consecutive successes at finding new solution (not
   //    necessarily new best feasible), --p[i]
   //
-  // 4) if H consecutive failutes, ++p[i]
+  // 4) if H consecutive failures, ++p[i]
 
   double obj;
 

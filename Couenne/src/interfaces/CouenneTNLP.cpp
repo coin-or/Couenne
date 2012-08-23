@@ -53,6 +53,9 @@ CouenneTNLP::~CouenneTNLP () {
     delete (*i). second;
 }
 
+/// defined in Feasibility pump
+int PSDize (int n, double *A, double *B, bool doSqrRoot);
+
 
 /// Constructor 
 CouenneTNLP::CouenneTNLP (CouenneProblem *p):
@@ -628,8 +631,10 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
   // if a save-flag was set, save this solution's lagrangian hessian
   // for later use by the FP
 
-  if (saveOptHessian_) {
+  if (!saveOptHessian_)
+    return;
 
+  {
     if (!optHessian_)
       optHessian_ = new CouenneSparseMatrix;
 
@@ -665,7 +670,7 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 	  (*(elist [j])) () * lambda [indLam-1]; // this is a constraint
       }
 
-      if (hessMember != 0.) {
+      if (fabs (hessMember) > COUENNE_EPS) {
 
 	// printf ("saving: %d, %d --> %g\n", 
 	// 	HLa_ -> iRow () [i],
@@ -677,11 +682,49 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
       }
     }
 
+    double *H = new double [n*n];
+    CoinZeroN (H, n*n);
+
+    double *H_PSD = new double [n*n];
+
+    for (int i=0; i < optHessianNum; ++i)
+      H [*optHessianRow++ * n + *optHessianCol++] = *optHessianVal++;
+
+    optHessianRow -= optHessianNum;
+    optHessianCol -= optHessianNum;
+    optHessianVal -= optHessianNum;
+
+    // transform matrix into a PSD one by eliminating the contribution
+    // of negative eigenvalues, return number of nonzeros
+    optHessianNum = PSDize (n, H, H_PSD, false); 
+
     optHessianVal = (double *) realloc (optHessianVal, optHessianNum * sizeof (double));
     optHessianRow = (int    *) realloc (optHessianRow, optHessianNum * sizeof (int));
     optHessianCol = (int    *) realloc (optHessianCol, optHessianNum * sizeof (int));
 
+    nnz = 0;
+    double val;
+
+    for (int i=0; i<n; ++i)
+      for (int j=0; j<n; ++j)
+	if (fabs (val = *H_PSD++) > COUENNE_EPS) {
+	  *optHessianRow++ = i;
+	  *optHessianCol++ = j;
+	  *optHessianVal++ = val;
+	  ++nnz;
+	}
+
+    H_PSD -= n*n;
+    optHessianNum = nnz;
+
+    optHessianRow -= nnz;
+    optHessianCol -= nnz;
+    optHessianVal -= nnz;
+
     problem_ -> domain () -> pop ();
+
+    delete [] H;
+    delete [] H_PSD;
   }
 }
 

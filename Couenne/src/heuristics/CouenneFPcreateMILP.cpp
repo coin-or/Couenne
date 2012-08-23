@@ -26,6 +26,11 @@ using namespace Couenne;
 /// computes square root of a CouenneSparseMatrix
 void ComputeSquareRoot (const CouenneFeasPump *fp, CouenneSparseMatrix *hessian, CoinPackedVector *P);
 
+/// project matrix onto the cone of positive semidefinite matrices
+/// (possibly take square root of eigenvalue for MILP). Return number
+/// of nonzeros
+int PSDize (int n, double *A, double *B, bool doSqrRoot);
+
 /// create clone of MILP and add variables for special objective
 OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model, bool isMILP) {
 
@@ -66,7 +71,6 @@ OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model,
 
   return lp;
 }
-
 
 /// modify MILP or LP to implement distance by adding extra rows (extra cols were already added by createCloneMILP)
 void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, double *sol, bool isMILP) {
@@ -227,6 +231,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   // fill an input to Lapack/Blas procedures using hessian
 
   double *A = (double *) malloc (n*n * sizeof (double));
+  double *B = (double *) malloc (n*n * sizeof (double));
 
   CoinZeroN (A, n*n);
 
@@ -247,80 +252,9 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   if (objInd >= 0)
     A [objInd * (n+1)] = maxElem * GRADIENT_WEIGHT * n;
 
-  // call Lapack/Blas routines
-  double *eigenval = (double *) malloc (n   * sizeof (double));
-  int status;
-
-  // compute eigenvalues and eigenvectors
-  Ipopt::IpLapackDsyev (true, n, A, n, eigenval, status);
-
-  if      (status < 0) printf ("Couenne: warning, argument %d illegal\n",                     -status);
-  else if (status > 0) printf ("Couenne: warning, dsyev did not converge (error code: %d)\n",  status);
-
-  // define a new matrix B = E' * D, where E' is E transposed,
-  //
-  // E = eigenvector matrix
-  // D = diagonal with square roots of eigenvalues
-  //
-  // Eventually, the square root is given by E' D E
-
-  double *B = (double *) malloc (n*n * sizeof(double));
+  PSDize (n, A, B, true); // use squareroot
 
   double *eigenvec = A; // as overwritten by dsyev;
-
-  // 
-  // eigenvec is column major, hence post-multiplying it by D equals
-  // multiplying each column i by the i-th eigenvalue
-  //
-
-  // if all eigenvalues are nonpositive, set them all to one
-
-  double
-    MinEigVal = eigenval [0],
-    MaxEigVal = eigenval [n-1];
-
-  for (int j=1; j<n; j++)
-    assert (eigenval [j-1] <= eigenval [j]);
-
-  if (MaxEigVal <= 0.)
-
-    // in this case it makes sense to invert each eigenvalue
-    // (i.e. take its inverse) and change its sign, as the steepest
-    // descent should correspond to the thinnest direction
-
-    for (int j=0; j<n; j++)
-      eigenval [j] = 1. / (.1 - eigenval [j]);
-
-  else {
-
-    // set all not-too-positive ones to a fraction of the maximum
-    // ("un-thins" the level curves defined by the HL)
-
-    MinEigVal = MaxEigVal * COUENNE_EIG_RATIO;
-
-    if (eigenval [0] <= MinEigVal) 
-      for (int j=0; eigenval [j] <= MinEigVal; j++)
-	eigenval [j] = MinEigVal;
-  }
-
-  // Now obtain sqrt (A)
-
-  for (int j=0; j<n; ++j) {
-
-    register double sqrtEig = sqrt (eigenval [j]);
-
-    for (int i=n; i--;)
-      *B++ = sqrtEig * eigenvec [i*n+j];
-  }
-
-  B -= n*n;
-
-  // TODO: set up B as    row-major sparse matrix and 
-  //              E as column-major sparse matrix
-  //
-  // Otherwise this multiplication is O(n^3)
-
-  // Now compute B * E
 
   for     (int i=0; i<n; ++i)
     for   (int j=0; j<n; ++j) { 
@@ -341,7 +275,98 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   //   printf ("P^{1/2}:\n");
   // }
 
-  free (eigenval);
-  free (A);
+  free (A); 
   free (B);
+}
+
+
+///
+/// Project matrix onto the cone of positive semidefinite matrices
+/// (possibly take square root of eigenvalue for MILP). Return number
+/// of nonzeros
+//
+
+int PSDize (int n, double *A, double *B, bool doSqrRoot) {
+
+  // call Lapack/Blas routines
+  double *eigenval = (double *) malloc (n * sizeof (double));
+  int status;
+
+  // compute eigenvalues and eigenvectors
+  Ipopt::IpLapackDsyev (true, n, A, n, eigenval, status);
+
+  if      (status < 0) printf ("Couenne: warning, argument %d illegal\n",                     -status);
+  else if (status > 0) printf ("Couenne: warning, dsyev did not converge (error code: %d)\n",  status);
+
+  // define a new matrix B = E' * D, where E' is E transposed,
+  //
+  // E = eigenvector matrix
+  // D = diagonal with square roots of eigenvalues
+  //
+  // Eventually, the square root is given by E' D E
+
+  double *eigenvec = A; // as overwritten by dsyev;
+
+  // 
+  // eigenvec is column major, hence post-multiplying it by D equals
+  // multiplying each column i by the i-th eigenvalue
+  //
+
+  // if all eigenvalues are nonpositive, set them all to one
+
+  double
+    MinEigVal = eigenval [0],
+    MaxEigVal = eigenval [n-1];
+
+  for (int j=1; j<n; j++)
+    assert (eigenval [j-1] <= eigenval [j]);
+
+  if (MaxEigVal <= 0.)
+
+    // In this case, we are interested in minimizing a concave
+    // function. It makes sense to invert each eigenvalue (i.e. take
+    // its inverse) and change its sign, as the steepest descent
+    // should correspond to the thinnest direction
+
+    for (int j=0; j<n; j++)
+      eigenval [j] = 1. / (.1 - eigenval [j]);
+
+  else {
+
+    // set all not-too-positive ones to a fraction of the maximum
+    // ("un-thins" the level curves defined by the HL)
+
+    MinEigVal = MaxEigVal * COUENNE_EIG_RATIO;
+
+    if (eigenval [0] <= MinEigVal) 
+      for (int j=0; eigenval [j] <= MinEigVal; j++)
+	eigenval [j] = MinEigVal;
+  }
+
+  // Now obtain sqrt (A)
+
+  int nnz = 0;
+
+  for (int j=0; j<n; ++j) {
+
+    register double multEig = doSqrRoot ? sqrt (eigenval [j]) : 
+                                                eigenval [j];
+
+    for (int i=0; i<n; ++i)
+      if (fabs (*B++ = multEig * eigenvec [i*n+j]) > COUENNE_EPS)
+	++nnz;
+  }
+
+  B -= n*n;
+
+  // TODO: set up B as    row-major sparse matrix and 
+  //              E as column-major sparse matrix
+  //
+  // Otherwise this multiplication is O(n^3)
+
+  // Now compute B * E
+
+  free (eigenval);
+
+  return nnz;
 }

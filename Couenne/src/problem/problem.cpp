@@ -314,6 +314,9 @@ void CouenneProblem::fillObjCoeff (double *&obj) {
 /// set cutoff from NLP solution
 void CouenneProblem::setCutOff (CouNumber cutoff, const double *s) const {
 
+  if (cutoff > COUENNE_INFINITY/2) 
+    return;
+
   int indobj = objectives_ [0] -> Body () -> Index ();
 
   // AW: Should we use the value of the objective variable computed by 
@@ -321,7 +324,7 @@ void CouenneProblem::setCutOff (CouNumber cutoff, const double *s) const {
   if ((indobj >= 0) && (cutoff < pcutoff_ -> getCutOff () - COUENNE_EPS)) {
 
     //if (fabs (cutoff - pcutoff_ -> getCutOff ()) > (1 + fabs (cutoff)) * 2 * SafeCutoff) // avoid too many printouts
-    Jnlst () -> Printf (Ipopt::J_ERROR, J_PROBLEM, "New feasible solution, value: %.10e\n", cutoff);
+    Jnlst () -> Printf (Ipopt::J_ERROR, J_PROBLEM, "Couenne: new cutoff value %.10e\n", cutoff);
 			//pcutoff_ -> getCutOff ());
 
     if (Var (indobj) -> isInteger ())
