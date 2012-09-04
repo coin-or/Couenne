@@ -138,8 +138,9 @@ CouenneInterface::extractLinearRelaxation
 	  if (lower       > upper)       CoinSwap (lower,       upper);
 	  if (p -> Lb (i) > p -> Ub (i)) CoinSwap (p -> Lb (i), p -> Ub (i));
 
-	  if (lower < p -> Lb (i) - COUENNE_EPS) setColLower (i, p -> Lb (i));
-	  if (upper > p -> Ub (i) + COUENNE_EPS) setColUpper (i, p -> Ub (i));
+	  if (lower < p -> Lb (i) - COUENNE_EPS) setColLower (i, CoinMin(nub[i], p -> Lb (i)));
+	  if (upper > p -> Ub (i) + COUENNE_EPS) setColUpper (i, CoinMax(nlb[i], p -> Ub (i)));
+
 	} else { 
 	  // if not enabled, fix them in the NLP solver
 	  setColLower (i, -COIN_DBL_MAX);
