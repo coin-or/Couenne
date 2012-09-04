@@ -130,8 +130,16 @@ CouenneInterface::extractLinearRelaxation
 	  /*printf ("---- %4d [%g,%g] [%g,%g]\n", i,
 		  nlb [i], nub [i],
 		  p -> Lb (i), p -> Ub (i));*/
-	  if (nlb [i] < p -> Lb (i) - COUENNE_EPS) setColLower (i, p -> Lb (i));
-	  if (nub [i] > p -> Ub (i) + COUENNE_EPS) setColUpper (i, p -> Ub (i));
+
+	  double 
+	    lower = nlb [i],
+	    upper = nub [i];
+
+	  if (lower       > upper)       CoinSwap (lower,       upper);
+	  if (p -> Lb (i) > p -> Ub (i)) CoinSwap (p -> Lb (i), p -> Ub (i));
+
+	  if (lower < p -> Lb (i) - COUENNE_EPS) setColLower (i, p -> Lb (i));
+	  if (upper > p -> Ub (i) + COUENNE_EPS) setColUpper (i, p -> Ub (i));
 	} else { 
 	  // if not enabled, fix them in the NLP solver
 	  setColLower (i, -COIN_DBL_MAX);
@@ -207,11 +215,8 @@ CouenneInterface::extractLinearRelaxation
 
 	    for (int i = getNumCols (); i--;) {
 
-	      if (lbCur [i] > ubCur [i]) {
-		double swap = lbCur [i];
-		lbCur [i] = ubCur [i];
-		ubCur [i] = swap;
-	      }
+	      if (lbCur [i] > ubCur [i])
+		CoinSwap (lbCur [i], ubCur [i]);
 
 	      if      (Y [i] < lbCur [i]) Y [i] = lbCur [i];
 	      else if (Y [i] > ubCur [i]) Y [i] = ubCur [i];
@@ -220,6 +225,7 @@ CouenneInterface::extractLinearRelaxation
 	    for (int i=0; i<norig; i++)
 	      if ((p -> Var (i) -> Multiplicity () > 0) &&
 		  p  -> Var (i) -> isDefinedInteger ()) {
+
 		setColLower (i, lbCur [i]);
 		setColUpper (i, ubCur [i]);
 	      }
@@ -242,6 +248,10 @@ CouenneInterface::extractLinearRelaxation
 	    for (int i=0; i<norig; i++)
 	      if ((p -> Var (i) -> Multiplicity () > 0) &&
 		  p  -> Var (i) -> isDefinedInteger ()) {
+
+		if (lbSave [i] > ubSave [i])
+		  CoinSwap (lbSave [i], ubSave [i]);
+
 		setColLower (i, lbSave [i]);
 		setColUpper (i, ubSave [i]);
 	      }
