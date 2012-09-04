@@ -129,7 +129,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     CoinZeroN (Y,    nvars);
     CoinCopyN (X (), nOrigVars_ - ndefined_, Y);
 
-    if (getIntegerCandidate (nlp -> getColSolution () ? nlp -> getColSolution () : Y, Y, lower, upper) < 0) {
+    if (getIntegerCandidate (nlp -> getColSolution () ? nlp -> getColSolution () : X (), Y, lower, upper) < 0) {
 
       jnlst_ -> Printf (J_ITERSUMMARY, J_BOUNDTIGHTENING, "TODO: find NLP point in ABT failed\n");
       retval = true;
