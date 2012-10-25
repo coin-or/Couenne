@@ -13,7 +13,6 @@
 #include "CoinTime.hpp"
 
 #include "CutGen.hpp"
-//#include "misc_util.hpp"
 #include "dsyevx_wrapper.hpp"
 
 static int decomposition_counter;
@@ -84,7 +83,7 @@ void cpp_quicksort_dec(const int k, const int l, int *key, double *value)
       q = stack[p];
       r = stack[p+1];
     }
-  }while (p);
+  } while (p);
 }
 
 
@@ -129,9 +128,7 @@ void CutGen::generateCuts (const OsiSolverInterface &si, OsiCuts &cs,
   int m;
 
   ///////////////////////////////////////////////////////////////
-
   dsyevx_wrapper_only_negative (np, A, m, w, z);
-
   ///////////////////////////////////////////////////////////////
 
   //remember that A gets destroyed
@@ -176,7 +173,6 @@ void CutGen::generateCuts (const OsiSolverInterface &si, OsiCuts &cs,
   int ncuts_beforesparsify = cs.sizeRowCuts ();
   int wise_evdec_num = 0;
 
-  //sparsify_timer.start();
 #if (defined SPARSIFY) || (defined SPARSIFY2) || (defined WISE_SPARSIFY)
   int card_sparse_v_mat = 0;
   double **sparse_v_mat = new double*[SPARSIFY_MAX_CARD];
@@ -191,6 +187,7 @@ void CutGen::generateCuts (const OsiSolverInterface &si, OsiCuts &cs,
   card_sparse_v_mat = 0;
 
   sparsify2(n_,sol,sparse_v_mat,&card_sparse_v_mat,min_nz,&wise_evdec_num);
+
   for(int k=0; k<card_sparse_v_mat; k++) {
     genSDPcut (si, cs, sparse_v_mat[k], sparse_v_mat[k],removeduplicates_,&duplicate_cuts);
   }
@@ -248,67 +245,6 @@ void CutGen::generateCuts (const OsiSolverInterface &si, OsiCuts &cs,
   delete [] sparse_v_mat;
 #endif
 
-
-#if (defined ADD_ONLY_PERC_DEEPEST_SPARSIFY_CUTS)  ||  (defined TRACE_SPARSIFY_CUT_DEPTH)
-  int card_cuts = cs.sizeRowCuts();
-  double *cuts_violations = new double[card_cuts - ncuts_beforesparsify];
-  int *cuts_indices = new int[card_cuts - ncuts_beforesparsify];
-  for (int i=ncuts_beforesparsify;i<card_cuts;i++)
-    cuts_indices[i-ncuts_beforesparsify] = i;
-  for (int i=ncuts_beforesparsify;i<card_cuts;i++) {
-    const OsiRowCut *curr_cut = cs.rowCutPtr(i);
-    const double *curr_cut_elem = curr_cut->row().getElements();
-    const int *curr_cut_ind = curr_cut->row().getIndices();
-		
-    const double rhs = curr_cut->rhs();
-    double lhs = 0.0;
-    for(int j=0;j<curr_cut->row().getNumElements();j++) {
-      lhs += curr_cut_elem[j] * sol[curr_cut_ind[j]];
-    }
-    switch(curr_cut->sense()) {
-    case 'L': 
-      cuts_violations[i-ncuts_beforesparsify] = lhs - rhs;
-      break;
-    case 'G': 
-      cuts_violations[i-ncuts_beforesparsify] = - lhs + rhs;
-      break;
-    default: //'E' 
-      cuts_violations[i-ncuts_beforesparsify] = max((lhs - rhs),(- lhs + rhs));
-    }
-  }
-  cpp_quicksort_dec(0,card_cuts - ncuts_beforesparsify, cuts_indices, cuts_violations);
-
-  //printf("card_cuts=%d ",card_cuts);
-  //printf(" ncuts_beforesparsify=%d ",ncuts_beforesparsify);
-  //printf(" card_cuts-ncuts_beforesparsify=%d\n",card_cuts-ncuts_beforesparsify);
-
-#ifdef  ADD_ONLY_PERC_DEEPEST_SPARSIFY_CUTS
-  int card_to_be_removed = (int) floor((card_cuts - ncuts_beforesparsify) *
-				       (1-ADD_ONLY_PERC_DEEPEST_SPARSIFY_CUTS));
-  if (card_to_be_removed > 0 ) {
-    int *cuts_indices_to_be_removed = new int[card_to_be_removed];
-    for (int i=0;i<card_to_be_removed;i++) {
-      cuts_indices_to_be_removed[i] = cuts_indices[i];
-    }
-    int *unuseful_vector = new int[card_to_be_removed];
-    cpp_quicksortINT_dec(0,card_to_be_removed,unuseful_vector,cuts_indices_to_be_removed);
-    //remove cuts from the last one !
-    for (int i=0;i<card_to_be_removed;i++)
-      cs.eraseRowCut(cuts_indices_to_be_removed[i]);
-    delete [] cuts_indices_to_be_removed;
-    delete [] unuseful_vector;
-  }
-#endif // ADD_ONLY_PERC_DEEPEST_SPARSIFY_CUTS
-
-#ifdef TRACE_SPARSIFY_CUT_DEPTH
-  for (int i=0;i<card_cuts- ncuts_beforesparsify;i++)
-    printf("sparse_cut[%4d]_violation=%.8f\n",i,cuts_violations[i]);
-#endif
-  delete [] cuts_violations;
-  delete [] cuts_indices;
-#endif // (defined TRACE_SPARSIFY_CUT_DEPTH) || (defined ADD_ONLY_PERC_DEEPEST_SPARSIFY_CUTS)
-
-
   delete [] z;
   delete [] w;
   delete [] A;
@@ -316,61 +252,10 @@ void CutGen::generateCuts (const OsiSolverInterface &si, OsiCuts &cs,
   for (int i=0;i<m;i++)
     delete [] work_ev[i];
   delete [] work_ev;
-
-
-#if (defined SPARSIFY) || (defined SPARSIFY2) || (defined WISE_SPARSIFY)
-
-  double *violation = new double[cs.sizeRowCuts()-ncuts_beforesparsify];
-  int *notused = new int[cs.sizeRowCuts()-ncuts_beforesparsify];
-  int *cols_sparsity = new int[np];
-  for (int i=0;i<np;i++)
-    cols_sparsity[i] = 0;
-  int **pair_sparsity = new int*[np];
-  for (int i=0;i<np;i++) {
-    pair_sparsity[i] = new int[np];
-    for (int j=0;j<np;j++)
-      pair_sparsity[i][j] = 0;
-  }
-  double *sparse_vector = new double[np];
-  for (int i=0;i<cs.sizeRowCuts()-ncuts_beforesparsify;i++) {
-    const OsiRowCut *cut = cs.rowCutPtr(i+ncuts_beforesparsify);
-    violation[i] = cut->violated(sol);
-    const double *elements = cut->row().getElements();
-    const int *indices = cut->row().getIndices();
-    int numelements = cut->row().getNumElements();
-    for (int k=0;k<np;k++)
-      sparse_vector[k] = 0.0;
-    sparse_vector[0] = sqrt(cut->rhs());
-    for (int k=0;k<n_;k++) {
-      int idx = indexQ(k,k,n_);
-      for (int j=0;j<numelements;j++)
-	if ((indices[j] == idx) && (elements[j] != 0.0))
-	  sparse_vector[k+1] = sqrt(elements[j]);
-    }
-    for (int k=0;k<np;k++) {
-      if (sparse_vector[k] != 0.0) {
-	cols_sparsity[k]++;
-	for (int p=k+1;p<np;p++)
-	  if (sparse_vector[p] != 0.0)
-	    pair_sparsity[k][p]++;
-      }
-    }
-  }
-
-  delete [] cols_sparsity;
-  for (int i=0;i<np;i++)
-    delete [] pair_sparsity[i];
-  delete [] pair_sparsity;
-  delete [] violation;
-  delete [] notused;
-  delete [] sparse_vector;
-#endif
-
 }
 
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 double violation_from_v(int n, double *v1, double *v2, const double *sol) {
   double violation = (v1[0]*v2[0]);
   for (int i=0;i<n;i++) {
@@ -385,404 +270,6 @@ double violation_from_v(int n, double *v1, double *v2, const double *sol) {
   return violation;
 }
 
-void CutGen::compareSparsify(const OsiSolverInterface &si,int n, int m, const double *sol, double *z, double *w,FILE *out) const {
-
-
-  static int iter;
-  iter++;
-	
-  int duplicate_cuts1 = 0;
-  int duplicate_cuts2 = 0;
-	
-  int np = n+1;
-  int card_sparse_v_mat1 = 0;
-  double **sparse_v_mat1 = new double*[SPARSIFY_MAX_CARD];
-  for (int i=0; i<SPARSIFY_MAX_CARD; i++)
-    sparse_v_mat1[i] = new double[np];
-  int card_sparse_v_mat2 = 0;
-  double **sparse_v_mat2 = new double*[SPARSIFY_MAX_CARD];
-  for (int i=0; i<SPARSIFY_MAX_CARD; i++)
-    sparse_v_mat2[i] = new double[np];
-
-  OsiSolverInterface *sirlt = si.clone(true);
-  sirlt->unmarkHotStart();
-  sirlt->initialSolve();
-
-
-  OsiCuts cs_origev;
-  for(int i=0;i<m;i++) {
-    double *curr_ev ;
-    curr_ev = z + (i*np);
-    genSDPcut (si, cs_origev, curr_ev, curr_ev,false,&duplicate_cuts1);
-  }
-
-
-
-
-  //first sparsify
-  decomposition_counter = 0;
-  int evdec_num1 = 0;
-  int *sparsify_cols1 = new int[np];
-  for (int i=0;i<np;i++)
-    sparsify_cols1[i] = 0;
-  int **pair_sparsity1 = new int*[np];
-  for (int i=0;i<np;i++) {
-    pair_sparsity1[i] = new int[np];
-    for (int j=0;j<np;j++)
-      pair_sparsity1[i][j] = 0;
-  }
-  double time1 = 0,starttime1 = 0;
-
-  starttime1 = CoinCpuTime ();
-
-
-  int gencuts1 = 0;
-  OsiCuts cs1;
-  double *workevs1 = new double[m];
-  for(int i=0;i<m;i++) {
-    double *curr_ev ;
-    curr_ev = z + (i*np);
-    double *work_ev = new double[np];
-    sparsify(i,w[i], curr_ev, n, sol, sparse_v_mat1, &card_sparse_v_mat1,work_ev,false,&evdec_num1);
-    workevs1[i] = violation_from_v(n_,work_ev,work_ev,sol);
-    gencuts1 += card_sparse_v_mat1;
-    for (int k=0;k<card_sparse_v_mat1;k++) {
-      genSDPcut (si, cs1, sparse_v_mat1[k], sparse_v_mat1[k],true,&duplicate_cuts1);
-      for (int j=0;j<np;j++)
-	if (sparse_v_mat1[k][j] != 0.0) {
-	  sparsify_cols1[j]++;
-	  for (int p=j+1;p<np;p++) {
-	    if (sparse_v_mat1[k][p] != 0.0)
-	      pair_sparsity1[j][p]++;
-	  }
-	}
-    }
-  }
-
-  int decomposition_counter1 = decomposition_counter;
-
-  time1 = CoinCpuTime () - starttime1;
-  double time_per_cut1 = time1 / gencuts1;
-  int dupcuts1 = gencuts1 - cs1.sizeRowCuts();
-  double dupcuts_perc1 = (100.0 * ((double) dupcuts1)) / ((double)gencuts1);
-
-  OsiSolverInterface *si1_lp = si.clone(true);
-  double starttime1_lp = CoinCpuTime ();
-  si1_lp->applyCuts (cs1);
-  si1_lp->resolve();
-  double time1_lp = CoinCpuTime () - starttime1_lp;
-  double obj1 = si1_lp->getObjValue() + objConst_;
-
-  OsiSolverInterface *si1_lporigcuts = si.clone(true);
-  double starttime1_lporigcuts = CoinCpuTime ();
-  si1_lporigcuts->applyCuts(cs_origev);
-  si1_lporigcuts->applyCuts(cs1);
-  si1_lporigcuts->resolve();
-  double time1_lporigcuts = CoinCpuTime () - starttime1_lporigcuts;
-  double obj1_withorigev = si1_lporigcuts->getObjValue() + objConst_;
-
-
-  double nz_mean1 = 0.0;
-  int nz_min1 = 10000000;
-  int nz_max1 = 0;
-  for (int i=0;i<cs1.sizeRowCuts();i++) {
-    const OsiRowCut *cut = cs1.rowCutPtr(i);
-    nz_mean1 += (double) cut->row().getNumElements();
-    if (cut->row().getNumElements() > nz_max1)
-      nz_max1 = cut->row().getNumElements();
-    if (cut->row().getNumElements() < nz_min1)
-      nz_min1 = cut->row().getNumElements();
-  }
-  nz_mean1 /= cs1.sizeRowCuts();
-  double nz_std_dev1 = 0.0;
-  for (int i=0;i<cs1.sizeRowCuts();i++) {
-    const OsiRowCut *cut = cs1.rowCutPtr(i);
-    nz_std_dev1 += (((double) cut->row().getNumElements()) - nz_mean1)
-      *(((double) cut->row().getNumElements()) - nz_mean1);
-  }
-  nz_std_dev1 /= cs1.sizeRowCuts();
-  nz_std_dev1 = sqrt(nz_std_dev1);
-
-  //second sparsify procedure
-  decomposition_counter = 0;
-  int evdec_num2 = 0;
-  int *sparsify_cols2 = new int[np];
-  for (int i=0;i<np;i++)
-    sparsify_cols2[i] = 0;
-  int **pair_sparsity2 = new int*[np];
-  for (int i=0;i<np;i++) {
-    pair_sparsity2[i] = new int[np];
-    for (int j=0;j<np;j++)
-      pair_sparsity2[i][j] = 0;
-  }
-  double time2 = 0,starttime2 = 0;
-
-  starttime2 = CoinCpuTime ();
-  int gencuts2 = 0;
-  OsiCuts cs2;
-  double *workevs2 = new double[m];
-  for(int i=0;i<m;i++) {
-    double *curr_ev ;
-    curr_ev = z + (i*np);
-    double *work_ev = new double[np];
-    sparsify_new(i,w[i], curr_ev, n, sol, sparse_v_mat2, &card_sparse_v_mat2,work_ev,true,&evdec_num2);
-    workevs2[i] = violation_from_v(n_,work_ev,work_ev,sol);
-    gencuts2 += card_sparse_v_mat2;
-    for (int k=0;k<card_sparse_v_mat2;k++) {
-      genSDPcut (si, cs2, sparse_v_mat2[k], sparse_v_mat2[k],true,&duplicate_cuts2);
-      for (int j=0;j<np;j++)
-	if (sparse_v_mat2[k][j] != 0.0) {
-	  sparsify_cols2[j]++;
-	  for (int p=j+1;p<np;p++) {
-	    if (sparse_v_mat2[k][p] != 0.0)
-	      pair_sparsity2[j][p]++;
-	  }
-	}
-    }
-  }
-
-  int decomposition_counter2 = decomposition_counter;
-
-  time2 = CoinCpuTime () - starttime2;
-  double time_per_cut2 = time2 / gencuts2;
-  int dupcuts2 = gencuts2 - cs2.sizeRowCuts();
-  double dupcuts_perc2 = (100.0 * ((double) dupcuts2)) / ((double)gencuts2);
-  OsiSolverInterface *si2_lp = si.clone(true);
-  double starttime2_lp = CoinCpuTime ();
-  si2_lp->applyCuts (cs2);
-  si2_lp->resolve();
-  double time2_lp = CoinCpuTime () - starttime2_lp;
-  double obj2 = si2_lp->getObjValue() + objConst_;
-  OsiSolverInterface *si2_lporigcuts = si.clone(true);
-  double starttime2_lporigcuts = CoinCpuTime ();
-  si2_lporigcuts->applyCuts(cs_origev);
-  si2_lporigcuts->applyCuts (cs2);
-  si2_lporigcuts->resolve();
-  double time2_lporigcuts = CoinCpuTime () - starttime2_lporigcuts;
-  double obj2_withorigev = si2_lporigcuts->getObjValue() + objConst_;
-
-  double nz_mean2 = 0.0;
-  int nz_min2 = 10000000;
-  int nz_max2 = 0;
-  for (int i=0;i<cs2.sizeRowCuts();i++) {
-    const OsiRowCut *cut = cs2.rowCutPtr(i);
-    nz_mean2 += (double) cut->row().getNumElements();
-    if (cut->row().getNumElements() > nz_max2)
-      nz_max2 = cut->row().getNumElements();
-    if (cut->row().getNumElements() < nz_min2)
-      nz_min2 = cut->row().getNumElements();
-  }
-  nz_mean2 /= cs2.sizeRowCuts();
-  double nz_std_dev2 = 0.0;
-  for (int i=0;i<cs2.sizeRowCuts();i++) {
-    const OsiRowCut *cut = cs2.rowCutPtr(i);
-    nz_std_dev2 += (((double) cut->row().getNumElements()) - nz_mean2)
-      *(((double) cut->row().getNumElements()) - nz_mean2);
-  }
-  nz_std_dev2 /= cs2.sizeRowCuts();
-  nz_std_dev2 = sqrt(nz_std_dev2);
-
-
-//   fprintf(out,"     Cuts Dup Dup%%  TotTime    TimePerCut NZmean NZSD Bound     Bound(+origev)\n");
-//   fprintf(out,"%2d S1 %3d %3d %2.2f%% %.8f %.8f %5.2f %5.2f %.4f %.4f\n",
-// 	  iter,gencuts1,dupcuts1,dupcuts_perc1,time1,time_per_cut1,nz_mean1,nz_std_dev1,obj1,obj1_withorigev);
-//   fprintf(out,"%2d S2 %3d %3d %2.2f%% %.8f %.8f %5.2f %5.2f %.4f %.4f\n",
-// 	  iter,gencuts2,dupcuts2,dupcuts_perc2,time2,time_per_cut2,nz_mean2,nz_std_dev2,obj2,obj2_withorigev);
-//   fprintf(out,"\n");
-//   fprintf(out,"      Bound(onlysp)  Time            Bound(+origev) Time       Decomp\n");
-//   fprintf(out,"%2d S1 %.4f      %.8f      %.4f      %.8f %d\n",
-// 	  iter,obj1,time1_lp,obj1_withorigev,time1_lporigcuts,decomposition_counter1);
-//   fprintf(out,"%2d S2 %.4f      %.8f      %.4f      %.8f %d\n",
-// 	  iter,obj2,time2_lp,obj2_withorigev,time2_lporigcuts,decomposition_counter2);
-
-//   fprintf(out,"\n");
-
-
-// #ifdef DETAILED_SPARSIFY_COMPARISON
-//   fprintf(out,"   orig_ev     S1_work     S2_work\n");
-//   for (int i=0;i<m;i++) {
-//     fprintf(out,"%2d %2.8f %2.8f %2.8f\n",iter,w[i],workevs1[i],workevs2[i]);
-//   }
-//   fprintf(out,"\n");
-// #endif
-//   fprintf(out,"sparsity statistics\n");
-// #ifdef DETAILED_SPARSIFY_COMPARISON
-//   fprintf(out,"idx: ");
-//   for (int i=0;i<np;i++) {
-//     fprintf(out,"%2d ",i);
-//   }
-//   fprintf(out,"\n");
-//   fprintf(out,"S1 : ");
-//   for (int i=0;i<np;i++) {
-//     fprintf(out,"%2d ",sparsify_cols1[i]);
-//   }
-//   fprintf(out,"\n");
-//   fprintf(out,"S2 : ");
-//   for (int i=0;i<np;i++) {
-//     fprintf(out,"%2d ",sparsify_cols2[i]);
-//   }
-//   fprintf(out,"\n");
-// #endif
-  double mean_cols1 = 0.0;
-  double mean_cols2 = 0.0;
-  int max_cols1 = 0;
-  int max_cols2 = 0;
-  int min_cols1 = 1000000000;
-  int min_cols2 = 1000000000;
-  for (int i=0;i<np;i++) {
-    mean_cols1 += sparsify_cols1[i];
-    mean_cols2 += sparsify_cols2[i];
-    if (sparsify_cols1[i] > max_cols1)
-      max_cols1 = sparsify_cols1[i];
-    if (sparsify_cols2[i] > max_cols2)
-      max_cols2 = sparsify_cols2[i];
-    if (sparsify_cols1[i] < min_cols1)
-      min_cols1 = sparsify_cols1[i];
-    if (sparsify_cols2[i] < min_cols2)
-      min_cols2 = sparsify_cols2[i];
-  }
-  mean_cols1 /= np;
-  mean_cols2 /= np;
-  double stddev_cols1 = 0.0;
-  double stddev_cols2 = 0.0;
-  for (int i=0;i<np;i++) {
-    stddev_cols1 += ((sparsify_cols1[i]-mean_cols1)*(sparsify_cols1[i]-mean_cols1));
-    stddev_cols2 += ((sparsify_cols2[i]-mean_cols2)*(sparsify_cols2[i]-mean_cols2));
-  }
-  stddev_cols1 /= np;
-  stddev_cols1 = sqrt(stddev_cols1);
-  stddev_cols2 /= np;
-  stddev_cols2 = sqrt(stddev_cols2);
-
-  fprintf(out,"single column sparsity:\n");
-
-  fprintf(out,"S1 mean = %.2f  stddev = %.2f  max = %d  min = %d\n"
-	  ,mean_cols1,stddev_cols1,max_cols1,min_cols1);
-  fprintf(out,"S2 mean = %.2f  stddev = %.2f  max = %d  min = %d\n"
-	  ,mean_cols2,stddev_cols2,max_cols2,min_cols2);
-  //column pair sparsity
-  double mean_pair_sparsity1 = 0.0;
-  double mean_pair_sparsity2 = 0.0;
-  int max_pair_sparsity1 = 0;
-  int max_pair_sparsity2 = 0;
-  int min_pair_sparsity1 = 1000000000;
-  int min_pair_sparsity2 = 1000000000;
-  for (int i=0;i<np;i++)
-    for (int j=i+1;j<np;j++) {
-      mean_pair_sparsity1 += pair_sparsity1[i][j];
-      mean_pair_sparsity2 += pair_sparsity2[i][j];
-      if (pair_sparsity1[i][j] > max_pair_sparsity1)
-	max_pair_sparsity1 = pair_sparsity1[i][j];
-      if (pair_sparsity2[i][j] > max_pair_sparsity2)
-	max_pair_sparsity2 = pair_sparsity2[i][j];
-      if (pair_sparsity1[i][j] < min_pair_sparsity1)
-	min_pair_sparsity1 = pair_sparsity1[i][j];
-      if (pair_sparsity2[i][j] < min_pair_sparsity2)
-	min_pair_sparsity2 = pair_sparsity2[i][j];
-    }
-  mean_pair_sparsity1 /= (np*(np-1))/2;
-  mean_pair_sparsity2 /= (np*(np-1))/2;
-  double stddev_pair_sparsity1 = 0.0;
-  double stddev_pair_sparsity2 = 0.0;
-  for (int i=0;i<np;i++)
-    for (int j=i+1;j<np;j++) {
-      stddev_pair_sparsity1 += (pair_sparsity1[i][j]-mean_pair_sparsity1) *
-	(pair_sparsity1[i][j]-mean_pair_sparsity1);
-      stddev_pair_sparsity2 += (pair_sparsity2[i][j]-mean_pair_sparsity2) *
-	(pair_sparsity2[i][j]-mean_pair_sparsity2);
-    }
-  stddev_pair_sparsity1 /= (np*(np-1))/2;
-  stddev_pair_sparsity2 /= (np*(np-1))/2;
-  stddev_pair_sparsity1 = sqrt(stddev_pair_sparsity1);
-  stddev_pair_sparsity2 = sqrt(stddev_pair_sparsity2);
-  fprintf(out,"column pair sparsity:\n");
-
- fprintf(out,"S1 mean = %.2f  stddev = %.2f  max = %d min = %d\n",mean_pair_sparsity1,stddev_pair_sparsity1,max_pair_sparsity1,min_pair_sparsity1);
-  fprintf(out,"S2 mean = %.2f  stddev = %.2f  max = %d  min = %d\n",mean_pair_sparsity2,stddev_pair_sparsity2,max_pair_sparsity2,min_pair_sparsity1);
-  fprintf(out,"\n");
-
-
-
-  double *violations1 = new double[cs1.sizeRowCuts()];
-  int *nz1 = new int[cs1.sizeRowCuts()];
-  for (int i=0;i<cs1.sizeRowCuts();i++) {
-    const OsiRowCut *cut = cs1.rowCutPtr(i);
-    violations1[i] = cut->violated(sol);
-    nz1[i] = cut->row().getNumElements();
-  }
-  cpp_quicksort_dec(0,cs1.sizeRowCuts(), nz1,violations1);
-
-  double *violations2 = new double[cs2.sizeRowCuts()];
-  int *nz2 = new int[cs2.sizeRowCuts()];
-  for (int i=0;i<cs2.sizeRowCuts();i++) {
-    const OsiRowCut *cut = cs2.rowCutPtr(i);
-    violations2[i] = cut->violated(sol);
-    nz2[i] = cut->row().getNumElements();
-  }
-  cpp_quicksort_dec(0,cs2.sizeRowCuts(), nz2,violations2);
-  int max_card = CoinMax(cs1.sizeRowCuts(),cs2.sizeRowCuts());
-
-  int min_card = CoinMin(cs1.sizeRowCuts(),cs2.sizeRowCuts());
-  int top_card = (int) (ceil(min_card * 0.20));
-  fprintf(out,"Top 20%% cuts statistics (cardinality=%d)\n",top_card);
-  double mean_viol1 = 0.0;
-  double mean_viol2 = 0.0;
-  for(int i=0;i<top_card;i++) {
-    mean_viol1 += violations1[i];
-    mean_viol2 += violations2[i];
-  }
-  printf("--->%.18f %.18f %d %.18f %.18f\n",mean_viol1,mean_viol2,top_card,mean_viol1/top_card,mean_viol2/top_card);
-  mean_viol1 /= top_card;
-  mean_viol2 /= top_card;
-  double stddev_viol1 = 0.0;
-  double stddev_viol2 = 0.0;
-  for(int i=0;i<top_card;i++) {
-    stddev_viol1 += (violations1[i] - mean_viol1)*(violations1[i] - mean_viol1);
-    stddev_viol2 += (violations2[i] - mean_viol2)*(violations2[i] - mean_viol2);
-  }
-  stddev_viol1 /= top_card;
-  stddev_viol2 /= top_card;
-  stddev_viol1 = sqrt(stddev_viol1);
-  stddev_viol2 = sqrt(stddev_viol2);
-  fprintf(out,"S1 mean violation = %.4f  stddev = %.4f\n",mean_viol1,stddev_viol1);
-  fprintf(out,"S2 mean violation = %.4f  stddev = %.4f\n",mean_viol2,stddev_viol2);
-#ifdef DETAILED_SPARSIFY_COMPARISON
-  fprintf(out,"   S1                  S2               [sparsified cuts only]\n");
-  fprintf(out,"   violation    cutNZ        violation    cutNZ  \n");
-  for (int i=0;i<max_card;i++) {
-    fprintf(out,"%2d ",iter);
-    if (i+1<= cs1.sizeRowCuts())
-      fprintf(out,"%.8f    %4d",violations1[i],nz1[i]);
-    else
-      fprintf(out,"    N/A           ");
-    fprintf(out,"       ");
-    if (i+1<= cs2.sizeRowCuts())
-      fprintf(out," %.8f    %4d",violations2[i],nz2[i]);
-    else
-      fprintf(out,"         N/A      ");
-    fprintf(out,"\n");
-  }
-#endif
-
-  fprintf(out,"\n-------------------------------------------\n\n");
-
-
-
-
-  for(int i=0;i<SPARSIFY_MAX_CARD;i++)
-    delete [] sparse_v_mat1[i];
-  delete [] sparse_v_mat1;
-  for(int i=0;i<SPARSIFY_MAX_CARD;i++)
-    delete [] sparse_v_mat2[i];
-  delete [] sparse_v_mat2;
-
-  delete [] violations1;
-  delete [] violations2;
-  delete [] nz1;
-  delete [] nz2;
-  delete [] sparsify_cols1; 
-  delete [] sparsify_cols2;
-} //compareSparsify()
 
 /************************************************************************/
 void CutGen::genSDPcut (const OsiSolverInterface &si,
@@ -817,29 +304,18 @@ void CutGen::genSDPcut (const OsiSolverInterface &si,
   cut -> setRow (nterms, ind, coeff);
   cut -> setLb (- *v1 * *v2);
 
-
-
-  if(nterms > 0) {
-#ifdef RAND_CUT_ADD
-    if ( drand48 () /* cpp_genalea(seed_) */ <= RAND_CUT_ADD)
-#endif
-      {
-
-	CoinAbsFltEq treatAsSame = CoinAbsFltEq(1.0e-8);
-	int initial = cs.sizeRowCuts();
-	cs.insertIfNotDuplicate (*cut, treatAsSame);
-	int final = cs.sizeRowCuts();
-	if (initial == final) {
-	  (*duplicate_cuts) ++;
-	  // if flag was false, we still add the duplicate cut
-	  if (!(checkduplicates))
-	    cs.insert (cut);
-	}
-
-      }
+  if (nterms > 0) {
+    CoinAbsFltEq treatAsSame = CoinAbsFltEq(1.0e-8);
+    int initial = cs.sizeRowCuts();
+    cs.insertIfNotDuplicate (*cut, treatAsSame);
+    int final = cs.sizeRowCuts();
+    if (initial == final) {
+      (*duplicate_cuts) ++;
+      // if flag was false, we still add the duplicate cut
+      if (!(checkduplicates))
+	cs.insert (cut);
+    }
   }
-
-
 
   delete cut;
   delete [] ind;
@@ -860,22 +336,14 @@ CutGen::CutGen (const int n,
 		const double objConst,
 		const double *b,
 		const double *c,
-		const double **Q,
-		const double **origMat,
-		const double *origRhs,
-		const char *origSense,
-		const double *xlb,
-		const double *xub,
-		const double *ylb,
-		const double *yub,
-		OsiSolverInterface *si
+		const double **Q
 		):
 
   n_ (n),
-  t_ (t),
+  //  t_ (t),
   cons_ (cons),
-  objConst_ (objConst),
-  si_ (si) {
+  objConst_ (objConst) {
+  // si_ (si) {
 
   N_ = n*(n+3)/2;
 
@@ -898,32 +366,6 @@ CutGen::CutGen (const int n,
     c_[i] = c[i];
   }
 
-  origRhs_ = new double[cons];
-  origSense_ = new char[cons];
-  origMat_ = new double*[cons];
-  for (int i=0; i<cons;i++)
-    origMat_[i] = new double[N_+t];
-  for (int i=0; i<cons;i++) {
-    for(int j=0;j<N_+t;j++)
-      origMat_[i][j] = origMat[i][j];
-    origRhs_[i] = origRhs[i];
-    origSense_[i] = origSense[i];
-  }
-
-  xlb_ = new double[n];
-  xub_ = new double[n];
-  ylb_ = new double[t];
-  yub_ = new double[t];
-
-  for (int i=0; i<n;i++) {
-    xlb_[i] = xlb[i];
-    xub_[i] = xub[i];
-  }
-  for (int i=0; i<t;i++) {
-    ylb_[i] = ylb[i];
-    yub_[i] = yub[i];
-  }
-	
   seed_ = new int[0];
   *seed_ = time(0);
 
@@ -935,34 +377,22 @@ CutGen::CutGen (const int n,
   removeduplicates_ = false;
 #endif
 
-
-
-
   }
+
+
 /************************************************************************/
 // destructor
 CutGen::~CutGen () {
-  delete seed_;
 
-  //delete heuristics_;
+  delete seed_;
 
   delete [] b_;
   delete [] c_;
   for(int i=0;i<n_;i++)
     delete [] Q_[i];
   delete [] Q_;
-  for (int i=0;i<cons_;i++)
-    delete [] origMat_[i];
-  delete [] origMat_;
-  delete [] origRhs_;
-  delete [] origSense_;
-  delete [] xlb_;
-  delete [] xub_;
-  delete [] ylb_;
-  delete [] yub_;
-
-
 }
+
 
 /***********************************************************************/
 void CutGen::myremoveBestOneRowCol(double *matrix, int n, int running_n, int min_nz,bool *del_idx, double **sparse_v_mat, int *card_v_mat, int *evdec_num) const {
@@ -1026,6 +456,7 @@ void CutGen::myremoveBestOneRowCol(double *matrix, int n, int running_n, int min
     delete [] z;
     delete [] w;
   }
+
   delete [] T;
   delete [] Tcopy;
   delete [] matrixCopy;
@@ -1088,6 +519,8 @@ void CutGen::myremoveBestOneRowCol(double *matrix, int n, int running_n, int min
   delete [] wbest;
 
 }// myremoveBestOneRowCol()
+
+
 /************************************************************************/
 void CutGen::sparsify2(const int n,
 		       const double *sol, double **sparse_v_mat,
@@ -1108,6 +541,8 @@ void CutGen::sparsify2(const int n,
 
   delete [] matrix;
 }// sparsify2()
+
+
 /************************************************************************/
 void CutGen::additionalSDPcuts(const OsiSolverInterface &si,OsiCuts &cs, int np, const double *A, const double *vector, int *duplicate_cuts) const{
 
@@ -1134,7 +569,10 @@ void CutGen::additionalSDPcuts(const OsiSolverInterface &si,OsiCuts &cs, int np,
 
   double *w = NULL, *z = NULL;
   int m;
+
+  //////////////////////////////////////////////////////
   dsyevx_wrapper_only_negative (cnt, subA, m, w, z);
+  //////////////////////////////////////////////////////
 
   double *v = new double[np];
   double *newv = new double[np];
@@ -1172,11 +610,6 @@ void CutGen::additionalSDPcuts(const OsiSolverInterface &si,OsiCuts &cs, int np,
   delete [] subA;
   delete [] indices;
 } // additionalSDPcuts
-
-
-
-
-
 
 
 /************************************************************************/
@@ -1274,6 +707,7 @@ void CutGen::update_sparsify_structures(const int np, const double *sol, double 
     (*lhs) += margin[i];
   }
 }
+
 /************************************************************************/
 void CutGen::zero_comp(const int ind_i, const double delta,
 		       const int np, const int *selected,
@@ -1467,6 +901,7 @@ void CutGen::zero_pos_delta(const int np, const int *order,
   }
 } /* zero_pos_delta */
 
+
 /************************************************************************/
 void CutGen::add_v_cut(const int np,
 		       const int *loc_selected, 
@@ -1527,6 +962,7 @@ void CutGen::add_v_cut(const int np,
   (*pcard_v_mat)++;
   
 } /* add_v_cut */
+
 
 /************************************************************************/
 void CutGen::sparsify(const int evidx, const double eigen_val, 
@@ -1765,6 +1201,7 @@ void CutGen::sparsify(const int evidx, const double eigen_val,
   delete[] selected;
   delete[] loc_selected;
 } // sparsify
+
 
 /************************************************************************/
 void CutGen::sparsify_new(const int evidx, const double eigen_val, 

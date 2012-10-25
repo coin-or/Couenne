@@ -12,7 +12,6 @@
 
 #include "CglCutGenerator.hpp"
 #include "OsiSolverInterface.hpp"
-//#include "misc_util.hpp"
 
 #define SPARSIFY_MAX_CARD  10000
 #define SPARSIFY_OLD_DELTA 0.50
@@ -31,7 +30,6 @@ class CutGen: public CglCutGenerator {
 private:
 
 	int n_;			// number of variables x_i (involved in quadratic terms)
-	int t_;			// number of variables y_i (NOT involved in quadratic terms)
 	int N_;			// number of variables x_i + X_ij  (= n*(n+3)/2)
 	int cons_;		// number of constraints in the original problem
 
@@ -39,15 +37,6 @@ private:
 	double *b_;		// objective function coefficients of the variables x_i
 	double *c_;		// objective function coefficients of the variables y_i
 	double **Q_;		// objective function coefficients of the variables X_ij
-
-	double **origMat_;	// original problem constraints (linearized)
-	double *origRhs_;	// original problem RHS
-	char *origSense_;	// original problem sense
-	double *xlb_;		// original problem lower bounds for x_i
-	double *xub_;		// original problem upper bounds for x_i
-	double *ylb_;		// original problem lower bounds for y_i
-	double *yub_;		// original problem upper bounds for y_i
-	OsiSolverInterface *si_;// pointer to the main problem
 
 	int *seed_;		// random seed used by random cut removal
 
@@ -62,7 +51,7 @@ public:
 
 	// constructor
 	//  SdpCutGen  (int, double *, double **);
-	CutGen(const int,const int,const int,const double,const double*,const double*,const double**,const double**,const double*,const char*,const double*,const double*,const double*,const double*,OsiSolverInterface *si);
+	CutGen (const int,const int,const int,const double,const double*,const double*,const double**);
 	
 	// destructor
 	~CutGen ();
