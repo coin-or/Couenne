@@ -11,24 +11,11 @@ noinst_LTLIBRARIES = libCouenneSdpCuts.la
 # List all source files for this library, including headers
 
 libCouenneSdpCuts_la_SOURCES = \
+	CouenneSdpCuts.cpp \
+	CouennePSDcon.cpp \
+	CouenneMatrix.cpp \
 	CutGen.cpp \
-	dsyevx_wrapper.cpp \
-	Heuristics.cpp \
-	linquad_cuts.cpp \
-	misc_util.cpp \
-	orthocut.cpp \
-	populate.cpp \
-	quadratic_cuts_check.cpp \
-	report2.cpp \
-	report.cpp \
-	sdpcuts.cpp \
-	sdpsol.cpp \
-	sedumi.cpp \
-	tracerreport.cpp \
-	tracer.cpp 
-
-#	disjunctive_cuts.cpp 
-#	rlt_cuts.cpp 
+	dsyevx_wrapper.cpp
 
 # This is for libtool
 libCouenneSdpCuts_la_LDFLAGS = $(LT_LDFLAGS)
@@ -38,6 +25,7 @@ libCouenneSdpCuts_la_LDFLAGS = $(LT_LDFLAGS)
 AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/../..` \
 	-I`$(CYGPATH_W) $(srcdir)/../../convex` \
+	-I`$(CYGPATH_W) $(srcdir)/../../expression` \
 	-I`$(CYGPATH_W) $(srcdir)/../../problem` \
 	$(COUENNELIB_CFLAGS)
 

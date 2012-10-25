@@ -300,6 +300,13 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 			cs.sizeColCuts () - initColCuts);
   }
 
+  if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) {
+
+    printf ("Disjunctive cuts (%d row + %d col):\n", cs.sizeRowCuts () - initRowCuts, cs.sizeColCuts () - initColCuts);
+    for (int i=initRowCuts; i<cs.sizeRowCuts (); ++i) cs.rowCutPtr (i) -> print ();
+    for (int i=initColCuts; i<cs.sizeColCuts (); ++i) cs.colCutPtr (i) -> print ();
+  }
+
   // else {
   //     jnlst_ -> Printf (J_STRONGWARNING, J_COUENNE, 
   // 			"In-BB disjunctive cuts: %d row cuts, %d col cuts\n",

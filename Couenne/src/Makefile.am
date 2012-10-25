@@ -31,10 +31,10 @@ libCouenne_la_LIBADD = \
 	./bound_tightening/libCouenneBoundTightening.la \
 	./bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
 	./util/libCouenneUtil.la \
-	./disjunctive/libCouenneDisjunctive.la 
+	./disjunctive/libCouenneDisjunctive.la \
+	./cut/crossconv/libCouenneCrossConv.la \
+	./cut/sdpcuts/libCouenneSdpCuts.la
 
-#	./cut/crossconv/libCouenneCrossConv.la
-#	./cut/sdpcuts/libCouenneSdpCuts.la
 #	./ellipcuts/libCouenneEllipCuts.la 
 #	./readnl/libCouenneReadnl.la 
 
@@ -158,10 +158,12 @@ includecoin_HEADERS = \
 	problem/CouenneRecordBestSol.hpp \
 	expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp \
-	convex/CouenneCutGenerator.hpp
+	convex/CouenneCutGenerator.hpp \
+	cut/sdpcuts/CouenneSdpCuts.hpp \
+	cut/sdpcuts/CouennePSDcon.hpp \
+	cut/sdpcuts/CouenneMatrix.hpp \
+	cut/crossconv/CouenneCrossConv.hpp
 
-# cut/crossconv/CouenneCrossConv.hpp
-# cut/sdpcuts/CouenneSdpCuts.hpp 
 # cut/sdpcuts/dsyevx_wrapper.hpp 
 # cut/sdpcuts/linquad_cuts.hpp 
 # cut/sdpcuts/populate.hpp 

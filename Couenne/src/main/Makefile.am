@@ -22,7 +22,7 @@ if COIN_HAS_ASL
 endif
 
 couenne_SOURCES = BonCouenne.cpp
-couenne_LDADD   = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS) $(ASL_LIBS) 
+couenne_LDADD         = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS)         $(ASL_LIBS) 
 couenne_DEPENDENCIES  = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
@@ -37,10 +37,11 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/../heuristics` \
 	-I`$(CYGPATH_W) $(srcdir)/../branch` \
 	-I`$(CYGPATH_W) $(srcdir)/../problem` \
-	-I`$(CYGPATH_W) $(srcdir)/../cut/crossconv` \
 	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
 	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening/twoImpliedBT` \
 	-I`$(CYGPATH_W) $(srcdir)/../disjunctive` \
+	-I`$(CYGPATH_W) $(srcdir)/../cut/sdpcuts` \
+	-I`$(CYGPATH_W) $(srcdir)/../cut/crossconv` \
 	-I`$(CYGPATH_W) $(srcdir)/../readnl` \
 	$(COUENNELIB_CFLAGS) $(ASL_CFLAGS) 
 

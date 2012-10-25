@@ -47,8 +47,6 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 
-# cut/crossconv/CouenneCrossConv.hpp
-# cut/sdpcuts/CouenneSdpCuts.hpp 
 # cut/sdpcuts/dsyevx_wrapper.hpp 
 # cut/sdpcuts/linquad_cuts.hpp 
 # cut/sdpcuts/populate.hpp 
@@ -151,7 +149,9 @@ am__includecoin_HEADERS_DIST = util/CouenneRootQ.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
 	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
-	branch/Nauty.h
+	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/CouennePSDcon.hpp \
+	cut/sdpcuts/CouenneMatrix.hpp \
+	cut/crossconv/CouenneCrossConv.hpp branch/Nauty.h
 includecoinHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(includecoin_HEADERS)
 ETAGS = etags
@@ -405,11 +405,11 @@ libCouenne_la_LIBADD = \
 	./bound_tightening/libCouenneBoundTightening.la \
 	./bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
 	./util/libCouenneUtil.la \
-	./disjunctive/libCouenneDisjunctive.la 
+	./disjunctive/libCouenneDisjunctive.la \
+	./cut/crossconv/libCouenneCrossConv.la \
+	./cut/sdpcuts/libCouenneSdpCuts.la
 
 
-#	./cut/crossconv/libCouenneCrossConv.la
-#	./cut/sdpcuts/libCouenneSdpCuts.la
 #	./ellipcuts/libCouenneEllipCuts.la 
 #	./readnl/libCouenneReadnl.la 
 libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
@@ -513,7 +513,9 @@ includecoin_HEADERS = util/CouenneRootQ.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
 	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
-	$(am__append_1)
+	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/CouennePSDcon.hpp \
+	cut/sdpcuts/CouenneMatrix.hpp \
+	cut/crossconv/CouenneCrossConv.hpp $(am__append_1)
 all: config.h config_couenne.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -686,7 +688,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/bound_tightening $(distdir)/bound_tightening/twoImpliedBT $(distdir)/branch $(distdir)/convex $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/standardize $(distdir)/util
+	$(mkdir_p) $(distdir)/bound_tightening $(distdir)/bound_tightening/twoImpliedBT $(distdir)/branch $(distdir)/convex $(distdir)/cut/crossconv $(distdir)/cut/sdpcuts $(distdir)/disjunctive $(distdir)/expression $(distdir)/expression/operators $(distdir)/expression/operators/bounds $(distdir)/expression/partial $(distdir)/heuristics $(distdir)/interfaces $(distdir)/main $(distdir)/problem $(distdir)/problem/depGraph $(distdir)/standardize $(distdir)/util
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
