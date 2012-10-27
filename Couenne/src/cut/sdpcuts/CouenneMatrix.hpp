@@ -14,9 +14,10 @@
 
 namespace Couenne {
 
-  // Base class for elements of our sparse structures ////////////////////////////
-
   class expression;
+  class CouenneSparseMatrix;
+
+  // Base class for elements of our sparse structures ////////////////////////////
 
   class CouenneScalar {
 
@@ -47,18 +48,26 @@ namespace Couenne {
     inline expression *getElem  () const {return elem_;}
 
     bool operator< (const CouenneScalar &rhs) const {return (index_ < rhs.index_);}
+
+    void print () const;
   };
 
-
-  class CouenneSparseMatrix;
 
   // Sparse vector of expressions /////////////////////////////////////////////////
 
   class CouenneSparseVector {
 
+  public:
+
+    struct compare_scalars {
+      inline bool operator() (register CouenneScalar * const &a, 
+			      register CouenneScalar * const &b)
+      {return a -> getIndex () < b -> getIndex ();}
+    };
+
   protected:
 
-    std::set <CouenneScalar *> elem_;
+    std::set <CouenneScalar *, compare_scalars> elem_;
 
   public:
 
@@ -70,9 +79,9 @@ namespace Couenne {
 
     void add_element (int index, expression *elem);
 
-    //void print ();
+    void print () const;
 
-    const std::set <CouenneScalar *> &getElements () {return elem_;}
+    const std::set <CouenneScalar *, compare_scalars> &getElements () {return elem_;}
 
     double               operator *     (const CouenneSparseVector &factor)           const; ///< vector * vector (dot product)
     CouenneSparseVector &operator *     (const CouenneSparseMatrix &post)             const; ///< vector * matrix
@@ -85,10 +94,18 @@ namespace Couenne {
 
   class CouenneSparseMatrix {
 
+  public:
+
+    struct compare_pair_ind {
+      inline bool operator() (register const std::pair <int, CouenneSparseVector *> &a, 
+			      register const std::pair <int, CouenneSparseVector *> &b)
+      {return a .first < b. first;}
+    };
+
   protected:
 
-    std::set <std::pair <int, CouenneSparseVector *> > row_;
-    std::set <std::pair <int, CouenneSparseVector *> > col_;
+    std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> row_;
+    std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> col_;
 
   public:
 
@@ -98,16 +115,15 @@ namespace Couenne {
     CouenneSparseMatrix (const CouenneSparseMatrix &rhs) {row_ = rhs.row_; col_ = rhs.col_;}
     CouenneSparseMatrix *clone () {return new CouenneSparseMatrix (*this);}
 
-    const std::set <std::pair <int, CouenneSparseVector *> > &getRows    () const {return row_;}
-    const std::set <std::pair <int, CouenneSparseVector *> > &getColumns () const {return col_;}
+    const std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> &getRows () const {return row_;}
+    const std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> &getCols () const {return col_;}
 
     void add_element (int row, int column, expression *elem);
-
-    //void print ();
+    void print () const;
+    long unsigned int size ();
 
     CouenneSparseVector &operator * (const CouenneSparseVector &factor) const; ///< matrix * vector 
-
-    //CouenneSparseMatrix &operator * (CouenneSparseMatrix &post);   ///< matrix * matrix
+    CouenneSparseMatrix &operator * (const CouenneSparseMatrix &post)   const; ///< matrix * matrix
   };
 }
 

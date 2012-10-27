@@ -24,7 +24,6 @@ libCouenneSdpCuts_la_LDFLAGS = $(LT_LDFLAGS)
 # "cygpath" stuff is necessary to compile with native compilers on Windows
 AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/../..` \
-	-I`$(CYGPATH_W) $(srcdir)/../../convex` \
 	-I`$(CYGPATH_W) $(srcdir)/../../expression` \
 	-I`$(CYGPATH_W) $(srcdir)/../../problem` \
 	$(COUENNELIB_CFLAGS)

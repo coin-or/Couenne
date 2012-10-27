@@ -520,6 +520,24 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   CouennePtr_ = couenneCg;
 
+  // Add PSD cut handler ///////////////////////////////////////////////////////
+
+  options () -> GetIntegerValue ("sdp_cuts", freq, "couenne.");
+
+  if (freq != 0) {
+
+    CouenneSdpCuts * couenneSDP = 
+      new CouenneSdpCuts (couenneProb_,
+			  journalist (),
+			  options    ());
+    CuttingMethod cg;
+    cg.frequency = freq;
+    cg.cgl = couenneSDP;
+    cg.id = "Couenne SDP cuts";
+    cutGenerators (). push_back (cg);
+  }
+
+
   // Add two-inequalities based bound tightening ///////////////////////////////////////////////////////
 
   options () -> GetIntegerValue ("two_implied_bt", freq, "couenne.");
@@ -787,9 +805,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cutGenerators (). push_back(cg);
   }
 
-  // Add sdp cuts ///////////////////////////////////////////////////////
+  // Add disjunctive cuts ///////////////////////////////////////////////////////
 
-  options () -> GetIntegerValue ("sdp_cuts", freq, "couenne.");
+  options () -> GetIntegerValue ("minlp_disj_cuts", freq, "couenne.");
 
   if (freq != 0) {
 

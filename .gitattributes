@@ -135,7 +135,6 @@ Couenne/src/cut/sdpcuts/CouennePSDcon.cpp -text
 Couenne/src/cut/sdpcuts/CouennePSDcon.hpp -text
 Couenne/src/cut/sdpcuts/CouenneSdpCuts.cpp -text
 Couenne/src/cut/sdpcuts/CutGen.cpp -text
-Couenne/src/cut/sdpcuts/CutGen.hpp -text
 Couenne/src/cut/sdpcuts/dsyevx_wrapper.cpp -text
 Couenne/src/cut/sdpcuts/dsyevx_wrapper.hpp -text
 Couenne/src/disjunctive/CouenneDisjCuts.cpp -text

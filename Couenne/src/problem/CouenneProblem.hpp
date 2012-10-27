@@ -17,6 +17,7 @@
 
 #include <vector>
 #include <map>
+#include <string.h>
 
 #include "CouenneConfig.h"
 
@@ -123,6 +124,11 @@ class Nauty;
       return (a.get_index() < b.get_index() );
     }
   };
+
+struct less_than_str {
+  inline bool operator() (register const  char *a, register const char *b)
+  {return strcmp (a, b) < 0;}
+};
 
 
 namespace Couenne {
@@ -333,6 +339,13 @@ class CouenneProblem {
   /// Performance indicator for FBBT -- to be moved away from
   /// CouenneProblem when we do it with FBBT
   CouenneBTPerfIndicator *perfIndicator_;
+
+  /// return particular constraint class. Classes:
+  /// 
+  /// 1) "convex": convex constraints;
+  /// 2) "PSDcon": constraints of the form X \succeq 0
+  /// 3) "normal": regular constraints
+  std::map <const char *, std::vector <CouenneConstraint *> *, less_than_str> ConstraintClass_;
 
  public:
 
@@ -862,6 +875,13 @@ public:
 		 const bool stopAtFirstViol = true,
 		 const bool checkAll        = false,
 	         const double precision     = -1) const; // if -1 then use feas_tolerance_
+
+  /// return particular constraint class. Classes:
+  /// 
+  /// 1) "convex": convex constraints;
+  /// 2) "PSDcon": constraints of the form X \succeq 0
+  /// 3) "normal": regular constraints
+  std::vector <CouenneConstraint *> *ConstraintClass (const char *str) {return ConstraintClass_ [str];}
 };
 
 }

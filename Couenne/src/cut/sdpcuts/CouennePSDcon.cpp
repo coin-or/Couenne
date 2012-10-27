@@ -25,5 +25,4 @@ exprAux *CouennePSDcon::standardize (CouenneProblem *p)
 {return NULL;}
 
 /// print constraint
-void CouennePSDcon::print (std::ostream &os) {
-}
+void CouennePSDcon::print (std::ostream &os) {}

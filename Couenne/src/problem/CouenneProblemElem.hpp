@@ -64,7 +64,7 @@ class CouenneConstraint {
   }
 
   /// Destructor
-  ~CouenneConstraint () {
+  virtual ~CouenneConstraint () {
     delete body_; 
     delete lb_; 
     delete ub_;
@@ -77,23 +77,23 @@ class CouenneConstraint {
     ub_    (c.Ub   () -> clone (d)) {}
 
   /// Cloning method
-  inline CouenneConstraint *clone (Domain *d = NULL) const
+  virtual inline CouenneConstraint *clone (Domain *d = NULL) const
   {return new CouenneConstraint (*this, d);}
 
   // Get constraint's elements
-  inline expression *Lb   () const {return lb_;}   ///< Expression of lower bound
-  inline expression *Ub   () const {return ub_;}   ///< Expression of upper bound
-  inline expression *Body () const {return body_;} ///< Expression of body of constraint
+  virtual inline expression *Lb   () const {return lb_;}   ///< Expression of lower bound
+  virtual inline expression *Ub   () const {return ub_;}   ///< Expression of upper bound
+  virtual inline expression *Body () const {return body_;} ///< Expression of body of constraint
 
   /// Set body of constraint
-  inline expression *Body (expression *newBody) 
+  virtual inline expression *Body (expression *newBody) 
   {body_ = newBody; return body_;}
 
   /// decompose body of constraint through auxiliary variables
-  exprAux *standardize (CouenneProblem *);
+  virtual exprAux *standardize (CouenneProblem *);
 
   /// print constraint
-  void print (std::ostream & = std::cout);
+  virtual void print (std::ostream & = std::cout);
 };
 
 

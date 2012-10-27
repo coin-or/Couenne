@@ -44,10 +44,13 @@ namespace Couenne {
     inline CouenneConstraint *clone (Domain *d = NULL) const
     {return new CouennePSDcon (*this, d);}
 
-    /// decompose body of constraint through auxiliary variables
+    /// return X
+    CouenneSparseMatrix *getX () const {return X_;}
+
+    /// Decompose body of constraint through auxiliary variables
     exprAux *standardize (CouenneProblem *);
 
-    /// print constraint
+    /// Print constraint
     void print (std::ostream & = std::cout);
   };
 }
