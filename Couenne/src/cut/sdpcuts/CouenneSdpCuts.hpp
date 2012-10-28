@@ -98,13 +98,15 @@ namespace Couenne {
     void genSDPcut (const OsiSolverInterface &si,
 		    OsiCuts &cs, 
 		    double *v1, double *v2, 
+		    int **, // contains indices
 		    bool checkduplicates,
 		    int *duplicate_cuts) const;
 
 
     void additionalSDPcuts (const OsiSolverInterface 
 			    &si,OsiCuts &cs, int np, const double *A, 
-			    const double *vector, int *duplicate_cuts) const;
+			    const double *vector, int **, // indices of matrix X'
+			    int *duplicate_cuts) const;
 
     void zero_comp (const int ind_i, const double delta,
 		    const int np, const int *selected,

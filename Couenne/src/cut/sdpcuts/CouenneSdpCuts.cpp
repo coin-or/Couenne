@@ -31,8 +31,6 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
   // 0) Search for X \succeq 0 constraints, if any, then add matrix to
   //    minors for each such constraint
 
-  double starttime = CoinCpuTime ();
-
   if (p -> ConstraintClass ("PSDcon"))
     for (std::vector <CouenneConstraint *>::iterator 
 	   i  = p -> ConstraintClass ("PSDcon") -> begin (); 

@@ -14,7 +14,6 @@
 #include <iostream>
 #include <set>
 
-//#include "CouenneJournalist.hpp"
 #include "CouenneTypes.hpp"
 #include "CouenneExpression.hpp"
 #include "CouenneExprConst.hpp"

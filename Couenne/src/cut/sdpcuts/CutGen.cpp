@@ -15,6 +15,7 @@
 #include "CoinTime.hpp"
 #include "CoinHelperFunctions.hpp"
 
+#include "CouenneExprVar.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneMatrix.hpp"
 #include "CouenneSdpCuts.hpp"
@@ -43,11 +44,15 @@ using namespace Couenne;
 void CouenneSdpCuts::generateCuts (const OsiSolverInterface &si, OsiCuts &cs, 
 				   const CglTreeInfo info) const {
 
+  problem_ -> domain () -> push (&si, &cs);
+
   for (std::vector <CouenneSparseMatrix *>::const_iterator 
 	 minor  = minors_. begin ();
        minor   != minors_. end   (); ++minor)
 
     genCutSingle (*minor, si, cs, info);
+
+  problem_ -> domain () -> pop ();
 }
 
 // sdpcut separator
@@ -56,29 +61,27 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 				   OsiCuts &cs, 
 				   const CglTreeInfo info) const {
 
-  minor -> print ();
+  //printf ("Generating cut on minor -> ");
+
+  //minor -> print ();
 
   int
-    n = minor -> size (),
+    n = (int) (minor -> size ()),
     np = n + 1,
     m,
     origsdpcuts_card = 0,
-    duplicate_cuts = 0,
+    duplicate_cuts   = 0,
 
-    **indA = new int * [np], // contains indices of matrix A below
-    *indMap = new int [problem_ -> nVars ()];
+    **indA  = new int * [np], // contains indices of matrix A below
+    *indMap = new int   [problem_ -> nVars ()];
 
-  double *A = new double [np * np];
+  double 
+    *A = new double [np * np];
 
   // ---------------------------------------------------------------------
 
-  for (int i=0; i<np; ++i) {
-
-    int *indArow = indA [i] = new int [np];
-
-    for (int j=0; j<np; ++j)
-      indArow [j] = -1; // unmarked positions mean auxs that don't exist
-  }
+  for (int i=0; i<np; ++i)
+    CoinFillN (indA [i] = new int [np], np, -1);
 
   int cnt = 1;
 
@@ -90,7 +93,7 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 	 i  = minor -> getCols () . begin ();
        i   != minor -> getCols () . end   (); ++i, ++cnt) {
 
-    printf ("[%d,%d] ", i -> first, cnt);
+    //printf ("[%d,%d] ", i -> first, cnt);
 
     indMap [i -> first] = cnt;
 
@@ -98,34 +101,9 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
     indA [cnt] [0] = i -> first;
   }
 
-  printf ("\n");
+  //printf ("\n");
 
-  // build index matrix
-
-  for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
-	 i  = minor -> getRows () . begin ();
-       i   != minor -> getRows () . end   (); ++i) {
-
-    int majInd = indMap [(*i) . first];
-
-    printf ("%d: ", majInd); fflush (stdout);
-
-    for (std::set <CouenneScalar *>::iterator 
-	   j  = (*i) . second -> getElements () . begin ();
-	 j   != (*i) . second -> getElements () . end   (); ++j) {
-
-      int minInd = indMap [(*j) -> getIndex ()];
-
-      printf ("[%d,%d]", minInd, (*j) -> getElem () -> Index ());
-      fflush (stdout);
-
-      indA [majInd] [minInd] = 
-      indA [minInd] [majInd] = (*j) -> getElem () -> Index ();
-    }
-    printf ("\n");
-  }
-
-  const double *sol = si.getColSolution ();
+  // build index and value matrices
 
   /*
     A =  /1 x^T\
@@ -134,14 +112,53 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 
   // Get minors_ 
 
-  A[0] = 1;
+  CoinFillN (A, np * np, 0.);
 
-  for (int i=0;i<n;i++)
-    A[np*(i+1)] = sol[i];
+  A [0] = 1; // upper left element
 
-  for (int i=0;i<n;i++)
-    for (int j=i;j<n;j++)
-      A[(j+1)*np+(i+1)] = sol [indexQ (i, j, n)];
+  // remainder of first row
+  for (int i=1; i <= n; i++)
+    A [np * i] = A [i] = problem_ -> X (indA [0] [i]);
+
+  for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
+	 i  = minor -> getRows () . begin ();
+       i   != minor -> getRows () . end   (); ++i) {
+
+    int majInd = indMap [(*i) . first];
+
+    //printf ("%d: ", majInd); fflush (stdout);
+
+    for (std::set <CouenneScalar *>::iterator 
+	   j  = (*i) . second -> getElements () . begin ();
+	 j   != (*i) . second -> getElements () . end   (); ++j) {
+
+      int minInd = indMap [(*j) -> getIndex ()];
+
+      //printf ("[%d,%d,%g,", minInd, (*j) -> getElem () -> Index (), (*((*j) -> getElem ()))  ());
+      //(*j) -> getElem () -> print (); printf ("] ");
+      //fflush (stdout);
+
+      expression *Elem = (*j) -> getElem ();
+
+      A [majInd * np + minInd] = 
+      A [minInd * np + majInd] = (*Elem) ();
+
+      indA [majInd] [minInd] = 
+      indA [minInd] [majInd] = Elem -> Index ();
+    }
+
+    //printf ("\n");
+  }
+
+  delete [] indMap;
+
+  // for (int i=0; i<np; ++i) {
+
+  //   for (int j=0; j<np; ++j)
+  //     printf ("[%4d,%7.2g] ", indA [i][j], A [i * np + j]);
+
+  //   printf ("\n");
+  // }
 
 #ifdef SPARSIFY_MINOR_SDP_CUTS
   double *Acopy = CoinCopyOfArray (A, np * np);
@@ -154,8 +171,7 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
   //------------------------------------------------------------------
 
   double
-    **work_ev = new double * [m],
-    scaling_factor = sqrt (np);
+    **work_ev = new double * [m];
 
   for (int i=0; i<m; i++) {
 
@@ -172,6 +188,8 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
     work_ev [i] = z + (i*np);
 
 #ifdef SCALE_EIGENV
+    double scaling_factor = sqrt (np);
+
     for (int j=0;j<np;j++)
       work_ev [i] [j] *= scaling_factor;
 #endif
@@ -180,13 +198,15 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
   // Generate sdp cuts proper //////////////////////////////////////////////////////////
 
   for (int i=0;i<m;i++) {
-    genSDPcut (si, cs, work_ev [i], work_ev [i], removeduplicates_, &duplicate_cuts);
+    genSDPcut (si, cs, work_ev [i], work_ev [i], indA, removeduplicates_, &duplicate_cuts);
     origsdpcuts_card++;
   }
 
-  int wise_evdec_num = 0;
 
 #if (defined SPARSIFY) || (defined SPARSIFY2) || (defined WISE_SPARSIFY)
+
+  int wise_evdec_num = 0;
+
   int card_sparse_v_mat = 0;
   double **sparse_v_mat = new double*[SPARSIFY_MAX_CARD];
   for (int i=0; i<SPARSIFY_MAX_CARD; i++)
@@ -199,15 +219,13 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
   min_nz = ceil (np * SPARSIFY_NEW_NZ_THRESHOLD);
   card_sparse_v_mat = 0;
 
-  sparsify2 (n,sol,sparse_v_mat,&card_sparse_v_mat,min_nz,&wise_evdec_num);
+  sparsify2 (n,X,sparse_v_mat,&card_sparse_v_mat,min_nz,&wise_evdec_num);
 
   for (int k=0; k<card_sparse_v_mat; k++)
-    genSDPcut (si, cs, sparse_v_mat [k], sparse_v_mat [k], removeduplicates_, &duplicate_cuts);
+    genSDPcut (si, cs, sparse_v_mat [k], sparse_v_mat [k], indA, removeduplicates_, &duplicate_cuts);
 #endif
 
   for (int i=0;i<m;i++) {
-
-    double *v = work_ev[i];
 
 #ifdef ONLY_NEG_EIGENV
     if (w [i] > 0) break;
@@ -220,23 +238,28 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 #if  (defined SPARSIFY) || (defined WISE_SPARSIFY)
 
     card_sparse_v_mat = 0;
+    double *v = work_ev[i];
 
 #if (defined WISE_SPARSIFY)
-    sparsify (true,  i, w[i], v, n, sol, sparse_v_mat, &card_sparse_v_mat, &wise_evdec_num);
+    sparsify (true,  i, w[i], v, n, X, sparse_v_mat, &card_sparse_v_mat, &wise_evdec_num);
 #else
-    sparsify (false, i, w[i], v, n, sol, sparse_v_mat, &card_sparse_v_mat, &wise_evdec_num);
+    sparsify (false, i, w[i], v, n, X, sparse_v_mat, &card_sparse_v_mat, &wise_evdec_num);
 #endif
 
     for (int k=0; k<card_sparse_v_mat; k++) {
 
-      genSDPcut (si, cs, sparse_v_mat [k], sparse_v_mat [k], removeduplicates_, &duplicate_cuts);
+      genSDPcut (si, cs, sparse_v_mat [k], sparse_v_mat [k], indA, removeduplicates_, &duplicate_cuts);
 
 #ifdef SPARSIFY_MINOR_SDP_CUTS
-      additionalSDPcuts (si,cs, np, Acopy, sparse_v_mat[k], &duplicate_cuts);
+      additionalSDPcuts (si,cs, np, Acopy, sparse_v_mat[k], indA, &duplicate_cuts);
 #endif
     }
 #endif // (defined SPARSIFY) || (defined WISE_SPARSIFY)
   }
+
+  for (int i=0; i<np; ++i)
+    delete [] indA [i];
+  delete [] indA;
 
 #if (defined SPARSIFY) || (defined SPARSIFY2) || (defined WISE_SPARSIFY)
   for(int i=0;i<SPARSIFY_MAX_CARD;i++)
@@ -259,12 +282,12 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 				OsiCuts &cs, 
 				double *v1, double *v2, 
+				int **indA,
 				bool checkduplicates, 
 				int *duplicate_cuts) const {
-
-  int 
+  int
     nterms = 0,
-    n      = minors_ [0] -> size (),
+    n      = (int) (minors_ [0] -> size ()),
     np     = n + 1,
     N      = n * n,
     *ind   = new int [N];
@@ -278,7 +301,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
       double coeff0 = v1 [i] * v2 [j] + v1 [j] * v2 [i];
       if (coeff0 != 0.0) {
 	coeff [nterms] = (i==j) ? (0.5 * coeff0) : (coeff0);
-	ind   [nterms++] = indexQ (i-1, j-1, n);
+	ind   [nterms++] = indA [i] [j]; //indexQ (i-1, j-1, n);
       }
     }
 
@@ -287,7 +310,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
     double coeff0 = v1 [i] * v2 [0] + v1 [0] * v2 [i];
     if (coeff0 != 0.0) {
       coeff [nterms]   = coeff0;
-      ind   [nterms++] = i-1;
+      ind   [nterms++] = indA [0] [i]; // i-1;
     }
   }
 
@@ -296,8 +319,8 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 
   if (nterms > 0) {
 
-    printf ("SDP: separating ");
-    cut -> print ();
+    //printf ("SDP: separating ");
+    //cut -> print ();
 
     CoinAbsFltEq treatAsSame (1.0e-8);
     int initial = cs.sizeRowCuts();
@@ -403,8 +426,10 @@ void CouenneSdpCuts::myremoveBestOneRowCol (double *matrix,
 		
     if (del_idx == NULL) {
       del_idx = new bool[n];
-      for (int i=0;i<n;i++)
-	del_idx[i]=false;
+      CoinFillN (del_idx, n, false);
+
+      // for (int i=0;i<n;i++)
+      // 	del_idx[i]=false;
     }
 
     int cnt_idx_orig = 0;
@@ -495,7 +520,7 @@ void CouenneSdpCuts::sparsify2(const int n,
 
 
 /************************************************************************/
-void CouenneSdpCuts::additionalSDPcuts(const OsiSolverInterface &si,OsiCuts &cs, int np, const double *A, const double *vector, int *duplicate_cuts) const{
+void CouenneSdpCuts::additionalSDPcuts(const OsiSolverInterface &si,OsiCuts &cs, int np, const double *A, const double *vector, int **indA, int *duplicate_cuts) const{
 
   int *indices;
   indices = new int[np];
@@ -549,7 +574,7 @@ void CouenneSdpCuts::additionalSDPcuts(const OsiSolverInterface &si,OsiCuts &cs,
 	newv[j] = 0;
     }
 
-    genSDPcut (si, cs, newv, newv,removeduplicates_,duplicate_cuts);
+    genSDPcut (si, cs, newv, newv, indA, removeduplicates_,duplicate_cuts);
   }
 
   delete [] v;
@@ -964,8 +989,8 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
   for (int i=0; i<np; ++i) {
 
     int 
-      newpos = i + floor ((np - i - 1.e-3) * drand48 ()),
-      tmp = order [newpos];
+      newpos = (double) i + floor (((double) (np - i) - 1.e-3) * drand48 ()),
+      tmp    = order [newpos];
     order [newpos] = order [i];
     order [i] = tmp;
   }
