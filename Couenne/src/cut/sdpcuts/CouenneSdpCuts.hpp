@@ -26,16 +26,17 @@ namespace Couenne {
   ///
   /// a' X a >= 0
   ///
-  /// where X = / 1 x' \   <--- where x' stands for "x transposed"
-  ///           \ x X0 /
+  /// where X is a matrix constrained to be PSD.
   ///
-  /// and X0 = (x_ij)_{i,j in N}, and x_ij is the auxiliary variable
-  /// for x_i * x_j. After reformulation, matrices like X0 arise
-  /// naturally and can be used to separate cuts that help strengthen
-  /// the lower bound. See Sherali and Fraticelli for the base idea,
-  /// and Qualizza, Belotti and Margot for an efficient rework and its
-  /// implementation. Andrea Qualizza's code has been made open source
-  /// and is used here (thanks Andrea!).
+  /// Typical application is in problems with products forming a
+  /// matrix of auxiliary variables X0 = (x_ij)_{i,j in N}, and x_ij
+  /// is the auxiliary variable for x_i * x_j. After reformulation,
+  /// matrices like X0 arise naturally and can be used to separate
+  /// cuts that help strengthen the lower bound. See Sherali and
+  /// Fraticelli for the base idea, and Qualizza, Belotti and Margot
+  /// for an efficient rework and its implementation. Andrea
+  /// Qualizza's code has been made open source and is used here
+  /// (thanks Andrea!).
   ///
 
   class CouenneSdpCuts: public CglCutGenerator {
@@ -97,14 +98,17 @@ namespace Couenne {
 
     void genSDPcut (const OsiSolverInterface &si,
 		    OsiCuts &cs, 
+		    CouenneSparseMatrix *XX,
 		    double *v1, double *v2, 
 		    int **, // contains indices
 		    bool checkduplicates,
 		    int *duplicate_cuts) const;
 
 
-    void additionalSDPcuts (const OsiSolverInterface 
-			    &si,OsiCuts &cs, int np, const double *A, 
+    void additionalSDPcuts (const OsiSolverInterface &si,
+			    OsiCuts &cs, 
+			    CouenneSparseMatrix *minor, 
+			    int np, const double *A, 
 			    const double *vector, int **, // indices of matrix X'
 			    int *duplicate_cuts) const;
 

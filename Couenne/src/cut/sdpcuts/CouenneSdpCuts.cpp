@@ -80,28 +80,26 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 	 i  = minors_ . begin ();
        i   != minors_ . end   (); ++i) {
 
-    int
-      size        = (*i) -> size (),
-      *varIndices = new int [size];
+    int size = (*i) -> size ();
 
     for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
 	   j  = (*i) -> getRows () . begin (); 
 	 j   != (*i) -> getRows () . end   (); ++j) {
 
-      *varIndices++ = j -> first;
+      (*i) -> varIndices () . push_back (problem_ -> Var (j -> first));
     }
-
-    varIndices -= ((*i) -> size ());
 
     for (int j = 0, k = (*i) -> size (); k--; ++j) {
 
-      (*i) -> add_element (size, varIndices [j],       problem_ -> Var (varIndices [j]));
-      (*i) -> add_element (      varIndices [j], size, problem_ -> Var (varIndices [j]));
+      int indexVar = (*i) -> varIndices () [j] -> Index ();
+
+      (*i) -> add_element (size, indexVar,       problem_ -> Var (indexVar));
+      (*i) -> add_element (      indexVar, size, problem_ -> Var (indexVar));
     }
 
     (*i) -> add_element (size, size, new exprConst (1.));
 
-    (*i) -> print ();
+    //(*i) -> print ();
   }
 
   // 0) Search for X \succeq 0 constraints, if any, then add matrix to

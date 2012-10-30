@@ -11,6 +11,7 @@
 #define CouenneMatrix_hpp
 
 #include <set>
+#include <vector>
 
 namespace Couenne {
 
@@ -104,19 +105,27 @@ namespace Couenne {
 
   protected:
 
-    std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> row_;
-    std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> col_;
+    std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> row_; ///< row major
+    std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> col_; ///< col major
+
+    std::vector <expression *> varIndices_; ///< if used in sdp cuts, contains indices of x_i used in X_ij = x_i * x_j
 
   public:
 
     CouenneSparseMatrix () {}
    ~CouenneSparseMatrix () {}
 
-    CouenneSparseMatrix (const CouenneSparseMatrix &rhs) {row_ = rhs.row_; col_ = rhs.col_;}
+    CouenneSparseMatrix (const CouenneSparseMatrix &rhs): 
+      row_        (rhs.row_), 
+      col_        (rhs.col_), 
+      varIndices_ (rhs.varIndices_) {}
+
     CouenneSparseMatrix *clone () {return new CouenneSparseMatrix (*this);}
 
     const std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> &getRows () const {return row_;}
     const std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> &getCols () const {return col_;}
+
+    std::vector <expression *> &varIndices () {return varIndices_;}
 
     void add_element (int row, int column, expression *elem);
     void print () const;
