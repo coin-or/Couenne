@@ -28,22 +28,6 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
   problem_  (p),
   doNotUse_ (false) {
 
-  // 0) Search for X \succeq 0 constraints, if any, then add matrix to
-  //    minors for each such constraint
-
-  if (p -> ConstraintClass ("PSDcon"))
-    for (std::vector <CouenneConstraint *>::iterator 
-	   i  = p -> ConstraintClass ("PSDcon") -> begin (); 
-	 i   != p -> ConstraintClass ("PSDcon") -> end   (); ++i) {
-
-      CouennePSDcon *con = dynamic_cast <CouennePSDcon *> (*i);
-
-      if (!con) 
-	continue;
-
-      minors_ . push_back (con -> getX ());
-    }
-    
   CouenneSparseMatrix *cauldron = new CouenneSparseMatrix;
 
   // 1) Construct matrix with entries x_i, x_j
@@ -84,9 +68,57 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
       }
     }
 
+  // TODO
   // 2) Block-partition it (optional), obtain matrices
 
   minors_ . push_back (cauldron);
+
+  // 3) Bottom-right border each block with a row vector, a column vector,
+  // and the constant 1
+
+  for (std::vector <CouenneSparseMatrix *>::iterator 
+	 i  = minors_ . begin ();
+       i   != minors_ . end   (); ++i) {
+
+    int
+      size        = (*i) -> size (),
+      *varIndices = new int [size];
+
+    for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
+	   j  = (*i) -> getRows () . begin (); 
+	 j   != (*i) -> getRows () . end   (); ++j) {
+
+      *varIndices++ = j -> first;
+    }
+
+    varIndices -= ((*i) -> size ());
+
+    for (int j = 0, k = (*i) -> size (); k--; ++j) {
+
+      (*i) -> add_element (size, varIndices [j],       problem_ -> Var (varIndices [j]));
+      (*i) -> add_element (      varIndices [j], size, problem_ -> Var (varIndices [j]));
+    }
+
+    (*i) -> add_element (size, size, new exprConst (1.));
+
+    (*i) -> print ();
+  }
+
+  // 0) Search for X \succeq 0 constraints, if any, then add matrix to
+  //    minors for each such constraint
+
+  if (p -> ConstraintClass ("PSDcon"))
+    for (std::vector <CouenneConstraint *>::iterator 
+	   i  = p -> ConstraintClass ("PSDcon") -> begin (); 
+	 i   != p -> ConstraintClass ("PSDcon") -> end   (); ++i) {
+
+      CouennePSDcon *con = dynamic_cast <CouennePSDcon *> (*i);
+
+      if (!con) 
+	continue;
+
+      minors_ . push_back (con -> getX ());
+    }
 }
 
 

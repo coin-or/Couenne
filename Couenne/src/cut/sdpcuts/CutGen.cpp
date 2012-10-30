@@ -67,7 +67,7 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 
   int
     n = (int) (minor -> size ()),
-    np = n + 1,
+    np = n, //// + 1,
     m,
     origsdpcuts_card = 0,
     duplicate_cuts   = 0,
@@ -83,48 +83,43 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
   for (int i=0; i<np; ++i)
     CoinFillN (indA [i] = new int [np], np, -1);
 
-  int cnt = 1;
+  int cnt = 0;
 
   // build index map for sparse column set in matrix
 
-  indA [0] [0] = -2; // this is the one at the top left of the matrix
+  //indA [0] [0] = -2; // this is the one at the top left of the matrix
 
-  for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
-	 i  = minor -> getCols () . begin ();
-       i   != minor -> getCols () . end   (); ++i, ++cnt) {
+  // for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
+  // 	 i  = minor -> getCols () . begin ();
+  //      i   != minor -> getCols () . end   (); ++i, ++cnt) {
 
-    //printf ("[%d,%d] ", i -> first, cnt);
+  //   //printf ("[%d,%d] ", i -> first, cnt);
 
-    indMap [i -> first] = cnt;
+  //   indMap [i -> first] = cnt;
 
-    indA [0] [cnt] = 
-    indA [cnt] [0] = i -> first;
-  }
+  //   indA [0] [cnt] = 
+  //   indA [cnt] [0] = i -> first;
+  // }
 
   //printf ("\n");
 
   // build index and value matrices
 
-  /*
-    A =  /1 x^T\
-         \x  X /
-  */
-
   // Get minors_ 
 
   CoinFillN (A, np * np, 0.);
 
-  A [0] = 1; // upper left element
+  //  A [0] = 1; // upper left element
 
   // remainder of first row
-  for (int i=1; i <= n; i++)
-    A [np * i] = A [i] = problem_ -> X (indA [0] [i]);
+  // for (int i=1; i <= n; i++)
+  //   A [np * i] = A [i] = problem_ -> X (indA [0] [i]);
 
   for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
 	 i  = minor -> getRows () . begin ();
        i   != minor -> getRows () . end   (); ++i) {
 
-    int majInd = indMap [(*i) . first];
+    int majInd = i -> first; //indMap [(*i) . first];
 
     //printf ("%d: ", majInd); fflush (stdout);
 
@@ -132,7 +127,7 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 	   j  = (*i) . second -> getElements () . begin ();
 	 j   != (*i) . second -> getElements () . end   (); ++j) {
 
-      int minInd = indMap [(*j) -> getIndex ()];
+      int minInd = (*j) -> getIndex (); //indMap [(*j) -> getIndex ()];
 
       //printf ("[%d,%d,%g,", minInd, (*j) -> getElem () -> Index (), (*((*j) -> getElem ()))  ());
       //(*j) -> getElem () -> print (); printf ("] ");
@@ -288,34 +283,45 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
   int
     nterms = 0,
     n      = (int) (minors_ [0] -> size ()),
-    np     = n + 1,
+    np     = n, // + 1,
     N      = n * n,
     *ind   = new int [N];
 
   OsiRowCut *cut   = new OsiRowCut;
-  double    *coeff = new double [N];
-	
+  double
+    *coeff = new double [N],
+    rhs = 0;
+
+  // ASSUMPTION: matrix is symmetric
+
   // coefficients for X_ij
   for (int i=1; i<np; i++)
     for (int j=i; j<np; j++) {
+
       double coeff0 = v1 [i] * v2 [j] + v1 [j] * v2 [i];
+      int index = indA [i] [j];
+
       if (coeff0 != 0.0) {
-	coeff [nterms] = (i==j) ? (0.5 * coeff0) : (coeff0);
-	ind   [nterms++] = indA [i] [j]; //indexQ (i-1, j-1, n);
+	if (index < 0)
+	  rhs -= ((i==j) ? coeff0/2 : coeff0);
+	else {
+	  coeff [nterms] = (i==j) ? (0.5 * coeff0) : (coeff0);
+	  ind   [nterms++] = index; //indexQ (i-1, j-1, n);
+	}
       }
     }
 
-  // coefficients for x_i
-  for (int i=1; i<np; i++) {
-    double coeff0 = v1 [i] * v2 [0] + v1 [0] * v2 [i];
-    if (coeff0 != 0.0) {
-      coeff [nterms]   = coeff0;
-      ind   [nterms++] = indA [0] [i]; // i-1;
-    }
-  }
+  // // coefficients for x_i
+  // for (int i=1; i<np; i++) {
+  //   double coeff0 = v1 [i] * v2 [0] + v1 [0] * v2 [i];
+  //   if (coeff0 != 0.0) {
+  //     coeff [nterms]   = coeff0;
+  //     ind   [nterms++] = indA [0] [i]; // i-1;
+  //   }
+  // }
 
   cut -> setRow (nterms, ind, coeff);
-  cut -> setLb (- *v1 * *v2);
+  cut -> setLb (rhs);
 
   if (nterms > 0) {
 
