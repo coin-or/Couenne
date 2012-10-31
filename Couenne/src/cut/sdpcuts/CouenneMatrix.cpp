@@ -172,11 +172,37 @@ void CouenneSparseMatrix::print () const {
 	  row_ . size (), 
 	  col_ . size ());
 
-  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneSparseMatrix::compare_pair_ind>::iterator i = row_ . begin ();
-       i != row_ . end (); ++i) {
+  // print rows
 
-    printf ("[%d]: ", (*i) . first);
+  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneSparseMatrix::compare_pair_ind>::iterator 
+	 i  = row_ . begin ();
+       i   != row_ . end (); ++i) {
+
+    printf ("Row [%d]: ", (*i) . first);
     (*i) . second -> print ();
     printf ("\n");
+  }
+
+  // print columns
+
+  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneSparseMatrix::compare_pair_ind>::iterator 
+	 i  = col_ . begin ();
+       i   != col_ . end (); ++i) {
+
+    printf ("Col [%d]: ", (*i) . first);
+    (*i) . second -> print ();
+    printf ("\n");
+  }
+
+  if (varIndices_ . size () > 0) {
+    printf ("varIndices: (");
+    for (std::vector <expression *>::const_iterator 
+	   i  = varIndices_ . begin (); 
+	 i   != varIndices_ . end   (); ++i) {
+      if (i != varIndices_ . begin ())
+	printf (",");
+      (*i) -> print ();
+    }
+    printf (")\n");
   }
 }

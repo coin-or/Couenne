@@ -20,6 +20,7 @@
 
 using namespace Couenne;
 
+#define DEBUG
 
 /// Constructor
 CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
@@ -37,29 +38,34 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
     if ((*i) -> Type () == AUX) {
 
+      expression *image = (*i) -> Image ();
+
       /// either it is x_i x_j
-      if (((*i) -> Image () -> code () == COU_EXPRMUL) && 
-	  ((*i) -> Image () -> ArgList () [0] -> Type () != CONST) && 
-	  ((*i) -> Image () -> ArgList () [1] -> Type () != CONST)) {
+      if ((image -> code () == COU_EXPRMUL) && 
+	  (image -> ArgList () [0] -> Type () != CONST) && 
+	  (image -> ArgList () [1] -> Type () != CONST)) {
 
 	int 
-	  index0 = (*i) -> Image () -> ArgList () [0] -> Index (),
-	  index1 = (*i) -> Image () -> ArgList () [1] -> Index ();
+	  index0 = image -> ArgList () [0] -> Index (),
+	  index1 = image -> ArgList () [1] -> Index ();
 
 	if ((index0 >= 0) &&
 	    (index1 >= 0) &&
 	    ((*i) -> Index () >= 0))
 
-	  cauldron -> add_element (CoinMin (index0, index1), 
-				   CoinMax (index0, index1), (*i));
+	  // cauldron -> add_element (CoinMin (index0, index1),
+	  //  			      CoinMax (index0, index1), (*i));
+
+	  cauldron -> add_element (index0, index1, (*i));
+	  cauldron -> add_element (index1, index0, (*i));
       }
 
       /// or it is x_i ^ 2
-      if (((*i) -> Image () -> code () == COU_EXPRPOW) && 
-	  ((*i) -> Image () -> ArgList () [0] -> Type  () != CONST) && 
-	  ((*i) -> Image () -> ArgList () [1] -> Value () == 2.)) {
+      if ((image -> code () == COU_EXPRPOW) && 
+	  (image -> ArgList () [0] -> Type  () != CONST) && 
+	  (image -> ArgList () [1] -> Value () == 2.)) {
 
-	int index0 = (*i) -> Image () -> ArgList () [0] -> Index ();
+	int index0 = image -> ArgList () [0] -> Index ();
 
 	if ((index0 >= 0) &&
 	    ((*i) -> Index () >= 0))
@@ -67,6 +73,11 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 	  cauldron -> add_element (index0, index0, (*i));
       }
     }
+
+#ifdef DEBUG
+  printf ("Cauldron so far\n");
+  cauldron -> print ();
+#endif
 
   // TODO
   // 2) Block-partition it (optional), obtain matrices
@@ -80,30 +91,37 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 	 i  = minors_ . begin ();
        i   != minors_ . end   (); ++i) {
 
-    int size = (*i) -> size ();
+    int size = problem_ -> nVars ();
 
-    // printf ("minor has %d rows and %d columns\n",
-    // 	    (*i) -> getRows () . size (),
-    // 	    (*i) -> getCols () . size ());
+#ifdef DEBUG
+    printf ("minor has %ld rows and %ld columns\n",
+    	    (*i) -> getRows () . size (),
+    	    (*i) -> getCols () . size ());
+#endif
 
     for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
 	   j  = (*i) -> getCols () . begin (); 
-	 j   != (*i) -> getCols () . end   (); ++j) {
+	 j   != (*i) -> getCols () . end   (); ++j)
 
       (*i) -> varIndices () . push_back (problem_ -> Var (j -> first));
-    }
 
     for (std::vector <expression *>::iterator 
 	   j  = (*i) -> varIndices () . begin ();
 	 j   != (*i) -> varIndices () . end   (); ++j) {
 
       int indexVar = (*j) -> Index ();
-      (*i) -> add_element (indexVar, size, problem_ -> Var (indexVar)); // note: problem_ -> Var (indexVar) = (*j)
+#ifdef DEBUG
+      printf ("adding at [%d,%d] and viceversa\n", indexVar, size);
+#endif
+      (*i) -> add_element (indexVar, size, *j); // note: problem_ -> Var (indexVar) = (*j)
+      (*i) -> add_element (size, indexVar, *j);
     }
 
     (*i) -> add_element (size, size, new exprConst (1.));
 
-    //(*i) -> print ();
+#ifdef DEBUG
+    (*i) -> print ();
+#endif
   }
 
   // 0) Search for X \succeq 0 constraints, if any, then add matrix to
