@@ -82,19 +82,23 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
     int size = (*i) -> size ();
 
+    // printf ("minor has %d rows and %d columns\n",
+    // 	    (*i) -> getRows () . size (),
+    // 	    (*i) -> getCols () . size ());
+
     for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
-	   j  = (*i) -> getRows () . begin (); 
-	 j   != (*i) -> getRows () . end   (); ++j) {
+	   j  = (*i) -> getCols () . begin (); 
+	 j   != (*i) -> getCols () . end   (); ++j) {
 
       (*i) -> varIndices () . push_back (problem_ -> Var (j -> first));
     }
 
-    for (int j = 0, k = (*i) -> size (); k--; ++j) {
+    for (std::vector <expression *>::iterator 
+	   j  = (*i) -> varIndices () . begin ();
+	 j   != (*i) -> varIndices () . end   (); ++j) {
 
-      int indexVar = (*i) -> varIndices () [j] -> Index ();
-
-      (*i) -> add_element (size, indexVar,       problem_ -> Var (indexVar));
-      (*i) -> add_element (      indexVar, size, problem_ -> Var (indexVar));
+      int indexVar = (*j) -> Index ();
+      (*i) -> add_element (indexVar, size, problem_ -> Var (indexVar)); // note: problem_ -> Var (indexVar) = (*j)
     }
 
     (*i) -> add_element (size, size, new exprConst (1.));

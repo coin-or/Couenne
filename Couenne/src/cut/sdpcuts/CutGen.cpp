@@ -67,19 +67,17 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 				   OsiCuts &cs, 
 				   const CglTreeInfo info) const {
 
-  //printf ("Generating cut on minor -> ");
-
-  //minor -> print ();
+  // printf ("Generating cut on minor -> ");
+  // minor -> print ();
 
   int
     n = (int) (minor -> size ()),
-    np = n, //// + 1,
+    np = n,
     m,
     origsdpcuts_card = 0,
     duplicate_cuts   = 0,
 
-    **indA  = new int * [np], // contains indices of matrix A below
-    *indMap = new int   [problem_ -> nVars ()];
+    **indA  = new int * [np]; // contains indices of matrix A below
 
   double 
     *A = new double [np * np];
@@ -95,23 +93,25 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 
   CoinFillN (A, np * np, 0.);
 
+  // printf ("Components\n\n");
+
   for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
 	 i  = minor -> getRows () . begin ();
        i   != minor -> getRows () . end   (); ++i) {
 
-    int majInd = i -> first; //indMap [(*i) . first];
+    int majInd = i -> first;
 
-    //printf ("%d: ", majInd); fflush (stdout);
+    // printf ("%d: ", majInd); fflush (stdout);
 
     for (std::set <CouenneScalar *>::iterator 
 	   j  = (*i) . second -> getElements () . begin ();
 	 j   != (*i) . second -> getElements () . end   (); ++j) {
 
-      int minInd = (*j) -> getIndex (); //indMap [(*j) -> getIndex ()];
+      int minInd = (*j) -> getIndex ();
 
-      //printf ("[%d,%d,%g,", minInd, (*j) -> getElem () -> Index (), (*((*j) -> getElem ()))  ());
-      //(*j) -> getElem () -> print (); printf ("] ");
-      //fflush (stdout);
+      // printf ("[%d,%d,%g,", minInd, (*j) -> getElem () -> Index (), (*((*j) -> getElem ()))  ());
+      // (*j) -> getElem () -> print (); printf ("] ");
+      // fflush (stdout);
 
       expression *Elem = (*j) -> getElem ();
 
@@ -122,16 +122,22 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
       indA [minInd] [majInd] = Elem -> Index ();
     }
 
-    //printf ("\n");
+    // printf ("\n");
   }
 
-  delete [] indMap;
+  std::vector <expression *> &varInd = minor -> varIndices ();
+
+  for   (int i=0; i<np-1; ++i) // get to np-1 since varIndices not defined afterward
+    for (int j=0; j<np-1; ++j)
+      if (indA [i] [j] == -2)
+	A [i * np + j] = 
+	A [j * np + i] = 
+	  (*(varInd [i])) () * 
+	  (*(varInd [j])) ();
 
   // for (int i=0; i<np; ++i) {
-
   //   for (int j=0; j<np; ++j)
   //     printf ("[%4d,%7.2g] ", indA [i][j], A [i * np + j]);
-
   //   printf ("\n");
   // }
 
@@ -142,7 +148,15 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
   double *w = NULL, *z = NULL;
 
   //------------------------------------------------------------------
-  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, 0., 1, np);
+#if defined ONLY_NEG_EIGENV && defined ONLY_MOST_NEG
+  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX,           0., 1, 1);
+#elif defined ONLY_NEG_EIGENV
+  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX,           0., 1, np);
+#elif defined ONLY_MOST_NEG
+  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, COIN_DBL_MAX, 1, 1);
+#else
+  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, COIN_DBL_MAX, 1, np);
+#endif
   //------------------------------------------------------------------
 
   double
@@ -289,10 +303,18 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
   CoinFillN (xtraC,   n, 0.);
   CoinFillN (inverse, N, -1);
 
+  // printf ("Solution: (");
+  // for (int i=0; i<np; i++) {
+  //   if (i) printf (",");
+  //   printf ("%g ", v1[i]);
+  // }
+  // printf ("\n");
+
   // ASSUMPTION: matrix is symmetric
 
   // coefficients for X_ij
-  for (int i=1; i<np; i++)
+  for (int i=0; i<np; i++)
+
     for (int j=i; j<np; j++) {
 
       double coeff0 = v1 [i] * v2 [j] + v1 [j] * v2 [i];
@@ -300,6 +322,8 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
       if (coeff0 == 0.) continue;
 
       int index = indA [i] [j];
+
+      // printf ("{%d,%g} ", index, coeff0);
 
       // Three cases:
       //
@@ -310,6 +334,8 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
       //
       // 3) index < -1: this variable (x_ij = x_i * x_j) is not in the
       //    problem, and must be replaced somehow. 
+
+      // if (index==-1) printf ("found constant: %g", (i==j) ? coeff0 / 2 : coeff0);
 
       if (index == -1)
 
@@ -330,6 +356,10 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 
 	Xi -> getBounds (li, ui);
 	Xj -> getBounds (lj, uj);
+
+	// printf ("expression: x%d [%g,%g] * x%d [%g,%g]", 
+	// 	Xi -> Index (), li, ui, 
+	// 	Xj -> Index (), lj, uj);
 
 	if (i==j) {
 
@@ -409,10 +439,14 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 
       } else {
 
+	// printf ("normal term: %g x_%d [terms:%d]\n", (i==j) ? (0.5 * coeff0) : (coeff0), index, nterms);
+
 	coeff   [nterms]   = (i==j) ? (0.5 * coeff0) : (coeff0);
 	inverse [index]    = nterms;
 	ind     [nterms++] = index;
       }
+
+      // printf ("%d terms so far\n", nterms);
     }
 
   for (std::vector <expression *>::iterator 
@@ -431,8 +465,8 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 
   if (nterms > 0) {
 
-    //printf ("SDP: separating ");
-    //cut -> print ();
+    // printf ("SDP: separating ");
+    // cut -> print ();
 
     CoinAbsFltEq treatAsSame (1.0e-8);
     int initial = cs.sizeRowCuts();

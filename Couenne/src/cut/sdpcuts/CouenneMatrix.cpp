@@ -142,7 +142,7 @@ CouenneSparseMatrix &CouenneSparseMatrix::operator * (const CouenneSparseMatrix 
 
 #define WRAP 20
 
-/// 
+/// Pretty print
 void CouenneSparseVector::print () const {
 
   int cnt=0;
@@ -165,7 +165,7 @@ void CouenneSparseVector::print () const {
 }
 
 
-/// 
+/// Pretty print
 void CouenneSparseMatrix::print () const {
 
   printf ("Matrix (%ld x %ld):\n", 
