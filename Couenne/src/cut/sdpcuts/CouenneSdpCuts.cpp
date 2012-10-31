@@ -20,7 +20,7 @@
 
 using namespace Couenne;
 
-#define DEBUG
+//#define DEBUG
 
 /// Constructor
 CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,

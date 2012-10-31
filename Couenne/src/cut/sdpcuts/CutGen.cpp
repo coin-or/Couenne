@@ -24,7 +24,7 @@
 
 #include "dsyevx_wrapper.hpp"
 
-#define DEBUG
+//#define DEBUG
 
 //#define ONLY_NEG_EIGENV
 //#define ONLY_MOST_NEG
@@ -491,7 +491,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 
 	      xtraC [varIndices [i] -> Index ()] += coeff0 * lj;
 	      xtraC [varIndices [j] -> Index ()] += coeff0 * ui;
-	      rhs += coeff0 * uj * li;
+	      rhs += coeff0 * lj * ui;
 
 #ifdef DEBUG
 	      printf ("adding (%g,%g) = %g*(%g,%g) (rhsMlu) to xtrac[%d=varInd[%d]] and xtrac[%d=varInd[%d]]\n", 
