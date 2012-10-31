@@ -320,27 +320,28 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
     nterms   = 0,
     n        = (int) (XX -> size ()),
     np       = n,
+    nvars    = problem_ -> nVars (),
     N        = n * n,
     *ind     = new int [N],
-    *inverse = new int [N];
+    *inverse = new int [nvars];
 
   double
     *coeff = new double [N],
-    *xtraC = new double [n],
-    rhs = 0;
+    *xtraC = new double [nvars],
+    rhs    = 0.;
 
   std::vector <expression *> &varIndices = XX -> varIndices ();
 
-  CoinFillN (xtraC,   n, 0.);
-  CoinFillN (inverse, N, -1);
+  CoinFillN (xtraC,   nvars, 0.);
+  CoinFillN (inverse, nvars, -1);
 
 #ifdef DEBUG
   printf ("Solution: (");
   for (int i=0; i<np; i++) {
     if (i) printf (",");
-    printf ("%g ", v1[i]);
+    printf ("%g", v1[i]);
   }
-  printf ("\n");
+  printf (")\n");
 #endif
 
   // ASSUMPTION: matrix is symmetric
@@ -352,7 +353,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 
       double coeff0 = v1 [i] * v2 [j] + v1 [j] * v2 [i];
 
-      if (fabs (coeff0) < 1e-8) continue; // why 1e-21? Cbc/Clp related
+      if (fabs (coeff0) < 1e-12) continue; // why 1e-21? Cbc/Clp related
 
       int index = indA [i] [j];
 
@@ -404,21 +405,21 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 	  // This variable (x_ii = x_i ^ 2) is not in the
 	  // problem. Replace it with its upper envelope 
 	  //
-	  // X_ii <= li^2 + (ui^2 - li^2) / (ui-li) * (xi-li)
+	  // X_ii <= li^2 + (ui^2 - li^2) / (ui-li) * (xi-li) = (ui+li) * xi - li*ui
 
-	  xtraC [varIndices [i] -> Index ()] += coeff0 * (li + ui); 
+	  xtraC [varIndices [i] -> Index ()] += coeff0 / 2 * (li + ui); 
 #ifdef DEBUG
 	  printf ("adding %g=%g*(%g+%g) (sq) to xtrac[%d=varInd[%d]]\n", 
-		  coeff0 * (li + ui), coeff0, li, ui, varIndices [i] -> Index (), i);
+		  coeff0 / 2 * (li + ui), coeff0, li, ui, varIndices [i] -> Index (), i);
 #endif
-	  rhs += li * ui;
+	  rhs += coeff0 / 2 * (li * ui);
 
 	} else {
 
 	  // This variable (x_ij = x_i * x_j) is not in the problem,
 	  // and must be replaced somehow. Apply Fourier-Motzkin
 	  // elimination using bounds and McCormick inequalities on
-	  // fictitious variable y_ij = x_i x_j:
+	  // the fictitious variable y_ij = x_i x_j:
 	  //
 	  //    y_ij >= L = min {l_i*l_j, u_i*u_j, l_i*u_j, u_i*l_j}
 	  //    y_ij >= l_j x_i + l_i x_j - l_i l_j
@@ -507,11 +508,19 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 #ifdef DEBUG
 	printf ("normal term: %g x_%d [terms:%d]\n", (i==j) ? (0.5 * coeff0) : (coeff0), index, nterms);
 #endif
-	coeff   [nterms]   = (i==j) ? (0.5 * coeff0) : (coeff0);
-	inverse [index]    = nterms;
-	ind     [nterms++] = index;
-      }
 
+	if      (inverse [index] >= 0)
+	  coeff [inverse [index]] += (i==j) ? (0.5 * coeff0) : (coeff0);
+	else {
+
+	  coeff   [nterms]   = (i==j) ? (0.5 * coeff0) : (coeff0);
+	  // if (inverse [index] >= 0)
+	  //   printf ("duplicate index at nterms=%d: inverse[%d] = %d, value %g\n", 
+	  // 	  nterms, index, inverse [index], coeff [nterms]);
+	  inverse [index]    = nterms;
+	  ind     [nterms++] = index;
+	}
+      }
 #ifdef DEBUG
       printf ("%d terms so far\n", nterms);
 #endif
@@ -528,6 +537,11 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
       printf ("now adding %g to coeff [inv [%d] = %d]\n", xtraC [varInd], varInd, inverse [varInd]);
 #endif
       coeff [inverse [varInd]] += xtraC [varInd];
+    } else if (fabs (xtraC [varInd]) > 1e-8) { // independent variable not appearing so far
+
+      coeff   [nterms]   = xtraC [varInd];
+      inverse [varInd]   = nterms; // probably useless
+      ind     [nterms++] = varInd;
     }
   }
 

@@ -145,6 +145,11 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 /// Destructor
 CouenneSdpCuts::~CouenneSdpCuts () {
 
+  // for (std::vector <CouenneSparseMatrix *>::iterator 
+  // 	 i  = minors_ . begin ();
+  //      i   != minors_ . end   (); ++i)
+  //   delete (*i);
+
   // Destroy matrix structures
 }
 
