@@ -107,7 +107,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 				      Ipopt::SmartPtr<Bonmin::TMINLP> tminlp,
 				      CouenneInterface *ci,
 				      Bonmin::Bab *bb) {
-
   bool retval = true;
 
   std::string s;
@@ -536,7 +535,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cg.id = "Couenne SDP cuts";
     cutGenerators (). push_back (cg);
   }
-
 
   // Add two-inequalities based bound tightening ///////////////////////////////////////////////////////
 

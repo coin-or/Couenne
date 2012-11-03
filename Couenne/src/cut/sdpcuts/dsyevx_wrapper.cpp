@@ -14,6 +14,8 @@
 
 #include "CoinFinite.hpp"
 
+//#include "IpLapack.hpp"
+
 extern "C" {
 
   /* Lapack routine to compute orthonormal eigenvalues/eigenvectors (in Fortran) */
@@ -76,11 +78,14 @@ void dsyevx_interface (int n, double *A, int &m,
 
   double *work  = new double [lwork];
 
+  // Equivalent:
+  // Ipopt::IpLapackDsyev (true, n, A, lda, w, info);
+
   dsyevx_ (&jobz, &range, &uplo, &n, 
-	   A, &lda, 
-	   &vl, &vu, &il, &iu,
-	   &abstol, &m, 
-	   w, z, &ldz, work, &lwork, iwork, ifail, &info);
+  	   A, &lda, 
+  	   &vl, &vu, &il, &iu,
+  	   &abstol, &m, 
+  	   w, z, &ldz, work, &lwork, iwork, ifail, &info);
 
   if (info) {
     printf (":: dsyevx returned status %d\n", info);

@@ -101,16 +101,14 @@ namespace Couenne {
 		    CouenneSparseMatrix *XX,
 		    double *v1, double *v2, 
 		    int **, // contains indices
-		    bool checkduplicates,
-		    int *duplicate_cuts) const;
+		    bool checkduplicates) const;
 
 
     void additionalSDPcuts (const OsiSolverInterface &si,
 			    OsiCuts &cs, 
 			    CouenneSparseMatrix *minor, 
 			    int np, const double *A, 
-			    const double *vector, int **, // indices of matrix X'
-			    int *duplicate_cuts) const;
+			    const double *vector, int **) const; // indices of matrix X'
 
     void zero_comp (const int ind_i, const double delta,
 		    const int np, const int *selected,
