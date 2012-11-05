@@ -26,8 +26,6 @@
 
 //#define DEBUG
 
-#define ONLY_NEG_EIGENV
-//#define ONLY_MOST_NEG
 //#define SPARSIFY
 
 #define indexQ(i,j,n) ((n) + (i) * (2*(n)-1-(i)) / 2 + (j))
@@ -51,6 +49,9 @@ using namespace Couenne;
 // sdpcut separator
 void CouenneSdpCuts::generateCuts (const OsiSolverInterface &si, OsiCuts &cs, 
 				   const CglTreeInfo info) const {
+
+  if ((info . level > 0) ||
+      (info . pass  > 1)) return;
 
   problem_ -> domain () -> push (&si, &cs);
 
@@ -80,6 +81,8 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
     n = (int) (minor -> size ()),
     np = n,
     m,
+
+    nVecs = (numEigVec_ < 0) ? n : numEigVec_,
 
     **indA  = new int * [np], // contains indices of matrix A below
     *indMap = new int [problem_ -> nVars ()];
@@ -176,32 +179,32 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 
   double *w = NULL, *z = NULL;
 
-  //------------------------------------------------------------------
-#if defined ONLY_NEG_EIGENV && defined ONLY_MOST_NEG
-  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX,           0., 1, 1);
-#elif defined ONLY_NEG_EIGENV
-  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX,           0., 1, np);
-#elif defined ONLY_MOST_NEG
-  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, COIN_DBL_MAX, 1, 1);
-#else
-  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, COIN_DBL_MAX, 1, np);
-#endif
-  //------------------------------------------------------------------
+  //------------------------------------------------------------------------------------------------------
+  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, onlyNegEV_ ? 0. : COIN_DBL_MAX, 1, numEigVec_);
+  //------------------------------------------------------------------------------------------------------
+
+//   //------------------------------------------------------------------
+// #if defined ONLY_NEG_EIGENV && defined ONLY_MOST_NEG
+  
+// #elif defined ONLY_NEG_EIGENV
+//   dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX,           0., 1, np);
+// #elif defined ONLY_MOST_NEG
+//   dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, COIN_DBL_MAX, 1, 1);
+// #else
+//   dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, COIN_DBL_MAX, 1, np);
+// #endif
+//   //------------------------------------------------------------------
 
   double
     **work_ev = new double * [m];
 
-  for (int i=0; i<m; i++) {
+  for (int i=0; i<nVecs; i++) {
 
-#ifdef ONLY_NEG_EIGENV
-    if (w [i] > 0)
-      break;
-#endif
+    if (w [i] >= 0) {
 
-#ifdef ONLY_MOST_NEG
-    if(i > 0)
+      nVecs = i; // updated nVecs
       break;
-#endif
+    }
 
     work_ev [i] = z + (i*np);
 
@@ -215,19 +218,9 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 
   // Generate sdp cuts proper //////////////////////////////////////////////////////////
 
-  for (int i=0;i<m;i++) {
+  for (int i=0; i<nVecs; i++) {
 
-#ifdef ONLY_NEG_EIGENV
-    if (w [i] > 0)
-      break;
-#endif
-
-#ifdef ONLY_MOST_NEG
-    if(i > 0)
-      break;
-#endif
-
-    genSDPcut (si, cs, minor, work_ev [i], work_ev [i], indA, removeduplicates_);
+    genSDPcut (si, cs, minor, work_ev [i], work_ev [i], indA);
   }
 
 #if (defined SPARSIFY) || (defined SPARSIFY2) || (defined WISE_SPARSIFY)
@@ -246,21 +239,13 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
   min_nz = ceil (np * SPARSIFY_NEW_NZ_THRESHOLD);
   card_sparse_v_mat = 0;
 
-  sparsify2 (n,X,sparse_v_mat,&card_sparse_v_mat,min_nz,&wise_evdec_num);
+  sparsify2 (n,A,sparse_v_mat,&card_sparse_v_mat,min_nz,&wise_evdec_num);
 
   for (int k=0; k<card_sparse_v_mat; k++)
-    genSDPcut (si, cs, minor, sparse_v_mat [k], sparse_v_mat [k], indA, removeduplicates_);
+    genSDPcut (si, cs, minor, sparse_v_mat [k], sparse_v_mat [k], indA);
 #endif
 
-  for (int i=0;i<m;i++) {
-
-#ifdef ONLY_NEG_EIGENV
-    if (w [i] > 0) break;
-#endif
-
-#ifdef ONLY_MOST_NEG
-    if(i > 0) break;
-#endif
+  for (int i=0; i<nVecs; ++i) {
 
 #if  (defined SPARSIFY) || (defined WISE_SPARSIFY)
 
@@ -275,7 +260,7 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 
     for (int k=0; k<card_sparse_v_mat; k++) {
 
-      genSDPcut (si, cs, minor, sparse_v_mat [k], sparse_v_mat [k], indA, removeduplicates_);
+      genSDPcut (si, cs, minor, sparse_v_mat [k], sparse_v_mat [k], indA);
 
 #ifdef SPARSIFY_MINOR_SDP_CUTS
       additionalSDPcuts (si,cs, np, Acopy, sparse_v_mat[k], indA);
@@ -310,8 +295,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 				OsiCuts &cs, 
 				CouenneSparseMatrix *XX,
 				double *v1, double *v2, 
-				int **indA,
-				bool checkduplicates) const {
+				int **indA) const {
   int
     nterms   = 0,
     n        = (int) (XX -> size ()),
@@ -604,16 +588,17 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 #endif
 
       CoinAbsFltEq treatAsSame (1.0e-8);
-      int initial = cs.sizeRowCuts();
       cs.insertIfNotDuplicate (*cut, treatAsSame);
-      int final = cs.sizeRowCuts();
 
-      if (initial == final) {
+      //int initial = cs.sizeRowCuts();
+      // int final = cs.sizeRowCuts();
 
-	// if flag was false, we still add the duplicate cut
-	if (!checkduplicates)
-	  cs.insert (cut);
-      }
+      // if (initial == final) {
+
+      // 	// if flag was false, we still add the duplicate cut
+      // 	if (!checkduplicates)
+      // 	  cs.insert (cut);
+      // }
     }
 
     delete cut;
@@ -856,7 +841,7 @@ void CouenneSdpCuts::additionalSDPcuts(const OsiSolverInterface &si,OsiCuts &cs,
 	newv[j] = 0;
     }
 
-    genSDPcut (si, cs, minor, newv, newv, indA, removeduplicates_);
+    genSDPcut (si, cs, minor, newv, newv, indA);
   }
 
   delete [] v;
@@ -872,9 +857,9 @@ void CouenneSdpCuts::additionalSDPcuts(const OsiSolverInterface &si,OsiCuts &cs,
 
 /************************************************************************/
 void CouenneSdpCuts::update_sparsify_structures (const int np, const double *sol, double *v,
-					 double* margin, double** mat, double *lhs, 
-					 const int *zeroed, int evidx, bool decompose, 
-					 int *evdec_num) const {
+						 double* margin, double** mat, double *lhs, 
+						 const int *zeroed, int evidx, bool decompose, 
+						 int *evdec_num) const {
 
   // copy sol[] in mat[][]
   mat[0][0] = 1;

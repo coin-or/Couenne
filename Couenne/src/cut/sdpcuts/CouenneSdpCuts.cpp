@@ -29,6 +29,12 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
   problem_  (p),
   doNotUse_ (false) {
 
+  std::string s;
+
+  options -> GetIntegerValue ("sdp_cuts_num_ev", numEigVec_, "couenne.");
+  options -> GetStringValue  ("sdp_cuts_neg_ev", s,          "couenne.");
+  onlyNegEV_ = (s == "yes");
+
   CouenneSparseMatrix *cauldron = new CouenneSparseMatrix;
 
   // 1) Construct matrix with entries x_i, x_j
@@ -157,15 +163,20 @@ CouenneSdpCuts::~CouenneSdpCuts () {
 /// Copy constructor
 CouenneSdpCuts::CouenneSdpCuts (const CouenneSdpCuts &rhs):
 
-  problem_ (rhs. problem_),
-  minors_  (rhs. minors_) {}
+  problem_   (rhs. problem_),
+  minors_    (rhs. minors_),
+  numEigVec_ (rhs. numEigVec_),
+  onlyNegEV_ (rhs. onlyNegEV_) {}
 
 
 /// Assignment
 CouenneSdpCuts &CouenneSdpCuts::operator= (const CouenneSdpCuts &rhs) {
 
-  problem_ = rhs. problem_;
-  minors_  = rhs. minors_;
+  problem_   = rhs. problem_;
+  minors_    = rhs. minors_;
+  numEigVec_ = rhs. numEigVec_;
+  onlyNegEV_ = rhs. onlyNegEV_;
+
   return *this;
 }
 
@@ -185,5 +196,21 @@ void CouenneSdpCuts::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
      "A frequency of 0 (default) means these cuts are never generated. \
 Any positive number n instructs Couenne to generate them at every n nodes of the B&B tree. \
 A negative number -n means that generation should be attempted at the root node, and if successful it can be repeated at every n nodes, otherwise it is stopped altogether."
+    );
+
+  roptions -> AddLowerBoundedIntegerOption
+    ("sdp_cuts_num_ev",
+     "The number of eigenvectors of matrix X to be used to create sdp cuts.",
+     -1, -1,
+     "Set to -1 to indicate that all n eigenvectors should be used. Eigenvalues are \
+sorted in non-decreasing order, hence selecting 1 will provide cuts on the most negative eigenvalue"
+    );
+
+  roptions -> AddStringOption2
+    ("sdp_cuts_neg_ev",
+     "Only use negative eigenvalues to create sdp cuts.",
+     "yes", 
+     "no", "use all eigenvalues regardless of their sign",
+     "yes", "exclude all non-negative eigenvalues"
     );
 }
