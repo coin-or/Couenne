@@ -31,6 +31,11 @@ AC_CONFIG_SRCDIR(src/expression/expression.cpp)
 # /usr/local.
 AC_PREFIX_DEFAULT([`pwd`])
 
+# to make correct call to Fortran routines
+
+AC_COIN_PROG_F77
+AC_COIN_F77_WRAPPERS
+
 #############################################################################
 #                         Standard build tool stuff                         #
 #############################################################################

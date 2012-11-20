@@ -85,13 +85,14 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
     nVecs = (numEigVec_ < 0) ? n : numEigVec_,
 
     **indA  = new int * [np], // contains indices of matrix A below
-    *indMap = new int [problem_ -> nVars ()];
+    *indMap = new int [problem_ -> nVars ()],
+
+    compressed_index = 0;
 
   double 
     *A = new double [np * np];
 
-  int compressed_index = 0;
-
+  // Fill in inverse map
   for (std::vector <expression *>::const_iterator 
 	 i  = varInd . begin ();
        i   != varInd . end   (); ++i)
@@ -143,7 +144,7 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 
       expression *Elem = (*j) -> getElem ();
 
-      A [majInd * np + minInd] = (*Elem) ();
+      A [majInd * np + minInd] = (*Elem) (); // evaluate variable at this position of matrix
       //A [indJ * np + indI] = (*Elem) ();
 
       indA [majInd] [minInd] = Elem -> Index ();
@@ -156,6 +157,8 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
   }
 
   delete [] indMap;
+
+  // fill in non-existing auxiliaries in X (if any) with their hypothetical product
 
   for   (int i=0; i<np-1; ++i) // get to np-1 since varIndices not defined afterward
     for (int j=0; j<np-1; ++j)
@@ -180,20 +183,10 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
   double *w = NULL, *z = NULL;
 
   //------------------------------------------------------------------------------------------------------
-  dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, onlyNegEV_ ? 0. : COIN_DBL_MAX, 1, numEigVec_);
+  dsyevx_interface (np, A, m, w, z, EV_TOL, 
+		    -COIN_DBL_MAX, onlyNegEV_ ? 0. : COIN_DBL_MAX, 
+		    1, numEigVec_ < 0 ? np : numEigVec_);
   //------------------------------------------------------------------------------------------------------
-
-//   //------------------------------------------------------------------
-// #if defined ONLY_NEG_EIGENV && defined ONLY_MOST_NEG
-  
-// #elif defined ONLY_NEG_EIGENV
-//   dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX,           0., 1, np);
-// #elif defined ONLY_MOST_NEG
-//   dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, COIN_DBL_MAX, 1, 1);
-// #else
-//   dsyevx_interface (np, A, m, w, z, EV_TOL, -COIN_DBL_MAX, COIN_DBL_MAX, 1, np);
-// #endif
-//   //------------------------------------------------------------------
 
   double
     **work_ev = new double * [m];
@@ -218,10 +211,8 @@ void CouenneSdpCuts::genCutSingle (CouenneSparseMatrix * const & minor,
 
   // Generate sdp cuts proper //////////////////////////////////////////////////////////
 
-  for (int i=0; i<nVecs; i++) {
-
+  for (int i=0; i<nVecs; i++)
     genSDPcut (si, cs, minor, work_ev [i], work_ev [i], indA);
-  }
 
 #if (defined SPARSIFY) || (defined SPARSIFY2) || (defined WISE_SPARSIFY)
 
@@ -317,8 +308,8 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 
   for (int i=0; i<np; ++i) {
 
-    if (fabs (v1 [i]) < 1e-10) v1 [i] = 0;
-    if (fabs (v2 [i]) < 1e-10) v2 [i] = 0;
+    if (fabs (v1 [i]) < COUENNE_EPS) v1 [i] = 0;
+    if (fabs (v2 [i]) < COUENNE_EPS) v2 [i] = 0;
   }
 
 #ifdef DEBUG
@@ -341,7 +332,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 
       double coeff0 = v1 [i] * v2 [j] + v1 [j] * v2 [i];
 
-      if (fabs (coeff0) < 1e-12) continue; // why 1e-21? Cbc/Clp related
+      if (fabs (coeff0) < 1e-21) continue; // why 1e-21? Cbc/Clp related
 
       int index = indA [i] [j];
 
@@ -563,7 +554,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
       printf ("now adding %g to coeff [inv [%d] = %d]\n", xtraC [varInd], varInd, inverse [varInd]);
 #endif
       coeff [inverse [varInd]] += xtraC [varInd];
-    } else if (fabs (xtraC [varInd]) > 1e-8) { // independent variable not appearing so far
+    } else if (fabs (xtraC [varInd]) > COUENNE_EPS) { // independent variable not appearing so far
 
       coeff   [nterms]   = xtraC [varInd];
       inverse [varInd]   = nterms; // probably useless
@@ -587,7 +578,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
       cut -> print ();
 #endif
 
-      CoinAbsFltEq treatAsSame (1.0e-8);
+      CoinAbsFltEq treatAsSame (COUENNE_EPS);
       cs.insertIfNotDuplicate (*cut, treatAsSame);
 
       //int initial = cs.sizeRowCuts();
@@ -787,25 +778,22 @@ void CouenneSdpCuts::sparsify2 (const int n,
 
 
 /************************************************************************/
-void CouenneSdpCuts::additionalSDPcuts(const OsiSolverInterface &si,OsiCuts &cs, CouenneSparseMatrix *minor, int np, const double *A, const double *vector, int **indA) const{
+void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,OsiCuts &cs, CouenneSparseMatrix *minor, int np, const double *A, const double *vector, int **indA) const{
 
   int *indices;
-  indices = new int[np];
+  indices = new int [np];
   int cnt = 0;
-  for(int i=0;i<np;i++) {
-    if (vector[i] != 0.0)
-      indices[i] = cnt++;
-    else
-      indices[i] = -1;
-  }
-	
+
+  for(int i=0;i<np;i++)
+    indices [i] = ((fabs (vector [i]) > COUENNE_EPS) ? (cnt++) : -1);
+
   double *subA = new double[cnt*cnt];
 
   for (register int i=0; i<np; i++) {
-    if (indices[i] >= 0) {
+    if (indices [i] >= 0) {
       for (register int j=0; j<np; j++) {
-	if (indices[j] >= 0)
-	  subA[cnt*indices[j]+indices[i]] = A[np*j+i];
+	if (indices [j] >= 0)
+	  subA [cnt*indices[j] + indices[i]] = A[np*j+i];
       }
     }
   }
@@ -817,29 +805,22 @@ void CouenneSdpCuts::additionalSDPcuts(const OsiSolverInterface &si,OsiCuts &cs,
   dsyevx_interface (cnt, subA, m, w, z, EV_TOL, -COIN_DBL_MAX, 0., 1, cnt);
   //////////////////////////////////////////////////////
 
-  double *v = new double[np];
-  double *newv = new double[np];
-
+  double
+    *v    = new double [np],
+    *newv = new double [np];
 
   for (int k=0; k<m; k++) {
-	
-#ifdef ONLY_NEG_EIGENV
-    if(w [k] > 0) {
+
+    if (onlyNegEV_ && (w [k] > 0))
       break;
-    }
-#endif
 
     double *zbase = z + k * cnt;
-    for (int j=0; j<cnt; j++) {
-      v [j] = *zbase++;
-    }
 
-    for(int j=0;j<np;j++) {
-      if (indices[j] >= 0)
-	newv[j] = v[indices[j]];
-      else
-	newv[j] = 0;
-    }
+    for (int j=0; j<cnt; j++)
+      v [j] = *zbase++;
+
+    for(int j=0;j<np;j++)
+      newv[j] = (indices[j] >= 0) ? v [indices[j]] : newv[j] = 0;
 
     genSDPcut (si, cs, minor, newv, newv, indA);
   }
@@ -1268,10 +1249,10 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
   min_delta = lhs * (use_new_sparsify ? SPARSIFY_NEW_DELTA : SPARSIFY_OLD_DELTA); // do not weaken the cut too much
   int start_point = -1; // order[start_point]: index that should not be removed
 	
-  while(card_selected < np) {
+  while (card_selected < np) {
 
     for(i=0; i<np; i++) {
-      if(selected[order[i]] == 0) {
+      if (selected [order [i]] == 0) {
 	start_point = i;
 	break;
       }

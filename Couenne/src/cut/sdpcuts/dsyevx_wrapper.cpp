@@ -14,31 +14,35 @@
 
 #include "CoinFinite.hpp"
 
+#include "config.h"
+
 //#include "IpLapack.hpp"
 
 extern "C" {
 
   /* Lapack routine to compute orthonormal eigenvalues/eigenvectors (in Fortran) */
-  void dsyevx_ (char   *,
-		char   *,
-		char   *,
-		int    *,
-		double *,
-		int    *,
-		double *,
-		double *,
-		int    *,
-		int    *,
-		double *,
-		int    *,
-		double *,
-		double *,
-		int    *,
-		double *,
-		int    *,
-		int    *,
-		int    *,
-		int    *);
+
+  void F77_FUNC(dsyevx,DSYEVX) (
+				  char   *,
+				  char   *,
+				  char   *,
+				  int    *,
+				  double *,
+				  int    *,
+				  double *,
+				  double *,
+				  int    *,
+				  int    *,
+				  double *,
+				  int    *,
+				  double *,
+				  double *,
+				  int    *,
+				  double *,
+				  int    *,
+				  int    *,
+				  int    *,
+				  int    *);
 }
 
 
@@ -81,11 +85,13 @@ void dsyevx_interface (int n, double *A, int &m,
   // Equivalent:
   // Ipopt::IpLapackDsyev (true, n, A, lda, w, info);
 
-  dsyevx_ (&jobz, &range, &uplo, &n, 
-  	   A, &lda, 
-  	   &vl, &vu, &il, &iu,
-  	   &abstol, &m, 
-  	   w, z, &ldz, work, &lwork, iwork, ifail, &info);
+  F77_FUNC
+    (dsyevx,DSYEVX) 
+    (&jobz, &range, &uplo, &n, 
+     A, &lda, 
+     &vl, &vu, &il, &iu,
+     &abstol, &m, 
+     w, z, &ldz, work, &lwork, iwork, ifail, &info);
 
   if (info) {
     printf (":: dsyevx returned status %d\n", info);
