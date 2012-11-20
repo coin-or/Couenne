@@ -14,7 +14,7 @@
 
 #include "CoinFinite.hpp"
 
-#include "config.h"
+#include "CouenneConfig.h"
 
 //#include "IpLapack.hpp"
 
