@@ -90,6 +90,8 @@ public:
   /// Perform branching step
   void branchCore (OsiSolverInterface *, int, int, bool, double, t_chg_bounds *&);
 
+  static int nOrbBr;
+
 protected:
 
   /// Pointer to CouenneCutGenerator (if any); if not NULL, allows to

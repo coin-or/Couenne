@@ -49,7 +49,8 @@ using namespace Couenne;
 #include "CouenneJournalist.hpp"
 
 #ifdef COIN_HAS_NTY
-int nOrbBr = 0; // FIXME: horrible global variable. Brrr.
+// FIXME: horrible global variable. Brrr.
+#include "CouenneBranchingObject.hpp"
 #endif
 
 #include "CoinSignal.hpp"
@@ -187,7 +188,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
 #ifdef COIN_HAS_NTY
     if (nOrbBr)
-      printf ("%d orbital nontrivial branchings\n", nOrbBr);
+      printf ("%d orbital nontrivial branchings\n", CouenneBranchingObject::nOrbBr);
 #endif
 
     std::cout.precision (10);

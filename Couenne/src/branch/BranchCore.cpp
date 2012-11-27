@@ -12,10 +12,10 @@
 #include "CouenneBranchingObject.hpp"
 #include "CouenneProblem.hpp"
 
-extern int nOrbBr;
-
 using namespace Ipopt;
 using namespace Couenne;
+
+int CouenneBranchingObject::nOrbBr = 0;
 
 /** \brief Execute the core of the branch --- need to separate code
     because of include conflicts with other packages' config_*.h
