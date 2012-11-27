@@ -51,9 +51,8 @@ using namespace Couenne;
 #ifdef COIN_HAS_NTY
 #include "Nauty.h"
 
-int nOrbBr = 0; // FIXME: horrible global variable. Brrr.
-int maxDepthOrbBranch = -1; // FIXME: horrible global variable. Brrr.
-int nSGcomputations = 0; // FIXME: horrible global variable. Brrr.
+// FIXME: horrible global variables. Brrr.
+#include "CouenneBranchingObject.hpp"
 #endif
 
 #include "CoinSignal.hpp"
@@ -195,8 +194,8 @@ Auxiliaries:     %8d (%d integer)\n\n",
       bb (couenne); // do branch and bound
 
 #ifdef COIN_HAS_NTY
-    if (nOrbBr)
-      printf ("%d orbital nontrivial branchings\n", nOrbBr);
+    if (CouenneBranchingObject::nOrbBr)
+      printf ("%d orbital nontrivial branchings\n", CouenneBranchingObject::nOrbBr);
 #endif
 
     std::cout.precision (10);
@@ -446,7 +445,7 @@ Branch-and-bound nodes:                  %8d\n",
 		infeasible ? 0 : bb.numNodes ()
 #ifdef COIN_HAS_NTY
 		,symmGroupSize
-		,nSGcomputations
+		,CouenneBranchingObject::nSGcomputations
 #endif
 );
 		//bb.iterationCount ());

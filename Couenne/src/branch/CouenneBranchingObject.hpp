@@ -90,6 +90,11 @@ public:
   /// Perform branching step
   void branchCore (OsiSolverInterface *, int, int, bool, double, t_chg_bounds *&);
 
+  // FIXME: horrible global variables. Brrr.
+  static int nOrbBr;
+  static int maxDepthOrbBranch;
+  static int nSGcomputations;
+
 protected:
 
   /// Pointer to CouenneCutGenerator (if any); if not NULL, allows to

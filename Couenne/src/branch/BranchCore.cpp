@@ -12,12 +12,13 @@
 #include "CouenneBranchingObject.hpp"
 #include "CouenneProblem.hpp"
 
-extern int nOrbBr;
-extern int maxDepthOrbBranch;
-extern int nSGcomputations;
-
 using namespace Ipopt;
 using namespace Couenne;
+
+// FIXME: horrible global variables. Brrr.
+int CouenneBranchingObject::nOrbBr = 0;
+int CouenneBranchingObject::maxDepthOrbBranch = -1;
+int CouenneBranchingObject::nSGcomputations = 0;
 
 #define OB_WEIGHT 0.6
 

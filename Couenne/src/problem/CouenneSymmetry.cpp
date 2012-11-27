@@ -26,8 +26,7 @@ using namespace Couenne;
 #include "CouenneExprGroup.hpp"
 
 #include "Nauty.h"
-
-extern int nSGcomputations;
+#include "CouenneBranchingObject.hpp"
 
 void Node::node(int i, double c , double l, double u, int cod, int s){
   index = i;
@@ -342,7 +341,7 @@ void CouenneProblem::Compute_Symmetry() const{
 
   nauty_info -> computeAuto();
 
-  ++nSGcomputations;
+  ++CouenneBranchingObject::nSGcomputations;
 }
 
   
