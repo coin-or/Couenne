@@ -187,7 +187,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
     bb (couenne); // do branch and bound
 
 #ifdef COIN_HAS_NTY
-    if (nOrbBr)
+    if (CouenneBranchingObject::nOrbBr)
       printf ("%d orbital nontrivial branchings\n", CouenneBranchingObject::nOrbBr);
 #endif
 
