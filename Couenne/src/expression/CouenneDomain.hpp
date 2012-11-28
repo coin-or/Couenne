@@ -47,10 +47,10 @@ protected:
 public:
 
   /// constructor
-  DomainPoint (int dim = 0, 
-	       CouNumber *x   = NULL, 
-	       CouNumber *lb  = NULL, 
-	       CouNumber *ub  = NULL,
+  DomainPoint (int dim, 
+	       CouNumber *x, 
+	       CouNumber *lb,
+	       CouNumber *ub,
 	       bool copy = true);
 
   /// constructor
