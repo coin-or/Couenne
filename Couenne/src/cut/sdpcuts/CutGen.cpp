@@ -27,6 +27,9 @@
 //#define DEBUG
 
 //#define SPARSIFY
+//#define SPARSIFY2
+//#define WISE_SPARSIFY
+//#define SPARSIFY_MINOR_SDP_CUTS
 
 #define indexQ(i,j,n) ((n) + (i) * (2*(n)-1-(i)) / 2 + (j))
 

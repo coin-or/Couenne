@@ -85,8 +85,40 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
   cauldron -> print ();
 #endif
 
+  //#define PRINT_AND_EXIT
+#ifdef PRINT_AND_EXIT
+
+  // check if cauldron fully dense. Output density, will do tests to
+  // assess efficacy as a function of density
+
+  printf ("==== Cauldron size %d %d room %d elements", 
+	  cauldron -> getRows (). size (), 
+	  cauldron -> getCols (). size (),
+	  cauldron -> getRows (). size () *
+	  cauldron -> getCols (). size ());
+
+  int nElements = 0;
+
+  for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
+	   i  = cauldron -> getCols () . begin (); 
+	 i   != cauldron -> getCols () . end   (); ++i) {
+
+    nElements += (*i) . second -> getElements () . size ();
+    // for each element, count 
+  }
+
+  printf (" %d density: %g\n", 
+	  nElements, 
+	  nElements / (cauldron -> getRows (). size () *
+		       cauldron -> getCols (). size ()));
+
+  exit (-1);
+#endif
+
   // TODO
-  // 2) Block-partition it (optional), obtain matrices
+
+  // 2) Block-partition it (optional), obtain matrices. Replace line
+  //    below to decompose cauldron
 
   minors_ . push_back (cauldron);
 

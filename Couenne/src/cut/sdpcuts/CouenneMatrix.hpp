@@ -100,7 +100,7 @@ namespace Couenne {
     struct compare_pair_ind {
       inline bool operator() (register const std::pair <int, CouenneSparseVector *> &a, 
 			      register const std::pair <int, CouenneSparseVector *> &b)
-      {return a .first < b. first;}
+      {return a. first < b. first;}
     };
 
   protected:
