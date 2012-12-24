@@ -11,7 +11,7 @@
 #ifndef DSYEVX_HPP
 #define DSYEVX_HPP
 
-void dsyevx_interface (int n, double *A, int &m, 
+int dsyevx_interface (int n, double *A, int &m, 
 		       double * &w, double * &z, // output values 
 		       double tolerance,
 		       double lb_ev, 

@@ -35,12 +35,13 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
   options -> GetStringValue  ("sdp_cuts_neg_ev", s,          "couenne.");
   onlyNegEV_ = (s == "yes");
 
-  CouenneSparseMatrix *cauldron = new CouenneSparseMatrix;
+  CouenneExprMatrix *cauldron = new CouenneExprMatrix;
 
   // 1) Construct matrix with entries x_i, x_j
 
-  for (std::vector <exprVar *>::iterator i = p -> Variables (). begin (); 
-       i != p -> Variables (). end (); ++i)
+  for (std::vector <exprVar *>::iterator 
+	 i  = p -> Variables (). begin (); 
+       i   != p -> Variables (). end   (); ++i)
 
     if ((*i) -> Type () == AUX) {
 
@@ -85,36 +86,6 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
   cauldron -> print ();
 #endif
 
-  //#define PRINT_AND_EXIT
-#ifdef PRINT_AND_EXIT
-
-  // check if cauldron fully dense. Output density, will do tests to
-  // assess efficacy as a function of density
-
-  printf ("==== Cauldron size %d %d room %d elements", 
-	  cauldron -> getRows (). size (), 
-	  cauldron -> getCols (). size (),
-	  cauldron -> getRows (). size () *
-	  cauldron -> getCols (). size ());
-
-  int nElements = 0;
-
-  for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
-	   i  = cauldron -> getCols () . begin (); 
-	 i   != cauldron -> getCols () . end   (); ++i) {
-
-    nElements += (*i) . second -> getElements () . size ();
-    // for each element, count 
-  }
-
-  printf (" %d density: %g\n", 
-	  nElements, 
-	  nElements / (cauldron -> getRows (). size () *
-		       cauldron -> getCols (). size ()));
-
-  exit (-1);
-#endif
-
   // TODO
 
   // 2) Block-partition it (optional), obtain matrices. Replace line
@@ -125,7 +96,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
   // 3) Bottom-right border each block with a row vector, a column vector,
   // and the constant 1
 
-  for (std::vector <CouenneSparseMatrix *>::iterator 
+  for (std::vector <CouenneExprMatrix *>::iterator 
 	 i  = minors_ . begin ();
        i   != minors_ . end   (); ++i) {
 
@@ -183,10 +154,16 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 /// Destructor
 CouenneSdpCuts::~CouenneSdpCuts () {
 
-  // for (std::vector <CouenneSparseMatrix *>::iterator 
-  // 	 i  = minors_ . begin ();
-  //      i   != minors_ . end   (); ++i)
-  //   delete (*i);
+  for (std::vector <CouenneExprMatrix *>::iterator 
+  	 i  = minors_ . begin ();
+       i   != minors_ . end   (); ++i) {
+
+    // printf ("\n\n\neliminating\n\n\n"); 
+    // (*i) -> print ();
+    // printf ("\n\nNOW\n\n\n"); 
+
+    delete (*i);
+  }
 
   // Destroy matrix structures
 }
@@ -196,18 +173,29 @@ CouenneSdpCuts::~CouenneSdpCuts () {
 CouenneSdpCuts::CouenneSdpCuts (const CouenneSdpCuts &rhs):
 
   problem_   (rhs. problem_),
-  minors_    (rhs. minors_),
   numEigVec_ (rhs. numEigVec_),
-  onlyNegEV_ (rhs. onlyNegEV_) {}
+  onlyNegEV_ (rhs. onlyNegEV_) {
+
+  for (std::vector <CouenneExprMatrix *>::const_iterator 
+  	 i  = rhs.minors_ . begin ();
+       i   != rhs.minors_ . end   (); ++i)
+
+    minors_ . push_back (*i);
+}
 
 
 /// Assignment
 CouenneSdpCuts &CouenneSdpCuts::operator= (const CouenneSdpCuts &rhs) {
 
   problem_   = rhs. problem_;
-  minors_    = rhs. minors_;
   numEigVec_ = rhs. numEigVec_;
   onlyNegEV_ = rhs. onlyNegEV_;
+
+  for (std::vector <CouenneExprMatrix *>::const_iterator 
+  	 i  = rhs.minors_ . begin ();
+       i   != rhs.minors_ . end   (); ++i)
+
+    minors_ . push_back (*i);
 
   return *this;
 }

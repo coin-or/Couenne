@@ -258,7 +258,8 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
     }
 
     if (numberUnsatisfied_) {
-      int cardIndForPseudo = 0, *indForPseudo = new int[numberUnsatisfied_];
+      int cardIndForPseudo = 0, 
+	*indForPseudo = new int[numberUnsatisfied_];
       OsiObject ** object = solver->objects();
       const double* upTotalChange = pseudoCosts_.upTotalChange();
       const double* downTotalChange = pseudoCosts_.downTotalChange();
@@ -576,8 +577,6 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	  }
 	}
     
-	delete[] indForPseudo;
-
 	if((bestObjectIndex_ < 0) && (bestObjectIndex2 >= 0)) {
 	  bestObjectIndex_ = bestObjectIndex2;
 	  bestWhichWay_ = bestWhichWay2;
@@ -631,6 +630,8 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
         }
       }
       retval = returnCode;
+
+      delete[] indForPseudo;
     }
     else {
       retval = 1;

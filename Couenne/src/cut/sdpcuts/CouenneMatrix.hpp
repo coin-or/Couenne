@@ -16,7 +16,7 @@
 namespace Couenne {
 
   class expression;
-  class CouenneSparseMatrix;
+  class CouenneExprMatrix;
 
   // Base class for elements of our sparse structures ////////////////////////////
 
@@ -33,7 +33,7 @@ namespace Couenne {
       index_ (index),
       elem_  (elem) {}
 
-    ~CouenneScalar () {}
+    ~CouenneScalar ();
 
     CouenneScalar (const CouenneScalar &rhs):
       index_ (rhs.index_),
@@ -44,6 +44,8 @@ namespace Couenne {
       elem_  = rhs.elem_;
       return *this;
     }
+
+    CouenneScalar *clone () {return new CouenneScalar (*this);}
 
     inline int         getIndex () const {return index_;}
     inline expression *getElem  () const {return elem_;}
@@ -73,9 +75,10 @@ namespace Couenne {
   public:
 
     CouenneSparseVector () {}
-   ~CouenneSparseVector () {}
+   ~CouenneSparseVector ();
 
-    CouenneSparseVector (const CouenneSparseVector &rhs) {elem_ = rhs.elem_;}
+    CouenneSparseVector            (const CouenneSparseVector &rhs) {elem_ = rhs.elem_;}
+    CouenneSparseVector &operator= (const CouenneSparseVector &rhs) {elem_ = rhs.elem_; return *this;}
     CouenneSparseVector *clone () {return new CouenneSparseVector (*this);}
 
     void add_element (int index, expression *elem);
@@ -85,7 +88,7 @@ namespace Couenne {
     const std::set <CouenneScalar *, compare_scalars> &getElements () {return elem_;}
 
     double               operator *     (const CouenneSparseVector &factor)           const; ///< vector * vector (dot product)
-    CouenneSparseVector &operator *     (const CouenneSparseMatrix &post)             const; ///< vector * matrix
+    CouenneSparseVector &operator *     (const CouenneExprMatrix &post)             const; ///< vector * matrix
 
     double               multiply_thres (const CouenneSparseVector &v2, double thres) const; ///< stops multiplication if above threshold
   };
@@ -93,7 +96,7 @@ namespace Couenne {
 
   // Sparse matrix of expressions ///////////////////////////////////////////////////
 
-  class CouenneSparseMatrix {
+  class CouenneExprMatrix {
 
   public:
 
@@ -112,15 +115,12 @@ namespace Couenne {
 
   public:
 
-    CouenneSparseMatrix () {}
-   ~CouenneSparseMatrix () {}
+    CouenneExprMatrix () {}
+   ~CouenneExprMatrix ();
 
-    CouenneSparseMatrix (const CouenneSparseMatrix &rhs): 
-      row_        (rhs.row_), 
-      col_        (rhs.col_), 
-      varIndices_ (rhs.varIndices_) {}
+    CouenneExprMatrix (const CouenneExprMatrix &rhs);
 
-    CouenneSparseMatrix *clone () {return new CouenneSparseMatrix (*this);}
+    CouenneExprMatrix *clone () {return new CouenneExprMatrix (*this);}
 
     const std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> &getRows () const {return row_;}
     const std::set <std::pair <int, CouenneSparseVector *>, compare_pair_ind> &getCols () const {return col_;}
@@ -132,7 +132,7 @@ namespace Couenne {
     long unsigned int size ();
 
     CouenneSparseVector &operator * (const CouenneSparseVector &factor) const; ///< matrix * vector 
-    CouenneSparseMatrix &operator * (const CouenneSparseMatrix &post)   const; ///< matrix * matrix
+    CouenneExprMatrix   &operator * (const CouenneExprMatrix   &post)   const; ///< matrix * matrix
   };
 }
 

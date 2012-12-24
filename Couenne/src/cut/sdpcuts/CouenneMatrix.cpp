@@ -17,6 +17,25 @@
 
 using namespace Couenne;
 
+/// copy constructor
+CouenneExprMatrix::CouenneExprMatrix (const CouenneExprMatrix &rhs):
+  varIndices_ (rhs.varIndices_) {
+
+  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::iterator 
+	 rowIt  = rhs. row_. begin (); 
+       rowIt   != rhs. row_. end   (); ++rowIt) {
+
+    row_ . insert (std::pair <int, CouenneSparseVector *> (rowIt -> first, new CouenneSparseVector (*(rowIt -> second))));
+  }
+
+  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::iterator 
+	 colIt  = rhs. col_. begin (); 
+       colIt   != rhs. col_. end   (); ++colIt) {
+
+    col_ . insert (std::pair <int, CouenneSparseVector *> (colIt -> first, new CouenneSparseVector (*(colIt -> second))));
+  }
+
+}
 
 void CouenneScalar::print () const {
   printf ("[%d,", index_); 
@@ -35,12 +54,12 @@ void CouenneSparseVector::add_element (int index, expression *elem) {
 
 
 /// return size of (square sub-) matrix
-long unsigned int CouenneSparseMatrix::size () 
+long unsigned int CouenneExprMatrix::size () 
 {return CoinMax (row_ . size (), col_ . size ());}
 
 
 /// Insertion into matrix
-void CouenneSparseMatrix::add_element (int rowInd, int colInd, expression *elem) {
+void CouenneExprMatrix::add_element (int rowInd, int colInd, expression *elem) {
 
   // don't duplicate, macroize
 
@@ -48,7 +67,7 @@ void CouenneSparseMatrix::add_element (int rowInd, int colInd, expression *elem)
   {									        	 	     \
     std::          pair <int, CouenneSparseVector *> findme (indMaj, NULL);  	        	     \
     std::set <std::pair <int, CouenneSparseVector *>,                                                \
-	      CouenneSparseMatrix::compare_pair_ind>::const_iterator check = vecMaj.find (findme);   \
+	      CouenneExprMatrix::compare_pair_ind>::const_iterator check = vecMaj.find (findme);   \
                                                                                                      \
     if (check == vecMaj. end ()) {					        	 	     \
       std::pair <int, CouenneSparseVector *> new_vector (indMaj, new CouenneSparseVector);           \
@@ -56,7 +75,7 @@ void CouenneSparseMatrix::add_element (int rowInd, int colInd, expression *elem)
       vecMaj. insert (new_vector);					        	 	     \
     } else check -> second -> add_element (indMin, elem);	                                     \
   }
-  
+
   check_and_insert (rowInd, colInd, row_);
   check_and_insert (colInd, rowInd, col_);
 }
@@ -95,13 +114,13 @@ double CouenneSparseVector::multiply_thres (const CouenneSparseVector &v2, doubl
 
 
 /// vector * matrix
-CouenneSparseVector &CouenneSparseVector::operator * (const CouenneSparseMatrix &post) const {
+CouenneSparseVector &CouenneSparseVector::operator * (const CouenneExprMatrix &post) const {
 
   CouenneSparseVector *product = new CouenneSparseVector;
 
-  const std::set <std::pair <int, CouenneSparseVector *>, CouenneSparseMatrix::compare_pair_ind> &columns = post. getCols ();
+  const std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind> &columns = post. getCols ();
 
-  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneSparseMatrix::compare_pair_ind>::iterator colIt = columns. begin (); 
+  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::iterator colIt = columns. begin (); 
        colIt != columns. end (); ++colIt) {
 
     double single = operator* (*(colIt -> second));
@@ -115,11 +134,11 @@ CouenneSparseVector &CouenneSparseVector::operator * (const CouenneSparseMatrix 
 
 
 /// matrix * vector
-CouenneSparseVector &CouenneSparseMatrix::operator * (const CouenneSparseVector &post) const {
+CouenneSparseVector &CouenneExprMatrix::operator * (const CouenneSparseVector &post) const {
 
   CouenneSparseVector *product = new CouenneSparseVector;
 
-  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneSparseMatrix::compare_pair_ind>::iterator rowIt = row_. begin (); 
+  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::iterator rowIt = row_. begin (); 
        rowIt != row_. end (); ++rowIt) {
 
     double single = post. operator* (*(rowIt -> second));
@@ -133,12 +152,43 @@ CouenneSparseVector &CouenneSparseMatrix::operator * (const CouenneSparseVector 
 
 
 /// matrix * matrix
-CouenneSparseMatrix &CouenneSparseMatrix::operator * (const CouenneSparseMatrix &post) const {
+CouenneExprMatrix &CouenneExprMatrix::operator * (const CouenneExprMatrix &post) const {
 
-  CouenneSparseMatrix *product = new CouenneSparseMatrix;
+  CouenneExprMatrix *product = new CouenneExprMatrix;
   return *product;
 }
 
+/// Destructor
+CouenneExprMatrix::~CouenneExprMatrix () {
+
+ for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::iterator 
+	i  = row_ . begin ();
+      i   != row_ . end   (); ++i)
+
+   delete i -> second;
+
+ for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::iterator 
+	i  = col_ . begin ();
+      i   != col_ . end   (); ++i)
+
+   delete i -> second;
+}
+
+
+/// Destructor
+CouenneSparseVector::~CouenneSparseVector () {
+
+  for (register std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::iterator 
+	 i  = elem_. begin ();
+       i   != elem_. end   (); ++i)
+    delete (*i);
+}
+
+
+CouenneScalar::~CouenneScalar () {
+  if (elem_ -> Index () < 0) // only delete constants
+    delete elem_;
+} 
 
 #define WRAP 20
 
@@ -166,7 +216,7 @@ void CouenneSparseVector::print () const {
 
 
 /// Pretty print
-void CouenneSparseMatrix::print () const {
+void CouenneExprMatrix::print () const {
 
   printf ("Matrix (%ld x %ld):\n", 
 	  row_ . size (), 
@@ -174,7 +224,7 @@ void CouenneSparseMatrix::print () const {
 
   // print rows
 
-  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneSparseMatrix::compare_pair_ind>::iterator 
+  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::iterator 
 	 i  = row_ . begin ();
        i   != row_ . end (); ++i) {
 
@@ -185,7 +235,7 @@ void CouenneSparseMatrix::print () const {
 
   // print columns
 
-  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneSparseMatrix::compare_pair_ind>::iterator 
+  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::iterator 
 	 i  = col_ . begin ();
        i   != col_ . end (); ++i) {
 

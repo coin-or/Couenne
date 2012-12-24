@@ -15,7 +15,7 @@
 
 namespace Couenne {
 
-  class CouenneSparseMatrix;
+  class CouenneExprMatrix;
   class CouenneProblem;
   class Domain;
 
@@ -25,12 +25,12 @@ namespace Couenne {
 
   protected:
 
-    CouenneSparseMatrix *X_; ///< contains indices of matrix X \succeq 0
+    CouenneExprMatrix *X_; ///< contains indices of matrix X \succeq 0
 
   public:
 
     /// Constructor
-    CouennePSDcon  (CouenneSparseMatrix *X): 
+    CouennePSDcon  (CouenneExprMatrix *X): 
       CouenneConstraint (),
       X_                (X) {}
 
@@ -45,7 +45,7 @@ namespace Couenne {
     {return new CouennePSDcon (*this, d);}
 
     /// return X
-    CouenneSparseMatrix *getX () const {return X_;}
+    CouenneExprMatrix *getX () const {return X_;}
 
     /// Decompose body of constraint through auxiliary variables
     exprAux *standardize (CouenneProblem *);

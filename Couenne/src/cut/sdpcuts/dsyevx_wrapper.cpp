@@ -46,14 +46,14 @@ extern "C" {
 }
 
 
-void dsyevx_interface (int n, double *A, int &m, 
-		       double * &w, 
-		       double * &z, // output values 
-		       double tolerance,
-		       double lb_ev, 
-		       double ub_ev,
-		       int firstidx,
-		       int lastidx) {
+int dsyevx_interface (int n, double *A, int &m, 
+		      double * &w, 
+		      double * &z, // output values 
+		      double tolerance,
+		      double lb_ev, 
+		      double ub_ev,
+		      int firstidx,
+		      int lastidx) {
 
   if (NULL == w) w = new double [n];
   if (NULL == z) z = new double [n*n];
@@ -108,4 +108,6 @@ void dsyevx_interface (int n, double *A, int &m,
   delete [] work;
   delete [] ifail;
   delete [] iwork;
+
+  return m;
 }

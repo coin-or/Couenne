@@ -19,7 +19,7 @@
 namespace Couenne {
 
   class CouenneProblem;
-  class CouenneSparseMatrix;
+  class CouenneExprMatrix;
 
   ///
   /// These are cuts of the form
@@ -49,7 +49,7 @@ namespace Couenne {
 		    ///< product terms to justify application. If not,
 		    ///< do not add this cut generator
 
-    std::vector <CouenneSparseMatrix *> minors_; ///< minors on which to apply cuts
+    std::vector <CouenneExprMatrix *> minors_; ///< minors on which to apply cuts
 
     int numEigVec_; ///< number of eigenvectors to be used (default n)
 
@@ -81,7 +81,7 @@ namespace Couenne {
 
   private:
 
-    void genCutSingle (CouenneSparseMatrix * const &,
+    void genCutSingle (CouenneExprMatrix * const &,
 		       const OsiSolverInterface &, OsiCuts &, 
 		       const CglTreeInfo = CglTreeInfo ()) const;
 
@@ -91,20 +91,22 @@ namespace Couenne {
 
 
     void sparsify2 (const int n,
-		    const double *sol, double **sparse_v_mat,
+		    const double *A, double **sparse_v_mat,
 		    int *card_v_mat, int min_nz, int *evdec_num) const;
 
     void genSDPcut (const OsiSolverInterface &si,
 		    OsiCuts &cs, 
-		    CouenneSparseMatrix *XX,
+		    CouenneExprMatrix *XX,
 		    double *v1, double *v2, 
 		    int **) const; // contains indices
 
     void additionalSDPcuts (const OsiSolverInterface &si,
 			    OsiCuts &cs, 
-			    CouenneSparseMatrix *minor, 
+			    CouenneExprMatrix *minor, 
 			    int np, const double *A, 
 			    const double *vector, int **) const; // indices of matrix X'
+
+    enum zero_type {POS_DELTA, SELECTED, VALID_DELTA};
 
     void zero_comp (const int ind_i, const double delta,
 		    const int np, const int *selected,
@@ -118,32 +120,14 @@ namespace Couenne {
 		    double *recomp_gap, 
 		    double *threshold) const;
 
-    void zero_valid_delta(const int np, const int *order,
-			  const int * selected,
-			  const int min_card_new_selected,
-			  const double min_delta, const int start_point, 
-			  const int curr_i, 
-			  int *loc_selected, 
-			  int *ploc_card_selected, 
-			  int *ploc_card_new_selected, 
-			  double *ploc_lhs, 
-			  double *locmargin, double **locmat, 
-			  int *pnchanged,
-			  const double *sol, double *locv, 
-			  const int evidx, bool wise,double *recomp_gap, double *threshold,
-			  int *pcard_selected,
-			  int *pnew_selected,
-			  double **sparse_v_mat,
-			  int *pcard_v_mat,
-			  const int init_card_selected, int *has_init_vect,
-			  int *evdec_num) const;
-
-    void zero_selected(const int np, const int *order,
-		       const int *selected,
+    void zero_unified (enum zero_type type,
+		       const int np, const int *order,
+		       const int * selected,
 		       const int min_card_new_selected,
-		       const double min_delta, const int start_point,
+		       const double min_delta, const int start_point, 
 		       const int curr_i, 
-		       int *loc_selected, int *ploc_card_selected, 
+		       int *loc_selected, 
+		       int *ploc_card_selected, 
 		       int *ploc_card_new_selected, 
 		       double *ploc_lhs, 
 		       double *locmargin, double **locmat, 
@@ -157,24 +141,63 @@ namespace Couenne {
 		       const int init_card_selected, int *has_init_vect,
 		       int *evdec_num) const;
 
-    void zero_pos_delta(const int np, const int *order,
-			const int *selected,
-			const int min_card_new_selected,
-			const int start_point, const int curr_i, 
-			int *loc_selected, int *ploc_card_selected, 
-			int *ploc_card_new_selected, 
-			double *ploc_lhs, 
-			double *locmargin, double **locmat, 
-			int *pnchanged, 
-			const double *sol, double *locv, 
-			const int evidx, bool wise,
-			double *recomp_gap, double *threshold,
-			int *pcard_selected,
-			int *pnew_selected,
-			double **sparse_v_mat,
-			int *pcard_v_mat,
-			const int init_card_selected, int *has_init_vect,
-			int *evdec_num) const;
+    // void zero_valid_delta(const int np, const int *order,
+    // 			  const int * selected,
+    // 			  const int min_card_new_selected,
+    // 			  const double min_delta, const int start_point, 
+    // 			  const int curr_i, 
+    // 			  int *loc_selected, 
+    // 			  int *ploc_card_selected, 
+    // 			  int *ploc_card_new_selected, 
+    // 			  double *ploc_lhs, 
+    // 			  double *locmargin, double **locmat, 
+    // 			  int *pnchanged,
+    // 			  const double *sol, double *locv, 
+    // 			  const int evidx, bool wise,double *recomp_gap, double *threshold,
+    // 			  int *pcard_selected,
+    // 			  int *pnew_selected,
+    // 			  double **sparse_v_mat,
+    // 			  int *pcard_v_mat,
+    // 			  const int init_card_selected, int *has_init_vect,
+    // 			  int *evdec_num) const;
+
+    // void zero_selected(const int np, const int *order,
+    // 		       const int *selected,
+    // 		       const int min_card_new_selected,
+    // 		       const double min_delta, const int start_point,
+    // 		       const int curr_i, 
+    // 		       int *loc_selected, int *ploc_card_selected, 
+    // 		       int *ploc_card_new_selected, 
+    // 		       double *ploc_lhs, 
+    // 		       double *locmargin, double **locmat, 
+    // 		       int *pnchanged,
+    // 		       const double *sol, double *locv, 
+    // 		       const int evidx, bool wise,double *recomp_gap, double *threshold,
+    // 		       int *pcard_selected,
+    // 		       int *pnew_selected,
+    // 		       double **sparse_v_mat,
+    // 		       int *pcard_v_mat,
+    // 		       const int init_card_selected, int *has_init_vect,
+    // 		       int *evdec_num) const;
+
+    // void zero_pos_delta(const int np, const int *order,
+    // 			const int *selected,
+    // 			const int min_card_new_selected,
+    // 			const int start_point, const int curr_i, 
+    // 			int *loc_selected, int *ploc_card_selected, 
+    // 			int *ploc_card_new_selected, 
+    // 			double *ploc_lhs, 
+    // 			double *locmargin, double **locmat, 
+    // 			int *pnchanged, 
+    // 			const double *sol, double *locv, 
+    // 			const int evidx, bool wise,
+    // 			double *recomp_gap, double *threshold,
+    // 			int *pcard_selected,
+    // 			int *pnew_selected,
+    // 			double **sparse_v_mat,
+    // 			int *pcard_v_mat,
+    // 			const int init_card_selected, int *has_init_vect,
+    // 			int *evdec_num) const;
 
     void add_v_cut(const int np,
 		   const int *loc_selected, 
