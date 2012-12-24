@@ -13,6 +13,8 @@
 #include <set>
 #include <vector>
 
+#include "CouenneExprClone.hpp"
+
 namespace Couenne {
 
   class expression;
@@ -24,24 +26,28 @@ namespace Couenne {
 
   protected:
 
-    int         index_; ///< index of element in vector
-    expression *elem_;  ///< element
+    int         index_;  ///< index of element in vector
+    expression *elem_;   ///< element
+    bool        delete_; ///< destructor should delete pointer to expression
 
   public:
 
     CouenneScalar (int index, expression *elem):
-      index_ (index),
-      elem_  (elem) {}
+      index_  (index),
+      elem_   (elem),
+      delete_ (elem_ -> code () == COU_EXPRCONST) {}
 
     ~CouenneScalar ();
 
     CouenneScalar (const CouenneScalar &rhs):
-      index_ (rhs.index_),
-      elem_  (rhs.elem_) {}
+      index_  (rhs.index_),
+      elem_   (new exprClone (rhs.elem_)),
+      delete_ (rhs.delete_) {}
 
     CouenneScalar &operator= (const CouenneScalar &rhs) {
-      index_ = rhs.index_;
-      elem_  = rhs.elem_;
+      index_  = rhs.index_;
+      elem_   = new exprClone (rhs.elem_);
+      delete_ = rhs.delete_;
       return *this;
     }
 
@@ -77,18 +83,18 @@ namespace Couenne {
     CouenneSparseVector () {}
    ~CouenneSparseVector ();
 
-    CouenneSparseVector            (const CouenneSparseVector &rhs) {elem_ = rhs.elem_;}
-    CouenneSparseVector &operator= (const CouenneSparseVector &rhs) {elem_ = rhs.elem_; return *this;}
+    CouenneSparseVector            (const CouenneSparseVector &rhs);
+    CouenneSparseVector &operator= (const CouenneSparseVector &rhs);
     CouenneSparseVector *clone () {return new CouenneSparseVector (*this);}
 
     void add_element (int index, expression *elem);
 
     void print () const;
 
-    const std::set <CouenneScalar *, compare_scalars> &getElements () {return elem_;}
+    const std::set <CouenneScalar *, compare_scalars> &getElements () {return elem_;}        ///< returns elements of vector as (ordered) set
 
     double               operator *     (const CouenneSparseVector &factor)           const; ///< vector * vector (dot product)
-    CouenneSparseVector &operator *     (const CouenneExprMatrix &post)             const; ///< vector * matrix
+    CouenneSparseVector &operator *     (const CouenneExprMatrix   &post)             const; ///< vector * matrix
 
     double               multiply_thres (const CouenneSparseVector &v2, double thres) const; ///< stops multiplication if above threshold
   };
@@ -118,7 +124,8 @@ namespace Couenne {
     CouenneExprMatrix () {}
    ~CouenneExprMatrix ();
 
-    CouenneExprMatrix (const CouenneExprMatrix &rhs);
+    CouenneExprMatrix            (const CouenneExprMatrix &rhs);
+    CouenneExprMatrix &operator= (const CouenneExprMatrix &rhs);
 
     CouenneExprMatrix *clone () {return new CouenneExprMatrix (*this);}
 

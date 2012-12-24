@@ -156,14 +156,9 @@ CouenneSdpCuts::~CouenneSdpCuts () {
 
   for (std::vector <CouenneExprMatrix *>::iterator 
   	 i  = minors_ . begin ();
-       i   != minors_ . end   (); ++i) {
-
-    // printf ("\n\n\neliminating\n\n\n"); 
-    // (*i) -> print ();
-    // printf ("\n\nNOW\n\n\n"); 
+       i   != minors_ . end   (); ++i)
 
     delete (*i);
-  }
 
   // Destroy matrix structures
 }
@@ -180,7 +175,7 @@ CouenneSdpCuts::CouenneSdpCuts (const CouenneSdpCuts &rhs):
   	 i  = rhs.minors_ . begin ();
        i   != rhs.minors_ . end   (); ++i)
 
-    minors_ . push_back (*i);
+    minors_ . push_back (new CouenneExprMatrix (**i));
 }
 
 
@@ -195,13 +190,13 @@ CouenneSdpCuts &CouenneSdpCuts::operator= (const CouenneSdpCuts &rhs) {
   	 i  = rhs.minors_ . begin ();
        i   != rhs.minors_ . end   (); ++i)
 
-    minors_ . push_back (*i);
+    minors_ . push_back (new CouenneExprMatrix (**i));
 
   return *this;
 }
 
 
-/// Assignment
+/// clone constructor
 CglCutGenerator *CouenneSdpCuts::clone () const
 {return new CouenneSdpCuts (*this);}
 
