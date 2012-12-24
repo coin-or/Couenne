@@ -107,8 +107,10 @@ void CouenneExprMatrix::add_element (int rowInd, int colInd, expression *elem) {
     } else check -> second -> add_element (indMin, elem);	                                     \
   }
 
-  check_and_insert (rowInd, colInd, row_,                elem);
-  check_and_insert (colInd, rowInd, col_, new exprClone (elem));
+  check_and_insert (rowInd, colInd, row_, elem);
+  if (elem -> code () == COU_EXPRCONST) 
+    elem = new exprClone (elem);
+  check_and_insert (colInd, rowInd, col_, elem);
 }
 
 

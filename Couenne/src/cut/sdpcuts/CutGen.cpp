@@ -623,8 +623,7 @@ void CouenneSdpCuts::myremoveBestOneRowCol (double *matrix,
 					    double **sparse_v_mat, 
 					    int *card_v_mat, 
 					    int *evdec_num) const {
-
-  if (running_n==1) 
+  if (running_n == 1) 
     return;
 
   int 
@@ -633,7 +632,6 @@ void CouenneSdpCuts::myremoveBestOneRowCol (double *matrix,
     card_ev_best;
 
   double
-
     best_val    = 1,
 
     *matrixCopy = CoinCopyOfArray (matrix, running_n * running_n),
@@ -648,7 +646,7 @@ void CouenneSdpCuts::myremoveBestOneRowCol (double *matrix,
     *w          = new double [running_n - 1],
     *z          = new double [rnsq];
 
-  //while (running_n > 1)
+  // while (running_n > 1)
 
   for (int k=0; k<running_n; k++) {
 
@@ -678,7 +676,9 @@ void CouenneSdpCuts::myremoveBestOneRowCol (double *matrix,
 
     (*evdec_num)++;
 
+    //------------------------------------------------------------------------------------------------------------------------------
     dsyevx_interface (running_n - 1, T, card_ev, w, z, EV_TOL, -COIN_DBL_MAX, 0., 1, (running_n-1 == min_nz) ? (running_n - 1) : 1);
+    //------------------------------------------------------------------------------------------------------------------------------
 
     double val = w [0]; // minimum eigenvalue
 
@@ -767,7 +767,7 @@ void CouenneSdpCuts::myremoveBestOneRowCol (double *matrix,
   delete [] zbest;
   delete [] wbest;
 
-}// myremoveBestOneRowCol()
+}// myremoveBestOneRowCol ()
 
 
 /************************************************************************/
@@ -777,10 +777,6 @@ void CouenneSdpCuts::sparsify2 (const int n,
 
   double *matrix = new double [n*n];
 
-  // matrix[0] = 1;
-  // for (int i=0;i<n;i++)
-  //   matrix[n*(i+1)] = sol[i];
-
   for (int i=0; i<n; i++)
     for (int j=i; j<n; j++)
       matrix [j*n+i] = A [j*n+i];
@@ -788,8 +784,11 @@ void CouenneSdpCuts::sparsify2 (const int n,
   myremoveBestOneRowCol (matrix, n, n, min_nz, NULL, sparse_v_mat, card_v_mat, evdec_num);
 
   delete [] matrix;
-}// sparsify2()
+} // sparsify2 ()
 
+
+// Adds SDP cuts using negative eigenvectors where small (smaller than
+// COUENNE_EPS) components are fixed to zero
 
 /************************************************************************/
 void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,
@@ -798,25 +797,27 @@ void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,
 					int n, 
 					const double *A, 
 					const double *vector,
-					int **indA) const{
+					int **indA) const {
+  int
+    *indices = new int [n],
+    cnt = 0;
 
-  int *indices;
-  indices = new int [n];
-  int cnt = 0;
-
-  for(int i=0;i<n;i++)
+  for (int i=0; i < n; i++)
     indices [i] = ((fabs (vector [i]) > COUENNE_EPS) ? (cnt++) : -1);
 
-  double *subA = new double[cnt*cnt];
+  double *subA = new double [cnt*cnt];
 
-  for (register int i=0; i<n; i++) {
+  for (register int i=0, k=0; i<n; i++)
+
     if (indices [i] >= 0) {
-      for (register int j=0; j<n; j++) {
+      
+      for (register int j=0, k2 = 0; j<n; j++)
+
 	if (indices [j] >= 0)
-	  subA [cnt*indices[j] + indices[i]] = A[n*j+i];
-      }
+	  subA [cnt * k + k2++] = A [n*i + j];
+
+      ++k;
     }
-  }
 
   double *w = NULL, *z = NULL;
   int m;
@@ -831,7 +832,7 @@ void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,
 
   for (int k=0; k<m; k++) {
 
-    if (onlyNegEV_ && (w [k] > 0))
+    if (onlyNegEV_ && (w [k] >= 0.))
       break;
 
     double *zbase = z + k * cnt;
@@ -839,8 +840,8 @@ void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,
     for (int j=0; j<cnt; j++)
       v [j] = *zbase++;
 
-    for(int j=0;j<n;j++)
-      newv[j] = (indices[j] >= 0) ? v [indices[j]] : newv[j] = 0;
+    for(int j=0; j<n; j++)
+      newv [j] = (indices [j] >= 0) ? v [indices [j]] : 0.;
 
     genSDPcut (si, cs, minor, newv, newv, indA);
   }
