@@ -40,6 +40,9 @@ namespace Couenne {
     /// Copy constructor
     CouennePSDcon (const CouennePSDcon &c, Domain *d = NULL);
 
+    /// Assignment operator
+    CouennePSDcon &operator= (const CouennePSDcon &c);
+
     /// Cloning method
     inline CouenneConstraint *clone (Domain *d = NULL) const
     {return new CouennePSDcon (*this, d);}

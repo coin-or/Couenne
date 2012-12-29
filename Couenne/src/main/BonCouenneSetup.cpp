@@ -803,26 +803,26 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cutGenerators (). push_back(cg);
   }
 
-  // Add disjunctive cuts ///////////////////////////////////////////////////////
+  // // Add disjunctive cuts ///////////////////////////////////////////////////////
 
-  options () -> GetIntegerValue ("minlp_disj_cuts", freq, "couenne.");
+  // options () -> GetIntegerValue ("minlp_disj_cuts", freq, "couenne.");
 
-  if (freq != 0) {
+  // if (freq != 0) {
 
-    CouenneDisjCuts * couenneDisj = 
-      new CouenneDisjCuts (ci, this, 
-  			   couenneCg, 
-  			   branchingMethod_, 
-  			   varSelection == OSI_STRONG, // if true, use strong branching candidates
-  			   journalist (),
-  			   options ());
+  //   CouenneDisjCuts * couenneDisj = 
+  //     new CouenneDisjCuts (ci, this, 
+  // 			   couenneCg, 
+  // 			   branchingMethod_, 
+  // 			   varSelection == OSI_STRONG, // if true, use strong branching candidates
+  // 			   journalist (),
+  // 			   options ());
 
-    CuttingMethod cg;
-    cg.frequency = freq;
-    cg.cgl = couenneDisj;
-    cg.id = "Couenne disjunctive cuts";
-    cutGenerators (). push_back(cg);
-  }
+  //   CuttingMethod cg;
+  //   cg.frequency = freq;
+  //   cg.cgl = couenneDisj;
+  //   cg.id = "Couenne disjunctive cuts";
+  //   cutGenerators (). push_back(cg);
+  // }
 
   return retval;
 }

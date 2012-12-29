@@ -113,8 +113,8 @@ namespace Couenne {
 		    int *loc_selected, 
 		    int *ploc_card_selected, int *ploc_card_new_selected, 
 		    double *ploc_lhs, 
-		    double *locmargin, double **locmat, 
-		    const double *sol, double *locv, 
+		    double *locmargin, double *locmat, 
+		    double *locv, 
 		    const int evidx, bool wise, 
 		    int *evdec_num, 
 		    double *recomp_gap, 
@@ -130,9 +130,9 @@ namespace Couenne {
 		       int *ploc_card_selected, 
 		       int *ploc_card_new_selected, 
 		       double *ploc_lhs, 
-		       double *locmargin, double **locmat, 
+		       double *locmargin, double *locmat, 
 		       int *pnchanged,
-		       const double *sol, double *locv, 
+		       double *locv, 
 		       const int evidx, bool wise,double *recomp_gap, double *threshold,
 		       int *pcard_selected,
 		       int *pnew_selected,
@@ -140,64 +140,6 @@ namespace Couenne {
 		       int *pcard_v_mat,
 		       const int init_card_selected, int *has_init_vect,
 		       int *evdec_num) const;
-
-    // void zero_valid_delta(const int np, const int *order,
-    // 			  const int * selected,
-    // 			  const int min_card_new_selected,
-    // 			  const double min_delta, const int start_point, 
-    // 			  const int curr_i, 
-    // 			  int *loc_selected, 
-    // 			  int *ploc_card_selected, 
-    // 			  int *ploc_card_new_selected, 
-    // 			  double *ploc_lhs, 
-    // 			  double *locmargin, double **locmat, 
-    // 			  int *pnchanged,
-    // 			  const double *sol, double *locv, 
-    // 			  const int evidx, bool wise,double *recomp_gap, double *threshold,
-    // 			  int *pcard_selected,
-    // 			  int *pnew_selected,
-    // 			  double **sparse_v_mat,
-    // 			  int *pcard_v_mat,
-    // 			  const int init_card_selected, int *has_init_vect,
-    // 			  int *evdec_num) const;
-
-    // void zero_selected(const int np, const int *order,
-    // 		       const int *selected,
-    // 		       const int min_card_new_selected,
-    // 		       const double min_delta, const int start_point,
-    // 		       const int curr_i, 
-    // 		       int *loc_selected, int *ploc_card_selected, 
-    // 		       int *ploc_card_new_selected, 
-    // 		       double *ploc_lhs, 
-    // 		       double *locmargin, double **locmat, 
-    // 		       int *pnchanged,
-    // 		       const double *sol, double *locv, 
-    // 		       const int evidx, bool wise,double *recomp_gap, double *threshold,
-    // 		       int *pcard_selected,
-    // 		       int *pnew_selected,
-    // 		       double **sparse_v_mat,
-    // 		       int *pcard_v_mat,
-    // 		       const int init_card_selected, int *has_init_vect,
-    // 		       int *evdec_num) const;
-
-    // void zero_pos_delta(const int np, const int *order,
-    // 			const int *selected,
-    // 			const int min_card_new_selected,
-    // 			const int start_point, const int curr_i, 
-    // 			int *loc_selected, int *ploc_card_selected, 
-    // 			int *ploc_card_new_selected, 
-    // 			double *ploc_lhs, 
-    // 			double *locmargin, double **locmat, 
-    // 			int *pnchanged, 
-    // 			const double *sol, double *locv, 
-    // 			const int evidx, bool wise,
-    // 			double *recomp_gap, double *threshold,
-    // 			int *pcard_selected,
-    // 			int *pnew_selected,
-    // 			double **sparse_v_mat,
-    // 			int *pcard_v_mat,
-    // 			const int init_card_selected, int *has_init_vect,
-    // 			int *evdec_num) const;
 
     void add_v_cut(const int np,
 		   const int *loc_selected, 
@@ -210,8 +152,8 @@ namespace Couenne {
 		   int *pcard_v_mat) const;
 
     void update_sparsify_structures(const int np, 
-				    const double *sol, double *v,double* margin, 
-				    double** mat, double *lhs, const int *zeroed, 
+				    double *v, double* margin, 
+				    double *A, double *lhs, const int *zeroed, 
 				    int evidx, bool decompose, int *evdec_num) const;
 
     void sparsify (bool sparsify_new,
@@ -220,15 +162,6 @@ namespace Couenne {
 		   const double *sol, double **sparse_v_mat,
 		   int *card_v_mat,
 		   int *evdec_num) const;
-
-    void myremoveBestOneRowCol(double *matrix, 
-			       int n, 
-			       int running_n, 
-			       int min_nz,
-			       bool *del_idx, 
-			       double **sparse_v_mat, 
-			       int *card_v_mat , 
-			       int *evdec_num) const;
   };
 }
 

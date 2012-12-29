@@ -228,4 +228,24 @@ sorted in non-decreasing order, hence selecting 1 will provide cuts on the most 
      "no", "use all eigenvalues regardless of their sign",
      "yes", "exclude all non-negative eigenvalues"
     );
+
+  /////////////////////////////////////////
+
+  roptions -> AddStringOption2
+    ("sdp_cuts_sparsify",
+     "Make cuts sparse by greedily reducing X one column at a time before extracting eigenvectors.",
+     "yes", 
+     "no", "",
+     "yes", ""
+    );
+
+#if 0
+  roptions -> AddStringOption2
+    ("sdp_cuts_neg_ev",
+     "Only use negative eigenvalues to create sdp cuts.",
+     "yes", 
+     "no", "use all eigenvalues regardless of their sign",
+     "yes", "exclude all non-negative eigenvalues"
+    );
+#endif
 }
