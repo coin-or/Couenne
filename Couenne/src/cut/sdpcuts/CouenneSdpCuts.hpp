@@ -51,9 +51,11 @@ namespace Couenne {
 
     std::vector <CouenneExprMatrix *> minors_; ///< minors on which to apply cuts
 
-    int numEigVec_; ///< number of eigenvectors to be used (default n)
+    int numEigVec_; ///< number of eigenvectors to be used (default: n)
 
     bool onlyNegEV_; ///< only use negative eigenvalues (default: yes)
+
+    bool useSparsity_; ///< Sparsify eigenvalues before writing inequality (default: no)
 
   public:
 

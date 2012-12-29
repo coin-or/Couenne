@@ -31,9 +31,9 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
   std::string s;
 
-  options -> GetIntegerValue ("sdp_cuts_num_ev", numEigVec_, "couenne.");
-  options -> GetStringValue  ("sdp_cuts_neg_ev", s,          "couenne.");
-  onlyNegEV_ = (s == "yes");
+  options -> GetIntegerValue ("sdp_cuts_num_ev",   numEigVec_, "couenne.");
+  options -> GetStringValue  ("sdp_cuts_neg_ev",   s,          "couenne."); onlyNegEV_   = (s == "yes");
+  options -> GetStringValue  ("sdp_cuts_sparsify", s,          "couenne."); useSparsity_ = (s == "yes");
 
   CouenneExprMatrix *cauldron = new CouenneExprMatrix;
 
@@ -159,17 +159,17 @@ CouenneSdpCuts::~CouenneSdpCuts () {
        i   != minors_ . end   (); ++i)
 
     delete (*i);
-
-  // Destroy matrix structures
 }
 
 
 /// Copy constructor
 CouenneSdpCuts::CouenneSdpCuts (const CouenneSdpCuts &rhs):
 
-  problem_   (rhs. problem_),
-  numEigVec_ (rhs. numEigVec_),
-  onlyNegEV_ (rhs. onlyNegEV_) {
+  problem_     (rhs. problem_),
+  doNotUse_    (rhs. doNotUse_),
+  numEigVec_   (rhs. numEigVec_),
+  onlyNegEV_   (rhs. onlyNegEV_),
+  useSparsity_ (rhs. useSparsity_) {
 
   for (std::vector <CouenneExprMatrix *>::const_iterator 
   	 i  = rhs.minors_ . begin ();
@@ -182,9 +182,11 @@ CouenneSdpCuts::CouenneSdpCuts (const CouenneSdpCuts &rhs):
 /// Assignment
 CouenneSdpCuts &CouenneSdpCuts::operator= (const CouenneSdpCuts &rhs) {
 
-  problem_   = rhs. problem_;
-  numEigVec_ = rhs. numEigVec_;
-  onlyNegEV_ = rhs. onlyNegEV_;
+  problem_     = rhs. problem_;
+  doNotUse_    = rhs. doNotUse_;
+  numEigVec_   = rhs. numEigVec_;
+  onlyNegEV_   = rhs. onlyNegEV_;
+  useSparsity_ = rhs. useSparsity_;
 
   for (std::vector <CouenneExprMatrix *>::const_iterator 
   	 i  = rhs.minors_ . begin ();
@@ -218,15 +220,15 @@ A negative number -n means that generation should be attempted at the root node,
      "The number of eigenvectors of matrix X to be used to create sdp cuts.",
      -1, -1,
      "Set to -1 to indicate that all n eigenvectors should be used. Eigenvalues are \
-sorted in non-decreasing order, hence selecting 1 will provide cuts on the most negative eigenvalue"
+sorted in non-decreasing order, hence selecting 1 will provide cuts on the most negative eigenvalue."
     );
 
   roptions -> AddStringOption2
     ("sdp_cuts_neg_ev",
      "Only use negative eigenvalues to create sdp cuts.",
      "yes", 
-     "no", "use all eigenvalues regardless of their sign",
-     "yes", "exclude all non-negative eigenvalues"
+     "no", "use all eigenvalues regardless of their sign.",
+     "yes", "exclude all non-negative eigenvalues."
     );
 
   /////////////////////////////////////////
@@ -234,18 +236,18 @@ sorted in non-decreasing order, hence selecting 1 will provide cuts on the most 
   roptions -> AddStringOption2
     ("sdp_cuts_sparsify",
      "Make cuts sparse by greedily reducing X one column at a time before extracting eigenvectors.",
-     "yes", 
+     "no", 
      "no", "",
      "yes", ""
     );
 
 #if 0
   roptions -> AddStringOption2
-    ("sdp_cuts_neg_ev",
-     "Only use negative eigenvalues to create sdp cuts.",
+    ("sdp_cuts_",
+     "",
      "yes", 
-     "no", "use all eigenvalues regardless of their sign",
-     "yes", "exclude all non-negative eigenvalues"
+     "no", "",
+     "yes", ""
     );
 #endif
 }

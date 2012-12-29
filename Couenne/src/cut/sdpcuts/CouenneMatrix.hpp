@@ -35,19 +35,19 @@ namespace Couenne {
     CouenneScalar (int index, expression *elem):
       index_  (index),
       elem_   (elem),
-      delete_ (elem_ -> code () == COU_EXPRCONST) {}
+      delete_ (elem_ -> code () == COU_EXPRCONST || (elem_ != elem_ -> Original ())) {}
 
     ~CouenneScalar ();
 
     CouenneScalar (const CouenneScalar &rhs):
       index_  (rhs.index_),
       elem_   (new exprClone (rhs.elem_)),
-      delete_ (rhs.delete_) {}
+      delete_ (true) {}
 
     CouenneScalar &operator= (const CouenneScalar &rhs) {
       index_  = rhs.index_;
       elem_   = new exprClone (rhs.elem_);
-      delete_ = rhs.delete_;
+      delete_ = true;
       return *this;
     }
 

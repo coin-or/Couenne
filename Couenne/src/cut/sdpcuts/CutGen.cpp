@@ -26,9 +26,9 @@
 
 //#define DEBUG
 
-#define SPARSIFY
-#define SPARSIFY2
-#define SPARSIFY_MINOR_SDP_CUTS
+//#define SPARSIFY
+//#define SPARSIFY2
+//#define SPARSIFY_MINOR_SDP_CUTS
 
 const bool WISE_SPARSIFY = true;
 
@@ -178,11 +178,8 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
   }
 #endif
 
-#ifdef SPARSIFY_MINOR_SDP_CUTS
-  double *Acopy = CoinCopyOfArray (A, n * n);
-#endif
-
-  double 
+  double
+    *Acopy = useSparsity_ ? CoinCopyOfArray (A, n * n) : NULL,
     *w = NULL,
     *z = NULL;
 
@@ -220,37 +217,30 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
   for (int i=0; i<nVecs; i++)
     genSDPcut (si, cs, minor, work_ev [i], work_ev [i], indA);
 
-#if (defined SPARSIFY) || (defined SPARSIFY2) || (defined WISE_SPARSIFY)
+  int
+    wise_evdec_num    = 0,
+    card_sparse_v_mat = 0,
+    min_nz;
 
-  int wise_evdec_num = 0;
 
-  int card_sparse_v_mat = 0;
-  double **sparse_v_mat = new double*[SPARSIFY_MAX_CARD];
-  for (int i=0; i<SPARSIFY_MAX_CARD; i++)
-    sparse_v_mat[i] = new double [n];
-#endif
+  double **sparse_v_mat = NULL;
 
-#ifdef SPARSIFY2
-  int min_nz;
+  if (useSparsity_) {
 
-  min_nz = ceil (n * SPARSIFY_NEW_NZ_THRESHOLD);
-  card_sparse_v_mat = 0;
+    sparse_v_mat = new double*[SPARSIFY_MAX_CARD];
+    for (int i=0; i<SPARSIFY_MAX_CARD; i++)
+      sparse_v_mat[i] = new double [n];
 
-  sparsify2 (n, A, sparse_v_mat, &card_sparse_v_mat, min_nz, &wise_evdec_num);
+    min_nz = ceil (n * SPARSIFY_NEW_NZ_THRESHOLD);
+    card_sparse_v_mat = 0;
 
-  for (int k=0; k < card_sparse_v_mat; k++)
-    genSDPcut (si, cs, minor, sparse_v_mat [k], sparse_v_mat [k], indA);
-#endif
+    sparsify2 (n, A, sparse_v_mat, &card_sparse_v_mat, min_nz, &wise_evdec_num);
 
-  bool do_next_sparsify = WISE_SPARSIFY;
-
-  if (!WISE_SPARSIFY) {
-#if defined SPARSIFY
-    do_next_sparsify = true;
-#endif
+    for (int k=0; k < card_sparse_v_mat; k++)
+      genSDPcut (si, cs, minor, sparse_v_mat [k], sparse_v_mat [k], indA);
   }
 
-  if (do_next_sparsify) {
+  if (WISE_SPARSIFY || useSparsity_) {
     for (int i=0; i<nVecs; ++i) {
 
       card_sparse_v_mat = 0;
@@ -262,9 +252,8 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
 
 	genSDPcut (si, cs, minor, sparse_v_mat [k], sparse_v_mat [k], indA);
 
-#ifdef SPARSIFY_MINOR_SDP_CUTS
-	additionalSDPcuts (si,cs, minor, n, Acopy, sparse_v_mat[k], indA);
-#endif
+	if (useSparsity_)
+	  additionalSDPcuts (si, cs, minor, n, Acopy, sparse_v_mat[k], indA);
       }
     }
   }
@@ -273,28 +262,19 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
     delete [] indA [i];
   delete [] indA;
 
-  do_next_sparsify = WISE_SPARSIFY;
+  if (useSparsity_) {
 
-  if (WISE_SPARSIFY) {
-#if (defined SPARSIFY) || (defined SPARSIFY2) 
-    do_next_sparsify = true;
-#endif
-  }
-
-  if (do_next_sparsify) {
     for (int i=0; i < SPARSIFY_MAX_CARD; i++)
       delete [] sparse_v_mat[i];
+
     delete [] sparse_v_mat;
+    delete [] Acopy;
   }
 
   delete [] z;
   delete [] w;
   delete [] A;
   delete [] work_ev;
-
-#ifdef SPARSIFY_MINOR_SDP_CUTS
-  delete [] Acopy;
-#endif
 }
 
 
@@ -647,12 +627,14 @@ void CouenneSdpCuts::sparsify2 (const int n,
     *wbest      = new double [running_n - 1],
     *zbest      = new double [rnsq],
 
-    *w          = new double [running_n - 1],
-    *z          = new double [rnsq];
+    *w          = NULL,//new double [running_n - 1],
+    *z          = NULL;//new double [rnsq];
 
   // remove one column/row at a time to get smaller and smaller minor
 
   while (running_n > 1) {
+
+    rnsq = (running_n - 1) * (running_n - 1);
 
     best_val = 0.;
     best_idx = -1;
@@ -697,11 +679,16 @@ void CouenneSdpCuts::sparsify2 (const int n,
       best_idx = k;
 
       std::memcpy (Tbest, Tcopy, rnsq            * sizeof (double));
-      std::memcpy (zbest, z,     rnsq            * sizeof (double));
+      CoinCopyN (z, rnsq, zbest); //std::memcpy (zbest, z,     rnsq            * sizeof (double));
       std::memcpy (wbest, w,     (running_n - 1) * sizeof (double));
 
       card_ev_best = card_ev;
     }
+
+    delete [] w;
+    delete [] z;
+
+    w = z = NULL;
   }
 
   // For this value of k, now we have in Tbest the best minor of size
@@ -774,7 +761,7 @@ void CouenneSdpCuts::sparsify2 (const int n,
 
 
 // Adds SDP cuts using negative eigenvectors where small (smaller than
-// COUENNE_EPS) components are fixed to zero
+// 1 / (10 sqrt n)) components are fixed to zero
 
 /************************************************************************/
 void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,
@@ -788,8 +775,10 @@ void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,
     *indices = new int [n],
     cnt = 0;
 
+  double threshold = 1 / (10 * sqrt ((double) n));
+
   for (int i=0; i < n; i++)
-    indices [i] = ((fabs (vector [i]) > COUENNE_EPS) ? (cnt++) : -1);
+    indices [i] = ((fabs (vector [i]) > threshold) ? (cnt++) : -1);
 
   double *subA = new double [cnt*cnt];
 
@@ -919,7 +908,7 @@ void CouenneSdpCuts::update_sparsify_structures (const int n, double *v,
 	A [i*n + j] = A [j*n + i] = 0;
     }
 
-  *lhs = 0;
+  *lhs = 0.;
 
   for (int i=0; i<n; i++) {
 
@@ -955,10 +944,10 @@ void CouenneSdpCuts::zero_comp (const int ind_i, const double delta,
 
   loc_selected[ind_i] = 0;
   (*ploc_card_selected)--;
-  
-  if(selected[ind_i] != 1) {
+
+  if (selected [ind_i] != 1)
     (*ploc_card_new_selected)--;
-  }
+
   (*ploc_lhs) -= delta;
 
   update_sparsify_structures (n,locv, locmargin, locmat, ploc_lhs, loc_selected, evidx, local_wise, evdec_num);
@@ -992,12 +981,10 @@ void CouenneSdpCuts::zero_unified     (enum zero_type type,
   int curr_ind = curr_i;
 
   *pnchanged = 0;
-  for(int i=0; i<n; i++) {
+  for (int i=0; i<n; i++) {
     
-    curr_ind++;
-    if(curr_ind == n) {
+    if (++curr_ind == n)
       curr_ind = 0;
-    }
     
     int ind_i = order[curr_ind];
 
@@ -1010,13 +997,13 @@ void CouenneSdpCuts::zero_unified     (enum zero_type type,
 	 ((selected[ind_i] == 0) || (loc_selected[ind_i] == 0))))
       continue;
     
-    double delta = 2 * locmargin[ind_i] - locmat[ind_i * n + ind_i];
+    double delta = 2 * locmargin [ind_i] - locmat [ind_i * n + ind_i];
     if (((type == VALID_DELTA || type == SELECTED) && (*ploc_lhs - delta < min_delta)) ||
 	((type == POS_DELTA)                       && (delta > 0))) {
 
-      zero_comp(ind_i, delta, n, selected, loc_selected, 
-		ploc_card_selected, ploc_card_new_selected, 
-		ploc_lhs, locmargin, locmat, locv, evidx, wise, evdec_num, recomp_gap, threshold);
+      zero_comp (ind_i, delta, n, selected, loc_selected, 
+		 ploc_card_selected, ploc_card_new_selected, 
+		 ploc_lhs, locmargin, locmat, locv, evidx, wise, evdec_num, recomp_gap, threshold);
       (*pnchanged)++;
     }
   }
@@ -1034,9 +1021,9 @@ void CouenneSdpCuts::add_v_cut(const int n,
 			       double **sparse_v_mat,
 			       int *pcard_v_mat) const {
 
-  (*pnew_selected) = 0;
+  *pnew_selected = 0;
 
-  for(int i=0; i<n; i++) {
+  for (int i=0; i<n; i++) {
     if(loc_selected[i]) {
       sparse_v_mat[*pcard_v_mat][i] = locv[i];
       if(selected[i] == 0) {
@@ -1045,9 +1032,8 @@ void CouenneSdpCuts::add_v_cut(const int n,
 	(*pnew_selected)++;
       }
     }
-    else {
+    else
       sparse_v_mat[*pcard_v_mat][i] = 0;
-    }
   }
 
 #ifdef NORMALIZE_SPARSE_CUTS
@@ -1063,13 +1049,9 @@ void CouenneSdpCuts::add_v_cut(const int n,
 #endif
 
   if(loc_card_selected + init_card_selected == n) {
-    if(*has_init_vect == 1) {
-
-      return;
-    }
-    else {
-      (*has_init_vect) = 1;
-    }
+    if (*has_init_vect == 1) return;
+    else
+       (*has_init_vect) = 1;
   }
 	
   (*pcard_v_mat)++;
@@ -1089,40 +1071,41 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
     loc_card_new_selected  = 0,
     card_selected          = 0,
     loc_card_selected      = 0,
+
     *selected     = new int [n],
     *loc_selected = new int [n], 
     *order        = new int [n];
 	
   double
     min_delta,
-    sq_np = sqrt((double)n),
-    is_zero = 1/(10 * sq_np),
-    lhs = 0, 
-    loc_lhs = 0,
+    is_zero = 1 / (10 * sqrt ((double) n)),
+    lhs     = 0., 
+    loc_lhs = 0.,
+
     *margin    = new double  [n],
     *locv      = new double  [n],
     *locv_orig = new double  [n],
-    *locmargin = new double  [n],
-    *mat       = new double  [n*n],
-    *locmat    = new double  [n*n];
+    *locmargin = new double  [n], 
+    *locmat    = new double  [n*n],
+    *mat       = CoinCopyOfArray (sol, n*n);
 
   *card_v_mat = 0;
 
   for (i=0; i<n; i++) {
 
-    selected[i] = 0;
-    //    mat[i] = new double[n*n];
-    //locmat[i] = new double[n];
-    order[i] = i;
+    order [i] = i;
 
     // zero small components in v
-    if (fabs(v[i]) < is_zero) {
+    if (fabs (v[i]) < is_zero) {
 
-      locv_orig[i] = 0;
-      selected[i] = -1; // -1: ind will be set to 0 in loc_selected
+      locv_orig [i] = 0;
+      selected  [i] = -1; // -1: ind will be set to 0 in loc_selected
       card_selected++;
-    } else
-      locv_orig[i] = v[i];
+
+    } else {
+      selected  [i] = 0;
+      locv_orig [i] = v[i];
+    }
   }
 
   /// Knuth shuffle for creating a random order
@@ -1138,16 +1121,17 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 
   update_sparsify_structures (n, locv_orig, margin, mat, &lhs, NULL, evidx, false, evdec_num);
 
-  int init_card_selected = card_selected; // to recognize if cut from original
-  // vector is generated
-  int has_init_vect = 0;
-	
+  int
+    init_card_selected = card_selected, // to recognize if cut from original
+    has_init_vect = 0,                  // vector is generated
+    start_point = -1;                   // order [start_point]: index that should not be removed
+
   min_delta = lhs * (use_new_sparsify ? SPARSIFY_NEW_DELTA : SPARSIFY_OLD_DELTA); // do not weaken the cut too much
-  int start_point = -1; // order[start_point]: index that should not be removed
-	
+
   while (card_selected < n) {
 
-    for(i=0; i<n; i++)
+    for (i=0; i<n; i++)
+
       if (selected [order [i]] == 0) {
 	start_point = i;
 	break;
@@ -1156,12 +1140,13 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
     loc_card_selected = n;
     loc_card_new_selected = n;
     loc_lhs = lhs;
-    double recomp_gap = fabs(lhs*WISE_SPARSIFY_GAP);
-    double threshold = lhs + recomp_gap;
+
+    double
+      recomp_gap = fabs (lhs * WISE_SPARSIFY_GAP),
+      threshold  = lhs + recomp_gap;
 
     // restore locv (might have been changed by WISE_SPARSIFY during the generation of the last sparse cut)
-    for(i=0;i<n;i++)
-      locv[i] = locv_orig[i];
+    CoinCopyN (locv_orig, n, locv);
 
     for(i=0; i<n; i++) {
       if(selected[i] == -1) {
@@ -1177,10 +1162,26 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 
       locmargin[i] = margin[i];
       for(j=0; j<n; j++)
-	locmat[i * n + j] = mat[i*n+j];
+	locmat[i * n + j] = mat [i * n + j];
     }
 
-    if (loc_lhs < min_delta) {
+    if (loc_lhs >= min_delta) {
+
+      // use vector as is
+
+      card_selected = n;
+
+      if (onlyNegEV_) {
+
+	int new_selected = 0;
+			
+	add_v_cut (n, loc_selected, loc_card_selected, locv, 
+		   init_card_selected, &has_init_vect,
+		   selected, &card_selected, &new_selected, 
+		   sparse_v_mat, card_v_mat);
+      }
+
+    } else {
 
       int changed = 1;
 			
@@ -1257,7 +1258,7 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 	}
       } /* while(changed) */
 
-      if((loc_card_selected < n * (use_new_sparsify ? SPARSIFY_NEW_NZ_THRESHOLD : SPARSIFY_OLD_NZ_THRESHOLD)) || (*card_v_mat == 0)) {
+      if ((loc_card_selected < n * (use_new_sparsify ? SPARSIFY_NEW_NZ_THRESHOLD : SPARSIFY_OLD_NZ_THRESHOLD)) || (*card_v_mat == 0)) {
 
 	int new_selected = 0;
 
@@ -1266,25 +1267,11 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 		  selected, &card_selected, &new_selected, 
 		  sparse_v_mat, card_v_mat);
       } else {
-	selected[order[start_point]] = 1;
+	selected [order [start_point]] = 1;
 	card_selected++;
       }
-    } else {
-      // loc_lhs >= min_delta  use vector as is
-
-      card_selected = n;
-
-#ifndef ONLY_NEG_EIGENV
-      int new_selected = 0;
-			
-      add_v_cut(n, loc_selected, loc_card_selected, locv, 
-		init_card_selected, &has_init_vect,
-		selected, &card_selected, &new_selected, 
-		sparse_v_mat, card_v_mat);
-#endif
-
     }
-  } /* while(card_selected < n) */
+  } /* while (card_selected < n) */
 
   delete[] order;
 	

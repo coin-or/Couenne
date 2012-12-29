@@ -16,8 +16,6 @@
 
 #include "CouenneConfig.h"
 
-//#include "IpLapack.hpp"
-
 extern "C" {
 
   /* Lapack routine to compute orthonormal eigenvalues/eigenvectors (in Fortran) */
@@ -86,7 +84,7 @@ int dsyevx_interface (int n, double *A, int &m,
   // Ipopt::IpLapackDsyev (true, n, A, lda, w, info);
 
   F77_FUNC
-    (dsyevx,DSYEVX) 
+    (dsyevx,DSYEVX)
     (&jobz, &range, &uplo, &n, 
      A, &lda, 
      &vl, &vu, &il, &iu,
@@ -99,7 +97,7 @@ int dsyevx_interface (int n, double *A, int &m,
     for(int i=0; i<m; i++) {
       if(ifail[i] > 0) {
 	printf("### WARNING: dsyevx_wrapper(): ifail[%d]: %d   curr_ev[%d]=%.18f\n"
-	       ,i, ifail[i],ifail[i],w[ifail[i]]);
+	       , i, ifail [i], ifail [i], w [ifail [i]]);
       }
     }
 #endif
