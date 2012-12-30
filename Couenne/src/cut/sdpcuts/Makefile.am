@@ -15,6 +15,7 @@ libCouenneSdpCuts_la_SOURCES = \
 	CouennePSDcon.cpp \
 	CouenneMatrix.cpp \
 	CutGen.cpp \
+	CutGenSparse.cpp \
 	dsyevx_wrapper.cpp
 
 # This is for libtool

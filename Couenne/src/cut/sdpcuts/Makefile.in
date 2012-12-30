@@ -57,7 +57,7 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneSdpCuts_la_LIBADD =
 am_libCouenneSdpCuts_la_OBJECTS = CouenneSdpCuts.lo CouennePSDcon.lo \
-	CouenneMatrix.lo CutGen.lo dsyevx_wrapper.lo
+	CouenneMatrix.lo CutGen.lo CutGenSparse.lo dsyevx_wrapper.lo
 libCouenneSdpCuts_la_OBJECTS = $(am_libCouenneSdpCuts_la_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -315,6 +315,7 @@ libCouenneSdpCuts_la_SOURCES = \
 	CouennePSDcon.cpp \
 	CouenneMatrix.cpp \
 	CutGen.cpp \
+	CutGenSparse.cpp \
 	dsyevx_wrapper.cpp
 
 
@@ -384,6 +385,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouennePSDcon.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSdpCuts.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CutGen.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CutGenSparse.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dsyevx_wrapper.Plo@am__quote@
 
 .cpp.o:

@@ -93,6 +93,15 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
   minors_ . push_back (cauldron);
 
+  // 2.5) If option says so, add fictitious auxiliary variables if not there
+
+  for (std::vector <CouenneExprMatrix *>::iterator 
+	 i  = minors_ . begin ();
+       i   != minors_ . end   (); ++i) {
+
+    
+  }
+
   // 3) Bottom-right border each block with a row vector, a column vector,
   // and the constant 1
 

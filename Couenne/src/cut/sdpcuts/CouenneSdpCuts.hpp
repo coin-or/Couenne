@@ -136,11 +136,6 @@ namespace Couenne {
 		       int *pnchanged,
 		       double *locv, 
 		       const int evidx, bool wise,double *recomp_gap, double *threshold,
-		       int *pcard_selected,
-		       int *pnew_selected,
-		       double **sparse_v_mat,
-		       int *pcard_v_mat,
-		       const int init_card_selected, int *has_init_vect,
 		       int *evdec_num) const;
 
     void add_v_cut(const int np,

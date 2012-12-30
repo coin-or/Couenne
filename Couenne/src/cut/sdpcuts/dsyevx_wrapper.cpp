@@ -13,8 +13,9 @@
 #include <math.h>
 
 #include "CoinFinite.hpp"
-
 #include "CouenneConfig.h"
+
+//#define DEBUG
 
 extern "C" {
 
@@ -52,6 +53,17 @@ int dsyevx_interface (int n, double *A, int &m,
 		      double ub_ev,
 		      int firstidx,
 		      int lastidx) {
+
+#ifdef DEBUG
+
+  printf ("matrix:\n---------------------------------\n");
+  for (int   i=0; i<n; ++i) {
+    for (int j=0; j<n; ++j)
+      printf ("%g ", A [i*n+j]);
+    printf ("\n");
+  }
+  printf ("---------------------------------\n");
+#endif
 
   if (NULL == w) w = new double [n];
   if (NULL == z) z = new double [n*n];
