@@ -57,6 +57,11 @@ namespace Couenne {
 
     bool useSparsity_; ///< Sparsify eigenvalues before writing inequality (default: no)
 
+    bool fillMissingTerms_; ///< If minor not fully dense, create 
+			    ///< fictitious auxiliary variables that 
+			    ///< will be used in sdp cuts only (tighter
+			    ///< than sdp cuts without)
+
   public:
 
     CouenneSdpCuts  (CouenneProblem *, JnlstPtr,

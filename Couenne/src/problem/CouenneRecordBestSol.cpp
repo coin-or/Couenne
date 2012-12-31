@@ -206,8 +206,15 @@ void CouenneRecordBestSol::setSol(const double *givenSol, const int givenCard,
   }
   else {
     if(givenCard != cardSol) {
-      printf("CouenneRecordBestSol::setSol(): ### ERROR: givenCard: %d  cardSol: %d", givenCard, cardSol);
-      exit(1);
+      //printf("CouenneRecordBestSol::setSol(): ### ERROR: givenCard: %d  cardSol: %d", givenCard, cardSol);
+      //exit(1);
+
+	double *newSol = new double [givenCard];
+	CoinCopyN (givenSol, givenCard, newSol);
+	delete [] modSol;
+	modSol = newSol;
+	cardSol = givenCard;
+
     }
   }
   CoinCopyN(givenSol, givenCard, sol);
@@ -340,8 +347,14 @@ void CouenneRecordBestSol::setModSol(const double *givenModSol,
     }
     else {
       if(givenModCard != cardModSol) {
-	printf("CouenneRecordBestSol::setModSol(): ### ERROR: givenModCard: %d  cardModSol: %d", givenModCard, cardModSol);
-	exit(1);
+	// printf("CouenneRecordBestSol::setModSol(): ### ERROR: givenModCard: %d  cardModSol: %d", givenModCard, cardModSol);
+	// exit(1);
+
+	double *newModSol = new double [givenModCard];
+	CoinCopyN (givenModSol, givenModCard, newModSol);
+	delete [] modSol;
+	modSol = newModSol;
+	cardModSol = givenModCard;
       }
     }
     CoinCopyN(givenModSol, givenModCard, modSol);

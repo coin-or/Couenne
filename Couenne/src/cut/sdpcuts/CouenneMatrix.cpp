@@ -218,11 +218,8 @@ CouenneSparseVector::~CouenneSparseVector () {
 }
 
 
-CouenneScalar::~CouenneScalar () {
-
-  if (delete_) // only delete constants
-    delete elem_;
-} 
+CouenneScalar::~CouenneScalar () 
+{delete elem_;} 
 
 #define WRAP 20
 

@@ -216,9 +216,6 @@ class CouenneProblem {
   /// Best known objective function
   CouNumber bestObj_;
 
-  /// Indices of variables appearing in products (used for SDP cuts)
-  int *quadIndex_;
-
   /// Variables that have commuted to auxiliary
   bool *commuted_;
 
@@ -723,6 +720,9 @@ class CouenneProblem {
 
   /// returns constant objective value if it contains no variables
   inline double constObjVal () const {return constObjVal_;}
+
+  /// refills auxiliaries vectors after adding auxiliaries
+  void resizeAuxs (int nOld, int nNew);
 
 protected:
 

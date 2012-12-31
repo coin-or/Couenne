@@ -107,6 +107,8 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 				      Ipopt::SmartPtr<Bonmin::TMINLP> tminlp,
 				      CouenneInterface *ci,
 				      Bonmin::Bab *bb) {
+  int freq;
+
   bool retval = true;
 
   std::string s;
@@ -119,7 +121,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   /* Get the basic options. */
   readOptionsFile();
- 
+
   // Suppress iteration output from nonlinear solver
   options () -> SetStringValue ("sb", "yes", false, true);
 
@@ -269,38 +271,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   int lpLogLevel;
   options () -> GetIntegerValue ("lp_log_level", lpLogLevel, "couenne.");
   continuousSolver_ -> messageHandler () -> setLogLevel (lpLogLevel);
-
-  //////////////////////////////////////////////////////////////
-
-  couenneCg -> Problem () -> setMaxCpuTime (getDoubleParameter (BabSetupBase::MaxTime));
-
-  std::string doHeuristic;
-  options () -> GetStringValue ("local_optimization_heuristic", doHeuristic, "couenne.");
-
-  ci -> extractLinearRelaxation (*continuousSolver_, *couenneCg, true, doHeuristic == "yes");
-
-  // In case there are no discrete variables, we have already a
-  // heuristic solution for which create a initialization heuristic
-  if (!(extraStuff -> infeasibleNode ()) &&
-      ci -> isProvenOptimal () && 
-      ci -> haveNlpSolution ()) {
-
-    /// setup initial heuristic (in principle it should only run once...)
-    InitHeuristic* initHeuristic = new InitHeuristic 
-      (ci -> getObjValue (), ci -> getColSolution (), *couenneProb_);
-    HeuristicMethod h;
-    h.id = "Couenne Rounding NLP"; // same name as the real rounding one
-    h.heuristic = initHeuristic;
-    heuristics_.push_back(h);
-  }
-
-  if (extraStuff -> infeasibleNode ()){
-    journalist() -> Printf (J_SUMMARY, J_PROBLEM, "Linear relaxation infeasible, the problem is infeasible.\n");
-    retval = false;
-  }
-
-  //continuousSolver_ -> findIntegersAndSOS (false);
-  //addSos (); // only adds embedded SOS objects
 
   // Add Couenne SOS ///////////////////////////////////////////////////////////////
 
@@ -478,8 +448,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   delete [] objects;
 
-  int freq;
-
   // Setup Fix Point bound tightener /////////////////////////////////////////////
 
   options () -> GetIntegerValue ("fixpoint_bt", freq, "couenne.");
@@ -519,23 +487,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   CouennePtr_ = couenneCg;
 
-  // Add PSD cut handler ///////////////////////////////////////////////////////
-
-  options () -> GetIntegerValue ("sdp_cuts", freq, "couenne.");
-
-  if (freq != 0) {
-
-    CouenneSdpCuts * couenneSDP = 
-      new CouenneSdpCuts (couenneProb_,
-			  journalist (),
-			  options    ());
-    CuttingMethod cg;
-    cg.frequency = freq;
-    cg.cgl = couenneSDP;
-    cg.id = "Couenne SDP cuts";
-    cutGenerators (). push_back (cg);
-  }
-
   // Add two-inequalities based bound tightening ///////////////////////////////////////////////////////
 
   options () -> GetIntegerValue ("two_implied_bt", freq, "couenne.");
@@ -556,6 +507,42 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   // check branch variable selection for disjunctive cuts
 
   // Setup heuristic to solve MINLP problems. /////////////////////////////////
+
+  std::string doHeuristic;
+  options () -> GetStringValue ("local_optimization_heuristic", doHeuristic, "couenne.");
+
+  // ----------------------------------------------------------------
+
+  //////////////////////////////////////////////////////////////
+
+  couenneCg -> Problem () -> setMaxCpuTime (getDoubleParameter (BabSetupBase::MaxTime));
+
+  ci -> extractLinearRelaxation (*continuousSolver_, *couenneCg, true, doHeuristic == "yes");
+
+  // In case there are no discrete variables, we have already a
+  // heuristic solution for which create a initialization heuristic
+  if (!(extraStuff -> infeasibleNode ()) &&
+      ci -> isProvenOptimal () && 
+      ci -> haveNlpSolution ()) {
+
+    /// setup initial heuristic (in principle it should only run once...)
+    InitHeuristic* initHeuristic = new InitHeuristic 
+      (ci -> getObjValue (), ci -> getColSolution (), *couenneProb_);
+    HeuristicMethod h;
+    h.id = "Couenne Rounding NLP"; // same name as the real rounding one
+    h.heuristic = initHeuristic;
+    heuristics_.push_back(h);
+  }
+
+  if (extraStuff -> infeasibleNode ()){
+    journalist() -> Printf (J_SUMMARY, J_PROBLEM, "Linear relaxation infeasible, the problem is infeasible.\n");
+    retval = false;
+  }
+
+  // ----------------------------------------------------------------
+
+  //continuousSolver_ -> findIntegersAndSOS (false);
+  //addSos (); // only adds embedded SOS objects
 
   if (doHeuristic == "yes") {
 
@@ -764,6 +751,23 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   // heuristic is indeed feasible
   intParam_ [BabSetupBase::SpecialOption] = 16 | 4;
 
+  // Add PSD cut handler ///////////////////////////////////////////////////////
+
+  options () -> GetIntegerValue ("sdp_cuts", freq, "couenne.");
+
+  if (freq != 0) {
+
+    CouenneSdpCuts * couenneSDP = 
+      new CouenneSdpCuts (couenneProb_,
+			  journalist (),
+			  options    ());
+    CuttingMethod cg;
+    cg.frequency = freq;
+    cg.cgl = couenneSDP;
+    cg.id = "Couenne SDP cuts";
+    cutGenerators (). push_back (cg);
+  }
+
   // Add disjunctive cuts ///////////////////////////////////////////////////////
 
   options () -> GetIntegerValue ("minlp_disj_cuts", freq, "couenne.");
@@ -802,27 +806,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cg.id = "Couenne cross-aux cuts";
     cutGenerators (). push_back(cg);
   }
-
-  // // Add disjunctive cuts ///////////////////////////////////////////////////////
-
-  // options () -> GetIntegerValue ("minlp_disj_cuts", freq, "couenne.");
-
-  // if (freq != 0) {
-
-  //   CouenneDisjCuts * couenneDisj = 
-  //     new CouenneDisjCuts (ci, this, 
-  // 			   couenneCg, 
-  // 			   branchingMethod_, 
-  // 			   varSelection == OSI_STRONG, // if true, use strong branching candidates
-  // 			   journalist (),
-  // 			   options ());
-
-  //   CuttingMethod cg;
-  //   cg.frequency = freq;
-  //   cg.cgl = couenneDisj;
-  //   cg.id = "Couenne disjunctive cuts";
-  //   cutGenerators (). push_back(cg);
-  // }
 
   return retval;
 }

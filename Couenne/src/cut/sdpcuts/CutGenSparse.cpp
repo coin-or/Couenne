@@ -110,8 +110,6 @@ void CouenneSdpCuts::sparsify2 (const int n,
 
       (*evdec_num)++;
 
-      //printf ("calling dsyevx SPARSIFY 2\n");
-
       //--------------------------------------------------------------------------------------------------------------------------------
       dsyevx_interface (running_n - 1, T, card_ev, w, z, EV_TOL, -COIN_DBL_MAX, 0., 1, (running_n - 1 == min_nz) ? (running_n - 1) : 1);
       //--------------------------------------------------------------------------------------------------------------------------------
@@ -124,7 +122,7 @@ void CouenneSdpCuts::sparsify2 (const int n,
 	best_idx = k;
 
 	std::memcpy (Tbest, Tcopy, rnsq            * sizeof (double));
-	CoinCopyN (z, rnsq, zbest); //std::memcpy (zbest, z,     rnsq            * sizeof (double));
+	std::memcpy (zbest, z,     rnsq            * sizeof (double));
 	std::memcpy (wbest, w,     (running_n - 1) * sizeof (double));
 
 	card_ev_best = card_ev;
@@ -532,7 +530,7 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 			       const double *A, double **sparse_v_mat,
 			       int *card_v_mat, int *evdec_num) const {
 
-  int i, j, nchanged = 0,
+  int nchanged = 0,
     min_number_new_per_cut = 1,
     loc_card_new_selected  = 0,
     card_selected          = 0,
@@ -557,7 +555,7 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 
   *card_v_mat = 0;
 
-  for (i=0; i<n; i++) {
+  for (int i=0; i<n; i++) {
 
     order [i] = i;
 
@@ -604,7 +602,7 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 
   while (card_selected < n) {
 
-    for (i=0; i<n; i++)
+    for (int i=0; i<n; i++)
 
       if (selected [order [i]] == 0) {
 	start_point = i;
@@ -631,7 +629,7 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
     // }
     // printf (":::::::::::::::::::::::::::::::::\n");
 
-    for(i=0; i<n; i++) {
+    for(int i=0; i<n; i++) {
       if(selected[i] == -1) {
 	loc_selected[i] = 0;
 	loc_card_selected--;

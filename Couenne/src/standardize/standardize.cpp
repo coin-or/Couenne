@@ -475,7 +475,7 @@ bool CouenneProblem::standardize () {
                          // cut
 #endif
 
-  delete auxSet_;
+  //  delete auxSet_;
 
   // Create evaluation order ////////////////////////////////////////////////////
 

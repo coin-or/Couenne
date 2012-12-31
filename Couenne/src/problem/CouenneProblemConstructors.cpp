@@ -54,7 +54,6 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   nIntVars_  (0),
   optimum_   (NULL),
   bestObj_   (COIN_DBL_MAX),
-  quadIndex_ (NULL),
   commuted_  (NULL),
   numbering_ (NULL),
   ndefined_  (0),
@@ -217,6 +216,8 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
 /// Destructor
 
 CouenneProblem::~CouenneProblem () {
+
+  delete auxSet_;
 
   if (perfIndicator_)
     delete perfIndicator_;

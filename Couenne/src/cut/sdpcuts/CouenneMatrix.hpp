@@ -28,26 +28,22 @@ namespace Couenne {
 
     int         index_;  ///< index of element in vector
     expression *elem_;   ///< element
-    bool        delete_; ///< destructor should delete pointer to expression
 
   public:
 
     CouenneScalar (int index, expression *elem):
       index_  (index),
-      elem_   (elem),
-      delete_ (elem_ -> code () == COU_EXPRCONST || (elem_ != elem_ -> Original ())) {}
+      elem_   (elem -> code () == COU_EXPRCONST ? elem : new exprClone (elem)) {}
 
     ~CouenneScalar ();
 
     CouenneScalar (const CouenneScalar &rhs):
       index_  (rhs.index_),
-      elem_   (new exprClone (rhs.elem_)),
-      delete_ (true) {}
+      elem_   (new exprClone (rhs.elem_)) {}
 
     CouenneScalar &operator= (const CouenneScalar &rhs) {
       index_  = rhs.index_;
       elem_   = new exprClone (rhs.elem_);
-      delete_ = true;
       return *this;
     }
 
@@ -83,8 +79,8 @@ namespace Couenne {
     CouenneSparseVector () {}
    ~CouenneSparseVector ();
 
-    CouenneSparseVector            (const CouenneSparseVector &rhs);
-    CouenneSparseVector &operator= (const CouenneSparseVector &rhs);
+    CouenneSparseVector                (const CouenneSparseVector &rhs);
+    CouenneSparseVector &operator=     (const CouenneSparseVector &rhs);
     CouenneSparseVector *clone () {return new CouenneSparseVector (*this);}
 
     void add_element (int index, expression *elem);

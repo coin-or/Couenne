@@ -237,6 +237,42 @@ void CouenneProblem::fillIntegerRank () const {
     jnlst_->Printf (Ipopt::J_VECTOR, J_PROBLEM, "%d: %d\n", i, numberInRank_ [i]);
 }
 
+/// rescans problem after adding new auxiliaries
+void CouenneProblem::resizeAuxs (int nOld, int nNew) {
+
+#define resizeOld(typeD,oldV,oldN,newN) { \
+  if (oldV) {                             \
+    typeD *newV = new typeD [newN];       \
+    CoinCopyN (oldV, oldN, newV);         \
+    delete [] oldV;                       \
+    oldV = newV;                          \
+  }					  \
+}
+
+  resizeOld (int,    numbering_,   nOld, nNew);
+  resizeOld (bool,   commuted_,    nOld, nNew);
+  resizeOld (int,    integerRank_, nOld, nNew);
+  //resizeOld (double, optimum_,     nOld, nNew);
+
+  optimum_ = (double *) realloc (optimum_, nNew * sizeof (double));
+
+  if (numbering_)   for (int i=nOld; i<nNew; ++i) numbering_   [i] = i;
+  if (commuted_)    for (int i=nOld; i<nNew; ++i) commuted_    [i] = false;
+  if (integerRank_) for (int i=nOld; i<nNew; ++i) integerRank_ [i] = nNew;
+  if (optimum_)     for (int i=nOld; i<nNew; ++i) optimum_     [i] = 0.;
+
+  domain_ . current () -> resize (nNew);
+
+  // post-rescan: update 
+  //
+  // numbering_
+  // domain_
+  // commuted_
+  // optimum_
+  // integerRank_
+  //
+  // since there are new variables
+}
 
 /// Get cutoff
 CouNumber CouenneProblem::getCutOff () const
