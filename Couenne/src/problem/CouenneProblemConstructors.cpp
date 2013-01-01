@@ -35,6 +35,7 @@
 
 #include "CouenneRecordBestSol.hpp"
 #include "CouenneBTPerfIndicator.hpp"
+#include "CouenneSdpCuts.hpp"
 
 #ifdef COIN_HAS_NTY
 #include "Nauty.h"
@@ -86,7 +87,8 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   constObjVal_ (0.),
   perfIndicator_ (new CouenneBTPerfIndicator (this, "FBBT")),
 
-  nauty_info (NULL) {
+  nauty_info (NULL),
+  sdpCutGen_ (NULL) {
 
   double now = CoinCpuTime ();
 
@@ -165,6 +167,8 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   perfIndicator_     (new CouenneBTPerfIndicator (*(p.perfIndicator_))),
   nauty_info         (p.nauty_info) {
 
+  sdpCutGen_  = new CouenneSdpCuts (*(p.sdpCutGen_));
+
   for (int i=0; i < p.nVars (); i++)
     variables_ . push_back (NULL);
 
@@ -216,6 +220,9 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
 /// Destructor
 
 CouenneProblem::~CouenneProblem () {
+
+  if (sdpCutGen_)
+    delete sdpCutGen_;
 
   delete auxSet_;
 

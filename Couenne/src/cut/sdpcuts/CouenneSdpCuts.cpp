@@ -127,15 +127,6 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 	  varNumIndices. insert ((*elemIt) -> getIndex ());
       }
 
-      printf ("varNumIndices: ");
-
-      for (std::set <int>::iterator 
-	     j  = varNumIndices. begin ();
-	   j   != varNumIndices. end   (); ++j)
-	printf ("%d ", *j);
-
-      printf ("\n");
-
       // Second: check every row for elements (i,j) not in this row by
       // parallel scanning of varNumINdices
 
@@ -163,11 +154,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 	      if (rowInd == *vniIt) image = new exprPow (new exprClone (problem_ -> Var (rowInd)), new exprConst (2.));
 	      else                  image = new exprMul (new exprClone (problem_ -> Var (rowInd)), new exprClone (problem_ -> Var (*vniIt)));
 
-	      exprAux *yIJ = new exprAux (image,
-					  problem_ -> nVars (),
-					  1 + image -> rank (), 
-					  exprAux::Unset, 
-					  problem_ -> domain ());
+	      exprAux *yIJ = problem_ -> addAuxiliary (image);
 
 	      // seek expression in the set
 	      if (problem_ -> AuxSet () -> find (yIJ) == 
@@ -202,8 +189,6 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
     // unusedOriginalsIndices_
     //
     // since there are new variables
-
-    problem_ -> resizeAuxs (nOld, problem_ -> nVars ());
   }
 
   // 3) Bottom-right border each block with a row vector, a column vector,

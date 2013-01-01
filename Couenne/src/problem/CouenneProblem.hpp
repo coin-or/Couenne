@@ -148,6 +148,7 @@ namespace Couenne {
   class GlobalCutOff;
   class CouenneBTPerfIndicator;
   class CouenneRecordBestSol;
+  class CouenneSdpCuts;
 
   typedef Ipopt::SmartPtr<Ipopt::Journalist> JnlstPtr;
   typedef Ipopt::SmartPtr<const Ipopt::Journalist> ConstJnlstPtr;
@@ -337,13 +338,18 @@ class CouenneProblem {
   /// CouenneProblem when we do it with FBBT
   CouenneBTPerfIndicator *perfIndicator_;
 
-  /// return particular constraint class. Classes:
+  /// Return particular constraint class. Classes:
   /// 
   /// 1) "convex": convex constraints;
   /// 2) "PSDcon": constraints of the form X \succeq 0
   /// 3) "normal": regular constraints
   std::map <const char *, std::vector <CouenneConstraint *> *, less_than_str> ConstraintClass_;
 
+  /// Temporary pointer to SDP cut generator. A little dirty as it is
+  /// generated DURING standardization, but necessary to avoid
+  /// meddling with different spaces
+  CouenneSdpCuts *sdpCutGen_;
+  
  public:
 
   CouenneProblem  (ASL * = NULL,
@@ -721,8 +727,8 @@ class CouenneProblem {
   /// returns constant objective value if it contains no variables
   inline double constObjVal () const {return constObjVal_;}
 
-  /// refills auxiliaries vectors after adding auxiliaries
-  void resizeAuxs (int nOld, int nNew);
+  /// Returns pointer to sdp cut generator
+  CouenneSdpCuts *getSdpCutGen () {return sdpCutGen_;}
 
 protected:
 

@@ -22,6 +22,7 @@
 #include "CouenneProblem.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneDepGraph.hpp"
+#include "CouenneSdpCuts.hpp"
 
 using namespace Ipopt;
 using namespace Couenne;
@@ -347,6 +348,18 @@ bool CouenneProblem::standardize () {
     // Use with caution. Bounds on auxs are not defined yet, so valgrind complains
     printf ("Done with standardization (careful, bounds below can be nonsense):\n");
     print (); 
+  }
+
+  // Extra auxiliaries: useless without CouenneSDPcuts
+
+  if (bonBase_) {
+
+    int freq;
+
+    if ((bonBase_ -> options () -> GetIntegerValue ("sdp_cuts", freq, "couenne.")) &&
+	(freq != 0))
+
+      sdpCutGen_ = new CouenneSdpCuts (this, jnlst_, bonBase_ -> options ());
   }
 
   // TODO: move redundancy elimination here. Then add another round of simplification
