@@ -147,7 +147,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 	  while ((vniIt != varNumIndices . end ()) && (*vniIt < colInd)) {
 
 	    if (rowInd <= *vniIt) {
-	      printf ("missing term: %d, %d\n", rowInd, *vniIt);
+	      //printf ("missing term: %d, %d\n", rowInd, *vniIt);
 
 	      expression *image;
 

@@ -42,8 +42,7 @@ void CouenneSdpCuts::generateCuts (const OsiSolverInterface &si, OsiCuts &cs,
 
   // only at root node once
 
-  if ((info . level > 0) ||
-      (info . pass  > 1)) return;
+  if ((info . level * info . pass > 4)) return;
 
   problem_ -> domain () -> push (&si, &cs);
 
