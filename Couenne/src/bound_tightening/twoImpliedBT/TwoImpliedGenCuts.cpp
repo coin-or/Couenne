@@ -601,10 +601,6 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	babInfo && 
 	babInfo -> babPtr ()) {
 
-#ifdef DEBUG
-      printf ("FBBT\n");
-#endif
-
       CouNumber
 	UB      = babInfo -> babPtr () -> model (). getObjValue(),
 	LB      = babInfo -> babPtr () -> model (). getBestPossibleObjValue (),
