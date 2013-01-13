@@ -6,7 +6,7 @@ ThirdParty/Lapack https://projects.coin-or.org/svn/BuildTools/ThirdParty/Lapack/
 ThirdParty/Mumps  https://projects.coin-or.org/svn/BuildTools/ThirdParty/Mumps/stable/1.4
 ThirdParty/Metis  https://projects.coin-or.org/svn/BuildTools/ThirdParty/Metis/stable/1.2
 ThirdParty/SoPlex https://projects.coin-or.org/svn/BuildTools/ThirdParty/SoPlex/stable/1.2
-ThirdParty/SCIP   https://projects.coin-or.org/svn/BuildTools/ThirdParty/SCIP/stable/1.1
+ThirdParty/SCIP   https://projects.coin-or.org/svn/BuildTools/ThirdParty/SCIP/trunk
 CoinUtils         https://projects.coin-or.org/svn/CoinUtils/stable/2.8/CoinUtils
 Cbc               https://projects.coin-or.org/svn/Cbc/stable/2.7/Cbc
 Cgl               https://projects.coin-or.org/svn/Cgl/stable/0.57/Cgl

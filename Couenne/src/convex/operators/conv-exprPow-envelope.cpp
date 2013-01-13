@@ -28,12 +28,12 @@ void Couenne::addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
 			      CouNumber x, CouNumber y,
 			      CouNumber k, 
 			      CouNumber l, CouNumber u,
-			      int sign) {
+			      int sign, bool signpower) {
 
   // set x to get a deeper cut (so that we get a tangent which is
   // orthogonal with line through current- and tangent point)
 
-  powertriplet pt (k);
+  powertriplet pt (k, signpower);
 
   if (!(cg -> isFirst ()))
     x = powNewton (x, y, &pt);

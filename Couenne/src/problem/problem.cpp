@@ -192,10 +192,12 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 
 	bool isInt = var -> isDefinedInteger ();
 
-	/*printf ("checking "); var -> print ();
-	printf (" = %g = %g. Sign: %d, int: %d, [%g,%g]", 
-		X (index), (*(var -> Image ())) (),
-		var -> sign (), isInt, l, u);*/
+	// if (Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_PROBLEM)) {
+	//   printf ("checking "); var -> print ();
+	//   printf (" = %g = %g. Sign: %d, int: %d, [%g,%g]", 
+	// 	  X (index), (*(var -> Image ())) (),
+	// 	  var -> sign (), isInt, l, u);
+	// }
 
 	if ((var -> sign () == expression::AUX_EQ) &&
 	    ((index >= nOrigVars_) ||
@@ -209,8 +211,8 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 	// feasibility heuristic: if semiaux, round value to nearest integer if variable is integer
 
 	if (isInt) {
-	  if (var -> sign () == expression::AUX_GEQ) x = ceil  (x - COUENNE_EPS);
-	  if (var -> sign () == expression::AUX_LEQ) x = floor (x + COUENNE_EPS);
+	  if      (var -> sign () == expression::AUX_GEQ) x = ceil  (x - COUENNE_EPS);
+	  else if (var -> sign () == expression::AUX_LEQ) x = floor (x + COUENNE_EPS);
 	}
 
 	//printf (" -> %g\n", X (index));

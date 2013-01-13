@@ -178,8 +178,8 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
     way = TWO_RIGHT;
     *brpts = obj -> midInterval (x0, l, u, info);
 
-    return CoinMin (brDist [0] = y0 - safe_pow (*brpts, 1. / k), 
-		    brDist [1] = projectSeg (x0, y0, l, safe_pow (l, k), 
+    return CoinMin (brDist [0] = y0 - safe_pow (*brpts, 1. / k),
+		    brDist [1] = projectSeg (x0, y0, l, safe_pow (l, k),
 					     *brpts, safe_pow (*brpts, k), -1)); // distance is exact
   }
 

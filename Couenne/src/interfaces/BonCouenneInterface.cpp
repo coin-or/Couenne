@@ -278,7 +278,7 @@ CouenneInterface::extractLinearRelaxation
 
       // re-check optimality in case resolve () was called
       if (isProvenOptimal () && 
-	  (obj < p -> getCutOff ())           && // check #1 (before re-computing)
+	  //	  (obj < p -> getCutOff ()) && // check #1 (before re-computing) -- BUG. What if real object is actually better?
 
 #ifdef FM_CHECKNLP2
 	  (p->checkNLP2(solution, 0, false, true, false, p->getFeasTol())) &&

@@ -13,6 +13,7 @@
 
 #include "CouenneTypes.hpp"
 #include <map>
+#include <iostream>
 
 namespace Couenne
 {
@@ -50,19 +51,35 @@ class Qroot {
     std::map <int, CouNumber>:: iterator pos;
     CouNumber root;
 
-    k /= 2; // becomes true index
+    if( k % 2 == 1 )
+    {
+       k /= 2; // becomes true index
 
-    if ((pos = Qmap.find (k)) == Qmap.end()) {
+       if ((pos = Qmap.find (k)) == Qmap.end()) {
 
-      std::pair <int, CouNumber> newpair;
+          std::pair <int, CouNumber> newpair;
 
-      newpair.first  = k;
-      newpair.second = (root = rootQ (k));
- 
-      Qmap.insert (newpair);
+          newpair.first  = k;
+          newpair.second = (root = rootQ (k));
+
+          Qmap.insert (newpair);
+       }
+       else
+          root = pos -> second;
     }
-    else 
-      root = pos -> second;
+    else
+    {
+       switch(k) {
+          case 2: return -(sqrt(2.0) - 1.0);
+          case 4: return -0.56042566045031785945;
+          case 6: return -0.64146546982884663257;
+          case 8: return -0.69428385661425826738;
+          case 10: return -0.73192937842370733350;
+          default:
+             std::cerr << "Need to implement root finding for even k" << std::endl;
+             throw -1;
+       }
+    }
 
     return root;
   }

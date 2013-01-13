@@ -39,6 +39,9 @@ namespace Couenne {
 // rounds to nearest integer
 #define COUENNE_round(x) ((int) (floor ((x) + 0.5)))
 
+// sign of a value
+#define COUENNE_sign(x) ((x) > 0.0 ? 1.0 : -1.0)
+
 #define MAX_BOUND 1.e45
 
 /// used to declare LP unbounded

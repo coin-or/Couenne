@@ -48,7 +48,7 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
 
     // expression = x^b, b!=0. There are four cases:
     // 
-    // 1) b   is integer and odd  (cube, x^5, etc)
+    // 1) b   is integer and odd or signpower (cube, x^5, etc)
     // 2) b   is integer and even (square, x^8, etc)
     // 3) 1/b is integer and odd  (cube root, x^(1/7), etc)
     // 4) 1/b is integer and even (square root, x^(1/4), etc)
@@ -64,17 +64,18 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
       ((fabs (expon) > COUENNE_EPS) &&
        (fabs (1/expon - (rndexp = COUENNE_round (1/expon))) < COUENNE_EPS));
 
-    if ((isInt || isInvInt) && (rndexp % 2) && (rndexp > 0)) { 
+    if ((isInt || isInvInt) && (rndexp % 2 || issignpower_) && (rndexp > 0)) {
 
-      // the exponent is integer (or inverse integer), odd and
+      // the exponent is integer (or inverse integer), odd or signpower and
       // positive, hence the function is monotone non decreasing
 
-      lb = new exprPow (lbbase, new exprConst (expon));
-      ub = new exprPow (ubbase, new exprConst (expon));
+      lb = new exprPow (lbbase, new exprConst (expon), issignpower_);
+      ub = new exprPow (ubbase, new exprConst (expon), issignpower_);
     } 
     else {
 
-      // the exponent is either negative, integer even, or fractional
+      // the exponent is either negative, integer even and not signpower, or fractional
+      assert(!issignpower_);
 
       expression **all = new expression * [6];
 
@@ -192,7 +193,7 @@ void exprPow::getBounds (CouNumber &lb, CouNumber &ub) {
     isInt    =           fabs (k    - (double) (intk = COUENNE_round (k)))    < COUENNE_EPS,
     isInvInt = !isInt && fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS;
 
-  if (!isInt && (!isInvInt || !(intk % 2))) {
+  if (!isInt && (!isInvInt || !(intk % 2 || issignpower_))) {
 
     // if exponent is fractional or 1/even, the base better be nonnegative
 
@@ -200,7 +201,7 @@ void exprPow::getBounds (CouNumber &lb, CouNumber &ub) {
     if (uba < 0.) uba = 0.;
   }
 
-  if (isInt && !(intk % 2) && (k > 0)) { // x^{2h}
+  if (isInt && !(intk % 2 || issignpower_) && (k > 0)) { // x^{2h}
 
     if (uba < 0) {
       lb = safe_pow (-uba, k);
@@ -213,12 +214,12 @@ void exprPow::getBounds (CouNumber &lb, CouNumber &ub) {
       ub = safe_pow (CoinMax (-lba, uba), k);
     }
 
-  } else if (k > 0) { // monotone increasing: x^{2h+1} with h integer, or x^h with h real
+  } else if (k > 0) { // monotone increasing: x^{2h+1} with h integer, or x^h with h real, or signpower
 
-    lb = safe_pow (lba, k);
-    ub = safe_pow (uba, k);
+    lb = safe_pow (lba, k, issignpower_);
+    ub = safe_pow (uba, k, issignpower_);
 
-  } else if (isInt && !(intk % 2)) { // x^{-2h} or x^{-1/2h} with h integer
+  } else if (isInt && !(intk % 2 || issignpower_)) { // x^{-2h} or x^{-1/2h} with h integer
 
     if (uba < 0) {
       lb = safe_pow (-lba, k);
@@ -232,7 +233,7 @@ void exprPow::getBounds (CouNumber &lb, CouNumber &ub) {
     }
 
   } else { // x^k, k<0
-
+    assert(!issignpower_);
     if (uba < 0) {
       lb = safe_pow (uba, k);
       ub = safe_pow (lba, k);

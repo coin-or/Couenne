@@ -73,28 +73,29 @@ class powertriplet: public funtriplet {
 
 protected:
 
-  CouNumber exponent_; //< defines the power function triplet
+  CouNumber exponent_;    //< defines the power function triplet
+  bool      issignpower_; //< determines if signed power
 
 public:
 
   /// Basic constructor
-  powertriplet (CouNumber exponent):
-    exponent_ (exponent) {}
+  powertriplet (CouNumber exponent, bool signpower = false):
+    exponent_ (exponent), issignpower_ (signpower) {}
 
   /// Destructor
   virtual ~powertriplet () {}
 
   virtual CouNumber F   (CouNumber x) 
-  {return safe_pow (x, exponent_);}                                   //< main funtion
+  {return safe_pow (x, exponent_, issignpower_);}                                   //< main funtion
 
   virtual CouNumber Fp  (CouNumber x) 
-  {return exponent_ * safe_pow (x, exponent_ - 1);}                   //< first-order derivative 
+  {return exponent_ * safe_pow (issignpower_ ? fabs(x) : x, exponent_ - 1);}  //< first-order derivative 
 
   virtual CouNumber Fpp (CouNumber x) 
-  {return exponent_ * (exponent_ - 1) * safe_pow (x, exponent_ - 2);} //< second-order derivative 
+  {return exponent_ * (exponent_ - 1) * safe_pow (x, exponent_ - 2, issignpower_);} //< second-order derivative 
 
   virtual CouNumber FpInv (CouNumber x) 
-  {return safe_pow (x / exponent_, 1 / (exponent_ - 1));} //< inverse of first derivative
+  {return safe_pow (x / exponent_, 1 / (exponent_ - 1), issignpower_);} //< inverse of first derivative
 };
 
 

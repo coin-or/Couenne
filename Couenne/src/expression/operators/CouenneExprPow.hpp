@@ -13,6 +13,7 @@
 #define COUENNE_EXPRPOW_HPP
 
 #include <math.h>
+#include <stdio.h>
 
 #include "CouenneExprOp.hpp"
 #include "CouenneExprMul.hpp"
@@ -28,23 +29,28 @@ class funtriplet;
 
 class exprPow: public exprOp {
 
+ private:
+
+  /// do we mean a signed power function: sign(arg0) * |arg0|^arg1 (assumes that arg1 is constant) 
+  bool issignpower_;
+
  public:
 
   /// Constructor
-  exprPow (expression **al, int n = 2): 
-    exprOp (al, n) {} //< non-leaf expression, with argument list
+  exprPow (expression **al, int n = 2, bool signpower = false): 
+    exprOp (al, n), issignpower_ (signpower) {} //< non-leaf expression, with argument list
 
   /// Constructor with only two arguments
-  exprPow (expression *arg0, expression *arg1):
-    exprOp (arg0, arg1) {}
+  exprPow (expression *arg0, expression *arg1, bool signpower = false):
+    exprOp (arg0, arg1), issignpower_ (signpower) {}
 
   /// cloning method
   expression *clone (Domain *d = NULL) const
-    {return new exprPow (clonearglist (d), nargs_);}
+  {return new exprPow (clonearglist (d), nargs_, issignpower_);}
 
   /// print operator
   virtual std::string printOp () const
-    {return "^";}
+  {return "^";}
 
   /// function for the evaluation of the expression
   virtual CouNumber operator () ();
@@ -88,7 +94,7 @@ class exprPow: public exprOp {
 
   /// code for comparison
   virtual enum expr_type code () 
-  {return COU_EXPRPOW;}
+  {return (issignpower_ ? COU_EXPRSIGNPOW : COU_EXPRPOW);}
 
   /// implied bound processing
   virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
@@ -112,13 +118,16 @@ class exprPow: public exprOp {
   /// can this expression be further linearized or are we on its
   /// concave ("bad") side
   virtual bool isCuttable (CouenneProblem *problem, int index) const;
+
+  /// return whether this expression corresponds to a signed integer power 
+  virtual bool isSignpower () const { return issignpower_; } 
 };
 
 
 /// compute power and check for integer-and-odd inverse exponent
 
 inline CouNumber safe_pow (CouNumber base, 
-			   CouNumber exponent) {
+			   CouNumber exponent, bool signpower = false) {
 
   double 
     lbase     = base,
@@ -127,14 +136,14 @@ inline CouNumber safe_pow (CouNumber base,
 
   if (lbase < 0.) {
 
-    register int rndexp;
+    register int rndexp = COUENNE_round (lexponent);
 
-    if (((fabs (lexponent - (rndexp = COUENNE_round (lexponent))) < COUENNE_EPS) ||
+    if (((fabs (lexponent - rndexp) < COUENNE_EPS) ||
 	 ((fabs (lexponent) > COUENNE_EPS) && 
 	  (fabs (1. / lexponent - (rndexp = COUENNE_round (1. / lexponent))) < COUENNE_EPS)))) {
-      if (rndexp % 2)
-	retval = (- pow (- lbase, lexponent)); // x^k, x negative, k odd
-      else retval = pow (- lbase, lexponent);  // x^k, x negative, k even
+      if ((rndexp % 2) || signpower)
+	retval = (- pow (- lbase, lexponent)); // x^k, x negative, k odd  or signed power
+      else retval = pow (- lbase, lexponent);  // x^k, x negative, k even or signed power
     }
     else retval =  0.; // this is incorrect but avoids nan's
   }
@@ -144,7 +153,7 @@ inline CouNumber safe_pow (CouNumber base,
 
       register int intk = COUENNE_round (lexponent);
 
-      if ((fabs (lexponent - intk) < COUENNE_EPS) && (intk % 2))
+      if ((fabs (lexponent - intk) < COUENNE_EPS) && (intk % 2 || signpower))
 	retval = (lexponent < 0.) ? 0. : -COUENNE_INFINITY;
     }
     else retval = (lexponent < 0.) ? 0. : COUENNE_INFINITY;
@@ -159,14 +168,13 @@ inline CouNumber safe_pow (CouNumber base,
 /// compute power
 inline CouNumber exprPow::operator () () {
   //  return (currValue_ = safe_pow (base, exponent));
-  return (safe_pow ((**arglist_) (), (*(arglist_ [1])) ()));
+  return safe_pow ((**arglist_) (), (*(arglist_ [1])) (), issignpower_);
 }
 
 
 /// add upper/lower envelope to power in convex/concave areas
 void addPowEnvelope (const CouenneCutGenerator *, OsiCuts &, int, int,
-		     CouNumber, CouNumber, CouNumber, CouNumber, CouNumber, int);
-
+		     CouNumber, CouNumber, CouNumber, CouNumber, CouNumber, int, bool = false);
 
 /// find proper tangent point to add deepest tangent cut
 CouNumber powNewton (CouNumber, CouNumber, unary_function, unary_function, unary_function);

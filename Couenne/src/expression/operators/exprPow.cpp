@@ -32,11 +32,11 @@ expression *exprPow::simplify () {
 
   exprOp:: simplify ();
 
-  if ((*arglist_) -> Type () == CONST) { // expr = c1 ^ g(x)
+  if ((*arglist_) -> Type () == CONST) { // expr = c0 ^ g(x)
 
     CouNumber c0 = (*arglist_) -> Value ();
 
-    if (arglist_ [1] -> Type () == CONST) { // expr = c1 ^ c2
+    if (arglist_ [1] -> Type () == CONST) { // expr = c0 ^ c1
 
       CouNumber c1 = arglist_ [1] -> Value ();
 
@@ -45,7 +45,10 @@ expression *exprPow::simplify () {
 
       arglist_ [0] = arglist_ [1] = NULL;
 
-      return new exprConst (pow (c0, c1));
+      return new exprConst
+	(issignpower_ ? 
+	 COUENNE_sign(c0) * pow (fabs(c0), c1) : 
+	 pow (c0, c1));
     }
     else 
       if (fabs (c0) <= COUENNE_EPS_SIMPL) 
@@ -204,7 +207,7 @@ int exprPow::Linearity () {
 
 	case 0:  return CONSTANT;
 	case 1:  return LINEAR;
-	case 2:  return QUADRATIC;
+	case 2:  return (issignpower_ ? NONLINEAR : QUADRATIC);
 
 	default: return NONLINEAR;
 	}
@@ -289,8 +292,10 @@ void exprPow::closestFeasible (expression *varind,
     x  = (*varind) (),
     y  = (*vardep) (),
     k  = arglist_ [1] -> Value (),
-    xk = safe_pow (x, k),
-    yk = safe_pow (y, 1./k);
+    xk = safe_pow (x,    k, issignpower_),
+    yk = safe_pow (y, 1./k, issignpower_);
+
+  assert(!issignpower_ || k > 0);
 
   int intk = 0;
 
@@ -298,13 +303,13 @@ void exprPow::closestFeasible (expression *varind,
        isInvInt = !isInt && (fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS);
 
   // three cases: 
-  // 1) k or  1/k odd,        => have either left or right
-  // 2) k or  1/k even,       => may have both
-  // 3) k and 1/k fractional  => have either left or right
+  // 1) k or  1/k odd or signpower => have either left or right
+  // 2) k or  1/k even,            => may have both
+  // 3) k and 1/k fractional       => have either left or right
 
   if (isInt || isInvInt)
 
-    if (intk % 2) // case 1
+    if (intk % 2 || issignpower_) // case 1
 
       if (k > 0) 
 	((y < xk) ? left : right) = yk; // easy, x^k is continuous
@@ -358,7 +363,7 @@ CouNumber exprPow::gradientNorm (const double *x) {
 
   int ind0 = arglist_ [0] -> Index ();
   CouNumber exponent = arglist_ [1] -> Value ();
-  return (ind0 < 0) ? 0. : fabs (exponent * safe_pow (x [ind0], exponent - 1));
+  return (ind0 < 0) ? 0. : fabs (exponent * safe_pow (x [ind0], exponent - 1, issignpower_));
 }
 
 
@@ -378,15 +383,16 @@ bool exprPow::isCuttable (CouenneProblem *problem, int index) const {
 
     if (isInt || isInvInt) {
 
-      if (intExp % 2) return false; // exponent odd or 1/odd
+      // TODO also with an odd exponent, there are convex parts where one could do separation
+      if (intExp % 2 || issignpower_) return false; // exponent odd or 1/odd
 
       CouNumber 
 	x = problem -> X (arglist_ [0] -> Index ()),
 	y = problem -> X (index);
 
-      if (isInt) return (y <= safe_pow (x, exponent)); // below convex curve ==> cuttable
+      if (isInt) return (y <= safe_pow (x, exponent, issignpower_)); // below convex curve ==> cuttable
 
-      return (y >= safe_pow (x, exponent)); // above concave k-th root curve ==> cuttable
+      return (y >= safe_pow (x, exponent, issignpower_)); // above concave k-th root curve ==> cuttable
     } else {
 
       // non-integer exponent
@@ -408,8 +414,8 @@ bool exprPow::isCuttable (CouenneProblem *problem, int index) const {
 
     if (isInt || isInvInt)
 
-      if (!(intExp % 2)) return (((lb > 0) || (ub < 0)) && (y * safe_pow (fabs (x), -exponent) <= 1.));
-      else               return (((lb > 0) || (ub < 0)) && (y * safe_pow (x,        -exponent) <= 1.));
-    else                 return                            (y * safe_pow (x,        -exponent) <= 1.);
+      if (!(intExp % 2 || issignpower_)) return (((lb > 0) || (ub < 0)) && (y * safe_pow (fabs (x), -exponent, issignpower_) <= 1.));
+      else               return (((lb > 0) || (ub < 0)) && (y * safe_pow (x,        -exponent, issignpower_) <= 1.));
+    else                 return                            (y * safe_pow (x,        -exponent, issignpower_) <= 1.);
   }
 }

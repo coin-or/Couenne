@@ -137,9 +137,9 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
   if (fabs (u-l) < COUENNE_EPS) {
 
     CouNumber avg     = 0.5 * (l+u),
-              avg_k_1 = safe_pow (avg, k-1),
-              lk      = safe_pow (l,   k),
-              uk      = safe_pow (u,   k);
+              avg_k_1 = safe_pow (avg, k-1, issignpower_),
+              lk      = safe_pow (l,   k,   issignpower_),
+              uk      = safe_pow (u,   k,   issignpower_);
 
     if (cL || cR) 
       cg -> createCut (cs, u*lk - l*uk + avg * avg_k_1 * (1-k), aSign,
@@ -170,13 +170,13 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
   // two macro-cases: 
 
   if (   (isInt || isInvInt)
-      && (intk % 2) 
+      && (intk % 2 || issignpower_) 
       && (k >   COUENNE_EPS) 
 	 //      && (l < - COUENNE_EPS) 
 	 //      && (u >   COUENNE_EPS)
 	 ) {
 
-    // 1) k (or its inverse) is positive, integer, and odd, and 0 is
+    // 1) k (or its inverse) is positive, integer, and odd, or signed power, and 0 is
     //    an internal point of the interval [l,u].
 
     // this case is somewhat simpler than the second, although if the
@@ -199,7 +199,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 	w = (l>0.) ? 1. : (u<0.) ? -1. : 0.;
 	x = 0;
       }
-      q = safe_pow (q, k);
+      q = safe_pow (q, k, issignpower_);
       sign = -1;
     }
     else {
@@ -215,13 +215,11 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     // lower envelope
     if ((aSign != expression::AUX_LEQ) && (l > -powThres)) {
-      if (l>=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k,   l, u, sign); // 0<l<u, tangents only
+      if (l>=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k,   l, u, sign, issignpower_); // 0<l<u, tangents only
       else if (u > q * l) { // upper x is after "turning point", add lower envelope
-	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, q*l, u, sign);
-	cg      -> addSegment     (cs, w_ind, x_ind, l, safe_pow (l,k), q*l, safe_pow (q*l,k), sign);
-      } else {
-	cg -> addSegment     (cs, w_ind, x_ind, l, safe_pow (l,k), u,   safe_pow (u,  k), sign);
-      }
+	addPowEnvelope        (cg, cs,    w_ind, x_ind, x, w, k, q*l, u, sign, issignpower_);
+	cg      -> addSegment (cs, w_ind, x_ind, l, safe_pow (l,k, issignpower_), q*l, safe_pow (q*l,k, issignpower_), sign);
+      } else cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l,k, issignpower_), u,   safe_pow (u,  k, issignpower_), sign);
     }
 
     // upper envelope
@@ -244,7 +242,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
     // function is only defined on non-negative numbers
 
     if (!isInt 
-	&& (!isInvInt || !(intk % 2))
+	&& (!isInvInt || !(intk % 2 || issignpower_))
 	&& (l < - COUENNE_EPS) 
 	&& (u < (l=0)))        // CAUTION! l updated if negative (k real)
       return;
@@ -260,7 +258,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
       if (!(intk % 2))
 	cg -> addSegment (cs, w_ind, arglist_ [0] -> Index (), 
-			  l, safe_pow (l,k), u, safe_pow (u,k), +1);
+			  l, safe_pow (l,k, issignpower_), u, safe_pow (u,k, issignpower_), +1);
 
       // TODO: if a<=w<=b, c<=x<=d, there is a diamond enclosing the
       // whole convexification
@@ -277,7 +275,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     // invert sign if 
     if (   ((l < - COUENNE_EPS) && (intk % 2) && (k < -COUENNE_EPS)) // k<0 odd, l<0
-	|| ((u <= 0.)           && (intk % 2) && (k >  COUENNE_EPS)) // k>0 odd, u<0
+	|| ((u <= 0.)           && (intk % 2 || issignpower_) && (k >  COUENNE_EPS)) // k>0 odd or signed power, u<0
 	|| (fabs (k-0.5) < 0.5 - COUENNE_EPS))                       // k in [0,1]
       sign = -1;
 
@@ -287,14 +285,14 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     // lower envelope for k negative even
     if ((k <  COUENNE_EPS) &&
-	isInt && !(intk % 2) &&
+	isInt && !(intk % 2 || issignpower_) &&
 	(l < -COUENNE_EPS) &&       // bounds do not contain 0
 	(u >  COUENNE_EPS) &&
 	(l > - powThres) &&         // and are finite
 	(u <   powThres) &&
 	aSign != expression::AUX_LEQ) 
 
-      cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l, k), u, safe_pow (u, k), 1);
+      cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l, k, issignpower_), u, safe_pow (u, k, issignpower_), 1);
 
     // upper envelope
     if ((   (k > COUENNE_EPS)        // when k negative, add only if
@@ -305,7 +303,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 	(fabs (l+u) > COUENNE_EPS) &&
 	(aSign != expression::AUX_GEQ)) // bounds are not opposite (otherwise it's a variable bound)
       
-      cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l, k), u, safe_pow (u, k), -sign);
+      cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l, k, issignpower_), u, safe_pow (u, k, issignpower_), -sign);
 
     // similarly, pay attention not to add infinite slopes
 
@@ -327,6 +325,6 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     if ((sign ==  1 && aSign != expression::AUX_LEQ) ||
 	(sign == -1 && aSign != expression::AUX_GEQ))
-      addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l, u, sign);
+      addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l, u, sign, issignpower_);
   }
 }

@@ -17,8 +17,6 @@
 
 #include "CouenneRecordBestSol.hpp"
 
-//#define FM_TRACE_NLP
-
 using namespace Couenne;
 
 // check if solution is MINLP feasible
@@ -121,8 +119,7 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
     if (recompute)
       obj = realobj;
 
-    if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM))
-      printf ("  recomputed: %.12e\n", obj);
+    Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "  recomputed: %.12e\n", obj);
 
     for (int i=0; i < nOrigVars_ - ndefined_; i++) {
 
@@ -298,15 +295,10 @@ double CouenneProblem::checkObj(const CouNumber *sol, const double &precision)
       sol[objBody->Index()] : 
       (*(objBody->Image() ? objBody->Image() : objBody)) ();
     
-    if (
-#ifdef FM_TRACE_NLP
-	(0) || 
-#endif
-	(Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM))) {
-      printf ("%.12e %.12e %.12e ------------------------------\n", 
-	      realObj, objBody -> Index () >= 0 ? sol[objBody -> Index ()] : 0., 
-	      (*(objBody -> Image () ? objBody -> Image () : objBody)) ());
-    }
+    Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, 
+			"%.12e %.12e %.12e ------------------------------\n", 
+			realObj, objBody -> Index () >= 0 ? sol[objBody -> Index ()] : 0., 
+			(*(objBody -> Image () ? objBody -> Image () : objBody)) ());
   } 
   else {
     printf("### ERROR: CouenneProblem::checkObj(): no objective body\n");
@@ -331,13 +323,11 @@ bool CouenneProblem::checkInt(const CouNumber *sol,
 
     int ind = listInt[i];
 
-    if((ind < from) || (variables_ [ind] -> Multiplicity () <= 0)) {
+    if((ind < from) || (variables_ [ind] -> Multiplicity () <= 0))
       continue;
-    }
 
-    if(ind >= upto) {
+    if(ind >= upto)
       break;
-    }
 
     CouNumber val = sol[ind];
     exprVar *v = variables_ [ind];
@@ -348,20 +338,18 @@ bool CouenneProblem::checkInt(const CouNumber *sol,
       if (viol > maxViol) maxViol = viol;
       if (viol > precision) {
 
-      Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_PROBLEM,
-		      "checkInt(): integrality %d violated: %.6f [%g,%g]: integer distance %e > %e (by %e)\n", 
-		      i, val, domain_.lb (i), domain_.ub (i), 
-		      fabs (val - COUENNE_round (val)),  feas_tolerance_, 
-		      fabs (val - COUENNE_round (val)) - feas_tolerance_);
+	Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_PROBLEM,
+			"checkInt(): integrality %d violated: %.6f [%g,%g]: integer distance %e > %e (by %e)\n", 
+			i, val, domain_.lb (i), domain_.ub (i), 
+			fabs (val - COUENNE_round (val)),  feas_tolerance_, 
+			fabs (val - COUENNE_round (val)) - feas_tolerance_);
 
-#ifdef FM_TRACE_NLP
-	printf("CouenneProblem::checkInt(): integrality %d violated: %.6f [%g,%g]\n", ind, val, domain_.lb (ind), domain_.ub (ind));
-#endif
+	Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkInt(): integrality %d violated: %.6f [%g,%g]\n", ind, val, domain_.lb (ind), domain_.ub (ind));
 
 	isFeas = false;
-	if(stopAtFirstViol) {
+
+	if (stopAtFirstViol)
 	  break;
-	}
       }
     }
   }
@@ -396,18 +384,15 @@ bool CouenneProblem::checkBounds(const CouNumber *sol,
 		      i, val, domain_.lb (i), domain_.ub (i),
 		      CoinMax (fabs (val - domain_.lb (i)), 
 			       fabs (val - domain_.ub (i))));
-      
-#ifdef FM_TRACE_NLP
-      printf("CouenneProblem::checkBounds: variable %d out of bounds: %.6f [%g,%g] (diff %g)\n", 
-	     i, val, domain_.lb (i), domain_.ub (i),
-	     CoinMax (fabs (val - domain_.lb (i)), 
-		      fabs (val - domain_.ub (i))));
-#endif
+
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkBounds: variable %d out of bounds: %.6f [%g,%g] (diff %g)\n", 
+			  i, val, domain_.lb (i), domain_.ub (i),
+			  CoinMax (fabs (val - domain_.lb (i)), 
+				   fabs (val - domain_.ub (i))));
       
       isFeas = false;
-      if(stopAtFirstViol) {
+      if(stopAtFirstViol)
 	break;
-      }
     }
   }
   return isFeas;
@@ -423,18 +408,22 @@ bool CouenneProblem::checkAux(const CouNumber *sol,
   for (int i=0; i<nVars(); i++) {
 
     exprVar *v = variables_ [i];
-    
+
     if ((v -> Type         () != AUX) || 
 	(v -> Multiplicity () <= 0)) 
       continue;
-    
-    if (
-#ifdef FM_TRACE_NLP
-	(1) || 
-#endif
-	(Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM))) {
-      printf ("checking aux -- %+.12e = %+.12e [%+.12e] ", (*(variables_ [i])) (),  (*(variables_ [i] -> Image ())) (),
-                                                           (*(variables_ [i])) () - (*(variables_ [i] -> Image ())) ());
+
+    if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
+
+      printf ("before check\n");
+
+      double 
+	v = (*(variables_ [i])) (), 
+	f = (*(variables_ [i] -> Image ())) ();
+
+      printf ("[%g,%g]\n", v, f);
+
+      printf ("checking aux -- %+.12e = %+.12e [%+.12e] ", v, f, v-f);
       variables_ [i] -> print ();             printf (" := ");
       variables_ [i] -> Image () -> print (); printf ("\n");
     }
@@ -452,7 +441,6 @@ bool CouenneProblem::checkAux(const CouNumber *sol,
     
     if (fabs (fval) > COUENNE_INFINITY)
       fval = COUENNE_INFINITY;
-    
 
     double
       delta = 
@@ -476,15 +464,14 @@ bool CouenneProblem::checkAux(const CouNumber *sol,
       
       isFeas = false;
 
-#ifdef FM_TRACE_NLP
-      printf("CouenneProblem::checkAux(): auxiliary %d violates tolerance %g by %g (deldenom: %g  ratio %g  COUENNE_EPS: %g)\n", i, feas_tolerance_, delta, deldenom, ratio, COUENNE_EPS);
-#endif
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkAux(): auxiliary %d violates tolerance %g by %g (deldenom: %g  ratio %g  COUENNE_EPS: %g)\n", 
+			  i, feas_tolerance_, delta, deldenom, ratio, COUENNE_EPS);
 
-      if(stopAtFirstViol) {
+      if (stopAtFirstViol)
 	break;
-      }
     }
   }
+
   return isFeas;
 }
 
@@ -518,9 +505,7 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
       if (maxViol <= violRelUb) maxViol = violRelUb;
 #endif
 
-#ifdef FM_TRACE_NLP
-      printf("violAbsUb: %12.10f  violRelUb: %12.10f  violUb: %12.10f maxViol: %12.10f\n", violAbsUb, violRelUb, violUb, maxViol);
-#endif
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "violAbsUb: %12.10f  violRelUb: %12.10f  violUb: %12.10f maxViol: %12.10f\n", violAbsUb, violRelUb, violUb, maxViol);
     }
 
     double violLb = 0, violRelLb = 0, violAbsLb = 0;
@@ -535,9 +520,7 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
       if (maxViol <= violRelLb) maxViol = violRelLb;
 #endif
 
-#ifdef FM_TRACE_NLP
-      printf("violAbsLb: %12.10f  violRelLb: %12.10f  violLb: %12.10f maxViol: %12.10f\n", violAbsLb, violRelLb, violLb, maxViol);
-#endif
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "violAbsLb: %12.10f  violRelLb: %12.10f  violLb: %12.10f maxViol: %12.10f\n", violAbsLb, violRelLb, violLb, maxViol);
     }
 
 #ifdef FM_USE_ABS_VIOL_CONS
@@ -547,11 +530,8 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
 	printf ("CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, absolute violation: %g)\n", i, lhs, body, rhs, CoinMax(violAbsUb, violAbsLb));
 	c -> print ();
       }
-      
-      
-#ifdef FM_TRACE_NLP
-      printf ("CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, absolute violation: %g)\n", i, lhs, body, rhs, CoinMax (violAbsUb, violAbsLb));
-#endif
+
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, absolute violation: %g)\n", i, lhs, body, rhs, CoinMax (violAbsUb, violAbsLb));
 
       isFeas = false;
       if(stopAtFirstViol) {
@@ -565,10 +545,9 @@ bool CouenneProblem::checkCons(const CouNumber *sol,
 	printf ("CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, relative violation: %g)\n", i, lhs, body, rhs, CoinMax(violRelUb, violRelLb));
 	c -> print ();
       }
-       
-#ifdef FM_TRACE_NLP
-      printf ("CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, relative violation: %g)\n", i, lhs, body, rhs, CoinMax (violRelUb, violRelLb));
-#endif
+
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkCons(): constraint %d violated (lhs=%+e body=%+e rhs=%+e, relative violation: %g)\n", i, lhs, body, rhs, CoinMax (violRelUb, violRelLb));
+
       isFeas = false;
       if(stopAtFirstViol) {
 	break;
@@ -586,11 +565,9 @@ bool CouenneProblem::checkNLP2(const double *solution,
 			       const bool checkAll,
 			       const double precision) const {
 
-  if(careAboutObj) {
-    if(stopAtFirstViol) {
-      printf("CouenneProblem::checkNLP2(): ### ERROR: careAboutObj: true and stopAtFirstViol: true are incompatible\n");
-      exit(1);
-    }
+  if (careAboutObj && stopAtFirstViol) {
+    printf("CouenneProblem::checkNLP2(): ### ERROR: careAboutObj: true and stopAtFirstViol: true are incompatible\n");
+    exit(1);
   }
 
   const std::vector<int> listInt = getRecordBestSol()->getListInt();
@@ -598,64 +575,61 @@ bool CouenneProblem::checkNLP2(const double *solution,
   double maxViolCouSol = 0;
   double maxViolRecSol = 0;
 
-#ifdef FM_TRACE_NLP
-  const bool *initIsInt = getRecordBestSol()->getInitIsInt();
-  printf("Integrality:\n");
-  for (register int i=0; i<nVars(); i++) {
+  if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
 
-    if (variables_ [i] -> Multiplicity () <= 0) 
-      continue;
+    const bool *initIsInt = getRecordBestSol()->getInitIsInt();
+    printf("Integrality:\n");
+    for (register int i=0; i<nVars(); i++) {
 
-    if(initIsInt[i]) {
-      printf(" %d", i);
+      if (variables_ [i] -> Multiplicity () <= 0) 
+	continue;
+
+      if(initIsInt[i]) {
+	printf(" %d", i);
+      }
     }
-  }
-  printf("\n");
+    printf("\n");
 
-  printf("VAR:\n");
-  for (register int i=0; i<nVars(); i++) {
+    printf("VAR:\n");
+    for (register int i=0; i<nVars(); i++) {
 
-    if (variables_ [i] -> Multiplicity () <= 0) 
-      continue;
-    exprVar *v = variables_ [i];
-    if(	(v -> Type () == VAR)) {
-      printf(" %d", i);
+      if (variables_ [i] -> Multiplicity () <= 0) 
+	continue;
+      exprVar *v = variables_ [i];
+      if(	(v -> Type () == VAR)) {
+	printf(" %d", i);
+      }
     }
-  }
-  printf("\n");
+    printf("\n");
 
-  printf("AUX:\n");
-  for (register int i=0; i<nVars(); i++) {
+    printf("AUX:\n");
+    for (register int i=0; i<nVars(); i++) {
 
-    if (variables_ [i] -> Multiplicity () <= 0) 
-      continue;
-    exprVar *v = variables_ [i];
-    if(	(v -> Type () == AUX)) {
-      printf(" %d", i);
+      if (variables_ [i] -> Multiplicity () <= 0) 
+	continue;
+      exprVar *v = variables_ [i];
+      if(	(v -> Type () == AUX)) {
+	printf(" %d", i);
+      }
     }
-  }
-  printf("\n");
+    printf("\n");
 
-  printf("mult 0:\n");
-  for (register int i=0; i<nVars(); i++) {
+    printf("mult 0:\n");
+    for (register int i=0; i<nVars(); i++) {
 
-    if (variables_ [i] -> Multiplicity () <= 0) { 
-      printf(" %d", i);
+      if (variables_ [i] -> Multiplicity () <= 0) { 
+	printf(" %d", i);
+      }
     }
+    printf("\n");
   }
-  printf("\n");
-#endif
 
   if ((Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM))) {
     printf ("checking solution:\n");
     for (int i=0; i<nOrigVars_ - ndefined_; i++)
       printf ("%.12e ", solution [i]);
-    printf ("\n");
+    printf ("\nCouenneProblem::checkNLP2(): Start checking computed_solution\n");
   }
-
-#ifdef FM_TRACE_NLP
-  printf("CouenneProblem::checkNLP2(): Start checking computed_solution\n");
-#endif
 
   // check integrality of integer constrained variables
 
@@ -666,12 +640,8 @@ bool CouenneProblem::checkNLP2(const double *solution,
   bool isFeasCou = isFeasRec;
   maxViolCouSol = maxViolRecSol;
 
-  if(stopAtFirstViol && !isFeasRec) {
-
-#ifdef FM_TRACE_NLP
+  if (stopAtFirstViol && !isFeasRec && Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) 
     printf("CouenneProblem::checkNLP2(): modified_solution is infeasible (some orig vars not integer feasible; violation: %12.10g)\n", maxViolRecSol);
-#endif
-  }
 
 #ifdef CHECK
   if(getRecordBestSol()->getCardInitDom() != nVars()) {
@@ -703,18 +673,14 @@ bool CouenneProblem::checkNLP2(const double *solution,
 	       getRecordBestSol()->getInitDomLb(), 
 	       getRecordBestSol()->getInitDomUb(), false);
 
-  if (
-#ifdef FM_TRACE_NLP
-      (1) || 
-#endif
-      (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM))) {
+  if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
     printf ("checkNLP2(): recomputed_solution: %d vars -------------------\n", domain_.current () -> Dimension ());
     double maxDelta = 0;
-    for (int i=0; i<domain_.current () -> Dimension (); i++) {
+    for (int i=0; i<nVars (); i++) {
       printf ("%4d %+e %+e [%+e %+e] %+e\n", i, solution[i], domain_.x (i), domain_.lb (i), domain_.ub (i), solution[i] - domain_.x (i));
       if (maxDelta < fabs(solution[i] - domain_.x(i))) maxDelta = fabs (solution[i] - domain_.x(i));
     }
-    printf("maxDelta: %.12g\n", maxDelta);
+    printf ("maxDelta: %.12g\n", maxDelta);
   }
 
   if(checkAll) {
@@ -723,11 +689,8 @@ bool CouenneProblem::checkNLP2(const double *solution,
 				false, stopAtFirstViol,
 				precision, maxViolRecSol);
 
-      if(!isFeasInt) {
-	
-#ifdef FM_TRACE_NLP
-	printf("CouenneProblem::checkNLP2(): recomputed_solution is infeasible (some aux vars not integer feasible; violation: %12.10g)\n", maxViolRecSol);
-#endif
+      if (!isFeasInt) {
+	Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): recomputed_solution is infeasible (some aux vars not integer feasible; violation: %12.10g)\n", maxViolRecSol);
 	
 	isFeasRec = false;
       }
@@ -744,10 +707,8 @@ bool CouenneProblem::checkNLP2(const double *solution,
 
       if(!isFeasBnd) {
 	
-#ifdef FM_TRACE_NLP
-	printf("CouenneProblem::checkNLP2(): recomputed_solution is infeasible (violated bounds; violation: %12.10g)\n", maxViolRecSol);
-#endif
-	
+	Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): recomputed_solution is infeasible (violated bounds; violation: %12.10g)\n", maxViolRecSol);
+
 	isFeasRec = false;
       }
     }
@@ -758,9 +719,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 
       if(!isFeasAux) {
 	
-#ifdef FM_TRACE_NLP
-	printf("CouenneProblem::checkNLP2(): recomputed_solution is infeasible (violated Aux; violation: %12.10g)\n", maxViolRecSol);
-#endif
+	Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): recomputed_solution is infeasible (violated Aux; violation: %12.10g)\n", maxViolRecSol);
 	
 	isFeasRec = false;
       }
@@ -773,22 +732,17 @@ bool CouenneProblem::checkNLP2(const double *solution,
 
     if(!isFeasCons) {
 
-#ifdef FM_TRACE_NLP
-      printf("CouenneProblem::checkNLP2(): recomputed_solution is infeasible (violated constraint; violation: %12.10g)\n", maxViolRecSol);
-#endif
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): recomputed_solution is infeasible (violated constraint; violation: %12.10g)\n", maxViolRecSol);
 
       isFeasRec = false;
     }
   }
 
-#ifdef FM_TRACE_NLP
-  printf("CouenneProblem::checkNLP2(): end check recomputed_solution (maxViol: %12.10g)\n", maxViolRecSol);
-#endif
+  Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): end check recomputed_solution (maxViol: %12.10g)\n", maxViolRecSol);
 
   double objErrorRecSol = objRecSol - obj;
-  if(!careAboutObj) {
+  if(!careAboutObj)
     objErrorRecSol = 0;
-  }
 
   CouNumber *couSol = new CouNumber[nVars()];
   bool useRecSol = false;
@@ -800,21 +754,14 @@ bool CouenneProblem::checkNLP2(const double *solution,
 
     if(checkAll) { // otherwise duplicates above calculations
 
-#ifdef FM_TRACE_NLP
-      printf("CouenneProblem::checkNLP2(): Start checking solution (maxViol: %g)\n",
-	     maxViolCouSol);
-#endif
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): Start checking solution (maxViol: %g)\n", maxViolCouSol);
 
       CoinCopyN(solution, nVars(), couSol);
       restoreUnusedOriginals(couSol);
       domain_.push(nVars(), couSol, getRecordBestSol()->getInitDomLb(), 
 		   getRecordBestSol()->getInitDomUb(), false);
 
-      if (
-#ifdef FM_TRACE_NLP
-	  (1) || 
-#endif
-	  (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM))) {
+      if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
 	printf ("checkNLP2(): solution: %d vars -------------------\n", domain_.current () -> Dimension ());	
 	double maxDelta = 0;
 	for (int i=0; i<domain_.current()->Dimension(); i++) {
@@ -832,9 +779,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 				  precision, maxViolCouSol);
 	if(!isFeasInt) {
 
-#ifdef FM_TRACE_NLP
-	  printf("CouenneProblem::checkNLP2(): solution is infeasible (some aux vars not integer feasible; violation: %12.10g)\n", maxViolCouSol);
-#endif
+	  Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): solution is infeasible (some aux vars not integer feasible; violation: %12.10g)\n", maxViolCouSol);
 	  
 	  isFeasCou = false;
 	}
@@ -847,9 +792,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 					precision, maxViolCouSol);
 	if(!isFeasCouBnd) {
 	  
-#ifdef FM_TRACE_NLP
-	  printf("CouenneProblem::checkNLP2(): solution is infeasible (some bounds are violated; violation: %12.10g)\n", maxViolCouSol);
-#endif
+	  Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): solution is infeasible (some bounds are violated; violation: %12.10g)\n", maxViolCouSol);
 	  
 	  isFeasCou = false;
 	}
@@ -860,9 +803,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 				     precision, maxViolCouSol);
 	if(!isFeasCouAux) {
 	  
-#ifdef FM_TRACE_NLP
-	  printf("CouenneProblem::checkNLP2(): solution is infeasible (violated Aux; violation: %12.10g)\n", maxViolCouSol);
-#endif
+	  Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): solution is infeasible (violated Aux; violation: %12.10g)\n", maxViolCouSol);
 	  
 	  isFeasCou = false;
 	}
@@ -873,17 +814,13 @@ bool CouenneProblem::checkNLP2(const double *solution,
 				       precision, maxViolCouSol);
 	if(!isFeasCouCons) {
 	  
-#ifdef FM_TRACE_NLP
-	  printf("CouenneProblem::checkNLP2(): solution is infeasible (violated constraint; violation: %12.10g)\n", maxViolCouSol);
-#endif
+	  Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): solution is infeasible (violated constraint; violation: %12.10g)\n", maxViolCouSol);
 	  
 	  isFeasCou = false;
 	}
       }
     
-#ifdef FM_TRACE_NLP
-      printf("CouenneProblem::checkNLP2(): end check solution (maxViol: %12.10g)\n", maxViolCouSol);
-#endif
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): end check solution (maxViol: %12.10g)\n", maxViolCouSol);
     
       double objErrorCouSol = objCouSol - obj;
       if(!careAboutObj) {
@@ -956,43 +893,36 @@ bool CouenneProblem::checkNLP2(const double *solution,
       recBSol->setModSol(couRecSol, nVars(), objRecSol, maxViolRecSol);
       maxViol = maxViolRecSol;
       
-#ifdef FM_TRACE_NLP
-      printf("CouenneProblem::checkNLP2(): select recomputed_solution (maxViol: %12.10g)\n", maxViol);
-#endif
-      
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): select recomputed_solution (maxViol: %12.10g)\n", maxViol);      
     }
     else {
       recBSol -> setModSol(couSol, nVars(), objCouSol, maxViolCouSol);
       maxViol = maxViolCouSol;
       
-#ifdef FM_TRACE_NLP
-      printf("CouenneProblem::checkNLP2(): select solution (maxViol: %12.10g)\n", maxViol);
-
-#endif
-      
+      Jnlst () -> Printf (Ipopt::J_ALL, J_PROBLEM, "CouenneProblem::checkNLP2(): select solution (maxViol: %12.10g)\n", maxViol);      
     }
   }
 
-#ifdef FM_TRACE_NLP
-  if(isFeas) {
+  if (Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) {
+    if(isFeas) {
 
-    // printf ("Solution: [");
-    // for (int i = 0; i < nVars (); ++i)
-    //   printf ("%g ", couSol [i]);
-    // printf ("]\n");
+      // printf ("Solution: [");
+      // for (int i = 0; i < nVars (); ++i)
+      //   printf ("%g ", couSol [i]);
+      // printf ("]\n");
 
-    printf ("checkNLP2(): RETURN: selected solution is feasible (maxViol: %g)\n", maxViol);
-  }
-  else {
-    printf ("checkNLP2(): RETURN: modified_solution and solution are infeasible\n");
-    if(!stopAtFirstViol) {
-      printf("(maxViol: %g)\n", maxViol);
+      printf ("checkNLP2(): RETURN: selected solution is feasible (maxViol: %g)\n", maxViol);
     }
     else {
-      printf("\n");
+      printf ("checkNLP2(): RETURN: modified_solution and solution are infeasible\n");
+      if(!stopAtFirstViol) {
+	printf("(maxViol: %g)\n", maxViol);
+      }
+      else {
+	printf("\n");
+      }
     }
   }
-#endif
 
   delete[] couSol;
   delete[] couRecSol;
