@@ -33,8 +33,7 @@ void cleanZeros (std::vector <std::pair <exprVar *, CouNumber> > &lcoeff) {
   size_t size = lcoeff.size ();
   
   while (size-- > 0) {
-    if ((i -> second ==  0.) || 
-	(i -> second == -0.)) {
+    if (i -> second ==  0.) { // or equivalently, i -> second == -0.
       lcoeff.erase (i);
       i = lcoeff.begin () + ind;
     } else {

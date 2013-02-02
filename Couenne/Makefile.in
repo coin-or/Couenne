@@ -835,7 +835,7 @@ uninstall-info: uninstall-info-recursive
 ########################################################################
 
 test: all
-	cd test; $(MAKE) test
+	cd test && $(MAKE) test
 
 unitTest: test
 

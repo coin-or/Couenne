@@ -56,7 +56,7 @@ EXTRA_DIST = test/grandTest.sh.in
 ########################################################################
 
 test: all
-	cd test; $(MAKE) test
+	cd test && $(MAKE) test
 
 unitTest: test
 

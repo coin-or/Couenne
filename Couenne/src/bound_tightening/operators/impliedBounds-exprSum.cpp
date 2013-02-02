@@ -120,8 +120,8 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     for (register exprGroup::lincoeff::iterator el = lcoe.begin ();
 	 el != lcoe.end (); ++el) {
 
-      CouNumber coe = el -> second;
-      int       ind = el -> first -> Index ();
+      register CouNumber coe = el -> second;
+      register int       ind = el -> first -> Index ();
 
       if      (coe >  0.) {I1 [ipos] = ind; C1 [ipos++] = coe;}
       else if (coe < -0.) {I2 [ineg] = ind; C2 [ineg++] = coe;}

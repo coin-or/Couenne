@@ -23,7 +23,7 @@ SUBDIRS = $(subdirs)
 ########################################################################
 
 test: all
-	cd Couenne; $(MAKE) test
+	cd Couenne && $(MAKE) test
 
 unitTest: test
 
@@ -37,7 +37,7 @@ tests: all
 unitTests: tests
 
 doxydoc:
-	cd ${srcdir}; doxygen doxydoc/doxygen.conf
+	cd ${srcdir} && doxygen doxydoc/doxygen.conf
 
 .PHONY: test unitTest tests unitTests doxydoc
 
