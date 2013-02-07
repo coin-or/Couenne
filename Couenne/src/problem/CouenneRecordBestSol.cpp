@@ -214,7 +214,6 @@ void CouenneRecordBestSol::setSol(const double *givenSol, const int givenCard,
 	delete [] modSol;
 	modSol = newSol;
 	cardSol = givenCard;
-
     }
   }
   CoinCopyN(givenSol, givenCard, sol);
@@ -257,14 +256,10 @@ void CouenneRecordBestSol::update() {
 } /* update */
 
 /*****************************************************************************/
-int CouenneRecordBestSol::compareAndSave(const double *solA, const double solAVal,
-				  const double solAMaxViol, 
-				  const bool solAIsFeas,
-				  const double *solB, const double solBVal,
-				  const double solBMaxViol, 
-				  const bool solBIsFeas,
-				  const int cardSol,
-				  const double precision) {
+int CouenneRecordBestSol::compareAndSave(const double *solA, const double solAVal, const double solAMaxViol, const bool solAIsFeas,
+					 const double *solB, const double solBVal, const double solBMaxViol, const bool solBIsFeas,
+					 const int cardSol,
+					 const double precision) {
   int retval = -2;
   if(solBIsFeas) {
     if(solAIsFeas) {

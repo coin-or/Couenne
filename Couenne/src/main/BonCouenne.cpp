@@ -239,6 +239,12 @@ Auxiliaries:     %8d (%d integer)\n\n",
 	exit(1);
       }
 
+      // round cbcSol's integer coordinates
+
+      // for (int i=0; i<modelNvars; i++)
+      // 	if (cp -> Var (i) -> isDefinedInteger ())
+      // 	  cbcSol [i] = COUENNE_round (cbcSol [i]);
+
       if (cbcObjVal < 1e49 && !infeasible) {
 
 #ifdef FM_CHECKNLP2
@@ -264,28 +270,32 @@ Auxiliaries:     %8d (%d integer)\n\n",
       double modCouenneSolVal= 1e100, modCouenneSolMaxViol = 0;
       bool couenneSolIsFeas = false;
 
+      // round couenneSol's integer coordinates
+
+      // for (int i=0; i<modelNvars; i++)
+      // 	if (cp -> Var (i) -> isDefinedInteger ())
+      // 	  couenneSol [i] = COUENNE_round (couenneSol [i]);
+
       if(couenneSol != NULL) {
 #ifdef FM_CHECKNLP2
+	int cMS = rs->getCardModSol();
 	couenneSolIsFeas = cp->checkNLP2(couenneSol, 0, false, 
 					 false, true, 
 					 cp->getFeasTol());
-	int cMS = rs->getCardModSol();
 	CoinCopyN(rs->getModSol(cMS), cMS, modCouenneSol);
 	modCouenneSolVal = rs->getModSolVal();
 	modCouenneSolMaxViol = rs->getModSolMaxViol();
 #else /* not FM_CHECKNLP2 */
-	couenneSolIsFeas = cp->checkNLP(couenneSol, modCouenneSolVal, true);
 	int cMS = cp->nVars();
+	couenneSolIsFeas = cp->checkNLP(couenneSol, modCouenneSolVal, true);
 	CoinCopyN(couenneSol, cMS, modCouenneSol);
 	modCouenneSolMaxViol = cp->getFeasTol();
 #endif /* not FM_CHECKNLP2 */
 	foundSol = true;
       }
 
-      retcomp = rs -> compareAndSave (modCbcSol, modCbcSolVal, 
-				      modCbcSolMaxViol, cbcSolIsFeas,
-				      modCouenneSol, modCouenneSolVal, 
-				      modCouenneSolMaxViol, couenneSolIsFeas, 
+      retcomp = rs -> compareAndSave (modCbcSol,     modCbcSolVal,     modCbcSolMaxViol,     cbcSolIsFeas,
+				      modCouenneSol, modCouenneSolVal, modCouenneSolMaxViol, couenneSolIsFeas, 
 				      modelNvars, cp->getFeasTol());
 
       // switch (retcomp) {
