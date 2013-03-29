@@ -21,7 +21,7 @@ extern "C" {
 
   /* Lapack routine to compute orthonormal eigenvalues/eigenvectors (in Fortran) */
 
-  void F77_FUNC(dsyevx,DSYEVX) (
+  void F77_FUNC(dsyev,DSYEV) (
 				  char   *,
 				  char   *,
 				  char   *,
@@ -96,7 +96,7 @@ int dsyevx_interface (int n, double *A, int &m,
   // Ipopt::IpLapackDsyev (true, n, A, lda, w, info);
 
   F77_FUNC
-    (dsyevx,DSYEVX)
+    (dsyev,DSYEV)
     (&jobz, &range, &uplo, &n, 
      A, &lda, 
      &vl, &vu, &il, &iu,
