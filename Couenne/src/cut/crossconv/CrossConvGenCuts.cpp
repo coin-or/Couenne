@@ -16,6 +16,10 @@ using namespace Couenne;
 /// the main CglCutGenerator
 void CouenneCrossConv::generateCuts (const OsiSolverInterface &, 
 				     OsiCuts &, 
-				     const CglTreeInfo) const {
+				     const CglTreeInfo)
+#if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
+   const
+#endif
+{
 
 }

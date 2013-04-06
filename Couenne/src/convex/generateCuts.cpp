@@ -93,7 +93,11 @@ void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p,
 
 void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 					OsiCuts &cs, 
-					const CglTreeInfo info) const {
+					const CglTreeInfo info)
+#if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
+  const
+#endif
+  {
 
   // if si.lb(objInd) > cutoff,
   //   return infeasCut

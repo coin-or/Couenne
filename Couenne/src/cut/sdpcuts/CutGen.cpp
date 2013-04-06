@@ -38,7 +38,11 @@ using namespace Couenne;
 
 // sdpcut separator -- all minors
 void CouenneSdpCuts::generateCuts (const OsiSolverInterface &si, OsiCuts &cs, 
-				   const CglTreeInfo info) const {
+				   const CglTreeInfo info)
+#if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
+  const
+#endif
+  {
 
   // only at root node once
 

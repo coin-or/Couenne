@@ -58,7 +58,11 @@ int combine (CouenneProblem *p,
 /// the main CglCutGenerator
 void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si, 
 				      OsiCuts &cs, 
-				      const CglTreeInfo info) const {
+				      const CglTreeInfo info)
+#if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
+  const
+#endif
+  {
 
   // don't perform this is cs has been added an infeasible cut (a
   // result of some bound tightening procedure discovering an

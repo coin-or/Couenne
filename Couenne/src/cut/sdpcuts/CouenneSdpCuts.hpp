@@ -11,6 +11,7 @@
 #ifndef CouenneSdpCuts_hpp
 #define CouenneSdpCuts_hpp
 
+#include "CglConfig.h"
 #include "CglCutGenerator.hpp"
 #include "BonRegisteredOptions.hpp"
 #include "IpOptionsList.hpp"
@@ -77,7 +78,11 @@ namespace Couenne {
     /// The main CglCutGenerator
     virtual void generateCuts (const OsiSolverInterface &, 
 			       OsiCuts &, 
-			       const CglTreeInfo = CglTreeInfo ()) const;
+			       const CglTreeInfo = CglTreeInfo ())
+#if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
+    const
+#endif
+    ;
 
     /// Add list of options to be read from file
     static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions);
