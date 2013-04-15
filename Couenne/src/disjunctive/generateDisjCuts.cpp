@@ -22,7 +22,11 @@ using namespace Couenne;
 /// generate disjunctive cuts
 void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si, 
 				    OsiCuts &cs, 
-				    const CglTreeInfo info) const {
+				    const CglTreeInfo info)
+#if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
+  const
+#endif
+{
 
   // Check if cs contains only one cut and if it is of the form 1 <=
   // x0 <= -1. That means a previous cut generator has determined that

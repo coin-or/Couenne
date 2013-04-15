@@ -14,6 +14,7 @@
 //#include "BonRegisteredOptions.hpp"
 
 #include "BonOaDecBase.hpp"
+#include "CglConfig.h"
 #include "CglCutGenerator.hpp"
 #include "OsiRowCut.hpp"
 #include "BonAuxInfos.hpp"
@@ -154,7 +155,11 @@ class CouenneCutGenerator: public CglCutGenerator {
   /// the main CglCutGenerator
   void generateCuts (const OsiSolverInterface &, 
 		     OsiCuts &, 
-		     const CglTreeInfo = CglTreeInfo ()) const;
+		     const CglTreeInfo = CglTreeInfo ())
+#if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
+   const
+#endif
+  ;
 
   /// create cut and check violation. Insert and return status
   int createCut (OsiCuts &, // cutset to insert

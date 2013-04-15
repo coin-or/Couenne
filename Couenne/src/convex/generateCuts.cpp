@@ -91,7 +91,11 @@ void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p,
 
 void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 					OsiCuts &cs, 
-					const CglTreeInfo info) const {
+					const CglTreeInfo info)
+#if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
+  const
+#endif
+  {
 
   // check if out of time or if an infeasibility cut (iis of type 0)
   // was added as a result of, e.g., pruning on BT. If so, no need to

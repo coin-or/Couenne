@@ -53,12 +53,6 @@ void CouenneAggrProbing::registerOptions(Ipopt::SmartPtr <Bonmin::RegisteredOpti
   // Nothing for the moment, but will be added later as needed
 }
 
-void CouenneAggrProbing::generateCuts(const OsiSolverInterface& solver,
-				      OsiCuts& cuts, 
-				      const CglTreeInfo info) const {
-  // Empty for the moment (cannot be used automatically in Branch-and-Bound)
-}
-
 double CouenneAggrProbing::getMaxTime() const {
   return maxTime_;
 }

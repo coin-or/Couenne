@@ -27,7 +27,11 @@ using namespace Couenne;
 
 void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 				    OsiCuts &cs,
-				    const CglTreeInfo treeInfo) const {
+				    const CglTreeInfo treeInfo)
+#if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
+  const
+#endif
+  {
 
   /// Only run this if the latest FBBT terminated on the iteration
   /// limit, as this suggest that the FPLP might be of some help.

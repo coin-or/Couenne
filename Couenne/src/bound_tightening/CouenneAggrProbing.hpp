@@ -14,6 +14,7 @@
 #include "BonRegisteredOptions.hpp"
 
 #include "BonOaDecBase.hpp"
+#include "CglConfig.h"
 #include "CglCutGenerator.hpp"
 #include "OsiColCut.hpp"
 #include "OsiSolverInterface.hpp"
@@ -54,7 +55,11 @@ namespace Couenne {
     /// The main CglCutGenerator; not implemented yet
     void generateCuts(const OsiSolverInterface & solver,
 		      OsiCuts& cuts, 
-		      const CglTreeInfo = CglTreeInfo ()) const;
+		      const CglTreeInfo = CglTreeInfo ())
+#if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
+    const
+#endif
+    { }
 
     /// Probe one variable (try to tigthen the lower or the upper
     /// bound, depending on the value of the second argument), so that
