@@ -28,7 +28,9 @@ namespace Couenne {
 #define COUENNE_EPS_SIMPL     1.e-20
 
 // for bounds
+#ifndef COUENNE_INFINITY
 #define COUENNE_INFINITY      1.e+50
+#endif
 
 // for cuts, ensures stability and scaling in Clp
 #define COU_MAX_COEFF     1.e+9
