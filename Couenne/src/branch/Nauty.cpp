@@ -109,7 +109,7 @@ Nauty::addElement(int ix, int jx)
 {
   // Right now die if bad index.  Can throw exception later
   //printf("addelement %d %d \n", ix, jx);
-  assert(ix < n_ and jx < n_);
+  assert(ix < n_ && jx < n_);
   if(ix != jx){  //No Loops
     set *gv = GRAPHROW(G_, ix, m_);
     ADDELEMENT(gv, jx);
@@ -185,7 +185,7 @@ void
 Nauty::deleteElement(int ix, int jx)
 {
   // Right now die if bad index.  Can throw exception later
-  assert(ix < n_ and jx < n_);
+  assert(ix < n_ && jx < n_);
   set *gv = GRAPHROW(G_, ix, m_);
   if (ISELEMENT(gv, jx)) {
     DELELEMENT(gv, jx);
