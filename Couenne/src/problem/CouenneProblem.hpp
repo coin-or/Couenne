@@ -126,7 +126,7 @@ class Nauty;
   };
 
 struct less_than_str {
-  inline const bool operator() (register const  char *a, register const char *b)
+  inline bool operator() (register const  char *a, register const char *b) const
   {return strcmp (a, b) < 0;}
 };
 
