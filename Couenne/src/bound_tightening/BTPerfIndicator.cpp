@@ -117,7 +117,7 @@ void CouenneBTPerfIndicator::update (CouNumber *lb, CouNumber *ub, int depth) co
 
   ++nRuns_;
 
-  ratio /= log (2); // so that it is readable in terms of halvings of the bound interval
+  ratio /= log ((double) 2.); // so that it is readable in terms of halvings of the bound interval
 
   boundRatio_      = (boundRatio_      * weightSum_ + curWei * ratio)   / newWS;
   shrunkInf_       = (shrunkInf_       * weightSum_ + curWei * nShr)    / newWS;
