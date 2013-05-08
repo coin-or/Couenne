@@ -114,13 +114,13 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
       std::set <int> varNumIndices;
 
-      for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::iterator 
+      for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator 
 	     rowIt  = (*i) -> getRows (). begin (); 
 	   rowIt   != (*i) -> getRows (). end   (); ++rowIt) {
 
 	varNumIndices. insert (rowIt -> first);
 
-	for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::iterator 
+	for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
 	       elemIt  = rowIt -> second -> getElements () . begin ();
 	     elemIt   != rowIt -> second -> getElements () . end   (); ++elemIt)
 
@@ -130,7 +130,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
       // Second: check every row for elements (i,j) not in this row by
       // parallel scanning of varNumINdices
 
-      for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::iterator 
+      for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator 
 	     rowIt  = (*i) -> getRows (). begin (); 
 	   rowIt   != (*i) -> getRows (). end   (); ++rowIt) {
 
@@ -138,7 +138,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
 	std::set <int>::iterator vniIt = varNumIndices . begin ();
 
-	for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::iterator 
+	for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
 	       elemIt  = rowIt -> second -> getElements () . begin ();
 	     elemIt   != rowIt -> second -> getElements () . end   (); ++elemIt) {
 
@@ -206,7 +206,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
     	    (*i) -> getCols () . size ());
 #endif
 
-    for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
+    for (std::set <std::pair <int, CouenneSparseVector *> >::const_iterator 
 	   j  = (*i) -> getCols () . begin (); 
 	 j   != (*i) -> getCols () . end   (); ++j)
 
