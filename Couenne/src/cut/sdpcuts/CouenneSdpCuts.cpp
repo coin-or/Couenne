@@ -21,6 +21,8 @@
 
 #include "CoinTime.hpp"
 
+#include <set>
+
 using namespace Couenne;
 
 //#define DEBUG
@@ -115,7 +117,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
       std::set <int> varNumIndices;
 
       for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator 
-	     rowIt  = (*i) -> getRows (). begin (); 
+	     rowIt  = (*i) -> getRows (). begin ();
 	   rowIt   != (*i) -> getRows (). end   (); ++rowIt) {
 
 	varNumIndices. insert (rowIt -> first);

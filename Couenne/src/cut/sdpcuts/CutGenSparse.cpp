@@ -20,6 +20,10 @@
 
 #include "dsyevx_wrapper.hpp"
 
+#ifdef WIN32
+#define drand48() ((double) (rand ()) / RAND_MAX)
+#endif
+
 //#define DEBUG
 
 const bool WISE_SPARSIFY = true;

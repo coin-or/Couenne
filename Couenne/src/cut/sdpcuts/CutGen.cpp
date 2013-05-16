@@ -108,7 +108,7 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
 
   int indI = 0;
 
-  for (std::set <std::pair <int, CouenneSparseVector *> >::iterator 
+  for (std::set <std::pair <int, CouenneSparseVector *> >::const_iterator 
 	 i  = minor -> getRows () . begin ();
        i   != minor -> getRows () . end   (); ++i, ++indI) {
 
@@ -120,7 +120,7 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
       majInd = (i -> first == problem_ -> nVars ()) ? n-1 : indMap [i -> first],
       indJ   = 0;
 
-    for (std::set <CouenneScalar *>::iterator 
+    for (std::set <CouenneScalar *>::const_iterator 
 	   j  = (*i) . second -> getElements () . begin ();
 	 j   != (*i) . second -> getElements () . end   (); ++j, ++indJ) {
 
