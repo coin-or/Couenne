@@ -208,7 +208,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
     	    (*i) -> getCols () . size ());
 #endif
 
-    for (std::set <std::pair <int, CouenneSparseVector *> >::const_iterator 
+    for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator 
 	   j  = (*i) -> getCols () . begin (); 
 	 j   != (*i) -> getCols () . end   (); ++j)
 

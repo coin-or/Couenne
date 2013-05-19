@@ -238,7 +238,7 @@ void CouenneSparseVector::print () const {
 
     (*i) -> print ();
 
-    if (!(++cnt) % WRAP)
+    if ((++cnt) % WRAP == 0)
       printf ("\n   ");
   }
 
