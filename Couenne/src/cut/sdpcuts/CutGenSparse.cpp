@@ -20,8 +20,8 @@
 
 #include "dsyevx_wrapper.hpp"
 
-#ifdef WIN32
-#define drand48() ((double) (rand ()) / RAND_MAX)
+#ifdef WIN_
+#define drand48() ((double) (rand () * (RAND_MAX + 1) + rand ()) / (RAND_MAX + 1) * (RAND_MAX + 1))
 #endif
 
 //#define DEBUG
@@ -52,7 +52,7 @@ void CouenneSdpCuts::sparsify2 (const int n,
     running_n = n,
     best_idx,
     rnsq     = (running_n - 1) * (running_n - 1),
-    card_ev_best;
+    card_ev_best = running_n - 1;
 
   double
 

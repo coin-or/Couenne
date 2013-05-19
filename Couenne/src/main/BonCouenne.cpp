@@ -78,6 +78,10 @@ extern "C" {
 
 int main (int argc, char *argv[]) {
 
+#ifdef WIN_
+  srand ((long) time (NULL));
+#endif
+
   //CoinSighandler_t saveSignal = SIG_DFL;
   //saveSignal = signal (SIGINT, signal_handler);
 

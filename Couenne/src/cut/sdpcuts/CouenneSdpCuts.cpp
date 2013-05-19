@@ -103,8 +103,6 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
   if (fillMissingTerms_) {
 
-    int nOld = problem_ -> nVars ();
-
     for (std::vector <CouenneExprMatrix *>::iterator 
 	   i  = minors_ . begin ();
 	 i   != minors_ . end   (); ++i) {
