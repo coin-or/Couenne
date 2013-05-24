@@ -81,6 +81,8 @@ double CouenneFeasPump::findSolution (double* &iSol, int niter, int* nsuciter) {
 #endif      
   {
 
+    milp_ -> messageHandler () -> setLogLevel (0);
+
      if (problem_ -> nIntVars () > 0) milp_ -> branchAndBound ();
      else                             milp_ -> initialSolve ();
 

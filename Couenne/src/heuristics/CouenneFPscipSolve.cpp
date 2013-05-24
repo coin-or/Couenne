@@ -88,9 +88,8 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
   }
 
   // initialize SCIP
-  SCIP_CALL( SCIPcreate(&scip) );
+  SCIP_CALL( SCIPcreate (&scip) );
   assert(scip != NULL);
-
    
   // include default SCIP plugins
   SCIP_CALL( SCIPincludeDefaultPlugins(scip) );
