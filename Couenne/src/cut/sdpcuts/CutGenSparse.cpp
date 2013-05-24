@@ -20,7 +20,7 @@
 
 #include "dsyevx_wrapper.hpp"
 
-#ifdef WIN_
+#ifdef _WIN32
 #define drand48() ((double) (rand () * (RAND_MAX + 1) + rand ()) / (RAND_MAX + 1) * (RAND_MAX + 1))
 #endif
 
