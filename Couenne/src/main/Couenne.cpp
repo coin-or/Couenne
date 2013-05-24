@@ -37,6 +37,10 @@
 #include "CouenneCutGenerator.hpp" 
 #include "CouenneProblem.hpp"
 
+#ifdef COIN_HAS_SCIP
+#include "lpiswitch.h"
+#endif
+
 
 namespace Ipopt {
   class OptionsList;
@@ -77,6 +81,10 @@ bool parseCommandLine(int argc, char* argv[], Ipopt::SmartPtr<Ipopt::OptionsList
 
 int main (int argc, char *argv[]) {
   WindowsErrorPopupBlocker();
+
+#ifdef COIN_HAS_SCIP
+  SCIPlpiSwitchSetDefaultSolver();
+#endif
 
   double time_start = CoinCpuTime();
   

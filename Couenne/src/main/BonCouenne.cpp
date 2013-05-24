@@ -10,16 +10,12 @@
 //
 // Date : 12/19/2006
 
-#if defined(_MSC_VER)
-// Turn off compiler warning about long names
-#  pragma warning(disable:4786)
-#endif
-
 #include <iomanip>
 #include <fstream>
 
 #include <stdlib.h>
 
+#include "CoinPragma.hpp"
 #include "CoinTime.hpp"
 #include "CoinError.hpp"
 #include "BonCouenneInterface.hpp"
@@ -55,6 +51,10 @@ using namespace Couenne;
 #include "CouenneBranchingObject.hpp"
 #endif
 
+#ifdef COIN_HAS_SCIP
+#include "lpiswitch.h"
+#endif
+
 #include "CoinSignal.hpp"
 
 #if 0
@@ -79,6 +79,7 @@ extern "C" {
 int main (int argc, char *argv[]) {
 
 #ifdef WIN_
+  // FIXME really want Couenne runs to be nondeterministic?
   srand ((long) time (NULL));
 #endif
 
@@ -92,6 +93,10 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
   WindowsErrorPopupBlocker();
   using namespace Ipopt;
+
+#ifdef COIN_HAS_SCIP
+  SCIPlpiSwitchSetDefaultSolver();
+#endif
 
   char * pbName = NULL;
 
