@@ -24,7 +24,9 @@
 #include "CouenneTNLP.hpp"
 #include "CouenneSparseMatrix.hpp"
 
+#ifdef COIN_HAS_SCIP
 #include "lpiswitch.h"
+#endif
 
 using namespace Ipopt;
 using namespace Couenne;
@@ -140,7 +142,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
     if (milpMethod_ < 0)
       milpMethod_ = 0;
     SCIPlpiSwitchSetSolver (SCIP_LPISW_CLP);
-    //    SCIPlpiSwitchSetDefaultSolver ();
+    //SCIPlpiSwitchSetDefaultSolver ();
 #else
     if (s == "yes") 
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_usescip to true, but SCIP is not installed.\n");
