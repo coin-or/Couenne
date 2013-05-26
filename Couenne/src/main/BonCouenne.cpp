@@ -51,9 +51,9 @@ using namespace Couenne;
 #include "CouenneBranchingObject.hpp"
 #endif
 
-// #ifdef COIN_HAS_SCIP
-// #include "lpiswitch.h"
-// #endif
+#ifdef COIN_HAS_SCIP
+#include "lpiswitch.h"
+#endif
 
 #include "CoinSignal.hpp"
 
@@ -94,9 +94,9 @@ Instructions: http://www.coin-or.org/Couenne\n",
   WindowsErrorPopupBlocker();
   using namespace Ipopt;
 
-// #ifdef COIN_HAS_SCIP
-//   SCIPlpiSwitchSetDefaultSolver();
-// #endif
+#ifdef COIN_HAS_SCIP
+  SCIPlpiSwitchSetSolver(SCIP_LPISW_CLP);
+#endif
 
   char * pbName = NULL;
 
