@@ -93,7 +93,7 @@ inline void check_and_insert (int indMaj, int indMin,
 			      std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind> &vecMaj, 
 			      expression *elem) {
 
-  std::          pair <int, CouenneSparseVector *> findme (indMaj, NULL);
+  std::          pair <int, CouenneSparseVector *> findme (indMaj, (CouenneSparseVector *) NULL);
   std::set <std::pair <int, CouenneSparseVector *>,
 	    CouenneExprMatrix::compare_pair_ind>::const_iterator check = vecMaj.find (findme);
 
