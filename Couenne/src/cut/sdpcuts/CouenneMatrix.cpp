@@ -88,24 +88,25 @@ void CouenneSparseVector::add_element (int index, expression *elem) {
 long unsigned int CouenneExprMatrix::size () 
 {return CoinMax (row_ . size (), col_ . size ());}
 
+/// used by add_elem below
+inline void check_and_insert (int indMaj, int indMin, 
+			      std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind> &vecMaj, 
+			      expression *elem) {
+
+  std::          pair <int, CouenneSparseVector *> findme (indMaj, NULL);
+  std::set <std::pair <int, CouenneSparseVector *>,
+	    CouenneExprMatrix::compare_pair_ind>::const_iterator check = vecMaj.find (findme);
+
+  if (check == vecMaj. end ()) {
+    std::pair <int, CouenneSparseVector *> new_vector (indMaj, new CouenneSparseVector);
+    new_vector.second -> add_element (indMin, elem);
+    vecMaj. insert (new_vector);
+  } else check -> second -> add_element (indMin, elem);
+}
+
 
 /// Insertion into matrix
 void CouenneExprMatrix::add_element (int rowInd, int colInd, expression *elem) {
-
-  // don't duplicate code, macroize
-
-#define check_and_insert(indMaj,indMin,vecMaj,elem)                                                  \
-  {									        	 	     \
-    std::          pair <int, CouenneSparseVector *> findme (indMaj, NULL);  	        	     \
-    std::set <std::pair <int, CouenneSparseVector *>,                                                \
-	      CouenneExprMatrix::compare_pair_ind>::const_iterator check = vecMaj.find (findme);     \
-                                                                                                     \
-    if (check == vecMaj. end ()) {					        	 	     \
-      std::pair <int, CouenneSparseVector *> new_vector (indMaj, new CouenneSparseVector);           \
-      new_vector.second -> add_element (indMin, elem);			        	 	     \
-      vecMaj. insert (new_vector);					        	 	     \
-    } else check -> second -> add_element (indMin, elem);	                                     \
-  }
 
   check_and_insert (rowInd, colInd, row_, elem);
   if (elem -> code () == COU_EXPRCONST) 
