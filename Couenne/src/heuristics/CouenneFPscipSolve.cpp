@@ -463,13 +463,14 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	// do not store too many or too poor solutions 
 	for(int i=1; i<nscipsols && nstoredsols < 10 && 
 	      SCIPgetSolOrigObj(scip,scipsols[i]) <= cutoffbound; i++){
-	  double* tmpsol;
 
-	  tmpsol = new CouNumber [nvars];
+	  double* tmpsol = new CouNumber [nvars];
            
 	  // get solution values
 	  SCIP_CALL( SCIPgetSolVals(scip, scipsols[i], problem_ -> nVars (), vars, tmpsol) );
 	  CouenneFPsolution couennesol = CouenneFPsolution (problem_, tmpsol);
+
+	  delete [] tmpsol;
 
 	  // add solutions to the pool if they are not in the tabu list
 	  if (   tabuPool_      . find (couennesol) == tabuPool_      . end () 

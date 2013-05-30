@@ -109,9 +109,8 @@ namespace Couenne {
     expression *updateNLPObj (const double *);
 
     /// admits a (possibly fractional) solution and fixes the integer
-    /// components in the nonlinear problem for later
-    /// re-solve. Returns false if restriction infeasible, true
-    /// otherwise
+    /// components in the nonlinear problem for later re-solve.
+    /// Returns false if restriction infeasible, true otherwise
     bool fixIntVariables (const double *sol);
 
     /// initialize options to be read later

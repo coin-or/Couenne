@@ -83,22 +83,22 @@ double CouenneFeasPump::findSolution (double* &iSol, int niter, int* nsuciter) {
 
     milp_ -> messageHandler () -> setLogLevel (0);
 
-     if (problem_ -> nIntVars () > 0) milp_ -> branchAndBound ();
-     else                             milp_ -> initialSolve ();
+    if (problem_ -> nIntVars () > 0) milp_ -> branchAndBound ();
+    else                             milp_ -> initialSolve ();
 
-     if (!iSol)
-       iSol = new CouNumber [problem_ -> nVars ()];
+    if (!iSol)
+      iSol = new CouNumber [problem_ -> nVars ()];
 
-     if (milp_ -> getColSolution ())
-       CoinCopyN (milp_ -> getColSolution (), problem_ -> nVars (), iSol);
-     else {
+    if (milp_ -> getColSolution ())
+      CoinCopyN (milp_ -> getColSolution (), problem_ -> nVars (), iSol);
+    else {
 
-       if (iSol)
-	 delete [] iSol;
-       iSol = NULL;
-     }
+      if (iSol)
+	delete [] iSol;
+      iSol = NULL;
+    }
 
-     obj = milp_ -> getObjValue ();
+    obj = milp_ -> getObjValue ();
   }
 
   return obj;

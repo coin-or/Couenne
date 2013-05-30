@@ -95,6 +95,7 @@ Instructions: http://www.coin-or.org/Couenne\n",
   using namespace Ipopt;
 
 #ifdef COIN_HAS_SCIP
+  //SCIPlpiSwitchSetDefaultSolver(); 
   SCIPlpiSwitchSetSolver(SCIP_LPISW_CLP);
 #endif
 
