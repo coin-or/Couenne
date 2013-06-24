@@ -209,7 +209,7 @@ class exprAux: public exprVar {
 
 struct compExpr {
   inline bool operator () (exprAux* e0, exprAux* e1) const
-  {return (e0 -> Image () -> compare (*(e1 -> Image ())) < 0);}
+  {return ((e0 -> sign () < e1 -> sign ()) || (e0 -> Image () -> compare (*(e1 -> Image ())) < 0));}
 };
 
 
