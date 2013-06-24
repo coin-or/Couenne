@@ -98,6 +98,11 @@ const CouNumber estProdEps = 1e-6;
   }
 
 /***********************************************************************/
+// returns
+// 4 if not a variable object (deemed good)
+// 3 if variable object and is good
+// 2 if variable object and is not good (i.e. fixed variable)
+// 1 if OsiSimpleBranchingObject and not good (deprecated)
 int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
 				       OsiBranchingInformation *info,
 				       OsiObject **object, const int iObject,
@@ -105,7 +110,7 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
 
   int vInd = object [iObject] -> columnNumber ();
 
-  if (vInd < 0) return 3;  // not a variable object, so deem it good
+  if (vInd < 0) return 4;  // not a variable object, so deem it good
 
   bool varIsInt = solver -> isInteger (vInd);
 
@@ -210,6 +215,8 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
      We can pick up branch from whichObject() and whichWay()
      We can pick up a forced branch (can change bound) from whichForcedObject() and whichForcedWay()
      If we have a solution then we can pick up from goodObjectiveValue() and goodSolution()
+
+Note: Must not return 4 for a non variable object
   */
   int CouenneChooseStrong::chooseVariable (OsiSolverInterface * solver,
 					   OsiBranchingInformation *info,
@@ -254,7 +261,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
     int numberStrong = numberStrong_;
 
     if (isRoot) {
-      numberStrong = CoinMax(numberStrong_, numberStrongRoot_);
+      numberStrong = numberStrongRoot_;
     }
 
     if (numberUnsatisfied_) {
@@ -271,7 +278,11 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
       int numberLeft = CoinMin (numberStrong - numberStrongDone_, numberUnsatisfied_);
 
       results_.clear();
-      int returnCode = 0;
+
+      // All look satisfied;
+      //useful if all objects considered for strong branching use pseudo costs
+      int returnCode = 1;
+
       int returnCodeSB = 0;
       bestObjectIndex_ = -1;
       bestWhichWay_ = -1;
@@ -465,7 +476,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 			(1.0 - MAXMIN_CRITERION) * maxVal);
 	    }
 
-	    if((needBranch == 3) &&
+	    if((needBranch >= 3) &&
 	       saveBestCand(object, iObject, value, upEstimate, downEstimate,
 			    bestTrustedVal1, 
 			    bestTrustedVal2, bestObjectIndex_, bestWhichWay_)) {
@@ -545,7 +556,7 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	  
 	  
 	  // store bad candidates in secondary best
-	  if(needBranch != 3) {
+	  if(needBranch < 3) {
 	    if(saveBestCand(object, iObject, value, 
 			    upEstimate, downEstimate,
 			    bestTrusted2Val1, 
@@ -565,6 +576,11 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 			    upEstimate, downEstimate,
 			    bestTrustedVal1, 
 			    bestTrustedVal2, bestObjectIndex_, bestWhichWay_)) {
+              if(returnCode == 1) { // first saved object
+                                    // is using pseudo-cost
+                returnCode = 0;
+              }
+
 	      returnCode = (returnCode ? 3 : 0); // if returnCode was 2 or 3
                                                  // it becomes 3
 	    }
@@ -581,7 +597,13 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	  bestObjectIndex_ = bestObjectIndex2;
 	  bestWhichWay_ = bestWhichWay2;
 	  bestTrustedVal1 = bestTrusted2Val1;
-	  returnCode = 4;
+          if(goodCandidate(solver, info, object,  
+                           bestObjectIndex_, prec) != 4) {
+            returnCode = 4;
+          }
+          else {
+            returnCode = 3;
+          }
 	}
       }
 
@@ -603,11 +625,26 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
 	if(problem_->doPrint_) {
 	  if(objectVarInd >= 0) {
             double vUb = solver->getColUpper()[objectVarInd];
-            double vLb = solver->getColLower()[objectVarInd];
+            char strUb[400], strLb[400];
+	    if(vUb > 1e50) {
+	      sprintf(strUb, "+inf");
+	    }
+	    else {
+	      sprintf(strUb, "%f", vUb);
+	    }
+	    double vLb = solver->getColLower()[objectVarInd];
+	    if(vLb < -1e50) {
+	      sprintf(strLb, "-inf");
+	    }
+	    else {
+	      sprintf(strLb, "%f", vLb);
+	    }
             double vSolI = info->solution_[objectVarInd];
             double vSolS = solver->getColSolution()[objectVarInd];
-            printf("Branch on object %d (var: %d): solInfo: %10.4f  SolSolver: %10.4f low: %10.4f  up: %10.4f\n",
-                   bestObjectIndex_, objectVarInd, vSolI, vSolS, vLb, vUb);
+            printf("Branch on object %d (var: %d): solInfo: %10.4f  SolSolver: %10.4f low: %s  up: %s\n",
+                   bestObjectIndex_, objectVarInd, vSolI, vSolS, strLb, strU
+
+b);
 	  }
 	  else {
 	    printf("Branch on object %d (var: -1)\n", bestObjectIndex_);
@@ -617,12 +654,14 @@ bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
       }
       message(CHOSEN_VAR)<<bestObjectIndex_<<CoinMessageEol;
     
-      if (numberFixed==numberUnsatisfied_&&numberFixed)
-        returnCode=4;
+      if((numberFixed==numberUnsatisfied_&&numberFixed) &&
+	 (goodCandidate(solver, info, object, bestObjectIndex_, prec) != 4)) {
+        returnCode = 4;
+      }
 
       if((returnCode == 2) || (returnCode == 3)) {
         if((objectVarInd > -1) && 
-	   (goodCandidate(solver, info, object, bestObjectIndex_, prec) != 2)) {
+	   (goodCandidate(solver, info, object, bestObjectIndex_, prec) != 4)) {
           // Can occur: two objects for same var, first scanned object
           // has both branches feasible and is saved as bestObjectIndex_,
           // second scanned object fixes the variable
@@ -702,6 +741,7 @@ void eliminateIntegerObjects (CbcModel           *model);
     }
 
 #ifdef TRACE_STRONG
+    printf("Start CouenneChooseStrong::setupList()\n");
     OsiObject ** object = info->solver_->objects();
     if(problem_->doPrint_) {
       printObjViol(info);
@@ -758,7 +798,7 @@ void eliminateIntegerObjects (CbcModel           *model);
 
 #ifdef TRACE_STRONG
     if(problem_->doPrint_) {
-      printf("Strong list: (obj_ind var_ind priority useful)\n");
+      printf("Strong list: (obj_ind var_ind priority useful viol)\n");
       printf("numberStrong: %d  numberStrongRoot: %d  retval: %d\n", 
 	     numberStrong_, numberStrongRoot_, retval);
       for(int i=0; i<retval; i++) {
@@ -768,13 +808,22 @@ void eliminateIntegerObjects (CbcModel           *model);
 	//   objectInd = co->Reference()->Index();
 	// }
 	// else {
-	  objectInd = object[list_[i]]->columnNumber();
+	objectInd = object[list_[i]]->columnNumber();
 	// }
-	printf(" (%d %d %d %6.4f)", list_[i], objectInd, 
-	       object[list_[i]]->priority(), useful_[i]);
+
+	int wayprint;
+	double violprint = object[list_[i]]->infeasibility(info, wayprint);
+	if(violprint < COIN_DBL_MAX / 100) {
+	  printf(" (%d %d %d %6.4f %6.4f)", list_[i], objectInd, 
+		 object[list_[i]]->priority(), useful_[i], 
+		 violprint);
+	}
+	else {
+	  printf(" (%d %d %d %6.4f +inf)", list_[i], objectInd, 
+		 object[list_[i]]->priority(), useful_[i]);
+	}
+	printf("\n");
       }
-      printf("\n");
-    }
 #endif
 
     // for (int i=0; i < (numberStrong_ ? CoinMin (numberStrong_, solver_ -> numberObjects ()) : 1); i++) {
@@ -784,6 +833,10 @@ void eliminateIntegerObjects (CbcModel           *model);
 
     jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
 		      "----------------- (strong) setup list done - %d infeasibilities\n", retval);
+
+#if (defined TRACE_STRONG)
+    printf("Done CouenneChooseStrong::setupList()\n");
+#endif
 
     problem_ -> domain () -> pop ();
     return retval;
@@ -875,7 +928,6 @@ void eliminateIntegerObjects (CbcModel           *model);
       }
     }
     printf("\nmaxViol: %g  minPosViol: %g\n", maxViol, minPosViol);
-
   } /* printObjViol */
 
 //}

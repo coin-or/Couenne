@@ -418,13 +418,22 @@ bool CouenneProblem::checkAux(const CouNumber *sol,
       printf ("before check\n");
 
       double 
-	v = (*(variables_ [i])) (), 
-	f = (*(variables_ [i] -> Image ())) ();
+	vdb = (*(variables_ [i])) (), 
+	fdb = (*(variables_ [i] -> Image ())) ();
 
-      printf ("[%g,%g]\n", v, f);
+      double
+	del = 
+	((v -> sign () == expression::AUX_GEQ) && (vdb >= fdb)) ? 0. : 
+	((v -> sign () == expression::AUX_LEQ) && (vdb <= fdb)) ? 0. : 
+	fabs (vdb - fdb);
 
-      printf ("checking aux -- %+.12e = %+.12e [%+.12e] ", v, f, v-f);
-      variables_ [i] -> print ();             printf (" := ");
+      printf ("[%g,%g]\n", vdb, fdb);
+
+      printf ("checking aux -- %+.12e = %+.12e [%+.12e] ", vdb, fdb, del);
+      variables_ [i] -> print ();
+      if(v->sign()== expression::AUX_GEQ) printf(" >= ");
+      if(v->sign()== expression::AUX_LEQ) printf(" <= ");
+      if(v->sign()== expression::AUX_EQ) printf(" := ");
       variables_ [i] -> Image () -> print (); printf ("\n");
     }
     
@@ -628,7 +637,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
     printf ("checking solution:\n");
     for (int i=0; i<nOrigVars_ - ndefined_; i++)
       printf ("%.12e ", solution [i]);
-    printf ("\nCouenneProblem::checkNLP2(): Start checking computed_solution\n");
+    printf ("\nCouenneProblem::checkNLP2(): Start checking recomputed_solution\n");
   }
 
   // check integrality of integer constrained variables
@@ -641,7 +650,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
   maxViolCouSol = maxViolRecSol;
 
   if (stopAtFirstViol && !isFeasRec && Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_PROBLEM)) 
-    printf("CouenneProblem::checkNLP2(): modified_solution is infeasible (some orig vars not integer feasible; violation: %12.10g)\n", maxViolRecSol);
+    printf("CouenneProblem::checkNLP2(): recomputed_solution is infeasible (some orig vars not integer feasible; violation: %12.10g)\n", maxViolRecSol);
 
 #ifdef CHECK
   if(getRecordBestSol()->getCardInitDom() != nVars()) {
@@ -658,7 +667,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 
   // install NL solution candidate and original bounds in evaluation structure
   // bounds are important so that getAuxs below works properly
-  domain_.push(nVars(), domain_.x(), getRecordBestSol()->getInitDomLb(), 
+  domain_.push(nVars(), solution, getRecordBestSol()->getInitDomLb(), 
 	       getRecordBestSol()->getInitDomUb(), false);
 
   CouNumber *couRecSol = new CouNumber[nVars()];
@@ -677,10 +686,24 @@ bool CouenneProblem::checkNLP2(const double *solution,
     printf ("checkNLP2(): recomputed_solution: %d vars -------------------\n", domain_.current () -> Dimension ());
     double maxDelta = 0;
     for (int i=0; i<nVars (); i++) {
-      printf ("%4d %+e %+e [%+e %+e] %+e\n", i, solution[i], domain_.x (i), domain_.lb (i), domain_.ub (i), solution[i] - domain_.x (i));
-      if (maxDelta < fabs(solution[i] - domain_.x(i))) maxDelta = fabs (solution[i] - domain_.x(i));
+      exprVar *v = variables_ [i];
+      if (v -> Multiplicity () <= 0) 
+        continue;
+      if(i < nOrigVars_ - ndefined_) {
+        double soli = solution[i];
+        double domi = domain_.x (i);
+        double domlbi = domain_.lb (i);
+        double domubi = domain_.ub (i);
+        printf ("%4d %+e %+e [%+e %+e] %+e\n", i, solution[i], domain_.x (i), domain_.lb (i), domain_.ub (i), solution[i] - domain_.x (i));
+        if (maxDelta < fabs(solution[i] - domain_.x(i))) maxDelta = fabs (solution[i] - domain_.x(i));
+      }
+      else {
+        if(v -> Type() == AUX) {
+          printf ("%4d  ------     %+e [%+e %+e]\n", i, domain_.x (i), domain_.lb (i), domain_.ub (i));
+        }
+      }
+      printf ("maxDelta: %.12g\n", maxDelta);
     }
-    printf ("maxDelta: %.12g\n", maxDelta);
   }
 
   if(checkAll) {
@@ -911,10 +934,10 @@ bool CouenneProblem::checkNLP2(const double *solution,
       //   printf ("%g ", couSol [i]);
       // printf ("]\n");
 
-      printf ("checkNLP2(): RETURN: selected solution is feasible (maxViol: %g)\n", maxViol);
+      printf ("checkNLP2(): RETURN: feasible (maxViol: %g)\n", maxViol);
     }
     else {
-      printf ("checkNLP2(): RETURN: modified_solution and solution are infeasible\n");
+      printf ("checkNLP2(): RETURN: recomputed_solution and solution are infeasible\n");
       if(!stopAtFirstViol) {
 	printf("(maxViol: %g)\n", maxViol);
       }
