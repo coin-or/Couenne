@@ -52,3 +52,13 @@ endif
 
 # This line is necessary to allow VPATH compilation
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..
+
+########################################################################
+#                     Installing manifest (MSVC++)                     #
+########################################################################
+
+install-exec-hook:
+	test -s couenne.exe.manifest && \
+	mt -manifest couenne.exe.manifest -outputresource:couenne.exe;\
+	cp couenne.exe $(bindir)/couenne.exe
+
