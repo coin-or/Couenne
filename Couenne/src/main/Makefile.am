@@ -58,7 +58,9 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..
 ########################################################################
 
 install-exec-hook:
-	test -s couenne.exe.manifest && \
-	mt -manifest couenne.exe.manifest -outputresource:couenne.exe;\
-	cp couenne.exe $(bindir)/couenne.exe
+	if COIN_CXX_IS_CL
+		test -s couenne.exe.manifest && \
+		mt -manifest couenne.exe.manifest -outputresource:couenne.exe;\
+		cp couenne.exe $(bindir)/couenne.exe
+	endif
 
