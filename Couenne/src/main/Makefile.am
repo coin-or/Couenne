@@ -57,10 +57,10 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..
 #                     Installing manifest (MSVC++)                     #
 ########################################################################
 
+if COIN_CXX_IS_CL
 install-exec-hook:
-	if COIN_CXX_IS_CL
-		test -s couenne.exe.manifest && \
-		mt -manifest couenne.exe.manifest -outputresource:couenne.exe;\
-		cp couenne.exe $(bindir)/couenne.exe
-	endif
+	test -s couenne.exe.manifest && \
+	mt -manifest couenne.exe.manifest -outputresource:couenne.exe;\
+	cp couenne.exe $(bindir)/couenne.exe
+endif
 
