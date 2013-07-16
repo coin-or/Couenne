@@ -476,8 +476,8 @@ ac_includes_default="\
 ac_subdirs_all="$ac_subdirs_all ThirdParty/ASL"
 ac_subdirs_all="$ac_subdirs_all ThirdParty/Blas"
 ac_subdirs_all="$ac_subdirs_all ThirdParty/Lapack"
-ac_subdirs_all="$ac_subdirs_all ThirdParty/HSL"
 ac_subdirs_all="$ac_subdirs_all ThirdParty/Metis"
+ac_subdirs_all="$ac_subdirs_all ThirdParty/HSL"
 ac_subdirs_all="$ac_subdirs_all ThirdParty/Mumps"
 ac_subdirs_all="$ac_subdirs_all ThirdParty/SoPlex"
 ac_subdirs_all="$ac_subdirs_all CoinUtils"
@@ -1152,12 +1152,12 @@ Optional Packages:
   --with-lapack-datadir directory with data files for using project Lapack
   --with-lapack           specify LAPACK library (or BUILD to enforce use of
                           ThirdParty/Lapack)
-  --with-hsl-lib linker flags for using project HSL
-  --with-hsl-incdir directory with header files for using project HSL
-  --with-hsl-datadir directory with data files for using project HSL
   --with-metis-lib linker flags for using project Metis
   --with-metis-incdir directory with header files for using project Metis
   --with-metis-datadir directory with data files for using project Metis
+  --with-hsl-lib linker flags for using project HSL
+  --with-hsl-incdir directory with header files for using project HSL
+  --with-hsl-datadir directory with data files for using project HSL
   --with-mumps-lib linker flags for using project Mumps
   --with-mumps-incdir directory with header files for using project Mumps
   --with-mumps-datadir directory with data files for using project Mumps
@@ -21398,122 +21398,6 @@ subdirs="$subdirs ThirdParty/Lapack"
 fi
 
 
-echo "$as_me:$LINENO: checking whether source of project HSL is available and should be compiled" >&5
-echo $ECHO_N "checking whether source of project HSL is available and should be compiled... $ECHO_C" >&6
-
-coin_has_hsl=notGiven
-coin_reason=
-
-# check if user wants to skip project in any case
-
-if test x"$COIN_SKIP_PROJECTS" != x; then
-  for dir in $COIN_SKIP_PROJECTS; do
-    if test $dir = "HSL"; then
-      coin_has_hsl="no"
-      coin_reason="HSL has been specified in COIN_SKIP_PROJECTS"
-    fi
-
-    if test $dir = "ThirdParty/HSL"; then
-      coin_has_hsl="no"
-      coin_reason="ThirdParty/HSL has been specified in COIN_SKIP_PROJECTS"
-    fi
-  done
-fi
-
-if test "$coin_has_hsl" != no; then
-
-# Check whether --with-m4_tolower(HSL) or --without-m4_tolower(HSL) was given.
-if test "${with_hsl+set}" = set; then
-  withval="$with_hsl"
-  if test "$withval" = no ; then
-       coin_has_hsl="no"
-       coin_reason="--without-hsl has been specified"
-     fi
-
-fi;
-fi
-
-if test "$coin_has_hsl" != no; then
-
-# Check whether --with-m4_tolower(HSL)-lib or --without-m4_tolower(HSL)-lib was given.
-if test "${with_hsl_lib+set}" = set; then
-  withval="$with_hsl_lib"
-  if test "$withval" = no ; then
-       coin_has_hsl="no"
-       coin_reason="--without-hsl-lib has been specified"
-     else
-       coin_has_hsl="no"
-       coin_reason="--with-hsl-lib has been specified"
-     fi
-fi;
-fi
-
-if test "$coin_has_hsl" != no; then
-
-# Check whether --with-m4_tolower(HSL)-incdir or --without-m4_tolower(HSL)-incdir was given.
-if test "${with_hsl_incdir+set}" = set; then
-  withval="$with_hsl_incdir"
-  if test "$withval" = no ; then
-       coin_has_hsl="no"
-       coin_reason="--without-hsl-incdir has been specified"
-     else
-       coin_has_hsl="no"
-       coin_reason="--with-hsl-incdir has been specified"
-     fi
-fi;
-fi
-
-if test "$coin_has_hsl" != no; then
-
-# Check whether --with-m4_tolower(HSL)-datadir or --without-m4_tolower(HSL)-datadir was given.
-if test "${with_hsl_datadir+set}" = set; then
-  withval="$with_hsl_datadir"
-  if test "$withval" = no ; then
-       coin_has_hsl="no"
-       coin_reason="--without-hsl-datadir has been specified"
-     else
-       coin_has_hsl="no"
-       coin_reason="--with-hsl-datadir has been specified"
-     fi
-fi;
-fi
-
-
-
-
-
-# check if project is available in present directory
-if test "$coin_has_hsl" = notGiven; then
-  coin_has_hsl=no
-  if test -d $srcdir/ThirdParty/HSL; then
-    coin_reason="source in ThirdParty/HSL"
-    # If a third argument is given, then we have to check if one one the files given in that third argument is present.
-    # If none of the files in the third argument is available, then we consider the project directory as non-existing.
-    # However, if no third argument is given, then this means that there should be no check, and existence of the directory is sufficient.
-     coin_has_hsl="yes"
-
-  fi
-fi
-
-if test -z "$coin_reason" ; then
-  echo "$as_me:$LINENO: result: $coin_has_hsl" >&5
-echo "${ECHO_T}$coin_has_hsl" >&6
-else
-  echo "$as_me:$LINENO: result: $coin_has_hsl, $coin_reason" >&5
-echo "${ECHO_T}$coin_has_hsl, $coin_reason" >&6
-fi
-
-if test "$coin_has_hsl" = yes ; then
-  if test -r $srcdir/ThirdParty/HSL/configure; then
-    coin_subdirs="$coin_subdirs ThirdParty/HSL"
-
-
-subdirs="$subdirs ThirdParty/HSL"
-
-  fi
-fi
-
-
 echo "$as_me:$LINENO: checking whether source of project Metis is available and should be compiled" >&5
 echo $ECHO_N "checking whether source of project Metis is available and should be compiled... $ECHO_C" >&6
 
@@ -21633,6 +21517,122 @@ if test "$coin_has_metis" = yes ; then
 
 
 subdirs="$subdirs ThirdParty/Metis"
+
+  fi
+fi
+
+
+echo "$as_me:$LINENO: checking whether source of project HSL is available and should be compiled" >&5
+echo $ECHO_N "checking whether source of project HSL is available and should be compiled... $ECHO_C" >&6
+
+coin_has_hsl=notGiven
+coin_reason=
+
+# check if user wants to skip project in any case
+
+if test x"$COIN_SKIP_PROJECTS" != x; then
+  for dir in $COIN_SKIP_PROJECTS; do
+    if test $dir = "HSL"; then
+      coin_has_hsl="no"
+      coin_reason="HSL has been specified in COIN_SKIP_PROJECTS"
+    fi
+
+    if test $dir = "ThirdParty/HSL"; then
+      coin_has_hsl="no"
+      coin_reason="ThirdParty/HSL has been specified in COIN_SKIP_PROJECTS"
+    fi
+  done
+fi
+
+if test "$coin_has_hsl" != no; then
+
+# Check whether --with-m4_tolower(HSL) or --without-m4_tolower(HSL) was given.
+if test "${with_hsl+set}" = set; then
+  withval="$with_hsl"
+  if test "$withval" = no ; then
+       coin_has_hsl="no"
+       coin_reason="--without-hsl has been specified"
+     fi
+
+fi;
+fi
+
+if test "$coin_has_hsl" != no; then
+
+# Check whether --with-m4_tolower(HSL)-lib or --without-m4_tolower(HSL)-lib was given.
+if test "${with_hsl_lib+set}" = set; then
+  withval="$with_hsl_lib"
+  if test "$withval" = no ; then
+       coin_has_hsl="no"
+       coin_reason="--without-hsl-lib has been specified"
+     else
+       coin_has_hsl="no"
+       coin_reason="--with-hsl-lib has been specified"
+     fi
+fi;
+fi
+
+if test "$coin_has_hsl" != no; then
+
+# Check whether --with-m4_tolower(HSL)-incdir or --without-m4_tolower(HSL)-incdir was given.
+if test "${with_hsl_incdir+set}" = set; then
+  withval="$with_hsl_incdir"
+  if test "$withval" = no ; then
+       coin_has_hsl="no"
+       coin_reason="--without-hsl-incdir has been specified"
+     else
+       coin_has_hsl="no"
+       coin_reason="--with-hsl-incdir has been specified"
+     fi
+fi;
+fi
+
+if test "$coin_has_hsl" != no; then
+
+# Check whether --with-m4_tolower(HSL)-datadir or --without-m4_tolower(HSL)-datadir was given.
+if test "${with_hsl_datadir+set}" = set; then
+  withval="$with_hsl_datadir"
+  if test "$withval" = no ; then
+       coin_has_hsl="no"
+       coin_reason="--without-hsl-datadir has been specified"
+     else
+       coin_has_hsl="no"
+       coin_reason="--with-hsl-datadir has been specified"
+     fi
+fi;
+fi
+
+
+
+
+
+# check if project is available in present directory
+if test "$coin_has_hsl" = notGiven; then
+  coin_has_hsl=no
+  if test -d $srcdir/ThirdParty/HSL; then
+    coin_reason="source in ThirdParty/HSL"
+    # If a third argument is given, then we have to check if one one the files given in that third argument is present.
+    # If none of the files in the third argument is available, then we consider the project directory as non-existing.
+    # However, if no third argument is given, then this means that there should be no check, and existence of the directory is sufficient.
+     coin_has_hsl="yes"
+
+  fi
+fi
+
+if test -z "$coin_reason" ; then
+  echo "$as_me:$LINENO: result: $coin_has_hsl" >&5
+echo "${ECHO_T}$coin_has_hsl" >&6
+else
+  echo "$as_me:$LINENO: result: $coin_has_hsl, $coin_reason" >&5
+echo "${ECHO_T}$coin_has_hsl, $coin_reason" >&6
+fi
+
+if test "$coin_has_hsl" = yes ; then
+  if test -r $srcdir/ThirdParty/HSL/configure; then
+    coin_subdirs="$coin_subdirs ThirdParty/HSL"
+
+
+subdirs="$subdirs ThirdParty/HSL"
 
   fi
 fi
