@@ -594,6 +594,7 @@ maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 @COIN_CXX_IS_CL_FALSE@install-exec-hook:
+@COIN_HAS_ASL_FALSE@install-exec-hook:
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
@@ -667,10 +668,10 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am \
 #                     Installing manifest (MSVC++)                     #
 ########################################################################
 
-@COIN_CXX_IS_CL_TRUE@install-exec-hook:
-@COIN_CXX_IS_CL_TRUE@	test -s couenne.exe.manifest && \
-@COIN_CXX_IS_CL_TRUE@	mt -manifest couenne.exe.manifest -outputresource:couenne.exe;\
-@COIN_CXX_IS_CL_TRUE@	cp couenne.exe $(bindir)/couenne.exe
+@COIN_CXX_IS_CL_TRUE@@COIN_HAS_ASL_TRUE@install-exec-hook:
+@COIN_CXX_IS_CL_TRUE@@COIN_HAS_ASL_TRUE@	test -s couenne.exe.manifest && \
+@COIN_CXX_IS_CL_TRUE@@COIN_HAS_ASL_TRUE@	mt -manifest couenne.exe.manifest -outputresource:couenne.exe;\
+@COIN_CXX_IS_CL_TRUE@@COIN_HAS_ASL_TRUE@	cp couenne.exe $(bindir)/couenne.exe
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
