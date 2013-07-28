@@ -354,7 +354,14 @@ Auxiliaries:     %8d (%d integer)\n\n",
 	strcpy(shortName, pbName);
       }
       
-      fprintf(f_res, "%20s %10.4f", shortName, cbcLb);
+
+      fprintf(f_res, "%20s ", shortName);
+      if((cbcLb > 1e20) || (cbcLb < -1e20)) {
+        fprintf(f_res, "%10.4g", cbcLb);
+      }
+      else {
+        fprintf(f_res, "%10.4f", cbcLb);
+      }
       if(foundSol) {
 	fprintf(f_res, " %10.4f", printObj);
       }
@@ -395,7 +402,12 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
     sprintf (lbstr,  "%10g",     lb);
     sprintf (ubstr,  "%10g",     ub);
-    sprintf (gapstr, "%.2f%%", fabs (100. * (ub - lb) / (1. + fabs (lb))));
+    if(ub > COUENNE_INFINITY/1e4) {
+      sprintf (gapstr, "--");
+    }
+    else {
+      sprintf (gapstr, "%.2f%%", fabs (100. * (ub - lb) / (1. + fabs (lb))));
+    }
 
     if (!infeasible)
       jnlst -> Printf (J_ERROR, J_COUENNE, "\n\
