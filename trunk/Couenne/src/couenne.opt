@@ -1,0 +1,322 @@
+#
+# Couenne options
+#
+# Couenne is an open-source solver for nonconvex Mixed-Integer 
+# Nonlinear Programming (MINLP) problems. See more at 
+# 
+# https://projects.coin-or.org/Couenne
+#
+# The following is a list of option to tweak the performance of
+# Couenne.  Each option has a brief description and is set to a
+# default value that we believe works well in most cases.
+#
+#
+# Some of the notation used here is close to that of the paper that
+# describes Couenne:
+#
+# P. Belotti, J. Lee, L. Liberti, F. Margot, A. Waechter, "Branching
+#   and bounds tightening techniques for non-convex MINLP," 2008.
+# Available on Optimization Online at
+#
+# http://www.optimization-online.org/DB_HTML/2008/08/2059.html
+#
+# We refer the curious user of Couenne to this paper for more insight
+# on how the options are used.
+
+
+
+#
+# Verbosity/output level options
+#
+
+# display statistics at the end of the run [yes/no]. Set to yes for a
+# line of output at the end with some brief data on the problem
+
+display_stats no
+
+
+# The following are verbosity levels for the main components of Couenne. 
+# Values: 0 for quiet, 11 for excessive output [0..11]
+
+branching_print_level       0 # Output level for braching code in Couenne.
+boundtightening_print_level 0 # Output level for bound tightening code in Couenne
+convexifying_print_level    0 # Output level for convexifying code in Couenne
+problem_print_level         0 # Output level for problem manipulation code in Couenne 
+                              # (4 prints out original problem)
+nlpheur_print_level         0 # Output level for NLP heuristic in Couenne
+#disjcuts_print_level       0 # Output level for disjunctive cuts in Couenne - disabled for now
+
+#
+# Option for branching rules
+#
+
+# Multipliers of pseudocosts for estimating and update estimation of bound
+#
+# When using pseudocosts, the lower bound of a node is estimated by multiplying 
+# the pseudocost by a measure of the "infeasibility" of that variable.
+#
+# Valid Settings:
+#   infeasibility (infeasibility returned by object)
+#   projectDist (distance between current LP point and resulting branches' LP points)
+#   interval_lp (width of the interval between bound and current lp point)
+#   interval_lp_rev (similar to interval_lp, reversed)
+#   interval_br (width of the interval between bound and branching point)
+#   interval_br_rev (similar to interval_br, reversed)
+
+pseudocost_mult interval_br_rev
+
+
+# Use distance between LP points to update multipliers of
+# pseudocosts. Can give a better estimate of the change in the node as
+# a result of the branching rule.
+
+pseudocost_mult_lp no
+
+
+# Use Special Ordered Sets (SOS) as indicated in the MINLP
+# model. Couenne recognizes constraints of the form 
+# 
+# f_1(x) + f_2(x) ... + f_n (x) = 1,
+#
+# where f_i (x) are binary expressions, as SOS constraints, and adds
+# them to the Branch&Bound solver (disabled now -- still testing)
+
+enable_sos no
+
+
+# Apply bound tightening before branching
+#
+# Upon branching, it may be useful to apply a bound reduction
+# technique as a preprocessing step for the node, even to check if the
+# node is feasible
+
+branch_fbbt yes
+
+
+# Apply convexification cuts before branching (for now only within
+# strong branching)
+#
+# This is useful to get a more precise lower bound within strong
+# branching (note: does not work when performing the real branching
+# rule)
+
+branch_conv_cuts yes
+
+
+# Chooses branching point selection strategy
+#
+#
+# When branching on a continuous variable x that has a bound interval
+# [l,u], the branching point is also important. Couenne implements
+# several ways of computing the branching point, that may depend on
+# the current solution of the LP relaxation or on the characteristics
+# of the linearization that would result from the branching.
+#
+# The default value of this option is a convex combination 
+#
+#     alpha xp + (1-alpha) xm
+#
+#
+# where xm is the middle point (l+u)/2, xp is the value of x in the
+# current LP relaxation, and 0 <= alpha <= 1. Alpha is defined in the
+# next option.
+#
+# Valid Settings:
+#   lp-clamped (LP point clamped in [k,1-k] of the bound intervals (k defined by lp_clamp))
+#   lp-central (LP point if within [k,1-k] of the bound intervals, 
+#               middle point otherwise(k defined by branch_lp_clamp))
+#   balanced (minimizes max distance from curve to convexification)
+#   min-area (minimizes total area of the two convexifications)
+#   mid-point (convex combination of current point and mid point)
+#   no-branch (do not branch, return null infeasibility; for testing purposes only)
+
+branch_pt_select mid-point
+
+
+# Defines convex combination of mid point and current LP point. See
+# comments on option "branch_pt_select" above.
+
+#branch_midpoint_alpha 0.25
+
+
+# Priority of continuous variable branching
+#
+# In Cbc, the Branch&Bound solver on which Couenne is based, integer
+# variables have a priority of 1000. This parameter is the branching
+# priority of continuous variables. Setting it to more than 1000 gives
+# precedence to integer variables, i.e., as long as one integer
+# variable is currently "infeasible" (i.e. fractional) it will be
+# branched on.  A value below 1000 will give precedence to continuous
+# variables. 
+
+#cont_var_priority 2000
+
+
+# Apply Reduced Cost Branching (instead of the Violation Transfer) --
+# MUST have vt_obj enabled
+#
+#
+# Violation Transfer and reduced cost branching are similar techniques
+# for selecting a branching variable. Couenne implements both and lets
+# you choose which one to use. Set this to yes to use reduced cost
+# branching. Experimentally, Violation Transfer appears slightly
+# better, hence it is preferred by default.
+
+red_cost_branching no
+
+
+# Type of branching object for variable selection
+#
+#
+# This parameter determines the branching variable selection
+# technique. With "vt_obj", the Violation Transfer branching technique
+# is used. "var_obj" chooses a variable based on the set of nonlinear
+# expressions that depends on it, while "expr_obj" selects the most
+# violated nonlinear expression and branches on one of the variables
+# on which the expression depends. The default is var_obj
+#
+#
+# Valid Settings:
+#   vt_obj    use Violation Transfer from Tawarmalani and Sahinidis
+#   var_obj   use one object for each variable
+#   expr_obj  use one object for each nonlinear expression
+
+branching_object var_obj
+
+
+
+
+#
+# Options for bound tightening
+#
+
+
+# Feasibility-based (cheap) bound tightening (FBBT)
+#
+# A fast bound reduction technique. Not very efficient in eliminating
+# vast portions of the solution set, but recommended.
+
+feasibility_bt yes
+
+
+# Optimality-based (expensive) bound tightening (OBBT)
+#
+# A slower bound reduction technique that relies on solving 2n LP
+# problems (n is the number of variables). Probably more efficient
+# that FBBT, but much more computationally intensive. Recommended 
+# for small problems. See also the next option.
+
+optimality_bt yes
+
+
+# Specify the frequency (in terms of nodes) for optimality-based bound
+# tightening
+#
+# As OBBT is expensive, the user may choose to run it only until the
+# depth k of the branch&bound tree, and with probability exponentially
+# decreasing with the depth of the branch&bound node at any other node
+# below depth k.
+
+log_num_obbt_per_level 1
+
+
+# Aggressive feasibility-based bound tightening (to use with NLP points)
+#
+#
+# See the paper for a detailed explanation. This is also an expensive
+# but efficient way to reduce the solution set
+
+aggressive_fbbt yes
+
+
+# Specify the frequency (in terms of nodes) for aggressive bound tightening.
+#
+# A parameter analogous to what log_num_obbt_per_level is for OBBT.
+
+log_num_abt_per_level 2
+
+
+#
+# Options for reformulation and linearization
+#
+
+
+# Specify the frequency (in terms of nodes) at which couenne ecp cuts
+# are generated.
+#
+# A default value of 1 has linearization inequalities generated at
+# every node.
+
+convexification_cuts 1
+
+
+# Specify the number of points at which to convexify when
+# convexification type.
+
+convexification_points 4
+
+
+# Yes if only violated convexification cuts should be added 
+
+violated_cuts_only yes
+
+
+
+#
+# Options for debugging
+#
+# Some of these options usually slow down Couenne, and are hence only suggested for debugging purposes.
+#
+
+# Check all LPs through an independent call to
+#  OsiClpSolverInterface::initialSolve() (very expensive)
+#check_lp no
+
+# Artificial cutoff. Used when you know a feasible solution and want
+# to use it to restrict the solution space
+
+#art_cutoff 1e100
+
+# Window around known optimum
+#opt_window 
+
+# Artificial lower bound
+#art_lower -1e100
+
+
+#
+# Other options
+#
+
+
+# Do we search for local solutions of NLP's?
+local_optimization_heuristic yes
+
+
+# Specify the logarithm of the number of local optimizations to
+# perform.
+#
+#
+# Analogous to log_num_abt_per_level and log_num_obbt_per_level, this
+# option determines until which depth of the branch&bound tree the
+# call to a nonlinear solver is done at every node. Below this depth,
+# calls to the nonlinear solver happen with probability inversely
+# proportional to the depth of the node.
+
+log_num_local_optimization_per_level 2
+
+
+# Tolerance for constraints/auxiliary variables
+#
+#
+# A solution is feasible for the original problem if the maximum
+# violation of a constraint is below this number
+
+feas_tolerance 1e-6
+
+
+# Use quadratic expressions and related exprQuad class
+#
+# Allows to use a single operator for quadratic forms (not yet enabled)
+
+use_quadratic no
