@@ -157,18 +157,18 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 				  exprAux::Integer : exprAux::Continuous,
 				  p -> domain (), aSign);
 
-// 	if (p -> Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
+	if (p -> Jnlst () -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
 
-// 	  printf ("AuxSet:\n");
-// 	  for (std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> begin ();
-// 	       i != p -> AuxSet () -> end (); ++i)
-// 	    if ((*i) -> Image () == NULL) {
-// 	      (*i) -> print (); printf (" does not have an image!!!\n");
-// 	    } else {
-// 	      printf ("-- "); (*i) -> print (); printf (" := ");
-// 	      (*i) -> Image () -> print (); printf ("\n");
-// 	    }
-// 	}
+	  printf ("AuxSet:\n");
+	  for (std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> begin ();
+	       i != p -> AuxSet () -> end (); ++i)
+	    if ((*i) -> Image () == NULL) {
+	      (*i) -> print (); printf (" does not have an image!!!\n");
+	    } else {
+	      printf ("-- "); (*i) -> print (); printf (" := ");
+	      (*i) -> Image () -> print (); printf ("\n");
+	    }
+	}
 
 	std::set <exprAux *, compExpr>::iterator i = p -> AuxSet () -> end ();
 

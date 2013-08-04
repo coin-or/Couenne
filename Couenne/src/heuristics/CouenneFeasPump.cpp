@@ -223,7 +223,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     CouenneFPsolution checkedSol (problem_, iSol, false); // false is for not allocating space for this
 
-    if (tabuPool_. find (checkedSol) != tabuPool_ . end ()) {
+    if (tabuPool_. find (checkedSol) == tabuPool_ . end ()) 
+
+      tabuPool_. insert (CouenneFPsolution (problem_, iSol)); // only insertion to tabu pool: we check its feasibility now
+
+    else {
 
       problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: found solution is tabu\n");
 
@@ -310,15 +314,15 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 #define RND_DECR_EXPONENT .5
 
-	    if (iSol [i] >= lb [i] - 1.) down =      1. / pow (1. + (downMoves += 1.), RND_DECR_EXPONENT);
-	    if (iSol [i] <= ub [i] + 1.) up   = 1. - 1. / pow (1. + (upMoves   += 1.), RND_DECR_EXPONENT);
+	    if (iSol [i] >= lb [i] + 1.) down =      1. / pow (1. + (downMoves += 1.), RND_DECR_EXPONENT);
+	    if (iSol [i] <= ub [i] - 1.) up   = 1. - 1. / pow (1. + (upMoves   += 1.), RND_DECR_EXPONENT);
 
 	    if      (rnd < down) iSol [i] -= 1.;
 	    else if (rnd > up)   iSol [i] += 1.;
 	  }
 	}
       }
-    } else tabuPool_. insert (CouenneFPsolution (problem_, iSol)); // only insertion to tabu pool: we check its feasibility now
+    } 
 
     problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: checking IP solution for feasibility\n");
 

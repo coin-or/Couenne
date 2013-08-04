@@ -18,9 +18,9 @@
 
 namespace Couenne {
 
-  /** An heuristic to call an NlpSolver if all CouenneObjects are
-      close to be satisfied (for other integer objects, rounding is
-      performed, is SOS are not satisfied does not run).
+  /** A heuristic to call an NlpSolver if all CouenneObjects are close
+      to be satisfied (for other integer objects, rounding is
+      performed, if SOS's are not satisfied it does not run).
    */
 
   const double maxNlpInf_0 = 1e-5;
