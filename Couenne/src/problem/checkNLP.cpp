@@ -710,7 +710,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 
   // install NL solution candidate and original bounds in evaluation structure
   // bounds are important so that getAuxs below works properly
-  domain_.push(nVars(), domain_.x(), getRecordBestSol()->getInitDomLb(), 
+  domain_.push(nVars(), solution, getRecordBestSol()->getInitDomLb(), 
 	       getRecordBestSol()->getInitDomUb(), false);
 
   CouNumber *couRecSol = new CouNumber[nVars()];
