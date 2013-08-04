@@ -78,6 +78,7 @@
 #include "CouenneSdpCuts.hpp"
 #include "CouenneTwoImplied.hpp"
 
+// only for amaya_andrea_ options
 #include "CouenneExprPow.hpp"
 #include "CouenneExprMul.hpp"
 
@@ -355,7 +356,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
       (CouenneObject::VT_OBJ            == objType)){
 
     printf ("Warning: Violation Transfer and strong branching are mutually exclusive.\nResetting to Violation Transfer only.");
-    varSelection = Bonmin::BabSetupBase::OSI_STRONG;
+    varSelection = Bonmin::BabSetupBase::OSI_SIMPLE;
   }
 
   for (int i = 0; i < nVars; i++) { // for each variable
