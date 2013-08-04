@@ -373,6 +373,13 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     varSelection = Bonmin::BabSetupBase::OSI_SIMPLE;
   }
 
+  if ((Bonmin::BabSetupBase::OSI_STRONG == varSelection) &&
+      (CouenneObject::VT_OBJ            == objType)){
+
+    printf ("Warning: Violation Transfer and strong branching are mutually exclusive.\nResetting to Violation Transfer only.");
+    varSelection = Bonmin::BabSetupBase::OSI_STRONG;
+  }
+
   for (int i = 0; i < nVars; i++) { // for each variable
 
     exprVar *var = couenneProb_ -> Var (i);
