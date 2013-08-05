@@ -10,20 +10,17 @@
 #include "CouenneCutGenerator.hpp"
 
 #include "BonCouenneInterface.hpp"
-#include "CouenneObject.hpp"
 #include "CouenneProblem.hpp"
-#include "CbcCutGenerator.hpp"
-//#include "CbcBranchActual.hpp"
 #include "BonAuxInfos.hpp"
-#include "CoinHelperFunctions.hpp"
 #include "BonOsiTMINLPInterface.hpp"
-#include "BonNlpHeuristic.hpp"
 #include "CouenneRecordBestSol.hpp"
+
+#include "CouenneNlpRoundOne.hpp"
 
 using namespace Ipopt;
 using namespace Couenne;
 
-NlpSolveHeuristic::NlpSolveHeuristic ():
+CouenneNlpRoundOne::CouenneNlpRoundOne ():
   CbcHeuristic (),
   nlp_ (NULL),
   hasCloned_ (false),
@@ -33,7 +30,7 @@ NlpSolveHeuristic::NlpSolveHeuristic ():
   setHeuristicName ("ClassifierNlp");
 }
   
-NlpSolveHeuristic::NlpSolveHeuristic (CbcModel &model, Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp, CouenneProblem * couenne):
+CouenneNlpRoundOne::CouenneNlpRoundOne (CbcModel &model, Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp, CouenneProblem *couenne):
 
   CbcHeuristic (model), 
   nlp_ (&nlp), 
@@ -47,7 +44,7 @@ NlpSolveHeuristic::NlpSolveHeuristic (CbcModel &model, Bonmin::OsiTMINLPInterfac
     nlp_ = dynamic_cast <Bonmin::OsiTMINLPInterface *> (nlp.clone ());
 }
   
-NlpSolveHeuristic::NlpSolveHeuristic (const NlpSolveHeuristic &other):
+CouenneNlpRoundOne::CouenneNlpRoundOne (const CouenneNlpRoundOne &other):
 
   CbcHeuristic (other), 
   nlp_ (other.nlp_), 
@@ -60,11 +57,11 @@ NlpSolveHeuristic::NlpSolveHeuristic (const NlpSolveHeuristic &other):
     nlp_ = dynamic_cast <Bonmin::OsiTMINLPInterface *> (other.nlp_ -> clone());
 }
  
-CbcHeuristic *NlpSolveHeuristic::clone () const {
-  return new NlpSolveHeuristic (*this);
+CbcHeuristic *CouenneNlpRoundOne::clone () const {
+  return new CouenneNlpRoundOne (*this);
 }
   
-NlpSolveHeuristic &NlpSolveHeuristic::operator= (const NlpSolveHeuristic & rhs) {
+CouenneNlpRoundOne &CouenneNlpRoundOne::operator= (const CouenneNlpRoundOne & rhs) {
 
   if (this != &rhs){
 
@@ -88,13 +85,13 @@ NlpSolveHeuristic &NlpSolveHeuristic::operator= (const NlpSolveHeuristic & rhs) 
   return *this;
 }
   
-NlpSolveHeuristic::~NlpSolveHeuristic(){
+CouenneNlpRoundOne::~CouenneNlpRoundOne(){
   if (hasCloned_)
     delete nlp_;
   nlp_ = NULL;
 }
   
-void NlpSolveHeuristic::setNlp (Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp) {
+void CouenneNlpRoundOne::setNlp (Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp) {
 
   if (hasCloned_ && nlp_ != NULL)
     delete nlp_;
@@ -105,11 +102,11 @@ void NlpSolveHeuristic::setNlp (Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp) 
   else          nlp_ = &nlp;
 }
   
-void NlpSolveHeuristic::setCouenneProblem (CouenneProblem * couenne)
+void CouenneNlpRoundOne::setCouenneProblem (CouenneProblem * couenne)
 {couenne_ = couenne;}
 
 
-int NlpSolveHeuristic::solution (double &objectiveValue, double *newSolution) {
+int CouenneNlpRoundOne::solution (double &objectiveValue, double *newSolution) {
 
   // Simply run a NLP solver starting from the current solution. The
   // only effect should be that all binary variables that are still
@@ -234,7 +231,7 @@ int NlpSolveHeuristic::solution (double &objectiveValue, double *newSolution) {
     // 	else{
 
     // 	  // Probably a SOS object -- do not stop here
-    // 	  //throw CoinError("Bonmin::NlpSolveHeuristic","solution",
+    // 	  //throw CoinError("Bonmin::CouenneNlpRoundOne","solution",
     // 	  //"Unknown object.");
     // 	}
     //   }
@@ -243,7 +240,7 @@ int NlpSolveHeuristic::solution (double &objectiveValue, double *newSolution) {
     // if here, it means the infeasibility is not too high. Generate a
     // better integer point as there are rounded integer variables
 
-    bool skipOnInfeasibility = false;
+    //bool skipOnInfeasibility = false;
 
     double *Y = new double [couenne_ -> nVars ()];
     CoinFillN (Y, couenne_ -> nVars (), 0.);
@@ -352,7 +349,7 @@ int NlpSolveHeuristic::solution (double &objectiveValue, double *newSolution) {
 			      false, // checkAll
 			      couenne_->getFeasTol())) {
 #ifdef FM_USE_REL_VIOL_CONS
-	printf("NlpSolveHeuristic::solution(): ### ERROR: checkNLP(): returns true,  checkNLP2() returns false\n");
+	printf("CouenneNlpRoundOne::solution(): ### ERROR: checkNLP(): returns true,  checkNLP2() returns false\n");
 	exit(1);
 #endif
       }
@@ -409,6 +406,8 @@ int NlpSolveHeuristic::solution (double &objectiveValue, double *newSolution) {
       if (foundSolution) printf ("Solution found, obj. %g\n", objectiveValue);
       else               printf ("No solution.\n");
     }
+
+    return foundSolution;
   }
 
   catch (int &e) {
@@ -436,13 +435,11 @@ int NlpSolveHeuristic::solution (double &objectiveValue, double *newSolution) {
     //   return 0;
     // }
   }
-
-  return foundSolution;
 }
 
 
 // /// initialize options
-// void NlpSolveHeuristic::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
+// void CouenneNlpRoundOne::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
 
 //   roptions -> AddStringOption2
 //     ("local_optimization_heuristic",
