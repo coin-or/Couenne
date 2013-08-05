@@ -24,6 +24,16 @@ void exprMul::generateCuts (expression *w,
 			    t_chg_bounds *chg, int wind, 
 			    CouNumber lbw, CouNumber ubw) {
 
+  //
+  // Skip this if McCormick inequalities are disabled
+  //
+
+  if (Couenne::exprMul::disable_mul_linearizing and !(cg -> isFirst ())) {
+
+    //printf ("No mul linearizing ////////////////////////////////////\n");
+    return;
+  }
+
   expression *xe = arglist_ [0];
   expression *ye = arglist_ [1];
 

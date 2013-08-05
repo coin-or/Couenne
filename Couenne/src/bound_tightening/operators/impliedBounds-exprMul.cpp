@@ -27,6 +27,12 @@ using namespace Couenne;
 
 bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
+  if (Couenne::exprMul::disable_mul_tightening) {
+
+    //printf ("No mul tightening  ....................................\n");
+    return false;
+  }
+
   bool resL, resU = resL = false;
   int ind;
 

@@ -121,6 +121,8 @@ class exprPow: public exprOp {
 
   /// return whether this expression corresponds to a signed integer power 
   virtual bool isSignpower () const { return issignpower_; } 
+
+  static bool disable_pow_tightening;
 };
 
 

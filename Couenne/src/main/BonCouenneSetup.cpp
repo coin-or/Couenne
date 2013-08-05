@@ -78,7 +78,7 @@
 #include "CouenneSdpCuts.hpp"
 #include "CouenneTwoImplied.hpp"
 
-// only for amaya_andrea_ options
+// only for disable{pow,mul} options
 #include "CouenneExprPow.hpp"
 #include "CouenneExprMul.hpp"
 
@@ -275,6 +275,12 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   int lpLogLevel;
   options () -> GetIntegerValue ("lp_log_level", lpLogLevel, "couenne.");
   continuousSolver_ -> messageHandler () -> setLogLevel (lpLogLevel);
+
+  /// Weakening Couenne
+
+  options () -> GetStringValue ("disable_pow_tightening",  s, "couenne."); Couenne::exprPow::disable_pow_tightening  = (s == "yes");
+  options () -> GetStringValue ("disable_mul_tightening",  s, "couenne."); Couenne::exprMul::disable_mul_tightening  = (s == "yes");
+  options () -> GetStringValue ("disable_mul_linearizing", s, "couenne."); Couenne::exprMul::disable_mul_linearizing = (s == "yes");
 
   // Add Couenne SOS ///////////////////////////////////////////////////////////////
 

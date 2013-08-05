@@ -94,6 +94,10 @@ class exprMul: public exprOp {
 				expression *vardep,
 				CouNumber &left,
 				CouNumber &right) const;
+
+  static bool disable_mul_tightening;
+  static bool disable_mul_linearizing;
+
 protected:
 
   /// inferring bounds on factors of a product

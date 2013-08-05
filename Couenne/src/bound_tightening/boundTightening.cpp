@@ -11,6 +11,8 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneExprVar.hpp"
+#include "CouenneExprMul.hpp"
+#include "CouenneExprPow.hpp"
 #include "CouenneProblemElem.hpp"
 #include "CouenneBTPerfIndicator.hpp"
 #include "BonBabInfos.hpp"
@@ -20,6 +22,10 @@
 #define THRES_IMPROVED 0
 
 using namespace Couenne;
+
+bool Couenne::exprPow::disable_pow_tightening  = false;
+bool Couenne::exprMul::disable_mul_tightening  = false;
+bool Couenne::exprMul::disable_mul_linearizing = false;
 
 // core of the bound tightening procedure
 

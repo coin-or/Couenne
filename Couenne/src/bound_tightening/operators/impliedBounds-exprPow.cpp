@@ -32,6 +32,12 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   bool resL, resU = resL = false;
 
+  if (Couenne::exprPow::disable_pow_tightening) {
+
+    //printf ("No power tightening-------------------------------------\n");
+    return false;
+  }
+
   if (arglist_ [0] -> Type () == CONST)   // base is constant or zero, nothing to do
     return false;
 

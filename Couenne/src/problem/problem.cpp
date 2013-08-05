@@ -530,4 +530,8 @@ If k>=0, apply with probability 2^(k - level), level being the current depth of 
      "tri+bi",  "Trilinear and bilinear term: x5 = (x1 (x2 x3 x4))",
      "bi+tri",  "Bilinear, THEN trilinear term: x5 = ((x1 x2) x3 x4))",
      "hier-bi", "Hierarchical decomposition: x5 = ((x1 x2) (x3 x4))");
+
+  roptions -> AddStringOption2 ("disable_pow_tightening",  "Futile attempt to weaken Couenne's power bound tightening to throw a bone to Cplex", "no", "yes", "OK, if you really have to...", "no", "That's better.");
+  roptions -> AddStringOption2 ("disable_mul_tightening",  "Futile attempt to weaken Couenne's product bound tightening to throw a bone to Cplex", "no", "yes", "OK, if you really have to...", "no", "That's better.");
+  roptions -> AddStringOption2 ("disable_mul_linearizing", "Futile attempt to weaken Couenne's product linearization (McCormick's inequalities) to throw a bone to Cplex", "no", "yes", "OK, if you really have to...", "no", "That's better.");
 }
