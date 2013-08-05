@@ -58,18 +58,18 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneHeuristics_la_LIBADD =
 am__libCouenneHeuristics_la_SOURCES_DIST = BonInitHeuristic.cpp \
-	BonNlpHeuristic.cpp CouenneFeasPumpConstructors.cpp \
-	CouenneFeasPump.cpp CouenneFPcreateMILP.cpp \
-	CouenneFPSolveMILP.cpp CouenneFPSolveNLP.cpp \
-	CouenneFPFindSolution.cpp CouenneFPpool.cpp \
-	CouenneFPscipSolve.cpp CouenneIterativeRounding.cpp \
-	cons_rowcuts.cpp
+	BonNlpHeuristic.cpp CouenneNlpRoundOne.cpp \
+	CouenneFeasPumpConstructors.cpp CouenneFeasPump.cpp \
+	CouenneFPcreateMILP.cpp CouenneFPSolveMILP.cpp \
+	CouenneFPSolveNLP.cpp CouenneFPFindSolution.cpp \
+	CouenneFPpool.cpp CouenneFPscipSolve.cpp \
+	CouenneIterativeRounding.cpp cons_rowcuts.cpp
 @COIN_HAS_SCIP_TRUE@am__objects_1 = cons_rowcuts.lo
 am_libCouenneHeuristics_la_OBJECTS = BonInitHeuristic.lo \
-	BonNlpHeuristic.lo CouenneFeasPumpConstructors.lo \
-	CouenneFeasPump.lo CouenneFPcreateMILP.lo \
-	CouenneFPSolveMILP.lo CouenneFPSolveNLP.lo \
-	CouenneFPFindSolution.lo CouenneFPpool.lo \
+	BonNlpHeuristic.lo CouenneNlpRoundOne.lo \
+	CouenneFeasPumpConstructors.lo CouenneFeasPump.lo \
+	CouenneFPcreateMILP.lo CouenneFPSolveMILP.lo \
+	CouenneFPSolveNLP.lo CouenneFPFindSolution.lo CouenneFPpool.lo \
 	CouenneFPscipSolve.lo CouenneIterativeRounding.lo \
 	$(am__objects_1)
 libCouenneHeuristics_la_OBJECTS =  \
@@ -275,10 +275,10 @@ ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_F77 = @ac_ct_F77@
-ac_ct_PKG_CONFIG = @ac_ct_PKG_CONFIG@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
 ac_cxx_preproc_warn_flag = @ac_cxx_preproc_warn_flag@
+ac_pt_PKG_CONFIG = @ac_pt_PKG_CONFIG@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -326,12 +326,12 @@ noinst_LTLIBRARIES = libCouenneHeuristics.la
 
 # List all source files for this library, including headers
 libCouenneHeuristics_la_SOURCES = BonInitHeuristic.cpp \
-	BonNlpHeuristic.cpp CouenneFeasPumpConstructors.cpp \
-	CouenneFeasPump.cpp CouenneFPcreateMILP.cpp \
-	CouenneFPSolveMILP.cpp CouenneFPSolveNLP.cpp \
-	CouenneFPFindSolution.cpp CouenneFPpool.cpp \
-	CouenneFPscipSolve.cpp CouenneIterativeRounding.cpp \
-	$(am__append_1)
+	BonNlpHeuristic.cpp CouenneNlpRoundOne.cpp \
+	CouenneFeasPumpConstructors.cpp CouenneFeasPump.cpp \
+	CouenneFPcreateMILP.cpp CouenneFPSolveMILP.cpp \
+	CouenneFPSolveNLP.cpp CouenneFPFindSolution.cpp \
+	CouenneFPpool.cpp CouenneFPscipSolve.cpp \
+	CouenneIterativeRounding.cpp $(am__append_1)
 
 # This is for libtool
 libCouenneHeuristics_la_LDFLAGS = $(LT_LDFLAGS)
@@ -411,6 +411,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPump.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneFeasPumpConstructors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneIterativeRounding.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneNlpRoundOne.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cons_rowcuts.Plo@am__quote@
 
 .cpp.o:

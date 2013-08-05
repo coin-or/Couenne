@@ -12,6 +12,7 @@ noinst_LTLIBRARIES = libCouenneHeuristics.la
 libCouenneHeuristics_la_SOURCES = \
 	BonInitHeuristic.cpp \
 	BonNlpHeuristic.cpp \
+	CouenneNlpRoundOne.cpp \
 	CouenneFeasPumpConstructors.cpp \
 	CouenneFeasPump.cpp \
 	CouenneFPcreateMILP.cpp \

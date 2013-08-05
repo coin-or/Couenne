@@ -43,6 +43,7 @@
 #include "CglRedSplit.hpp"
 
 #include "BonCouenneSetup.hpp"
+#include "CouenneNlpRoundOne.hpp"
 #include "CouenneFeasPump.hpp"
 #include "CouenneIterativeRounding.hpp"
 #include "BonCouenneInterface.hpp"
@@ -579,7 +580,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   options () -> GetStringValue ("iterative_rounding_heuristic", doHeuristic, "couenne.");
   
   if (doHeuristic == "yes") {
-    CouenneIterativeRounding * nlpHeuristic = new CouenneIterativeRounding(nonlinearSolver_, ci, couenneProb_, options());
+    CouenneIterativeRounding * nlpHeuristic = new CouenneIterativeRounding (nonlinearSolver_, ci, couenneProb_, options());
     HeuristicMethod h;
     h.id = "Couenne Iterative Rounding";
     h.heuristic = nlpHeuristic;
@@ -604,6 +605,15 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     heuristics_. push_back (h);
   }
 
+  CouenneNlpRoundOne *nlpHeuristic = new CouenneNlpRoundOne;
+  nlpHeuristic -> setNlp (*ci,false);
+  nlpHeuristic -> setCouenneProblem (couenneProb_);
+
+  HeuristicMethod h;
+
+  h.id = "Couenne Nlp Round";
+  h.heuristic = nlpHeuristic;
+  heuristics_. push_back (h);
 
   if (0) { // inactive as of yet -- segfaults 
 

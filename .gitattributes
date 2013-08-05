@@ -232,6 +232,8 @@ Couenne/src/heuristics/CouenneFeasPump.cpp -text
 Couenne/src/heuristics/CouenneFeasPump.hpp -text
 Couenne/src/heuristics/CouenneIterativeRounding.cpp -text
 Couenne/src/heuristics/CouenneIterativeRounding.hpp -text
+Couenne/src/heuristics/CouenneNlpRoundOne.cpp -text
+Couenne/src/heuristics/CouenneNlpRoundOne.hpp -text
 Couenne/src/heuristics/cons_rowcuts.cpp -text
 Couenne/src/heuristics/cons_rowcuts.h -text
 Couenne/src/interfaces/BonCouenneInterface.cpp -text
