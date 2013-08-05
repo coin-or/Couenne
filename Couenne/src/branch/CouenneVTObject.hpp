@@ -25,9 +25,11 @@ public:
 		   CouenneProblem *p,
 		   exprVar *ref, 
 		   Bonmin::BabSetupBase *base, 
-		   JnlstPtr jnlst):
+		   JnlstPtr jnlst,
+		   int varSelection // either OSI_SIMPLE or OSI_STRONG
+		   ):
 
-    CouenneVarObject (c, p, ref, base, jnlst, Bonmin::BabSetupBase::OSI_SIMPLE) {}
+    CouenneVarObject (c, p, ref, base, jnlst, varSelection) {}
 
   /// Copy constructor
   CouenneVTObject (const CouenneVTObject &src):

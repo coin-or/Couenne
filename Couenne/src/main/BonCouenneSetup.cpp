@@ -352,12 +352,14 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     varSelection = Bonmin::BabSetupBase::OSI_SIMPLE;
   }
 
+#ifdef TO_BE_REMOVED
   if ((Bonmin::BabSetupBase::OSI_STRONG == varSelection) &&
       (CouenneObject::VT_OBJ            == objType)){
 
     printf ("Warning: Violation Transfer and strong branching are mutually exclusive.\nResetting to Violation Transfer only.");
     varSelection = Bonmin::BabSetupBase::OSI_SIMPLE;
   }
+#endif
 
   for (int i = 0; i < nVars; i++) { // for each variable
 
@@ -419,7 +421,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 	//|| ((var -> Type () == AUX) &&                      // or, aux 
 	//(var -> Image () -> Linearity () > LINEAR))) { // of nonlinear
 
-	objects [nobj] = new CouenneVTObject (couenneCg, couenneProb_, var, this, journalist ());
+	objects [nobj] = new CouenneVTObject (couenneCg, couenneProb_, var, this, journalist (), varSelection);
 	objects [nobj++] -> setPriority (var -> isInteger () ? intObjPriority : contObjPriority);
 	//objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
       }
