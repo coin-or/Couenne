@@ -47,27 +47,19 @@ namespace Couenne {
     */
     virtual int solution (double &objectiveValue, double * newSolution);
 
-    // /** set maxNlpInf. */
-    // void setMaxNlpInf(double value){
-    //   maxNlpInf_ = value;}
-
-    // /** set number of nlp's solved for each given level of the tree*/
-    // void setNumberSolvePerLevel(int value){
-    //   numberSolvePerLevel_ = value;}
-
     /// initialize options
     static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions>);
+
+    /** set number of nlp's solved for each given level of the tree*/
+    void setNumberSolvePerLevel(int value){
+      numberSolvePerLevel_ = value;}
 
   private:
 
     Bonmin::OsiTMINLPInterface * nlp_; ///< Pointer to an NLP solver interface
     bool hasCloned_;                   ///< Is nlp_ cloned or just a pointer?
-    CouenneProblem * couenne_;         ///< pointer to CouenneProblem
-
-    // /** maximum nlp infeasibility under which try to solve problem with Ipopt.*/
-    // double maxNlpInf_;
-    // /** Number of nlp's solved for each given level of the tree*/
-    // int numberSolvePerLevel_;
+    CouenneProblem * couenne_;         ///< Pointer to CouenneProblem
+    int numberSolvePerLevel_;          ///< Number of nlp's solved for each given level of the tree
   };
 }
 

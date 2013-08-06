@@ -605,15 +605,22 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     heuristics_. push_back (h);
   }
 
+  int numSolve;
+  options () -> GetIntegerValue ("heur_classifier_level", numSolve, "couenne.");
+
+  //#if 0
   CouenneNlpRoundOne *nlpHeuristic = new CouenneNlpRoundOne;
   nlpHeuristic -> setNlp (*ci,false);
   nlpHeuristic -> setCouenneProblem (couenneProb_);
+  //nlpHeuristic -> setMaxNlpInf (maxNlpInf_0);
+  nlpHeuristic -> setNumberSolvePerLevel (numSolve);
 
   HeuristicMethod h;
 
-  h.id = "Couenne Nlp Round";
+  h.id = "Couenne Classifier";
   h.heuristic = nlpHeuristic;
   heuristics_. push_back (h);
+  //#endif
 
   if (0) { // inactive as of yet -- segfaults 
 

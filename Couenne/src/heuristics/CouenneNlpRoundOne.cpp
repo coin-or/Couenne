@@ -8,6 +8,7 @@
  */
 
 #include "CouenneCutGenerator.hpp"
+#include "CouenneExprVar.hpp"
 
 #include "BonCouenneInterface.hpp"
 #include "CouenneProblem.hpp"
@@ -25,7 +26,7 @@ CouenneNlpRoundOne::CouenneNlpRoundOne ():
   nlp_ (NULL),
   hasCloned_ (false),
   //  maxNlpInf_(maxNlpInf_0),
-  //  numberSolvePerLevel_(-1),
+  numberSolvePerLevel_(-1),
   couenne_ (NULL){
   setHeuristicName ("ClassifierNlp");
 }
@@ -35,8 +36,7 @@ CouenneNlpRoundOne::CouenneNlpRoundOne (CbcModel &model, Bonmin::OsiTMINLPInterf
   CbcHeuristic (model), 
   nlp_ (&nlp), 
   hasCloned_ (cloneNlp),
-  // maxNlpInf_(maxNlpInf_0),
-  // numberSolvePerLevel_(-1),
+  numberSolvePerLevel_(-1),
   couenne_ (couenne) {
   setHeuristicName ("ClassifierNlp");
 
@@ -48,10 +48,8 @@ CouenneNlpRoundOne::CouenneNlpRoundOne (const CouenneNlpRoundOne &other):
 
   CbcHeuristic (other), 
   nlp_ (other.nlp_), 
+  numberSolvePerLevel_ (other.numberSolvePerLevel_),
   hasCloned_ (other.hasCloned_),
-  // maxNlpInf_ (other.maxNlpInf_),
-  // numberSolvePerLevel_(other.numberSolvePerLevel_),
-
   couenne_(other.couenne_) {
   if (hasCloned_ && nlp_ != NULL)
     nlp_ = dynamic_cast <Bonmin::OsiTMINLPInterface *> (other.nlp_ -> clone());
@@ -71,6 +69,7 @@ CouenneNlpRoundOne &CouenneNlpRoundOne::operator= (const CouenneNlpRoundOne & rh
       delete nlp_;
 
     hasCloned_ = rhs.hasCloned_;
+    numberSolvePerLevel_ = rhs. numberSolvePerLevel_;
 
     if (nlp_ != NULL) {
 
@@ -79,8 +78,6 @@ CouenneNlpRoundOne &CouenneNlpRoundOne::operator= (const CouenneNlpRoundOne & rh
     }
   }
 
-  // maxNlpInf_ = rhs.maxNlpInf_;
-  // numberSolvePerLevel_ = rhs.numberSolvePerLevel_;
   couenne_ = rhs.couenne_;
   return *this;
 }
@@ -108,13 +105,13 @@ void CouenneNlpRoundOne::setCouenneProblem (CouenneProblem * couenne)
 
 int CouenneNlpRoundOne::solution (double &objectiveValue, double *newSolution) {
 
-  // Simply run a NLP solver starting from the current solution. The
+  // Simply run an NLP solver starting from the current solution. The
   // only effect should be that all binary variables that are still
   // fractional should be set to one
 
   int noSolution = 1, maxTime = 2;
 
-  // do heuristic the usual way, but if for any reason (time is up, no
+  // Do heuristic the usual way, but if for any reason (time is up, no
   // better solution found) there is no improvement, get the best
   // solution from the GlobalCutOff object in the pointer to the
   // CouenneProblem and return it instead.
@@ -122,12 +119,10 @@ int CouenneNlpRoundOne::solution (double &objectiveValue, double *newSolution) {
   // Although this should be handled by Cbc, very often this doesn't
   // happen.
 
-  //  int nodeDepth = -1;
-
   const int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
 
   if (depth <= 0)
-    couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "NLP Heuristic: "); fflush (stdout);
+    couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Classifier heuristic: "); fflush (stdout);
 
   try {
 
@@ -146,25 +141,25 @@ int CouenneNlpRoundOne::solution (double &objectiveValue, double *newSolution) {
       }
     }
 
-    // // if too deep in the BB tree, only run NLP heuristic if
-    // // feasibility is low
-    // bool too_deep = false;
+    // if too deep in the BB tree, only run NLP heuristic if
+    // feasibility is low
+    bool too_deep = false;
 
-    // // check depth
-    // if (numberSolvePerLevel_ > -1) {
+    // check depth
+    if (numberSolvePerLevel_ > -1) {
 
-    //   if (numberSolvePerLevel_ == 0) 
-    // 	throw maxTime;
+      if (numberSolvePerLevel_ == 0) 
+	throw maxTime;
 
-    //   //if (CoinDrand48 () > pow (2., numberSolvePerLevel_ - depth))
-    //   if (CoinDrand48 () > 1. / CoinMax 
-    // 	  (1., (double) ((depth - numberSolvePerLevel_) * 
-    // 			 (depth - numberSolvePerLevel_))))
-    // 	too_deep = true;
-    // }
+      //if (CoinDrand48 () > pow (2., numberSolvePerLevel_ - depth))
+      if (CoinDrand48 () > 1. / CoinMax 
+	  (1., (double) ((depth - numberSolvePerLevel_) * 
+			 (depth - numberSolvePerLevel_))))
+	too_deep = true;
+    }
 
-    // if (too_deep)
-    //   throw maxTime;
+    if (too_deep)
+      throw maxTime;
 
     double *lower = new double [couenne_ -> nVars ()];
     double *upper = new double [couenne_ -> nVars ()];
@@ -175,126 +170,14 @@ int CouenneNlpRoundOne::solution (double &objectiveValue, double *newSolution) {
     CoinCopyN (solver -> getColLower (), nlp_ -> getNumCols (), lower);
     CoinCopyN (solver -> getColUpper (), nlp_ -> getNumCols (), upper);
 
-    /*printf ("-- int candidate, before: ");
-      for (int i=0; i<couenne_ -> nOrig (); i++) 
-      printf ("[%g %g] ", lower [i], upper [i]);
-      printf ("\n");*/
-
-    const double * solution = solver->getColSolution();
+    const double * solution = solver -> getColSolution();
     OsiBranchingInformation info (solver, true);
-    //const int & numberObjects = model_->numberObjects();
-    //OsiObject ** objects = model_->objects();
-    //double maxInfeasibility = 0;
-
-    // bool haveRoundedIntVars = false;
-
-    // for (int i = 0 ; i < numberObjects ; i++) {
-
-    //   CouenneObject * couObj = dynamic_cast <CouenneObject *> (objects [i]);
-
-    //   if (couObj) {
-    // 	if (too_deep) { // only test infeasibility if BB level is high
-    // 	  int dummy;
-    // 	  double infeas;
-    // 	  maxInfeasibility = CoinMax ( maxInfeasibility, infeas = couObj->infeasibility(&info, dummy));
-
-    // 	  if (maxInfeasibility > maxNlpInf_){
-    // 	    delete [] lower;
-    // 	    delete [] upper;
-    // 	    throw noSolution;
-    // 	  }
-    // 	}
-    //   } else {
-
-    // 	OsiSimpleInteger * intObj = dynamic_cast<OsiSimpleInteger *>(objects[i]);
-
-    // 	if (intObj) {
-    // 	  const int & i = intObj -> columnNumber ();
-    // 	  // Round the variable in the solver
-    // 	  double value = solution [i];
-    // 	  if (value < lower[i])
-    // 	    value = lower[i];
-    // 	  else if (value > upper[i])
-    // 	    value = upper[i];
-
-    // 	  double rounded = floor (value + 0.5);
-
-    // 	  if (fabs (value - rounded) > COUENNE_EPS) {
-    // 	    haveRoundedIntVars = true;
-    // 	    //value = rounded;
-    // 	  }
-
-    // 	  // fix bounds anyway, if a better candidate is not found
-    // 	  // below at least we have an integer point
-    // 	  //lower[i] = upper[i] = value;
-    // 	}
-    // 	else{
-
-    // 	  // Probably a SOS object -- do not stop here
-    // 	  //throw CoinError("Bonmin::CouenneNlpRoundOne","solution",
-    // 	  //"Unknown object.");
-    // 	}
-    //   }
-    // }
-
-    // if here, it means the infeasibility is not too high. Generate a
-    // better integer point as there are rounded integer variables
-
-    //bool skipOnInfeasibility = false;
 
     double *Y = new double [couenne_ -> nVars ()];
     CoinFillN (Y, couenne_ -> nVars (), 0.);
     CoinCopyN (solution, nlp_ -> getNumCols (), Y);
 
-    /*printf ("-- int candidate, upon call: ");
-      for (int i=0; i<couenne_ -> nOrig (); i++) 
-      if (couenne_ -> Var (i) -> isInteger ())
-      printf ("[%g <%g> %g] ", lower [i], Y [i], upper [i]);
-      else printf ("%g ", Y [i]);
-      printf ("\n");*/
-
-    //if (haveRoundedIntVars) // create "good" integer candidate for Ipopt
-    //skipOnInfeasibility = (couenne_ -> getIntegerCandidate (solution, Y, lower, upper) < 0);
-
-    /*printf ("-- int candidate, after: ");
-      for (int i=0; i<couenne_ -> nOrig (); i++) 
-      if (couenne_ -> Var (i) -> isInteger ())
-      printf ("[%g <%g> %g] ", lower [i], Y [i], upper [i]);
-      else printf ("%g ", Y [i]);
-      printf ("\n");*/
-
     bool foundSolution = false;
-
-    // if (haveRoundedIntVars && skipOnInfeasibility) 
-    //   // no integer initial point could be found, make up some random rounding
-
-    //   for (int i = couenne_ -> nOrigVars (); i--;) 
-
-    // 	if (couenne_ -> Var (i) -> isDefinedInteger ())
-    // 	  lower [i] = upper [i] = Y [i] = 
-    // 	    (CoinDrand48 () < 0.5) ? 
-    // 	    floor (Y [i] + COUENNE_EPS) : 
-    // 	    ceil  (Y [i] - COUENNE_EPS);
-
-    // 	else if (lower [i] > upper [i]) { 
-
-    // 	  // sanity check (should avoid problems in ex1263 with
-    // 	  // couenne.opt.obbt)
-
-    // 	  double swap = lower [i];
-    // 	  lower [i] = upper [i];
-    // 	  upper [i] = swap;
-    // 	}
-
-    //{
-    //	printf ("[%g <%g> %g] ", lower [i], Y [i], upper [i]);
-
-    /*printf ("int candidate: ");
-      for (int i=0; i<couenne_ -> nOrig (); i++) 
-      if (couenne_ -> Var (i) -> isInteger ())
-      printf ("[%g <%g> %g] ", lower [i], Y [i], upper [i]);
-      else printf ("%g ", Y [i]);
-      printf ("\n");*/
 
     // Now set column bounds and solve the NLP with starting point
     double * saveColLower = CoinCopyOfArray (nlp_ -> getColLower (), nlp_ -> getNumCols ());
@@ -316,19 +199,75 @@ int CouenneNlpRoundOne::solution (double &objectiveValue, double *newSolution) {
     nlp_ -> setColUpper    (upper);
     nlp_ -> setColSolution (Y);
 
+    /*
+    printf ("---------------------------------------------------------------------------------------------------\nInitial solution:  ");
+    for (int i=0; i<couenne_ -> nVars (); ++i) 
+      if (couenne_ -> Var (i) -> isInteger ())
+	printf ("%c", 
+		Y [i] <= 1e-7   ? '0' : 
+		Y [i] <= 1e-4   ? '.' :
+		Y [i] <= 1-1e-4 ? '-' : 
+		Y [i] <= 1-1e-7 ? '^' : '1');
+    printf ("\n");
+    */
+
     // apply NLP solver /////////////////////////////////
     try {
       nlp_ -> options () -> SetNumericValue ("max_cpu_time", CoinMax (0., couenne_ -> getMaxCpuTime () - CoinCpuTime ()));
+      //nlp_ -> messageHandler () -> setLogLevel (8);
       nlp_ -> initialSolve ();
     }
 
     catch (Bonmin::TNLPSolver::UnsolvedError *E) {}
 
+    const double *sol = nlp_ -> getColSolution ();
+
+    /*
+    printf ("-- Solution change:");
+    for (int i=0; i<couenne_ -> nVars (); ++i) 
+      if (couenne_ -> Var (i) -> isInteger ())
+	printf ("%c", 
+		(Y [i] - sol [i] <= -1e-4)   ? '^' : 
+		(Y [i] - sol [i] >=  1e-4)   ? 'V' : ' ');
+    printf ("\n");
+
+    printf ("-- Solution:       ");
+    for (int i=0; i<couenne_ -> nVars (); ++i) 
+      if (couenne_ -> Var (i) -> isInteger ())
+	printf ("%c", 
+		(sol   [i]       <=1e-4)   ? '0' : 
+		(sol   [i]       >=1-1e-4) ? '1' : '-');
+    printf ("\n");
+
+    printf ("-- lower    bounds:");
+    for (int i=0; i<couenne_ -> nVars (); ++i) 
+      if (couenne_ -> Var (i) -> isInteger ())
+	printf ("%c", 
+		(lower [i]       <=1e-4)   ? '0' : 
+		(lower [i]       >=1-1e-4) ? '1' : '-');
+    printf ("\n");
+
+    printf ("-- upper    bounds:");
+    for (int i=0; i<couenne_ -> nVars (); ++i) 
+      if (couenne_ -> Var (i) -> isInteger ())
+	printf ("%c", 
+		(upper [i]       <=  1e-4) ? '0' : 
+		(upper [i]       >=1-1e-4) ? '1' : '-');
+    printf ("\n----------------------------------------------------------------------------------------\n");
+    */
+
     double obj = (nlp_ -> isProvenOptimal()) ? nlp_ -> getObjValue (): COIN_DBL_MAX;
+
+    for (int i=0; i<couenne_ -> nVars (); ++i) 
+      if (couenne_ -> Var (i) -> isInteger ())
+	if (!(::isInteger (Y [i])))
+	  Y [i] = ceil (Y [i]);
 
     if (nlp_ -> isProvenOptimal () &&
 	couenne_ -> checkNLP (nlp_ -> getColSolution (), obj, true) && // true for recomputing obj
 	(obj < couenne_ -> getCutOff ())) {
+
+      //printf ("====================================== improved solution: %g\n", obj);
 
       // store solution in Aux info
 
@@ -353,6 +292,7 @@ int CouenneNlpRoundOne::solution (double &objectiveValue, double *newSolution) {
 	exit(1);
 #endif
       }
+
       obj = couenne_->getRecordBestSol()->getModSolVal(); 
       couenne_->getRecordBestSol()->update();
 #else
