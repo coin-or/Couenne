@@ -1,4 +1,4 @@
-/* $Id
+/* $Id$
  *
  * Name:    CouenneNlpRoundOne.hpp
  * Author:  Pietro Belotti
@@ -22,22 +22,26 @@ using namespace Ipopt;
 using namespace Couenne;
 
 CouenneNlpRoundOne::CouenneNlpRoundOne ():
+
   CbcHeuristic (),
-  nlp_ (NULL),
-  hasCloned_ (false),
-  //  maxNlpInf_(maxNlpInf_0),
-  numberSolvePerLevel_(-1),
-  couenne_ (NULL){
-  setHeuristicName ("ClassifierNlp");
+
+  nlp_                 (NULL),
+  hasCloned_           (false),
+  couenne_             (NULL),
+  numberSolvePerLevel_ (-1) {
+
+  setHeuristicName     ("ClassifierNlp");
 }
   
 CouenneNlpRoundOne::CouenneNlpRoundOne (CbcModel &model, Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp, CouenneProblem *couenne):
 
   CbcHeuristic (model), 
-  nlp_ (&nlp), 
-  hasCloned_ (cloneNlp),
-  numberSolvePerLevel_(-1),
-  couenne_ (couenne) {
+
+  nlp_                 (&nlp), 
+  hasCloned_           (cloneNlp),
+  couenne_             (couenne),
+  numberSolvePerLevel_ (-1) {
+
   setHeuristicName ("ClassifierNlp");
 
   if (cloneNlp)
@@ -46,11 +50,13 @@ CouenneNlpRoundOne::CouenneNlpRoundOne (CbcModel &model, Bonmin::OsiTMINLPInterf
   
 CouenneNlpRoundOne::CouenneNlpRoundOne (const CouenneNlpRoundOne &other):
 
-  CbcHeuristic (other), 
-  nlp_ (other.nlp_), 
-  numberSolvePerLevel_ (other.numberSolvePerLevel_),
-  hasCloned_ (other.hasCloned_),
-  couenne_(other.couenne_) {
+  CbcHeuristic         (other), 
+
+  nlp_                 (other.nlp_),
+  hasCloned_           (other.hasCloned_),
+  couenne_             (other.couenne_), 
+  numberSolvePerLevel_ (other.numberSolvePerLevel_) {
+
   if (hasCloned_ && nlp_ != NULL)
     nlp_ = dynamic_cast <Bonmin::OsiTMINLPInterface *> (other.nlp_ -> clone());
 }
@@ -220,9 +226,9 @@ int CouenneNlpRoundOne::solution (double &objectiveValue, double *newSolution) {
 
     catch (Bonmin::TNLPSolver::UnsolvedError *E) {}
 
+    /*
     const double *sol = nlp_ -> getColSolution ();
 
-    /*
     printf ("-- Solution change:");
     for (int i=0; i<couenne_ -> nVars (); ++i) 
       if (couenne_ -> Var (i) -> isInteger ())
@@ -378,27 +384,27 @@ int CouenneNlpRoundOne::solution (double &objectiveValue, double *newSolution) {
 }
 
 
-// /// initialize options
-// void CouenneNlpRoundOne::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
+/// initialize options
+void CouenneNlpRoundOne::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
 
-//   roptions -> AddStringOption2
-//     ("local_optimization_heuristic",
-//      "Search for local solutions of MINLPs",
-//      "yes",
-//      "no","",
-//      "yes","",
-//      "If enabled, a heuristic based on Ipopt is used to find feasible solutions for the problem. "
-//      "It is highly recommended that this option is left enabled, as it would be difficult to find feasible solutions otherwise.");
+  roptions -> AddStringOption2
+    ("classifier_heuristic",
+     "Search for local solutions of classification MINLPs by runnning an NLP",
+     "yes",
+     "no","",
+     "yes","",
+     "If enabled, a heuristic based on Ipopt is used to find feasible solutions for the problem. "
+     "It is highly recommended that this option is left enabled, as it would be difficult to find feasible solutions otherwise.");
 
-//   roptions -> AddLowerBoundedIntegerOption
-//     ("log_num_local_optimization_per_level",
-//      "Specify the logarithm of the number of local optimizations to perform" 
-//      " on average for each level of given depth of the tree.",
-//      -1,
-//      2, "Solve as many nlp's at the nodes for each level of the tree. "
-//      "Nodes are randomly selected. If for a "
-//      "given level there are less nodes than this number nlp are solved for every nodes. "
-//      "For example if parameter is 8, nlp's are solved for all node until level 8, " 
-//      "then for half the node at level 9, 1/4 at level 10.... "
-//      "Value -1 specify to perform at all nodes.");
-// }
+  roptions -> AddLowerBoundedIntegerOption
+    ("heur_classifier_level",
+     "Specify the logarithm of the number of classifier heuristic calls to perform" 
+     " on average for each level of given depth of the tree.",
+     -1,
+     2, "Solve as many nlp's at the nodes for each level of the tree. "
+     "Nodes are randomly selected. If for a "
+     "given level there are less nodes than this number nlp are solved for every nodes. "
+     "For example if parameter is 8, nlp's are solved for all node until level 8, " 
+     "then for half the node at level 9, 1/4 at level 10.... "
+     "Value -1 specify to perform at all nodes.");
+}

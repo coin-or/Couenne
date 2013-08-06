@@ -1,4 +1,4 @@
-/* $Id
+/* $Id$
  *
  * Name:    CouenneNlpRoundOne.hpp
  * Author:  Pietro Belotti
@@ -50,9 +50,9 @@ namespace Couenne {
     /// initialize options
     static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions>);
 
-    /** set number of nlp's solved for each given level of the tree*/
-    void setNumberSolvePerLevel(int value){
-      numberSolvePerLevel_ = value;}
+    /** set number of NLPs solved for each given level of the tree*/
+    void setNumberSolvePerLevel (int value)
+    {numberSolvePerLevel_ = value;}
 
   private:
 
