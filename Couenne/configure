@@ -1099,7 +1099,6 @@ Optional Features:
                           -mno-cygwin. Set to msvc to use cl/link (or
                           icl/link). Default when mentioned: mingw. Default
                           when not mentioned: disabled.
-
   --enable-debug          compile all projects with debug options tests
                           (implies --disable-shared)
   --enable-debug-couenne compile project Couenne with debug compiler flags
@@ -1773,23 +1772,6 @@ echo "$as_me: error: Invalid value $enable_doscompile for --enable-doscompile.
     { echo "$as_me:$LINENO: DOS compile style is: $enable_doscompile" >&5
 echo "$as_me: DOS compile style is: $enable_doscompile" >&6;}
   fi
-
-
-# Check whether --enable-static-standardlibs or --disable-static-standardlibs was given.
-if test "${enable_static_standardlibs+set}" = set; then
-  enableval="$enable_static_standardlibs"
-  case "$enableval" in
-     no | yes | auto ) ;;
-     *)
-       { { echo "$as_me:$LINENO: error: invalid argument for --enable-static-standardlibs: $enableval" >&5
-echo "$as_me: error: invalid argument for --enable-static-standardlibs: $enableval" >&2;}
-   { (exit 1); exit 1; }; } ;;
-   esac
-   use_static_standardlibs=$enableval
-else
-  use_static_standardlibs=no
-fi;
-
 
 
 
@@ -2929,7 +2911,6 @@ rm -f conftest.err conftest.$ac_objext \
   else
     CFLAGS="$OPT_CFLAGS"
   fi
-
 else
   CFLAGS="$CFLAGS $ADD_CFLAGS $CDEFS"
   if test x${DBG_CFLAGS+set} != xset; then
@@ -3098,82 +3079,6 @@ case "$CC" in
     ;;
 esac
 
-# check whether to add flags for static linking against standard libraries to LDFLAGS
-if test x$use_static_standardlibs != xno ; then
-  case $build in
-    *-mingw*)
-      static_standardlib_flag=-static
-      ;;
-    *)
-      static_standardlib_flag=-static-libgcc
-      ;;
-  esac
-  case " $LDFLAGS " in
-    *" $static_standardlib_flag "* ) ;;
-    *)
-    echo "$as_me:$LINENO: checking whether linking with $static_standardlib_flag works" >&5
-echo $ECHO_N "checking whether linking with $static_standardlib_flag works... $ECHO_C" >&6
-    coin_save_LDFLAGS="$LDFLAGS"
-    LDFLAGS="$LDFLAGS $static_standardlib_flag"
-    cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-int
-main ()
-{
-int i=0;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-       LDFLAGS="$coin_save_LDFLAGS"
-       if test $use_static_standardlibs = yes ; then
-         { { echo "$as_me:$LINENO: error: failed to link with $static_standardlib_flag" >&5
-echo "$as_me: error: failed to link with $static_standardlib_flag" >&2;}
-   { (exit 1); exit 1; }; }
-       fi
-
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-    ;;
-  esac
-fi
-
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -3194,7 +3099,6 @@ case $build in
      coin_f77_comps="gfortran ifort g95 fort77 f77 g77 pgf90 pgf77 ifc frt af77 xlf_r" ;;
   *) coin_f77_comps="xlf_r fort77 gfortran ifort g95 f77 g77 pgf90 pgf77 ifc frt af77" ;;
  esac
-
 
 
 
@@ -3410,7 +3314,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:3413:" \
+echo "$as_me:3317:" \
      "checking for Fortran 77 compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
@@ -3787,7 +3691,6 @@ rm -f conftest.err conftest.$ac_objext \
   else
     FFLAGS="$OPT_FFLAGS"
   fi
-
 else
   FFLAGS="$FFLAGS $ADD_FFLAGS"
   if test x${DBG_FFLAGS+set} != xset; then
@@ -3930,72 +3833,6 @@ case "$F77" in
     ;;
 esac
 
-# check whether to add flag for static linking against standard libraries to LDFLAGS
-if test x$use_static_standardlibs != xno ; then
-  case $build in
-    *-mingw*)
-      static_standardlib_flag=-static
-      ;;
-    *)
-      static_standardlib_flag=-static-libgfortran
-      ;;
-  esac
-  case " $LDFLAGS " in
-    *" $static_standardlib_flag "* ) ;;
-    *)
-    echo "$as_me:$LINENO: checking whether linking with $static_standardlib_flag works" >&5
-echo $ECHO_N "checking whether linking with $static_standardlib_flag works... $ECHO_C" >&6
-    coin_save_LDFLAGS="$LDFLAGS"
-    LDFLAGS="$LDFLAGS $static_standardlib_flag"
-    cat >conftest.$ac_ext <<_ACEOF
-      program main
-      integer i
-      end
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_f77_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-       LDFLAGS="$coin_save_LDFLAGS"
-       if test $use_static_standardlibs = yes ; then
-         { { echo "$as_me:$LINENO: error: failed to link with $static_standardlib_flag" >&5
-echo "$as_me: error: failed to link with $static_standardlib_flag" >&2;}
-   { (exit 1); exit 1; }; }
-       fi
-
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-    ;;
-  esac
-fi
-
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4056,7 +3893,7 @@ _ACEOF
 # flags.
 ac_save_FFLAGS=$FFLAGS
 FFLAGS="$FFLAGS $ac_verb"
-(eval echo $as_me:4059: \"$ac_link\") >&5
+(eval echo $as_me:3896: \"$ac_link\") >&5
 ac_f77_v_output=`eval $ac_link 5>&1 2>&1 | grep -v 'Driving:'`
 echo "$ac_f77_v_output" >&5
 FFLAGS=$ac_save_FFLAGS
@@ -4134,7 +3971,7 @@ _ACEOF
 # flags.
 ac_save_FFLAGS=$FFLAGS
 FFLAGS="$FFLAGS $ac_cv_prog_f77_v"
-(eval echo $as_me:4137: \"$ac_link\") >&5
+(eval echo $as_me:3974: \"$ac_link\") >&5
 ac_f77_v_output=`eval $ac_link 5>&1 2>&1 | grep -v 'Driving:'`
 echo "$ac_f77_v_output" >&5
 FFLAGS=$ac_save_FFLAGS
@@ -5106,7 +4943,6 @@ _ACEOF
 # Get the name of the C++ compiler and appropriate compiler options
 
  #Let's try if that overcomes configuration problem with VC++ 6.0
-
 
 ac_ext=cc
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -6139,90 +5975,6 @@ case "$CXX" in
     ;;
 esac
 
-# check whether to add flag for static linking against standard libraries to LDFLAGS
-if test x$use_static_standardlibs != xno ; then
-  case $build in
-    *-mingw*)
-      static_standardlib_flag=-static
-      ;;
-    *)
-      static_standardlib_flag=-static-libstdc++
-      ;;
-  esac
-  case " $LDFLAGS " in
-    *" $static_standardlib_flag "* ) ;;
-    *)
-    echo "$as_me:$LINENO: checking whether linking with $static_standardlib_flag works" >&5
-echo $ECHO_N "checking whether linking with $static_standardlib_flag works... $ECHO_C" >&6
-    coin_save_LDFLAGS="$LDFLAGS"
-    LDFLAGS="$LDFLAGS $static_standardlib_flag"
-    cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-#ifdef F77_DUMMY_MAIN
-
-#  ifdef __cplusplus
-     extern "C"
-#  endif
-   int F77_DUMMY_MAIN() { return 1; }
-
-#endif
-int
-main ()
-{
-int i=0;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_cxx_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-       LDFLAGS="$coin_save_LDFLAGS"
-       if test $use_static_standardlibs = yes ; then
-         { { echo "$as_me:$LINENO: error: failed to link with $static_standardlib_flag" >&5
-echo "$as_me: error: failed to link with $static_standardlib_flag" >&2;}
-   { (exit 1); exit 1; }; }
-       fi
-
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-    ;;
-  esac
-fi
-
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -6232,7 +5984,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 # Get the name of the C compiler and appropriate compiler options
-
 
 
 ac_ext=c
@@ -7233,7 +6984,6 @@ rm -f conftest.err conftest.$ac_objext \
   else
     CFLAGS="$OPT_CFLAGS"
   fi
-
 else
   CFLAGS="$CFLAGS $ADD_CFLAGS $CDEFS"
   if test x${DBG_CFLAGS+set} != xset; then
@@ -7417,90 +7167,6 @@ case "$CC" in
 
     ;;
 esac
-
-# check whether to add flags for static linking against standard libraries to LDFLAGS
-if test x$use_static_standardlibs != xno ; then
-  case $build in
-    *-mingw*)
-      static_standardlib_flag=-static
-      ;;
-    *)
-      static_standardlib_flag=-static-libgcc
-      ;;
-  esac
-  case " $LDFLAGS " in
-    *" $static_standardlib_flag "* ) ;;
-    *)
-    echo "$as_me:$LINENO: checking whether linking with $static_standardlib_flag works" >&5
-echo $ECHO_N "checking whether linking with $static_standardlib_flag works... $ECHO_C" >&6
-    coin_save_LDFLAGS="$LDFLAGS"
-    LDFLAGS="$LDFLAGS $static_standardlib_flag"
-    cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-#ifdef F77_DUMMY_MAIN
-
-#  ifdef __cplusplus
-     extern "C"
-#  endif
-   int F77_DUMMY_MAIN() { return 1; }
-
-#endif
-int
-main ()
-{
-int i=0;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-       LDFLAGS="$coin_save_LDFLAGS"
-       if test $use_static_standardlibs = yes ; then
-         { { echo "$as_me:$LINENO: error: failed to link with $static_standardlib_flag" >&5
-echo "$as_me: error: failed to link with $static_standardlib_flag" >&2;}
-   { (exit 1); exit 1; }; }
-       fi
-
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-    ;;
-  esac
-fi
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -9270,7 +8936,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 9273 "configure"' > conftest.$ac_ext
+  echo '#line 8939 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -11250,11 +10916,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:11253: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10919: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:11257: \$? = $ac_status" >&5
+   echo "$as_me:10923: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -11518,11 +11184,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:11521: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:11187: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:11525: \$? = $ac_status" >&5
+   echo "$as_me:11191: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -11622,11 +11288,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:11625: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:11291: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:11629: \$? = $ac_status" >&5
+   echo "$as_me:11295: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14039,7 +13705,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14042 "configure"
+#line 13708 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14139,7 +13805,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14142 "configure"
+#line 13808 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16499,11 +16165,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16502: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16168: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16506: \$? = $ac_status" >&5
+   echo "$as_me:16172: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16603,11 +16269,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16606: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16272: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16610: \$? = $ac_status" >&5
+   echo "$as_me:16276: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -18173,11 +17839,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18176: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17842: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:18180: \$? = $ac_status" >&5
+   echo "$as_me:17846: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -18277,11 +17943,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18280: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17946: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:18284: \$? = $ac_status" >&5
+   echo "$as_me:17950: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -20484,11 +20150,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:20487: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:20153: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:20491: \$? = $ac_status" >&5
+   echo "$as_me:20157: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -20752,11 +20418,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:20755: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:20421: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:20759: \$? = $ac_status" >&5
+   echo "$as_me:20425: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -20856,11 +20522,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:20859: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:20525: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:20863: \$? = $ac_status" >&5
+   echo "$as_me:20529: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
