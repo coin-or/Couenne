@@ -32,7 +32,7 @@ CouenneBTPerfIndicator::CouenneBTPerfIndicator (CouenneProblem *p, const std::st
   problem_         (p),
   stats_           ((p             != NULL) && 
 		    (GetRawPtr (p -> Jnlst ()) != NULL) && 
-		    (p -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_BOUNDTIGHTENING))) {}
+		    (p -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_COUENNE))) {}
 
 
 ///
@@ -43,7 +43,7 @@ CouenneBTPerfIndicator::~CouenneBTPerfIndicator () {
       problem_)
 
     if (stats_)
-      printf ("Performance of %30s:\t %10gs, %8d runs fix:%10g shrink:%10g ubd:%10g 2ubd:%10g infeas:%10g\n", 
+      printf ("Performance of %30s:\t %10gs, %8d runs. fix: %10g shrnk: %10g ubd: %10g 2ubd: %10g infeas: %10g\n", 
 	      name_.c_str (),
 	      totalTime_, 
 	      nRuns_,

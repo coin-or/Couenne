@@ -71,9 +71,6 @@ namespace Couenne {
     /// CPU time
     mutable double CPUtime_;
 
-    /// Number of actual runs
-    mutable int nRuns_;
-
     /// Number of bounds tightened
     mutable int nTightened_;
 

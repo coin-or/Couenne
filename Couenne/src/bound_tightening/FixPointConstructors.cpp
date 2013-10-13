@@ -19,7 +19,6 @@ CouenneFixPoint::CouenneFixPoint (CouenneProblem *p,
   problem_    (p),
   firstCall_  (true),
   CPUtime_    (0.),
-  nRuns_      (0),
   nTightened_ (0),
   perfIndicator_ (p, "Fixed Point LP") {
 
@@ -35,18 +34,12 @@ CouenneFixPoint::CouenneFixPoint (const CouenneFixPoint &rhs):
   problem_       (rhs.problem_),
   firstCall_     (rhs.firstCall_),
   CPUtime_       (rhs.CPUtime_),
-  nRuns_         (rhs.nRuns_),
   nTightened_    (rhs.nTightened_),
   perfIndicator_ (rhs.perfIndicator_) {}
 
 
 /// destructor
-CouenneFixPoint::~CouenneFixPoint () {
-
-  if (0 && !firstCall_)
-    printf ("Fixed point BT: CPU time %g, %d runs, %d tightened\n", 
-	    CPUtime_, nRuns_, nTightened_);
-}
+CouenneFixPoint::~CouenneFixPoint () {}
 
 
 /// Add list of options to be read from file

@@ -34,7 +34,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   {
 
   /// Only run this if the latest FBBT terminated on the iteration
-  /// limit, as this suggest that the FPLP might be of some help.
+  /// limit, as this suggests that the FPLP might be of some help.
   /// Termination before iteration limit reached implies that a
   /// relaxation (on which the FPLP is based) won't generate better
   /// bounds.
@@ -58,8 +58,6 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   double startTime = CoinCpuTime ();
 
-  perfIndicator_. setOldBounds (si. getColLower (), si. getColUpper ());
-
   int nInitTightened = nTightened_;
 
   if (treeInfo.inTree && 
@@ -69,11 +67,17 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     fflush (stdout);
   }
 
-  ++nRuns_;
+  //++nRuns_;
 
   double now = CoinCpuTime ();
 
   problem_ -> domain () -> push (&si, &cs);
+
+  double 
+    *oldLB = CoinCopyOfArray (problem_ -> Lb (), problem_ -> nVars ()),
+    *oldUB = CoinCopyOfArray (problem_ -> Ub (), problem_ -> nVars ());
+
+  perfIndicator_. setOldBounds (problem_ -> Lb (), problem_ -> Ub ());
 
   /// An LP relaxation of a MINLP problem is available in the first
   /// parameter passed. Let us suppose that this LP relaxation is of
@@ -124,14 +128,14 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   const CoinPackedMatrix *A = si. getMatrixByRow ();
 
   const int
-       n     = si.  getNumCols  (),
-       m     = si.  getNumRows  (),
-       nCuts = cs.sizeRowCuts   (),
-    *ind     = A -> getIndices  ();
+    n     = si.  getNumCols (),
+    m     = si.  getNumRows (),
+    nCuts = cs.sizeRowCuts  (),
+    *ind  = A -> getIndices ();
 
   const double
-    *lb  = si.  getColLower (),
-    *ub  = si.  getColUpper (),
+    *lb  = problem_ -> Lb (), //si.  getColLower (),
+    *ub  = problem_ -> Ub (), //si.  getColUpper (),
     *rlb = si.  getRowLower (),
     *rub = si.  getRowUpper (),
     *coe = A -> getElements ();
@@ -265,15 +269,15 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   fplp -> initialSolve ();
 
+  const double 
+    *newLB = fplp -> getColSolution (),
+    *newUB = newLB + n;
+
+  double infeasBounds [] = {1,-1};
+
   if (fplp -> isProvenOptimal ()) {
 
     // if problem not solved to optimality, bounds are useless
-
-    const double 
-      *newLB = fplp -> getColSolution (),
-      *newUB = newLB + n,
-      *oldLB = si. getColLower (),
-      *oldUB = si. getColUpper ();
 
     // check old and new bounds
 
@@ -335,20 +339,27 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 				      nTightened_ - nInitTightened, CoinCpuTime () - now); 
     }
 
-    perfIndicator_. update (problem_ -> Lb (), problem_ -> Ub (), treeInfo.level);
-    perfIndicator_. addToTimer (CoinCpuTime () - startTime);
-
   } else {
+
     if (treeInfo.inTree && 
 	treeInfo.level <= 0)
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP infeasible or unbounded.\n");
 
     WipeMakeInfeas (cs);
+
+    newLB = infeasBounds;
+    newUB = infeasBounds + 1;
   }
 
   delete fplp;
 
+  perfIndicator_. update (newLB, newUB, treeInfo.level);
+  perfIndicator_. addToTimer (CoinCpuTime () - startTime);
+
   problem_ -> domain () -> pop ();
+
+  delete [] oldLB;
+  delete [] oldUB;
 }
 
 

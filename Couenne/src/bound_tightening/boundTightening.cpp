@@ -25,6 +25,8 @@ using namespace Couenne;
 
 bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
+  fbbtReachedIterLimit_ = false;
+
   if (!chg_bds) {
 
     chg_bds = new t_chg_bounds [nVars ()];

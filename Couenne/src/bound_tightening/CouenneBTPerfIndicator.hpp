@@ -67,7 +67,7 @@ namespace Couenne {
     void addToTimer (double time) const;
 
     /// 
-    void update (CouNumber *lb, CouNumber *ub, int depth) const;
+    void update (const CouNumber *lb, const CouNumber *ub, int depth) const;
   };
 }
 
