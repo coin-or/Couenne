@@ -522,6 +522,12 @@ class CouenneProblem {
   /// @param fname Name of the .gams file to be written.
   void writeGAMS (const std::string &fname);
 
+  /// Write nonlinear problem to a .lp file. Note: only works with
+  /// MIQCQPs (and MISOCPs in the future)
+  ///
+  ///@param fname Name of the .lp file to be written
+  void writeLP (const std::string &fname);
+
   /// Initialize auxiliary variables and their bounds from original
   /// variables
   //void initAuxs (const CouNumber *, const CouNumber *, const CouNumber *);

@@ -47,21 +47,22 @@ extern CbcModel                *OAModel;     // pointer to the submip if using C
 
 extern "C" {
 
-  static bool BonminInterruptedOnce = false;
+  static bool interruptedOnce = false;
 
   static void couenne_signal_handler (int whichSignal) {
 
-    if (BonminInterruptedOnce) {
-      //std::cerr<<"User-forced interruption"<<std::endl;
-      abort ();
-      exit (0);
-    }
+    if (interruptedOnce) {
+      std::cerr<<"[BREAK]"<<std::endl;
+      //abort ();
+      exit (-1);
+    } else 
+      std::cerr<<"Ctrl+C detected, stopping Couenne..." << std::endl;
 
-    if (currentBranchModel) currentBranchModel -> sayEventHappened();          // stop at next node
-    if (OAModel)            OAModel -> sayEventHappened();                     // stop at next node
+    if (currentBranchModel) currentBranchModel -> sayEventHappened();           // stop at next node
+    if (OAModel)            OAModel   -> sayEventHappened();                      // stop at next node
     if (currentOA)          currentOA -> parameter ().maxLocalSearchTime_ = 0.; // stop OA
 
-    BonminInterruptedOnce = true;
+    interruptedOnce = true;
   }
 }
 #endif
@@ -191,7 +192,6 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
     }
 
 #if 1
-
     // Now pass user set Sos constraints (code inspired from CoinSolve.cpp)
     const TMINLP::SosInfo * sos = s.nonlinearSolver()->model()->sosConstraints();
 

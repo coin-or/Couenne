@@ -75,11 +75,12 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneProblem_la_LIBADD =
 am__libCouenneProblem_la_SOURCES_DIST = problem.cpp CouenneProblem.cpp \
-	problemIO.cpp writeAMPL.cpp writeGAMS.cpp constraint.cpp \
-	fillQuadIndices.cpp fillDependence.cpp checkNLP.cpp \
-	getIntegerCandidate.cpp testIntFix.cpp CouenneSOS.cpp \
-	CouenneProblemConstructors.cpp CouenneRestoreUnused.cpp \
-	reformulate.cpp CouenneGlobalCutOff.cpp CouenneSymmetry.cpp \
+	problemIO.cpp writeAMPL.cpp writeGAMS.cpp writeLP.cpp \
+	constraint.cpp fillQuadIndices.cpp fillDependence.cpp \
+	checkNLP.cpp getIntegerCandidate.cpp testIntFix.cpp \
+	CouenneSOS.cpp CouenneProblemConstructors.cpp \
+	CouenneRestoreUnused.cpp reformulate.cpp \
+	CouenneGlobalCutOff.cpp CouenneSymmetry.cpp \
 	CouenneRecordBestSol.cpp depGraph/depGraph.cpp \
 	depGraph/checkCycles.cpp ../readnl/readnl.cpp \
 	../readnl/nl2e.cpp ../readnl/invmap.cpp \
@@ -87,8 +88,8 @@ am__libCouenneProblem_la_SOURCES_DIST = problem.cpp CouenneProblem.cpp \
 @COIN_HAS_ASL_TRUE@am__objects_1 = readnl.lo nl2e.lo invmap.lo \
 @COIN_HAS_ASL_TRUE@	readASLfg.lo
 am_libCouenneProblem_la_OBJECTS = problem.lo CouenneProblem.lo \
-	problemIO.lo writeAMPL.lo writeGAMS.lo constraint.lo \
-	fillQuadIndices.lo fillDependence.lo checkNLP.lo \
+	problemIO.lo writeAMPL.lo writeGAMS.lo writeLP.lo \
+	constraint.lo fillQuadIndices.lo fillDependence.lo checkNLP.lo \
 	getIntegerCandidate.lo testIntFix.lo CouenneSOS.lo \
 	CouenneProblemConstructors.lo CouenneRestoreUnused.lo \
 	reformulate.lo CouenneGlobalCutOff.lo CouenneSymmetry.lo \
@@ -296,10 +297,10 @@ ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_F77 = @ac_ct_F77@
-ac_ct_PKG_CONFIG = @ac_ct_PKG_CONFIG@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
 ac_cxx_preproc_warn_flag = @ac_cxx_preproc_warn_flag@
+ac_pt_PKG_CONFIG = @ac_pt_PKG_CONFIG@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -347,11 +348,12 @@ noinst_LTLIBRARIES = libCouenneProblem.la
 
 # List all source files for this library, including headers
 libCouenneProblem_la_SOURCES = problem.cpp CouenneProblem.cpp \
-	problemIO.cpp writeAMPL.cpp writeGAMS.cpp constraint.cpp \
-	fillQuadIndices.cpp fillDependence.cpp checkNLP.cpp \
-	getIntegerCandidate.cpp testIntFix.cpp CouenneSOS.cpp \
-	CouenneProblemConstructors.cpp CouenneRestoreUnused.cpp \
-	reformulate.cpp CouenneGlobalCutOff.cpp CouenneSymmetry.cpp \
+	problemIO.cpp writeAMPL.cpp writeGAMS.cpp writeLP.cpp \
+	constraint.cpp fillQuadIndices.cpp fillDependence.cpp \
+	checkNLP.cpp getIntegerCandidate.cpp testIntFix.cpp \
+	CouenneSOS.cpp CouenneProblemConstructors.cpp \
+	CouenneRestoreUnused.cpp reformulate.cpp \
+	CouenneGlobalCutOff.cpp CouenneSymmetry.cpp \
 	CouenneRecordBestSol.cpp depGraph/depGraph.cpp \
 	depGraph/checkCycles.cpp $(am__append_1)
 
@@ -447,6 +449,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testIntFix.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writeAMPL.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writeGAMS.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writeLP.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

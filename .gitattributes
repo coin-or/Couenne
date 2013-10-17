@@ -274,6 +274,7 @@ Couenne/src/problem/problemIO.cpp -text
 Couenne/src/problem/testIntFix.cpp -text
 Couenne/src/problem/writeAMPL.cpp -text
 Couenne/src/problem/writeGAMS.cpp -text
+Couenne/src/problem/writeLP.cpp -text
 Couenne/src/readnl/CouenneAmplInterface.cpp -text
 Couenne/src/readnl/CouenneAmplInterface.hpp -text
 Couenne/src/readnl/invmap.cpp -text

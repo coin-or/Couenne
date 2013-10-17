@@ -15,6 +15,7 @@ libCouenneProblem_la_SOURCES = \
 	problemIO.cpp \
 	writeAMPL.cpp \
 	writeGAMS.cpp \
+	writeLP.cpp \
 	constraint.cpp \
 	fillQuadIndices.cpp \
 	fillDependence.cpp \
