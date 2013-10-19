@@ -156,7 +156,7 @@ namespace Couenne {
   private:
 
     //
-    // Essential tools for the FP: a problem pointer and one for the
+    // ESSENTIAL TOOLS for the FP: a problem pointer and one for the
     // linearization cut generator
     //
 
@@ -180,8 +180,8 @@ namespace Couenne {
     /// Ipopt Application pointer for solving NLPs
     Ipopt::IpoptApplication *app_;
 
-    /// MILP relaxation of the MINLP (used to find integer
-    /// non-NLP-feasible solution)
+    /// MILP relaxation of the MINLP (used to find integer,
+    /// non-NLP-feasible solutions)
     OsiSolverInterface *milp_;
 
     /// LP relaxation of the MINLP used when fixing integer variables
@@ -213,7 +213,7 @@ namespace Couenne {
     double multHessMILP_; ///< weight of Hessian   in MILP
     double multObjFMILP_; ///< weight of objective in MILP
 
-    /// compute distance from integer variables only, not all variables;
+    /// Compute distance from integer variables only, not all variables
     enum fpCompDistIntType compDistInt_;
 
     /// Separate convexification cuts during or after MILP
@@ -222,10 +222,10 @@ namespace Couenne {
     /// Number of separation rounds for MILP convexification cuts
     int nSepRounds_;
 
-    /// maximum iterations per call
+    /// Maximum iterations per call
     int maxIter_;
 
-    /// use SCIP instead of Cbc for solving MILPs
+    /// Use SCIP instead of Cbc for solving MILPs
     bool useSCIP_;
 
     /// Which SCIP MILP method to use

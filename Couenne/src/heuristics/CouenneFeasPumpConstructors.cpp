@@ -86,11 +86,11 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   milpMethod_          (0),
   tabuMgt_             (FP_TABU_NONE) {
 
+  int compareTerm = INTEGER_VARS;
+
   if (IsValid (options)) {
 
     std::string s;
-
-    int compareTerm;
 
     options -> GetIntegerValue ("feas_pump_iter",       maxIter_,             "couenne.");
     options -> GetIntegerValue ("feas_pump_level",      numberSolvePerLevel_, "couenne.");
@@ -122,8 +122,6 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
     options -> GetIntegerValue ("feas_pump_milpmethod", milpMethod_, "couenne."); 
     options -> GetIntegerValue ("feas_pump_poolcomp",   compareTerm, "couenne."); 
 
-    pool_ = new CouenneFPpool (problem_, (enum what_to_compare) compareTerm);
-
     options -> GetStringValue  ("feas_pump_tabumgt", s, "couenne.");
 
     tabuMgt_ = 
@@ -142,9 +140,12 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "Warning: you have set feas_pump_usescip to true, but SCIP is not installed.\n");
 #endif
 
-  } else
-    //pool_ = new CouenneFPpool (SUM_NINF);
-    pool_ = new CouenneFPpool (problem_, INTEGER_VARS);
+  }
+
+  pool_ = new CouenneFPpool (problem_, (enum what_to_compare) compareTerm);
+
+  //pool_ = new CouenneFPpool (SUM_NINF);
+  //pool_ = new CouenneFPpool (problem_, INTEGER_VARS);
 
   setHeuristicName ("Couenne Feasibility Pump");
 

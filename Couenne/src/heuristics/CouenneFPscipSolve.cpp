@@ -250,7 +250,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
     }
   else if (milpMethod_ != 0)
     currentmilpmethod = milpMethod_; // use a fixed method to solve the MILP
-     
+
      
   // MILP solving loop. If the MILP terminates without a solution, it might get resolved with a more expensive atrategy
   do {
@@ -260,7 +260,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
     SCIP_CALL( SCIPresetParams(scip) );
         
     // deactivate SCIP output
-    if (!(problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC))) {
+    if (!(problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_WARNING, J_NLPHEURISTIC))) {
       SCIP_CALL( SCIPsetIntParam(scip, "display/verblevel", 0) );
     }
         
@@ -275,8 +275,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 
     SCIP_CALL( SCIPsetRealParam(scip, "limits/time", timelimit) );        
 
-
-    if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC)) {
+    if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_WARNING, J_NLPHEURISTIC)) {
       SCIPinfoMessage(scip, NULL, "using MILP method: %d\n",currentmilpmethod);
     }
         
@@ -294,6 +293,10 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	  { 
 	    SCIP_CALL( SCIPsetLongintParam(scip, "constraints/rowcuts/maxcuttingrounds", 0) );
 	  }
+
+	// As this is expensive, stop as soon as a solution is found
+
+	SCIP_CALL( SCIPsetIntParam(scip, "limits/bestsol", 1) );
 	break;
 
       case 1: // Be aggressive in finding feasible solutions, but lazy about the dual bound. 
@@ -334,6 +337,13 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
       case 2: // default SCIP with node limits
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/stallnodes", 500) );
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/nodes", 5000) );
+
+	// disable expensive dual techniques
+
+	SCIP_CALL( SCIPsetSeparating(scip, SCIP_PARAMSETTING_FAST, TRUE) );
+	SCIP_CALL( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
+	SCIP_CALL( SCIPsetIntParam(scip, "branching/pscost/priority", INT_MAX/4) );
+
 	break;
       case 3: // solve the MILP with RENS. Disable most other features, enable RENS
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/nodes", 1) );
@@ -423,8 +433,15 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 
     SCIP_RETCODE retcode = SCIPsolve (scip);
 
+    if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_WARNING, J_NLPHEURISTIC))
+      SCIP_CALL( SCIPprintStatistics(scip, NULL) );
+
+    // Greppable line with condensed info
+
+    problem_ -> Jnlst () -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC, "[FeasPump-SCIP] %5d %5d %7.2f\n", SCIPgetNVars(scip), SCIPgetNConss(scip), SCIPgetSolvingTime(scip));
+
     if (retcode != SCIP_OKAY) {
-      problem_ -> Jnlst () -> Printf (Ipopt::J_ERROR, J_NLPHEURISTIC, "Couenne FP: SCIPsolve did not succeed\n");
+      problem_ -> Jnlst () -> Printf (Ipopt::J_WARNING, J_NLPHEURISTIC, "Couenne FP: SCIPsolve did not succeed\n");
       goto TERMINATION;
     }
 

@@ -153,7 +153,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
   double obj = findSolution (iSol, niter, nsuciter);
 
   if ((nSol0 && iSol) &&
-      (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC))) {
+      (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_WARNING, J_NLPHEURISTIC))) {
 
     double dist = 0.;
     int nNonint = 0;

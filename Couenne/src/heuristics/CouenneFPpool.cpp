@@ -137,7 +137,7 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
     case OBJVAL:       return (objVal_              < other.objVal_);
     case ALL_VARS: {
       // lexicographical comparison: unless the two solutions have the
-      // same integer subvector, comparison will tell them apart
+      // same subvector, comparison will tell them apart
 
       for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
 	   i != problem_ -> Variables (). end ();
