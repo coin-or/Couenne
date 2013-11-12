@@ -274,8 +274,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 #define RND_DECR_EXPONENT .5
 
-	    if (iSol [i] >= lb [i] - 1.) down =      1. / pow (1. + (downMoves += 1.), RND_DECR_EXPONENT);
-	    if (iSol [i] <= ub [i] + 1.) up   = 1. - 1. / pow (1. + (upMoves   += 1.), RND_DECR_EXPONENT);
+	    if (iSol [i] >= lb [i] + 1.) down =      1. / pow (1. + (downMoves += 1.), RND_DECR_EXPONENT);
+	    if (iSol [i] <= ub [i] - 1.) up   = 1. - 1. / pow (1. + (upMoves   += 1.), RND_DECR_EXPONENT);
 
 	    if      (rnd < down) iSol [i] -= 1.;
 	    else if (rnd > up)   iSol [i] += 1.;
