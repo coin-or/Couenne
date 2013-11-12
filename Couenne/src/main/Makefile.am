@@ -17,6 +17,8 @@ libBonCouenne_la_SOURCES = \
 	BonCouenneSetup.cpp \
 	SmartAslDestr.cpp
 
+libBonCouenne_la_LDFLAGS = $(LT_LDFLAGS)
+
 if COIN_HAS_ASL
   bin_PROGRAMS = couenne 
 endif
