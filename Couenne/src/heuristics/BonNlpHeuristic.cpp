@@ -310,7 +310,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
     // apply NLP solver /////////////////////////////////
     try {
-      nlp_ -> options () -> SetNumericValue ("max_cpu_time", CoinMax (0., couenne_ -> getMaxCpuTime () - CoinCpuTime ()));
+      nlp_ -> options () -> SetNumericValue ("max_cpu_time", CoinMax (0.1, couenne_ -> getMaxCpuTime () - CoinCpuTime ()));
       nlp_ -> initialSolve ();
     }
     catch (Bonmin::TNLPSolver::UnsolvedError *E) {}

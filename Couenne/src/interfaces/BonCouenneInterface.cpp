@@ -150,7 +150,7 @@ CouenneInterface::extractLinearRelaxation
 
     if (is_feasible) {
       try {
-	options () -> SetNumericValue ("max_cpu_time", CoinMax (0., (p -> getMaxCpuTime () - CoinCpuTime ()) / 2));
+	options () -> SetNumericValue ("max_cpu_time", CoinMax (0.1, (p -> getMaxCpuTime () - CoinCpuTime ()) / 2));
 	initialSolve ();
       }
       catch (Bonmin::TNLPSolver::UnsolvedError *E) {
@@ -234,7 +234,7 @@ CouenneInterface::extractLinearRelaxation
 	    setColSolution (Y); // use initial solution given 
 
 	    try {
-	      options () -> SetNumericValue ("max_cpu_time", CoinMax (0., p -> getMaxCpuTime () - CoinCpuTime ()));
+	      options () -> SetNumericValue ("max_cpu_time", CoinMax (0.1, p -> getMaxCpuTime () - CoinCpuTime ()));
 	      resolve (); // solve with integer variables fixed
 	    }
 	    catch (Bonmin::TNLPSolver::UnsolvedError *E) {

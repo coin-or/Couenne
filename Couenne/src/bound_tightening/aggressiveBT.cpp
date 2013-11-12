@@ -144,7 +144,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
       try {
 
-	nlp -> options () -> SetNumericValue ("max_cpu_time", CoinMax (0., getMaxCpuTime () - CoinCpuTime ()));
+	nlp -> options () -> SetNumericValue ("max_cpu_time", CoinMax (0.1, getMaxCpuTime () - CoinCpuTime ()));
 	nlp -> initialSolve ();
       }
 
