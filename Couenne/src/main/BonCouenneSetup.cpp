@@ -376,7 +376,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   if ((Bonmin::BabSetupBase::OSI_STRONG == varSelection) &&
       (CouenneObject::VT_OBJ            == objType)){
 
-    printf ("Warning: Violation Transfer and strong branching are mutually exclusive.\nResetting to Violation Transfer only.");
+    printf ("Warning: Violation Transfer and strong branching are mutually exclusive.\nResetting to Violation Transfer only.\n");
     varSelection = Bonmin::BabSetupBase::OSI_SIMPLE;
   }
 
