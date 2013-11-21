@@ -13,13 +13,8 @@ AUTOMAKE_OPTIONS = foreign
 ########################################################################
 
 SUBDIRS = src/util \
-	  src/expression
-
-if COIN_HAS_ASL
-SUBDIRS += src/readnl
-endif
-
-SUBDIRS += src/standardize \
+	  src/expression \
+	  src/standardize \
 	  src/problem \
 	  src/bound_tightening \
 	  src/bound_tightening/twoImpliedBT \
@@ -30,8 +25,13 @@ SUBDIRS += src/standardize \
 	  src/heuristics \
 	  src/cut/sdpcuts \
 	  src/cut/crossconv \
-	  src \
-	  src/main 
+	  src
+
+if COIN_HAS_ASL
+SUBDIRS += src/readnl
+endif
+
+SUBDIRS += src/main 
 
 #	  src/cut/ellipcuts
 

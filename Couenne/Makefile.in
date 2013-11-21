@@ -98,11 +98,11 @@ pkgconfiglibDATA_INSTALL = $(INSTALL_DATA)
 DATA = $(pkgconfiglib_DATA)
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = src/util src/expression src/readnl src/standardize \
-	src/problem src/bound_tightening \
-	src/bound_tightening/twoImpliedBT src/convex src/branch \
-	src/disjunctive src/interfaces src/heuristics src/cut/sdpcuts \
-	src/cut/crossconv src src/main test
+DIST_SUBDIRS = src/util src/expression src/standardize src/problem \
+	src/bound_tightening src/bound_tightening/twoImpliedBT \
+	src/convex src/branch src/disjunctive src/interfaces \
+	src/heuristics src/cut/sdpcuts src/cut/crossconv src \
+	src/readnl src/main test
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -204,6 +204,8 @@ DBG_CXXFLAGS = @DBG_CXXFLAGS@
 DBG_FFLAGS = @DBG_FFLAGS@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DEPENDENCY_LINKING_FALSE = @DEPENDENCY_LINKING_FALSE@
+DEPENDENCY_LINKING_TRUE = @DEPENDENCY_LINKING_TRUE@
 ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -351,11 +353,11 @@ AUTOMAKE_OPTIONS = foreign
 ########################################################################
 #                          Subdirectories                              #
 ########################################################################
-SUBDIRS = src/util src/expression $(am__append_1) src/standardize \
-	src/problem src/bound_tightening \
-	src/bound_tightening/twoImpliedBT src/convex src/branch \
-	src/disjunctive src/interfaces src/heuristics src/cut/sdpcuts \
-	src/cut/crossconv src src/main $(am__append_2)
+SUBDIRS = src/util src/expression src/standardize src/problem \
+	src/bound_tightening src/bound_tightening/twoImpliedBT \
+	src/convex src/branch src/disjunctive src/interfaces \
+	src/heuristics src/cut/sdpcuts src/cut/crossconv src \
+	$(am__append_1) src/main $(am__append_2)
 
 ########################################################################
 #             Additional files to be included in tarball               #

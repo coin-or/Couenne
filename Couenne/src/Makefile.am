@@ -18,9 +18,20 @@ AUTOMAKE_OPTIONS = foreign
 # in the 'lib' directory
 lib_LTLIBRARIES = libCouenne.la
 
-libCouenne_la_SOURCES = 
+# List all source files, including headers
+libCouenne_la_SOURCES = \
+	main/CouenneBab.cpp \
+	main/BonCouenneSetup.cpp \
+	main/SmartAslDestr.cpp
 
-libCouenne_la_LIBADD = \
+# List all additionally required libraries
+libCouenne_la_LIBADD = $(libCouenne_la_DEPENDENCIES)
+if DEPENDENCY_LINKING
+libCouenne_la_LIBADD += $(COUENNELIB_LIBS)
+endif
+
+# List all dependency libraries
+libCouenne_la_DEPENDENCIES = \
 	./interfaces/libCouenneInterfaces.la \
 	./heuristics/libCouenneHeuristics.la \
 	./problem/libCouenneProblem.la \
@@ -38,8 +49,6 @@ libCouenne_la_LIBADD = \
 #	./ellipcuts/libCouenneEllipCuts.la 
 #	./readnl/libCouenneReadnl.la 
 
-libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
-
 # This is for libtool
 libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
@@ -50,23 +59,24 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
 
-AM_CPPFLAGS =
+AM_CPPFLAGS = \
+	-I`$(CYGPATH_W) $(srcdir)/convex` \
+	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
+	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
+	-I`$(CYGPATH_W) $(srcdir)/expression` \
+	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
+	-I`$(CYGPATH_W) $(srcdir)/expression/partial` \
+	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
+	-I`$(CYGPATH_W) $(srcdir)/main` \
+	-I`$(CYGPATH_W) $(srcdir)/problem` \
+	-I`$(CYGPATH_W) $(srcdir)/branch` \
+	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
+	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
+	-I`$(CYGPATH_W) $(srcdir)/bound_tightening` \
+	-I`$(CYGPATH_W) $(srcdir)/bound_tightening/twoImpliedBT` \
+       $(COUENNELIB_CFLAGS)
 
-# AM_CPPFLAGS = \
-# 	-I`$(CYGPATH_W) $(srcdir)/convex` \
-# 	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
-# 	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
-# 	-I`$(CYGPATH_W) $(srcdir)/expression` \
-# 	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
-# 	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
-# 	-I`$(CYGPATH_W) $(srcdir)/main` \
-# 	-I`$(CYGPATH_W) $(srcdir)/problem` \
-# 	-I`$(CYGPATH_W) $(srcdir)/branch` \
-# 	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
-# 	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
-# 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt` \
-#       $(COUENNELIB_CFLAGS)
-
+#	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt` \
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
 
 # This line is necessary to allow VPATH compilation

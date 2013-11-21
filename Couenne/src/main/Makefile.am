@@ -17,6 +17,10 @@ libBonCouenne_la_SOURCES = \
 	BonCouenneSetup.cpp \
 	SmartAslDestr.cpp
 
+if DEPENDENCY_LINKING
+libBonCouenne_la_LIBADD = $(COUENNELIB_LIBS) ../libCouenne.la
+endif
+
 libBonCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 if COIN_HAS_ASL

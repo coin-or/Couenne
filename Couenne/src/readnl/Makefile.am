@@ -16,6 +16,11 @@ libCouenneReadnl_la_SOURCES = CouenneAmplInterface.cpp
 #	invmap.cpp \
 #	readASLfg.cpp
 
+# List all additionally required libraries
+if DEPENDENCY_LINKING
+libCouenneReadnl_la_LIBADD = $(COUENNELIB_LIBS) ../libCouenne.la
+endif
+
 # This is for libtool
 libCouenneReadnl_la_LDFLAGS = $(LT_LDFLAGS)
 

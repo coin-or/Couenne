@@ -62,7 +62,10 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libCouenneReadnl_la_LIBADD =
+am__DEPENDENCIES_1 =
+@DEPENDENCY_LINKING_TRUE@libCouenneReadnl_la_DEPENDENCIES =  \
+@DEPENDENCY_LINKING_TRUE@	$(am__DEPENDENCIES_1) \
+@DEPENDENCY_LINKING_TRUE@	../libCouenne.la
 am_libCouenneReadnl_la_OBJECTS = CouenneAmplInterface.lo
 libCouenneReadnl_la_OBJECTS = $(am_libCouenneReadnl_la_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -170,6 +173,8 @@ DBG_CXXFLAGS = @DBG_CXXFLAGS@
 DBG_FFLAGS = @DBG_FFLAGS@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DEPENDENCY_LINKING_FALSE = @DEPENDENCY_LINKING_FALSE@
+DEPENDENCY_LINKING_TRUE = @DEPENDENCY_LINKING_TRUE@
 ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -322,6 +327,9 @@ libCouenneReadnl_la_SOURCES = CouenneAmplInterface.cpp
 #	nl2e.cpp \
 #	invmap.cpp \
 #	readASLfg.cpp
+
+# List all additionally required libraries
+@DEPENDENCY_LINKING_TRUE@libCouenneReadnl_la_LIBADD = $(COUENNELIB_LIBS) ../libCouenne.la
 
 # This is for libtool
 libCouenneReadnl_la_LDFLAGS = $(LT_LDFLAGS)

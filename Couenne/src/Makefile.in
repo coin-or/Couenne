@@ -46,6 +46,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@DEPENDENCY_LINKING_TRUE@am__append_1 = $(COUENNELIB_LIBS)
 
 # cut/sdpcuts/dsyevx_wrapper.hpp 
 # cut/sdpcuts/linquad_cuts.hpp 
@@ -54,7 +55,7 @@ host_triplet = @host@
 # cut/sdpcuts/rlt_cuts.hpp
 
 # ellipcuts/CouenneEllipCuts.hpp 
-@COIN_HAS_NTY_TRUE@am__append_1 = branch/Nauty.h
+@COIN_HAS_NTY_TRUE@am__append_2 = branch/Nauty.h
 subdir = src
 DIST_COMMON = $(am__includecoin_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -76,16 +77,33 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includecoindir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-am_libCouenne_la_OBJECTS =
+am__DEPENDENCIES_1 = ./interfaces/libCouenneInterfaces.la \
+	./heuristics/libCouenneHeuristics.la \
+	./problem/libCouenneProblem.la \
+	./standardize/libCouenneStandardize.la \
+	./expression/libCouenneExpression.la \
+	./branch/libCouenneBranch.la ./convex/libCouenneConvex.la \
+	./bound_tightening/libCouenneBoundTightening.la \
+	./bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
+	./util/libCouenneUtil.la \
+	./disjunctive/libCouenneDisjunctive.la \
+	./cut/crossconv/libCouenneCrossConv.la \
+	./cut/sdpcuts/libCouenneSdpCuts.la
+am__DEPENDENCIES_2 =
+@DEPENDENCY_LINKING_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_2)
+am_libCouenne_la_OBJECTS = CouenneBab.lo BonCouenneSetup.lo \
+	SmartAslDestr.lo
 libCouenne_la_OBJECTS = $(am_libCouenne_la_OBJECTS)
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
+depcomp = $(SHELL) $(top_srcdir)/depcomp
+am__depfiles_maybe = depfiles
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libCouenne_la_SOURCES)
 DIST_SOURCES = $(libCouenne_la_SOURCES)
 am__includecoin_HEADERS_DIST = util/CouenneRootQ.hpp \
@@ -247,6 +265,8 @@ DBG_CXXFLAGS = @DBG_CXXFLAGS@
 DBG_FFLAGS = @DBG_FFLAGS@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DEPENDENCY_LINKING_FALSE = @DEPENDENCY_LINKING_FALSE@
+DEPENDENCY_LINKING_TRUE = @DEPENDENCY_LINKING_TRUE@
 ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -398,8 +418,19 @@ AUTOMAKE_OPTIONS = foreign
 # Name of the library compiled in this directory.  We want it to be installed
 # in the 'lib' directory
 lib_LTLIBRARIES = libCouenne.la
-libCouenne_la_SOURCES = 
-libCouenne_la_LIBADD = \
+
+# List all source files, including headers
+libCouenne_la_SOURCES = \
+	main/CouenneBab.cpp \
+	main/BonCouenneSetup.cpp \
+	main/SmartAslDestr.cpp
+
+
+# List all additionally required libraries
+libCouenne_la_LIBADD = $(libCouenne_la_DEPENDENCIES) $(am__append_1)
+
+# List all dependency libraries
+libCouenne_la_DEPENDENCIES = \
 	./interfaces/libCouenneInterfaces.la \
 	./heuristics/libCouenneHeuristics.la \
 	./problem/libCouenneProblem.la \
@@ -417,7 +448,6 @@ libCouenne_la_LIBADD = \
 
 #	./ellipcuts/libCouenneEllipCuts.la 
 #	./readnl/libCouenneReadnl.la 
-libCouenne_la_DEPENDENCIES = $(libCouenne_la_LIBADD)
 
 # This is for libtool
 libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
@@ -428,23 +458,25 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
-AM_CPPFLAGS = 
+AM_CPPFLAGS = \
+	-I`$(CYGPATH_W) $(srcdir)/convex` \
+	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
+	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
+	-I`$(CYGPATH_W) $(srcdir)/expression` \
+	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
+	-I`$(CYGPATH_W) $(srcdir)/expression/partial` \
+	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
+	-I`$(CYGPATH_W) $(srcdir)/main` \
+	-I`$(CYGPATH_W) $(srcdir)/problem` \
+	-I`$(CYGPATH_W) $(srcdir)/branch` \
+	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
+	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
+	-I`$(CYGPATH_W) $(srcdir)/bound_tightening` \
+	-I`$(CYGPATH_W) $(srcdir)/bound_tightening/twoImpliedBT` \
+       $(COUENNELIB_CFLAGS)
 
-# AM_CPPFLAGS = \
-# 	-I`$(CYGPATH_W) $(srcdir)/convex` \
-# 	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
-# 	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
-# 	-I`$(CYGPATH_W) $(srcdir)/expression` \
-# 	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
-# 	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
-# 	-I`$(CYGPATH_W) $(srcdir)/main` \
-# 	-I`$(CYGPATH_W) $(srcdir)/problem` \
-# 	-I`$(CYGPATH_W) $(srcdir)/branch` \
-# 	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
-# 	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
-# 	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt` \
-#       $(COUENNELIB_CFLAGS)
 
+#	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt` \
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
 
 # This line is necessary to allow VPATH compilation
@@ -520,11 +552,12 @@ includecoin_HEADERS = util/CouenneRootQ.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
 	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/CouennePSDcon.hpp \
 	cut/sdpcuts/CouenneMatrix.hpp \
-	cut/crossconv/CouenneCrossConv.hpp $(am__append_1)
+	cut/crossconv/CouenneCrossConv.hpp $(am__append_2)
 all: config.h config_couenne.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
+.SUFFIXES: .cpp .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -609,13 +642,59 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libCouenne.la: $(libCouenne_la_OBJECTS) $(libCouenne_la_DEPENDENCIES) 
-	$(LINK) -rpath $(libdir) $(libCouenne_la_LDFLAGS) $(libCouenne_la_OBJECTS) $(libCouenne_la_LIBADD) $(LIBS)
+	$(CXXLINK) -rpath $(libdir) $(libCouenne_la_LDFLAGS) $(libCouenne_la_OBJECTS) $(libCouenne_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
+
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneBab.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SmartAslDestr.Plo@am__quote@
+
+.cpp.o:
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ `$(CYGPATH_W) '$<'`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cpp.lo:
+@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+CouenneBab.lo: main/CouenneBab.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CouenneBab.lo -MD -MP -MF "$(DEPDIR)/CouenneBab.Tpo" -c -o CouenneBab.lo `test -f 'main/CouenneBab.cpp' || echo '$(srcdir)/'`main/CouenneBab.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/CouenneBab.Tpo" "$(DEPDIR)/CouenneBab.Plo"; else rm -f "$(DEPDIR)/CouenneBab.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main/CouenneBab.cpp' object='CouenneBab.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CouenneBab.lo `test -f 'main/CouenneBab.cpp' || echo '$(srcdir)/'`main/CouenneBab.cpp
+
+BonCouenneSetup.lo: main/BonCouenneSetup.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BonCouenneSetup.lo -MD -MP -MF "$(DEPDIR)/BonCouenneSetup.Tpo" -c -o BonCouenneSetup.lo `test -f 'main/BonCouenneSetup.cpp' || echo '$(srcdir)/'`main/BonCouenneSetup.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/BonCouenneSetup.Tpo" "$(DEPDIR)/BonCouenneSetup.Plo"; else rm -f "$(DEPDIR)/BonCouenneSetup.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main/BonCouenneSetup.cpp' object='BonCouenneSetup.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BonCouenneSetup.lo `test -f 'main/BonCouenneSetup.cpp' || echo '$(srcdir)/'`main/BonCouenneSetup.cpp
+
+SmartAslDestr.lo: main/SmartAslDestr.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SmartAslDestr.lo -MD -MP -MF "$(DEPDIR)/SmartAslDestr.Tpo" -c -o SmartAslDestr.lo `test -f 'main/SmartAslDestr.cpp' || echo '$(srcdir)/'`main/SmartAslDestr.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/SmartAslDestr.Tpo" "$(DEPDIR)/SmartAslDestr.Plo"; else rm -f "$(DEPDIR)/SmartAslDestr.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main/SmartAslDestr.cpp' object='SmartAslDestr.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SmartAslDestr.lo `test -f 'main/SmartAslDestr.cpp' || echo '$(srcdir)/'`main/SmartAslDestr.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -757,6 +836,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -782,6 +862,7 @@ install-man:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
