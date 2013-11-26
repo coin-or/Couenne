@@ -46,7 +46,29 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@DEPENDENCY_LINKING_TRUE@am__append_1 = $(COUENNELIB_LIBS)
+@DEPENDENCY_LINKING_TRUE@am__append_1 = \
+@DEPENDENCY_LINKING_TRUE@	main/CouenneBab.cpp \
+@DEPENDENCY_LINKING_TRUE@	main/BonCouenneSetup.cpp \
+@DEPENDENCY_LINKING_TRUE@	main/SmartAslDestr.cpp
+
+@DEPENDENCY_LINKING_TRUE@am__append_2 = $(COUENNELIB_LIBS)
+@DEPENDENCY_LINKING_TRUE@am__append_3 = \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/convex` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/expression` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/expression/partial` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/main` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/problem` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/branch` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/bound_tightening` \
+@DEPENDENCY_LINKING_TRUE@	-I`$(CYGPATH_W) $(srcdir)/bound_tightening/twoImpliedBT` \
+@DEPENDENCY_LINKING_TRUE@       $(COUENNELIB_CFLAGS)
+
 
 # cut/sdpcuts/dsyevx_wrapper.hpp 
 # cut/sdpcuts/linquad_cuts.hpp 
@@ -55,7 +77,7 @@ host_triplet = @host@
 # cut/sdpcuts/rlt_cuts.hpp
 
 # ellipcuts/CouenneEllipCuts.hpp 
-@COIN_HAS_NTY_TRUE@am__append_2 = branch/Nauty.h
+@COIN_HAS_NTY_TRUE@am__append_4 = branch/Nauty.h
 subdir = src
 DIST_COMMON = $(am__includecoin_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -91,8 +113,11 @@ am__DEPENDENCIES_1 = ./interfaces/libCouenneInterfaces.la \
 	./cut/sdpcuts/libCouenneSdpCuts.la
 am__DEPENDENCIES_2 =
 @DEPENDENCY_LINKING_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_2)
-am_libCouenne_la_OBJECTS = CouenneBab.lo BonCouenneSetup.lo \
-	SmartAslDestr.lo
+am__libCouenne_la_SOURCES_DIST = main/CouenneBab.cpp \
+	main/BonCouenneSetup.cpp main/SmartAslDestr.cpp
+@DEPENDENCY_LINKING_TRUE@am__objects_1 = CouenneBab.lo \
+@DEPENDENCY_LINKING_TRUE@	BonCouenneSetup.lo SmartAslDestr.lo
+am_libCouenne_la_OBJECTS = $(am__objects_1)
 libCouenne_la_OBJECTS = $(am_libCouenne_la_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -105,7 +130,7 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libCouenne_la_SOURCES)
-DIST_SOURCES = $(libCouenne_la_SOURCES)
+DIST_SOURCES = $(am__libCouenne_la_SOURCES_DIST)
 am__includecoin_HEADERS_DIST = util/CouenneRootQ.hpp \
 	util/CouenneFunTriplets.hpp main/CouenneBab.hpp \
 	main/BonCouenneInfo.hpp main/BonCouenneSetup.hpp \
@@ -420,14 +445,10 @@ AUTOMAKE_OPTIONS = foreign
 lib_LTLIBRARIES = libCouenne.la
 
 # List all source files, including headers
-libCouenne_la_SOURCES = \
-	main/CouenneBab.cpp \
-	main/BonCouenneSetup.cpp \
-	main/SmartAslDestr.cpp
-
+libCouenne_la_SOURCES = $(am__append_1)
 
 # List all additionally required libraries
-libCouenne_la_LIBADD = $(libCouenne_la_DEPENDENCIES) $(am__append_1)
+libCouenne_la_LIBADD = $(libCouenne_la_DEPENDENCIES) $(am__append_2)
 
 # List all dependency libraries
 libCouenne_la_DEPENDENCIES = \
@@ -458,23 +479,7 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
-AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(srcdir)/convex` \
-	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
-	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
-	-I`$(CYGPATH_W) $(srcdir)/expression` \
-	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/expression/partial` \
-	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
-	-I`$(CYGPATH_W) $(srcdir)/main` \
-	-I`$(CYGPATH_W) $(srcdir)/problem` \
-	-I`$(CYGPATH_W) $(srcdir)/branch` \
-	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
-	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
-	-I`$(CYGPATH_W) $(srcdir)/bound_tightening` \
-	-I`$(CYGPATH_W) $(srcdir)/bound_tightening/twoImpliedBT` \
-       $(COUENNELIB_CFLAGS)
-
+AM_CPPFLAGS = $(am__append_3)
 
 #	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt` \
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
@@ -552,7 +557,7 @@ includecoin_HEADERS = util/CouenneRootQ.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
 	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/CouennePSDcon.hpp \
 	cut/sdpcuts/CouenneMatrix.hpp \
-	cut/crossconv/CouenneCrossConv.hpp $(am__append_2)
+	cut/crossconv/CouenneCrossConv.hpp $(am__append_4)
 all: config.h config_couenne.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
