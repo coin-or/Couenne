@@ -183,6 +183,23 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   do {
 
+    if (niter) {
+      multDistNLP_  *= fabs (save_mDN); // update within loop
+      multHessNLP_  *= fabs (save_mHN);
+      multObjFNLP_  *= fabs (save_mON);
+      multDistMILP_ *= fabs (save_mDM);
+      multHessMILP_ *= fabs (save_mHM);
+      multObjFMILP_ *= fabs (save_mOM);
+    }
+
+    printf ("multipliers (%d): %g, %g, %g, %g, %g, %g\n", niter,
+	    multDistNLP (),
+	    multHessNLP (),
+	    multObjFNLP (),
+	    multDistMILP (),
+	    multHessMILP (),
+	    multObjFMILP ());
+
     if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
       break;
 
@@ -654,13 +671,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // MILP and NLP parts
 
     //multHessNLP_ *= save_multHessNLP_; // exponential reduction
-
-    multDistNLP_  *= fabs (save_mDN); // update within loop
-    multHessNLP_  *= fabs (save_mHN);
-    multObjFNLP_  *= fabs (save_mON);
-    multDistMILP_ *= fabs (save_mDM);
-    multHessMILP_ *= fabs (save_mHM);
-    multObjFMILP_ *= fabs (save_mOM);
 
   } while ((niter++ < maxIter_) && 
 	   (retval == 0));
