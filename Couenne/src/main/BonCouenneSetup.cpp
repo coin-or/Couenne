@@ -130,9 +130,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   options () -> SetStringValue ("sb", "yes", false, true);
 
   // in check mode, avoid pop-up error message (there are quite a few messages)
-  options_ -> GetStringValue ("test_mode", s, "couenne.");
-  if (s == "yes")
-    WindowsErrorPopupBlocker();
+  //options_ -> GetStringValue ("test_mode", s, "couenne.");
+  //if (s == "yes")
+  //WindowsErrorPopupBlocker();
 
   /** Change default value for failure behavior so that code doesn't crash 
       when Ipopt does not solve a sub-problem.*/
@@ -404,6 +404,8 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 	//|| ((var -> Type () == AUX) &&                                  // or, aux 
 	//    (var -> Image () -> Linearity () > LINEAR))) {              // of nonlinear
 
+	int ind = var -> Index ();
+
 	objects [nobj] = new CouenneVarObject (couenneCg, couenneProb_, var, this, journalist (), varSelection);
 	objects [nobj++] -> setPriority (var -> isInteger () ? intObjPriority : contObjPriority);
 	//objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
@@ -584,14 +586,17 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   options () -> GetStringValue ("feas_pump_heuristic", doHeuristic, "couenne.");
 
-  if (doHeuristic == "yes") {
+  if (doHeuristic != "no") {
 
     int numSolve;
-    options () -> GetIntegerValue ("feas_pump_level", numSolve, "couenne.");
 
     CouenneFeasPump *nlpHeuristic = new CouenneFeasPump (couenneProb_, couenneCg, options ());
 
+    options () -> GetIntegerValue ("feas_pump_level", numSolve, "couenne.");
+
     nlpHeuristic -> setNumberSolvePerLevel (numSolve);
+
+    nlpHeuristic -> nCalls () = ("yes" == doHeuristic) ? -1 : 1; // second case it means the answer was "once"
 
     HeuristicMethod h;
 
@@ -599,7 +604,6 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     h.heuristic = nlpHeuristic;
     heuristics_. push_back (h);
   }
-
 
   if (0) { // inactive as of yet -- segfaults 
 

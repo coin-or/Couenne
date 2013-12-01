@@ -92,6 +92,7 @@ Instructions: http://www.coin-or.org/Couenne\n",
 	    strcmp (COUENNE_VERSION, "trunk") ? COUENNE_VERSION : "");
 
   WindowsErrorPopupBlocker();
+
   using namespace Ipopt;
 
 #ifdef COIN_HAS_SCIP
@@ -106,6 +107,10 @@ Instructions: http://www.coin-or.org/Couenne\n",
   try {
 
     CouenneBab bb;
+
+    // printf ("abs=%g\n, rel=%g\n",
+    // 	    bb.model().getAllowableGap(),
+    // 	    bb.model().getAllowableFractionGap());
 
     CouenneProblem *p = NULL;
     CouenneInterface *ci = NULL;
