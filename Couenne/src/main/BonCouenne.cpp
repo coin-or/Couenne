@@ -10,6 +10,7 @@
 //
 // Date : 12/19/2006
 
+
 #include <iomanip>
 #include <fstream>
 
@@ -46,8 +47,6 @@ using namespace Couenne;
 
 #ifdef COIN_HAS_NTY
 #include "Nauty.h"
-
-// FIXME: horrible global variables. Brrr.
 #include "CouenneBranchingObject.hpp"
 #endif
 
@@ -56,6 +55,8 @@ using namespace Couenne;
 #endif
 
 #include "CoinSignal.hpp"
+
+#undef printError // defined in SCIP, replaces error handling below...
 
 #if 0
 extern "C" {
@@ -80,13 +81,15 @@ int main (int argc, char *argv[]) {
 
 #ifdef WIN_
   // FIXME really want Couenne runs to be nondeterministic?
-  srand ((long) time (NULL));
+  //srand ((long) time (NULL));
+  srand ((long) 42*666);
 #endif
 
   //CoinSighandler_t saveSignal = SIG_DFL;
   //saveSignal = signal (SIGINT, signal_handler);
 
-    printf ("Couenne %s --  an Open-Source solver for Mixed Integer Nonlinear Optimization\n\
+    printf ("\
+Couenne %s -- an Open-Source solver for Mixed Integer Nonlinear Optimization\n\
 Mailing list: couenne@list.coin-or.org\n\
 Instructions: http://www.coin-or.org/Couenne\n", 
 	    strcmp (COUENNE_VERSION, "trunk") ? COUENNE_VERSION : "");
@@ -207,8 +210,35 @@ Auxiliaries:     %8d (%d integer)\n\n",
     double symmGroupSize = prob -> orbitalBranching () ? prob -> getNtyInfo () -> getGroupSize () : -1;
 #endif
 
-    if (!infeasible)
-      bb (couenne); // do branch and bound
+    // run FP and exit if its option is equal to "only"
+
+    std::string s;
+    couenne.options () -> GetStringValue ("feas_pump_heuristic", s, "couenne.");
+
+    // if ("only" == s) {
+    //   CouenneFeasPump *nlpHeuristic = NULL;
+    //   for (std::list<struct Bonmin::BabSetupBase::HeuristicMethod>::iterator i = couenne.heuristics(). begin(); 
+    // 	   i!=couenne.heuristics(). end() && !nlpHeuristic; ++i) {
+    // 	nlpHeuristic = dynamic_cast <CouenneFeasPump *> (i -> heuristic);
+    //   }
+    //   if (!nlpHeuristic) jnlst -> Printf (J_ERROR, J_COUENNE, "Set feas_pump_heuristic to \"once\" but FP not found.\n");
+    //   else {
+    // 	CouNumber
+    // 	  *newsol = new CouNumber [prob -> nVars ()],
+    // 	  objval;
+    // 	nlpHeuristic -> solution (objval, newsol);
+    // 	// check solution and saves it
+    // 	if (! (prob -> checkNLP2 (newsol, 0, false, true, false, prob -> getFeasTol ())))
+    // 	  jnlst -> Printf (J_ERROR, J_COUENNE, "Single run of FP found an infeasible solution\n");
+    // 	delete [] newsol;
+    // 	couenne.options () -> SetNumericValue ("time_limit", 0.001, "couenne.");
+    // 	couenne.setDoubleParameter (Bonmin::BabSetupBase::MaxTime, 0.001);
+    //   }
+    // }
+
+    if (!infeasible)                                //  /|-------------=
+      bb (couenne); // do branch and bound          // < |             =
+                                                    //  \|-------------=
 
 #ifdef COIN_HAS_NTY
     if (CouenneBranchingObject::nOrbBr)
@@ -240,7 +270,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
     //   exit(1);
     // }
 
-    if(cp != NULL) {
+    if (cp != NULL) {
       double cbcObjVal = infeasible ? COIN_DBL_MAX : bb.model().getObjValue();
       int modelNvars = prob -> nVars ();//bb.model().getNumCols();
 

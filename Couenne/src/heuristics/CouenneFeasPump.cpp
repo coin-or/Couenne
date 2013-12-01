@@ -38,12 +38,12 @@ void printCmpSol (CouenneProblem *p, const double *iSol, double *nSol, int direc
 // Solve
 int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
-  const int depth = (model_ -> currentNode ()) ? model_ -> currentNode () -> depth () : 0;
+  const int depth = (model_ && (model_ -> currentNode ())) ? model_ -> currentNode () -> depth () : 0;
 
   double time0 = CoinCpuTime();
 
-  if ((nCalls_ == 0) ||                                     // check upper limit on number of runs
-      //(problem_ -> nIntVars () <= 0) ||                   // feas pump on NLP? Why not?
+  if ((nCalls_ == 0) ||                                   // check upper limit on number of runs
+      //(problem_ -> nIntVars () <= 0) ||                 // feas pump on NLP? Why not?
       (CoinCpuTime () > problem_ -> getMaxCpuTime ()) ||  // don't start if time is out
       ((numberSolvePerLevel_ >= 0) &&                     // stop FP after a certain level
        (CoinDrand48 () > 1. / CoinMax                     // decided randomly and inversely proportional
@@ -803,6 +803,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   if (!retval)
     problem_ -> Jnlst () -> Printf 
       (J_ERROR, J_NLPHEURISTIC, "FP: No solution found\n");
+
+  if (retval && (-2 == nCalls_)) {
+    problem_ -> bonBase () -> options () -> SetNumericValue ("time_limit", 0.001, "couenne.");
+    problem_ -> bonBase () -> setDoubleParameter (Bonmin::BabSetupBase::MaxTime, 0.001);
+  }
 
   return retval;
 }

@@ -78,10 +78,6 @@
 #include "CouenneSdpCuts.hpp"
 #include "CouenneTwoImplied.hpp"
 
-// only for amaya_andrea_ options
-#include "CouenneExprPow.hpp"
-#include "CouenneExprMul.hpp"
-
 #include "BonCouenneInfo.hpp"
 #include "BonCbcNode.hpp"
 #include "BonCbc.hpp"
@@ -596,7 +592,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
     nlpHeuristic -> setNumberSolvePerLevel (numSolve);
 
-    nlpHeuristic -> nCalls () = ("yes" == doHeuristic) ? -1 : 1; // second case it means the answer was "once"
+    nlpHeuristic -> nCalls () = 
+      ("yes"  == doHeuristic) ? -1 :     // run it every time Cbc wants
+      ("once" == doHeuristic) ?  1 : -2; // second case means the answer was "only"
 
     HeuristicMethod h;
 
