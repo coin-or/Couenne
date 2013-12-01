@@ -84,7 +84,9 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
   maxIter_             (COIN_INT_MAX),
   useSCIP_             (false),
   milpMethod_          (0),
-  tabuMgt_             (FP_TABU_NONE) {
+  tabuMgt_             (FP_TABU_NONE),
+  nCalls_              (0),
+  fadeMult_            (1) {
 
   int compareTerm = INTEGER_VARS;
 
@@ -103,6 +105,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
     options -> GetNumericValue ("feas_pump_mult_dist_milp", multDistMILP_,    "couenne.");
     options -> GetNumericValue ("feas_pump_mult_hess_milp", multHessMILP_,    "couenne.");
     options -> GetNumericValue ("feas_pump_mult_objf_milp", multObjFMILP_,    "couenne.");
+
+    options -> GetNumericValue ("feas_pump_fademult",  fadeMult_,     "couenne.");
 
     options -> GetStringValue  ("feas_pump_convcuts", s, "couenne."); 
 
@@ -154,10 +158,8 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 
   
 // Copy constructor ///////////////////////////////////////////// 
-CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other) {
-
-  operator= (other);
-}
+CouenneFeasPump::CouenneFeasPump (const CouenneFeasPump &other)
+{operator= (other);}
 
 
 // Clone //////////////////////////////////////////////////////// 
@@ -197,6 +199,8 @@ CouenneFeasPump &CouenneFeasPump::operator= (const CouenneFeasPump & rhs) {
     useSCIP_             = rhs. useSCIP_;
     milpMethod_          = rhs. milpMethod_;
     tabuMgt_             = rhs. tabuMgt_;
+    nCalls_              = rhs. nCalls_;
+    fadeMult_            = rhs. fadeMult_;
 
     if (rhs. pool_)
       pool_ = new CouenneFPpool (*(rhs. pool_));
@@ -280,7 +284,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
     bool *diag = NULL;
 
-    if (multDistNLP_ > 0.) { // only use this if distance is used
+    if (multDistNLP_ != 0.) { // only use this if distance is used
 
       diag = new bool [problem_ -> nVars ()];
       CoinFillN (diag, problem_ -> nVars (), false);
@@ -328,18 +332,18 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
       } else if (*col == *row) { // or diagonal elements
 
-	if (multDistNLP_ > 0.)
+	if (multDistNLP_ != 0.)
 	  diag [*col] = true;
 
-	if (*val + multDistNLP_ == 1.)
+	if (*val + multDistNLP () == 1.)
 
 	  list [nTerms++] = new exprPow (new exprSub (new exprClone (problem_ -> Var (*row)), 
 						      new exprConst (iSol [*row])), 
 					 new exprConst (2.));
 
-	else if (fabs (*val + multDistNLP_) > COUENNE_EPS)
+	else if (fabs (*val + multDistNLP ()) > COUENNE_EPS)
 
-	  list [nTerms++] = new exprMul (new exprConst (*val + multDistNLP_),
+	  list [nTerms++] = new exprMul (new exprConst (*val + multDistNLP ()),
 					 new exprPow (new exprSub (new exprClone (problem_ -> Var (*row)), 
 								   new exprConst (iSol [*row])), 
 						      new exprConst (2.)));
@@ -348,7 +352,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
     // third, add missing diagonal elements
 
-    if (multDistNLP_ > 0.) {
+    if (multDistNLP () > 0.) {
 
       // create the argument list (x_i - x_i^0)^2 for all i's
       for (int i=0; i<problem_ -> nVars (); ++i, ++iS) {
@@ -374,8 +378,8 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     }
   }
 
-  if (multObjFNLP_ != 0.) 
-    list [nTerms++] = new exprMul (new exprConst (multObjFNLP_),
+  if (multObjFNLP () != 0.) 
+    list [nTerms++] = new exprMul (new exprConst (multObjFNLP ()),
 				   new exprClone (problem_ -> Obj (0) -> Body ()));
 
   // resize list
@@ -439,13 +443,22 @@ bool CouenneFeasPump::fixIntVariables (const double *sol) {
 /// initialize options
 void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
 
-  roptions -> AddStringOption2
+  roptions -> AddStringOption4
     ("feas_pump_heuristic",
      "Apply the nonconvex Feasibility Pump",
      "no",
-     "no","",
-     "yes","",
+     "no",   "never called",
+     "yes",  "called any time Cbc calls heuristics",
+     "once", "call it at most once",
+     "only", "Call it exactly once and then exit",
      "An implementation of the Feasibility Pump for nonconvex MINLPs");
+
+  roptions -> AddBoundedNumberOption
+    ("feas_pump_fademult",
+     "decrease/increase rate of multipliers",
+     0, false,
+     1, false,
+     1, "1 keeps initial multipliers from one call to the next; any <1 multiplies ALL of them");
 
   roptions -> AddLowerBoundedIntegerOption
     ("feas_pump_level",
@@ -483,9 +496,9 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
 
       roptions -> AddBoundedNumberOption
 	(option, help,
-	 0., false,
-	 1., false,
-	 0., "0: no weight, 1: full weight");
+	 -1., true,
+	 +1., false,
+	 0., "0: neglected; 1: full weight; a in ]0,1[: weight is a^k where k is the FP iteration; a in ]-1,0[: weight is 1-|a|^k");
     }
 
   roptions -> AddStringOption3

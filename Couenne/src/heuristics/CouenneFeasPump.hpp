@@ -16,11 +16,7 @@
 
 #include "CouenneTypes.hpp"
 #include "CbcHeuristic.hpp"
-
-#include "CouenneConfig.h"
-
 #include "CouenneFPpool.hpp"
-
 #include "IpOptionsList.hpp"
 
 #ifdef COIN_HAS_SCIP
@@ -29,6 +25,15 @@
 
 struct Scip;
 class OsiSolverInterface;
+
+//
+// A fading coefficient decreases from a to a^k at every iteration if
+// a > 0. If a is negative, then it increases from 1-|a| = 1+a to
+// 1-|a|^k and eventually converges to 1
+//
+
+inline double fadingCoeff (double a)
+{return (a<0) ? a+1 : a;}
 
 namespace Ipopt {
   class IpoptApplication;
@@ -137,17 +142,21 @@ namespace Couenne {
     /// Return Weights in computing distance, in both MILP and NLP (must sum
     /// up to 1 for MILP and for NLP):
 
-    double multDistNLP  () const {return multDistNLP_;}  ///< weight of distance  in NLP
-    double multHessNLP  () const {return multHessNLP_;}  ///< weight of Hessian   in NLP
-    double multObjFNLP  () const {return multObjFNLP_;}  ///< weight of objective in NLP
+    double multDistNLP  () const {return fadingCoeff (multDistNLP_);}  ///< weight of distance  in NLP
+    double multHessNLP  () const {return fadingCoeff (multHessNLP_);}  ///< weight of Hessian   in NLP
+    double multObjFNLP  () const {return fadingCoeff (multObjFNLP_);}  ///< weight of objective in NLP
 
-    double multDistMILP () const {return multDistMILP_;} ///< weight of distance  in MILP
-    double multHessMILP () const {return multHessMILP_;} ///< weight of Hessian   in MILP
-    double multObjFMILP () const {return multObjFMILP_;} ///< weight of objective in MILP
+    double multDistMILP () const {return fadingCoeff (multDistMILP_);} ///< weight of distance  in MILP
+    double multHessMILP () const {return fadingCoeff (multHessMILP_);} ///< weight of Hessian   in MILP
+    double multObjFMILP () const {return fadingCoeff (multObjFMILP_);} ///< weight of objective in MILP
 
     /// return NLP
     CouenneTNLP *nlp () const
     {return nlp_;}
+
+    /// return number of calls (can be changeD)
+    int &nCalls ()
+    {return nCalls_;}
 
 #ifdef COIN_HAS_SCIP
     SCIP_RETCODE ScipSolve (double* &sol, int niter, int* nsuciter, CouNumber &obj);
@@ -233,6 +242,12 @@ namespace Couenne {
 
     /// Tabu management policy: none, use from pool, random perturbation of current solution
     enum fpTabuMgtPolicy tabuMgt_;
+
+    /// How often should it be called
+    int nCalls_;
+
+    /// decrease factor for MILP/NLP multipliers of distance/Hessian/objective
+    double fadeMult_;
   };
 }
 

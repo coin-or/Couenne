@@ -42,7 +42,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   double time0 = CoinCpuTime();
 
-  if (//(problem_ -> nIntVars () <= 0) ||                   // feas pump on NLP? Why not?
+  if ((nCalls_ == 0) ||                                     // check upper limit on number of runs
+      //(problem_ -> nIntVars () <= 0) ||                   // feas pump on NLP? Why not?
       (CoinCpuTime () > problem_ -> getMaxCpuTime ()) ||  // don't start if time is out
       ((numberSolvePerLevel_ >= 0) &&                     // stop FP after a certain level
        (CoinDrand48 () > 1. / CoinMax                     // decided randomly and inversely proportional
@@ -50,9 +51,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
    		                   (depth - numberSolvePerLevel_ + 1))))))
     return 0;
 
-  problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "==================================================== FP: BEGIN\n");
+  if (nCalls_ > 0) // only decrease it if positive. If -1, no limit on # calls
+    --nCalls_;
 
-  problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "[FeasPump] Initializing\n");
+  problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "==================================================== FP: BEGIN\n");
+  problem_ -> Jnlst () -> Printf (J_ERROR,   J_NLPHEURISTIC, "[FeasPump] Initializing\n");
 
   // Solve NLP once at the beginning ////////////////////////
   //
@@ -74,8 +77,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   ////////////////////////////////////////////////////////////////
 
-  if ((multHessNLP_  > 0.) || 
-      (multHessMILP_ > 0.))
+  if ((multHessNLP_  != 0.) || 
+      (multHessMILP_ != 0.))
     nlp_ -> getSaveOptHessian () = true;
 
   if (problem_ -> Jnlst () -> ProduceOutput (J_ALL, J_NLPHEURISTIC)) {
@@ -107,8 +110,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   if ((status != Solve_Succeeded) && (status != Solved_To_Acceptable_Level))
     problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "Feasibility Pump: error in initial NLP problem\n");
 
-  if ((multHessNLP_  > 0.) || 
-      (multHessMILP_ > 0.))
+  if ((multHessNLP_  != 0.) ||
+      (multHessMILP_ != 0.))
     nlp_ -> getSaveOptHessian () = false;
 
   // This FP works as follows:
@@ -169,6 +172,14 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   problem_ -> domain () -> push (model_ -> solver ());
 
   expression *originalObjective = problem_ -> Obj (0) -> Body ();
+
+  double
+    save_mDN = multDistNLP_,
+    save_mHN = multHessNLP_,
+    save_mON = multObjFNLP_,
+    save_mDM = multDistMILP_,
+    save_mHM = multHessMILP_,
+    save_mOM = multObjFMILP_;
 
   do {
 
@@ -639,6 +650,18 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       }
     }
 
+    // update weights for hessian, distance, and objective, for both
+    // MILP and NLP parts
+
+    //multHessNLP_ *= save_multHessNLP_; // exponential reduction
+
+    multDistNLP_  *= fabs (save_mDN); // update within loop
+    multHessNLP_  *= fabs (save_mHN);
+    multObjFNLP_  *= fabs (save_mON);
+    multDistMILP_ *= fabs (save_mDM);
+    multHessMILP_ *= fabs (save_mHM);
+    multObjFMILP_ *= fabs (save_mOM);
+
   } while ((niter++ < maxIter_) && 
 	   (retval == 0));
 
@@ -751,6 +774,15 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     CoinCopyN (best, problem_ -> nVars (), newSolution);
   }
 
+  // post-call fading update of coefficients
+
+  multDistNLP_  = save_mDN * fadeMult_;
+  multHessNLP_  = save_mHN * fadeMult_;
+  multObjFNLP_  = save_mON * fadeMult_;
+  multDistMILP_ = save_mDM * fadeMult_;
+  multHessMILP_ = save_mHM * fadeMult_;
+  multObjFMILP_ = save_mOM * fadeMult_;
+
   if (iSol) delete [] iSol;
   if (nSol) delete [] nSol;
 
@@ -767,6 +799,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   problem_ -> Jnlst () -> Printf 
     (J_WARNING, J_NLPHEURISTIC, "FP: done ===================\n");
+
+  if (!retval)
+    problem_ -> Jnlst () -> Printf 
+      (J_ERROR, J_NLPHEURISTIC, "FP: No solution found\n");
 
   return retval;
 }
