@@ -192,14 +192,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       multObjFMILP_ *= fabs (save_mOM);
     }
 
-    printf ("multipliers (%d): %g, %g, %g, %g, %g, %g\n", niter,
-	    multDistNLP (),
-	    multHessNLP (),
-	    multObjFNLP (),
-	    multDistMILP (),
-	    multHessMILP (),
-	    multObjFMILP ());
-
     if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
       break;
 
