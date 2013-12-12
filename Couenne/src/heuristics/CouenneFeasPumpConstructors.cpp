@@ -474,7 +474,7 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
 
   roptions -> AddLowerBoundedIntegerOption
     ("feas_pump_iter",
-     "Number of iterations in the main Feasibility Pump loop",
+     "Number of iterations in the main Feasibility Pump loop (default: 10)",
      -1,
      10, "-1 means no limit");
 

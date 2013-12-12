@@ -453,7 +453,7 @@ Linearization cuts added in total:       %8d  (separation time: %gs)\n",
     else jnlst -> Printf (J_ERROR, J_COUENNE, "Problem infeasible\n");
 
     jnlst -> Printf (J_NONE, J_COUENNE, "\
-Total time:                              %8gs (%gs in branch-and-bound)\n\
+Total solve time:                        %8gs (%gs in branch-and-bound)\n\
 Lower bound:                           %s\n\
 Upper bound:                           %s  (gap: %s)\n\
 Branch-and-bound nodes:                  %8d\n",

@@ -339,17 +339,21 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 				      nTightened_ - nInitTightened, CoinCpuTime () - now); 
     }
 
-  } else {
+  } else 
 
-    if (treeInfo.inTree && 
-	treeInfo.level <= 0)
-      problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP infeasible or unbounded.\n");
+    if (fplp -> isProvenPrimalInfeasible () ||
+	fplp -> isProvenDualInfeasible   ()) {
 
-    WipeMakeInfeas (cs);
+      if (treeInfo.inTree &&
+	  treeInfo.level <= 0)
+	problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP infeasible or unbounded.\n");
 
-    newLB = infeasBounds;
-    newUB = infeasBounds + 1;
-  }
+      WipeMakeInfeas (cs);
+
+      newLB = infeasBounds;
+      newUB = infeasBounds + 1;
+
+    } else problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP inconclusive.\n");
 
   delete fplp;
 
