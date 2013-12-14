@@ -27,6 +27,8 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
   fbbtReachedIterLimit_ = false;
 
+  bool null_chg_bds = (NULL == chg_bds);
+
   if (!chg_bds) {
 
     chg_bds = new t_chg_bounds [nVars ()];
@@ -67,7 +69,9 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
       }
   }
 
-  if (max_fbbt_iter_)  do {
+  if (max_fbbt_iter_) 
+
+  do {
 
     if (CoinCpuTime () > maxCpuTime_)
       break;
@@ -89,6 +93,8 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
     if ((ntightened < 0) || (nbwtightened < 0)) {
       Jnlst () -> Printf (Ipopt::J_ITERSUMMARY, J_BOUNDTIGHTENING, "infeasible BT\n");
+      if (null_chg_bds) 
+	delete [] chg_bds;
       return false;
     }
 
@@ -127,6 +133,9 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
   } while (((ntightened > 0) || (nbwtightened > 0)) && 
 	   (ntightened + nbwtightened > THRES_IMPROVED) &&
 	   ((max_fbbt_iter_ < 0) || (niter++ < max_fbbt_iter_)));
+
+  if (null_chg_bds) 
+    delete [] chg_bds;
 
   fbbtReachedIterLimit_ = ((max_fbbt_iter_ > 0) && (niter >= max_fbbt_iter_));
 

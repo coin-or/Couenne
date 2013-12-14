@@ -520,7 +520,6 @@ Branch-and-bound nodes:                  %8d\n",
 		//bb.iterationCount ());
 		//status.c_str (), message.c_str ());
     }
-
 //    nlp_and_solver -> writeAmplSolFile (message, bb.bestSolution (), NULL);
   }
   catch(Bonmin::TNLPSolver::UnsolvedError *E) {

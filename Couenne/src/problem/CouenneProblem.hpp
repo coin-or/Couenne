@@ -495,10 +495,10 @@ class CouenneProblem {
 #endif
 
   // bound tightening parameters
-  bool doFBBT () const {return doFBBT_;} ///< shall we do Feasibility Based Bound Tightening?
-  bool doRCBT () const {return doRCBT_;} ///< shall we do reduced cost      Bound Tightening?
-  bool doOBBT () const {return doOBBT_;} ///< shall we do Optimality  Based Bound Tightening?
-  bool doABT  () const {return doABT_;}  ///< shall we do Aggressive        Bound Tightening?
+  bool doFBBT () const {return (doFBBT_ && (max_fbbt_iter_ != 0));} ///< shall we do Feasibility Based Bound Tightening?
+  bool doRCBT () const {return doRCBT_;}                            ///< shall we do reduced cost      Bound Tightening?
+  bool doOBBT () const {return doOBBT_;}                            ///< shall we do Optimality  Based Bound Tightening?
+  bool doABT  () const {return doABT_;}                             ///< shall we do Aggressive        Bound Tightening?
 
   int  logObbtLev () const {return logObbtLev_;} ///< How often shall we do OBBT?
   int  logAbtLev  () const {return logAbtLev_;}  ///< How often shall we do ABT?
