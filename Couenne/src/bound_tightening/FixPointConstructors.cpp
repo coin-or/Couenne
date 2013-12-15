@@ -58,7 +58,7 @@ void CouenneFixPoint::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
     ("fixpoint_bt_model",
      "Choose whether to add an extended fixpoint LP model or a more compact one.",
      "compact",
-     "extended", "",
-     "compact", "",
-     "");
+     "extended", "Extended model with variables for lower/upper bounds of right-hand sides (see paper by Belotti, Cafieri, Lee, Liberti)",
+     "compact", "Compact equivalent model obtained by projecting lower/upper bounds of rhs",
+     "The \"extended\" option is for debugging purposes; the compact formulation is equivalent and this option should be used");
 }

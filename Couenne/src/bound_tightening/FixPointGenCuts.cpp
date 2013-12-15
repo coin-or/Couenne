@@ -393,17 +393,15 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     CPUtime_ += CoinCpuTime () - now;
 
     if (treeInfo.inTree && 
-	treeInfo.level <= 0) {
-
+	treeInfo.level <= 0)
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "%d bounds tightened (%g seconds)\n", 
 				      nTightened_ - nInitTightened, CoinCpuTime () - now); 
-    }
 
   } else if (fplp -> isProvenPrimalInfeasible ()) {
 
     if (treeInfo.inTree &&
 	treeInfo.level <= 0)
-      problem_ -> Jnlst () -> Printf (J_ERROR, J_BOUNDTIGHTENING, " FPLP infeasible.\n");
+      problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP infeasible.\n");
 
     WipeMakeInfeas (cs);
 
@@ -415,7 +413,9 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     // we won't use the solution from FPLP, and should tell the BT
     // performance indicator that nothing should change.
 
-    problem_ -> Jnlst () -> Printf (J_ERROR, J_BOUNDTIGHTENING, " FPLP inconclusive, won't be used.\n");
+    if (treeInfo.inTree && 
+	treeInfo.level <= 0)
+      problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP inconclusive, won't be used.\n");
 
     newLB = oldLB;
     newUB = oldUB;
