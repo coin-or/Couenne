@@ -87,9 +87,7 @@ am__DEPENDENCIES_1 = ./interfaces/libCouenneInterfaces.la \
 	./bound_tightening/libCouenneBoundTightening.la \
 	./bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
 	./util/libCouenneUtil.la \
-	./disjunctive/libCouenneDisjunctive.la \
-	./cut/crossconv/libCouenneCrossConv.la \
-	./cut/sdpcuts/libCouenneSdpCuts.la
+	./disjunctive/libCouenneDisjunctive.la
 am__DEPENDENCIES_2 =
 @DEPENDENCY_LINKING_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_2)
 am_libCouenne_la_OBJECTS = CouenneBab.lo BonCouenneSetup.lo \
@@ -542,9 +540,7 @@ includecoin_HEADERS = util/CouenneRootQ.hpp \
 	problem/CouenneJournalist.hpp problem/CouenneGlobalCutOff.hpp \
 	problem/CouenneRecordBestSol.hpp expression/CouenneTypes.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
-	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/CouennePSDcon.hpp \
-	cut/sdpcuts/CouenneMatrix.hpp \
-	cut/crossconv/CouenneCrossConv.hpp $(am__append_2)
+	$(am__append_2)
 all: config.h config_couenne.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

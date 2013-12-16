@@ -54,8 +54,6 @@ build_triplet = @build@
 host_triplet = @host@
 @COIN_HAS_ASL_TRUE@am__append_1 = src/readnl
 
-#	  src/cut/crossconv
-#	  src/cut/sdpcuts
 #	  src/cut/ellipcuts
 
 # We don't want to compile the test subdirectory, unless the test target is
@@ -103,8 +101,7 @@ CTAGS = ctags
 DIST_SUBDIRS = src/util src/expression src/standardize src/problem \
 	src/bound_tightening src/bound_tightening/twoImpliedBT \
 	src/convex src/branch src/disjunctive src/interfaces \
-	src/heuristics src/cut/sdpcuts src/cut/crossconv src \
-	src/readnl src/main test
+	src/heuristics src src/readnl src/main test
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -353,8 +350,7 @@ AUTOMAKE_OPTIONS = foreign
 SUBDIRS = src/util src/expression src/standardize src/problem \
 	src/bound_tightening src/bound_tightening/twoImpliedBT \
 	src/convex src/branch src/disjunctive src/interfaces \
-	src/heuristics src/cut/sdpcuts src/cut/crossconv src \
-	$(am__append_1) src/main $(am__append_2)
+	src/heuristics src $(am__append_1) src/main $(am__append_2)
 
 ########################################################################
 #             Additional files to be included in tarball               #
