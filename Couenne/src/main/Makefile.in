@@ -64,7 +64,10 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libBonCouenne_la_LIBADD =
+am__DEPENDENCIES_1 =
+@DEPENDENCY_LINKING_TRUE@libBonCouenne_la_DEPENDENCIES =  \
+@DEPENDENCY_LINKING_TRUE@	$(am__DEPENDENCIES_1) \
+@DEPENDENCY_LINKING_TRUE@	../libCouenne.la
 am_libBonCouenne_la_OBJECTS = CouenneBab.lo BonCouenneSetup.lo \
 	SmartAslDestr.lo
 libBonCouenne_la_OBJECTS = $(am_libBonCouenne_la_OBJECTS)
@@ -72,7 +75,6 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_couenne_OBJECTS = BonCouenne.$(OBJEXT)
 couenne_OBJECTS = $(am_couenne_OBJECTS)
-am__DEPENDENCIES_1 =
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -326,6 +328,7 @@ libBonCouenne_la_SOURCES = \
 	BonCouenneSetup.cpp \
 	SmartAslDestr.cpp
 
+@DEPENDENCY_LINKING_TRUE@libBonCouenne_la_LIBADD = $(COUENNELIB_LIBS) ../libCouenne.la
 libBonCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 couenne_SOURCES = BonCouenne.cpp
 couenne_LDADD = libBonCouenne.la ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS) $(ASL_LIBS) 
