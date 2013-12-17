@@ -18,10 +18,13 @@ AUTOMAKE_OPTIONS = foreign
 lib_LTLIBRARIES = libCouenne.la
 
 # List all source files, including headers
-libCouenne_la_SOURCES = \
+libCouenne_la_SOURCES =
+if DEPENDENCY_LINKING
+libCouenne_la_SOURCES += \
 	main/CouenneBab.cpp \
 	main/BonCouenneSetup.cpp \
 	main/SmartAslDestr.cpp
+endif
 
 # List all additionally required libraries
 libCouenne_la_LIBADD = $(libCouenne_la_DEPENDENCIES)
@@ -58,7 +61,9 @@ libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows.
 
-AM_CPPFLAGS = \
+AM_CPPFLAGS = 
+if DEPENDENCY_LINKING
+AM_CPPFLAGS += \
 	-I`$(CYGPATH_W) $(srcdir)/convex` \
 	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
 	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
@@ -74,6 +79,7 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/bound_tightening` \
 	-I`$(CYGPATH_W) $(srcdir)/bound_tightening/twoImpliedBT` \
        $(COUENNELIB_CFLAGS)
+endif
 
 #	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt` \
 #	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
