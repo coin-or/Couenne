@@ -179,6 +179,8 @@ void CouenneProblem::fillIntegerRank () const {
 
   integerRank_ = new int [nvars];
 
+  CoinZeroN (integerRank_, nvars);
+
   // 0: fractional
   // 1: integer
   // k: integer,    depending on at least one integer with associated value k-1, or
