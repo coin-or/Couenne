@@ -115,9 +115,13 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	ub = wl;
       }
 
-      if (lb > 0. || k > 0.) resL = updateBound (-1, l + index, safe_pow (lb, 1./k));
+      if ((lb > 0. || k > 0.) && 
+	  (sign != expression::AUX_GEQ))
+	resL = updateBound (-1, l + index, safe_pow (lb, 1./k));
 
-      if ((fabs (ub) < COUENNE_INFINITY) && (ub > 0 || k > 0.)) 
+      if ((fabs (ub) < COUENNE_INFINITY) && 
+	  (ub > 0 || k > 0.) &&
+	  (sign != expression::AUX_LEQ))
 	resU = updateBound (+1, u + index, safe_pow (ub, 1./k));
       //else                  resU = updateBound (+1, u + index, COUENNE_INFINITY);
     }
