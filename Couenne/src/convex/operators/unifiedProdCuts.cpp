@@ -187,7 +187,8 @@ void Couenne::unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
       }
     }
   } else
-    if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepTight)
+    if ((cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepTight) &&
+	!(Couenne::exprMul::disable_mul_lifted_linearizing))
       upperEnvHull (cg, cs, 
 		    xi, x0, xl, xu, 
 		    yi, y0, yl, yu,

@@ -215,7 +215,8 @@ Auxiliaries:     %8d (%d integer)\n\n",
     int nr=-1, nt=-1;
     double st=-1;
 
-    if (cg) cg -> getStats (nr, nt, st);
+    if (couenne. couennePtr ()) couenne. couennePtr () -> getStats (nr, nt, st);
+    //if (cg) cg -> getStats (nr, nt, st);
     else printf ("Warning, could not get pointer to CouenneCutGenerator\n");
 
     CouenneProblem *cp = cg ? cg -> Problem () : NULL;

@@ -119,6 +119,25 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
      (CoinCpuTime () > problem_ -> getMaxCpuTime ()))
     return;
 
+#if 0
+  if (info.pass == 0) {
+    const double
+      *lb = si.getColLower (),
+      *ub = si.getColUpper ();
+    //printf ("BZ%.0f", log(1 + (double)info.level)/log(10));
+    printf ("BZ%d", info.level);
+    for (int i=3; i < 203; ++i)
+      if      (lb [i] >     .01) printf ("#");
+      else if (ub [i] < 1 - .01) printf (" ");
+      else                       printf ("|");
+    //printf (" %.0f %.0f %.0f\n", 
+    printf (" %g %g %g\n", 
+	    CoinMax (-lb [0], ub [0]),
+	    CoinMax (-lb [1], ub [1]),
+	    CoinMax (-lb [2], ub [2]));
+  }
+#endif
+
 #ifdef FM_TRACE_OPTSOL
   double currCutOff = problem_->getCutOff();
   double bestVal = 1e50;

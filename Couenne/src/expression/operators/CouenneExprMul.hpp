@@ -97,6 +97,7 @@ class exprMul: public exprOp {
 
   static bool disable_mul_tightening;
   static bool disable_mul_linearizing;
+  static bool disable_mul_lifted_linearizing;
 
 protected:
 

@@ -23,9 +23,12 @@
 
 using namespace Couenne;
 
-bool Couenne::exprPow::disable_pow_tightening  = false;
-bool Couenne::exprMul::disable_mul_tightening  = false;
-bool Couenne::exprMul::disable_mul_linearizing = false;
+// static members of expr{Pow,Mul} (see their classes for meaning)
+
+bool Couenne::exprPow::disable_pow_tightening         = false;
+bool Couenne::exprMul::disable_mul_tightening         = false;
+bool Couenne::exprMul::disable_mul_linearizing        = false;
+bool Couenne::exprMul::disable_mul_lifted_linearizing = false;
 
 // core of the bound tightening procedure
 

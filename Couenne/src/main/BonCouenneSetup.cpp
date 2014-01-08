@@ -279,9 +279,10 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   /// Weakening Couenne
 
-  options () -> GetStringValue ("disable_pow_tightening",  s, "couenne."); Couenne::exprPow::disable_pow_tightening  = (s == "yes");
-  options () -> GetStringValue ("disable_mul_tightening",  s, "couenne."); Couenne::exprMul::disable_mul_tightening  = (s == "yes");
-  options () -> GetStringValue ("disable_mul_linearizing", s, "couenne."); Couenne::exprMul::disable_mul_linearizing = (s == "yes");
+  options () -> GetStringValue ("disable_pow_tightening",         s, "couenne."); Couenne::exprPow::disable_pow_tightening         = (s == "yes");
+  options () -> GetStringValue ("disable_mul_tightening",         s, "couenne."); Couenne::exprMul::disable_mul_tightening         = (s == "yes");
+  options () -> GetStringValue ("disable_mul_linearizing",        s, "couenne."); Couenne::exprMul::disable_mul_linearizing        = (s == "yes");
+  options () -> GetStringValue ("disable_mul_lifted_linearizing", s, "couenne."); Couenne::exprMul::disable_mul_lifted_linearizing = (s == "yes");
 
   // Add Couenne SOS ///////////////////////////////////////////////////////////////
 
@@ -409,8 +410,15 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 	//|| ((var -> Type () == AUX) &&                                  // or, aux 
 	//    (var -> Image () -> Linearity () > LINEAR))) {              // of nonlinear
 
+	//int ind = var -> Index ();
+	//bool isOutLier    = (contObjPriority == 997) &&  ((ind >= 103 && ind <= 107) || (ind >= 198 && ind <= 202));
+	//bool isNotOutLier = (contObjPriority == 996) &&                 (ind >  107) || (ind <  198);
+
 	objects [nobj] = new CouenneVarObject (couenneCg, couenneProb_, var, this, journalist (), varSelection);
-	objects [nobj++] -> setPriority (var -> isInteger () ? intObjPriority : contObjPriority);
+	objects [nobj++] -> setPriority 
+	  //isOutLier    ? CoinMin (intObjPriority, contObjPriority) - 1 : 
+	  // isNotOutLier ? CoinMin (intObjPriority, contObjPriority) - 1 : 
+	  (var -> isInteger () ? intObjPriority : contObjPriority);
 	//objects [nobj++] -> setPriority (contObjPriority + var -> rank ());
       }
 
