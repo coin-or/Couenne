@@ -30,4 +30,3 @@ bool exprTrilinear::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bo
 
   return false;
 }
-

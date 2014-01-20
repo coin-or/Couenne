@@ -58,7 +58,7 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
   for(int i=0; i<6; i++) {
     ind[i] = new int[6];
   }
-     
+
   int *ibnd; 
   ibnd = new int[3];
   ibnd[0] = varIndices[0]; ibnd[1] = varIndices[1]; ibnd[2] = varIndices[2];
@@ -651,8 +651,8 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 
     // compute the permutations of the 3 variables 
     ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
-   ind[0][0] = ibnd[0]; ind[0][1] = ibnd[1]; ind[0][2] = ibnd[2];
-   ind[1][0] = ibnd[1]; ind[1][1] = ibnd[0]; ind[1][2] = ibnd[2];
+    ind[0][0] = ibnd[0]; ind[0][1] = ibnd[1]; ind[0][2] = ibnd[2];
+    ind[1][0] = ibnd[1]; ind[1][1] = ibnd[0]; ind[1][2] = ibnd[2];
     int i, flagg=0, idx=0;
     i = 0;
     while(i < 2 && flagg == 0) {
@@ -1149,7 +1149,7 @@ void exprTrilinear::generateCuts (expression *w,
 
   expression **args = w -> Image () -> ArgList ();
 
-  int *varInd = new int [4];
+  int varInd [4];
 
   for (int i=0; i<3; i++)
     varInd [i] = args [i] -> Index (); 
@@ -1180,6 +1180,16 @@ void exprTrilinear::generateCuts (expression *w,
       *ind  = new int [size];
 
     double *coe = new double [size];
+
+    // Fix right hand sides: all cuts have coefficients of w equal to
+    // one, but they might be inequality-type auxiliaries.
+
+    exprAux *waux = dynamic_cast <exprAux *> (w);
+
+    if (waux) {
+      if      (waux -> sign () == expression::AUX_LEQ) cutLb [i] = - COUENNE_INFINITY;
+      else if (waux -> sign () == expression::AUX_GEQ) cutUb [i] =   COUENNE_INFINITY;
+    }
 
     std::copy (cutIndices [i].begin (), cutIndices [i].end (), ind);
     std::copy (cutCoeff   [i].begin (), cutCoeff   [i].end (), coe);
@@ -1239,6 +1249,5 @@ void exprTrilinear::generateCuts (expression *w,
 
     cs.insert (cut);
   }
-
-  delete [] varInd;
+  //delete [] varInd;
 }

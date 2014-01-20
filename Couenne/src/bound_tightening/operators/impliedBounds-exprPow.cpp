@@ -112,8 +112,6 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
       CouNumber lb = wl, ub = wu;
 
-      //printf ("should be here: wl=%g wu=%g k=%g, signpow=%d safepow = %g\n", wl, wu, k, issignpower_, safe_pow (wl, 1./k, issignpower_));
-
       if (k < 0) { // swap bounds as they swap on the curve x^k when 
 	lb = wu;
 	ub = wl;
