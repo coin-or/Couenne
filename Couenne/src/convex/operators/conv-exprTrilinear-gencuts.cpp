@@ -1181,6 +1181,16 @@ void exprTrilinear::generateCuts (expression *w,
 
     double *coe = new double [size];
 
+    // Fix right hand sides: all cuts have coefficients of w equal to
+    // one, but they might be inequality-type auxiliaries.
+
+    exprAux *waux = dynamic_cast <exprAux *> (w);
+
+    if (waux) {
+      if      (waux -> sign () == expression::AUX_LEQ) cutLb [i] = - COUENNE_INFINITY;
+      else if (waux -> sign () == expression::AUX_GEQ) cutUb [i] =   COUENNE_INFINITY;
+    }
+
     std::copy (cutIndices [i].begin (), cutIndices [i].end (), ind);
     std::copy (cutCoeff   [i].begin (), cutCoeff   [i].end (), coe);
 
