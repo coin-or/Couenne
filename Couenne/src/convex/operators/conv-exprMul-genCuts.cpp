@@ -125,13 +125,10 @@ void exprMul::generateCuts (expression *w,
   // add different cuts, to cut out current point in bounding box but
   // out of the hyperbola's belly
 
-  CouNumber x0 = (*(arglist_ [0])) (),
-            y0 = (*(arglist_ [1])) ();
-
-  unifiedProdCuts (cg, cs, 
-		   xi, x0,      xl, xu, 
-		   yi, y0,      yl, yu,
-		   wi, (*w) (), wl, wu,
+  unifiedProdCuts (cg, cs,
+		   xi, (*(arglist_ [0])) (), xl, xu, 
+		   yi, (*(arglist_ [1])) (), yl, yu,
+		   wi, (*w) (),              wl, wu,
 		   //sign == expression::AUX_LEQ ? -COIN_DBL_MAX : wl, 
 		   //sign == expression::AUX_GEQ ?  COIN_DBL_MAX : wu,
 		   chg, sign);
