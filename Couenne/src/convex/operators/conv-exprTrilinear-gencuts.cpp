@@ -1192,7 +1192,7 @@ void exprTrilinear::generateCuts (expression *w,
 			   w -> Index (), 1))) {
 
 	cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "exprTriLin: variable should be fixed but cut can't be added: ");
-	w -> print ();
+	if (cg -> Problem () -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_CONVEXIFYING)) w -> print ();
 	cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "\n");
       }
 
@@ -1247,7 +1247,7 @@ void exprTrilinear::generateCuts (expression *w,
 
 	  if (!(cg->createCut (cs, lb, ub, w -> Index (), 1, ArgList () [varInd] -> Index (), -fixed_prod))) {
 	    cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "exprTriLin: variable should be fixed but cut can't be added: "); 
-	    w -> print ();
+	    if (cg -> Problem () -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_CONVEXIFYING)) w -> print ();
 	    cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "\n");
 	  }
 	}
