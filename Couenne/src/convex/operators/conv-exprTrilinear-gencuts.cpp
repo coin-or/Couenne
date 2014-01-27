@@ -1237,7 +1237,7 @@ void exprTrilinear::generateCuts (expression *w,
 
       case 2: 
 
-	{ // easy... cut is w = f1 * f2 * v3, where f* are fixed and v* is remaining
+	{ // easy... cut is w = (f1 * f2) * v3, where f* are fixed and v* is remaining
 
 	  int varInd = (!isFixed [0]) ? 0 : (!isFixed [1]) ? 1 : 2;
 
@@ -1245,8 +1245,9 @@ void exprTrilinear::generateCuts (expression *w,
 	    lb = ((sign == expression::AUX_LEQ) ? - COIN_DBL_MAX : 0), 
 	    ub = ((sign == expression::AUX_GEQ) ?   COIN_DBL_MAX : 0);
 
-	  if (!(cg->createCut (cs, lb, ub, w -> Index (), 1, w -> ArgList () [varInd] -> Index (), -fixed_prod))) {
-	    cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "exprTriLin: variable should be fixed but cut can't be added: "); w -> print ();
+	  if (!(cg->createCut (cs, lb, ub, w -> Index (), 1, ArgList () [varInd] -> Index (), -fixed_prod))) {
+	    cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "exprTriLin: variable should be fixed but cut can't be added: "); 
+	    w -> print ();
 	    cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "\n");
 	  }
 	}
