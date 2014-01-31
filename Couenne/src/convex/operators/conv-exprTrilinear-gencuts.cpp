@@ -1278,12 +1278,6 @@ void exprTrilinear::generateCuts (expression *w,
 
   for (int i = (int) cutIndices.size (); i--;) {
 
-    int 
-       size = (int) cutIndices [i].size (),
-      *ind  = new int [size];
-
-    double *coe = new double [size];
-
     // Fix right hand sides: all cuts have coefficients of w equal to
     // one, but they might be inequality-type auxiliaries.
 
@@ -1294,17 +1288,26 @@ void exprTrilinear::generateCuts (expression *w,
       else if (waux -> sign () == expression::AUX_GEQ) cutUb [i] =   COUENNE_INFINITY;
     }
 
-    if ((cutLb [i] > - COUENNE_INFINITY) ||
-	(cutUb [i] <   COUENNE_INFINITY)) {
+    if ((cutLb [i] > - COUENNE_INFINITY/10) ||
+	(cutUb [i] <   COUENNE_INFINITY/10)) {
 
-      std::copy (cutIndices [i].begin (), cutIndices [i].end (), ind);
-      std::copy (cutCoeff   [i].begin (), cutCoeff   [i].end (), coe);
+      int 
+	size = (int) cutIndices [i].size (),
+	*ind  = new int [size];
+      
+      double *coe = new double [size];
 
-      OsiRowCut cut (cutLb [i], cutUb [i], 4, 4, ind, coe);
+      int cardCut = 0;
+      for(int fmi=0; fmi<4; fmi++) {
+	if(fabs(cutCoeff[i][fmi]) > 1e-8) {
+	  ind[cardCut] = cutIndices[i][fmi];
+	  coe[cardCut] = cutCoeff[i][fmi];
+	  cardCut++;
+	}
+      }
+
+      OsiRowCut cut (cutLb [i], cutUb [i], 4, cardCut, ind, coe);
       //cut.print ();
-
-      delete [] ind;
-      delete [] coe;
 
       if (cg -> Problem () -> bestSol ()) {
 
