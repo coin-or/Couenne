@@ -96,8 +96,7 @@ CouNumber CouenneFeasPump::solveNLP (const CouNumber *iSol, CouNumber *&nSol) {
     if  (nSol)  CoinCopyN       (nlp_ -> getSolution (), problem_ -> nVars (), nSol);
     else nSol = CoinCopyOfArray (nlp_ -> getSolution (), problem_ -> nVars ());
 
-  else problem_ -> Jnlst () -> Printf 
-      (J_WARNING, J_NLPHEURISTIC, "FP: warning, NLP returns a NULL solution\n");
+  else problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: warning, NLP returns a NULL solution\n");
 
   if (nlp_ -> getSolution () && (problem_ -> Jnlst () -> ProduceOutput (J_ALL, J_NLPHEURISTIC))) { // check if non-NULL
     printf ("######################## NLP solution (nlp):\n");

@@ -1,10 +1,9 @@
 /* $Id$
  *
- * Name:    CouenneFeasPump.cpp
+ * Name:    CouenneFPphaseNLP.cpp
  * Authors: Pietro Belotti
- *          Timo Berthold, ZIB Berlin
- * Purpose: Implement the Feasibility Pump heuristic class
- * Created: August 5, 2009
+ * Purpose: NLP part of the loop
+ * Created: February 1, 2014
  * 
  * This file is licensed under the Eclipse Public License (EPL)
  */
@@ -231,8 +230,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // Solve IP using nSol as the initial point to minimize weighted
     // l-1 distance from. If nSol==NULL, the MILP is created using the
     // original milp's LP solution.
-
-    bool bad_IP_sol = false;
             
     double z = solveMILP (nSol, iSol, niter, &nsuciter);
 
@@ -261,8 +258,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       }
 
       if (!try_again) { // try moving around current solution 
-
-	bad_IP_sol = true;
 
 	// SCIP could not find a MILP solution and we're somewhat
 	// locked. Round current solution and feed it to the NLP. This
@@ -471,24 +466,20 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	    break;
 	} 
 
-	// ONLY do the following if we didn't get a good IP solution
-	// earlier (i.e. if we had to round)
-
 	// find non-tabu solution in the solution pool
-	if (bad_IP_sol)
-	  while (!pool_ -> Set (). empty ()) {
+	while (!pool_ -> Set (). empty ()) {
 
-	    // EXTRACT the closest (to nSol) IP solution from the pool
-	    pool_ -> findClosestAndReplace (iSol, nSol, problem_ -> nVars ());
+	  // EXTRACT the closest (to nSol) IP solution from the pool
+	  pool_ -> findClosestAndReplace (iSol, nSol, problem_ -> nVars ());
 
-	    CouenneFPsolution newSol (problem_, iSol);
+	  CouenneFPsolution newSol (problem_, iSol);
 
-	    // we found a solution that is not in the tabu list
-	    if (tabuPool_ . find (newSol) == tabuPool_ . end ()) {
-	      try_again = true;
-	      break;
-	    }
-	  } 
+	  // we found a solution that is not in the tabu list
+	  if (tabuPool_ . find (newSol) == tabuPool_ . end ()) {
+	    try_again = true;
+	    break;
+	  }
+	} 
 
       } while (try_again);
     }
@@ -559,7 +550,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  break;
 
 	// Update lb/ub on milp and nlp here
-	const CouNumber
+	const CouNumber 
 	  *plb = problem_ -> Lb (),
 	  *pub = problem_ -> Ub (),
 	  *mlb = milp_    -> getColLower (),

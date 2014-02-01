@@ -158,7 +158,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 
       if (problem_ -> Var (j) -> isInteger () && 
 	  problem_ -> Var (j) -> Multiplicity () > 0 &&
-	  problem_ -> Ub (j) - problem_ -> Lb (j) > .5) {
+	  problem_ -> Ub  (j) - problem_ -> Lb (j) > .5) {
 
 	// if (fabs (x [j] - floor (x [j] + .5)) >= SCIPfeastol (scip)) {
 	//   printf ("integer var x%d not really integer: %e\n", j, x [j]);
@@ -166,7 +166,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 
 	assert (fabs (lbs [j] - problem_ -> Lb (j)) < SCIPfeastol (scip));
 	assert (fabs (ubs [j] - problem_ -> Ub (j)) < SCIPfeastol (scip));
-	assert (fabs (x [j] - floor (x [j] + .5))   < 1e3 * SCIPfeastol (scip));
+	assert (fabs (x [j] - floor (x [j] + .5))   < SCIPfeastol (scip) * 1.e3);
 
 	assert (nEntries <= 2*nvars - 2);
 
@@ -251,7 +251,6 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
   else if (milpMethod_ != 0)
     currentmilpmethod = milpMethod_; // use a fixed method to solve the MILP
 
-     
   // MILP solving loop. If the MILP terminates without a solution, it might get resolved with a more expensive atrategy
   do {
     solveagain = false;

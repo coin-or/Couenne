@@ -154,9 +154,15 @@ namespace Couenne {
     CouenneTNLP *nlp () const
     {return nlp_;}
 
-    /// return number of calls (can be changeD)
+    /// return number of calls (can be changed)
     int &nCalls ()
     {return nCalls_;}
+
+    /// MILP phase of the FP
+    int milpPhase (double *nSol, double *iSol);
+
+    /// NLP phase of the FP
+    int nlpPhase (double *iSol, double *nSol);
 
 #ifdef COIN_HAS_SCIP
     SCIP_RETCODE ScipSolve (double* &sol, int niter, int* nsuciter, CouNumber &obj);

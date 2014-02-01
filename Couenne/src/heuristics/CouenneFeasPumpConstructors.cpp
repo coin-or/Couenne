@@ -520,7 +520,7 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
 
   roptions -> AddBoundedIntegerOption
     ("feas_pump_nseprounds",
-     "Number of rounds that separate convexification cuts. Must be at least 1",
+     "Number of rounds of convexification cuts. Must be at least 1",
      1, 1e5, 4,
      "");
 
@@ -554,6 +554,11 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> AddBoundedIntegerOption
     ("feas_pump_poolcomp",
      "Priority field to compare solutions in FP pool",
-     0, 2, 0, 
-       "0: total number of infeasible objects (integer and nonlinear), 1: maximum infeasibility (integer or nonlinear), 2: objective value.");
+     0, 4, 4,
+       "\
+0: total number of infeasible objects (integer and nonlinear); \
+1: maximum infeasibility (integer or nonlinear); \
+2: objective value; \
+3: compare value of all variables; \
+4: compare value of all integers.");
 }
