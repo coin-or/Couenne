@@ -184,6 +184,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     nSep     = 0,   // If separation short circuit, max # of consecutive separations
     objInd   = problem_ -> Obj (0) -> Body () -> Index ();
 
+  if (nlp_ -> getSolution ())
+    nSol = CoinCopyOfArray (nlp_ -> getSolution (), problem_ -> nVars ());
+
   /////////////////////////////////////////////////////////////////////////
   //                      _                   _
   //                     (_)                 | |

@@ -209,7 +209,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 						 FALSE, FALSE, FALSE, FALSE, FALSE));
       
       SCIP_CALL( SCIPaddCons(scip, tabucons) );
-
+      //SCIP_CALL (SCIPprintCons (scip, tabucons, NULL));
       SCIP_CALL (SCIPreleaseCons (scip, &tabucons));
     }
   }
@@ -461,6 +461,8 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 
 	int nstoredsols;
 
+	double objval = 0;
+
 	/* get incumbent solution */
 	bestsol = SCIPgetBestSol(scip);
 	assert(bestsol != NULL);
@@ -484,7 +486,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	// insert other SCIP solutions into solution pool
 	// do not store too many or too poor solutions 
 	for(int i=1; i<nscipsols && nstoredsols < 10 && 
-	      SCIPgetSolOrigObj(scip,scipsols[i]) <= cutoffbound; i++){
+	      (objval = SCIPgetSolOrigObj(scip,scipsols[i])) <= cutoffbound; i++){
 
 	  double* tmpsol = new CouNumber [nvars];
            
@@ -498,6 +500,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	  if (   tabuPool_      . find (couennesol) == tabuPool_      . end () 
 	      && pool_ -> Set (). find (couennesol) == pool_ -> Set() . end ()
 	      ){
+
 	    pool_ -> Set (). insert (couennesol);
 
 	    ++nstoredsols;

@@ -150,12 +150,24 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
 	  (*i) -> isInteger ()) {
 
 	int indVar = (*i) -> Index ();
-	
-	if (x_ [indVar] > other.x_ [indVar] + COUENNE_EPS)
-	  return false;
+
+	// LEXICOGRAPHICAL ORDERING: return true upon finding the
+	// first element with lower element
+
+#if 0
+	if (0) {
+	  printf (" (%d,%g,%g,%g)", indVar, x_ [indVar], other.x_ [indVar], x_ [indVar] - other.x_ [indVar]);
+
+	  if (x_ [indVar] < other.x_ [indVar] - COUENNE_EPS)
+	    printf ("\n-----\n");
+	}
+#endif
+	if (x_ [indVar] < other.x_ [indVar] - COUENNE_EPS)
+	  return true;
       }
 
-    return true;
+    //printf ("\n####\n");
+    return false;
   }
 
   case ALL_VARS: {
@@ -170,11 +182,11 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
 
 	int indVar = (*i) -> Index ();
 
-	if (x_ [indVar] > other.x_ [indVar] + COUENNE_EPS)
-	  return false;
+	if (x_ [indVar] < other.x_ [indVar] + COUENNE_EPS)
+	  return true;
       }
 
-    return true;
+    return false;
   }
   }
 
@@ -222,11 +234,11 @@ bool compareSol::operator() (const CouenneFPsolution &one,
 void CouenneFPpool::findClosestAndReplace (double *&sol, const double *nSol, int nvars)  {
 
    double bestdist = COIN_DBL_MAX;
-   std::set <CouenneFPsolution>::iterator bestsol = set_. end ();
+   std::set <CouenneFPsolution, compareSol>::iterator bestsol = set_. end ();
 
    if( nSol )
    {
-      for (std::set <CouenneFPsolution>::iterator i = set_. begin (); 
+     for (std::set <CouenneFPsolution, compareSol>::iterator i = set_. begin (); 
            i != set_. end (); ++i)
       {
 	//compute distance of pool solution and NLP solution

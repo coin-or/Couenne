@@ -93,7 +93,7 @@ namespace Couenne {
   protected:
 
     /// Pool
-    std::set <CouenneFPsolution> set_;
+    std::set <CouenneFPsolution, compareSol> set_;
 
     /// Problem pointer
     CouenneProblem *problem_;
@@ -111,7 +111,7 @@ namespace Couenne {
     CouenneFPpool &operator= (const CouenneFPpool &src);
 
     /// return the main object in this class
-    std::set <CouenneFPsolution> &Set ()
+    std::set <CouenneFPsolution, compareSol> &Set ()
     {return set_;}
 
     /// return the problem pointer
