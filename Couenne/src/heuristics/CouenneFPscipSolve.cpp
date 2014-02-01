@@ -157,8 +157,9 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
     for (int j = 0; j < i -> n (); ++j) {
 
       if (problem_ -> Var (j) -> isInteger () && 
-	  problem_ -> Var (j) -> Multiplicity () > 0 &&
-	  problem_ -> Ub  (j) - problem_ -> Lb (j) > .5) {
+	  (problem_ -> Var (j) -> Multiplicity () > 0) &&
+	  (fabs (ubs [j] - lbs [j]) > .5)) {
+	// problem_ -> Ub  (j) - problem_ -> Lb (j) > .5) {
 
 	// if (fabs (x [j] - floor (x [j] + .5)) >= SCIPfeastol (scip)) {
 	//   printf ("integer var x%d not really integer: %e\n", j, x [j]);
@@ -172,13 +173,13 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 
 	double x_rounded = floor (x [j] + .5);
 
-	if        (x [j] >= problem_ -> Ub (j) - COUENNE_EPS) {
+	if        (x [j] >= ubs [j] - COUENNE_EPS) {
 
 	  tabuvars       [nEntries]   = vars [j];
 	  tabubounds     [nEntries]   = x_rounded - 1.;
 	  tabuboundtypes [nEntries++] = SCIP_BOUNDTYPE_UPPER;
 
-	} else if (x [j] <= problem_ -> Lb (j) + COUENNE_EPS) {
+	} else if (x [j] <= lbs [j] + COUENNE_EPS) {
 
 	  tabuvars       [nEntries]   = vars [j];
 	  tabubounds     [nEntries]   = x_rounded + 1.;
