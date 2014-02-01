@@ -560,5 +560,5 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
 1: maximum infeasibility (integer or nonlinear); \
 2: objective value; \
 3: compare value of all variables; \
-4: compare value of all integers.");
+4: compare value of all integers (RECOMMENDED).");
 }

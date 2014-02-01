@@ -255,6 +255,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	// we found a solution that is not in the tabu list
 	if (tabuPool_ . find (newSol) == tabuPool_ . end ()) {
 
+	  //tabuPool_ . insert (newSol);
+
 	  try_again = true;
 	  break;
 	}
@@ -294,6 +296,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // 2) the pool is nonempty: extract the best solution from the
     //    pool and use it instead
 
+    problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: %d solutions in pool, %d in tabu list\n", pool_ -> Set (). size (), tabuPool_ . size ());
+
     CouenneFPsolution checkedSol (problem_, iSol, false); // false is for not allocating space for this
 
     if (tabuPool_. find (checkedSol) == tabuPool_ . end ())
@@ -312,23 +316,37 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       else   if ((tabuMgt_ == FP_TABU_POOL) && !(pool_ -> Set (). empty ())) {
 
 	// try to find non-tabu solution in the solution pool
+
 	do {
 
-            // retrieve the top solution from the pool
-            pool_ -> findClosestAndReplace (iSol, nSol, problem_ -> nVars ());
+	  // retrieve the top solution from the pool
+	  pool_ -> findClosestAndReplace (iSol, nSol, problem_ -> nVars ());
 
-	    CouenneFPsolution newSol (problem_, iSol);
+	  CouenneFPsolution newSol (problem_, iSol);
 
-            // we found a solution that is not in the tabu list
-            if (tabuPool_. find (newSol) == tabuPool_ . end ())
-	      break;
+	  // we found a solution that is not in the tabu list
+	  if (tabuPool_. find (newSol) == tabuPool_ . end ()) {
 
-            // the pool is empty -> bail out
-            if (pool_ -> Set ().empty ())
-	      {
-		delete[] iSol;
-		iSol = NULL;
-	      }
+	    tabuPool_ . insert (newSol);
+	    break;
+	  }
+
+	  // the pool is empty -> just round
+	  if (pool_ -> Set ().empty ())
+	    {
+	      int n = problem_ -> nVars ();
+
+	      if (!iSol)
+		iSol = new double [n];
+
+	      for (int i=0; i<n; i++)
+		iSol [i] = (problem_ -> Var (i) -> isInteger ()) ? 
+		  COUENNE_round (nSol [i]) : 
+		  nSol [i];
+
+	      // delete[] iSol;
+	      // iSol = NULL;
+	    }
 
 	} while( !pool_ -> Set ().empty() );
 
@@ -395,7 +413,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  }
 	}
       }
-    } 
+    }
+
+    if (!iSol)
+      break;
 
     problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: checking IP solution for feasibility\n");
 
@@ -485,6 +506,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	    // we found a solution that is not in the tabu list
 	    if (tabuPool_ . find (newSol) == tabuPool_ . end ()) {
+
+	      tabuPool_ . insert (newSol);
 	      try_again = true;
 	      break;
 	    }

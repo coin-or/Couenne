@@ -165,11 +165,14 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	//   printf ("integer var x%d not really integer: %e\n", j, x [j]);
 	// }
 
+	/* FIXME: restore
+
 	assert (fabs (lbs [j] - problem_ -> Lb (j)) < SCIPfeastol (scip));
 	assert (fabs (ubs [j] - problem_ -> Ub (j)) < SCIPfeastol (scip));
 	assert (fabs (x [j] - floor (x [j] + .5))   < SCIPfeastol (scip) * 1.e3);
 
 	assert (nEntries <= 2*nvars - 2);
+	*/
 
 	double x_rounded = floor (x [j] + .5);
 
@@ -303,6 +306,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	// Set limits on overall nodes and stall nodes (nodes without incumbent improvement).
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/stallnodes", 1000) );
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/nodes", 10000) );
+	SCIP_CALL( SCIPsetRealParam   (scip, "limits/gap", .001) );
 
 	// disable cutting plane separation 
 	SCIP_CALL( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );
@@ -337,6 +341,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
       case 2: // default SCIP with node limits
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/stallnodes", 500) );
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/nodes", 5000) );
+	SCIP_CALL( SCIPsetRealParam   (scip, "limits/gap", .005) );
 
 	// disable expensive dual techniques
 

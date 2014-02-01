@@ -72,7 +72,7 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x, bool copi
     if (((*i) -> Type () == AUX) &&
 	((*i) -> Image () -> Linearity () > LINEAR)) {
 
-      double 
+      double
 	diff = 0.,
 	fval = (*((*i) -> Image ())) ();
 
@@ -132,50 +132,50 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
 
   switch (comparedTerm) {
 
-    case SUM_NINF:     return (nNLinf_   + nIinf_   < other.nNLinf_   + other.nIinf_);
-    case SUM_INF:      return (maxNLinf_ + maxIinf_ < other.maxNLinf_ + other.maxIinf_);
-    case OBJVAL:       return (objVal_              < other.objVal_ - COUENNE_EPS * CoinMax (1., CoinMax (objVal_, other.objVal_))); 
+  case SUM_INF:      if (maxNLinf_ + maxIinf_ < other.maxNLinf_ + other.maxIinf_)                                             return true;
+  case OBJVAL:       if (objVal_              < other.objVal_ - COUENNE_EPS * CoinMax (1., CoinMax (objVal_, other.objVal_))) return true;
+  case SUM_NINF:     if (nNLinf_   + nIinf_   < other.nNLinf_   + other.nIinf_)                                               return true;
     // so that if objective is close these two solutions will be deemed equal
 
-    case ALL_VARS: {
-      // lexicographical comparison: unless the two solutions have the
-      // same subvector, comparison will tell them apart
+  case INTEGER_VARS: {
 
-      for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
-	   i != problem_ -> Variables (). end ();
-	   ++i) 
+    // lexicographical comparison: unless the two solutions have the
+    // same integer subvector, comparison will tell them apart
 
-	if ((*i) -> Multiplicity () > 0) {
+    for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
+	 i != problem_ -> Variables (). end ();
+	 ++i)
 
-	  int indVar = (*i) -> Index ();
+      if (((*i) -> Multiplicity () > 0) && 
+	  (*i) -> isInteger ()) {
 
-	  if (x_ [indVar] < other.x_ [indVar] - COUENNE_EPS)
-	    return true;
-	}
-
-      return false;
-    }
-
-    case INTEGER_VARS: {
-
-      // lexicographical comparison: unless the two solutions have the
-      // same integer subvector, comparison will tell them apart
-
-      for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
-	   i != problem_ -> Variables (). end ();
-	   ++i)
-
-	if (((*i) -> Multiplicity () > 0) && 
-	    (*i) -> isInteger ()) {
-
-	  int indVar = (*i) -> Index ();
+	int indVar = (*i) -> Index ();
 	
-	  if (x_ [indVar] < other.x_ [indVar] - COUENNE_EPS)
-	    return true;
-	}
+	if (x_ [indVar] > other.x_ [indVar] + COUENNE_EPS)
+	  return false;
+      }
 
-      return false;
-    }
+    return true;
+  }
+
+  case ALL_VARS: {
+    // lexicographical comparison: unless the two solutions have the
+    // same subvector, comparison will tell them apart
+
+    for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
+	 i != problem_ -> Variables (). end ();
+	 ++i) 
+
+      if ((*i) -> Multiplicity () > 0) {
+
+	int indVar = (*i) -> Index ();
+
+	if (x_ [indVar] > other.x_ [indVar] + COUENNE_EPS)
+	  return false;
+      }
+
+    return true;
+  }
   }
 
   printf ("CouenneFPsolution::compare: bad compared term\n");
