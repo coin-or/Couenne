@@ -44,7 +44,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   if ((nCalls_ == 0) ||                                   // check upper limit on number of runs
       //(problem_ -> nIntVars () <= 0) ||                 // feas pump on NLP? Why not?
-      (CoinCpuTime () > problem_ -> getMaxCpuTime ()) ||  // don't start if time is out
+      (CoinCpuTime () >= problem_ -> getMaxCpuTime ()) || // don't start if time is out
       ((numberSolvePerLevel_ >= 0) &&                     // stop FP after a certain level
        (CoinDrand48 () > 1. / CoinMax                     // decided randomly and inversely proportional
 	(1., (double) ((CoinMax (0, depth - numberSolvePerLevel_ + 1)) *   // to BB tree depth
@@ -69,6 +69,35 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     nlp_ = new CouenneTNLP (problem_);
 
   problem_ -> domain () -> push (*(problem_ -> domain () -> current ()));
+
+  // Initial Bound Tightening: since Cbc prefers (reasonably) to call
+  // a heuristic before any cut separator and because BT is instead
+  // quite fast, let's see if we can reduce bounds to get a tighter
+  // MILP relaxation.
+
+  t_chg_bounds *chg_bds = new t_chg_bounds [problem_ -> nVars ()];
+
+  for (int i=problem_ -> nVars (); i--;) {
+    chg_bds [i]. setLower (t_chg_bounds::CHANGED);
+    chg_bds [i]. setUpper (t_chg_bounds::CHANGED);
+  }
+
+  bool is_still_feas = problem_ -> btCore (chg_bds);
+
+  delete [] chg_bds;
+
+  // Now that bounds are possibly reduced, put current point within
+  // bounds
+
+  double
+    *lb  = problem_ -> domain () -> lb (),
+    *ub  = problem_ -> domain () -> ub (),
+    *sol = problem_ -> domain () -> x  ();
+
+  for (int i=problem_ -> nVars (); i--;)
+
+    if      (sol [i] < lb [i]) sol [i] = lb [i];
+    else if (sol [i] > ub [i]) sol [i] = ub [i];
 
   // fix integer coordinates of current (MINLP feasible!) solution
   // and set it as initial (obviously NLP feasible) solution
