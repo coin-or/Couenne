@@ -426,6 +426,47 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	break;
       }
 
+    ////////////////////////////////////////////////////////////////////////
+
+    SCIP_CALL(SCIPtransformProb(scip));
+
+    {
+      SCIP_CONSHDLR*  conshdlr_bounddisjunction = SCIPfindConshdlr(scip, "bounddisjunction");
+      int nbdconss= SCIPconshdlrGetNConss(conshdlr_bounddisjunction);
+      SCIP_CONS** bdconss = SCIPconshdlrGetConss(conshdlr_bounddisjunction);
+
+      for(int i=0; i < nbdconss; i++)
+	{
+          SCIP_CONS* checkcons = bdconss[i];
+          SCIP_VAR** checkvars = SCIPgetVarsBounddisjunction(scip, checkcons);
+          SCIP_Real* checkbounds = SCIPgetBoundsBounddisjunction(scip,checkcons);
+          SCIP_BOUNDTYPE* checkboundtypes =SCIPgetBoundtypesBounddisjunction(scip, checkcons);
+          int checknvars = SCIPgetNVarsBounddisjunction(scip, checkcons);
+
+          for(int j=i+1; j < nbdconss; j++)
+	    {
+	      SCIP_CONS* tmpcons =SCIPconshdlrGetConss(conshdlr_bounddisjunction)[j];
+	      SCIP_VAR      **tmpvars = SCIPgetVarsBounddisjunction(scip,tmpcons);
+	      SCIP_Real      *tmpbounds =SCIPgetBoundsBounddisjunction(scip, tmpcons);
+	      SCIP_BOUNDTYPE *tmpboundtypes =SCIPgetBoundtypesBounddisjunction(scip, tmpcons);
+	      int tmpnvars = SCIPgetNVarsBounddisjunction(scip, tmpcons);
+	      int k;
+
+	      if( checknvars !=  tmpnvars )
+                continue;
+
+	      for(k=0; k < tmpnvars; k++)
+                if(tmpvars[k] != checkvars[k] || tmpbounds[k] !=checkbounds[k] || tmpboundtypes[k] != checkboundtypes[k])
+		  break;
+
+	      if(k == tmpnvars)
+                printf("ZZZ identical bounddisjunction constraints\n");
+	    }
+	}
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+
 #if 0
     // writes MILP problem and SCIP settings into a file
     SCIP_CALL( SCIPwriteOrigProblem(scip, "debug.lp", NULL, FALSE) );
