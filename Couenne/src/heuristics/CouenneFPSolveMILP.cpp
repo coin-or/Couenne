@@ -202,7 +202,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 	(iSol [i] - nSol0 [i]);
     }
 
-    problem_ -> Jnlst () -> Printf ("FP: after MILP, distance %g, %d nonintegers\n", sqrt (dist), nNonint);
+    problem_ -> Jnlst () -> Printf (Ipopt::J_WARNING, J_NLPHEURISTIC, "FP: after MILP, distance %g, %d nonintegers\n", sqrt (dist), nNonint);
   }
 
   //
