@@ -459,8 +459,8 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
                 if(tmpvars[k] != checkvars[k] || tmpbounds[k] !=checkbounds[k] || tmpboundtypes[k] != checkboundtypes[k])
 		  break;
 
-	      if(k == tmpnvars)
-                printf("ZZZ identical bounddisjunction constraints\n");
+	      if (k == tmpnvars)
+		problem_ -> Jnlst () -> Printf (Ipopt::J_WARNING, J_NLPHEURISTIC, "ZZZ identical bounddisjunction constraints\n");
 	    }
 	}
     }
