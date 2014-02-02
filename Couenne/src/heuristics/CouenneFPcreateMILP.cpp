@@ -32,7 +32,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp, CouenneSparseMatrix *hessian,
 int PSDize (int n, double *A, double *B, bool doSqrRoot);
 
 /// create clone of MILP and add variables for special objective
-OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model, bool isMILP) {
+OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model, bool isMILP, int *match) {
 
   OsiSolverInterface *lp = model -> solver () -> clone ();
 
@@ -52,16 +52,21 @@ OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model,
 
     // TODO: should this really happen? I bet no
 
-    //if (fp -> Problem () -> Var (j) -> Multiplicity () <= 0)
-    //continue;
+    if (fp -> Problem () -> Var (j) -> Multiplicity () <= 0)
+      continue;
 
     bool intVar = lp -> isInteger (j);
 
     if ((isMILP && (intVar || (fp -> compDistInt () == CouenneFeasPump::FP_DIST_ALL)))
 	||
-	(!isMILP && !intVar))
+	(!isMILP && !intVar)) {
+
       // (empty) coeff col vector, lb = 0, ub = inf, obj coeff
       lp -> addCol (vec, 0., COIN_DBL_MAX, 1.); 
+
+      if (match) 
+	match [j] = lp -> getNumCols () - 1;
+    }
   }
 
   // Set to zero all other variables' obj coefficient. This means we
@@ -78,7 +83,7 @@ OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model,
 }
 
 /// modify MILP or LP to implement distance by adding extra rows (extra cols were already added by createCloneMILP)
-void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, double *sol, bool isMILP) {
+void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, double *sol, bool isMILP, int *match) {
 
   // Construct an (empty) Hessian. It will be modified later, but
   // the changes should be relatively easy for the case when
@@ -147,6 +152,9 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
   for (int i = 0, j = n, k = n; k--; ++i) {
 
+    if (match && match [i] < 0) 
+      continue;
+
     if (fp -> Problem () -> Var (i) -> Multiplicity () <= 0)
       continue;
 
@@ -169,6 +177,10 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
       // right-hand side equals <P^i,x^0>
       double PiX0 = sparseDotProduct (vec, x0); 
+
+      assert (!match || match [i] >= 0);
+
+      //printf ("adding row %d with %d elements\n", j, vec.getNumElements());
 
       // j is the index of the j-th extra variable z_j, used for z_j >=  P (x - x0)  ===> z_j - Px >= - Px_0 ==> -z_j + Px <= Px_0
       // Second inequality is                                    z_j >= -P (x - x0)                          ==>  z_j + Px >= Px_0

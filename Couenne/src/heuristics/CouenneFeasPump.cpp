@@ -42,6 +42,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   double time0 = CoinCpuTime();
 
+  match_ = NULL;
+
   if ((nCalls_ == 0) ||                                   // check upper limit on number of runs
       //(problem_ -> nIntVars () <= 0) ||                 // feas pump on NLP? Why not?
       (CoinCpuTime () >= problem_ -> getMaxCpuTime ()) || // don't start if time is out
@@ -915,6 +917,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   delete milp_;
   delete postlp_;
   milp_ = postlp_ = NULL;
+
+  if (match_) {
+    delete [] match_;
+    match_ = NULL;
+  }
 
   problem_ -> Jnlst () -> Printf 
     (J_WARNING, J_NLPHEURISTIC, "FP: done ===================\n");

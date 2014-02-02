@@ -210,6 +210,9 @@ namespace Couenne {
     /// Solutions to avoid
     std::set <CouenneFPsolution, compareSol> tabuPool_;
 
+    /// matching between reformulation's variables and L-1 norm variables
+    int *match_;
+
     //
     // PARAMETERS
     //

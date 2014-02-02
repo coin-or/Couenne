@@ -40,11 +40,11 @@ void CouenneFeasPump::checkInfinity(SCIP *scip, SCIP_Real val, double infinity){
 
 
 /// create clone of MILP and add variables for special objective
-OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model, bool isMILP);
+OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model, bool isMILP, int *match);
 
 
 /// modify MILP or LP to implement distance by adding extra rows (extra cols were already added by createCloneMILP)
-void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, double *sol, bool isMILP);
+void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, double *sol, bool isMILP, int *match);
 
 
 /// find integer (possibly NLP-infeasible) point isol closest
@@ -96,11 +96,28 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
   	                            // solveMILP; initialization will be
   	                            // necessary
 
+  // match [i] contains the i-th extra variable associated with the
+  // term in the L1 norm for x_i, and -1 otherwise.
+
   if (firstCall) {
+
+    match_ = new int [problem_ -> nVars ()];
+
+    for (int i=problem_ -> nVars (); i--;)
+      match_ [i] = -1;
 
     // create MILP
 
-    milp_ = createCloneMILP (this, model_, true);
+    milp_ = createCloneMILP (this, model_, true, match_);
+
+    // the bounds might have improved because of FBBT. Unless a new
+    // MINLP solution was found (unlikely ...), this should be done only
+    // at the first call to the FP
+
+    for (int i=problem_ -> nVars (); i--;) {
+      milp_ -> setColLower (i, problem_ -> Lb (i));
+      milp_ -> setColUpper (i, problem_ -> Ub (i));
+    }
 
     // Post-processing LP: persistent if FP_DIST_POST, created on the
     // fly if FP_DIST_INT and numerics, not created if FP_DIST_ALL
@@ -110,15 +127,18 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
     // problems, which might not happen
 
     if ((compDistInt_ == FP_DIST_POST) && !postlp_)
-      postlp_ = createCloneMILP (this, model_, false);
-
-    // the bounds might have improved because of FBBT. Unless a new
-    // MINLP solution was found (unlikely ...), this should be done only
-    // at the first call to the FP
-
-    milp_ -> setColLower (problem_ -> Lb ());
-    milp_ -> setColUpper (problem_ -> Ub ());
+      postlp_ = createCloneMILP (this, model_, false, NULL);
   }
+
+#if 0
+  printf ("======================================================================================================================================\n");
+  for (int i=0,j; i<problem_->nVars (); ++i)
+    if (match_ [i] >= 0) {
+      printf ("(%d,%d)", i, match_ [i]);
+      if ((++j) % 6 == 0) printf ("\n");
+    }
+  printf ("======================================================================================================================================\n");
+#endif
 
   int nInitRows = milp_ -> getNumRows ();
 
@@ -136,7 +156,9 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 				 problem_ -> nVars ());
 
   // create constraints to define l_1 distance objective function
-  addDistanceConstraints (this, milp_, nlpSolExp, true);
+  addDistanceConstraints (this, milp_, nlpSolExp, true, match_);
+
+  //milp_ -> writeLp ("afterAdd");
 
   delete [] nlpSolExp;
 
@@ -155,6 +177,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
     char filename [30];
     sprintf (filename, "fp-milp%04d", cntr++);
     milp_ -> writeLp (filename);
+    printf ("saving FP_MILP %d\n", cntr);
   }
 
   double obj = findSolution (iSol, niter, nsuciter);
@@ -179,7 +202,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 	(iSol [i] - nSol0 [i]);
     }
 
-    printf ("FP: after MILP, distance %g, %d nonintegers\n", sqrt (dist), nNonint);
+    problem_ -> Jnlst () -> Printf ("FP: after MILP, distance %g, %d nonintegers\n", sqrt (dist), nNonint);
   }
 
   //
@@ -225,7 +248,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 	// 6) delete variables
 
 	if (!postlp_)
-	  postlp_ = createCloneMILP (this, model_, false);
+	  postlp_ = createCloneMILP (this, model_, false, NULL);
 
 	int nvars = postlp_ -> getNumCols ();
 
@@ -251,7 +274,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 	// add inequalities
 
 	int nInitRowsLP  = postlp_ -> getNumRows ();
-	addDistanceConstraints (this, postlp_, iSol, false);
+	addDistanceConstraints (this, postlp_, iSol, false, match_);
 	int nFinalRowsLP = postlp_ -> getNumRows ();
 
 	// Solve the LP, obtain closest point with integer variables fixed
