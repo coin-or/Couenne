@@ -159,20 +159,18 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
       if (problem_ -> Var (j) -> isInteger () && 
 	  (problem_ -> Var (j) -> Multiplicity () > 0) &&
 	  (fabs (ubs [j] - lbs [j]) > .5)) {
+
 	// problem_ -> Ub  (j) - problem_ -> Lb (j) > .5) {
 
 	// if (fabs (x [j] - floor (x [j] + .5)) >= SCIPfeastol (scip)) {
 	//   printf ("integer var x%d not really integer: %e\n", j, x [j]);
 	// }
 
-	/* FIXME: restore
-
 	assert (fabs (lbs [j] - problem_ -> Lb (j)) < SCIPfeastol (scip));
 	assert (fabs (ubs [j] - problem_ -> Ub (j)) < SCIPfeastol (scip));
 	assert (fabs (x [j] - floor (x [j] + .5))   < SCIPfeastol (scip) * 1.e3);
 
 	assert (nEntries <= 2*nvars - 2);
-	*/
 
 	double x_rounded = floor (x [j] + .5);
 
@@ -433,10 +431,23 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
     SCIP_CALL( SCIPwriteOrigProblem(scip, "debug.lp", NULL, FALSE) );
     SCIP_CALL( SCIPwriteParams(scip, "debug.set", FALSE,TRUE) );
 #endif
-          
+     
     // solve the MILP
 
     SCIP_RETCODE retcode = SCIPsolve (scip);
+
+#if 0
+    if (SCIPgetStatus (scip) == SCIP_STATUS_INFEASIBLE) {
+
+      // writes MILP problem and SCIP settings into a file
+      SCIP_CALL( SCIPwriteOrigProblem(scip, "debug.lp", NULL, FALSE) );
+      SCIP_CALL( SCIPwriteParams(scip, "debug.set", FALSE, TRUE));
+
+      printf ("SCIP found that the problem is infeasible, exiting\n");
+
+      exit (-1);
+    }
+#endif
 
     if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_WARNING, J_NLPHEURISTIC))
       SCIP_CALL( SCIPprintStatistics(scip, NULL) );

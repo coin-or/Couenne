@@ -74,7 +74,7 @@ double CouenneFeasPump::findSolution (double* &iSol, int niter, int* nsuciter) {
     if (retcode != SCIP_OKAY) {
 
       printf ("Couenne Feasibility Pump: SCIP did not return a feasible solution\n");
-      return COIN_DBL_MAX;
+      obj = COIN_DBL_MAX;
     }
   } else
 

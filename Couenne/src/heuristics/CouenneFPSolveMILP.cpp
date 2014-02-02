@@ -111,6 +111,13 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 
     if ((compDistInt_ == FP_DIST_POST) && !postlp_)
       postlp_ = createCloneMILP (this, model_, false);
+
+    // the bounds might have improved because of FBBT. Unless a new
+    // MINLP solution was found (unlikely ...), this should be done only
+    // at the first call to the FP
+
+    milp_ -> setColLower (problem_ -> Lb ());
+    milp_ -> setColUpper (problem_ -> Ub ());
   }
 
   int nInitRows = milp_ -> getNumRows ();

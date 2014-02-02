@@ -50,13 +50,18 @@ OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model,
     // creating MIP AND (integer variable OR FP_DIST_ALL)
     // creating LP  AND fractional variable
 
+    // TODO: should this really happen? I bet no
+
+    //if (fp -> Problem () -> Var (j) -> Multiplicity () <= 0)
+    //continue;
+
     bool intVar = lp -> isInteger (j);
 
     if ((isMILP && (intVar || (fp -> compDistInt () == CouenneFeasPump::FP_DIST_ALL)))
 	||
 	(!isMILP && !intVar))
       // (empty) coeff col vector, lb = 0, ub = inf, obj coeff
-      lp -> addCol (vec, 0., (fp -> Problem () -> Var (j) -> Multiplicity () <= 0) ? 0. : COIN_DBL_MAX, 1.); 
+      lp -> addCol (vec, 0., COIN_DBL_MAX, 1.); 
   }
 
   // Set to zero all other variables' obj coefficient. This means we

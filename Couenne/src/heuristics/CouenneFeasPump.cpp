@@ -68,7 +68,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   if (!nlp_) // first call (in this run of FP). Create NLP
     nlp_ = new CouenneTNLP (problem_);
 
-  problem_ -> domain () -> push (*(problem_ -> domain () -> current ()));
+  //problem_ -> domain () -> push (*(problem_ -> domain () -> current ()));
+  problem_ -> domain () -> push (model_ -> solver ());
+  // NOTE: FP should only get bounds from the current BB node
 
   // Initial Bound Tightening: since Cbc prefers (reasonably) to call
   // a heuristic before any cut separator and because BT is instead
@@ -118,8 +120,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: Initial NLP... "); fflush (stdout);
 
-  // Solve with original objective function
-  ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);
+
+  // Solve with original objective function                           //       /|---------+
+  ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);       //      < |   NLP   |
+                                                                      //       \|---------+
 
   problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "done\n"); fflush (stdout);
 
@@ -134,7 +138,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   ////////////////////////////////////////////////////////////////
 
-  problem_ -> domain () -> pop ();
+  //problem_ -> domain () -> pop ();
 
   if ((status != Solve_Succeeded) && (status != Solved_To_Acceptable_Level))
     problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "Feasibility Pump: error in initial NLP problem\n");
@@ -187,6 +191,13 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   if (nlp_ -> getSolution ())
     nSol = CoinCopyOfArray (nlp_ -> getSolution (), problem_ -> nVars ());
 
+  bool isNlpFeas = problem_ -> checkNLP0 (nSol, 
+					  nSol [objInd], 
+					  true, 
+					  false, // don't care about obj
+					  true,  // stop at first violation
+					  true); // checkAll
+
   /////////////////////////////////////////////////////////////////////////
   //                      _                   _
   //                     (_)                 | |
@@ -201,7 +212,9 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   // linearization cuts). Note that this push is pop()'d at the end
   // of the main routine
 
-  problem_ -> domain () -> push (model_ -> solver ());
+  // use new bounds found in BT earlier
+
+  //problem_ -> domain () -> push (model_ -> solver ());
 
   expression *originalObjective = problem_ -> Obj (0) -> Body ();
 
@@ -213,7 +226,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     save_mHM = multHessMILP_,
     save_mOM = multObjFMILP_;
 
-  do {
+  if (!isNlpFeas) do { // only do this if NLP solution was not also MINLP
+
+    if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
+      break;
 
     if (niter) {
       multDistNLP_  *= fabs (save_mDN); // update within loop
@@ -223,9 +239,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
       multHessMILP_ *= fabs (save_mHM);
       multObjFMILP_ *= fabs (save_mOM);
     }
-
-    if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
-      break;
 
     problem_ -> Jnlst () -> Printf (J_ERROR, J_NLPHEURISTIC, "[FeasPump] Iteration %d [%gs]\n", niter, CoinCpuTime() - time0);
 
@@ -238,6 +251,31 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     bool bad_IP_sol = false;
             
     double z = solveMILP (nSol, iSol, niter, &nsuciter);
+
+#if 0
+    if (milp_ && milp_ -> getColLower ()) {
+      printf ("fixed in milp_:    ");
+      for (int i=0; i<problem_ -> nVars (); ++i)
+	if (fabs (milp_ -> getColUpper () [i] - 
+		  milp_ -> getColLower () [i]) < COUENNE_EPS)
+	  printf ("%d ", i);
+    }
+
+    problem_ -> domain () -> push (model_ -> solver ());
+    printf ("\nfixed in model_:   ");
+    for (int i=0; i<problem_ -> nVars (); ++i)
+      if (fabs (problem_ -> Ub (i) - problem_ -> Lb (i)) < COUENNE_EPS)
+	printf ("%d ", i);
+    problem_ -> domain () -> pop ();
+
+    problem_ -> domain () -> push (*(problem_ -> domain () -> current ()));
+    printf ("\nfixed in problem_: ");
+    for (int i=0; i<problem_ -> nVars (); ++i)
+      if (fabs (problem_ -> Ub (i) - problem_ -> Lb (i)) < COUENNE_EPS)
+	printf ("%d ", i);
+    problem_ -> domain () -> pop ();
+    printf ("\n");
+#endif
 
     // if no MILP solution was found, bail out
 
