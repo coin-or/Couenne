@@ -34,9 +34,9 @@ void exprTrilinear::getBounds (expression *&lb, expression *&ub) {
 
 	int indexTerm = i0*8 + i1*4 + i2*2;
 
-	arglistMax [indexTerm] = new exprTrilinear (new exprClone (i0 ? ubA [0] : lbA [0]),
-						    new exprClone (i1 ? ubA [1] : lbA [1]),
-						    new exprClone (i2 ? ubA [2] : lbA [2]));
+	arglistMax [indexTerm] = new exprCopy (new exprTrilinear (new exprClone (i0 ? ubA [0] : lbA [0]),
+								  new exprClone (i1 ? ubA [1] : lbA [1]),
+								  new exprClone (i2 ? ubA [2] : lbA [2]))); // saves value to be retrieved later for computation
 
 	arglistMin [indexTerm] = new exprClone (arglistMax [indexTerm]);
 
@@ -75,6 +75,19 @@ void exprTrilinear::getBounds (CouNumber &lb, CouNumber &ub) {
 	if (curbound < lb) lb = curbound;
 	if (curbound > ub) ub = curbound;
       }
+
+  bool isInt = true;
+
+  for (int i=0; i<3; i++)
+    if (!(arglist_ [i] -> isInteger ())) {
+      isInt = false;
+      break;
+    }
+
+  if (isInt) {
+    lb = ceil  (lb - COUENNE_EPS);
+    ub = floor (ub + COUENNE_EPS);
+  }
 
   delete [] lbA;
   delete [] ubA;

@@ -30,7 +30,7 @@ using namespace Couenne;
 
 /// preprocess problem in order to extract linear relaxations etc.
 void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
-  
+
   double now = CoinCpuTime ();
 
   if (nVars () > THRESHOLD_OUTPUT_REFORMULATE) {
@@ -116,7 +116,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 	       true, // stop at first viol 
 	       true, // checkAll
 	       getFeasTol())) {
-    
+
     jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM,
 		      "Couenne: initial solution (value %g) is MINLP feasible\n",
 		      cutoff);
