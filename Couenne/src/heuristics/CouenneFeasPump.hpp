@@ -122,7 +122,7 @@ namespace Couenne {
     static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions>);
 
     /// find feasible solution (called by solveMILP ())
-    double findSolution (double *&sol, int niter, int* nsuciter);
+    double findSolution (const double *nSol, double *&sol, int niter, int* nsuciter);
 
     /// initialize all solvers at the first call, where the initial
     /// MILP is built
@@ -165,7 +165,7 @@ namespace Couenne {
     int nlpPhase (double *iSol, double *nSol);
 
 #ifdef COIN_HAS_SCIP
-    SCIP_RETCODE ScipSolve (double* &sol, int niter, int* nsuciter, CouNumber &obj);
+    SCIP_RETCODE ScipSolve (const double *nSol, double* &sol, int niter, int* nsuciter, CouNumber &obj);
 #endif
 
   private:

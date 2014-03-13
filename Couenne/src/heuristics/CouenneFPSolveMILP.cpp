@@ -180,7 +180,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
     printf ("saving FP_MILP %d\n", cntr);
   }
 
-  double obj = findSolution (iSol, niter, nsuciter);
+  double obj = findSolution (nSol0, iSol, niter, nsuciter);
 
   if ((nSol0 && iSol) &&
       (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_WARNING, J_NLPHEURISTIC))) {

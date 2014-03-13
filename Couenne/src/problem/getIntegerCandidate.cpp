@@ -376,6 +376,13 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
     if (i == infeasible)
       retval = -1;
+
+    //
+    // While Couenne does not use this solution (retval==-1), the FP can still use a rounded solution
+    //
+
+    for (int j=nVars(); j--;)
+      xInt [j] = ceil (xInt [j] - 0.5);
   }
 
   ////////////////////////////////////////////////////////////////////////////////

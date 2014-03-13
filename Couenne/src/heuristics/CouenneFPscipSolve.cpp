@@ -23,7 +23,7 @@ using namespace Couenne;
 #include "scip/scipdefplugins.h"
 #include "scip/cons_bounddisjunction.h"
 
-SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter, CouNumber &obj) {
+SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int niter, int* nsuciter, CouNumber &obj) {
 
   static int currentmilpmethod = 0;
 
@@ -216,8 +216,8 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
   for (int i=0; i<nconss; i++) {
 
     SCIP_CONS* cons;
-        
-    char consname[SCIP_MAXSTRLEN];  
+
+    char consname[SCIP_MAXSTRLEN];
     (void) SCIPsnprintf(consname, SCIP_MAXSTRLEN, "row_%d", i);
 
     // check that all data is in valid ranges
@@ -256,7 +256,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
   // MILP solving loop. If the MILP terminates without a solution, it might get resolved with a more expensive atrategy
   do {
     solveagain = false;
-        
+
     // reset parameters if MILP is solved agian
     SCIP_CALL( SCIPresetParams(scip) );
         
@@ -267,7 +267,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
         
     // do not abort subproblem on CTRL-C
     SCIP_CALL( SCIPsetBoolParam(scip, "misc/catchctrlc", FALSE) );
-        
+
     // set time limit
     timelimit = problem_ -> getMaxCpuTime () - CoinCpuTime ();
 
@@ -281,7 +281,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
     }
         
     // tune SCIP differently, depending on the chosen method to solve the MILP
-    /// -1. Solve the MILP relaxation to proven optimality
+    /// -1. MILP and stop at first solution found (similar to other FP implementations and mainly done for comparison with them)
     ///  0. Let Couenne choose
     ///  1. Partially solve the MILP with emphasis on good solutions
     ///  2. Solve the MILP relaxation partially, up to a certain node limit
@@ -291,7 +291,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
       {
       case -1: // solve the MILP completely. SCIP's default setting should be best for this
 	if( milpCuttingPlane_ == FP_CUT_INTEGRATED )
-	  { 
+	  {
 	    SCIP_CALL( SCIPsetLongintParam(scip, "constraints/rowcuts/maxcuttingrounds", 0) );
 	  }
 
@@ -306,33 +306,39 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/nodes", 10000) );
 	SCIP_CALL( SCIPsetRealParam   (scip, "limits/gap", .001) );
 
-	// disable cutting plane separation 
-	SCIP_CALL( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );
+	// disable expensive cutting plane separation 
+	//SCIP_CALL( SCIPsetSeparating(scip, SCIP_PARAMSETTING_FAST, TRUE) );
         
 	// disable expensive presolving 
-	SCIP_CALL( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
+	//SCIP_CALL( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
 
 	// use aggressive primal heuristics 
 	SCIP_CALL( SCIPsetHeuristics(scip, SCIP_PARAMSETTING_AGGRESSIVE, TRUE) );
         
-	// use best estimate node selection 
-	if( SCIPfindNodesel(scip, "estimate") != NULL )
+	// use best estimate node selection
+	/*
+	  if( SCIPfindNodesel(scip, "estimate") != NULL )
 	  {
 	    SCIP_CALL( SCIPsetIntParam(scip, "nodeselection/estimate/stdpriority", INT_MAX/4) ); 
 	  }
-        
+	*/
+
 	// use inference branching 
-	if( SCIPfindBranchrule(scip, "inference") != NULL )
+	/*
+	  if( SCIPfindBranchrule(scip, "inference") != NULL )
 	  {
 	    SCIP_CALL( SCIPsetIntParam(scip, "branching/inference/priority", INT_MAX/4) );
 	  }
-        
+	*/
+
 	// disable conflict analysis 
-	SCIP_CALL( SCIPsetBoolParam(scip, "conflict/useprop", FALSE) );
-	SCIP_CALL( SCIPsetBoolParam(scip, "conflict/useinflp", FALSE) );
-	SCIP_CALL( SCIPsetBoolParam(scip, "conflict/useboundlp", FALSE) );
-	SCIP_CALL( SCIPsetBoolParam(scip, "conflict/usesb", FALSE) );
-	SCIP_CALL( SCIPsetBoolParam(scip, "conflict/usepseudo", FALSE) );
+	/*
+	  SCIP_CALL( SCIPsetBoolParam(scip, "conflict/useprop", FALSE) );
+	  SCIP_CALL( SCIPsetBoolParam(scip, "conflict/useinflp", FALSE) );
+	  SCIP_CALL( SCIPsetBoolParam(scip, "conflict/useboundlp", FALSE) );
+	  SCIP_CALL( SCIPsetBoolParam(scip, "conflict/usesb", FALSE) );
+	  SCIP_CALL( SCIPsetBoolParam(scip, "conflict/usepseudo", FALSE) );
+	*/
 
 	break;
 
@@ -420,8 +426,35 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 	  }
 	break;
 
+      case 5: // use rounding heuristic in Couenne
+
+	{
+	  bool success;
+
+	  if (!sol)
+	    sol = new CouNumber [problem_ -> nVars ()];
+
+	  if (nSol)
+	    problem_ -> getIntegerCandidate (nSol, sol, problem_ -> Lb (), problem_ -> Ub ());
+
+	  // 
+	  //
+	  //SCIP_SOL scipSol = {0,0,0,sol,NULL,NULL,0,0,0,0,0,0};
+	  //SCIP_CALL (SCIPtrySol (scip, ScipSol, FALSE, FALSE, FALSE, FALSE, &success) );
+	  //if (!success) 
+	  //problem_ -> Jnlst () -> Printf (Ipopt::J_WARNING, J_NLPHEURISTIC, "Could not add initial MINLP solution to SCIP\n");
+	}
+
+	break;
+
+
+      case 6: // round, but perturb first if we are cycling
+
+	break;
+
+
       default:
-	printf("invalid MILP method: %d\n", currentmilpmethod);
+	printf("Invalid MILP method in feasibility pump: %d\n", currentmilpmethod);
 	assert(false);
 	break;
       }
@@ -561,9 +594,9 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (double* &sol, int niter, int* nsuciter,
 
 	++(*nsuciter);
 
-	// if we succeeded five times in a row, try a cheaper MILP_ solving method next time
+	// if we succeeded three times in a row, try a cheaper MILP_ solving method next time
 	// TODO: if we want to use time limits, hitting the time limit would be another good reason to switch
-	if( *nsuciter >= 3 && currentmilpmethod < 4 )
+	if( milpMethod_ == 0 && *nsuciter >= 3 && currentmilpmethod < 4 )
 	  {
 	    ++currentmilpmethod;
 	    *nsuciter = 0;
