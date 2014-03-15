@@ -439,8 +439,9 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 
 	  // 
 	  //
-	  //SCIP_SOL scipSol = {0,0,0,sol,NULL,NULL,0,0,0,0,0,0};
-	  //SCIP_CALL (SCIPtrySol (scip, ScipSol, FALSE, FALSE, FALSE, FALSE, &success) );
+	  SCIP_SOL* scipSol;// = {0,0,0,sol,NULL,NULL,0,0,0,0,0,0};
+	  SCIP_CALL( SCIPcreateSol(scip, &scipSol, NULL ));
+	  SCIP_CALL(SCIPsetSolVals(scip, scipSol, nvars, vars,(double*) sol));//SCIP_CALL (SCIPtrySol (scip, ScipSol, FALSE, FALSE, FALSE, FALSE, &success) );
 	  //if (!success) 
 	  //problem_ -> Jnlst () -> Printf (Ipopt::J_WARNING, J_NLPHEURISTIC, "Could not add initial MINLP solution to SCIP\n");
 	}
