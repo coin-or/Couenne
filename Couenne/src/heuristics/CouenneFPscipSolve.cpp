@@ -32,8 +32,8 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
   SCIP* scip;
 
   SCIP_VAR** vars;
-  const SCIP_Real* lbs;
-  const SCIP_Real* ubs;
+  SCIP_Real* lbs;
+  SCIP_Real* ubs;
   const SCIP_Real* objs;
   const char* vartypes;
   const CoinPackedMatrix * matrix;
@@ -65,10 +65,19 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
   infinity = milp_ -> getInfinity ();
 
   // get variable data
-  lbs =      milp_ -> getColLower ();
-  ubs =      milp_ -> getColUpper ();
+  lbs =      CoinCopyOfArray (milp_ -> getColLower (), milp_ -> getNumCols ());
+  ubs =      CoinCopyOfArray (milp_ -> getColUpper (), milp_ -> getNumCols ());
+
   objs =     milp_ -> getObjCoefficients ();
   vartypes = milp_ -> getColType ();
+
+  // tighten bounds with data from problem_ (which may have run btCore())
+
+  for (int i = 0; i < problem_->nVars(); ++i)
+    if (problem_ -> Var (i) -> Multiplicity () > 0) {
+      if (problem_ -> Lb (i) > lbs [i]) lbs [i] = problem_ -> Lb (i);
+      if (problem_ -> Ub (i) < ubs [i]) ubs [i] = problem_ -> Ub (i);
+    }
 
   // get row data
   lhss = milp_ -> getRowLower ();
@@ -166,8 +175,8 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 	//   printf ("integer var x%d not really integer: %e\n", j, x [j]);
 	// }
 
-	assert (fabs (lbs [j] - problem_ -> Lb (j)) < SCIPfeastol (scip));
-	assert (fabs (ubs [j] - problem_ -> Ub (j)) < SCIPfeastol (scip));
+	//assert (fabs (lbs [j] - problem_ -> Lb (j)) < SCIPfeastol (scip));
+	//assert (fabs (ubs [j] - problem_ -> Ub (j)) < SCIPfeastol (scip));
 	assert (fabs (x [j] - floor (x [j] + .5))   < SCIPfeastol (scip) * 1.e3);
 
 	assert (nEntries <= 2*nvars - 2);
@@ -448,7 +457,6 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 
 	break;
 
-
       case 6: // round, but perturb first if we are cycling
 
 	break;
@@ -636,6 +644,9 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
   SCIPfreeMemoryArray(scip, &tabuvars      );
   SCIPfreeMemoryArray(scip, &tabubounds    );
   SCIPfreeMemoryArray(scip, &tabuboundtypes);
+
+  delete [] lbs;
+  delete [] ubs;
 
   SCIP_CALL( SCIPfree(&scip) );
    

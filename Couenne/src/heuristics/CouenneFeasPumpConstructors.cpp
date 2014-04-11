@@ -1,6 +1,6 @@
 /* $Id$
  *
- * Name:    CouenneFeasPump.cpp
+ * Name:    CouenneFeasPumpConstructors.cpp
  * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
  * Purpose: Constructors and service methods of the Feasibility Pump class

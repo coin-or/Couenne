@@ -122,7 +122,6 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: Initial NLP... "); fflush (stdout);
 
-
   // Solve with original objective function                           //       /|---------+
   ApplicationReturnStatus status = app_ -> OptimizeTNLP (nlp_);       //      < |   NLP   |
                                                                       //       \|---------+
@@ -251,7 +250,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // original milp's LP solution.
 
     bool bad_IP_sol = false;
-            
+
     double z = solveMILP (nSol, iSol, niter, &nsuciter);
 
 #if 0
@@ -635,6 +634,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	  bool neglect = problem_ -> Var (j) -> Multiplicity () <= 0;
 
+	  // neglect'ed variables don't appear in the problem, so MILP can fix them to zero
 	  if (*plb > *mlb++) milp_ -> setColLower (j, neglect ? 0. : *plb);
 	  if (*pub < *mub++) milp_ -> setColUpper (j, neglect ? 0. : *pub);
 	}
