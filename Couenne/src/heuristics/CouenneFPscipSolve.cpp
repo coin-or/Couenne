@@ -437,6 +437,10 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 
       case 5: // use rounding heuristic in Couenne
 
+	SCIP_CALL( SCIPsetLongintParam(scip, "limits/stallnodes", 500) );
+	SCIP_CALL( SCIPsetLongintParam(scip, "limits/nodes", 5000) );
+	SCIP_CALL( SCIPsetRealParam   (scip, "limits/gap", .05) );
+
 	{
 	  if (!sol)
 	    sol = new CouNumber [problem_ -> nVars ()];
@@ -456,6 +460,10 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 	break;
 
       case 6: // round; TODO: but perturb first if we are cycling
+
+	SCIP_CALL( SCIPsetLongintParam(scip, "limits/stallnodes", 500) );
+	SCIP_CALL( SCIPsetLongintParam(scip, "limits/nodes", 5000) );
+	SCIP_CALL( SCIPsetRealParam   (scip, "limits/gap", .05) );
 
 	if (!sol)
 	  sol = new CouNumber [problem_ -> nVars ()];
