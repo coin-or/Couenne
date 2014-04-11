@@ -438,26 +438,39 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
       case 5: // use rounding heuristic in Couenne
 
 	{
-	  bool success;
-
 	  if (!sol)
 	    sol = new CouNumber [problem_ -> nVars ()];
 
-	  if (nSol)
-	    problem_ -> getIntegerCandidate (nSol, sol, problem_ -> Lb (), problem_ -> Ub ());
+	  if (!nSol)
+	    nSol = milp_ -> getColSolution ();
 
-	  // 
-	  //
-	  SCIP_SOL* scipSol;// = {0,0,0,sol,NULL,NULL,0,0,0,0,0,0};
+	  // whatever nSol, pick solution through getIntCand
+
+	  problem_ -> getIntegerCandidate (nSol, sol, problem_ -> Lb (), problem_ -> Ub ());
+
+	  SCIP_SOL* scipSol;
 	  SCIP_CALL( SCIPcreateSol(scip, &scipSol, NULL ));
-	  SCIP_CALL(SCIPsetSolVals(scip, scipSol, nvars, vars,(double*) sol));//SCIP_CALL (SCIPtrySol (scip, ScipSol, FALSE, FALSE, FALSE, FALSE, &success) );
-	  //if (!success) 
-	  //problem_ -> Jnlst () -> Printf (Ipopt::J_WARNING, J_NLPHEURISTIC, "Could not add initial MINLP solution to SCIP\n");
+	  SCIP_CALL(SCIPsetSolVals(scip, scipSol, nvars, vars,(double*) sol));
 	}
 
 	break;
 
-      case 6: // round, but perturb first if we are cycling
+      case 6: // round; TODO: but perturb first if we are cycling
+
+	if (!sol)
+	  sol = new CouNumber [problem_ -> nVars ()];
+
+	if (!nSol)
+	  nSol = milp_ -> getColSolution ();
+
+	for (int j = 0; j < problem_ -> nVars (); ++j)
+	  sol [j] =
+	    (problem_ -> Var (j) -> Multiplicity () <= 0) ? 0. :
+	    (problem_ -> Var (j) -> isInteger    ())      ? COUENNE_round (nSol [j]) : nSol [j];
+
+	  SCIP_SOL* scipSol;
+	  SCIP_CALL( SCIPcreateSol(scip, &scipSol, NULL ));
+	  SCIP_CALL(SCIPsetSolVals(scip, scipSol, nvars, vars, (double*) sol));
 
 	break;
 
@@ -516,9 +529,11 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 #endif
      
     // solve the MILP
-
-    SCIP_RETCODE retcode = SCIPsolve (scip);
-
+                                                //   /|
+                                                //  / +---------+
+    SCIP_RETCODE retcode = SCIPsolve (scip);    // <     MILP   |
+                                                //  \ +---------+
+                                                //   \|
 #if 0
     if (SCIPgetStatus (scip) == SCIP_STATUS_INFEASIBLE) {
 
