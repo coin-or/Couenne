@@ -103,7 +103,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
   // 
   // (the latter being equivalent to
   //
-  // - z_i <=   P^i (x - x^0)  or  P^i x + z_i >= P^i x^0 (***)
+  // - z_i <=   P^i (x - x^0)  or  P^i x + z_i >= P^i x^0 (***))
   //
   // so we'll use this instead as most coefficients don't change)
   // for each i, where q is the number of variables involved (either
@@ -145,7 +145,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
     for (int i=0; i<n; i++)
       if (fp -> Problem () -> Var (i) -> Multiplicity () > 0)
-        P[i].insert (i, 1.); 
+        P[i].insert (i, 1. / sqrt ((double) n)); 
   }
 
   // Add 2q inequalities
@@ -161,7 +161,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
     // two rows have to be added if:
     //
     // amending MIP AND (integer variable OR FP_DIST_ALL)
-    // amending ssLP  AND fractional variable
+    // amending LP  AND fractional variable
 
     bool intVar = lp -> isInteger (i);
 
@@ -209,6 +209,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 void ComputeSquareRoot (const CouenneFeasPump *fp, 
 			CouenneSparseMatrix *hessian, 
 			CoinPackedVector *P) {
+
   int 
     objInd = fp -> Problem () -> Obj (0) -> Body () -> Index (),
     n      = fp -> Problem () -> nVars ();
@@ -257,10 +258,34 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
     if (*col <= *row)
       A [*col * n + *row] = fp -> multHessMILP () * *val;
 
+  val -= num;
+  row -= num;
+  col -= num;  
+
+  double sqrt_trace = 0;
+
+  // Add Hessian part -- only lower triangular part
+  for (int i=0; i<num; ++i, ++row, ++col)
+    if (*col == *row)
+      sqrt_trace += fabs (A [*col * n + *row]);
+
+  sqrt_trace = sqrt (sqrt_trace);
+
+  row -= num;
+  col -= num;
+
+  // Add Hessian part -- only lower triangular part
+  if (sqrt_trace > COUENNE_EPS)
+    for (int i=0; i<num; ++i, ++row, ++col)
+      A [*col * n + *row] /= sqrt_trace;
+
+  row -= num;
+  col -= num;
+
   // Add distance part
   for (int i=0; i<n; ++i)
     if (fp -> Problem () -> Var (i) -> Multiplicity () > 0)
-      A [i * (n+1)] += fp -> multDistMILP ();
+      A [i * (n+1)] += fp -> multDistMILP () / sqrt (n);
 
   // Add gradient-parallel term to the hessian, (x_z - x_z_0)^2. This
   // amounts to setting the diagonal element to GRADIENT_WEIGHT. Don't

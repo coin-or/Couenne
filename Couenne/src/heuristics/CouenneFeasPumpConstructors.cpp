@@ -282,19 +282,42 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     // P is a convex combination, with weights multDistMILP_ and
     // multHessMILP_, of the distance and the Hessian respectively
 
-    bool *diag = NULL;
+    //bool *diag = NULL;
 
-    if (multDistNLP_ != 0.) { // only use this if distance is used
-
-      diag = new bool [problem_ -> nVars ()];
-      CoinFillN (diag, problem_ -> nVars (), false);
-    }
+    // if (multDistNLP_ != 0.) { // only use this if distance is used
+    //   diag = new bool [problem_ -> nVars ()];
+    //   CoinFillN (diag, problem_ -> nVars (), false);
+    // }
 
     int    *row = nlp_ -> optHessian () -> row ();
     int    *col = nlp_ -> optHessian () -> col ();
     double *val = nlp_ -> optHessian () -> val ();
 
     int     num = nlp_ -> optHessian () -> num ();
+
+    double
+      trace_H = 0,
+      nActualTerms = 0;
+
+    // create the argument list (x_i - x_i^0)^2 for all i's
+    for (int i=0; i<problem_ -> nVars (); ++i) 
+      if (!((problem_ -> Var (i) -> Multiplicity () <= 0) ||
+	    (compDistInt_ == FP_DIST_INT && 
+	     !(problem_ -> Var (i) -> isInteger ()))))
+	nActualTerms += 1;
+
+    nActualTerms = (nActualTerms == 0) ? 1 : (1 / sqrt (nActualTerms));
+
+    // Add Hessian part -- only lower triangular part
+    for (int i=0; i<num; ++i, ++val) 
+      if (*row++ == *col++)
+	trace_H += fabs (*val);
+
+    trace_H = (trace_H < COUENNE_EPS) ? 1 : (1 / sqrt (trace_H));
+
+    row = nlp_ -> optHessian () -> row ();
+    col = nlp_ -> optHessian () -> col ();
+    val = nlp_ -> optHessian () -> val ();
 
     // Add Hessian part -- only lower triangular part
     for (int i=0; i<num; ++i, ++row, ++col, ++val) {
@@ -314,16 +337,16 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
       if (*col < *row) { // that is, lower triangular
 
-	if (2. * *val == 1.) // check if this would have trivial coefficient when doubled (off-diagonal element)
+	if (2. * *val * trace_H == 1.) // check if this would have trivial coefficient when doubled (off-diagonal element)
 
 	  list [nTerms++] = new exprMul (new exprSub (new exprClone (problem_ -> Var (*row)), new exprConst (iSol [*row])),
 					 new exprSub (new exprClone (problem_ -> Var (*col)), new exprConst (iSol [*col])));
 
-	else if (fabs (*val) > COUENNE_EPS) { // we don't need extreme precision...
+	else if (fabs (*val * trace_H) > COUENNE_EPS) { // we don't need extreme precision...
 
 	  expression **mlist = new expression * [3];
 
-	  mlist [0] = new exprConst (2. * *val);  // twice elements off diagonal
+	  mlist [0] = new exprConst (2. * *val * trace_H);  // twice elements off diagonal
 	  mlist [1] = new exprSub (new exprClone (problem_ -> Var (*row)), new exprConst (iSol [*row]));
 	  mlist [2] = new exprSub (new exprClone (problem_ -> Var (*col)), new exprConst (iSol [*col]));
 
@@ -332,26 +355,26 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
       } else if (*col == *row) { // or diagonal elements
 
-	if (multDistNLP_ != 0.)
-	  diag [*col] = true;
+	//if (multDistNLP_ != 0.)
+	//diag [*col] = true;
 
-	if (*val + multDistNLP () == 1.)
+	if (trace_H * *val + multDistNLP () * nActualTerms == 1.) // the plus is for the distance term
 
 	  list [nTerms++] = new exprPow (new exprSub (new exprClone (problem_ -> Var (*row)), 
 						      new exprConst (iSol [*row])), 
 					 new exprConst (2.));
 
-	else if (fabs (*val + multDistNLP ()) > COUENNE_EPS)
+	else if (fabs (trace_H * *val + nActualTerms * multDistNLP ()) > COUENNE_EPS)
 
-	  list [nTerms++] = new exprMul (new exprConst (*val + multDistNLP ()),
+	  list [nTerms++] = new exprMul (new exprConst (trace_H * *val + nActualTerms * multDistNLP ()),
 					 new exprPow (new exprSub (new exprClone (problem_ -> Var (*row)), 
 								   new exprConst (iSol [*row])), 
 						      new exprConst (2.)));
       }
     }
 
-    // third, add missing diagonal elements
-
+    // third, add missing diagonal elements. NO! Already added above (fewer terms)
+    /*
     if (multDistNLP () > 0.) {
 
       // create the argument list (x_i - x_i^0)^2 for all i's
@@ -371,12 +394,17 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 	else if (*iS <  0.) base = new exprSum (new exprClone (problem_ -> Var (i)), new exprConst (-*iS));
 	else                base = new exprSub (new exprClone (problem_ -> Var (i)), new exprConst  (*iS));
 
+	base = new exprMul (base, new exprConst (nActualTerms));
+
 	list [nTerms++] = new exprPow (base, new exprConst (2.));
       }
 
       delete [] diag;
-    }
+    } */
   }
+
+  // as per latest development: objective is multiplied by one to
+  // normalize it with distance and Hessian-based objective
 
   if (multObjFNLP () != 0.) 
     list [nTerms++] = new exprMul (new exprConst (multObjFNLP ()),
@@ -390,7 +418,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
   expression *retexpr = new exprSum (list, nTerms);
 
-  //printf ("new objective: "); retexpr -> print (); printf ("\n");
+  // printf ("new objective: "); retexpr -> print (); printf ("\n");
 
   return retexpr;
 }

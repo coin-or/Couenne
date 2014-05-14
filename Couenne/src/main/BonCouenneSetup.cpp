@@ -922,11 +922,11 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> AddStringOption5 ("lp_solver",
 				"Linear Programming solver for the linearization",
 				"clp",
-				"clp",    "Use the COIN-OR Open Source solver CLP",
+				"clp",    "Use the COIN-OR Open Source solver CLP (default)",
 				"cplex",  "Use the commercial solver Cplex (license is needed)",
 				"gurobi", "Use the commercial solver Gurobi (license is needed)",
 				"soplex", "Use the freely available Soplex",
-                               "xpress-mp", "Use the commercial solver Xpress MP (license is needed)"
+                                "xpress-mp", "Use the commercial solver Xpress MP (license is needed)"
 				);
 
 #define addLevOption(optname,comment) roptions -> AddBoundedIntegerOption (optname, comment, -2, J_LAST_LEVEL-1, J_NONE, "")
