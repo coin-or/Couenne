@@ -282,13 +282,6 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     // P is a convex combination, with weights multDistMILP_ and
     // multHessMILP_, of the distance and the Hessian respectively
 
-    //bool *diag = NULL;
-
-    // if (multDistNLP_ != 0.) { // only use this if distance is used
-    //   diag = new bool [problem_ -> nVars ()];
-    //   CoinFillN (diag, problem_ -> nVars (), false);
-    // }
-
     int    *row = nlp_ -> optHessian () -> row ();
     int    *col = nlp_ -> optHessian () -> col ();
     double *val = nlp_ -> optHessian () -> val ();
@@ -311,7 +304,7 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
     // Add Hessian part -- only lower triangular part
     for (int i=0; i<num; ++i, ++val) 
       if (*row++ == *col++)
-	trace_H += fabs (*val);
+	trace_H += *val * *val;
 
     trace_H = (trace_H < COUENNE_EPS) ? 1 : (1 / sqrt (trace_H));
 

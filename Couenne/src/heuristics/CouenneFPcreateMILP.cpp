@@ -266,8 +266,10 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   // Add Hessian part -- only lower triangular part
   for (int i=0; i<num; ++i, ++row, ++col)
-    if (*col == *row)
-      sqrt_trace += fabs (A [*col * n + *row]);
+    if (*col == *row) {
+      double elem = A [*col * n + *row];
+      sqrt_trace += elem * elem;
+    }
 
   sqrt_trace = sqrt (sqrt_trace);
 
