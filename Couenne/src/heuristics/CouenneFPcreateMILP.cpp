@@ -225,7 +225,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   // Remove objective's row and column (equivalent to taking the
   // Lagrangian's Hessian, setting f(x) = x_z = c, and recomputing the
-  // hessian). 
+  // hessian).
 
   double maxElem = 0.; // used in adding diagonal element of x_z
 
@@ -253,28 +253,21 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
   CoinZeroN (A, n*n);
 
-  // Add Hessian part -- only lower triangular part
-  for (int i=0; i<num; ++i, ++row, ++col, ++val)
-    if (*col <= *row)
-      A [*col * n + *row] = fp -> multHessMILP () * *val;
-
-  val -= num;
-  row -= num;
-  col -= num;  
-
   double sqrt_trace = 0;
 
   // Add Hessian part -- only lower triangular part
-  for (int i=0; i<num; ++i, ++row, ++col)
-    if (*col == *row) {
-      double elem = A [*col * n + *row];
-      sqrt_trace += elem * elem;
+  for (int i=0; i<num; ++i, ++row, ++col, ++val)
+    if (*col <= *row) {
+      A [*col * n + *row] = fp -> multHessMILP () * *val;
+      if (*col == *row)
+	sqrt_trace += *val * *val;
     }
 
-  sqrt_trace = sqrt (sqrt_trace);
-
+  val -= num;
   row -= num;
   col -= num;
+
+  sqrt_trace = sqrt (sqrt_trace);
 
   // Add Hessian part -- only lower triangular part
   if (sqrt_trace > COUENNE_EPS)
