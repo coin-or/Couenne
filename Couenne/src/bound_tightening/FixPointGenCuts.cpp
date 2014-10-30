@@ -51,6 +51,8 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   if (isWiped (cs))
     return;
 
+  // do it at most once per node
+
   if (treeInfo.inTree && 
       treeInfo.level > 0 &&
       treeInfo.pass > 1)
