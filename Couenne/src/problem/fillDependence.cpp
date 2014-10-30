@@ -30,6 +30,7 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base, CouenneCutGener
        i != variables_.end (); ++i) {
 
     if (((*i) -> Type () == AUX)                           // consider auxs only
+        && ((*i) -> Multiplicity () > 0)
 	&& ((*i) -> Image () -> Linearity () > LINEAR)) {  // and nonlinear
 
       CouenneObject *infeasObj = (*i) -> properObject (cg, this, base, jnlst_);

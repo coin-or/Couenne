@@ -388,7 +388,7 @@ bool CouenneProblem::standardize () {
       for (std::vector <exprVar *>::iterator i = variables_.begin (); 
 	   i != variables_.end (); ++i)
 
-	if (((*i) -> Type () == AUX) && ((*i) -> sign () == expression::AUX_EQ)) {
+	if (((*i) -> Multiplicity () > 0) && ((*i) -> Type () == AUX) && ((*i) -> sign () == expression::AUX_EQ)) {
 
 	  int type = (*i) -> Image () -> Type ();
 
@@ -519,6 +519,9 @@ bool CouenneProblem::standardize () {
   for (int i = 0; i < nVars (); i++) {
 
     int ord = numbering_ [i];
+
+    if (variables_ [ord] -> Multiplicity () <= 0)
+      continue;
 
     if (variables_ [ord] -> Type () == AUX) {
 

@@ -145,8 +145,8 @@ class exprAux: public exprVar {
 
     return ((integer_ == Integer) || 
 	    ((integer_ == Unset) && 
-	    ((integer_ = (image_ -> isInteger ()) ? 
-	      Integer : Continuous) == Integer)));
+             ((integer_ = ((image_ != NULL) && (image_ -> isInteger ())) ? 
+               Integer : Continuous) == Integer)));
   }
 
   /// is this expression integer?
@@ -209,7 +209,10 @@ class exprAux: public exprVar {
 
 struct compExpr {
   inline bool operator () (exprAux* e0, exprAux* e1) const
-  {return ((e0 -> sign () < e1 -> sign ()) || (e0 -> Image () -> compare (*(e1 -> Image ())) < 0));}
+  {
+    return ((e0 -> sign  () < e1 -> sign  ()) || 
+            ((e0 -> Image () != NULL) && (e1 -> Image () != NULL) && (e0 -> Image () -> compare (*(e1 -> Image ())) < 0)));
+  }
 };
 
 
