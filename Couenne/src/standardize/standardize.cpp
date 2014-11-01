@@ -379,6 +379,9 @@ bool CouenneProblem::standardize () {
 
     int ord = numbering_ [i];
 
+    if (variables_ [ord] -> Multiplicity () <= 0)
+      continue;
+
     if (variables_ [ord] -> Type () == AUX) {
 
       // initial auxiliary bounds are infinite (they are later changed

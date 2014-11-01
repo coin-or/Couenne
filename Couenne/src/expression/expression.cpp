@@ -71,18 +71,18 @@ int expression::compare (expression &e1) {
 
   // same code, check arguments
 
-  if (c0 >= COU_EXPRUNARY) { // both are exprUnary's
+  if (c0 >= COU_EXPRUNARY) { // both are exprUnary's. COU_EXPRUNARY > COU_EXPROP, so if this is run then the next is not
 
-    exprUnary *ne0 = dynamic_cast <exprUnary *> (this);
-    exprUnary *ne1 = dynamic_cast <exprUnary *> (&e1);
+    exprUnary *ne0 = dynamic_cast <exprUnary *> (const_cast <expression *> (this->Original()));
+    exprUnary *ne1 = dynamic_cast <exprUnary *> (const_cast <expression *> (e1.Original()));
 
     return ne0 -> compare (*ne1);
   }
 
   if (c0 >= COU_EXPROP) { // both are exprOp's
 
-    exprOp *ne0 = dynamic_cast <exprOp *> (this);
-    exprOp *ne1 = dynamic_cast <exprOp *> (&e1);
+    exprOp *ne0 = dynamic_cast <exprOp *> (const_cast <expression *> (this->Original()));
+    exprOp *ne1 = dynamic_cast <exprOp *> (const_cast <expression *> (e1.Original()));
 
     return ne0 -> compare (*ne1);
   }

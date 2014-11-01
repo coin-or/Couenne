@@ -378,6 +378,9 @@ void CouenneProblem::realign () {
   for (std::vector <exprVar *>::iterator i = variables_.begin ();
        i != variables_.end (); ++i) {
 
+    if ((*i) -> Multiplicity () <= 0)
+      continue;
+
     (*i) -> linkDomain (&domain_);
     (*i) -> realign (this);
     if ((*i) -> Type () == AUX)
