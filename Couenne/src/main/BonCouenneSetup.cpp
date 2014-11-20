@@ -913,6 +913,12 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
 				"yes", "",
 				"no", "");
 
+  roptions -> AddStringOption2 ("save_soltext",
+				"save pairs (index, value) of the solution at the end of the solve",
+				"no",
+				"yes", "",
+				"no", "");
+
   roptions -> AddStringOption2 ("test_mode",
 				"set to true if this is Couenne unit test",
 				"no",

@@ -345,6 +345,49 @@ Auxiliaries:     %8d (%d integer)\n\n",
 				      modCouenneSol, modCouenneSolVal, modCouenneSolMaxViol, couenneSolIsFeas, 
 				      modelNvars, cp->getFeasTol());
 
+
+      // rs now has the best and/or least violated solution. Write it out if required
+
+      std::string saveSol;
+
+      couenne.options () -> GetStringValue ("save_soltext", saveSol, "couenne.");
+
+      if (saveSol == "yes") {
+
+        char txtFileName [400];
+
+        sprintf (txtFileName, "%s-sol.txt", cp -> problemName (). c_str ());
+
+        FILE *txtSol = fopen (txtFileName, "w");
+
+        if (txtSol == NULL) {
+
+          printf ("Could not create file %s for solving solution\n", txtFileName);
+
+        } else {
+
+          cp -> domain () -> push (cp -> nOrigVars (), rs -> getSol (), NULL, NULL);
+
+          cp -> initAuxs (); // to get auxiliaries in case some of these were previously originals
+
+          for (std::vector <exprVar *>::iterator it = cp -> Variables (). begin ();
+               it != cp -> Variables(). end (); ++it) {
+
+            if ((*it) -> Index () >= cp -> nOrigVars ())
+              continue;
+
+            if ((*it) -> Multiplicity () == 0) {
+
+              if ((*it) -> Image ()) fprintf (txtSol, "%d %e\n", (*it) -> Index (), (*(*it) -> Image ()) ());
+              else                   fprintf (txtSol, "%d %e\n", (*it) -> Index (), 0);
+
+            } else fprintf (txtSol, "%d %e\n", (*it) -> Index (), (*(*it)) ());
+          }
+
+          cp -> domain () -> pop ();
+        }
+      }
+
       // switch (retcomp) {
       // case -1: printf("No solution found\n"); break;
       // case 0: printf("Best solution found by Cbc. Value: %10.4f. Tolerance: %10g\n", modCbcSolVal, modCbcSolMaxViol); break;
@@ -409,6 +452,8 @@ Auxiliaries:     %8d (%d integer)\n\n",
     }
 #endif
 
+    // save solution to text file
+
     // retrieve test value to check
     double global_opt;
     couenne.options () -> GetNumericValue ("couenne_check", global_opt, "couenne.");
@@ -426,7 +471,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
     	(lb > ub))
       lb = ub;
 
-    char 
+    char
       *gapstr = new char [40],
       *lbstr  = new char [40],
       *ubstr  = new char [40];
@@ -499,11 +544,11 @@ Branch-and-bound nodes:                  %8d\n",
 		"%20e [lower] %20e [upper] %7d [nodes]\n",
 #endif
 		cp ? cp -> problemName (). c_str () : "unknown",
-		(cp) ? cp -> nOrigVars     () : -1, 
-		(cp) ? cp -> nOrigIntVars  () : -1, 
-		(cp) ? cp -> nOrigCons     () : -1,
-		(cp) ? (cp -> nVars     () - 
-			cp -> nOrigVars ()): -1,
+		cp ? cp -> nOrigVars     () : -1, 
+		cp ? cp -> nOrigIntVars  () : -1, 
+		cp ? cp -> nOrigCons     () : -1,
+		cp ? (cp -> nVars     () - 
+                      cp -> nOrigVars ())   : -1,
 		nr, nt, st, 
 		CoinCpuTime () - time_start,
 		cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
@@ -516,7 +561,7 @@ Branch-and-bound nodes:                  %8d\n",
 		,symmGroupSize
 		,CouenneBranchingObject::nSGcomputations
 #endif
-);
+                );
 		//bb.iterationCount ());
 		//status.c_str (), message.c_str ());
     }
