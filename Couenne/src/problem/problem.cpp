@@ -137,7 +137,16 @@ void CouenneProblem::initAuxs () const {
 	if (var -> sign () != expression::AUX_LEQ) Ub (ord) = floor (Ub (ord) + COUENNE_EPS);
       }
 
-      X (ord) = CoinMax (Lb (ord), CoinMin (Ub (ord), (*(var -> Image ())) ()));
+      double image = (*(var -> Image ())) ();
+
+      X (ord) = (*var) (); // take value, then only change if violating constraint (</>/=)
+
+      if      ((var -> sign () != expression::AUX_LEQ) && X (ord) < image) X (ord) = image;
+      else if ((var -> sign () != expression::AUX_GEQ) && X (ord) > image) X (ord) = image;
+
+      // normalize within bounds
+
+      X (ord) = CoinMax (Lb (ord), CoinMin (Ub (ord), X (ord)));
 
       Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
 			  " --> [%10g,%10g] (%g)\n", Lb (ord), Ub (ord), X (ord));
