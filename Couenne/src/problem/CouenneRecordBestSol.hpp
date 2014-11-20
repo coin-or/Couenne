@@ -15,8 +15,6 @@
 
 namespace Couenne {
 
-class CouenneProblem;
-
 // class to record best found feasible solution
 class CouenneRecordBestSol {
 
@@ -102,10 +100,10 @@ public:
 		     const int cardSol,
 		     const double precision);
 
-  inline int getCardModSol() const {return cardModSol;};
+  inline int getCardModSol() const {return cardModSol;}
   double *getModSol(const int expectedCard);
-  inline double getModSolVal() const {return modSolVal;};
-  inline double getModSolMaxViol() const {return modSolMaxViol;};
+  inline double getModSolVal() const {return modSolVal;}
+  inline double getModSolMaxViol() const {return modSolMaxViol;}
 
   // set modSol, modSolVal, and modSolMaxViol to given values; if
   // givenModSol == NULL, only the other two are set

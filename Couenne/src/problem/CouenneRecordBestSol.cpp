@@ -196,7 +196,7 @@ void CouenneRecordBestSol::setCardSol(const int givenCard) {
 
 /*****************************************************************************/
 void CouenneRecordBestSol::setSol(const double *givenSol, const int givenCard,
-			   const double givenMaxViol) {
+                                  const double givenMaxViol) {
   if(sol == NULL) {
     cardSol = givenCard;
     sol = new double[givenCard];

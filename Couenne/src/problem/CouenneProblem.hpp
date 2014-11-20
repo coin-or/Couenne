@@ -838,12 +838,12 @@ public:
 		   const bool stopAtFirstViol,
 		   const double precision, double &maxViol) const;
 
-  /// returns true iff value of all auxilliaries are within bounds
+  /// returns true iff value of all auxiliaries are within bounds
   bool checkAux(const CouNumber *sol,
 		const bool stopAtFirstViol,
 		const double precision, double &maxViol) const;
 
-  /// returns true iff value of all auxilliaries are within bounds
+  /// returns true iff value of all auxiliaries are within bounds
   bool checkCons(const CouNumber *sol,
 		 const bool stopAtFirstViol,
 		 const double precision, double &maxViol) const;
