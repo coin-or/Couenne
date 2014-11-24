@@ -374,16 +374,23 @@ int CouenneProblem::readnl (const ASL *asl) {
       body = subst;
     }
 
-    // add them (and set lower-upper bound)
-    switch (sign) {
+    if ((lb < negInfinity) &&
+        (ub > Infinity)) {
 
-    case COUENNE_EQ:  addEQConstraint  (body, new exprConst (ub)); break;
-    case COUENNE_LE:  addLEConstraint  (body, new exprConst (ub)); break;
-    case COUENNE_GE:  addGEConstraint  (body, new exprConst (lb)); break;
-    case COUENNE_RNG: addRNGConstraint (body, new exprConst (lb), 
+      printf ("Free constraint %d ignored\n", i);
+
+    } else
+
+      // add them (and set lower-upper bound)
+      switch (sign) {
+
+      case COUENNE_EQ:  addEQConstraint  (body, new exprConst (ub)); break;
+      case COUENNE_LE:  addLEConstraint  (body, new exprConst (ub)); break;
+      case COUENNE_GE:  addGEConstraint  (body, new exprConst (lb)); break;
+      case COUENNE_RNG: addRNGConstraint (body, new exprConst (lb), 
 					      new exprConst (ub)); break;
-    default: printf ("Could not recognize constraint\n"); return -1;
-    }
+      default: printf ("Could not recognize constraint\n"); return -1;
+      }
 
     delete [] indexL [i];
     delete [] coeff  [i];
