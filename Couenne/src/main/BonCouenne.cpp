@@ -354,7 +354,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
       if (saveSol == "yes") {
 
-        char txtFileName [400];
+        char *txtFileName = new char [20 + cp -> problemName () . length ()];
 
         sprintf (txtFileName, "%s-sol.txt", cp -> problemName (). c_str ());
 
@@ -386,6 +386,10 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
           cp -> domain () -> pop ();
         }
+
+        fclose (txtSol);
+
+        delete [] txtFileName;
       }
 
       // switch (retcomp) {
