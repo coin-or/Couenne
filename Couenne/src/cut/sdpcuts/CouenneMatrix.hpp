@@ -47,16 +47,19 @@ namespace Couenne {
       return *this;
     }
 
-    CouenneScalar *clone () {return new CouenneScalar (*this);}
+    inline CouenneScalar *clone () {return new CouenneScalar (*this);}
 
     inline int         getIndex () const {return index_;}
     inline expression *getElem  () const {return elem_;}
 
-    bool operator< (const CouenneScalar &rhs) const {return (index_ < rhs.index_);}
+    inline bool operator< (const CouenneScalar &rhs) const {return (index_ < rhs.index_);}
+
+    friend bool operator< (const CouenneScalar &first, const CouenneScalar &second);
 
     void print () const;
   };
 
+  inline bool operator< (const CouenneScalar &first, const CouenneScalar &second) {return (first.index_ < second.index_);}
 
   // Sparse vector of expressions /////////////////////////////////////////////////
 

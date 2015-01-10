@@ -240,6 +240,12 @@ expression *CouenneFeasPump::updateNLPObj (const double *iSol) {
 
   const double *iS = iSol;
 
+  // TODO:
+  //
+  // 1) resize list
+  // 2) separate H norm from distance
+  // 3
+
   if ((multHessNLP_ == 0.) || 
       (nlp_ -> optHessian () == NULL)) {
 

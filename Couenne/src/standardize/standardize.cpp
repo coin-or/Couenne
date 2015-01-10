@@ -474,7 +474,7 @@ bool CouenneProblem::standardize () {
 	  else simpl = subst;
 	}
 
-	if (simpl) {
+	if (simpl && simpl != subst) {
 
 	  has_changed = true;
 

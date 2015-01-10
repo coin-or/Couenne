@@ -42,6 +42,12 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
 
   int nterms = 0;
 
+  // first check: duplicate index.
+
+  if ((i1 != -1) && (i1 == i3)) {i3 = -1; c1 += c3; c3 = 0;}
+  if ((i2 != -1) && (i2 == i3)) {i3 = -1; c2 += c3; c3 = 0;}
+  if ((i1 != -1) && (i1 == i2)) {i2 = -1; c1 += c2; c2 = 0;}
+
   // CAUTION: this can make the problem infeasible...
   if (fabs (c3) <= 1.e-21) {                                    i3 = -1;} // shift coeff/index to
   if (fabs (c2) <= 1.e-21) {                  c2 = c3; i2 = i3; i3 = -1;} // keep consistency
