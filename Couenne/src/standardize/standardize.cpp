@@ -447,7 +447,7 @@ bool CouenneProblem::standardize () {
     for (std::vector <exprVar *>::iterator i = variables_.begin (); 
        i != variables_.end (); ++i)
 
-    if (((*i) -> Type () == AUX) && ((*i) -> sign () == expression::AUX_EQ)) {
+    if (((*i) -> Multiplicity () > 0) && ((*i) -> Type () == AUX) && ((*i) -> sign () == expression::AUX_EQ)) {
 
       int type = (*i) -> Image () -> Type ();
 
