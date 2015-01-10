@@ -240,6 +240,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
 				     false, // do not stop at first viol 
 				     true, // checkAll 
 				     cp->getFeasTol());
+	cMS = rs->getCardModSol(); // re-read in case it changed after checkNLP2 (it could be -1 if no solution present)
 	CoinCopyN(rs->getModSol(cMS), cMS, modCbcSol);
 	modCbcSolVal = rs->getModSolVal();
 	modCbcSolMaxViol = rs->getModSolMaxViol();
