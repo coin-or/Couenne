@@ -80,8 +80,6 @@ extern "C" {
 int main (int argc, char *argv[]) {
 
 #ifdef WIN_
-  // FIXME really want Couenne runs to be nondeterministic?
-  //srand ((long) time (NULL));
   srand ((long) 42*666);
 #endif
 
@@ -239,6 +237,35 @@ Auxiliaries:     %8d (%d integer)\n\n",
     if (!infeasible)                                //  /|-------------=
       bb (couenne); // do branch and bound          // < |             =
                                                     //  \|-------------=
+    else {
+
+      char *filename = new char [prob -> problemName (). length () + strlen ((char *) ".sol") + 1],
+	*lastdot;
+
+      FILE *amplsol;
+
+      strcpy (filename, prob -> problemName () . c_str ());
+
+      if ((lastdot = strrchr (filename, '.')) != NULL)
+	*lastdot = 0;
+
+      strcat (filename, ".sol");
+
+      amplsol = fopen (filename, "w");
+
+      if (amplsol != NULL) {
+
+	fprintf (amplsol, "\n Couenne (%s %s): Infeasible\n\nOptions\n3\n0\n1\n0\n%d\n0\n%d\n0\nobjno 0 220\n", 
+		 prob -> problemName (). c_str (),
+		 __DATE__, 
+		 prob -> nOrigCons (),
+		 prob -> nOrigVars ());
+
+	fclose (amplsol);
+      }
+
+      delete [] filename;
+    }
 
 #ifdef COIN_HAS_NTY
     if (CouenneBranchingObject::nOrbBr)
@@ -570,7 +597,6 @@ Branch-and-bound nodes:                  %8d\n",
 		//bb.iterationCount ());
 		//status.c_str (), message.c_str ());
     }
-//    nlp_and_solver -> writeAmplSolFile (message, bb.bestSolution (), NULL);
   }
   catch(Bonmin::TNLPSolver::UnsolvedError *E) {
      E->writeDiffFiles();
