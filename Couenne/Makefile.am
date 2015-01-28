@@ -84,7 +84,7 @@ addlibsdir = $(DESTDIR)$(datadir)/coin/doc/Couenne
 install-data-hook:
 	@$(mkdir_p) "$(addlibsdir)"
 if COIN_HAS_PKGCONFIG
-	PKG_CONFIG_PATH=@COIN_PKG_CONFIG_PATH@ \
+	PKG_CONFIG_PATH=@COIN_PKG_CONFIG_PATH@:$(DESTDIR)$(pkgconfiglibdir) \
 	$(PKG_CONFIG) --libs couenne > $(addlibsdir)/couenne_addlibs.txt
 else
 if COIN_CXX_IS_CL
