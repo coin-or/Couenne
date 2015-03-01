@@ -109,10 +109,6 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
     CouenneBab bb;
 
-    // printf ("abs=%g\n, rel=%g\n",
-    // 	    bb.model().getAllowableGap(),
-    // 	    bb.model().getAllowableFractionGap());
-
     CouenneProblem *p = NULL;
     CouenneInterface *ci = NULL;
 
@@ -193,6 +189,10 @@ Auxiliaries:     %8d (%d integer)\n\n",
     CouenneFeasibility feasibility;
     bb.model().setProblemFeasibility (feasibility);
 #endif
+
+    couenne.options () -> SetIntegerValue ("bb_log_level",  1);
+    couenne.options () -> SetIntegerValue ("lp_log_level",  0);
+    couenne.options () -> SetIntegerValue ("nlp_log_level", 0);
 
     /// update time limit (read/preprocessing might have taken some)
     double timeLimit = 0;
