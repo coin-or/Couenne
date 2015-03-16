@@ -139,7 +139,8 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
 		 test/grandTest.sh
 		 couenne.pc 
-		 couenne-uninstalled.pc])
+		 couenne-uninstalled.pc
+		 doxydoc/doxygen.conf])
 
 #                 src/cut/ellipcuts/Makefile
 

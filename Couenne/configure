@@ -29347,7 +29347,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 # Here list all the files that configure should create (except for the
 # configuration header file)
-                                                                                                                                                                                                                  ac_config_files="$ac_config_files Makefile test/Makefile src/main/Makefile src/bound_tightening/Makefile src/bound_tightening/twoImpliedBT/Makefile src/branch/Makefile src/convex/Makefile src/interfaces/Makefile src/heuristics/Makefile src/disjunctive/Makefile src/cut/crossconv/Makefile src/cut/sdpcuts/Makefile src/expression/Makefile src/problem/Makefile src/standardize/Makefile src/readnl/Makefile src/util/Makefile src/Makefile test/grandTest.sh couenne.pc couenne-uninstalled.pc"
+                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile test/Makefile src/main/Makefile src/bound_tightening/Makefile src/bound_tightening/twoImpliedBT/Makefile src/branch/Makefile src/convex/Makefile src/interfaces/Makefile src/heuristics/Makefile src/disjunctive/Makefile src/cut/crossconv/Makefile src/cut/sdpcuts/Makefile src/expression/Makefile src/problem/Makefile src/standardize/Makefile src/readnl/Makefile src/util/Makefile src/Makefile test/grandTest.sh couenne.pc couenne-uninstalled.pc doxydoc/doxygen.conf"
 
 
 #                 src/cut/ellipcuts/Makefile
@@ -30171,6 +30171,7 @@ do
   "test/grandTest.sh" ) CONFIG_FILES="$CONFIG_FILES test/grandTest.sh" ;;
   "couenne.pc" ) CONFIG_FILES="$CONFIG_FILES couenne.pc" ;;
   "couenne-uninstalled.pc" ) CONFIG_FILES="$CONFIG_FILES couenne-uninstalled.pc" ;;
+  "doxydoc/doxygen.conf" ) CONFIG_FILES="$CONFIG_FILES doxydoc/doxygen.conf" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "src/config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS src/config.h" ;;
   "src/config_couenne.h" ) CONFIG_HEADERS="$CONFIG_HEADERS src/config_couenne.h" ;;

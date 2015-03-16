@@ -63,8 +63,9 @@ host_triplet = @host@
 DIST_COMMON = README $(am__configure_deps) \
 	$(srcdir)/BuildTools/Makemain.inc $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/couenne-uninstalled.pc.in \
-	$(srcdir)/couenne.pc.in $(top_srcdir)/configure AUTHORS \
-	config.guess config.sub depcomp install-sh ltmain.sh missing
+	$(srcdir)/couenne.pc.in $(top_srcdir)/configure \
+	$(top_srcdir)/doxydoc/doxygen.conf.in AUTHORS config.guess \
+	config.sub depcomp install-sh ltmain.sh missing
 @HAVE_EXTERNALS_TRUE@am__append_3 = Dependencies
 @HAVE_EXTERNALS_TRUE@am__append_4 = .Dependencies-stamp
 subdir = .
@@ -78,7 +79,8 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/src/config.h \
 	$(top_builddir)/src/config_couenne.h
-CONFIG_CLEAN_FILES = couenne.pc couenne-uninstalled.pc
+CONFIG_CLEAN_FILES = couenne.pc couenne-uninstalled.pc \
+	doxydoc/doxygen.conf
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -421,6 +423,8 @@ couenne.pc: $(top_builddir)/config.status $(srcdir)/couenne.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 couenne-uninstalled.pc: $(top_builddir)/config.status $(srcdir)/couenne-uninstalled.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
+doxydoc/doxygen.conf: $(top_builddir)/config.status $(top_srcdir)/doxydoc/doxygen.conf.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -584,7 +588,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/. $(distdir)/BuildTools $(distdir)/test
+	$(mkdir_p) $(distdir)/. $(distdir)/BuildTools $(distdir)/doxydoc $(distdir)/test
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
