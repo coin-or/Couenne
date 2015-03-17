@@ -323,6 +323,12 @@ build_alias = @build_alias@
 build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
+coin_doxy_excludes = @coin_doxy_excludes@
+coin_doxy_logname = @coin_doxy_logname@
+coin_doxy_tagfiles = @coin_doxy_tagfiles@
+coin_doxy_tagname = @coin_doxy_tagname@
+coin_doxy_usedot = @coin_doxy_usedot@
+coin_have_doxygen = @coin_have_doxygen@
 datadir = @datadir@
 exec_prefix = @exec_prefix@
 have_autoconf = @have_autoconf@
@@ -845,7 +851,15 @@ test: all
 
 unitTest: test
 
-clean-local:
+# Doxygen documentation
+
+doxydoc:
+	doxygen doxydoc/doxygen.conf
+
+clean-doxydoc:
+	( cd doxydoc ; rm -rf html *.log *.tag )
+
+clean-local: clean-doxydoc
 	if test -r test/Makefile; then cd test; $(MAKE) clean; fi
 
 distclean-local:
@@ -855,7 +869,7 @@ install-exec-local: install-doc
 
 uninstall-local: uninstall-doc
 
-.PHONY: test unitTest
+.PHONY: test unitTest doxydoc
 
 install-data-hook:
 	@$(mkdir_p) "$(addlibsdir)"
