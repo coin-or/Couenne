@@ -14,6 +14,7 @@ Couenne/couenne.pc.in -text
 Couenne/depcomp -text
 Couenne/doc/couenne-user-manual.pdf -text
 Couenne/doc/mainpage.dox -text
+Couenne/doxydoc/doxygen.conf.in -text
 Couenne/install-sh -text
 Couenne/ltmain.sh -text
 Couenne/missing -text

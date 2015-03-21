@@ -113,6 +113,12 @@ AC_COIN_CHECK_CXX_CHEADER(float)
 AC_COIN_CHECK_CXX_CHEADER(ieeefp)
 AC_COIN_CHECK_CXX_CHEADER(stdint)
 
+#############################################################################
+#                  Check for doxygen                                        #
+#############################################################################
+
+AC_COIN_DOXYGEN(CoinUtils Osi Clp Cgl Cbc Ipopt Bonmin)
+
 ##############################################################################
 #                   Finishing up by writing all the output                   #
 ##############################################################################
@@ -139,7 +145,8 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
 		 test/grandTest.sh
 		 couenne.pc 
-		 couenne-uninstalled.pc])
+		 couenne-uninstalled.pc
+		 doxydoc/doxygen.conf])
 
 #                 src/cut/ellipcuts/Makefile
 
