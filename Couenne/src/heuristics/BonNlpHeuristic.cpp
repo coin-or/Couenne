@@ -393,10 +393,10 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   delete [] lower;
   delete [] upper;
 
-  if (couenne_ -> Jnlst () -> ProduceOutput (J_ERROR, J_COUENNE) && (depth <= 0)) {
+  if (depth <= 0) {
 
-    if (foundSolution) printf ("solution found, obj. %g\n", objectiveValue);
-    else               printf ("no solution.\n");
+    if (foundSolution) couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "solution found, obj. %g\n", objectiveValue);
+    else               couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "no solution.\n");
   }
 
   return foundSolution;
@@ -407,11 +407,9 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
     // forget about using the global cutoff. That has to trickle up to
     // Cbc some other way
 
-    bool output = couenne_ -> Jnlst () -> ProduceOutput (J_ERROR, J_COUENNE) && (depth <= 0);
-
-    if      (e==noSolution) {if (output) printf ("no solution.\n");                            return 0;}
-    else if (e==maxTime)    {if (output) printf ("time limit reached.\n");                     return 0;}
-    else                    {if (output) printf ("solution found, obj. %g\n", objectiveValue); return 1;}
+    if      (e==noSolution) {if (depth <= 0) couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "no solution.\n");                            return 0;}
+    else if (e==maxTime)    {if (depth <= 0) couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "time limit reached.\n");                     return 0;}
+    else                    {if (depth <= 0) couenne_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "solution found, obj. %g\n", objectiveValue); return 1;}
 
     // // no solution available? Use the one from the global cutoff
     // if ((couenne_ -> getCutOff () < objectiveValue) &&
