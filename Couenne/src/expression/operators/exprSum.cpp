@@ -83,7 +83,7 @@ expression *exprSum::simplify () {
   else return NULL;
   */
 
-  if (found_one && shrink_arglist (total, 0)) {
+  if (found_one && shrink_arglist (total, 0.)) {
     expression *ret = arglist_ [0];
     arglist_ [0] = NULL;
     return ret;

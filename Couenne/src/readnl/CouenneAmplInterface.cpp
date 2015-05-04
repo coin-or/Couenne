@@ -423,12 +423,12 @@ bool CouenneAmplInterface::readnl() {
 
     ///////////////////////////////////////////////////
 
-    expression *subst = body -> simplify ();
+    expression *subst = Simplified (body);//  -> simplify ();
 
-    if (subst) {
-      delete body; // VALGRIND
-      body = subst;
-    }
+    // if (subst) {
+    //   delete body; // VALGRIND
+    //   body = subst;
+    // }
 
     // ThirdParty/ASL/solvers/asl.h, line 336: 0 is minimization, 1 is maximization
     problem -> addObjective (body, (OBJ_sense [i] == 0) ? "min" : "max");
@@ -577,11 +577,13 @@ bool CouenneAmplInterface::readnl() {
       delete [] nll;
     }
 
-    expression *subst = body -> simplify ();
-    if (subst) {
-      delete body; // VALGRIND
-      body = subst;
-    }
+    expression *subst = Simplified (body);
+
+    // -> simplify ();
+    // if (subst) {
+    //   delete body; // VALGRIND
+    //   body = subst;
+    // }
 
     // add them (and set lower-upper bound)
     switch (sign) {

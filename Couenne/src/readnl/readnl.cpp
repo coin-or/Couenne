@@ -148,13 +148,13 @@ int CouenneProblem::readnl (const ASL *asl) {
 
     expression 
       *body,
-      *nl = nl2e (OBJ_DE [i] . e, asl),
-      *nls = nl -> simplify ();
+      *nl = Simplified (nl2e (OBJ_DE [i] . e, asl));
+    //   *nls = nl -> simplify ();
 
-    if (nls) {
-      delete nl;
-      nl = nls;
-    }
+    // if (nls) {
+    //   delete nl;
+    //   nl = nls;
+    // }
 
     if (nterms) { // have linear terms
 
@@ -205,12 +205,12 @@ int CouenneProblem::readnl (const ASL *asl) {
 
     ///////////////////////////////////////////////////
 
-    expression *subst = body -> simplify ();
+    expression *subst = Simplified (body); //  -> simplify ();
 
-    if (subst) {
-      delete body; // VALGRIND
-      body = subst;
-    }
+    // if (subst) {
+    //   delete body; // VALGRIND
+    //   body = subst;
+    // }
 
     // ThirdParty/ASL/solvers/asl.h, line 336: 0 is minimization, 1 is maximization
     addObjective (body, (OBJ_sense [i] == 0) ? "min" : "max");
@@ -332,14 +332,14 @@ int CouenneProblem::readnl (const ASL *asl) {
       **nll = new expression * [1],
        *nls;
 
-    *nll = nl2e (CON_DE [i] . e, asl);
+    *nll = Simplified (nl2e (CON_DE [i] . e, asl));
 
-    nls = (*nll) -> simplify ();
+    // nls = (*nll) -> simplify ();
 
-    if (nls) {
-      delete *nll;
-      *nll = nls;
-    }
+    // if (nls) {
+    //   delete *nll;
+    //   *nll = nls;
+    // }
 
     if (indexL [i] && (*(indexL [i]) >= 0)) {
 
@@ -368,12 +368,15 @@ int CouenneProblem::readnl (const ASL *asl) {
       delete [] nll;
     }
 
-    expression *subst = body -> simplify ();
-    if (subst) {
-      delete body; // VALGRIND
-      body = subst;
-    }
+    expression *subst = Simplified (body); // or body->simplify() ?
 
+    //  -> simplify ();
+    // if (subst) {
+    //   delete body; // VALGRIND
+    //   body = subst;
+    // }
+
+    // add them (and set lower-upper bound)
     if ((lb < negInfinity) &&
         (ub > Infinity)) {
 
@@ -488,13 +491,14 @@ void createCommonExpr (CouenneProblem *p, const ASL *asl, int i, int which) {
   struct cexp1 *common1 = ((const ASL_fg *) asl) -> I.cexps1_ + i;
 
   expression
-    *nle = p -> nl2e (which ? common1 -> e : common -> e, asl),
-    *nls = nle -> simplify ();
+    *nle = Simplified (p -> nl2e (which ? common1 -> e : common -> e, asl));
 
-  if (nls) {
-    delete nle;
-    nle = nls;
-  }
+  //   *nls = nle -> simplify ();
+
+  // if (nls) {
+  //   delete nle;
+  //   nle = nls;
+  // }
 
 #ifdef DEBUG
   printf ("cexp1 %d [%d]: ", i, p -> Variables () . size ()); nle -> print ();  printf (" ||| ");

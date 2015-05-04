@@ -223,8 +223,8 @@ void CouenneProblem::decomposeTerm (expression *term,
       CouNumber expon = al [1] -> Value ();
       int ind = aux -> Index ();
 
-      if      (fabs (expon - 1) < COUENNE_EPS) lmap.insert (ind, initCoe);
-      else if (fabs (expon - 2) < COUENNE_EPS) qmap.insert (ind, ind, initCoe);
+      if      (fabs (expon - 1.) == 0.) lmap.insert (ind,      initCoe);
+      else if (fabs (expon - 2.) == 0.) qmap.insert (ind, ind, initCoe);
       else {
 	exprAux *aux2 = addAuxiliary 
 	  (new exprPow (new exprClone (aux), new exprConst (expon))); // TODO: FIX!

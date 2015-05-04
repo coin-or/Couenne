@@ -598,14 +598,13 @@ void CouenneTNLP::setObjective (expression *newObj) {
 
   for (std::set <int>::iterator i = objDep.begin (); i != objDep. end (); ++i) {
 
-    expression
-      *gradcomp = newObj -> differentiate (*i),
-      *gsimp    = gradcomp -> simplify ();
+    expression *gradcomp = Simplified (newObj -> differentiate (*i));
+    //*gsimp    = gradcomp -> simplify ();
 
-    if (gsimp) {
-      delete gradcomp;
-      gradcomp = gsimp;
-    }
+    // if (gsimp) {
+    //   delete gradcomp;
+    //   gradcomp = gsimp;
+    // }
 
     gradcomp -> realign (problem_);
     gradient_ . push_back (std::pair <int, expression *> (*i, gradcomp));

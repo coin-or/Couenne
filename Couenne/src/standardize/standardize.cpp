@@ -211,7 +211,7 @@ bool CouenneProblem::standardize () {
     }
   }
 
-  // Constraints ----------------------------------------------------------------------------
+  // CONSTRAINTS ----------------------------------------------------------------------------
 
   // commuted_ is an array with a flag for each original variable,
   // which is true at position i if initially original variable x_i
@@ -332,9 +332,7 @@ bool CouenneProblem::standardize () {
 
     //(*i) -> Body () -> realign (this);
 
-    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf (" --> "); (*i) -> print (); printf ("\n\n");
-    }
+    if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {printf (" --> "); (*i) -> print (); printf ("\n\n");}
 
     /*printf ("=== "); fflush (stdout); 
     aux -> print (); printf (" := "); fflush (stdout);
