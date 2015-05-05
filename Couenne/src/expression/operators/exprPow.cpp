@@ -40,10 +40,10 @@ expression *exprPow::simplify () {
 
       CouNumber c1 = arglist_ [1] -> Value ();
 
-      delete arglist_ [0]; 
-      delete arglist_ [1];
+      // delete arglist_ [0]; 
+      // delete arglist_ [1];
 
-      arglist_ [0] = arglist_ [1] = NULL;
+      // arglist_ [0] = arglist_ [1] = NULL;
 
       return new exprConst
 	(issignpower_ ? 
@@ -65,22 +65,25 @@ expression *exprPow::simplify () {
 
       else if (fabs (expon - 1.) <= COUENNE_EPS_SIMPL) { // expr = x ^ 1 = x
 
-	delete arglist_ [1];
+	//delete arglist_ [1];
 	expression *ret = arglist_ [0];
-	arglist_ [0] = arglist_ [1] = NULL;
+	arglist_ [0] = NULL;
+
 	return ret;
       }
 
       else if (fabs (expon + 1.) <= COUENNE_EPS_SIMPL) { // expr = x ^ -1 = 1/x
 
-	delete arglist_ [1];
+	//delete arglist_ [1];
 	expression *ret = new exprInv (arglist_ [0]);
-	arglist_ [0] = arglist_ [1] = NULL;
+	arglist_ [0] = NULL;
 	return ret;
       }
 
       //
       // x^k = x for x binary. Too bad we don't know bounds yet, so the code below will give segfault
+
+      // TODO: readnl first reads bounds. Then uncomment this.
 
       //       // is it an integer variable with bounds [-1,0] or [0,1]
       //       else if ((arglist_ [0] -> Type () == VAR) && (arglist_ [0] -> isDefinedInteger ())) {

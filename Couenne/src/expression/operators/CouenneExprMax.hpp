@@ -2,7 +2,7 @@
  *
  * Name:    exprMax.hpp
  * Author:  Pietro Belotti
- * Purpose: definition of $\f(x_{\argmax_{i\in I} y_i})$ 
+ * Purpose: definition of $\f{\textrm{argmax}_{i\in I} y_i}$ 
  *
  * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Eclipse Public License (EPL)

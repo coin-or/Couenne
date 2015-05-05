@@ -113,13 +113,13 @@ exprAux *CouenneProblem::addAuxiliary (expression *symbolic) {
   int var_ind = variables_ . size ();
   domain_. current () -> resize (var_ind + 1);
 
-  symbolic -> getBounds (domain_. lb (var_ind), 
+  symbolic -> getBounds (domain_. lb (var_ind),
 			 domain_. ub (var_ind));
 
   // create new aux associated with that expression
   exprAux *w = new exprAux (symbolic,
 			    var_ind,
-			    1 + symbolic -> rank (), 
+			    1 + symbolic -> rank (),
 			    exprAux::Unset, 
 			    &domain_);
   //symbolic -> isInteger () ? exprAux::Integer : exprAux::Continuous);
@@ -136,7 +136,7 @@ exprAux *CouenneProblem::addAuxiliary (expression *symbolic) {
 
   } else {  // otherwise, just return the entry's pointer
 
-    w -> Image(NULL); // otherwise "delete w" will also delete user given expression "symbolic"
+    w -> Image (NULL); // otherwise "delete w" will also delete user given expression "symbolic"
     delete w;
     w = *i;
     (*i) -> increaseMult ();

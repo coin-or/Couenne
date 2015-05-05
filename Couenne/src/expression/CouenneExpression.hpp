@@ -318,6 +318,18 @@ inline expression *getOriginal (expression *e) {
   else return e;
 }
 
+/// Macro to return already simplified expression without having to do
+/// the if part every time simplify () is called
+inline expression *Simplified (expression *complicated) {
+
+  expression *simpler = complicated -> simplify ();
+
+  if (simpler) {
+    delete complicated;
+    return simpler;
+  } else return complicated;
+}
+
 }
 
 #endif

@@ -43,7 +43,7 @@ CouenneBTPerfIndicator::~CouenneBTPerfIndicator () {
       problem_)
 
     if (stats_)
-      printf ("Performance of %30s:\t %10gs, %8d runs. fix: %10g shrnk: %10g ubd: %10g 2ubd: %10g infeas: %10g\n", 
+      problem_->Jnlst()->Printf(Ipopt::J_ERROR, J_COUENNE, "Performance of %30s:\t %10gs, %8d runs. fix: %10g shrnk: %10g ubd: %10g 2ubd: %10g infeas: %10g\n", 
 	      name_.c_str (),
 	      totalTime_, 
 	      nRuns_,
