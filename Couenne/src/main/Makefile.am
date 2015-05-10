@@ -14,15 +14,6 @@ if COIN_HAS_ASL
   bin_PROGRAMS = couenne
 endif
 
-lib_LTLIBRARIES = libBonCouenne.la
-
-libBonCouenne_la_SOURCES = \
-	BonCouenneSetup.cpp \
-	BonCouenneInterface.cpp \
-	BonNlpHeuristic.cpp \
-	BonInitHeuristic.cpp \
-	CouenneOSInterface.cpp
-
 COINLIBS = \
 	$(CBCOBJDIR)/src/libCbc.la \
 	$(CGLOBJDIR)/src/libCgl.la \
@@ -46,14 +37,12 @@ IPOPTLIBS = \
         $(IPOPTOBJDIR)/src/Interfaces/libipopt.la \
         $(IPOPTOBJDIR)/src/LinAlg/liblinalg.la
 
-couenne_LDADD         = libBonCouenne.la
-couenne_DEPENDENCIES  = libBonCouenne.la
+couenne_LDADD         = ../libCouenne.la
+couenne_DEPENDENCIES  = ../libCouenne.la
 if COIN_HAS_ASL
 couenne_LDADD        += ../readnl/libCouenneReadnl.la
 couenne_DEPENDENCIES += ../readnl/libCouenneReadnl.la
 endif
-couenne_LDADD        += ../libCouenne.la
-couenne_DEPENDENCIES += ../libCouenne.la
 
 couenne_SOURCES = \
 	BonCouenne.cpp

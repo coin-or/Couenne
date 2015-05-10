@@ -6399,7 +6399,7 @@ AC_MSG_RESULT([$SED])
 # All Rights Reserved.
 # This file is distributed under the Common Public License.
 #
-## $Id: coin.m4 1331 2009-07-16 16:00:50Z andreasw $
+## $Id: coin.m4 1591 2010-07-04 23:43:59Z lou $
 #
 # Author: Andreas Wachter    IBM      2006-04-14
 
@@ -6705,6 +6705,19 @@ AM_CONDITIONAL(ALWAYS_FALSE, false)
 # We set the following variable so that we know later in AC_COIN_FINALIZE
 # that we are in a project main directory
 coin_projectdir=yes
+
+# Set the project's version number. Use m4_ifval here to avoid defining
+# _VERSION when the user has not supplied a parameter.
+m4_ifval([$1],
+  [ # temporary hack to avoid breaking lapack 1.0.20;
+    # do not propagate to BuildTools trunk!  --lh, 100615--
+    if expr "$1" : '.*:.*' >/dev/null 2>&1 ; then
+      coin_libversion="$1"
+    else
+      AC_DEFINE_UNQUOTED(m4_toupper($1_VERSION), ["$PACKAGE_VERSION"],
+			 [Version number of project])
+    fi
+  ],[])
 ]) # AC_COIN_PROJECTDIR_INIT
 
 ###########################################################################
