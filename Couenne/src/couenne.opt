@@ -38,7 +38,7 @@ display_stats no
 # The following are verbosity levels for the main components of Couenne. 
 # Values: 0 for quiet, 11 for excessive output [0..11]
 
-branching_print_level       0 # Output level for braching code in Couenne.
+branching_print_level       0 # Output level for branching code in Couenne.
 boundtightening_print_level 0 # Output level for bound tightening code in Couenne
 convexifying_print_level    0 # Output level for convexifying code in Couenne
 problem_print_level         4 # Output level for problem manipulation code in Couenne 
