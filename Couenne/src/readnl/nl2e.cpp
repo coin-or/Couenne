@@ -65,7 +65,7 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
 
   case OP_tanh: notimpl ("tanh");
   case OP_tan:
-    return new exprDiv (new exprSin (nl2e (e -> L.e, asl)), new exprCos (new exprClone (nl2e (e -> L.e, asl))));
+    return new exprDiv (new exprSin (nl2e (e -> L.e, asl)), new exprCos (nl2e (e -> L.e, asl)));
   case OP_sqrt:    return new exprPow (nl2e (e -> L.e, asl), new exprConst (0.5));
   case OP_sinh:    return new exprMul (new exprConst (0.5),
 				       new exprSub (new exprExp (nl2e (e -> L.e, asl)),
