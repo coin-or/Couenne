@@ -57,7 +57,8 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_couenne_OBJECTS = BonCouenne.$(OBJEXT)
+am_couenne_OBJECTS = BonCouenne.$(OBJEXT) CouenneBab.$(OBJEXT) \
+	BonCouenneSetup.$(OBJEXT) SmartAslDestr.$(OBJEXT)
 couenne_OBJECTS = $(am_couenne_OBJECTS)
 am__DEPENDENCIES_1 =
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -305,7 +306,11 @@ sol_cc_compiler = @sol_cc_compiler@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
-couenne_SOURCES = BonCouenne.cpp
+couenne_SOURCES = BonCouenne.cpp \
+	CouenneBab.cpp \
+	BonCouenneSetup.cpp \
+	SmartAslDestr.cpp
+
 couenne_LDADD = ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS) $(ASL_LIBS) 
 couenne_DEPENDENCIES = ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
 
@@ -402,6 +407,9 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenne.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BonCouenneSetup.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneBab.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SmartAslDestr.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

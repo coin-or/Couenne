@@ -14,7 +14,10 @@ if COIN_HAS_ASL
   bin_PROGRAMS = couenne 
 endif
 
-couenne_SOURCES = BonCouenne.cpp
+couenne_SOURCES = BonCouenne.cpp \
+	CouenneBab.cpp \
+	BonCouenneSetup.cpp \
+	SmartAslDestr.cpp
 couenne_LDADD   = ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS) $(ASL_LIBS) 
 couenne_DEPENDENCIES  = ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
 
