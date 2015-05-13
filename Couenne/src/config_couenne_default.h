@@ -5,7 +5,7 @@
 /***************************************************************************/
 
 /* Version number of project */
-#define COUENNE_VERSION "0.4.10"
+#define COUENNE_VERSION "0.4"
 
 /* Major Version number of project */
 #define COUENNE_VERSION_MAJOR 0
@@ -14,4 +14,4 @@
 #define COUENNE_VERSION_MINOR 4
 
 /* Release Version number of project */
-#define COUENNE_VERSION_RELEASE 10
+#define COUENNE_VERSION_RELEASE 9999

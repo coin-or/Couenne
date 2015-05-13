@@ -11,7 +11,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[0.4.10],[couenne@list.coin-or.org])
+AC_INIT([Couenne],[0.4.8],[couenne@list.coin-or.org])
 
 AC_COPYRIGHT([
 Copyright 2011 Pietro Belotti
