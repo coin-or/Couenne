@@ -169,6 +169,8 @@ namespace Bonmin{
     options()->GetIntegerValue("reformulate_print_level", i, "bonmin.");
     journalist()->GetJournal("console")-> SetPrintLevel(J_REFORMULATE, (EJournalLevel) i);
 
+    options_ -> SetIntegerValue ("print_level", 0);
+
     /* Initialize Couenne cut generator.*/
     //int ivalue, num_points;
     //options()->GetEnumValue("convexification_type", ivalue,"bonmin.");
