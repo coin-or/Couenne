@@ -183,6 +183,8 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   addJournalist ("disjcuts_print_level",        J_DISJCUTS);
   addJournalist ("reformulate_print_level",     J_REFORMULATE);
 
+  options_ -> SetIntegerValue ("print_level", 0);
+
   /* Initialize Couenne cut generator.*/
   //int ivalue, num_points;
   //options()->GetEnumValue("convexification_type", ivalue,"couenne.");
