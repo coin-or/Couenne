@@ -8,6 +8,7 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
+#include <cassert>
 #include <math.h>
 #ifndef M_E
 # define M_E  2.7182818284590452354
@@ -166,6 +167,10 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
   bool isInt    =            fabs (k    - (double) (intk = COUENNE_round (k)))    < COUENNE_EPS,
        isInvInt = !isInt && (fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS);
+
+  // FIXME currently, convexification of signpower(x,k) is only implemented for k odd or k=2,4,6,8,10
+  // for other cases, Qroot needs to be extended
+  assert(!issignpower_ || isInt);
 
   // two macro-cases: 
 

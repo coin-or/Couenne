@@ -64,7 +64,7 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
       ((fabs (expon) > COUENNE_EPS) &&
        (fabs (1/expon - (rndexp = COUENNE_round (1/expon))) < COUENNE_EPS));
 
-    if ((isInt || isInvInt) && (rndexp % 2 || issignpower_) && (rndexp > 0)) {
+    if (issignpower_ || ((isInt || isInvInt) && (rndexp % 2) && (rndexp > 0))) {
 
       // the exponent is integer (or inverse integer), odd or signpower and
       // positive, hence the function is monotone non decreasing
