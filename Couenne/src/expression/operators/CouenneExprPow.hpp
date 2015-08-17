@@ -48,9 +48,13 @@ class exprPow: public exprOp {
   expression *clone (Domain *d = NULL) const
   {return new exprPow (clonearglist (d), nargs_, issignpower_);}
 
+  /// print operator positioning
+  virtual enum pos printPos () const
+  {return issignpower_ ? PRE : INSIDE ;}
+
   /// print operator
   virtual std::string printOp () const
-  {return "^";}
+  {return issignpower_ ? "signpower" : "^";}
 
   /// function for the evaluation of the expression
   virtual CouNumber operator () ();
