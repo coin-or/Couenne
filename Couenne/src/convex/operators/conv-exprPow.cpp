@@ -8,6 +8,7 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
+#include <cassert>
 #include <math.h>
 #ifndef M_E
 # define M_E  2.7182818284590452354
@@ -167,6 +168,10 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
   bool isInt    =            fabs (k    - (double) (intk = COUENNE_round (k)))    < COUENNE_EPS,
        isInvInt = !isInt && (fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS);
 
+  // FIXME currently, convexification of signpower(x,k) is only implemented for k odd or k=2,4,6,8,10
+  // for other cases, Qroot needs to be extended
+  assert(!issignpower_ || isInt);
+
   // two macro-cases: 
 
   if (   (isInt || isInvInt)
@@ -224,12 +229,12 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     // upper envelope
     if ((aSign != expression::AUX_GEQ) && (u < powThres)) {
-      if (u<=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l,   u, -sign);  // l<u<0, tangents only
+      if (u<=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l,   u, -sign, issignpower_);  // l<u<0, tangents only
       else if (l < q * u) { // lower x is before "turning point", add upper envelope
-	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, l, q*u, -sign);
-	cg -> addSegment     (cs, w_ind, x_ind, q*u, safe_pow (q*u,k), u, safe_pow (u,k), -sign);
+	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, l, q*u, -sign, issignpower_);
+	cg -> addSegment     (cs, w_ind, x_ind, q*u, safe_pow (q*u,k, issignpower_), u, safe_pow (u,k, issignpower_), -sign);
       } else {
-	cg -> addSegment     (cs, w_ind, x_ind, l,   safe_pow (l,k),   u, safe_pow (u,k), -sign);
+	cg -> addSegment     (cs, w_ind, x_ind, l,   safe_pow (l,k, issignpower_),   u, safe_pow (u,k, issignpower_), -sign);
       }
     }
   }
