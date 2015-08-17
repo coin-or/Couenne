@@ -224,12 +224,12 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     // upper envelope
     if ((aSign != expression::AUX_GEQ) && (u < powThres)) {
-      if (u<=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l,   u, -sign);  // l<u<0, tangents only
+      if (u<=0.) addPowEnvelope (cg, cs, w_ind, x_ind, x, w, k, l,   u, -sign, issignpower_);  // l<u<0, tangents only
       else if (l < q * u) { // lower x is before "turning point", add upper envelope
-	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, l, q*u, -sign);
-	cg -> addSegment     (cs, w_ind, x_ind, q*u, safe_pow (q*u,k), u, safe_pow (u,k), -sign);
+	addPowEnvelope        (cg, cs, w_ind, x_ind, x, w, k, l, q*u, -sign, issignpower_);
+	cg -> addSegment     (cs, w_ind, x_ind, q*u, safe_pow (q*u,k, issignpower_), u, safe_pow (u,k, issignpower_), -sign);
       } else {
-	cg -> addSegment     (cs, w_ind, x_ind, l,   safe_pow (l,k),   u, safe_pow (u,k), -sign);
+	cg -> addSegment     (cs, w_ind, x_ind, l,   safe_pow (l,k, issignpower_),   u, safe_pow (u,k, issignpower_), -sign);
       }
     }
   }
