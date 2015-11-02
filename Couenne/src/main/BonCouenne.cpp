@@ -255,7 +255,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
       if (amplsol != NULL) {
 
-	fprintf (amplsol, "\n Couenne (%s %s): Infeasible\n\nOptions\n3\n0\n1\n0\n%d\n0\n%d\n0\nobjno 0 220\n", 
+	fprintf (amplsol, "Couenne (%s %s): Infeasible\n\nOptions\n3\n0\n1\n0\n%d\n0\n%d\n0\nobjno 0 220\n", 
 		 prob -> problemName (). c_str (),
 		 __DATE__, 
 		 prob -> nOrigCons (),
