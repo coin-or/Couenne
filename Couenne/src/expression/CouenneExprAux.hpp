@@ -13,6 +13,7 @@
 #define COUENNE_EXPRAUX_HPP
 
 #include <iostream>
+#include <assert.h>
 
 #include "CouenneExprVar.hpp"
 
@@ -210,8 +211,16 @@ class exprAux: public exprVar {
 struct compExpr {
   inline bool operator () (exprAux* e0, exprAux* e1) const
   {
-    return ((e0 -> sign  () < e1 -> sign  ()) || 
-            ((e0 -> Image () != NULL) && (e1 -> Image () != NULL) && (e0 -> Image () -> compare (*(e1 -> Image ())) < 0)));
+    int signDiff = (e0 -> sign  () - e1 -> sign  ());
+
+    assert (e0 -> Image () != NULL);
+    assert (e1 -> Image () != NULL);
+
+    return ((signDiff < 0) ||
+            ((signDiff == 0) &&
+             ((e0 -> Image () != NULL) && 
+              (e1 -> Image () != NULL) &&
+              (e0 -> Image () -> compare (*(e1 -> Image ())) < 0))));
   }
 };
 
