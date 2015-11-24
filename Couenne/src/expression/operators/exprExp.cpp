@@ -56,6 +56,9 @@ bool exprExp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   CouNumber b;
 
+  if (ind < 0)
+    return false;
+
   if ((b = sign == expression::AUX_GEQ ? 0.           : l [wind]) > 0.) // lower bound    
     resL = updateBound (-1, l + ind, argument_->isInteger () ? ceil  (log (b)) : log (b));
 

@@ -94,8 +94,11 @@ bool exprAbs::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   CouNumber *xl = l + index, wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
             *xu = u + index, wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
-  // for w >= b > 0, we can only improve xlb if it is at least  b
+  // For w >= b > 0, we can only improve xlb if it is at least  b
   //                                     xub             most  -b
+
+  if (index < 0)
+    return false;
 
   bool tighter = false;
 
