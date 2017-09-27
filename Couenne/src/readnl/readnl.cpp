@@ -14,6 +14,9 @@
 #include "getstub.h"
 #include "opcode.hd"
 
+// Avoid compiler issues with gcc >=6.2 --- see https://github.com/JuliaOpt/CoinOptServices.jl/issues/27#issuecomment-290960312
+#undef strtod
+
 #include "CoinHelperFunctions.hpp"
 #include "CoinTime.hpp"
 
