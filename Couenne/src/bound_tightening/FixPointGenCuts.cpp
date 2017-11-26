@@ -248,7 +248,18 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     coe += nEl;
   }
 
-  // finally, add consistency cuts, bL <= bU
+  // Add zL <= zU constraints
+
+  for (int j=0; j<m; j++) { // for each row
+
+    int    ind [2] = {j,   m + j};
+    double coe [2] = {1., -1.};
+
+    CoinPackedVector row (2, ind, coe);
+    fplp -> addRow (row, -COIN_DBL_MAX, 0.);
+  }
+
+  // Finally, add consistency cuts, bL <= bU
 
   if (extendedModel_)
 
