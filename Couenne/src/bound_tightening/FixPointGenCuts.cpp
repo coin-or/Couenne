@@ -252,7 +252,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   for (int j=0; j<n; j++) { // for each row
 
-    int    ind [2] = {j,   m + j};
+    int    ind [2] = {j,   n + j};
     double coe [2] = {1., -1.};
 
     CoinPackedVector row (2, ind, coe);
