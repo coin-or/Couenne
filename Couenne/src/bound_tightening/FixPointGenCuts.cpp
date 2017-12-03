@@ -250,7 +250,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   // Add zL <= zU constraints
 
-  for (int j=0; j<m; j++) { // for each row
+  for (int j=0; j<n; j++) { // for each row
 
     int    ind [2] = {j,   m + j};
     double coe [2] = {1., -1.};
