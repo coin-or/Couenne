@@ -170,7 +170,9 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   
   for (int j=0; j<m; j++) { // for each row
 
-    int nEl = A -> getVectorSize (j); // # elements in each row
+    const int nEl = A->getVectorLast(j) - A->getVectorFirst(j), // A -> getVectorSize (j); // # elements in each row
+      *rind = &ind [A->getVectorFirst (j)];
+    const double *rcoe = &coe [A->getVectorFirst (j)];
 
     if (!nEl)
       continue;
@@ -180,7 +182,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
       printf ("row %4d, %4d elements: ", j, nEl);
 
       for (int i=0; i<nEl; i++) {
-	printf ("%+g x%d ", coe [i], ind [i]);
+	printf ("%+g x%d ", rcoe [i], rind [i]);
 	fflush (stdout);
       }
 
@@ -190,22 +192,19 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     // create cuts for the xL and xU elements //////////////////////
 
     if (extendedModel_ || rlb [j] > -COUENNE_INFINITY) 
-      for (int i=0; i<nEl; i++) 
-	createRow (-1, ind [i], n, fplp, ind, coe, rlb [j], nEl, extendedModel_, j, m + nCuts); // downward constraints -- on x_i
+      for (int i = A->getVectorFirst(j); i < A->getVectorLast(j); i++) 
+	createRow (-1, ind [i], n, fplp, rind, rcoe, rlb [j], nEl, extendedModel_, j, m + nCuts); // downward constraints -- on x_i
 
     if (extendedModel_ || rub [j] <  COUENNE_INFINITY) 
-      for (int i=0; i<nEl; i++) 
-	createRow (+1, ind [i], n, fplp, ind, coe, rub [j], nEl, extendedModel_, j, m + nCuts); // downward constraints -- on x_i
+      for (int i = A->getVectorFirst(j); i < A->getVectorLast(j); i++) 
+	createRow (+1, ind [i], n, fplp, rind, rcoe, rub [j], nEl, extendedModel_, j, m + nCuts); // downward constraints -- on x_i
 
     // create (at most 2) cuts for the bL and bU elements //////////////////////
 
     if (extendedModel_) {
-      createRow (-1, 2*n     + j, n, fplp, ind, coe, rlb [j], nEl, extendedModel_, j, m + nCuts); // upward constraints -- on bL_i
-      createRow (+1, 2*n + m + j, n, fplp, ind, coe, rub [j], nEl, extendedModel_, j, m + nCuts); // upward constraints -- on bU_i
+      createRow (-1, 2*n     + j, n, fplp, rind, rcoe, rlb [j], nEl, extendedModel_, j, m + nCuts); // upward constraints -- on bL_i
+      createRow (+1, 2*n + m + j, n, fplp, rind, rcoe, rub [j], nEl, extendedModel_, j, m + nCuts); // upward constraints -- on bU_i
     }
-
-    ind += nEl;
-    coe += nEl;
   }
 
   // similarly, scan previous cuts in cs //////////////////////////////////////
@@ -243,9 +242,6 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
       createRow (-1, 2*n             + j, n, fplp, ind, coe, cut -> lb (), nEl, extendedModel_, m + j, m + nCuts); // upward constraints -- on bL_i
       createRow (+1, 2*n + m + nCuts + j, n, fplp, ind, coe, cut -> ub (), nEl, extendedModel_, m + j, m + nCuts); // upward constraints -- on bU_i
     }
-
-    ind += nEl;
-    coe += nEl;
   }
 
   // Add zL <= zU constraints
