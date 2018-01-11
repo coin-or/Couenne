@@ -74,6 +74,9 @@ namespace Couenne {
     /// Number of bounds tightened
     mutable int nTightened_;
 
+    /// Level at which to stop
+    int levelStop_;
+
     /// Create a single cut
     void createRow (int, int,
 		    int,
