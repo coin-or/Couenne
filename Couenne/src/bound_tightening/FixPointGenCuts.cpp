@@ -59,7 +59,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     return;
 
   // Avoid if excessive BB tree depth
-  if ((levelStop_ < 0) && (treeInfo.level > -levelStop))
+  if ((levelStop_ < 0) && (treeInfo.level > -levelStop_))
     return;
 
   double startTime = CoinCpuTime ();
