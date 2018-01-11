@@ -25,6 +25,7 @@ CouenneFixPoint::CouenneFixPoint (CouenneProblem *p,
   std::string s;
   options -> GetStringValue ("fixpoint_bt_model", s, "couenne."); 
   extendedModel_ = (s == "extended");
+  options -> GetIntegerValue ("fixpoint_bt", levelStop_, "couenne.");
 }
 
 

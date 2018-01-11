@@ -463,12 +463,12 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   // Setup Fix Point bound tightener /////////////////////////////////////////////
 
-  options () -> GetIntegerValue ("fixpoint_bt", freq, "couenne.");
+  //options () -> GetIntegerValue ("fixpoint_bt", freq, "couenne.");
 
   if (freq != 0) {
 
     CuttingMethod cg;
-    cg.frequency = freq;
+    cg.frequency = 1; // Do it always, check within generateCuts() against tree depth
     cg.cgl = new CouenneFixPoint (couenneProb_, options ());
     cg.id = "Couenne fixed point FBBT";
     cutGenerators (). push_back (cg);

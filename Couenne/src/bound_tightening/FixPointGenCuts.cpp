@@ -44,9 +44,9 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   if (firstCall_) 
     firstCall_ = false;
-  else
-    if (!(problem_ -> fbbtReachedIterLimit ()))
-      return;
+  //else
+    //if (!(problem_ -> fbbtReachedIterLimit ()))
+      //return;
 
   if (isWiped (cs))
     return;
@@ -56,6 +56,10 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   if (treeInfo.inTree && 
       treeInfo.level > 0 &&
       treeInfo.pass > 1)
+    return;
+
+  // Avoid if excessive BB tree depth
+  if ((levelStop_ < 0) && (treeInfo.level > -levelStop))
     return;
 
   double startTime = CoinCpuTime ();
