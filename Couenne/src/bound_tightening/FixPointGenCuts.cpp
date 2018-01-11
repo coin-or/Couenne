@@ -48,6 +48,9 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     //if (!(problem_ -> fbbtReachedIterLimit ()))
       //return;
 
+  if (levelStop_ == 0) // turned off; should never happen, can actually assert != 0
+    return;
+
   if (isWiped (cs))
     return;
 
@@ -58,9 +61,14 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
       treeInfo.pass > 1)
     return;
 
-  // Avoid if excessive BB tree depth
-  if ((levelStop_ < 0) && (treeInfo.level > -levelStop_))
-    return;
+  // Avoid if excessive BB tree depth. Run run it at every node until
+  // depth -levelStop_, then every other level until -2 levelStop_,
+  // then stop.
+  if ((levelStop_ < 0) &&                  // If this cut generator has negative frequency option
+      ((treeInfo.level > -2*levelStop_) || // AND either we are at a low depth
+       ((treeInfo.level > -levelStop_) &&  //     OR the depth is low enough
+        (treeInfo.level & 1))))            //        AND it's even,
+    return;                                // skip
 
   double startTime = CoinCpuTime ();
 
