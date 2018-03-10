@@ -291,7 +291,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   // dual-infeasible but not primal-infeasible), then repeat after a
   // call to BT. This is a cheap way not to throw
 
-  if (fplp -> isProvenDualInfeasible ())
+  if (fplp -> isProvenDualInfeasible ()) {
 
     problem_ -> Jnlst () -> Printf (J_WARNING, J_BOUNDTIGHTENING, "FPLP unbounded: extra BT\n");
 
