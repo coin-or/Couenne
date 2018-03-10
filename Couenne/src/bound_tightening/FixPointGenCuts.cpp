@@ -245,7 +245,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
         createRow (-1, ind [i], n, fplp, ind, coe, cut -> lb (), nEl, extendedModel_, m + j, m + nCuts); // downward constraints -- on x_i
 
     if (extendedModel_ || cut -> ub () <  COUENNE_INFINITY) 
-      for (int i=0; i<nEl; i++) 
+      for (int i=0; i<nEl; i++)
         createRow (+1, ind [i], n, fplp, ind, coe, cut -> ub (), nEl, extendedModel_, m + j, m + nCuts); // downward constraints -- on x_i
 
     // create (at most 2) cuts for the bL and bU elements
@@ -283,50 +283,15 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   /// Now we have an fbbt-fixpoint LP problem. Solve it to get
   /// (possibly) better bounds
 
-  fplp -> setObjSense (-1.); // we want to maximize 
-
-  //printf ("(writing lp) "); fflush (stdout);
-  //fplp -> writeLp ("fplp");
-
-  // sometimes Clp gets stuck on these fplps...
-  fplp -> setIntParam (OsiMaxNumIteration, CoinMax (100, fplp -> getNumRows ()));
-
-  // we are maximizing the size of the box. If the initial box [l0,u0]
-  // is bounded, since the final one is contained in [l0,u0] we can
-  // set as a primal limit (Clp will stop after reaching it) a value
-  // close to it, since we won't need tightening if the one norm is
-  // very close to the old one.
-
-  double one_norm = 0;
-  bool one_inf_bd = false;
-
-  for (int i=0; i<n; ++i) {
-
-    if ((oldLB [i] < -COUENNE_INFINITY) ||
-        (oldUB [i] >  COUENNE_INFINITY)) {
-      one_inf_bd = true;
-      break;
-    }
-
-    one_norm += (oldUB [i] - oldLB [i]);
-  }
-
-#define APPROX_USELESS .99
-
-  //csi -> setDblParam (OsiDualObjectiveLimit, COIN_DBL_MAX); 
-  if (!one_inf_bd)
-    fplp -> setDblParam (OsiPrimalObjectiveLimit, APPROX_USELESS * one_norm);
+  fplp -> setObjSense (-1.); // we want to maximize
 
   fplp -> initialSolve ();
-
-  //fplp -> writeLp ("beforefplp"); // TODO: remove
 
   // Extra pre-solve: if the initial LP is unbounded (that is,
   // dual-infeasible but not primal-infeasible), then repeat after a
   // call to BT. This is a cheap way not to throw
 
-  if (fplp   -> isProvenDualInfeasible   () &&
-      !(fplp -> isProvenPrimalInfeasible ())) {
+  if (fplp -> isProvenDualInfeasible ())
 
     problem_ -> Jnlst () -> Printf (J_WARNING, J_BOUNDTIGHTENING, "FPLP unbounded: extra BT\n");
 
@@ -335,15 +300,13 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
       WipeMakeInfeas (cs);            // well, this is infeasible though FPLP will take the merit
 
     // Otherwise, reset bounds on auxiliaries based on new bounds in problem_ -> domain ();
-    
+
     for (int i=0; i<n; i++) {
       fplp -> setColLower (  i, problem_ -> Lb (i)); // set lower bound for xL [i]
       fplp -> setColLower (n+i, problem_ -> Lb (i)); //                     xU
       fplp -> setColUpper (  i, problem_ -> Ub (i)); //     upper           xL
       fplp -> setColUpper (n+i, problem_ -> Ub (i)); //                     xU
     }
-
-    //fplp -> writeLp ("fplp+bt"); // TODO: remove
 
     fplp -> resolve ();
   }
@@ -353,8 +316,6 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     *newUB = newLB + n;
 
   double infeasBounds [] = {1,-1};
-
-  //problem_ -> Jnlst () -> Printf (J_WARNING, J_BOUNDTIGHTENING, "FBBTFP point:\n");
 
   if (fplp -> isProvenOptimal ()) {
 
@@ -444,10 +405,10 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
   //  problem_ -> Jnlst () -> Printf (J_ERROR, J_BOUNDTIGHTENING, "END\n");
 
-  delete fplp;
-
   perfIndicator_. update (newLB, newUB, treeInfo.level);
   perfIndicator_. addToTimer (CoinCpuTime () - startTime);
+
+  delete fplp;
 
   problem_ -> domain () -> pop ();
 
