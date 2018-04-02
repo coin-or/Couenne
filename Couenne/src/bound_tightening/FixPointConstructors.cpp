@@ -20,7 +20,8 @@ CouenneFixPoint::CouenneFixPoint (CouenneProblem *p,
   firstCall_  (true),
   CPUtime_    (0.),
   nTightened_ (0),
-  perfIndicator_ (p, "Fixed Point LP") {
+  perfIndicator_ (p, "Fixed Point LP"),
+  levelStop_  (0) {
 
   std::string s;
   options -> GetStringValue ("fixpoint_bt_model", s, "couenne."); 
@@ -36,7 +37,8 @@ CouenneFixPoint::CouenneFixPoint (const CouenneFixPoint &rhs):
   firstCall_     (rhs.firstCall_),
   CPUtime_       (rhs.CPUtime_),
   nTightened_    (rhs.nTightened_),
-  perfIndicator_ (rhs.perfIndicator_) {}
+  perfIndicator_ (rhs.perfIndicator_),
+  levelStop_     (rhs.levelStop_) {}
 
 
 /// destructor
