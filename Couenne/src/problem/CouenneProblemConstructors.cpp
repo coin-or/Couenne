@@ -85,7 +85,8 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   max_fbbt_iter_ (MAX_FBBT_ITER),
   orbitalBranching_ (false),
   constObjVal_ (0.),
-  perfIndicator_ (new CouenneBTPerfIndicator (this, "FBBT")),
+  FBBTperfIndicator_ (new CouenneBTPerfIndicator (this, "FBBT")),
+  OBBTperfIndicator_ (new CouenneBTPerfIndicator (this, "OBBT")),
 
   nauty_info (NULL),
   sdpCutGen_ (NULL) {
@@ -164,7 +165,8 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   max_fbbt_iter_  (p.max_fbbt_iter_),
   orbitalBranching_  (p.orbitalBranching_),
   constObjVal_       (p.constObjVal_),
-  perfIndicator_     (new CouenneBTPerfIndicator (*(p.perfIndicator_))),
+  FBBTperfIndicator_     (new CouenneBTPerfIndicator (*(p.FBBTperfIndicator_))),
+  OBBTperfIndicator_     (new CouenneBTPerfIndicator (*(p.OBBTperfIndicator_))),
   nauty_info         (p.nauty_info) {
 
   sdpCutGen_  = new CouenneSdpCuts (*(p.sdpCutGen_));
@@ -226,8 +228,11 @@ CouenneProblem::~CouenneProblem () {
 
   delete auxSet_;
 
-  if (perfIndicator_)
-    delete perfIndicator_;
+  if (FBBTperfIndicator_)
+    delete FBBTperfIndicator_;
+
+  if (OBBTperfIndicator_)
+    delete OBBTperfIndicator_;
 
   // delete optimal solution (if any)
   if (optimum_)

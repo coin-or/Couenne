@@ -336,7 +336,11 @@ class CouenneProblem {
 
   /// Performance indicator for FBBT -- to be moved away from
   /// CouenneProblem when we do it with FBBT
-  CouenneBTPerfIndicator *perfIndicator_;
+  CouenneBTPerfIndicator *FBBTperfIndicator_;
+
+  /// Performance indicator for OBBT -- to be moved away from
+  /// CouenneProblem
+  CouenneBTPerfIndicator *OBBTperfIndicator_;
 
   /// Return particular constraint class. Classes:
   /// 
