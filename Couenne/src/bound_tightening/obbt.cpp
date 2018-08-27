@@ -17,6 +17,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 #include "CouenneInfeasCut.hpp"
+#include "CouenneBTPerfIndicator.hpp"
 
 using namespace Ipopt;
 using namespace Couenne;
@@ -188,8 +189,14 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
   // this node is infeasible and we shouldn't take the pain of running
   // this CGL.
 
+  int retval = 0;
+
   if (isWiped (cs) || info.pass >= MAX_OBBT_ATTEMPTS)
     return 0;
+
+  double startTime = CoinCpuTime ();
+
+  OBBTperfIndicator_ -> setOldBounds (Lb (), Ub ());
 
   int nTotImproved = 0;
 
@@ -273,9 +280,12 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
     if (nImprov < 0) {
       jnlst_->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "  Couenne: infeasible node after OBBT\n");
-      return -1;
+      retval = -1;
     }
   }
 
-  return 0;
+  OBBTperfIndicator_ -> update     (Lb (), Ub (), info.level);
+  OBBTperfIndicator_ -> addToTimer (CoinCpuTime () - startTime);
+
+  return retval;
 }
