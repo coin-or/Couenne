@@ -64,13 +64,14 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
 	if ((index0 >= 0) &&
 	    (index1 >= 0) &&
-	    ((*i) -> Index () >= 0))
+	    ((*i) -> Index () >= 0)) {
 
 	  // cauldron -> add_element (CoinMin (index0, index1),
 	  //  			      CoinMax (index0, index1), (*i));
 
 	  cauldron -> add_element (index0, index1, (*i));
 	  cauldron -> add_element (index1, index0, (*i));
+        }
       }
 
       /// or it is x_i ^ 2
