@@ -342,11 +342,9 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
     CouNumber xp = objind >= 0 ? X (objind) : Obj (0) -> Body () -> Value ();
 
-    if (xp < getCutOff ()) {
+    const CouNumber *x = X ();
 
-      const CouNumber *x = X ();
-
-      if  (checkNLP0 (x, xp, true, false, true, true))
+    if  (checkNLP0 (x, xp, true, false, true, true)) {
 // #ifdef FM_CHECKNLP2
 // 	(checkNLP2(x, 0, false, true, true, feas_tolerance_)) 
 // 	// false for not caring about objective value, 
@@ -354,21 +352,21 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 // #else
 // 	(checkNLP (x, xp, true)) // true for recomputing xp
 // #endif	 
-	  { 
-	    
+      
 #ifdef FM_TRACE_OPTSOL
 #ifdef FM_CHECKNLP2
-	    recBSol->update();
-	    xp = recBSol->getVal();
+      recBSol->update();
+      xp = recBSol->getVal();
 #else
-	    recBSol -> update (x, nVars(), xp, feas_tolerance_);
+      recBSol -> update (x, nVars(), xp, feas_tolerance_);
 #endif
 #endif
+      if (xp < getCutOff ()) {
 
-	    setCutOff (xp, x);
-	    jnlst_ -> Printf (Ipopt::J_DETAILED, J_NLPHEURISTIC, 
-			      "new cutoff from getIntCand: %g\n", xp);
-	  }
+        setCutOff (xp, x);
+        jnlst_ -> Printf (Ipopt::J_DETAILED, J_NLPHEURISTIC, 
+                          "new cutoff from getIntCand: %g\n", xp);
+      }
     }
   } // try
 
