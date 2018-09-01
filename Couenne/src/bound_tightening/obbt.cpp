@@ -196,8 +196,6 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
   double startTime = CoinCpuTime ();
 
-  OBBTperfIndicator_ -> setOldBounds (Lb (), Ub ());
-
   int nTotImproved = 0;
 
   // Do OBBT if:
@@ -209,6 +207,8 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
        (info.level <= logObbtLev_) ||     //  depth is lower than COU_OBBT_CUTOFF_LEVEL, OR
                                           //  probability inversely proportional to the level)
        (CoinDrand48 () < pow (2., (double) logObbtLev_ - (info.level + 1))))) {
+
+    OBBTperfIndicator_ -> setOldBounds (Lb (), Ub ());
 
     if ((info.level <= 0 && !(info.inTree)) || 
     	jnlst_ -> ProduceOutput (J_STRONGWARNING, J_COUENNE))  {
@@ -282,10 +282,10 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
       jnlst_->Printf(J_ITERSUMMARY, J_BOUNDTIGHTENING, "  Couenne: infeasible node after OBBT\n");
       retval = -1;
     }
-  }
 
-  OBBTperfIndicator_ -> update     (Lb (), Ub (), info.level);
-  OBBTperfIndicator_ -> addToTimer (CoinCpuTime () - startTime);
+    OBBTperfIndicator_ -> update     (Lb (), Ub (), info.level);
+    OBBTperfIndicator_ -> addToTimer (CoinCpuTime () - startTime);
+  }
 
   return retval;
 }
