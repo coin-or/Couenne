@@ -26,8 +26,8 @@ using namespace Couenne;
 /// Cut Generator for FBBT fixpoint
 
 void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
-				    OsiCuts &cs,
-				    const CglTreeInfo treeInfo)
+                                    OsiCuts &cs,
+                                    const CglTreeInfo treeInfo)
 #if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
   const
 #endif
@@ -115,7 +115,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
   OsiSolverInterface *fplp = NULL;
 
   if (true) { // placeholder for later selection of LP solver among
-	      // those available
+              // those available
 
     fplp = new OsiClpSolverInterface;
   }
@@ -242,11 +242,11 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 
     if (extendedModel_ || cut -> lb () > -COUENNE_INFINITY) 
       for (int i=0; i<nEl; i++) 
-	createRow (-1, ind [i], n, fplp, ind, coe, cut -> lb (), nEl, extendedModel_, m + j, m + nCuts); // downward constraints -- on x_i
+        createRow (-1, ind [i], n, fplp, ind, coe, cut -> lb (), nEl, extendedModel_, m + j, m + nCuts); // downward constraints -- on x_i
 
     if (extendedModel_ || cut -> ub () <  COUENNE_INFINITY) 
       for (int i=0; i<nEl; i++)
-	createRow (+1, ind [i], n, fplp, ind, coe, cut -> ub (), nEl, extendedModel_, m + j, m + nCuts); // downward constraints -- on x_i
+        createRow (+1, ind [i], n, fplp, ind, coe, cut -> ub (), nEl, extendedModel_, m + j, m + nCuts); // downward constraints -- on x_i
 
     // create (at most 2) cuts for the bL and bU elements
 
@@ -296,7 +296,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     problem_ -> Jnlst () -> Printf (J_WARNING, J_BOUNDTIGHTENING, "FPLP unbounded: extra BT\n");
 
     if (!(problem_ -> doFBBT ()) &&   // if FBBT was not applied before (because it was excluded,
-	!(problem_ -> btCore (NULL))) // do a round of FBBT. If infeasible,
+        !(problem_ -> btCore (NULL))) // do a round of FBBT. If infeasible,
       WipeMakeInfeas (cs);            // well, this is infeasible though FPLP will take the merit
 
     // Otherwise, reset bounds on auxiliaries based on new bounds in problem_ -> domain ();
@@ -336,24 +336,24 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     for (int i=0; i<n; i++) {
 
       if (problem_ -> Jnlst () -> ProduceOutput (J_ERROR, J_BOUNDTIGHTENING))
-	printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
-		oldLB [i], oldUB [i], 
-		newLB [i], newUB [i]);
+        printf ("x%d: [%g,%g] --> [%g,%g]\n", i, 
+                oldLB [i], oldUB [i], 
+                newLB [i], newUB [i]);
 
       if (newLB [i] > oldLB [i] + COUENNE_EPS) {
 
-	indLB [ntightenedL]   = i;
-	valLB [ntightenedL++] = newLB [i];
+        indLB [ntightenedL]   = i;
+        valLB [ntightenedL++] = newLB [i];
 
-	++nTightened_;
+        ++nTightened_;
       }
 
       if (newUB [i] < oldUB [i] - COUENNE_EPS) {
 
-	indUB [ntightenedU]   = i;
-	valUB [ntightenedU++] = newUB [i];
+        indUB [ntightenedU]   = i;
+        valUB [ntightenedU++] = newUB [i];
 
-	++nTightened_;
+        ++nTightened_;
       }
     }
 
@@ -375,14 +375,14 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     CPUtime_ += CoinCpuTime () - now;
 
     if (treeInfo.inTree && 
-	treeInfo.level <= 0)
+        treeInfo.level <= 0)
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, "%d bounds tightened (%g seconds)\n", 
-				      nTightened_ - nInitTightened, CoinCpuTime () - now); 
+                                      nTightened_ - nInitTightened, CoinCpuTime () - now); 
 
   } else if (fplp -> isProvenPrimalInfeasible ()) {
 
     if (treeInfo.inTree &&
-	treeInfo.level <= 0)
+        treeInfo.level <= 0)
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP infeasible.\n");
 
     WipeMakeInfeas (cs);
@@ -396,7 +396,7 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
     // performance indicator that nothing should change.
 
     if (treeInfo.inTree && 
-	treeInfo.level <= 0)
+        treeInfo.level <= 0)
       problem_ -> Jnlst () -> Printf (J_ERROR, J_COUENNE, " FPLP inconclusive, won't be used.\n");
 
     newLB = oldLB;
@@ -434,16 +434,16 @@ void CouenneFixPoint::generateCuts (const OsiSolverInterface &si,
 // 11) nCon:     number of constraints
 
 void CouenneFixPoint::createRow (int sign,
-				 int indexVar,
-				 int nVars,
-				 OsiSolverInterface *p,
-				 const int *indices,
-				 const double *coe,
-				 const double rhs,
-				 const int nEl,
-				 bool extMod,
-				 int indCon,
-				 int nCon) const {
+                                 int indexVar,
+                                 int nVars,
+                                 OsiSolverInterface *p,
+                                 const int *indices,
+                                 const double *coe,
+                                 const double rhs,
+                                 const int nEl,
+                                 bool extMod,
+                                 int indCon,
+                                 int nCon) const {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
   ///
@@ -523,7 +523,7 @@ void CouenneFixPoint::createRow (int sign,
   ///
   /// xL_i >= (b_j - sum {k in I+} a_jk xU_k - sum {k in I-} a_jk xL_k) / a_ji   (if a_ji > 0 and (>))
   /// xU_i <= (b_j - sum {k in I+} a_jk xL_k - sum {k in I-} a_jk xU_k) / a_ji   (if a_ji > 0 and (<))
-  ///										     
+  ///                                                                                
   /// xU_i <= (b_j - sum {k in I+} a_jk xU_k - sum {k in I-} a_jk xL_k) / a_ji   (if a_ji < 0 and (>))
   /// xL_i >= (b_j - sum {k in I+} a_jk xL_k - sum {k in I-} a_jk xU_k) / a_ji   (if a_ji < 0 and (<))
   ///
@@ -531,7 +531,7 @@ void CouenneFixPoint::createRow (int sign,
   ///
   ///   a_ji xL_i >=   b_j - sum {k in I+} a_jk xU_k - sum {k in I-} a_jk xL_k   (if a_ji > 0 and (>))
   ///   a_ji xU_i <=   b_j - sum {k in I+} a_jk xL_k - sum {k in I-} a_jk xU_k   (if a_ji > 0 and (<))
-  ///										     
+  ///                                                                                
   /// - a_ji xU_i <= - b_j + sum {k in I+} a_jk xU_k + sum {k in I-} a_jk xL_k   (if a_ji < 0 and (>))
   /// - a_ji xL_i >= - b_j + sum {k in I+} a_jk xL_k + sum {k in I-} a_jk xU_k   (if a_ji < 0 and (<))
   ///
@@ -539,7 +539,7 @@ void CouenneFixPoint::createRow (int sign,
   ///
   /// a_ji xL_i + sum {k in I+} a_jk xU_k + sum {k in I-} a_jk xL_k >= b_j       (if a_ji > 0 and (>))
   /// a_ji xU_i + sum {k in I+} a_jk xL_k + sum {k in I-} a_jk xU_k <= b_j       (if a_ji > 0 and (<))
-  ///										     
+  ///                                                                                
   /// a_ji xU_i + sum {k in I+} a_jk xU_k + sum {k in I-} a_jk xL_k >= b_j       (if a_ji < 0 and (>))
   /// a_ji xL_i + sum {k in I+} a_jk xL_k + sum {k in I-} a_jk xU_k <= b_j       (if a_ji < 0 and (<))
   ///
@@ -587,12 +587,12 @@ void CouenneFixPoint::createRow (int sign,
 
     if (curInd == indexVar) { // x_k is x_i itself
       if (((sign > 0) && (coe [k] > 0.)) || 
-	  ((sign < 0) && (coe [k] < 0.)))
+          ((sign < 0) && (coe [k] < 0.)))
 
       iInd [k] += nVars;
 
     } else if (((coe [k] > 0.) && (sign < 0)) ||
-	       ((coe [k] < 0.) && (sign > 0)))
+               ((coe [k] < 0.) && (sign > 0)))
 
       iInd [k] += nVars;
   }
