@@ -176,8 +176,8 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"\n");
 
 	if (knownOptimum && 
-	    (knownOptimum [i] >= lower_i) && 
-	    (knownOptimum [i] <= ll - COUENNE_EPS)) {
+	    ((knownOptimum [i] - lower_i) / (1 + std::max (fabs (knownOptimum [i]), fabs (lower_i))) >=  COUENNE_EPS) && 
+	    ((knownOptimum [i] - ll)      / (1 + std::max (fabs (knownOptimum [i]), fabs (ll)))      <= -COUENNE_EPS)) {
 
 	  Jnlst()->Printf(J_STRONGWARNING, J_BOUNDTIGHTENING,
 			  "Couenne: propagating l_%d cuts optimum: [%g --> %g -X-> %g] :: ", 
@@ -229,8 +229,8 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"\n");
 
 	if (knownOptimum && 
-	    (knownOptimum [i] <= upper_i) && 
-	    (knownOptimum [i] >= uu + COUENNE_EPS)) {
+	    ((knownOptimum [i] - upper_i) / (1 + std::max (fabs (knownOptimum [i]), fabs (upper_i))) <= -COUENNE_EPS) && 
+	    ((knownOptimum [i] - uu)      / (1 + std::max (fabs (knownOptimum [i]), fabs (uu)))      >=  COUENNE_EPS)) {
 
 	  Jnlst()->Printf(J_STRONGWARNING, J_BOUNDTIGHTENING,
 			  "Couenne: propagating u_%d cuts optimum: [%g <-X- %g <-- %g] :: ", 
