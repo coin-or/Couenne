@@ -10,12 +10,14 @@
 
 #include "asl.h"
 
-// Added to avoid compiler issues with gcc 6.2.1 --- see https://github.com/JuliaOpt/CoinOptServices.jl/issues/27#issuecomment-290960312
 #undef strtod
 
 #include "nlp.h"
 #include "getstub.h"
 #include "opcode.hd"
+
+// Avoid compiler issues with gcc >=6.2 --- see https://github.com/JuliaOpt/CoinOptServices.jl/issues/27#issuecomment-290960312
+#undef strtod
 
 #include "CoinHelperFunctions.hpp"
 #include "CoinTime.hpp"
@@ -394,7 +396,7 @@ int CouenneProblem::readnl (const ASL *asl) {
       case COUENNE_LE:  addLEConstraint  (body, new exprConst (ub)); break;
       case COUENNE_GE:  addGEConstraint  (body, new exprConst (lb)); break;
       case COUENNE_RNG: addRNGConstraint (body, new exprConst (lb), 
-					      new exprConst (ub)); break;
+                                                new exprConst (ub)); break;
       default: printf ("Could not recognize constraint\n"); return -1;
       }
 
@@ -451,7 +453,7 @@ int CouenneProblem::readnl (const ASL *asl) {
 
   for (register int i=n_var; i--;) 
 
-    if (X0 && havex0 [i]) X (i) = X0 [i]; 
+    if (X0 && havex0 [i]) X (i) = X0 [i];
 
     else {
 

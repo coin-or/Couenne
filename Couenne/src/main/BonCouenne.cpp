@@ -234,6 +234,12 @@ Auxiliaries:     %8d (%d integer)\n\n",
     //   }
     // }
 
+    bool printOptions;
+
+    std::string liststr;
+    couenne.options () -> PrintUserOptions (liststr);
+    jnlst -> Printf (J_ERROR, J_MAIN, "\nList of user-set options:\n\n%s", liststr.c_str());
+
     if (!infeasible)                                //  /|-------------=
       bb (couenne); // do branch and bound          // < |             =
                                                     //  \|-------------=
