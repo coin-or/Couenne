@@ -9,7 +9,7 @@ Couenne (Convex Over and Under ENvelopes for Nonlinear Estimation) is a branch&b
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     <i>x</i> in R<sup>n</sup>,
                                    <i>y</i> in Z<sup>p</sup>
 
-where all _f_,,i,,(_x_,_y_) are, in general, nonlinear functions. 
+where all _f_<sub>i</sub>(_x_,_y_) are, in general, nonlinear functions. 
 
 Couenne aims at finding global optima of nonconvex MINLPs. It implements linearization, bound reduction, and branching methods within a branch-and-bound framework. Its main components are:
 
@@ -34,7 +34,7 @@ These packages are: ASL, Blas, Lapack, and HSL or MUMPS.
 The user is referred to the `INSTALL` file in each of the subdirectories of Couenne/ThirdParty for instructions on how to obtain them.
 
 In general, the stable version of Couenne is subject to slight changes such as bug fixes. In order to be up-to-date with such changes, you may run the command `svn update` within the `Couenne` directory.
-The latest release 0.5.6 is also available at [https://projects.coin-or.org/svn/Couenne/releases/0.5.6](https://projects.coin-or.org/svn/Couenne/releases/0.5.6). This release is not subject to change, and can also be downloaded as a tar ball.
+The latest release 0.5.7 is also available at [https://projects.coin-or.org/svn/Couenne/releases/0.5.7](https://projects.coin-or.org/svn/Couenne/releases/0.5.7). This release is not subject to change, and can also be downloaded as a tar ball.
 
 To install Couenne, we refer to general installation [instructions](https://projects.coin-or.org/BuildTools/) for COIN-OR projects.
 We also suggest the excellent [Ipopt compilation hints](https://projects.coin-or.org/Ipopt/wiki/CompilationHints) page for compiling on non-Linux systems, such as Mac and Windows.
@@ -87,9 +87,9 @@ Doc/html/index.html for documentation of Couenne.
 
 ## Resources and links
 
-Couenne is maintained by [Pietro Belotti](http://myweb.clemson.edu/~pbelott) (couenne`@`list.coin-or.org).
+Couenne is maintained by [Pietro Belotti](http://myweb.clemson.edu/~pbelott) (couenne@list.coin-or.org).
 
-Web page: [https://projects.coin-or.org/Couenne/wiki]
+Web page: [https://www.github.com/coin-or/Couenne]
 
 Dependencies: 
 [CoinUtils](https://projects.coin-or.org/CoinUtils), 
@@ -111,7 +111,7 @@ External resources:  [COIN-OR](http://www.coin-or.org),
 
 
 
-## Improve this page, report a bug, contribute to Couenne
+## Report a bug, contribute to Couenne
 
 As an open-source code, contributions to Couenne are welcome. To submit a contribution to Couenne, please follow the [COIN-OR guidelines](http://www.coin-or.org/contributions.html).
 
