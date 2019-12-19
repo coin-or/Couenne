@@ -94,7 +94,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   double now = CoinCpuTime ();
 
   if (asl) {
-#if COIN_HAS_ASL
+#ifdef COIN_HAS_ASL
     // read problem from AMPL structure
     readnl (asl);
 #else
