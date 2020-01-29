@@ -15,11 +15,11 @@
 #include "BonBabSetupBase.hpp"
 #include "CouenneConfig.h"
 
-namespace COUENNELIB_EXPORT Couenne {
+namespace Couenne {
 
   class CouenneProblem;
 
-  class CouenneBab: public Bonmin::Bab {
+  class COUENNELIB_EXPORT CouenneBab: public Bonmin::Bab {
 
   public:
 
