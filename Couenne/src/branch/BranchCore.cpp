@@ -38,7 +38,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
       (doConvCuts_ && simulate_ && cutGen_))
     chg_bds = new t_chg_bounds [problem_ -> nVars ()];
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
 
   if (problem_ -> orbitalBranching ()) {
 

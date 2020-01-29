@@ -16,16 +16,16 @@
 
 #include "OsiClpSolverInterface.hpp"
 
-#ifdef COIN_HAS_CPX
+#ifdef COIN_HAS_OSICPX
 #include "OsiCpxSolverInterface.hpp"
 #endif
-#ifdef COIN_HAS_GRB
+#ifdef COIN_HAS_OSIGRB
 #include "OsiGrbSolverInterface.hpp"
 #endif
-#ifdef COIN_HAS_SPX
+#ifdef COIN_HAS_OSISPX
 #include "OsiSpxSolverInterface.hpp"
 #endif
-#ifdef COIN_HAS_XPR
+#ifdef COIN_HAS_OSIXPR
 #include "OsiXprSolverInterface.hpp"
 #endif
 
@@ -208,7 +208,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   } else if (s == "cplex") {
 
-#ifdef COIN_HAS_CPX
+#ifdef COIN_HAS_OSICPX
     CouenneSolverInterface <OsiCpxSolverInterface> *CSI = new CouenneSolverInterface <OsiCpxSolverInterface>;
     continuousSolver_ = CSI;
     CSI -> setCutGenPtr (couenneCg);
@@ -218,7 +218,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 #endif
   } else if (s == "xpress-mp") {
 
-#ifdef COIN_HAS_XPR
+#ifdef COIN_HAS_OSIXPR
     CouenneSolverInterface <OsiXprSolverInterface> *CSI = new CouenneSolverInterface <OsiXprSolverInterface>;
     continuousSolver_ = CSI;
     CSI -> setCutGenPtr (couenneCg);
@@ -228,7 +228,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 #endif
   } else if (s == "gurobi") {
 
-#ifdef COIN_HAS_GRB
+#ifdef COIN_HAS_OSIGRB
     CouenneSolverInterface <OsiGrbSolverInterface> *CSI = new CouenneSolverInterface <OsiGrbSolverInterface>;
     continuousSolver_ = CSI;
     CSI -> setCutGenPtr (couenneCg);
@@ -238,7 +238,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 #endif
   } else if (s == "soplex") {
 
-#ifdef COIN_HAS_SPX
+#ifdef COIN_HAS_OSISPX
     CouenneSolverInterface <OsiSpxSolverInterface> *CSI = new CouenneSolverInterface <OsiSpxSolverInterface>;
     continuousSolver_ = CSI;
     CSI -> setCutGenPtr (couenneCg);
@@ -440,7 +440,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   //   objects [nobj++] -> setPriority (contObjPriority);
   // }
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
   if (couenneProb_ -> orbitalBranching ()) {
 
     couenneProb_ -> ChangeBounds (couenneProb_ -> Lb (), couenneProb_ -> Ub (), couenneProb_ -> nVars ());

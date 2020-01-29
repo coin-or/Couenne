@@ -8,7 +8,7 @@ AUTOMAKE_OPTIONS = foreign
 
 noinst_LTLIBRARIES = libCouenneDisjunctive.la
 
-# List all source files for this library, including headers
+# List all source files for this library
 libCouenneDisjunctive_la_SOURCES = \
         CouenneDisjCuts.cpp \
         generateDisjCuts.cpp \
@@ -20,20 +20,13 @@ libCouenneDisjunctive_la_SOURCES = \
         OsiLinear2MatrVec.cpp \
         OsiCuts2MatrVec.cpp
 
-# This is for libtool
-libCouenneDisjunctive_la_LDFLAGS = $(LT_LDFLAGS)
-
-# Here list all include flags, relative to this "srcdir" directory.  This
-# "cygpath" stuff is necessary to compile with native compilers on Windows
+# Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../convex` \
-	-I`$(CYGPATH_W) $(srcdir)/../heuristics` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem` \
+	-I$(srcdir)/.. \
+	-I$(srcdir)/../convex \
+	-I$(srcdir)/../heuristics \
+	-I$(srcdir)/../expression \
+	-I$(srcdir)/../bound_tightening \
+	-I$(srcdir)/../branch \
+	-I$(srcdir)/../problem \
 	$(COUENNELIB_CFLAGS)
-
-# This line is necessary to allow VPATH compilation
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

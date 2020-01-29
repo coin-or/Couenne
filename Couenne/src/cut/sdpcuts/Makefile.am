@@ -8,8 +8,7 @@ AUTOMAKE_OPTIONS = foreign
 
 noinst_LTLIBRARIES = libCouenneSdpCuts.la
 
-# List all source files for this library, including headers
-
+# List all source files for this library
 libCouenneSdpCuts_la_SOURCES = \
 	CouenneSdpCuts.cpp \
 	CouennePSDcon.cpp \
@@ -18,20 +17,9 @@ libCouenneSdpCuts_la_SOURCES = \
 	CutGenSparse.cpp \
 	dsyevx_wrapper.cpp
 
-# This is for libtool
-libCouenneSdpCuts_la_LDFLAGS = $(LT_LDFLAGS)
-
-# Here list all include flags, relative to this "srcdir" directory.  This
-# "cygpath" stuff is necessary to compile with native compilers on Windows
+# Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(srcdir)/../..` \
-	-I`$(CYGPATH_W) $(srcdir)/../../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../../problem` \
+	-I$(srcdir)/../.. \
+	-I$(srcdir)/../../expression \
+	-I$(srcdir)/../../problem \
 	$(COUENNELIB_CFLAGS)
-
-if COIN_HAS_CPX
-AM_CPPFLAGS += -I`$(CYGPATH_W) $(CPXINCDIR)`
-endif
-
-# This line is necessary to allow VPATH compilation
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/src

@@ -9,6 +9,7 @@ Couenne/LICENSE -text
 Couenne/Makefile.am -text
 Couenne/Makefile.in -text
 Couenne/README -text
+Couenne/compile -text
 Couenne/config.guess -text
 Couenne/config.sub -text
 Couenne/configure -text

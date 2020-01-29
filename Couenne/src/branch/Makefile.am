@@ -8,7 +8,7 @@ AUTOMAKE_OPTIONS = foreign
 
 noinst_LTLIBRARIES = libCouenneBranch.la
 
-# List all source files for this library, including headers
+# List all source files for this library
 libCouenneBranch_la_SOURCES = \
 	CouenneThreeWayBranchObj.cpp \
 	CouenneBranchingObject.cpp \
@@ -29,7 +29,7 @@ libCouenneBranch_la_SOURCES = \
 	CouenneSOSObject.cpp \
 	StrongBranchingSetupList.cpp
 
-if COIN_HAS_NTY
+if COIN_HAS_NAUTY
 libCouenneBranch_la_SOURCES += Nauty.cpp
 endif
 
@@ -45,25 +45,13 @@ endif
 # 	operators/minMaxDelta.cpp \
 # 	operators/computeMulBrDist.cpp
 
-# This is for libtool
-libCouenneBranch_la_LDFLAGS = $(LT_LDFLAGS)
-
-# Here list all include flags, relative to this "srcdir" directory.  This
-# "cygpath" stuff is necessary to compile with native compilers on Windows
+# Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../convex` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem` \
-	-I`$(CYGPATH_W) $(srcdir)/../util` \
-	-I`$(CYGPATH_W) $(srcdir)/../standardize` \
+	-I$(srcdir)/.. \
+	-I$(srcdir)/../convex \
+	-I$(srcdir)/../expression \
+	-I$(srcdir)/../expression/operators \
+	-I$(srcdir)/../problem \
+	-I$(srcdir)/../util \
+	-I$(srcdir)/../standardize \
 	$(COUENNELIB_CFLAGS)
-
-if COIN_HAS_NTY
-AM_CPPFLAGS += \
-	-I`$(CYGPATH_W) $(NTYINCDIR)/`
-endif
-
-# This line is necessary to allow VPATH compilation
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

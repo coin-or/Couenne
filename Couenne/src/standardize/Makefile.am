@@ -8,7 +8,7 @@ AUTOMAKE_OPTIONS = foreign
 
 noinst_LTLIBRARIES = libCouenneStandardize.la
 
-# List all source files for this library, including headers
+# List all source files for this library
 libCouenneStandardize_la_SOURCES = \
 	decomposeTerm.cpp \
 	linStandardize.cpp \
@@ -21,21 +21,14 @@ libCouenneStandardize_la_SOURCES = \
 	standardize.cpp \
 	flattenMul.cpp
 
-# This is for libtool
-libCouenneStandardize_la_LDFLAGS = $(LT_LDFLAGS)
-
-# Here list all include flags, relative to this "srcdir" directory.  This
-# "cygpath" stuff is necessary to compile with native compilers on Windows
+# Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch` \
-	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem/depGraph` \
-	-I`$(CYGPATH_W) $(srcdir)/../cut/sdpcuts` \
+	-I$(srcdir)/.. \
+	-I$(srcdir)/../expression \
+	-I$(srcdir)/../expression/operators \
+	-I$(srcdir)/../branch \
+	-I$(srcdir)/../bound_tightening \
+	-I$(srcdir)/../problem \
+	-I$(srcdir)/../problem/depGraph \
+	-I$(srcdir)/../cut/sdpcuts \
 	$(COUENNELIB_CFLAGS)
-
-# This line is necessary to allow VPATH compilation
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

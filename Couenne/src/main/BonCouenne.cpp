@@ -45,7 +45,7 @@ using namespace Couenne;
 #include "CouenneProblem.hpp"
 #include "CouenneJournalist.hpp"
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
 #include "Nauty.h"
 #include "CouenneBranchingObject.hpp"
 #endif
@@ -204,7 +204,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
     //////////////////////////////////
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
     double symmGroupSize = prob -> orbitalBranching () ? prob -> getNtyInfo () -> getGroupSize () : -1;
 #endif
 
@@ -273,7 +273,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
       delete [] filename;
     }
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
     if (CouenneBranchingObject::nOrbBr)
       printf ("%d orbital nontrivial branchings\n", CouenneBranchingObject::nOrbBr);
 #endif
@@ -576,7 +576,7 @@ Branch-and-bound nodes:                  %8d\n",
       else
 	printf ("Stats: %-15s %4d [var] %4d [int] %4d [con] %4d [aux] "
 		"%6d [root] %8d [tot] %6g [sep] %8g [time] %8g [bb] "
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
 		"%20e [lower] %20e [upper] %7d [nodes] %.0g [sg] %d [sgc]\n",
 #else
 		"%20e [lower] %20e [upper] %7d [nodes]\n",
@@ -595,7 +595,7 @@ Branch-and-bound nodes:                  %8d\n",
 		//bb.bestBound (),
 		//bb.bestObj (),
 		infeasible ? 0 : bb.numNodes ()
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
 		,symmGroupSize
 		,CouenneBranchingObject::nSGcomputations
 #endif

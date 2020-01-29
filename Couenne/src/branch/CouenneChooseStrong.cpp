@@ -35,7 +35,7 @@ using namespace Couenne;
 
 const CouNumber estProdEps = 1e-6;
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
 #include "Nauty.h"
 #endif
 

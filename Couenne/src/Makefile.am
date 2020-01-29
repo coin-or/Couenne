@@ -8,7 +8,7 @@
 # Authors:  Andreas Waechter           IBM    2006-04-13
 #           Pietro Belotti
 
-AUTOMAKE_OPTIONS = foreign
+AUTOMAKE_OPTIONS = foreign subdir-objects
 
 ########################################################################
 #                               libCouenne                             #
@@ -18,77 +18,67 @@ AUTOMAKE_OPTIONS = foreign
 # in the 'lib' directory
 lib_LTLIBRARIES = libCouenne.la
 
-# List all source files, including headers
+# List all source files
 libCouenne_la_SOURCES = \
 	main/CouenneBab.cpp \
 	main/BonCouenneSetup.cpp \
 	main/SmartAslDestr.cpp
 
 # List all additionally required libraries
-libCouenne_la_LIBADD = $(libCouenne_la_DEPENDENCIES)
-if DEPENDENCY_LINKING
-libCouenne_la_LIBADD += $(COUENNELIB_LIBS)
-endif
+libCouenne_la_LIBADD = \
+	interfaces/libCouenneInterfaces.la \
+	heuristics/libCouenneHeuristics.la \
+	problem/libCouenneProblem.la \
+	standardize/libCouenneStandardize.la \
+	expression/libCouenneExpression.la \
+	branch/libCouenneBranch.la \
+	convex/libCouenneConvex.la \
+	bound_tightening/libCouenneBoundTightening.la \
+	bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
+	util/libCouenneUtil.la \
+	disjunctive/libCouenneDisjunctive.la \
+	cut/crossconv/libCouenneCrossConv.la \
+	cut/sdpcuts/libCouenneSdpCuts.la
+#	ellipcuts/libCouenneEllipCuts.la 
+#	readnl/libCouenneReadnl.la 
 
-# List all dependency libraries
-libCouenne_la_DEPENDENCIES = \
-	./interfaces/libCouenneInterfaces.la \
-	./heuristics/libCouenneHeuristics.la \
-	./problem/libCouenneProblem.la \
-	./standardize/libCouenneStandardize.la \
-	./expression/libCouenneExpression.la \
-	./branch/libCouenneBranch.la \
-	./convex/libCouenneConvex.la \
-	./bound_tightening/libCouenneBoundTightening.la \
-	./bound_tightening/twoImpliedBT/libCouenneTwoImplied.la \
-	./util/libCouenneUtil.la \
-	./disjunctive/libCouenneDisjunctive.la \
-	./cut/crossconv/libCouenneCrossConv.la \
-	./cut/sdpcuts/libCouenneSdpCuts.la
+libCouenne_la_LIBADD += $(COUENNELIB_LFLAGS)
 
-#	./ellipcuts/libCouenneEllipCuts.la 
-#	./readnl/libCouenneReadnl.la 
-
-# This is for libtool
-libCouenne_la_LDFLAGS = $(LT_LDFLAGS)
+# Add libtool flags
+LDFLAGS = $(LT_LDFLAGS)
 
 ########################################################################
 #                            Additional flags                          #
 ########################################################################
 
-# Here list all include flags, relative to this "srcdir" directory.  This
-# "cygpath" stuff is necessary to compile with native compilers on Windows.
-
+# Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(srcdir)/convex` \
-	-I`$(CYGPATH_W) $(srcdir)/interfaces` \
-	-I`$(CYGPATH_W) $(srcdir)/heuristics` \
-	-I`$(CYGPATH_W) $(srcdir)/expression` \
-	-I`$(CYGPATH_W) $(srcdir)/expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/expression/partial` \
-	-I`$(CYGPATH_W) $(srcdir)/disjunctive` \
-	-I`$(CYGPATH_W) $(srcdir)/main` \
-	-I`$(CYGPATH_W) $(srcdir)/problem` \
-	-I`$(CYGPATH_W) $(srcdir)/branch` \
-	-I`$(CYGPATH_W) $(srcdir)/cut/sdpcuts` \
-	-I`$(CYGPATH_W) $(srcdir)/cut/crossconv` \
-	-I`$(CYGPATH_W) $(srcdir)/bound_tightening` \
-	-I`$(CYGPATH_W) $(srcdir)/bound_tightening/twoImpliedBT` \
-       $(COUENNELIB_CFLAGS)
+	-I$(srcdir)/convex \
+	-I$(srcdir)/interfaces \
+	-I$(srcdir)/heuristics \
+	-I$(srcdir)/expression \
+	-I$(srcdir)/expression/operators \
+	-I$(srcdir)/expression/partial \
+	-I$(srcdir)/disjunctive \
+	-I$(srcdir)/main \
+	-I$(srcdir)/problem \
+	-I$(srcdir)/branch \
+	-I$(srcdir)/cut/sdpcuts \
+	-I$(srcdir)/cut/crossconv \
+	-I$(srcdir)/bound_tightening \
+	-I$(srcdir)/bound_tightening/twoImpliedBT \
+	$(COUENNELIB_CFLAGS)
 
-#	-I`$(CYGPATH_W) $(srcdir)/two_implied_bt` \
-#	-I`$(CYGPATH_W) $(srcdir)/ellipcuts` 
-
-# This line is necessary to allow VPATH compilation
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)`
+#	-I$(srcdir)/two_implied_bt \
+#	-I$(srcdir)/ellipcuts 
 
 ########################################################################
 #                Headers that need to be installed                     #
 ########################################################################
 
 # Here list all the header files that are required by a user of the library,
-# and that therefore should be installed in 'include/coin'
-includecoindir = $(includedir)/coin
+# and that therefore should be installed in 'include/coin-or'
+includecoindir = $(includedir)/coin-or
 includecoin_HEADERS = \
 	util/CouenneRootQ.hpp \
 	util/CouenneFunTriplets.hpp \
@@ -173,16 +163,14 @@ includecoin_HEADERS = \
 	cut/sdpcuts/CouennePSDcon.hpp \
 	cut/sdpcuts/CouenneMatrix.hpp \
 	cut/crossconv/CouenneCrossConv.hpp
-
 # cut/sdpcuts/dsyevx_wrapper.hpp 
 # cut/sdpcuts/linquad_cuts.hpp 
 # cut/sdpcuts/populate.hpp 
 # cut/sdpcuts/quadratic_cuts_check.hpp 
 # cut/sdpcuts/rlt_cuts.hpp
-
 # ellipcuts/CouenneEllipCuts.hpp 
 
-if COIN_HAS_NTY
+if COIN_HAS_NAUTY
 includecoin_HEADERS += branch/Nauty.h
 endif
 

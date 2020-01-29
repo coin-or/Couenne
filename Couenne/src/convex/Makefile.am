@@ -8,7 +8,7 @@ AUTOMAKE_OPTIONS = foreign
 
 noinst_LTLIBRARIES = libCouenneConvex.la
 
-# List all source files for this library, including headers
+# List all source files for this library
 libCouenneConvex_la_SOURCES = \
 	addEnvelope.cpp \
 	createCuts.cpp \
@@ -18,7 +18,6 @@ libCouenneConvex_la_SOURCES = \
 	genRowCuts.cpp \
 	updateBranchInfo.cpp \
 	isOptimumCut.cpp
-
 
 # 	operators/conv-exprAbs.cpp \
 # 	operators/conv-exprDiv.cpp \
@@ -42,26 +41,14 @@ libCouenneConvex_la_SOURCES = \
 # 	operators/alphaConvexify.cpp \
 # 	operators/quadCuts.cpp 
 
-# This is for libtool
-libCouenneConvex_la_LDFLAGS = $(LT_LDFLAGS)
-
-# Here list all include flags, relative to this "srcdir" directory.  This
-# "cygpath" stuff is necessary to compile with native compilers on Windows
+# Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/../expression/operators/bounds` \
-	-I`$(CYGPATH_W) $(srcdir)/../util` \
-	-I`$(CYGPATH_W) $(srcdir)/../branch` \
-	-I`$(CYGPATH_W) $(srcdir)/../problem` \
+	-I$(srcdir)/.. \
+	-I$(srcdir)/../bound_tightening \
+	-I$(srcdir)/../expression \
+	-I$(srcdir)/../expression/operators \
+	-I$(srcdir)/../expression/operators/bounds \
+	-I$(srcdir)/../util \
+	-I$(srcdir)/../branch \
+	-I$(srcdir)/../problem \
 	$(COUENNELIB_CFLAGS)
-
-if COIN_HAS_NTY
-AM_CPPFLAGS += \
-	-I`$(CYGPATH_W) $(NTYINCDIR)/`
-endif
-
-# This line is necessary to allow VPATH compilation
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..
