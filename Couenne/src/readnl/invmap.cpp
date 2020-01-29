@@ -13,8 +13,18 @@
 
 #include "asl.h"
 #include "opcode.hd"
+// do not let nlp.h declare r_ops_ASL, as it would miss the dllimport-specificator
+#define r_ops_ASL dummy_for_windll
 #include "nlp.h"
+#undef r_ops_ASL
 #include "r_opn.hd"
+
+#ifdef DLL_EXPORT
+#define ASLLIB_IMPORT __declspec(dllimport)
+#else
+#define ASLLIB_IMPORT
+#endif
+extern "C" ASLLIB_IMPORT efunc *r_ops_ASL[];
 
 /* couples an ASL function pointer with the relative operator constant */
 
