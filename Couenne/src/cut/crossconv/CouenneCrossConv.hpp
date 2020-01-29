@@ -28,8 +28,8 @@ namespace Couenne {
 
   class CouenneProblem;
 
+#if 0
   /// Base class definition for relations between auxiliaries
-
   class COUENNELIB_EXPORT AuxRelation {
 
   public:
@@ -133,7 +133,7 @@ namespace Couenne {
 			       OsiCuts &, 
 			       const CglTreeInfo = CglTreeInfo ()) const;
   };
-
+#endif
 
   /// Cut Generator that uses relationships between auxiliaries
 
