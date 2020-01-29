@@ -67,7 +67,7 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/cut/crossconv \
 	-I$(srcdir)/bound_tightening \
 	-I$(srcdir)/bound_tightening/twoImpliedBT \
-	$(COUENNELIB_CFLAGS)
+	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD
 
 #	-I$(srcdir)/two_implied_bt \
 #	-I$(srcdir)/ellipcuts 

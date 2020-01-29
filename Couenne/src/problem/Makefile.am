@@ -62,4 +62,4 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../problem \
 	-I$(srcdir)/../problem/depGraph \
 	-I$(srcdir)/../cut/sdpcuts \
-	$(COUENNELIB_CFLAGS)
+	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD

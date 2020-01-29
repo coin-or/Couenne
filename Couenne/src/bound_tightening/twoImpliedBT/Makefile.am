@@ -23,4 +23,4 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../../branch \
 	-I$(srcdir)/../../problem \
 	-I$(srcdir)/../../bound_tightening \
-	$(COUENNELIB_CFLAGS)
+	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD

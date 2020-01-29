@@ -54,4 +54,4 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../problem \
 	-I$(srcdir)/../util \
 	-I$(srcdir)/../standardize \
-	$(COUENNELIB_CFLAGS)
+	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD

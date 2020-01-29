@@ -22,4 +22,4 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../.. \
 	-I$(srcdir)/../../expression \
 	-I$(srcdir)/../../problem \
-	$(COUENNELIB_CFLAGS)
+	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD
