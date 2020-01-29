@@ -76,6 +76,9 @@ AC_COIN_CHK_LIB([SCIP],[CouenneLib],[-lscipopt],[],[],[SCIPcreate])
 AC_COIN_CHK_LIB([Cplex],[CouenneLib],[-lcplex -lpthread -lm -ldl],[],[],[CPXgetstat])
 AC_LANG_POP(C)
 
+# for dsyevx in sdpcuts
+AC_COIN_CHK_LAPACK(CouenneLib)
+
 #############################################################################
 #                               System header                               #
 #############################################################################

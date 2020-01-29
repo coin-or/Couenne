@@ -9,6 +9,9 @@
 /* Define to 1 if the Cplex package is available */
 #undef COIN_HAS_CPLEX
 
+/* Define to 1 if the LAPACK package is available */
+#undef COIN_HAS_LAPACK
+
 /* Define to 1 if the Nauty package is available */
 #undef COIN_HAS_NAUTY
 
@@ -29,6 +32,13 @@
 
 /* Define to 1 if the SCIP package is available */
 #undef COIN_HAS_SCIP
+
+/* Define to a macro mangling the given C identifier (in lower and upper
+   case). */
+#undef COIN_LAPACK_FUNC
+
+/* As COIN_LAPACK_FUNC, but for C identifiers containing underscores. */
+#undef COIN_LAPACK_FUNC_
 
 /* whether CouenneInterface is derived from Bonmins AmplInterface */
 #undef COUENNEINTERFACE_FROM_ASL
