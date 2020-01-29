@@ -30,7 +30,7 @@ struct compNode {
 /// vertex of a dependence graph. Contains variable and its forward
 /// star (all variables it depends on)
 
-class DepNode {
+class COUENNELIB_EXPORT DepNode {
 
 public:
 
@@ -105,14 +105,14 @@ public:
 
 /// structure for comparing nodes
 
-bool compNode::operator () (const DepNode *n0, const DepNode *n1) const
+inline bool compNode::operator () (const DepNode *n0, const DepNode *n1) const
 {return (n0 -> Index () < n1 -> Index ());}
 
 
 /// Dependence graph. Shows dependence of auxiliary variable on other
 /// (auxiliary and/or original) variables
 
-class DepGraph {
+class COUENNELIB_EXPORT DepGraph {
 
 protected:
 

@@ -34,7 +34,7 @@ static inline CouNumber safeDiv (register CouNumber a, register CouNumber b, int
 ///  class to compute lower bound of a fraction based on the bounds of
 ///  both numerator and denominator
 
-class exprLBDiv: public exprOp {
+class COUENNELIB_EXPORT exprLBDiv: public exprOp {
 
  public:
 
@@ -82,7 +82,7 @@ inline CouNumber exprLBDiv::operator () () {
 /// class to compute upper bound of a fraction based on the bounds of
 /// both numerator and denominator
 
-class exprUBDiv: public exprOp {
+class COUENNELIB_EXPORT exprUBDiv: public exprOp {
 
  public:
 

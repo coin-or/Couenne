@@ -13,11 +13,12 @@
 
 #include <map>
 
+#include "CouenneConfig.h"
 #include "CouenneTypes.hpp"
 
 namespace Couenne {
 
-class quadElem {
+class COUENNELIB_EXPORT quadElem {
 
 private:
   exprVar   *varI_;
@@ -45,7 +46,7 @@ public:
 };
 
 
-class LinMap {
+class COUENNELIB_EXPORT LinMap {
 
 private:
   std::map <int, CouNumber> lmap_;
@@ -72,7 +73,7 @@ public:
 };
 
 
-class QuadMap {
+class COUENNELIB_EXPORT QuadMap {
 
 private:
   std::map <std::pair <int, int>, CouNumber> qmap_;

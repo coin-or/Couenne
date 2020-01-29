@@ -13,8 +13,9 @@
 
 #include "BonCbc.hpp"
 #include "BonBabSetupBase.hpp"
+#include "CouenneConfig.h"
 
-namespace Couenne {
+namespace COUENNELIB_EXPORT Couenne {
 
   class CouenneProblem;
 

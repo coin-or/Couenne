@@ -10,6 +10,8 @@
 #ifndef CouenneExprJac_HPP
 #define CouenneExprJac_HPP
 
+#include "CouenneConfig.h"
+
 namespace Couenne {
 
   class expression;
@@ -18,7 +20,7 @@ namespace Couenne {
   /// Jacobian of the problem (computed through Couenne expression
   /// classes).
 
-  class ExprJac {
+  class COUENNELIB_EXPORT ExprJac {
 
   private:
 

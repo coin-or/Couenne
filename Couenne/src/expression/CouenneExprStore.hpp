@@ -20,7 +20,7 @@ namespace Couenne {
 
 /// storage class for previously evaluated expressions
 
-class exprStore: public exprCopy {
+class COUENNELIB_EXPORT exprStore: public exprCopy {
 
  protected:
 

@@ -36,7 +36,7 @@ namespace Couenne {
  *  while lb_ = new exprConst (2.) and ub_ = new exprConst (4.).
  */
 
-class CouenneConstraint {
+class COUENNELIB_EXPORT CouenneConstraint {
 
  protected:
 
@@ -106,7 +106,7 @@ class CouenneConstraint {
  *
  */
 
-class CouenneObjective {
+class COUENNELIB_EXPORT CouenneObjective {
 
  protected:
 

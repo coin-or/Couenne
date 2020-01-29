@@ -17,7 +17,7 @@ namespace Couenne {
 
 /// class cosine, \f$ \cos f(x) \f$
 
-class exprCos: public exprUnary {
+class COUENNELIB_EXPORT exprCos: public exprUnary {
 
  public:
 
@@ -105,6 +105,7 @@ class exprCos: public exprUnary {
 
 
 /// common convexification method used by both cos and sin
+COUENNELIB_EXPORT
 CouNumber trigNewton (CouNumber, CouNumber, CouNumber);
 
 }

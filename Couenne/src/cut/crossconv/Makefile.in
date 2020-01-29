@@ -328,6 +328,7 @@ libCouenneCrossConv_la_SOURCES = \
 # Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \
 	-I$(srcdir)/.. \
+	-I$(srcdir)/../.. \
 	-I$(srcdir)/../../convex \
 	-I$(srcdir)/../../heuristics \
 	-I$(srcdir)/../../expression \

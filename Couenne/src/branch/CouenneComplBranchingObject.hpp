@@ -21,7 +21,7 @@ namespace Couenne {
  *  either x_1=0 or x_2=0
  */
 
-class CouenneComplBranchingObject: public CouenneBranchingObject {
+class COUENNELIB_EXPORT CouenneComplBranchingObject: public CouenneBranchingObject {
 
 public:
 

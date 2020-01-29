@@ -22,7 +22,7 @@ namespace Couenne {
 /// variable-type operator. All variables of the expression must be
 /// objects of this class
 
-class exprIVar: public exprVar {
+class COUENNELIB_EXPORT exprIVar: public exprVar {
 
  public:
 

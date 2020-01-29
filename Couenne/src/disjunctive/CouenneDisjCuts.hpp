@@ -20,6 +20,7 @@
 #include "BonBabSetupBase.hpp"
 #include "BonBabInfos.hpp"
 #include "OsiChooseVariable.hpp"
+#include "CouenneConfig.h"
 #include "CouenneTypes.hpp"
 #include "CouenneJournalist.hpp"
 
@@ -31,7 +32,7 @@ enum {COUENNE_INFEASIBLE, COUENNE_TIGHTENED, COUENNE_FEASIBLE};
 
 /// Cut Generator for linear convexifications
 
-class CouenneDisjCuts: public CglCutGenerator {
+class COUENNELIB_EXPORT CouenneDisjCuts: public CglCutGenerator {
 
  protected:
 

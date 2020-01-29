@@ -50,7 +50,7 @@ class CoinWarmStart;
 
 class Nauty;
 
-  class Node{
+  class COUENNELIB_EXPORT Node{
     int index;
     double coeff;
     double lb;
@@ -166,7 +166,7 @@ const CouNumber feas_tolerance_default = 1e-5;
  *  program occur in standardization.
  */
 
-class CouenneProblem {
+class COUENNELIB_EXPORT CouenneProblem {
 
   friend class exprMul;
 

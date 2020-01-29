@@ -28,6 +28,7 @@
 //#include "BonCutStrengthener.hpp"
 //#include "BonRegisteredOptions.hpp"
 
+#include "CouenneConfig.h"
 #include "CouenneTypes.hpp"
 
 namespace Ipopt {
@@ -56,7 +57,7 @@ namespace Couenne {
   /// Linear Program expressed as a TMINLP (so that we can use it for
   /// example as the continuous solver in Cbc).
 
-  class CouenneMINLPInterface: public OsiSolverInterface {
+  class COUENNELIB_EXPORT CouenneMINLPInterface: public OsiSolverInterface {
 
   public:
 

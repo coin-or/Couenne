@@ -15,6 +15,7 @@
 #include "CglCutGenerator.hpp"
 #include "BonRegisteredOptions.hpp"
 #include "IpOptionsList.hpp"
+#include "CouenneConfig.h"
 #include "CouenneJournalist.hpp"
 
 namespace Couenne {
@@ -40,7 +41,7 @@ namespace Couenne {
   /// (thanks Andrea!).
   ///
 
-  class CouenneSdpCuts: public CglCutGenerator {
+  class COUENNELIB_EXPORT CouenneSdpCuts: public CglCutGenerator {
 
   protected:
 

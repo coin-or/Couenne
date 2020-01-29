@@ -26,7 +26,7 @@ namespace Couenne {
 
 /// class for minima
 
-class exprMin: public exprOp {
+class COUENNELIB_EXPORT exprMin: public exprOp {
 
  public:
 

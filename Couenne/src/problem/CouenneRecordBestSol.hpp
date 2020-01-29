@@ -10,13 +10,14 @@
 #ifndef RECBESTSOL_H
 #define RECBESTSOL_H
 
+#include "CouenneConfig.h"
 #include "CouenneTypes.hpp"
 
 
 namespace Couenne {
 
 // class to record best found feasible solution
-class CouenneRecordBestSol {
+class COUENNELIB_EXPORT CouenneRecordBestSol {
 
 public:
 

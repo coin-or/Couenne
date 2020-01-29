@@ -16,7 +16,7 @@
 namespace Couenne {
 
 /// OsiObject for violation transfer on variables in a MINLP
-class CouenneVTObject: public CouenneVarObject {
+class COUENNELIB_EXPORT CouenneVTObject: public CouenneVarObject {
 
 public:
 

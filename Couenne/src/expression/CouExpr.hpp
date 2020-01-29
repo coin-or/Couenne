@@ -14,7 +14,7 @@
 
 namespace Couenne {
 
-class CouExpr {
+class COUENNELIB_EXPORT CouExpr {
 
 private:
 
@@ -39,36 +39,36 @@ public:
 };
 
 
-CouExpr operator+(CouExpr &e1, CouExpr &e2);
-CouExpr &operator/(CouExpr &e1, CouExpr &e2);
-CouExpr &operator%(CouExpr &e1, CouExpr &e2);
-CouExpr &operator-(CouExpr &e1, CouExpr &e2);
-CouExpr &operator*(CouExpr &e1, CouExpr &e2);
-CouExpr &operator^(CouExpr &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr operator+(CouExpr &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator/(CouExpr &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator%(CouExpr &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator-(CouExpr &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator*(CouExpr &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator^(CouExpr &e1, CouExpr &e2);
 
-CouExpr &sin(CouExpr &e);
-CouExpr &cos(CouExpr &e);
-CouExpr &log(CouExpr &e);
-CouExpr &exp(CouExpr &e);
+COUENNELIB_EXPORT CouExpr &sin(CouExpr &e);
+COUENNELIB_EXPORT CouExpr &cos(CouExpr &e);
+COUENNELIB_EXPORT CouExpr &log(CouExpr &e);
+COUENNELIB_EXPORT CouExpr &exp(CouExpr &e);
 
-CouExpr &operator+(CouNumber &e1, CouExpr &e2);
-CouExpr &operator/(CouNumber &e1, CouExpr &e2);
-CouExpr &operator%(CouNumber &e1, CouExpr &e2);
-CouExpr &operator-(CouNumber &e1, CouExpr &e2);
-CouExpr &operator*(CouNumber &e1, CouExpr &e2);
-CouExpr &operator^(CouNumber &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator+(CouNumber &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator/(CouNumber &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator%(CouNumber &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator-(CouNumber &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator*(CouNumber &e1, CouExpr &e2);
+COUENNELIB_EXPORT CouExpr &operator^(CouNumber &e1, CouExpr &e2);
 
-CouExpr &sin(CouNumber &e);
-CouExpr &cos(CouNumber &e);
-CouExpr &log(CouNumber &e);
-CouExpr &exp(CouNumber &e);
+COUENNELIB_EXPORT CouExpr &sin(CouNumber &e);
+COUENNELIB_EXPORT CouExpr &cos(CouNumber &e);
+COUENNELIB_EXPORT CouExpr &log(CouNumber &e);
+COUENNELIB_EXPORT CouExpr &exp(CouNumber &e);
 
-CouExpr &operator+(CouExpr &e1, CouNumber &e2);
-CouExpr &operator/(CouExpr &e1, CouNumber &e2);
-CouExpr &operator%(CouExpr &e1, CouNumber &e2);
-CouExpr &operator-(CouExpr &e1, CouNumber &e2);
-CouExpr &operator*(CouExpr &e1, CouNumber &e2);
-CouExpr &operator^(CouExpr &e1, CouNumber &e2);
+COUENNELIB_EXPORT CouExpr &operator+(CouExpr &e1, CouNumber &e2);
+COUENNELIB_EXPORT CouExpr &operator/(CouExpr &e1, CouNumber &e2);
+COUENNELIB_EXPORT CouExpr &operator%(CouExpr &e1, CouNumber &e2);
+COUENNELIB_EXPORT CouExpr &operator-(CouExpr &e1, CouNumber &e2);
+COUENNELIB_EXPORT CouExpr &operator*(CouExpr &e1, CouNumber &e2);
+COUENNELIB_EXPORT CouExpr &operator^(CouExpr &e1, CouNumber &e2);
 
 }
 

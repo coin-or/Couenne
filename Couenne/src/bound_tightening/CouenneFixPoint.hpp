@@ -27,7 +27,7 @@ namespace Couenne {
 
   /// Cut Generator for FBBT fixpoint
 
-  class CouenneFixPoint: public CglCutGenerator {
+  class COUENNELIB_EXPORT CouenneFixPoint: public CglCutGenerator {
 
   public:
 

@@ -42,7 +42,7 @@ class CouenneCutGenerator;
 /// All variables of the expression must be objects of this class or
 /// of the derived exprAux class
 
-class exprVar: public expression {
+class COUENNELIB_EXPORT exprVar: public expression {
 
  protected:
 

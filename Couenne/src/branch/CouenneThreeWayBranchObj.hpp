@@ -25,7 +25,7 @@ namespace Couenne {
 /// convexification is sought around the current point by dividing the
 /// interval in three parts
 
-class CouenneThreeWayBranchObj: public OsiBranchingObject {
+class COUENNELIB_EXPORT CouenneThreeWayBranchObj: public OsiBranchingObject {
 
 public:
 

@@ -10,6 +10,8 @@
 #ifndef CouenneExprHess_HPP
 #define CouenneExprHess_HPP
 
+#include "CouenneConfig.h"
+
 namespace Couenne {
 
   class expression;
@@ -18,7 +20,7 @@ namespace Couenne {
   /// expression matrices. Used to evaluate the Hessian of the
   /// Lagrangian function at an optimal solution of the NLP
 
-  class ExprHess {
+  class COUENNELIB_EXPORT ExprHess {
 
   private:
 

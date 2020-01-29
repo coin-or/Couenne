@@ -33,7 +33,7 @@ namespace Couenne {
  *  Branching can also be performed on continuous variables.
  */
 
-class CouenneOrbitBranchingObj: public CouenneBranchingObject {
+class COUENNELIB_EXPORT CouenneOrbitBranchingObj: public CouenneBranchingObject {
 
 public:
 

@@ -35,7 +35,7 @@ namespace Couenne {
 
 /// lower bound 
 
-class exprLowerBound: public exprVar {
+class COUENNELIB_EXPORT exprLowerBound: public exprVar {
 
  public:
 
@@ -84,7 +84,7 @@ class exprLowerBound: public exprVar {
 
 /// upper bound 
 
-class exprUpperBound: public exprVar {
+class COUENNELIB_EXPORT exprUpperBound: public exprVar {
 
  public:
 

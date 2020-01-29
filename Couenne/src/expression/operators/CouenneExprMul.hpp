@@ -21,7 +21,7 @@ class CouenneCutGenerator;
 
 /// class for multiplications, \f$ \prod_{i=1}^n f_i(x) \f$
 
-class exprMul: public exprOp {
+class COUENNELIB_EXPORT exprMul: public exprOp {
 
  public:
 
@@ -128,6 +128,7 @@ inline CouNumber exprMul:: operator () () {
 
 
 /// unified convexification of products and divisions
+COUENNELIB_EXPORT
 void unifiedProdCuts (const CouenneCutGenerator *, OsiCuts &, 
 		      int, CouNumber, CouNumber, CouNumber,
 		      int, CouNumber, CouNumber, CouNumber,
@@ -136,6 +137,7 @@ void unifiedProdCuts (const CouenneCutGenerator *, OsiCuts &,
 
 
 /// better cuts than those from unifiedProdCuts
+COUENNELIB_EXPORT
 void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs, 
 		   int xi, CouNumber x0, CouNumber xl, CouNumber xu,
 		   int yi, CouNumber y0, CouNumber yl, CouNumber yu,
@@ -144,6 +146,7 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
 /// compute distance from future convexifications in set \f$\{(x,y,w):
 /// w = xy\}\f$ with x,y,w bounded. Unified with exprDiv
+COUENNELIB_EXPORT
 double *computeMulBrDist (const OsiBranchingInformation *info,
 			  int xi, int yi, int wi, int brind, double *brpt, int nPts = 1);
 

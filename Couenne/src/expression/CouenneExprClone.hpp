@@ -21,7 +21,7 @@ namespace Couenne {
 
 /// expression clone (points to another expression) 
 
-class exprClone: public exprCopy {
+class COUENNELIB_EXPORT exprClone: public exprCopy {
 
  public:
 

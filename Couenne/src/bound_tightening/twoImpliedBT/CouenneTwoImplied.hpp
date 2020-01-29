@@ -17,6 +17,7 @@
 #include "CglCutGenerator.hpp"
 #include "OsiRowCut.hpp"
 #include "CouenneJournalist.hpp"
+#include "CouenneConfig.h"
 
 namespace Ipopt {
   template <class T> class SmartPtr;
@@ -171,7 +172,7 @@ namespace Couenne {
      as in those cases, no \f$ c_i \f$ would be in \f$ [0,1] \f$
   */
 
-  class CouenneTwoImplied: public CglCutGenerator {
+  class COUENNELIB_EXPORT CouenneTwoImplied: public CglCutGenerator {
 
   public:
 

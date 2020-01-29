@@ -22,7 +22,7 @@ class CouenneObject;
 
 // expression copy (points to VALUE of another expression) 
 
-class exprCopy: public expression {
+class COUENNELIB_EXPORT exprCopy: public expression {
 
  protected:
 

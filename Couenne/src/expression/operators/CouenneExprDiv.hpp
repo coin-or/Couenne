@@ -21,7 +21,7 @@ namespace Couenne {
 
 /// class for divisions, \f$ \frac{f(x)}{g(x)} \f$
 
-class exprDiv: public exprOp {
+class COUENNELIB_EXPORT exprDiv: public exprOp {
 
  public:
 

@@ -14,16 +14,18 @@
 #include "BonBabInfos.hpp"
 #include "BonCbc.hpp"
 #include "IpSmartPtr.hpp"
+#include "CouenneConfig.h"
+
 #include <list>
 
 namespace Couenne {
 
   /** Bonmin class for passing info between components of branch-and-cuts.*/
-  class CouenneInfo : public Bonmin::BabInfo
+  class COUENNELIB_EXPORT CouenneInfo : public Bonmin::BabInfo
   {
   public:
     /** Class for storing an Nlp Solution */
-    class NlpSolution: public Ipopt::ReferencedObject
+    class COUENNELIB_EXPORT NlpSolution: public Ipopt::ReferencedObject
     {
     public:
       // meaningful constructor

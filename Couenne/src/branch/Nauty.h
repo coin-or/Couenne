@@ -11,6 +11,8 @@
 #ifndef NAUTY_H
 #define NAUTY_H
 
+#include "CouenneConfig.h"
+
 extern "C" {
 #include "nauty.h"
 }
@@ -20,7 +22,7 @@ extern "C" {
 #include <vector>
 #include <string>
 
-class Nauty
+class COUENNELIB_EXPORT Nauty
 {
 
 public:

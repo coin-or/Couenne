@@ -37,7 +37,7 @@ inline CouNumber safeProd (register CouNumber a, register CouNumber b) {
 /// class to compute lower bound of a product based on the bounds of
 /// both factors
 
-class exprLBMul: public exprOp {
+class COUENNELIB_EXPORT exprLBMul: public exprOp {
 
  public:
 
@@ -90,7 +90,7 @@ inline CouNumber exprLBMul::operator () () {
 /// class to compute upper bound of a product based on the bounds of
 /// both factors
 
-class exprUBMul: public exprOp {
+class COUENNELIB_EXPORT exprUBMul: public exprOp {
 
  public:
 

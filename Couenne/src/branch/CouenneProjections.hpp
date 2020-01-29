@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 
+#include "CouenneConfig.h"
 #include "CouennePrecisions.hpp"
 
 namespace Couenne {
@@ -22,6 +23,7 @@ namespace Couenne {
  *  bounds [lb, ub] on x. Return distance from segment, 0 if satisfied
  */
 
+COUENNELIB_EXPORT
 CouNumber project (CouNumber a,   CouNumber b, CouNumber c, 
 		   CouNumber x0,  CouNumber y0, 
 		   CouNumber lb,  CouNumber ub, 
@@ -33,6 +35,7 @@ CouNumber project (CouNumber a,   CouNumber b, CouNumber c,
  *  sign. Return distance from segment, 0 if on it.
  */
 
+COUENNELIB_EXPORT
 CouNumber projectSeg (CouNumber x0,  CouNumber y0, 
 		      CouNumber x1,  CouNumber y1, 
 		      CouNumber x2,  CouNumber y2, 

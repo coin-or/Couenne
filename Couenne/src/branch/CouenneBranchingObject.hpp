@@ -34,7 +34,7 @@ class CouenneProblem;
  *  Branching can also be performed on continuous variables.
  */
 
-class CouenneBranchingObject: public OsiTwoWayBranchingObject {
+class COUENNELIB_EXPORT CouenneBranchingObject: public OsiTwoWayBranchingObject {
 
 public:
 

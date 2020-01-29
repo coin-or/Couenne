@@ -15,6 +15,7 @@
 #include "BonBonminSetup.hpp"
 #include "CbcFeasibilityBase.hpp"
 
+#include "CouenneConfig.h"
 #include "CouenneTNLP.hpp"
 
 struct ASL;
@@ -30,7 +31,7 @@ namespace Couenne {
   class CouenneProblem;
   class CouenneTNLP;
 
-  class SmartAsl : public Ipopt::ReferencedObject{
+  class COUENNELIB_EXPORT SmartAsl : public Ipopt::ReferencedObject{
   public:
     ASL * asl;
     SmartAsl():
@@ -40,7 +41,7 @@ namespace Couenne {
     virtual ~SmartAsl();
   };
 
-  class CouenneSetup : public Bonmin::BonminSetup{
+  class COUENNELIB_EXPORT CouenneSetup : public Bonmin::BonminSetup{
   public:
     /** Default constructor*/
     CouenneSetup():

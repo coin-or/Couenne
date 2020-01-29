@@ -19,7 +19,7 @@ class CouenneProblem;
 
 
 /// OsiObject for variables in a MINLP
-class CouenneVarObject: public CouenneObject {
+class COUENNELIB_EXPORT CouenneVarObject: public CouenneObject {
 
 public:
 
