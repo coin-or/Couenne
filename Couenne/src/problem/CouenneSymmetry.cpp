@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 
+#include "CouenneConfig.h"
 #include "CouenneProblem.hpp"
 
 using namespace Couenne;
