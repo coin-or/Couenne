@@ -414,7 +414,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
             if ((*it) -> Multiplicity () == 0) {
 
               if ((*it) -> Image ()) fprintf (txtSol, "%d %e\n", (*it) -> Index (), (*(*it) -> Image ()) ());
-              else                   fprintf (txtSol, "%d %e\n", (*it) -> Index (), 0);
+              else                   fprintf (txtSol, "%d %e\n", (*it) -> Index (), 0.0);
 
             } else fprintf (txtSol, "%d %e\n", (*it) -> Index (), (*(*it)) ());
           }

@@ -229,7 +229,7 @@ void CouenneSparseVector::print () const {
 
   int cnt=0;
 
-  printf ("Vector (%ld) (", elem_ .  size ());
+  printf ("Vector (%d) (", (int) elem_ .  size ());
 
   for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator i = elem_ . begin (); 
        i != elem_ . end (); ++i) {
@@ -250,9 +250,9 @@ void CouenneSparseVector::print () const {
 /// Pretty print
 void CouenneExprMatrix::print () const {
 
-  printf ("Matrix (%ld x %ld):\n", 
-	  row_ . size (), 
-	  col_ . size ());
+  printf ("Matrix (%d x %d):\n", 
+	  (int) row_ . size (), 
+	  (int) col_ . size ());
 
   // print rows
 
