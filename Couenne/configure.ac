@@ -118,7 +118,6 @@ AC_CONFIG_FILES([Makefile
                  src/expression/Makefile
                  src/problem/Makefile
                  src/standardize/Makefile
-                 src/readnl/Makefile
                  src/util/Makefile
                  src/Makefile
                  test/grandTest.sh

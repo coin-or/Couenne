@@ -13,7 +13,7 @@ if COIN_HAS_ASL
 endif
 
 couenne_SOURCES = BonCouenne.cpp
-couenne_LDADD   = ../libCouenne.la ../readnl/libCouenneReadnl.la
+couenne_LDADD   = ../libCouenne.la
 
 # Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \

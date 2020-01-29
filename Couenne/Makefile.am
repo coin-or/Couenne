@@ -27,10 +27,6 @@ SUBDIRS = src/util \
 	src/cut/crossconv \
 	src
 
-if COIN_HAS_ASL
-SUBDIRS += src/readnl
-endif
-
 SUBDIRS += src/main 
 
 # We don't want to compile the test subdirectory, unless the test target is

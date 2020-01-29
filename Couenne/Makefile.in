@@ -107,12 +107,11 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@COIN_HAS_ASL_TRUE@am__append_1 = src/readnl
 
 # We don't want to compile the test subdirectory, unless the test target is
 # specified.  But we need to list it as subdirectory to make sure that it is
 # included in the tarball
-@ALWAYS_FALSE@am__append_2 = test
+@ALWAYS_FALSE@am__append_1 = test
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -213,8 +212,8 @@ CSCOPE = cscope
 DIST_SUBDIRS = src/util src/expression src/standardize src/problem \
 	src/bound_tightening src/bound_tightening/twoImpliedBT \
 	src/convex src/branch src/disjunctive src/interfaces \
-	src/heuristics src/cut/sdpcuts src/cut/crossconv src \
-	src/readnl src/main test
+	src/heuristics src/cut/sdpcuts src/cut/crossconv src src/main \
+	test
 pkgdatadir = $(datadir)/$(PACKAGE_TARNAME)
 pkgincludedir = $(includedir)/coin-or
 ACLOCAL = @ACLOCAL@
@@ -364,8 +363,8 @@ AUTOMAKE_OPTIONS = foreign
 SUBDIRS = src/util src/expression src/standardize src/problem \
 	src/bound_tightening src/bound_tightening/twoImpliedBT \
 	src/convex src/branch src/disjunctive src/interfaces \
-	src/heuristics src/cut/sdpcuts src/cut/crossconv src \
-	$(am__append_1) src/main $(am__append_2)
+	src/heuristics src/cut/sdpcuts src/cut/crossconv src src/main \
+	$(am__append_1)
 
 ########################################################################
 #                  Installation of the pkg-config file                 #

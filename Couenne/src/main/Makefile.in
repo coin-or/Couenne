@@ -110,7 +110,7 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_couenne_OBJECTS = BonCouenne.$(OBJEXT)
 couenne_OBJECTS = $(am_couenne_OBJECTS)
-couenne_DEPENDENCIES = ../libCouenne.la ../readnl/libCouenneReadnl.la
+couenne_DEPENDENCIES = ../libCouenne.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -316,7 +316,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 couenne_SOURCES = BonCouenne.cpp
-couenne_LDADD = ../libCouenne.la ../readnl/libCouenneReadnl.la
+couenne_LDADD = ../libCouenne.la
 
 # Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \

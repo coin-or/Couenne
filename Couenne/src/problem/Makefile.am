@@ -47,7 +47,8 @@ libCouenneProblem_la_SOURCES += \
 	../readnl/readnl.cpp \
 	../readnl/nl2e.cpp \
 	../readnl/invmap.cpp \
-	../readnl/readASLfg.cpp
+	../readnl/readASLfg.cpp \
+	../readnl/CouenneAmplInterface.cpp
 endif
 
 # Here list all include flags, relative to this "srcdir" directory.
@@ -59,7 +60,9 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../standardize \
 	-I$(srcdir)/../bound_tightening \
 	-I$(srcdir)/../branch \
-	-I$(srcdir)/../problem \
 	-I$(srcdir)/../problem/depGraph \
 	-I$(srcdir)/../cut/sdpcuts \
+	-I$(srcdir)/../main \
+	-I$(srcdir)/../interfaces \
 	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD
+
