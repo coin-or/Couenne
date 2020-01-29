@@ -50,9 +50,10 @@ using namespace Couenne;
 #include "CouenneBranchingObject.hpp"
 #endif
 
-#ifdef COIN_HAS_SCIP
-#include "lpiswitch.h"
-#endif
+// this is only for SCIP build via ThirdParty/SCIP, which we no longer expect to be used
+//#ifdef COIN_HAS_SCIP
+//#include "lpiswitch.h"
+//#endif
 
 #include "CoinSignal.hpp"
 
@@ -96,10 +97,10 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
   using namespace Ipopt;
 
-#ifdef COIN_HAS_SCIP
-  //SCIPlpiSwitchSetDefaultSolver(); 
-  SCIPlpiSwitchSetSolver(SCIP_LPISW_CLP);
-#endif
+//#ifdef COIN_HAS_SCIP
+//  //SCIPlpiSwitchSetDefaultSolver(); 
+//  SCIPlpiSwitchSetSolver(SCIP_LPISW_CLP);
+//#endif
 
   char * pbName = NULL;
 
