@@ -14,7 +14,6 @@ Couenne/config.guess -text
 Couenne/config.sub -text
 Couenne/configure -text
 Couenne/configure.ac -text
-Couenne/couenne-uninstalled.pc.in -text
 Couenne/couenne.pc.in -text
 Couenne/depcomp -text
 Couenne/doc/couenne-user-manual.pdf -text
