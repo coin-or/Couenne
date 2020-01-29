@@ -321,8 +321,8 @@ int CouenneProblem::readnl (const ASL *asl) {
     }
 
     // set constraint sign
-    if (lb > negInfinity)
-      if (ub < Infinity) sign = COUENNE_RNG;
+    if (lb > -COUENNE_INFINITY /*negInfinity*/)
+      if (ub < COUENNE_INFINITY /*Infinity*/) sign = COUENNE_RNG;
       else               sign = COUENNE_GE;
     else                 sign = COUENNE_LE;
 
@@ -380,8 +380,8 @@ int CouenneProblem::readnl (const ASL *asl) {
     // }
 
     // add them (and set lower-upper bound)
-    if ((lb < negInfinity) &&
-        (ub > Infinity)) {
+    if ((lb < -COUENNE_INFINITY /*negInfinity*/) &&
+        (ub > COUENNE_INFINITY /*Infinity*/)) {
 
       printf ("Free constraint %d ignored\n", i);
 

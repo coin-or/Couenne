@@ -42,8 +42,8 @@
 
 // Code to enable user interruption
 static CbcModel * currentBranchModel = NULL; // pointer to the main b&b
-extern Bonmin::OACutGenerator2 *currentOA;   // pointer to the OA generator
-extern CbcModel                *OAModel;     // pointer to the submip if using Cbc
+extern BONMINLIB_EXPORT Bonmin::OACutGenerator2 *currentOA;   // pointer to the OA generator
+extern BONMINLIB_EXPORT CbcModel                *OAModel;     // pointer to the submip if using Cbc
 
 extern "C" {
 

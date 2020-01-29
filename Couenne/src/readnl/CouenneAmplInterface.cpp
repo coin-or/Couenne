@@ -536,8 +536,8 @@ bool CouenneAmplInterface::readnl() {
     }
 
     // set constraint sign
-    if (lb > negInfinity)
-      if (ub < Infinity) sign = COUENNE_RNG;
+    if (lb > -COUENNE_INFINITY /* negInfinity */)
+      if (ub < COUENNE_INFINITY /* Infinity */) sign = COUENNE_RNG;
       else               sign = COUENNE_GE;
     else                 sign = COUENNE_LE;
 
