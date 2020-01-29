@@ -1,6 +1,6 @@
 /* $Id$ 
  *
- * Name:    Nauty.cpp
+ * Name:    CouenneNauty.hpp
  * Authors: Jim Ostrowski
  * Purpose: Branching with symmetry
  * Date:    October 13, 2010
@@ -8,8 +8,8 @@
  * This file is licensed under the Common Public License (CPL)
  */
 
-#ifndef NAUTY_H
-#define NAUTY_H
+#ifndef COUENNENAUTY_HPP
+#define COUENNENAUTY_HPP
 
 #include "CouenneConfig.h"
 

@@ -171,7 +171,7 @@ includecoin_HEADERS = \
 # ellipcuts/CouenneEllipCuts.hpp 
 
 if COIN_HAS_NAUTY
-includecoin_HEADERS += branch/Nauty.h
+includecoin_HEADERS += branch/CouenneNauty.hpp
 endif
 
 install-exec-local:

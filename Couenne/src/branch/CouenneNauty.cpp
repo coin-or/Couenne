@@ -1,6 +1,6 @@
 /* $Id$ 
  *
- * Name:    Nauty.cpp
+ * Name:    CouenneNauty.cpp
  * Authors: Jim Ostrowski
  * Purpose: Branching with symmetry -- implementation of the Nauty object
  * Date:    October 13, 2010
@@ -10,7 +10,7 @@
 
 #include <cassert>
 #include <cmath>
-#include "Nauty.h"
+#include "CouenneNauty.hpp"
 #include <iostream>
 #include <algorithm>
 #include <map>

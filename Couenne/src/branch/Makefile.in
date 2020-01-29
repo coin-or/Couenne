@@ -94,7 +94,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@COIN_HAS_NAUTY_TRUE@am__append_1 = Nauty.cpp
+@COIN_HAS_NAUTY_TRUE@am__append_1 = CouenneNauty.cpp
 subdir = src/branch
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -108,7 +108,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneBranch_la_LIBADD =
-@COIN_HAS_NAUTY_TRUE@am__objects_1 = Nauty.lo
+@COIN_HAS_NAUTY_TRUE@am__objects_1 = CouenneNauty.lo
 am_libCouenneBranch_la_OBJECTS = CouenneThreeWayBranchObj.lo \
 	CouenneBranchingObject.lo CouenneObject.lo CouenneVarObject.lo \
 	CouenneChooseVariable.lo CouenneChooseStrong.lo \
@@ -143,12 +143,12 @@ am__depfiles_remade = ./$(DEPDIR)/BranchCore.Plo \
 	./$(DEPDIR)/CouenneChooseVariable.Plo \
 	./$(DEPDIR)/CouenneComplBranchingObject.Plo \
 	./$(DEPDIR)/CouenneComplObject.Plo \
-	./$(DEPDIR)/CouenneObject.Plo \
+	./$(DEPDIR)/CouenneNauty.Plo ./$(DEPDIR)/CouenneObject.Plo \
 	./$(DEPDIR)/CouenneOrbitBranchingObj.Plo \
 	./$(DEPDIR)/CouenneOrbitObj.Plo \
 	./$(DEPDIR)/CouenneSOSObject.Plo \
 	./$(DEPDIR)/CouenneThreeWayBranchObj.Plo \
-	./$(DEPDIR)/CouenneVarObject.Plo ./$(DEPDIR)/Nauty.Plo \
+	./$(DEPDIR)/CouenneVarObject.Plo \
 	./$(DEPDIR)/StrongBranchingSetupList.Plo \
 	./$(DEPDIR)/doStrongBranching.Plo \
 	./$(DEPDIR)/feasibleRegion.Plo ./$(DEPDIR)/infeasibility.Plo \
@@ -433,13 +433,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneChooseVariable.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneComplBranchingObject.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneComplObject.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneNauty.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneObject.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneOrbitBranchingObj.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneOrbitObj.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneSOSObject.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneThreeWayBranchObj.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CouenneVarObject.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Nauty.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StrongBranchingSetupList.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/doStrongBranching.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/feasibleRegion.Plo@am__quote@ # am--include-marker
@@ -577,13 +577,13 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/CouenneChooseVariable.Plo
 	-rm -f ./$(DEPDIR)/CouenneComplBranchingObject.Plo
 	-rm -f ./$(DEPDIR)/CouenneComplObject.Plo
+	-rm -f ./$(DEPDIR)/CouenneNauty.Plo
 	-rm -f ./$(DEPDIR)/CouenneObject.Plo
 	-rm -f ./$(DEPDIR)/CouenneOrbitBranchingObj.Plo
 	-rm -f ./$(DEPDIR)/CouenneOrbitObj.Plo
 	-rm -f ./$(DEPDIR)/CouenneSOSObject.Plo
 	-rm -f ./$(DEPDIR)/CouenneThreeWayBranchObj.Plo
 	-rm -f ./$(DEPDIR)/CouenneVarObject.Plo
-	-rm -f ./$(DEPDIR)/Nauty.Plo
 	-rm -f ./$(DEPDIR)/StrongBranchingSetupList.Plo
 	-rm -f ./$(DEPDIR)/doStrongBranching.Plo
 	-rm -f ./$(DEPDIR)/feasibleRegion.Plo
@@ -641,13 +641,13 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/CouenneChooseVariable.Plo
 	-rm -f ./$(DEPDIR)/CouenneComplBranchingObject.Plo
 	-rm -f ./$(DEPDIR)/CouenneComplObject.Plo
+	-rm -f ./$(DEPDIR)/CouenneNauty.Plo
 	-rm -f ./$(DEPDIR)/CouenneObject.Plo
 	-rm -f ./$(DEPDIR)/CouenneOrbitBranchingObj.Plo
 	-rm -f ./$(DEPDIR)/CouenneOrbitObj.Plo
 	-rm -f ./$(DEPDIR)/CouenneSOSObject.Plo
 	-rm -f ./$(DEPDIR)/CouenneThreeWayBranchObj.Plo
 	-rm -f ./$(DEPDIR)/CouenneVarObject.Plo
-	-rm -f ./$(DEPDIR)/Nauty.Plo
 	-rm -f ./$(DEPDIR)/StrongBranchingSetupList.Plo
 	-rm -f ./$(DEPDIR)/doStrongBranching.Plo
 	-rm -f ./$(DEPDIR)/feasibleRegion.Plo

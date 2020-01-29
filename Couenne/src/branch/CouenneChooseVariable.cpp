@@ -21,7 +21,7 @@
 #include "CouenneObject.hpp"
 
 #ifdef COIN_HAS_NAUTY
-#include "Nauty.h"
+#include "CouenneNauty.hpp"
 #endif
 
 struct objPri {

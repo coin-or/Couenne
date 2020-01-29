@@ -17,7 +17,7 @@
 #include "CouenneJournalist.hpp"
 #include "OsiBranchingObject.hpp"
 #include "CouenneObject.hpp"
-#include "Nauty.h"
+#include "CouenneNauty.hpp"
 
 namespace Couenne {
 

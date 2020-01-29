@@ -26,7 +26,7 @@ using namespace Couenne;
 #include "CouenneExprVar.hpp"
 #include "CouenneExprGroup.hpp"
 
-#include "Nauty.h"
+#include "CouenneNauty.hpp"
 #include "CouenneBranchingObject.hpp"
 
 void Node::node(int i, double c , double l, double u, int cod, int s){

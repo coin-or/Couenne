@@ -30,7 +30,7 @@ libCouenneBranch_la_SOURCES = \
 	StrongBranchingSetupList.cpp
 
 if COIN_HAS_NAUTY
-libCouenneBranch_la_SOURCES += Nauty.cpp
+libCouenneBranch_la_SOURCES += CouenneNauty.cpp
 endif
 
 # 	operators/branchExprAbs.cpp \

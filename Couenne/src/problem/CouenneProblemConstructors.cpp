@@ -38,7 +38,7 @@
 #include "CouenneSdpCuts.hpp"
 
 #ifdef COIN_HAS_NAUTY
-#include "Nauty.h"
+#include "CouenneNauty.hpp"
 #endif
 
 using namespace Couenne;

@@ -104,7 +104,7 @@ host_triplet = @host@
 # cut/sdpcuts/quadratic_cuts_check.hpp 
 # cut/sdpcuts/rlt_cuts.hpp
 # ellipcuts/CouenneEllipCuts.hpp 
-@COIN_HAS_NAUTY_TRUE@am__append_1 = branch/Nauty.h
+@COIN_HAS_NAUTY_TRUE@am__append_1 = branch/CouenneNauty.hpp
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -269,7 +269,7 @@ am__includecoin_HEADERS_DIST = util/CouenneRootQ.hpp \
 	disjunctive/CouenneDisjCuts.hpp convex/CouenneCutGenerator.hpp \
 	cut/sdpcuts/CouenneSdpCuts.hpp cut/sdpcuts/CouennePSDcon.hpp \
 	cut/sdpcuts/CouenneMatrix.hpp \
-	cut/crossconv/CouenneCrossConv.hpp branch/Nauty.h
+	cut/crossconv/CouenneCrossConv.hpp branch/CouenneNauty.hpp
 HEADERS = $(includecoin_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
 	$(LISP)config.h.in config_couenne.h.in

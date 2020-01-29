@@ -23,7 +23,7 @@
 //#define FM_PRINT_INFO
 
 #ifdef COIN_HAS_NAUTY
-#include "Nauty.h"
+#include "CouenneNauty.hpp"
 #endif
 
 using namespace Ipopt;

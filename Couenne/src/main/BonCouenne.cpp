@@ -46,7 +46,7 @@ using namespace Couenne;
 #include "CouenneJournalist.hpp"
 
 #ifdef COIN_HAS_NAUTY
-#include "Nauty.h"
+#include "CouenneNauty.hpp"
 #include "CouenneBranchingObject.hpp"
 #endif
 
