@@ -17,6 +17,7 @@
 
 #include "CouennePrecisions.hpp"
 #include "CouenneTypes.hpp"
+#include "CouenneConfig.h"
 
 class OsiBranchingInformation;
 class OsiSolverInterface;
@@ -45,7 +46,7 @@ struct compNode;
 /// all other expression classes (for constants, variables, and
 /// operators) are derived.
 
-class expression {
+class COUENNELIB_EXPORT expression {
 
  public:
 

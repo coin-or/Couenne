@@ -14,6 +14,7 @@
 
 #include <queue>
 
+#include "CouenneConfig.h"
 #include "CouenneTypes.hpp"
 #include "CbcHeuristic.hpp"
 #include "CouenneFPpool.hpp"
@@ -54,7 +55,7 @@ namespace Couenne {
   /// An implementation of the Feasibility pump that uses
   /// linearization and Ipopt to find the two sequences of points.
   
-  class CouenneFeasPump: public CbcHeuristic {
+  class COUENNELIB_EXPORT CouenneFeasPump: public CbcHeuristic {
 
   public:
 

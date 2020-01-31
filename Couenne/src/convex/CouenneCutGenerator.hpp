@@ -46,7 +46,7 @@ class funtriplet;
 
 /// Cut Generator for linear convexifications
 
-class CouenneCutGenerator: public CglCutGenerator {
+class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
 
  protected:
 
@@ -264,6 +264,7 @@ class CouenneCutGenerator: public CglCutGenerator {
 
 
 /// translate sparse to dense vector (should be replaced)
+COUENNELIB_EXPORT
 void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchanged);
 
 }

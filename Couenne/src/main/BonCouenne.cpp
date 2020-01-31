@@ -45,14 +45,15 @@ using namespace Couenne;
 #include "CouenneProblem.hpp"
 #include "CouenneJournalist.hpp"
 
-#ifdef COIN_HAS_NTY
-#include "Nauty.h"
+#ifdef COIN_HAS_NAUTY
+#include "CouenneNauty.hpp"
 #include "CouenneBranchingObject.hpp"
 #endif
 
-#ifdef COIN_HAS_SCIP
-#include "lpiswitch.h"
-#endif
+// this is only for SCIP build via ThirdParty/SCIP, which we no longer expect to be used
+//#ifdef COIN_HAS_SCIP
+//#include "lpiswitch.h"
+//#endif
 
 #include "CoinSignal.hpp"
 
@@ -96,10 +97,10 @@ Instructions: http://www.coin-or.org/Couenne\n",
 
   using namespace Ipopt;
 
-#ifdef COIN_HAS_SCIP
-  //SCIPlpiSwitchSetDefaultSolver(); 
-  SCIPlpiSwitchSetSolver(SCIP_LPISW_CLP);
-#endif
+//#ifdef COIN_HAS_SCIP
+//  //SCIPlpiSwitchSetDefaultSolver(); 
+//  SCIPlpiSwitchSetSolver(SCIP_LPISW_CLP);
+//#endif
 
   char * pbName = NULL;
 
@@ -204,7 +205,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
 
     //////////////////////////////////
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
     double symmGroupSize = prob -> orbitalBranching () ? prob -> getNtyInfo () -> getGroupSize () : -1;
 #endif
 
@@ -273,7 +274,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
       delete [] filename;
     }
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
     if (CouenneBranchingObject::nOrbBr)
       printf ("%d orbital nontrivial branchings\n", CouenneBranchingObject::nOrbBr);
 #endif
@@ -413,7 +414,7 @@ Auxiliaries:     %8d (%d integer)\n\n",
             if ((*it) -> Multiplicity () == 0) {
 
               if ((*it) -> Image ()) fprintf (txtSol, "%d %e\n", (*it) -> Index (), (*(*it) -> Image ()) ());
-              else                   fprintf (txtSol, "%d %e\n", (*it) -> Index (), 0);
+              else                   fprintf (txtSol, "%d %e\n", (*it) -> Index (), 0.0);
 
             } else fprintf (txtSol, "%d %e\n", (*it) -> Index (), (*(*it)) ());
           }
@@ -576,7 +577,7 @@ Branch-and-bound nodes:                  %8d\n",
       else
 	printf ("Stats: %-15s %4d [var] %4d [int] %4d [con] %4d [aux] "
 		"%6d [root] %8d [tot] %6g [sep] %8g [time] %8g [bb] "
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
 		"%20e [lower] %20e [upper] %7d [nodes] %.0g [sg] %d [sgc]\n",
 #else
 		"%20e [lower] %20e [upper] %7d [nodes]\n",
@@ -595,7 +596,7 @@ Branch-and-bound nodes:                  %8d\n",
 		//bb.bestBound (),
 		//bb.bestObj (),
 		infeasible ? 0 : bb.numNodes ()
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
 		,symmGroupSize
 		,CouenneBranchingObject::nSGcomputations
 #endif

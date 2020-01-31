@@ -19,7 +19,7 @@ namespace Couenne {
 
 /// class for the exponential, \f$ e^{f(x)} \f$
 
-class exprExp: public exprUnary {
+class COUENNELIB_EXPORT exprExp: public exprUnary {
 
  public:
 

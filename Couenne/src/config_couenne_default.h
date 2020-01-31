@@ -15,3 +15,12 @@
 
 /* Release Version number of project */
 #define COUENNE_VERSION_RELEASE 9999
+
+#ifndef COUENNELIB_EXPORT
+#ifdef _WIN32
+/* assuming we link against a Bonmin DLL */
+#define COUENNELIB_EXPORT __declspec(dllimport)
+#else
+#define COUENNELIB_EXPORT
+#endif
+#endif

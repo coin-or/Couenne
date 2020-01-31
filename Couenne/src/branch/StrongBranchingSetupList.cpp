@@ -30,8 +30,8 @@ using namespace Couenne;
 
 const CouNumber estProdEps = 1e-6;
 
-#ifdef COIN_HAS_NTY
-#include "Nauty.h"
+#ifdef COIN_HAS_NAUTY
+#include "CouenneNauty.hpp"
 #endif
 
 // service types for orbital branching
@@ -220,7 +220,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
     // the same orbit is a waste of time given that, in theory, the
     // branching rules on these two variables are equivalent.
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
 
     bool useOrbitalBranching = problem_ -> orbitalBranching ();
 
@@ -888,7 +888,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
       }
     }
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
     // if (useOrbitalBranching &&
     // 	(objectOrig != object))
     //   delete [] object;

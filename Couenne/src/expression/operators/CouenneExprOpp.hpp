@@ -24,7 +24,7 @@ inline CouNumber opp (register CouNumber arg)
 
 /// class opposite, \f$ -f(x) \f$
 
-class exprOpp: public exprUnary {
+class COUENNELIB_EXPORT exprOpp: public exprUnary {
 
  public:
 

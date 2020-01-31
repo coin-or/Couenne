@@ -13,6 +13,7 @@
 
 #include "OsiBranchingObject.hpp"
 #include "CouenneJournalist.hpp"
+#include "CouenneConfig.h"
 
 namespace Couenne {
 
@@ -24,7 +25,7 @@ class exprVar;
 // TODO: SOS of the form sum x_i \le k with k small. Instead of
 // branching on a single variable do a SOS-like branching
 
-class CouenneSOSBranchingObject: public OsiSOSBranchingObject {
+class COUENNELIB_EXPORT CouenneSOSBranchingObject: public OsiSOSBranchingObject {
 
 protected:
 
@@ -92,7 +93,7 @@ public:
 ///
 ///
 
-class CouenneSOSObject: public OsiSOS {
+class COUENNELIB_EXPORT CouenneSOSObject: public OsiSOS {
 
 protected:
 

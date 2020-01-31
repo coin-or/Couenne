@@ -20,6 +20,7 @@
 #include "OsiSolverInterface.hpp"
 #include "CouenneProblem.hpp"
 #include "BonCouenneSetup.hpp"
+#include "CouenneConfig.h"
 
 namespace Couenne {
 
@@ -34,7 +35,7 @@ namespace Couenne {
   /// TODO: Implement some way to automatically choose the variables
   /// TODO: Implement the generateCuts method, for use in Branch-and-Bound
 
-  class CouenneAggrProbing: public CglCutGenerator {
+  class COUENNELIB_EXPORT CouenneAggrProbing: public CglCutGenerator {
 
   public:
 

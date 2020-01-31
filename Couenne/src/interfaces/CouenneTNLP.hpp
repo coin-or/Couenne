@@ -11,6 +11,7 @@
 #define COUENNETNLP_HPP
 
 #include "IpTNLP.hpp"
+#include "CouenneConfig.h"
 #include "CouenneExprJac.hpp"
 #include "CouenneExprHess.hpp"
 #include "CouenneTypes.hpp"
@@ -24,7 +25,7 @@ namespace Couenne {
   class CouenneSparseMatrix;
 
   /// Class for handling NLPs using CouenneProblem
-  class CouenneTNLP: public Ipopt::TNLP {
+  class COUENNELIB_EXPORT CouenneTNLP: public Ipopt::TNLP {
 
   public:
 

@@ -24,7 +24,7 @@ namespace Couenne {
 ///  class to compute lower bound of a sine based on the bounds on its
 ///  arguments
 
-class exprLBSin: public exprOp {
+class COUENNELIB_EXPORT exprLBSin: public exprOp {
 
  public:
 
@@ -77,7 +77,7 @@ inline CouNumber exprLBSin::operator () () {
 ///  class to compute lower bound of a sine based on the bounds on its
 ///  arguments
 
-class exprUBSin: public exprOp {
+class COUENNELIB_EXPORT exprUBSin: public exprOp {
 
  public:
 

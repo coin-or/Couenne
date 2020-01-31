@@ -20,7 +20,7 @@ namespace Couenne {
 
 /// class for \f$ |f(x)| \f$
 
-class exprAbs: public exprUnary {
+class COUENNELIB_EXPORT exprAbs: public exprUnary {
 
  public:
 

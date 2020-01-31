@@ -73,7 +73,7 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
     if (body) {
 
       if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-	printf ("replacing within common expression [%d]: ", i - commonexprs_.begin ()); fflush (stdout); (*i) -> print (); printf ("\n");
+	printf ("replacing within common expression [%d]: ", (int)(i - commonexprs_.begin ())); fflush (stdout); (*i) -> print (); printf ("\n");
       }
 
       if ((body -> Type () == VAR) || 
@@ -123,7 +123,7 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
     if (body) {
 
       if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-	printf ("replacing within constraint [%d]: ", i - constraints_.begin ()); fflush (stdout); (*i) -> print (); 
+	printf ("replacing within constraint [%d]: ", (int)(i - constraints_.begin ())); fflush (stdout); (*i) -> print (); 
       }
 
       if ((body -> Type () == VAR) ||

@@ -16,6 +16,7 @@
 #include "BonBabInfos.hpp"
 #include "CouenneJournalist.hpp"
 #include "BonRegisteredOptions.hpp"
+#include "CouenneConfig.h"
 
 namespace Couenne {
 
@@ -24,7 +25,7 @@ class CouenneProblem;
 /** \brief Choose a variable for branching
  */
 
-class CouenneChooseVariable: public OsiChooseVariable {
+class COUENNELIB_EXPORT CouenneChooseVariable: public OsiChooseVariable {
 
 public:
 

@@ -30,7 +30,7 @@ inline CouNumber zero_fun (CouNumber x)
 /// of common methods that need not be re-implemented by any
 /// univariate class.
 
-class exprUnary: public expression {
+class COUENNELIB_EXPORT exprUnary: public expression {
 
  protected:
 

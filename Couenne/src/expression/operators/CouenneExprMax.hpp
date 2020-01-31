@@ -19,7 +19,7 @@ namespace Couenne {
 
 /// class for maxima
 
-class exprMax: public exprOp {
+class COUENNELIB_EXPORT exprMax: public exprOp {
 
  public:
 

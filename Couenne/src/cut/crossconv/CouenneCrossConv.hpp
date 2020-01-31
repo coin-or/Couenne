@@ -16,6 +16,7 @@
 #include "CglConfig.h"
 #include "CglCutGenerator.hpp"
 #include "OsiRowCut.hpp"
+#include "CouenneConfig.h"
 #include "CouenneJournalist.hpp"
 
 namespace Ipopt {
@@ -27,9 +28,9 @@ namespace Couenne {
 
   class CouenneProblem;
 
+#if 0
   /// Base class definition for relations between auxiliaries
-
-  class AuxRelation {
+  class COUENNELIB_EXPORT AuxRelation {
 
   public:
 
@@ -55,7 +56,7 @@ namespace Couenne {
   /// This has to be repeatedly generated, even when l=u (l and/or u
   /// could change in other nodes).
 
-  class SumLogAuxRel: public AuxRelation {
+  class COUENNELIB_EXPORT SumLogAuxRel: public AuxRelation {
 
   public:
 
@@ -79,7 +80,7 @@ namespace Couenne {
   ///
   /// x_q = x_r (in both cases).
 
-  class MultiProdRel: public AuxRelation {
+  class COUENNELIB_EXPORT MultiProdRel: public AuxRelation {
 
   public:
 
@@ -102,7 +103,7 @@ namespace Couenne {
   ///
   /// x_l = x_m (in both cases).
 
-  class BiProdDivRel: public AuxRelation {
+  class COUENNELIB_EXPORT BiProdDivRel: public AuxRelation {
 
   public:
 
@@ -122,7 +123,7 @@ namespace Couenne {
   ///
   /// x_p = x_j ^ {beta/alpha}
 
-  class PowRel: public AuxRelation {
+  class COUENNELIB_EXPORT PowRel: public AuxRelation {
 
   public:
 
@@ -132,11 +133,11 @@ namespace Couenne {
 			       OsiCuts &, 
 			       const CglTreeInfo = CglTreeInfo ()) const;
   };
-
+#endif
 
   /// Cut Generator that uses relationships between auxiliaries
 
-  class CouenneCrossConv: public CglCutGenerator {
+  class COUENNELIB_EXPORT CouenneCrossConv: public CglCutGenerator {
 
   public:
 

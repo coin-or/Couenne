@@ -12,11 +12,12 @@
 #ifndef COUENNE_GLOBAL_CUTOFF_HPP
 #define COUENNE_GLOBAL_CUTOFF_HPP
 
+#include "CouenneConfig.h"
 #include "CouenneProblem.hpp"
 
 namespace Couenne {
 
-  class GlobalCutOff {
+  class COUENNELIB_EXPORT GlobalCutOff {
 
   private:
 

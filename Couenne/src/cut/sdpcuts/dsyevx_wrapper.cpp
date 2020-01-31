@@ -18,10 +18,8 @@
 //#define DEBUG
 
 extern "C" {
-
   /* Lapack routine to compute orthonormal eigenvalues/eigenvectors (in Fortran) */
-
-  void F77_FUNC(dsyev,DSYEV) (
+  void COIN_LAPACK_FUNC(dsyevx,DSYEVX) (
 				  char   *,
 				  char   *,
 				  char   *,
@@ -44,7 +42,6 @@ extern "C" {
 				  int    *);
 }
 
-
 int dsyevx_interface (int n, double *A, int &m, 
 		      double * &w, 
 		      double * &z, // output values 
@@ -54,6 +51,7 @@ int dsyevx_interface (int n, double *A, int &m,
 		      int firstidx,
 		      int lastidx) {
 
+#ifdef COIN_HAS_LAPACK
 #ifdef DEBUG
 
   printf ("matrix:\n---------------------------------\n");
@@ -95,8 +93,8 @@ int dsyevx_interface (int n, double *A, int &m,
   // Equivalent:
   // Ipopt::IpLapackDsyev (true, n, A, lda, w, info);
 
-  F77_FUNC
-    (dsyev,DSYEV)
+  COIN_LAPACK_FUNC
+    (dsyevx,DSYEVX)
     (&jobz, &range, &uplo, &n, 
      A, &lda, 
      &vl, &vu, &il, &iu,
@@ -120,4 +118,10 @@ int dsyevx_interface (int n, double *A, int &m,
   delete [] iwork;
 
   return m;
+
+#else
+  printf("Couenne build without Lapack. Cannot compute SDPCuts\n");
+  return 0;
+#endif
+
 }

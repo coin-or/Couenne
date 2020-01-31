@@ -32,7 +32,7 @@ inline CouNumber inv_dblprime (register CouNumber x)
 
 /// class inverse: \f$ 1/f(x) \f$
 
-class exprInv: public exprUnary {
+class COUENNELIB_EXPORT exprInv: public exprUnary {
 
  public:
 

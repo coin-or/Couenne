@@ -22,7 +22,7 @@ class Domain;
 
 /// class Group, with constant, linear and nonlinear terms: \f$ a_0 + \sum_{i=1}^n a_i x_i \f$
 
-class exprGroup: public exprSum {
+class COUENNELIB_EXPORT exprGroup: public exprSum {
 
 public:
 

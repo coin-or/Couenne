@@ -15,7 +15,7 @@
 
 namespace Couenne {
 
-class exprPWLinear: public exprOp {
+class COUENNELIB_EXPORT exprPWLinear: public exprOp {
 
 };
 

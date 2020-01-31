@@ -12,6 +12,7 @@
 #define BonInitHeuristic_HPP
 
 #include "CbcHeuristic.hpp"
+#include "CouenneConfig.h"
 #include "CouenneProblem.hpp"
 
 namespace Couenne {
@@ -21,7 +22,7 @@ namespace Couenne {
    *  Cbc about this.
    */
 
-  class InitHeuristic : public CbcHeuristic{
+  class COUENNELIB_EXPORT InitHeuristic : public CbcHeuristic{
 
   public:
 

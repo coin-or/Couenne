@@ -10,6 +10,7 @@
 #ifndef CouennePSDcon_hpp
 #define CouennePSDcon_hpp
 
+#include "CouenneConfig.h"
 #include "CouenneProblemElem.hpp"
 #include <iostream>
 
@@ -21,7 +22,7 @@ namespace Couenne {
 
   /// Class to represent positive semidefinite constraints //////////////////
 
-  class CouennePSDcon: public CouenneConstraint {
+  class COUENNELIB_EXPORT CouennePSDcon: public CouenneConstraint {
 
   protected:
 

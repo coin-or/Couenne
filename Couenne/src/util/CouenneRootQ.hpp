@@ -12,6 +12,7 @@
 #define CouenneRootQ_hpp
 
 #include "CouenneTypes.hpp"
+#include "CouenneConfig.h"
 #include <map>
 #include <iostream>
 
@@ -20,13 +21,14 @@ namespace Couenne
 
 /// Find roots of polynomial $Q^k(x) = \f$\sum_{i=1}^{2k} i x^{i-1}\f$. Used
 /// in convexification of powers with odd exponent
+COUENNELIB_EXPORT
 CouNumber rootQ (int k);
 
 
 /// class that stores result of previous calls to rootQ into a map for
 /// faster access
 
-class Qroot {
+class COUENNELIB_EXPORT Qroot {
 
  protected:
 

@@ -6,6 +6,9 @@
 /* whether CouenneInterface is derived from Bonmin's AmplInterface */
 #undef COUENNEINTERFACE_FROM_ASL
 
+/* Library Visibility Attribute */
+#undef COUENNELIB_EXPORT
+
 /* Version number of project */
 #undef COUENNE_VERSION
 

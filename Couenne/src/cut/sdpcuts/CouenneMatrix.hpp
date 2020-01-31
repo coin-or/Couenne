@@ -22,7 +22,7 @@ namespace Couenne {
 
   // Base class for elements of our sparse structures ////////////////////////////
 
-  class CouenneScalar {
+  class COUENNELIB_EXPORT CouenneScalar {
 
   protected:
 
@@ -63,7 +63,7 @@ namespace Couenne {
 
   // Sparse vector of expressions /////////////////////////////////////////////////
 
-  class CouenneSparseVector {
+  class COUENNELIB_EXPORT CouenneSparseVector {
 
   public:
 
@@ -101,7 +101,7 @@ namespace Couenne {
 
   // Sparse matrix of expressions ///////////////////////////////////////////////////
 
-  class CouenneExprMatrix {
+  class COUENNELIB_EXPORT CouenneExprMatrix {
 
   public:
 

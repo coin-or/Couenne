@@ -15,6 +15,7 @@
 #include <stack>
 
 #include "CouenneTypes.hpp"
+#include "CouenneConfig.h"
 
 namespace Osi {
 
@@ -27,7 +28,7 @@ namespace Couenne {
 
 /// Define a point in the solution space and the bounds around it.
 
-class DomainPoint {
+class COUENNELIB_EXPORT DomainPoint {
 
   friend class Domain;
 
@@ -101,7 +102,7 @@ public:
 /// Define a dynamic point+bounds, with a way to save and restore
 /// previous points+bounds through a LIFO structure
 
-class Domain {
+class COUENNELIB_EXPORT Domain {
 
 protected:
 

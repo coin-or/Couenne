@@ -19,6 +19,7 @@
 #include "BonAmplInterface.hpp"
 
 struct ASL;
+COUENNELIB_EXPORT
 struct ASL *readASLfg (char **);
 #else
 #define AmplInterface OsiTMINLPInterface
@@ -30,7 +31,7 @@ namespace Bonmin {
 
 namespace Couenne {
 
-  class CouenneInterface : public Bonmin::AmplInterface
+  class COUENNELIB_EXPORT CouenneInterface : public Bonmin::AmplInterface
   {
   public:
     /** Default constructor. */

@@ -18,7 +18,7 @@ namespace Couenne {
 
   /// class for multiplications
 
-  class exprTrilinear: public exprMul {
+  class COUENNELIB_EXPORT exprTrilinear: public exprMul {
 
   public:
 

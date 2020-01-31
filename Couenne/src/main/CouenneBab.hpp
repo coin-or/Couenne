@@ -13,12 +13,13 @@
 
 #include "BonCbc.hpp"
 #include "BonBabSetupBase.hpp"
+#include "CouenneConfig.h"
 
 namespace Couenne {
 
   class CouenneProblem;
 
-  class CouenneBab: public Bonmin::Bab {
+  class COUENNELIB_EXPORT CouenneBab: public Bonmin::Bab {
 
   public:
 

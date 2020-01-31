@@ -27,7 +27,7 @@ class funtriplet;
 
 /// Power of an expression (binary operator), \f$ f(x)^k\f$ with \f$ k\f$ constant
 
-class exprPow: public exprOp {
+class COUENNELIB_EXPORT exprPow: public exprOp {
 
  private:
 
@@ -177,13 +177,16 @@ inline CouNumber exprPow::operator () () {
 
 
 /// add upper/lower envelope to power in convex/concave areas
+COUENNELIB_EXPORT
 void addPowEnvelope (const CouenneCutGenerator *, OsiCuts &, int, int,
 		     CouNumber, CouNumber, CouNumber, CouNumber, CouNumber, int, bool = false);
 
 /// find proper tangent point to add deepest tangent cut
+COUENNELIB_EXPORT
 CouNumber powNewton (CouNumber, CouNumber, unary_function, unary_function, unary_function);
 
 /// find proper tangent point to add deepest tangent cut
+COUENNELIB_EXPORT
 CouNumber powNewton (CouNumber, CouNumber, funtriplet *);
 
 }

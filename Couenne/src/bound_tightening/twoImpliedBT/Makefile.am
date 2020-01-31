@@ -10,24 +10,17 @@ AUTOMAKE_OPTIONS = foreign
 
 noinst_LTLIBRARIES = libCouenneTwoImplied.la
 
-# List all source files for this library, including headers
+# List all source files for this library
 libCouenneTwoImplied_la_SOURCES = \
 	TwoImpliedConstructors.cpp \
 	TwoImpliedIneqCombine.cpp \
 	TwoImpliedGenCuts.cpp 
 
-# This is for libtool
-libCouenneTwoImplied_la_LDFLAGS = $(LT_LDFLAGS)
-
-# Here list all include flags, relative to this "srcdir" directory.  This
-# "cygpath" stuff is necessary to compile with native compilers on Windows
+# Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(srcdir)/../..` \
-	-I`$(CYGPATH_W) $(srcdir)/../../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../../branch` \
-	-I`$(CYGPATH_W) $(srcdir)/../../problem` \
-	-I`$(CYGPATH_W) $(srcdir)/../../bound_tightening` \
-	$(COUENNELIB_CFLAGS)
-
-# This line is necessary to allow VPATH compilation
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/src
+	-I$(srcdir)/../.. \
+	-I$(srcdir)/../../expression \
+	-I$(srcdir)/../../branch \
+	-I$(srcdir)/../../problem \
+	-I$(srcdir)/../../bound_tightening \
+	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD

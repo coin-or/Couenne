@@ -20,8 +20,8 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneObject.hpp"
 
-#ifdef COIN_HAS_NTY
-#include "Nauty.h"
+#ifdef COIN_HAS_NAUTY
+#include "CouenneNauty.hpp"
 #endif
 
 struct objPri {

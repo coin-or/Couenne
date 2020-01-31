@@ -10,11 +10,12 @@
 
 #include <stdio.h>
 
+#include "CouenneConfig.h"
 #include "CouenneProblem.hpp"
 
 using namespace Couenne;
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
 
 #include <cassert>
 #include <vector>
@@ -25,7 +26,7 @@ using namespace Couenne;
 #include "CouenneExprVar.hpp"
 #include "CouenneExprGroup.hpp"
 
-#include "Nauty.h"
+#include "CouenneNauty.hpp"
 #include "CouenneBranchingObject.hpp"
 
 void Node::node(int i, double c , double l, double u, int cod, int s){
@@ -450,7 +451,7 @@ void CouenneProblem::ChangeBounds (const double * new_lb, const double * new_ub,
 
 void CouenneProblem::setupSymmetry () {
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
   sym_setup ();
   Compute_Symmetry ();
   if (jnlst_ -> ProduceOutput (Ipopt::J_ERROR, J_COUENNE)) {

@@ -37,8 +37,8 @@
 #include "CouenneBTPerfIndicator.hpp"
 #include "CouenneSdpCuts.hpp"
 
-#ifdef COIN_HAS_NTY
-#include "Nauty.h"
+#ifdef COIN_HAS_NAUTY
+#include "CouenneNauty.hpp"
 #endif
 
 using namespace Couenne;
@@ -269,7 +269,7 @@ CouenneProblem::~CouenneProblem () {
        i != objects_.end (); ++i)
     delete (*i);
 
-#ifdef COIN_HAS_NTY
+#ifdef COIN_HAS_NAUTY
   if (nauty_info)
     delete nauty_info;
 #endif

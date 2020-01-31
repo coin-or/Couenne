@@ -13,6 +13,7 @@
 
 #include "BonChooseVariable.hpp"
 #include "CouenneJournalist.hpp"
+#include "CouenneConfig.h"
 
 namespace Couenne {
 
@@ -20,7 +21,7 @@ class CouenneProblem;
 
 template <class T> class CouenneSolverInterface;
 
-class CouenneChooseStrong : public Bonmin::BonChooseVariable {
+class COUENNELIB_EXPORT CouenneChooseStrong : public Bonmin::BonChooseVariable {
 
 public:
 

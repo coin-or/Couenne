@@ -29,6 +29,7 @@ inline CouNumber modulo (register CouNumber a, register CouNumber b)
 
 
 /// generalized procedure for both sine and cosine
+COUENNELIB_EXPORT
 CouNumber trigSelBranch (const CouenneObject *obj, 
 			 const OsiBranchingInformation *info,
 			 expression * &var,
@@ -40,11 +41,12 @@ CouNumber trigSelBranch (const CouenneObject *obj,
 
 
 /// generalized implied bound procedure for sine/cosine
+COUENNELIB_EXPORT
 bool trigImpliedBound (enum cou_trig, int, int, CouNumber *, CouNumber *, t_chg_bounds *);
 
 
 /// class for \f$ \sin f(x)\f$
-class exprSin: public exprUnary {
+class COUENNELIB_EXPORT exprSin: public exprUnary {
 
  public:
 

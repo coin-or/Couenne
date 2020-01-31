@@ -24,7 +24,7 @@ class CouenneCutGenerator;
 /// 2) to replace OsiSolverInterface::isInteger () with problem_ -> [expression] -> isInteger ()
 /// 3) to use NLP solution at branching
  
-template <class T> class CouenneSolverInterface: public T {
+template <class T> class COUENNELIB_EXPORT CouenneSolverInterface: public T {
 
 public:
 

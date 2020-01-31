@@ -41,7 +41,7 @@ class Domain;
  *  \f$w=h(x)\f$ is created and included in the linear part.
  */
 
-class exprQuad: public exprGroup {
+class COUENNELIB_EXPORT exprQuad: public exprGroup {
 
 public:
 

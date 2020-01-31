@@ -28,7 +28,7 @@ class Domain;
 /// subtraction, multiplication, power, division, max, min, etc. are
 /// derived from this class.
 
-class exprOp: public expression {
+class COUENNELIB_EXPORT exprOp: public expression {
 
  protected:
 

@@ -44,7 +44,9 @@ class funtriplet;
 class CouenneProblem;
 class CouenneCutGenerator;
 
+COUENNELIB_EXPORT 
 CouNumber minMaxDelta (funtriplet *ft, CouNumber lb, CouNumber ub);
+COUENNELIB_EXPORT 
 CouNumber maxHeight   (funtriplet *ft, CouNumber lb, CouNumber ub);
 
 
@@ -54,7 +56,7 @@ CouNumber maxHeight   (funtriplet *ft, CouNumber lb, CouNumber ub);
 /// infeasibility $|w-f(x)|$, creates branches to help restoring
 /// feasibility
 
-  class CouenneObject: public OsiObject {
+  class COUENNELIB_EXPORT CouenneObject: public OsiObject {
 
 public:
 

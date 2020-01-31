@@ -20,7 +20,7 @@ namespace Couenne {
 
 /// constant-type operator
 
-class exprConst: public expression {
+class COUENNELIB_EXPORT exprConst: public expression {
 
 private: 
 

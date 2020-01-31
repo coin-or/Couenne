@@ -14,13 +14,14 @@
 #include "CoinHelperFunctions.hpp"
 #include <string.h>
 
+#include "CouenneConfig.h"
 #include "CouenneTypes.hpp"
 
 namespace Couenne {
 
   class CouenneProblem;
 
-  class CouenneBTPerfIndicator {
+  class COUENNELIB_EXPORT CouenneBTPerfIndicator {
 
   protected:
 

@@ -19,7 +19,7 @@ namespace Couenne
 {
 
 ///
-class funtriplet {
+class COUENNELIB_EXPORT funtriplet {
 
 public:
 
@@ -37,7 +37,7 @@ public:
 
 
 ///
-class simpletriplet: public funtriplet {
+class COUENNELIB_EXPORT simpletriplet: public funtriplet {
 
 protected:
 
@@ -69,7 +69,7 @@ public:
 
 
 ///
-class powertriplet: public funtriplet {
+class COUENNELIB_EXPORT powertriplet: public funtriplet {
 
 protected:
 
@@ -100,7 +100,7 @@ public:
 
 
 ///
-class kpowertriplet: public powertriplet {
+class COUENNELIB_EXPORT kpowertriplet: public powertriplet {
 
 protected:
 

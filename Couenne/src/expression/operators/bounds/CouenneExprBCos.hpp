@@ -24,7 +24,7 @@ namespace Couenne {
 ///  class to compute lower bound of a cosine based on the bounds of
 ///  its arguments
 
-class exprLBCos: public exprOp {
+class COUENNELIB_EXPORT exprLBCos: public exprOp {
 
  public:
 
@@ -77,7 +77,7 @@ inline CouNumber exprLBCos::operator () () {
 ///  class to compute lower bound of a cosine based on the bounds of
 ///  its arguments
 
-class exprUBCos: public exprOp {
+class COUENNELIB_EXPORT exprUBCos: public exprOp {
 
  public:
 

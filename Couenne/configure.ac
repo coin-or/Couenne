@@ -25,103 +25,81 @@ under the Eclipse Public License.])
 # whether the package is actually there
 AC_CONFIG_SRCDIR(src/expression/expression.cpp)
 
-# Where should everything be installed by default?  Here, we want it
-# to be installed directly in 'bin', 'lib', 'include' subdirectories
-# of the directory where configure is run.  The default would be
-# /usr/local.
-AC_PREFIX_DEFAULT([`pwd`])
-
-# to make correct call to Fortran routines
-
-AC_COIN_PROG_F77
-AC_COIN_F77_WRAPPERS
-
 #############################################################################
 #                         Standard build tool stuff                         #
 #############################################################################
 
-# Get the system type
-AC_CANONICAL_BUILD
-
-# Initialization specifically for project main directories
-AC_COIN_PROJECTDIR_INIT(Couenne)
-
-# Check if user wants to produce debugging code
-AC_COIN_DEBUG_COMPILE(Couenne)
+# Do some initialization work (version numbers, change prefix default, ...)
+AC_COIN_INITIALIZE(Couenne)
 
 # Get the name of the C++ compiler and appropriate compiler options
 AC_COIN_PROG_CXX
 
-# Get the name of the C compiler and appropriate compiler options
-AC_COIN_PROG_CC
-
-# Initialize automake and libtool
-AC_COIN_INIT_AUTO_TOOLS
-
-# for readnl.cpp
-AC_COIN_CHECK_CXX_CHEADER(stdint)
+# Initialize libtool
+AC_COIN_PROG_LIBTOOL
 
 #############################################################################
 #                            COIN-OR components                             #
 #############################################################################
 
-AC_COIN_CHECK_PACKAGE(Bonmin, [bonmin], [CouenneLib])
+AC_COIN_CHK_PKG(Bonmin,[CouenneLib])
 if test $coin_has_bonmin != yes ; then
   AC_MSG_ERROR([Required package Bonmin not available.])
 fi
+
+AC_COIN_CHK_PKG(ASL,[CouenneLib],[bonminamplinterface])
+
+# more workaround for having ASL deep inside Couenne
+if test $coin_has_asl = yes ; then
+  AC_DEFINE(COUENNEINTERFACE_FROM_ASL, 1, [whether CouenneInterface is derived from Bonmins AmplInterface])
+fi
+
+# Osi interfaces to LP solvers
+AC_COIN_CHK_PKG(OsiCpx,[CouenneLib],[osi-cplex])  # Osi/Cplex
+AC_COIN_CHK_PKG(OsiGrb,[CouenneLib],[osi-gurobi]) # Osi/Gurobi
+AC_COIN_CHK_PKG(OsiMsk,[CouenneLib],[osi-mosek])  # Osi/Mosek
+AC_COIN_CHK_PKG(OsiSpx,[CouenneLib],[osi-soplex]) # Osi/SoPlex
+AC_COIN_CHK_PKG(OsiXpr,[CouenneLib],[osi-xpress]) # Osi/Xpress
 
 #############################################################################
 #                       Other third party software                          #
 #############################################################################
 
-# Bonmin AMPL interface
-# bad bad: if AMPL stuff is available, then libCouenne will depend on it, so we add it to CouenneLib
-AC_COIN_CHECK_PACKAGE(ASL, [bonminamplinterface], [CouenneLib])
-
-# more workaround for having ASL deep inside Couenne
-if test $coin_has_asl = yes ; then
-  AC_DEFINE(COUENNEINTERFACE_FROM_ASL, 1, [whether CouenneInterface is derived from Bonmin's AmplInterface])
-fi
-
 # Nauty library (for symmetry detection)
 AC_LANG_PUSH(C)
-AC_COIN_CHECK_USER_LIBRARY([Nauty],[NTY],[nauty.h],[nauty],,[CouenneLib])
-AC_LANG_POP(C)
+AC_COIN_CHK_LIB([Nauty],[CouenneLib],[-lnauty],[],[],[nauty])
 
 # SCIP (used in Feasibility Pump)
-AC_COIN_CHECK_PACKAGE(SCIP, [coinscip], [CouenneLib])
+AC_COIN_CHK_LIB([SCIP],[CouenneLib],[-lscipopt],[],[],[SCIPcreate])
 
-# CPLEX: check for OsiCplex, and check for cplex include dir, so we can include cplex.h
-AC_COIN_CHECK_PACKAGE(Cpx, [osi-cplex], [CouenneLib])
-AC_ARG_WITH([cplex-incdir],
-  [AS_HELP_STRING([--with-cplex-incdir], [specify the header file directory for library cplex])],
-  [CPXINCDIR=`cd $withval; pwd`])
-AC_SUBST(CPXINCDIR)
+# CPLEX (so we can include cplex.h)
+AC_COIN_CHK_LIB([Cplex],[CouenneLib],[-lcplex -lpthread -lm -ldl],[],[],[CPXgetstat])
+AC_LANG_POP(C)
 
-# other LP solvers
-AC_COIN_CHECK_PACKAGE(Grb, [osi-gurobi], [CouenneLib])  # Osi/Gurobi
-AC_COIN_CHECK_PACKAGE(Msk, [osi-mosek],  [CouenneLib])  # Osi/Mosek
-AC_COIN_CHECK_PACKAGE(Spx, [osi-soplex], [CouenneLib])  # Osi/Soplex
-AC_COIN_CHECK_PACKAGE(Xpr, [osi-xpress], [CouenneLib])  # Osi/XpressMP
+# for dsyevx in sdpcuts
+AC_COIN_CHK_LAPACK(CouenneLib)
 
 #############################################################################
 #                               System header                               #
 #############################################################################
 
-AC_COIN_CHECK_CXX_CHEADER(math)
-AC_COIN_CHECK_CXX_CHEADER(float)
-AC_COIN_CHECK_CXX_CHEADER(ieeefp)
-AC_COIN_CHECK_CXX_CHEADER(stdint)
+AC_LANG_PUSH(C++)
+# for readnl
+AC_CHECK_HEADERS([cstdint stdint.h],[break],[])
+AC_LANG_POP(C++)
 
 #############################################################################
 #                  Check for doxygen                                        #
 #############################################################################
 
-AC_COIN_DOXYGEN(CoinUtils Osi Clp Cgl Cbc Ipopt Bonmin)
+#AC_COIN_DOXYGEN(CoinUtils Osi Clp Cgl Cbc Ipopt Bonmin)
+AC_COIN_DOXYGEN
 
 ##############################################################################
 #                   Finishing up by writing all the output                   #
 ##############################################################################
+
+AC_COIN_FINALIZE_FLAGS([CouenneLib])
 
 # Here list all the files that configure should create (except for the
 # configuration header file)
@@ -140,15 +118,11 @@ AC_CONFIG_FILES([Makefile
                  src/expression/Makefile
                  src/problem/Makefile
                  src/standardize/Makefile
-                 src/readnl/Makefile
                  src/util/Makefile
                  src/Makefile
-		 test/grandTest.sh
-		 couenne.pc 
-		 couenne-uninstalled.pc
-		 doxydoc/doxygen.conf])
-
-#                 src/cut/ellipcuts/Makefile
+                 test/grandTest.sh
+                 couenne.pc 
+                 doxydoc/doxygen.conf])
 
 # Here put the location and name of the configuration header file
 AC_CONFIG_HEADER([src/config.h src/config_couenne.h])

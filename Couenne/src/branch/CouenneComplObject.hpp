@@ -19,7 +19,7 @@ namespace Couenne {
 ///
 /// Associated with two variables \f$ x_1\f$ and \f$x_2\f$, branches with either \f$x_1=0\f$ or \f$x_2=0\f$
 
-class CouenneComplObject: public CouenneObject {
+class COUENNELIB_EXPORT CouenneComplObject: public CouenneObject {
 
 public:
 

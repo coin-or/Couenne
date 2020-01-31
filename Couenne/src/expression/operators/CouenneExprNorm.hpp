@@ -17,7 +17,7 @@ namespace Couenne {
 
   /// Class for \f$ p \f$-norms, \f$ || f(x)||_p = \left(\sum_{i=1}^n f_i(x)^p\right)^{\frac{1}{p}} \f$
 
-  class exprNorm: public exprOp {
+  class COUENNELIB_EXPORT exprNorm: public exprOp {
 
   };
 

@@ -8,27 +8,21 @@ AUTOMAKE_OPTIONS = foreign
 
 noinst_LTLIBRARIES = libCouenneCrossConv.la
 
-# List all source files for this library, including headers
+# List all source files for this library
 libCouenneCrossConv_la_SOURCES = \
 	CrossConvConstructors.cpp \
 	CrossConvGenCuts.cpp \
 	CrossConvSetup.cpp
 
-# This is for libtool
-libCouenneCrossConv_la_LDFLAGS = $(LT_LDFLAGS)
-
-# Here list all include flags, relative to this "srcdir" directory.  This
-# "cygpath" stuff is necessary to compile with native compilers on Windows
+# Here list all include flags, relative to this "srcdir" directory.
 AM_CPPFLAGS = \
-	-I`$(CYGPATH_W) $(srcdir)/..` \
-	-I`$(CYGPATH_W) $(srcdir)/../../convex` \
-	-I`$(CYGPATH_W) $(srcdir)/../../heuristics` \
-	-I`$(CYGPATH_W) $(srcdir)/../../expression` \
-	-I`$(CYGPATH_W) $(srcdir)/../../expression/operators` \
-	-I`$(CYGPATH_W) $(srcdir)/../../main` \
-	-I`$(CYGPATH_W) $(srcdir)/../../branch` \
-	-I`$(CYGPATH_W) $(srcdir)/../../problem` \
-	$(COUENNELIB_CFLAGS)
-
-# This line is necessary to allow VPATH compilation
-DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I$(top_builddir)/src
+	-I$(srcdir)/.. \
+	-I$(srcdir)/../.. \
+	-I$(srcdir)/../../convex \
+	-I$(srcdir)/../../heuristics \
+	-I$(srcdir)/../../expression \
+	-I$(srcdir)/../../expression/operators \
+	-I$(srcdir)/../../main \
+	-I$(srcdir)/../../branch \
+	-I$(srcdir)/../../problem \
+	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD

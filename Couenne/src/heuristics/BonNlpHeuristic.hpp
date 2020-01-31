@@ -14,6 +14,7 @@
 #include "BonOsiTMINLPInterface.hpp"
 #include "CbcHeuristic.hpp"
 #include "BonOsiTMINLPInterface.hpp"
+#include "CouenneConfig.h"
 #include "CouenneProblem.hpp"
 
 namespace Couenne {
@@ -25,7 +26,7 @@ namespace Couenne {
 
   const double maxNlpInf_0 = 1e-5;
 
-  class NlpSolveHeuristic : public CbcHeuristic{
+  class COUENNELIB_EXPORT NlpSolveHeuristic : public CbcHeuristic{
 
   public:
     /** Default constructor.*/

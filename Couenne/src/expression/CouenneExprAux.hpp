@@ -29,7 +29,7 @@ class CouenneCutGenerator;
  *  nonlinear constraints/objectives.
  */
 
-class exprAux: public exprVar {
+class COUENNELIB_EXPORT exprAux: public exprVar {
 
  public:
 
@@ -226,6 +226,7 @@ struct compExpr {
 
 
 /// allow to draw function within intervals and cuts introduced
+COUENNELIB_EXPORT
 void draw_cuts (OsiCuts &, const CouenneCutGenerator *, 
 		int, expression *, expression *);
 

@@ -19,7 +19,7 @@ namespace Couenne {
 
 /// class for subtraction, \f$ f(x) - g(x) \f$
 
-class exprSub: public exprOp {
+class COUENNELIB_EXPORT exprSub: public exprOp {
 
  public:
 
