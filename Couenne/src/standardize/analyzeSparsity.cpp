@@ -59,8 +59,8 @@ void CouenneProblem::analyzeSparsity (CouNumber c0,
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
     printf ("qmap has %d element, occur has %d, md*s*(s+1)/2 = %g\n", 
-	    qmap.Map().size (), 
-	    occur.size (),
+	    (int)qmap.Map().size (), 
+	    (int)occur.size (),
 	    MIN_DENSITY * (double) (occur.size ()) * ((double) (occur.size ()) + 1.) / 2);
   }
 

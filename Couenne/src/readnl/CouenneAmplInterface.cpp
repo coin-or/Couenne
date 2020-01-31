@@ -51,7 +51,7 @@
 #include "opcode.hd"
 
 // get ASL op. code relative to function pointer passed as parameter 
-int getOperator (efunc *);
+size_t getOperator (efunc *);
 
 #define OBJ_DE    ((const ASL_fg *) asl) -> I.obj_de_
 #define VAR_E     ((const ASL_fg *) asl) -> I.var_e_
