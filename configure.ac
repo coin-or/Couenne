@@ -13,7 +13,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([Couenne],[trunk],[couenne@list.coin-or.org])
+AC_INIT([Couenne],[trunk],[https://github.com/coin-or/Couenne/issues/new],[coin-or-couenne],[https://github.com/coin-or/Couenne])
 
 AC_COPYRIGHT([
 Copyright 2006 Carnegie Mellon University, International Business Machines and others.
