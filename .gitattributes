@@ -5,7 +5,6 @@
 .coin-or/projDesc.xml -text
 /.travis.yml -text
 /AUTHORS -text
-/INSTALL -text
 /LICENSE -text
 /Makefile.am -text
 /Makefile.in -text
