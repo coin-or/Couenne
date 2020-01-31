@@ -8,4 +8,4 @@ Clp               https://projects.coin-or.org/svn/Clp/trunk/Clp
 Cgl               https://projects.coin-or.org/svn/Cgl/trunk/Cgl
 Cbc               https://projects.coin-or.org/svn/Cbc/trunk/Cbc
 Ipopt             https://github.com/coin-or/Ipopt stable/3.13
-Bonmin            https://projects.coin-or.org/svn/Bonmin/branches/autotools-update/Bonmin
+Bonmin            https://projects.coin-or.org/svn/Bonmin/trunk/Bonmin
