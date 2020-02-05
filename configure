@@ -19014,7 +19014,7 @@ fi
 
   case $coin_has_scip in
     build | requested)
-      scip_lflags="-lscipopt"
+      scip_lflags="-lscipsolver"
          if test "$coin_has_scip" = build ; then
               scip_cflags="-I\$(pkgincludedir)/ThirdParty"
             fi

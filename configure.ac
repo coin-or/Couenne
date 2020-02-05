@@ -70,7 +70,7 @@ AC_LANG_PUSH(C)
 AC_COIN_CHK_LIB([Nauty],[CouenneLib],[-lnauty],[],[],[nauty])
 
 # SCIP (used in Feasibility Pump)
-AC_COIN_CHK_LIB([SCIP],[CouenneLib],[-lscipopt],[],[],[SCIPcreate])
+AC_COIN_CHK_LIB([SCIP],[CouenneLib],[-lscipsolver],[],[],[SCIPcreate])
 
 # CPLEX (so we can include cplex.h)
 AC_COIN_CHK_LIB([Cplex],[CouenneLib],[-lcplex -lpthread -lm -ldl],[],[],[CPXgetstat])
