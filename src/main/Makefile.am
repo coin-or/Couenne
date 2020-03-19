@@ -6,8 +6,6 @@
 
 # Author: Pietro Belotti, on a template by Pierre Bonami
 
-AUTOMAKE_OPTIONS = foreign
-
 if COIN_HAS_ASL
   bin_PROGRAMS = couenne 
 endif
@@ -34,4 +32,4 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../readnl \
 	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD
 
-LDFLAGS += $(LT_LDFLAGS)
+AM_LDFLAGS = $(LT_LDFLAGS)

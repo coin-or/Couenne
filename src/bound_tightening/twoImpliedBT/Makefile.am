@@ -6,8 +6,6 @@
 
 # Author: Pietro Belotti, from a template by Pierre Bonami
 
-AUTOMAKE_OPTIONS = foreign
-
 noinst_LTLIBRARIES = libCouenneTwoImplied.la
 
 # List all source files for this library

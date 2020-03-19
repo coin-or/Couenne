@@ -23,6 +23,10 @@
 # Authors:  Andreas Waechter           IBM    2006-04-13
 #           Pietro Belotti
 
+########################################################################
+#                               libCouenne                             #
+########################################################################
+
 
 VPATH = @srcdir@
 am__is_gnu_make = { \
@@ -336,9 +340,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LD = @LD@
-
-# Add libtool flags
-LDFLAGS = $(LT_LDFLAGS)
+LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -432,11 +434,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AUTOMAKE_OPTIONS = foreign subdir-objects
-
-########################################################################
-#                               libCouenne                             #
-########################################################################
 
 # Name of the library compiled in this directory.  We want it to be installed
 # in the 'lib' directory
@@ -463,6 +460,9 @@ libCouenne_la_LIBADD = interfaces/libCouenneInterfaces.la \
 	util/libCouenneUtil.la disjunctive/libCouenneDisjunctive.la \
 	cut/crossconv/libCouenneCrossConv.la \
 	cut/sdpcuts/libCouenneSdpCuts.la $(COUENNELIB_LFLAGS)
+
+# Add libtool flags
+AM_LDFLAGS = $(LT_LDFLAGS)
 
 ########################################################################
 #                            Additional flags                          #

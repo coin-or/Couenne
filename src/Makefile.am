@@ -8,8 +8,6 @@
 # Authors:  Andreas Waechter           IBM    2006-04-13
 #           Pietro Belotti
 
-AUTOMAKE_OPTIONS = foreign subdir-objects
-
 ########################################################################
 #                               libCouenne                             #
 ########################################################################
@@ -45,7 +43,7 @@ libCouenne_la_LIBADD = \
 libCouenne_la_LIBADD += $(COUENNELIB_LFLAGS)
 
 # Add libtool flags
-LDFLAGS = $(LT_LDFLAGS)
+AM_LDFLAGS = $(LT_LDFLAGS)
 
 ########################################################################
 #                            Additional flags                          #

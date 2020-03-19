@@ -19,6 +19,10 @@
 # This file is distributed under the Eclipse Public License.
 
 # Author:  Andreas Waechter           IBM    2006-04-13
+
+########################################################################
+#                        testfun for Couenne                           #
+########################################################################
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -262,7 +266,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AUTOMAKE_OPTIONS = foreign
 all: all-am
 
 .SUFFIXES:
@@ -425,10 +428,6 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-
-########################################################################
-#                        testfun for Couenne                           #
-########################################################################
 
 @COIN_HAS_ASL_TRUE@test: 
 @COIN_HAS_ASL_TRUE@	chmod u+x grandTest.sh

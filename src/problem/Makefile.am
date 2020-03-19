@@ -4,8 +4,6 @@
 
 # Author: Pietro Belotti, from a template by Pierre Bonami
 
-AUTOMAKE_OPTIONS = foreign subdir-objects
-
 noinst_LTLIBRARIES = libCouenneProblem.la
 
 # List all source files for this library

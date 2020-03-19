@@ -4,8 +4,6 @@
 
 # Author: Pietro Belotti
 
-AUTOMAKE_OPTIONS = foreign
-
 noinst_LTLIBRARIES = libCouenneSdpCuts.la
 
 # List all source files for this library

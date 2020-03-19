@@ -10,6 +10,7 @@
 /Makefile.in -text
 /README -text
 /appveyor.yml -text
+/ar-lib -text
 /compile -text
 /config.guess -text
 /config.sub -text
