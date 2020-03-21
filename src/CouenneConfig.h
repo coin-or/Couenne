@@ -25,7 +25,7 @@
 
 #ifdef HAVE_CONFIG_H
 
-#ifdef COUENNE_BUILD
+#ifdef COUENNELIB_BUILD
 #include "config.h"
 #else
 #include "config_couenne.h"
@@ -36,7 +36,7 @@
  * we want it to be __attribute__((__visibility__("default"))) when building with GCC,
  *   so user can compile with -fvisibility=hidden
  */
-#ifdef COUENNE_BUILD
+#ifdef COUENNELIB_BUILD
 #ifdef DLL_EXPORT
 #undef COUENNELIB_EXPORT
 #define COUENNELIB_EXPORT __declspec(dllexport)
@@ -48,7 +48,7 @@
 
 #else /* HAVE_CONFIG_H */
 
-#ifdef COUENNE_BUILD
+#ifdef COUENNELIB_BUILD
 #include "config_default.h"
 #else
 #include "config_couenne_default.h"

@@ -30,6 +30,6 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../cut/sdpcuts \
 	-I$(srcdir)/../cut/crossconv \
 	-I$(srcdir)/../readnl \
-	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD
+	$(COUENNELIB_CFLAGS) -UCOUENNELIB_BUILD
 
 AM_LDFLAGS = $(LT_LDFLAGS)

@@ -35,4 +35,4 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../branch \
 	-I$(srcdir)/../util \
 	-I$(srcdir)/../problem \
-	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD
+	$(COUENNELIB_CFLAGS)

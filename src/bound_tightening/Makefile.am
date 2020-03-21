@@ -44,4 +44,4 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../interfaces \
 	-I$(srcdir)/../branch \
 	-I$(srcdir)/../expression/operators \
-	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD
+	$(COUENNELIB_CFLAGS)

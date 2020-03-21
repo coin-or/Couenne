@@ -62,5 +62,5 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../cut/sdpcuts \
 	-I$(srcdir)/../main \
 	-I$(srcdir)/../interfaces \
-	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD
+	$(COUENNELIB_CFLAGS)
 

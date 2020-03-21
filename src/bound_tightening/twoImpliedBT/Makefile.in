@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am 1313 2020-01-31 11:17:47Z stefan $
+# $Id: Makefile.am 1331 2020-03-19 19:25:05Z stefan $
 #
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
@@ -334,7 +334,7 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../../branch \
 	-I$(srcdir)/../../problem \
 	-I$(srcdir)/../../bound_tightening \
-	$(COUENNELIB_CFLAGS) -DCOUENNE_BUILD
+	$(COUENNELIB_CFLAGS)
 
 all: all-am
 
