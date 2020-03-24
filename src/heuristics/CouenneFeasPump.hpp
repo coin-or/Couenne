@@ -20,7 +20,7 @@
 #include "CouenneFPpool.hpp"
 #include "IpOptionsList.hpp"
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
 #include "scip/scip.h"
 #endif
 
@@ -96,7 +96,7 @@ namespace Couenne {
     void setNumberSolvePerLevel (int value)
     {numberSolvePerLevel_ = value;}
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
     /// checks if val is above a threshold for finiteness
     void checkInfinity (struct Scip *scip, double val, double infinity);
 #endif
@@ -165,7 +165,7 @@ namespace Couenne {
     /// NLP phase of the FP
     int nlpPhase (double *iSol, double *nSol);
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
     SCIP_RETCODE ScipSolve (const double *nSol, double* &sol, int niter, int* nsuciter, CouNumber &obj);
 #endif
 

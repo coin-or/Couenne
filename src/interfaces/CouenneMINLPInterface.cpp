@@ -39,7 +39,7 @@ CouNumber CouenneMINLPInterface::solve (CouNumber *solution) {
 #include "Ipopt/BonIpoptSolver.hpp"
 #include "Ipopt/BonIpoptWarmStart.hpp"
 
-#ifdef COIN_HAS_FILTERSQP
+#ifdef COUENNE_HAS_FILTERSQP
 #include "Filter/BonFilterSolver.hpp"
 #include "Filter/BonFilterWarmStart.hpp"
 //#include "Filter/BonBqpdWarmStart.hpp"
@@ -234,10 +234,10 @@ CouenneMINLPInterface::registerOptions
   try {
     register_general_options(roptions);
     register_OA_options(roptions);
-#ifdef COIN_HAS_FILTERSQP
+#ifdef COUENNE_HAS_FILTERSQP
     FilterSolver::RegisterOptions(roptions);
 #endif
-#ifdef COIN_HAS_IPOPT
+#ifdef COUENNE_HAS_IPOPT
     IpoptSolver::RegisterOptions(roptions);
 #endif
   }   
@@ -407,7 +407,7 @@ CouenneMINLPInterface::createApplication(Ipopt::SmartPtr<Bonmin::RegisteredOptio
   Solver s = (Solver) ival;
   if(s == EFilterSQP){
     testOthers_ = false;;
-#ifdef COIN_HAS_FILTERSQP
+#ifdef COUENNE_HAS_FILTERSQP
     app_ = new Bonmin::FilterSolver(roptions, options, journalist);
 #else
     throw SimpleError("createApplication",
@@ -416,7 +416,7 @@ CouenneMINLPInterface::createApplication(Ipopt::SmartPtr<Bonmin::RegisteredOptio
   }
   else if(s == EIpopt){
     testOthers_ = false;
-#ifdef COIN_HAS_IPOPT
+#ifdef COUENNE_HAS_IPOPT
     app_ = new IpoptSolver(roptions, options, journalist);
 #else
     throw SimpleError("createApplication",
@@ -424,13 +424,13 @@ CouenneMINLPInterface::createApplication(Ipopt::SmartPtr<Bonmin::RegisteredOptio
 #endif
   }
   else if(s == EAll){
-#ifdef COIN_HAS_FILTERSQP
+#ifdef COUENNE_HAS_FILTERSQP
     app_ = new Bonmin::FilterSolver(roptions, options, journalist);
 #else
     throw SimpleError("createApplication",
 		      "Bonmin not configured to run with Ipopt.");
 #endif
-#ifdef COIN_HAS_IPOPT
+#ifdef COUENNE_HAS_IPOPT
     debug_apps_.push_back(new IpoptSolver(roptions, options, journalist)); 
 #endif
     testOthers_ = true;
@@ -2745,14 +2745,14 @@ CouenneMINLPInterface::extractInterfaceParams()
     app_->options()->GetIntegerValue("nlp_log_level", logLevel,"bonmin.");
     messageHandler()->setLogLevel(logLevel);
 
-#ifdef COIN_HAS_FILTERSQP
+#ifdef COUENNE_HAS_FILTERSQP
     FilterSolver * filter = dynamic_cast<FilterSolver *>(GetRawPtr(app_));
 
     bool is_given =
 #endif
       app_->options()->GetNumericValue("max_random_point_radius",maxRandomRadius_,"bonmin.");
 
-#ifdef COIN_HAS_FILTERSQP
+#ifdef COUENNE_HAS_FILTERSQP
     if(filter && !is_given){
       // overwriting default for filter
       maxRandomRadius_ = 10.;

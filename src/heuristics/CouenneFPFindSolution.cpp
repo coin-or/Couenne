@@ -17,7 +17,7 @@
 
 #include "cons_rowcuts.h"
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
 #include "scip/scip.h"
 #endif
 
@@ -65,7 +65,7 @@ double CouenneFeasPump::findSolution (const double *nSol, double* &iSol, int nit
     milp_ -> writeLp (name);
   }
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
 
   if (useSCIP_ && problem_ -> nIntVars () > 0) { // if LP, use Clp below
 

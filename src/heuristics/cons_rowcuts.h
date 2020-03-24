@@ -16,7 +16,7 @@
 #include "CouenneCutGenerator.hpp"
 #include "OsiSolverInterface.hpp"
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
 
 #include "scip/scip.h"
 

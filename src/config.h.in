@@ -1,50 +1,50 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* Define to 1 if ASL is available. */
-#undef COIN_HAS_ASL
-
-/* Define to 1 if Bonmin is available. */
-#undef COIN_HAS_BONMIN
-
-/* Define to 1 if the Cplex package is available */
-#undef COIN_HAS_CPLEX
-
-/* Define to 1 if the LAPACK package is available */
-#undef COIN_HAS_LAPACK
-
-/* Define to 1 if the Nauty package is available */
-#undef COIN_HAS_NAUTY
-
-/* Define to 1 if OsiCpx is available. */
-#undef COIN_HAS_OSICPX
-
-/* Define to 1 if OsiGrb is available. */
-#undef COIN_HAS_OSIGRB
-
-/* Define to 1 if OsiMsk is available. */
-#undef COIN_HAS_OSIMSK
-
-/* Define to 1 if OsiSpx is available. */
-#undef COIN_HAS_OSISPX
-
-/* Define to 1 if OsiXpr is available. */
-#undef COIN_HAS_OSIXPR
-
-/* Define to 1 if the SCIP package is available */
-#undef COIN_HAS_SCIP
-
-/* Define to a macro mangling the given C identifier (in lower and upper
-   case). */
-#undef COIN_LAPACK_FUNC
-
-/* As COIN_LAPACK_FUNC, but for C identifiers containing underscores. */
-#undef COIN_LAPACK_FUNC_
-
 /* whether CouenneInterface is derived from Bonmins AmplInterface */
 #undef COUENNEINTERFACE_FROM_ASL
 
 /* Library Visibility Attribute */
 #undef COUENNELIB_EXPORT
+
+/* Define to 1 if ASL is available. */
+#undef COUENNE_HAS_ASL
+
+/* Define to 1 if Bonmin is available. */
+#undef COUENNE_HAS_BONMIN
+
+/* Define to 1 if the Cplex package is available */
+#undef COUENNE_HAS_CPLEX
+
+/* Define to 1 if the LAPACK package is available */
+#undef COUENNE_HAS_LAPACK
+
+/* Define to 1 if the Nauty package is available */
+#undef COUENNE_HAS_NAUTY
+
+/* Define to 1 if OsiCpx is available. */
+#undef COUENNE_HAS_OSICPX
+
+/* Define to 1 if OsiGrb is available. */
+#undef COUENNE_HAS_OSIGRB
+
+/* Define to 1 if OsiMsk is available. */
+#undef COUENNE_HAS_OSIMSK
+
+/* Define to 1 if OsiSpx is available. */
+#undef COUENNE_HAS_OSISPX
+
+/* Define to 1 if OsiXpr is available. */
+#undef COUENNE_HAS_OSIXPR
+
+/* Define to 1 if the SCIP package is available */
+#undef COUENNE_HAS_SCIP
+
+/* Define to a macro mangling the given C identifier (in lower and upper
+   case). */
+#undef COUENNE_LAPACK_FUNC
+
+/* As COUENNE_LAPACK_FUNC, but for C identifiers containing underscores. */
+#undef COUENNE_LAPACK_FUNC_
 
 /* Version number of project */
 #undef COUENNE_VERSION

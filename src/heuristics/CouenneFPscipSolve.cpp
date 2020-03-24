@@ -15,7 +15,7 @@
 
 using namespace Couenne;
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
 
 /* general SCIP includes */
 #include "scip/scip.h"

@@ -20,7 +20,7 @@
 #include "CouenneExprVar.hpp"
 #include "CouenneObject.hpp"
 
-#ifdef COIN_HAS_NAUTY
+#ifdef COUENNE_HAS_NAUTY
 #include "CouenneNauty.hpp"
 #endif
 

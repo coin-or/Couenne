@@ -14,7 +14,7 @@
 #include "CbcHeuristic.hpp"
 #include "BonOsiTMINLPInterface.hpp"
 
-#if defined(COIN_HAS_OSICPX) && defined(COIN_HAS_CPLEX)
+#if defined(COUENNE_HAS_OSICPX) && defined(COUENNE_HAS_CPLEX)
 #include "OsiCpxSolverInterface.hpp"
 #else
 #include "CbcHeuristicFPump.hpp"
@@ -132,7 +132,7 @@ private:
     /** Pointer to the original NLP solver interface*/
     OsiSolverInterface * cinlp_;
     /** Pointer to a milp solver interface.*/
-#if defined(COIN_HAS_OSICPX) && defined(COIN_HAS_CPLEX)
+#if defined(COUENNE_HAS_OSICPX) && defined(COUENNE_HAS_CPLEX)
     OsiCpxSolverInterface * milp_;
 #else
     OsiClpSolverInterface * milp_;
@@ -159,7 +159,7 @@ private:
         of the original problem, i.e. the MINLP */
     double* colLowerNlp_;
     double* colUpperNlp_;
-#if !defined(COIN_HAS_OSICPX) || !defined(COIN_HAS_CPLEX)
+#if !defined(COUENNE_HAS_OSICPX) || !defined(COUENNE_HAS_CPLEX)
     /** Heuristics for the MILP */
     CbcHeuristic** heuristics_;
     int numHeuristics_;

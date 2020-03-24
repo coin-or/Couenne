@@ -19,10 +19,10 @@
 #include "CoinTime.hpp"
 
 #include "CouenneUserInterface.hpp"
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
 #include "CouenneAmplInterface.hpp"
 #endif
-#ifdef COIN_HAS_OS
+#ifdef COUENNE_HAS_OS
 #include "CouenneOSInterface.hpp"
 #endif
 
@@ -37,7 +37,7 @@
 #include "CouenneCutGenerator.hpp" 
 #include "CouenneProblem.hpp"
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
 #include "lpiswitch.h"
 #endif
 
@@ -82,7 +82,7 @@ bool parseCommandLine(int argc, char* argv[], Ipopt::SmartPtr<Ipopt::OptionsList
 int main (int argc, char *argv[]) {
   WindowsErrorPopupBlocker();
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
   SCIPlpiSwitchSetDefaultSolver();
 #endif
 
@@ -91,10 +91,10 @@ int main (int argc, char *argv[]) {
   // register options to prepare for parsing the command line
   SmartPtr<Bonmin::RegisteredOptions> roptions = new Bonmin::RegisteredOptions();
   Couenne::CouenneSetup::registerAllOptions(roptions);
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
   CouenneAmplInterface::registerOptions(roptions);
 #endif
-#ifdef COIN_HAS_OS
+#ifdef COUENNE_HAS_OS
   CouenneOSInterface::registerOptions(roptions);
 #endif
 	
@@ -110,13 +110,13 @@ int main (int argc, char *argv[]) {
   CouenneUserInterface* userinterface = NULL;
 	
   std::string dummy;
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
   if (!userinterface && options->GetStringValue("nlfile", dummy, "")) {
     userinterface = new CouenneAmplInterface(options, jnlst);
     ((CouenneAmplInterface*)userinterface) -> setRegisteredOptions(roptions); // for some reason the TMINLP constructor needs the registered options
   }
 #endif
-#ifdef COIN_HAS_OS
+#ifdef COUENNE_HAS_OS
   if (!userinterface && options->GetStringValue("osilfile", dummy, "")) {
     userinterface = new CouenneOSInterface();
   }

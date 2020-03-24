@@ -14,11 +14,11 @@
 #include "CouenneRecordBestSol.hpp"
 
 // if we use OsiCpx, then we need to have cplex.h, too
-#if defined(COIN_HAS_OSICPX) && !defined(COIN_HAS_CPLEX)
-#undef COIN_HAS_OSICPX
+#if defined(COUENNE_HAS_OSICPX) && !defined(COUENNE_HAS_CPLEX)
+#undef COUENNE_HAS_OSICPX
 #endif
 
-#ifdef COIN_HAS_OSICPX
+#ifdef COUENNE_HAS_OSICPX
 #include "OsiCpxSolverInterface.hpp"
 #include "cplex.h"
 #endif
@@ -100,7 +100,7 @@ namespace Couenne{
       nlp_ = dynamic_cast<Bonmin::OsiTMINLPInterface*>(other.nlp_->clone());
     }
     if(milp_ != NULL)
-#ifdef COIN_HAS_OSICPX
+#ifdef COUENNE_HAS_OSICPX
       milp_ =  dynamic_cast<OsiCpxSolverInterface*>(other.milp_->clone());
 #else
       milp_ =  dynamic_cast<OsiClpSolverInterface*>(other.milp_->clone());
@@ -230,7 +230,7 @@ namespace Couenne{
     OsiSolverInterface * milp = model_->solver();
     int n = milp->getNumCols();
 
-#ifdef COIN_HAS_OSICPX
+#ifdef COUENNE_HAS_OSICPX
     milp_ = new OsiCpxSolverInterface();
     milp_->loadProblem(*(milp->getMatrixByRow()), milp->getColLower(), 
 		       milp->getColUpper(), milp->getObjCoefficients(),
@@ -295,7 +295,7 @@ namespace Couenne{
     milp_->messageHandler()->setLogLevel(0);
     milp_->setDblParam(OsiDualTolerance, COUENNE_EPS_INT);
 
-#ifdef COIN_HAS_OSICPX
+#ifdef COUENNE_HAS_OSICPX
     // Set options if we have Cplex
     CPXsetintparam(milp_->getEnvironmentPtr(), CPX_PARAM_MIPEMPHASIS, CPX_MIPEMPHASIS_HIDDENFEAS);
     CPXsetintparam(milp_->getEnvironmentPtr(), CPX_PARAM_FPHEUR, 2);
@@ -1082,7 +1082,7 @@ namespace Couenne{
   CouenneIterativeRounding::solveMilp(OsiSolverInterface* milp,
 				      double maxTime){
     double start = CoinCpuTime();
-#ifdef COIN_HAS_OSICPX
+#ifdef COUENNE_HAS_OSICPX
     OsiCpxSolverInterface * solver = dynamic_cast<OsiCpxSolverInterface*>(milp);
     CPXENVptr env = solver->getEnvironmentPtr();
     CPXLPptr cpxlp = solver->getLpPtr(OsiCpxSolverInterface::KEEPCACHED_ALL);

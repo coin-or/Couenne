@@ -16,7 +16,7 @@
 #include <assert.h>
 
 #include "CouenneConfig.h"
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
 
 #include "cons_rowcuts.h"
 #include "scip/cons_linear.h"

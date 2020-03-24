@@ -37,7 +37,7 @@
 #include "CouenneBTPerfIndicator.hpp"
 #include "CouenneSdpCuts.hpp"
 
-#ifdef COIN_HAS_NAUTY
+#ifdef COUENNE_HAS_NAUTY
 #include "CouenneNauty.hpp"
 #endif
 
@@ -76,7 +76,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   integerRank_ (NULL),
   maxCpuTime_  (COIN_DBL_MAX),
   bonBase_     (base),
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
   asl_         (asl),
 #endif
   unusedOriginalsIndices_ (NULL),
@@ -94,7 +94,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   double now = CoinCpuTime ();
 
   if (asl) {
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
     // read problem from AMPL structure
     readnl (asl);
 #else
@@ -156,7 +156,7 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   numberInRank_ (p.numberInRank_),
   maxCpuTime_   (p.maxCpuTime_),
   bonBase_      (p.bonBase_),
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
   asl_          (p.asl_),
 #endif
   unusedOriginalsIndices_ (NULL),
@@ -269,7 +269,7 @@ CouenneProblem::~CouenneProblem () {
        i != objects_.end (); ++i)
     delete (*i);
 
-#ifdef COIN_HAS_NAUTY
+#ifdef COUENNE_HAS_NAUTY
   if (nauty_info)
     delete nauty_info;
 #endif

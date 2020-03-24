@@ -15,7 +15,7 @@
 
 using namespace Couenne;
 
-#ifdef COIN_HAS_NAUTY
+#ifdef COUENNE_HAS_NAUTY
 
 #include <cassert>
 #include <vector>
@@ -451,7 +451,7 @@ void CouenneProblem::ChangeBounds (const double * new_lb, const double * new_ub,
 
 void CouenneProblem::setupSymmetry () {
 
-#ifdef COIN_HAS_NAUTY
+#ifdef COUENNE_HAS_NAUTY
   sym_setup ();
   Compute_Symmetry ();
   if (jnlst_ -> ProduceOutput (Ipopt::J_ERROR, J_COUENNE)) {

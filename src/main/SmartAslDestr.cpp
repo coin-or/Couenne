@@ -14,7 +14,7 @@
 
 #include "BonCouenneSetup.hpp"
 
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
 #include "asl.h"
 #include "getstub.h"
 #endif
@@ -22,7 +22,7 @@
 using namespace Couenne;
   
 SmartAsl::~SmartAsl(){
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
   //Code from Ipopt::AmplTNLP to free asl
   if(asl != NULL){
     if (X0) {

@@ -30,7 +30,7 @@ AC_CONFIG_SRCDIR(src/expression/expression.cpp)
 #############################################################################
 
 # Do some initialization work (version numbers, change prefix default, ...)
-AC_COIN_INITIALIZE(Couenne)
+AC_COIN_INITIALIZE
 
 # Get the name of the C++ compiler and appropriate compiler options
 AC_COIN_PROG_CXX

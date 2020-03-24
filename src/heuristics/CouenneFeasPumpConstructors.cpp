@@ -135,7 +135,7 @@ CouenneFeasPump::CouenneFeasPump (CouenneProblem *couenne,
 
     options -> GetStringValue  ("feas_pump_usescip", s, "couenne."); 
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
     useSCIP_ = (s == "yes");
     if (milpMethod_ < 0)
       milpMethod_ = 0;
@@ -563,7 +563,7 @@ void CouenneFeasPump::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> AddStringOption2
     ("feas_pump_usescip",
      "Should SCIP be used to solve the MILPs?",
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
      "yes", // we want it by default if SCIP is available
 #else
      "no",  // otherwise switch it off and warn the user if turned on

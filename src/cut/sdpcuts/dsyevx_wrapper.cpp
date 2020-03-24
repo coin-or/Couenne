@@ -19,7 +19,7 @@
 
 extern "C" {
   /* Lapack routine to compute orthonormal eigenvalues/eigenvectors (in Fortran) */
-  void COIN_LAPACK_FUNC(dsyevx,DSYEVX) (
+  void COUENNE_LAPACK_FUNC(dsyevx,DSYEVX) (
 				  char   *,
 				  char   *,
 				  char   *,
@@ -51,7 +51,7 @@ int dsyevx_interface (int n, double *A, int &m,
 		      int firstidx,
 		      int lastidx) {
 
-#ifdef COIN_HAS_LAPACK
+#ifdef COUENNE_HAS_LAPACK
 #ifdef DEBUG
 
   printf ("matrix:\n---------------------------------\n");
@@ -93,7 +93,7 @@ int dsyevx_interface (int n, double *A, int &m,
   // Equivalent:
   // Ipopt::IpLapackDsyev (true, n, A, lda, w, info);
 
-  COIN_LAPACK_FUNC
+  COUENNE_LAPACK_FUNC
     (dsyevx,DSYEVX)
     (&jobz, &range, &uplo, &n, 
      A, &lda, 

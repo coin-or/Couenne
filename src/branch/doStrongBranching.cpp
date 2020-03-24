@@ -350,7 +350,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
         break; // exit loop
       } else if (status0==1 || status1==1) {
 
-#ifdef COIN_HAS_NAUTY
+#ifdef COUENNE_HAS_NAUTY
 	if (problem_ -> orbitalBranching () && 
 	    (Object -> columnNumber () >= 0) &&
 	    (problem_ -> Find_Orbit (Object -> columnNumber ()) -> size () > 1)) {

@@ -22,7 +22,7 @@
 
 //#define FM_PRINT_INFO
 
-#ifdef COIN_HAS_NAUTY
+#ifdef COUENNE_HAS_NAUTY
 #include "CouenneNauty.hpp"
 #endif
 
@@ -397,7 +397,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // tightening is done, we can apply further tightening using orbit
     // information.
 
-// #ifdef COIN_HAS_NAUTY
+// #ifdef COUENNE_HAS_NAUTY
 //     //    ChangeBounds (psi -> getColLower (),  
 //     //		  psi -> getColUpper (), 
 //     //		  psi -> getNumCols ());
@@ -451,7 +451,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
     // Use orbit info to tighten bounds
 
-#ifdef COIN_HAS_NAUTY
+#ifdef COUENNE_HAS_NAUTY
 
     // TODO: when independent bound tightener, can get original bounds
     // through si.getCol{Low,Upp}er()

@@ -16,16 +16,16 @@
 
 #include "OsiClpSolverInterface.hpp"
 
-#ifdef COIN_HAS_OSICPX
+#ifdef COUENNE_HAS_OSICPX
 #include "OsiCpxSolverInterface.hpp"
 #endif
-#ifdef COIN_HAS_OSIGRB
+#ifdef COUENNE_HAS_OSIGRB
 #include "OsiGrbSolverInterface.hpp"
 #endif
-#ifdef COIN_HAS_OSISPX
+#ifdef COUENNE_HAS_OSISPX
 #include "OsiSpxSolverInterface.hpp"
 #endif
-#ifdef COIN_HAS_OSIXPR
+#ifdef COUENNE_HAS_OSIXPR
 #include "OsiXprSolverInterface.hpp"
 #endif
 
@@ -85,7 +85,7 @@
 // ASL includes need to come behind OsiClp and Bonmin, because it defines "filename",
 // which is used as variablename in Clp
 // (similar bad as windows.h, which defines "small")
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
 #include "asl.h"
 #include "getstub.h"
 #endif
@@ -97,7 +97,7 @@ CouenneSetup::~CouenneSetup(){
   if (couenneProb_ && couenneProb_is_own_)
     delete couenneProb_;
 
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
   // free (aslfg_ -> asl); // triggers segfault -- apparently freed in ancestor class
 #endif
 }
@@ -142,7 +142,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     ci = new CouenneInterface;
 
     if (!couenneProb_ && argv) {
-#ifdef COIN_HAS_ASL
+#ifdef COUENNE_HAS_ASL
       /* Read the model in various places. */
       ci -> readAmplNlFile (argv, roptions (), options (), journalist ());
       aslfg_ = new SmartAsl;
@@ -208,7 +208,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   } else if (s == "cplex") {
 
-#ifdef COIN_HAS_OSICPX
+#ifdef COUENNE_HAS_OSICPX
     CouenneSolverInterface <OsiCpxSolverInterface> *CSI = new CouenneSolverInterface <OsiCpxSolverInterface>;
     continuousSolver_ = CSI;
     CSI -> setCutGenPtr (couenneCg);
@@ -218,7 +218,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 #endif
   } else if (s == "xpress-mp") {
 
-#ifdef COIN_HAS_OSIXPR
+#ifdef COUENNE_HAS_OSIXPR
     CouenneSolverInterface <OsiXprSolverInterface> *CSI = new CouenneSolverInterface <OsiXprSolverInterface>;
     continuousSolver_ = CSI;
     CSI -> setCutGenPtr (couenneCg);
@@ -228,7 +228,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 #endif
   } else if (s == "gurobi") {
 
-#ifdef COIN_HAS_OSIGRB
+#ifdef COUENNE_HAS_OSIGRB
     CouenneSolverInterface <OsiGrbSolverInterface> *CSI = new CouenneSolverInterface <OsiGrbSolverInterface>;
     continuousSolver_ = CSI;
     CSI -> setCutGenPtr (couenneCg);
@@ -238,7 +238,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 #endif
   } else if (s == "soplex") {
 
-#ifdef COIN_HAS_OSISPX
+#ifdef COUENNE_HAS_OSISPX
     CouenneSolverInterface <OsiSpxSolverInterface> *CSI = new CouenneSolverInterface <OsiSpxSolverInterface>;
     continuousSolver_ = CSI;
     CSI -> setCutGenPtr (couenneCg);
@@ -440,7 +440,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   //   objects [nobj++] -> setPriority (contObjPriority);
   // }
 
-#ifdef COIN_HAS_NAUTY
+#ifdef COUENNE_HAS_NAUTY
   if (couenneProb_ -> orbitalBranching ()) {
 
     couenneProb_ -> ChangeBounds (couenneProb_ -> Lb (), couenneProb_ -> Ub (), couenneProb_ -> nVars ());

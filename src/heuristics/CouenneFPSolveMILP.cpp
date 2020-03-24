@@ -19,7 +19,7 @@
 
 #include "CouenneFPpool.hpp"
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
 /* general SCIP includes */
 #include "scip/scip.h"
 #include "scip/cons_linear.h"
@@ -30,7 +30,7 @@ using namespace Couenne;
 
 #define NUMERICS_THRES 1e19
 
-#ifdef COIN_HAS_SCIP
+#ifdef COUENNE_HAS_SCIP
 void CouenneFeasPump::checkInfinity(SCIP *scip, SCIP_Real val, double infinity){
   if( SCIPisInfinity(scip, val) && val < infinity)
     problem_ -> Jnlst () -> Printf (Ipopt::J_WARNING, J_NLPHEURISTIC, 

@@ -3250,8 +3250,6 @@ _ACEOF
 
 
 
-
-
 # A useful makefile conditional that is always false
 
    if false; then
@@ -17204,7 +17202,7 @@ fi
 
   if test $coin_has_bonmin = yes ; then
 
-$as_echo "#define COIN_HAS_BONMIN 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_BONMIN 1" >>confdefs.h
 
     if test -n "$bonmin_pcfiles" ; then COUENNELIB_PCFILES="$bonmin_pcfiles $COUENNELIB_PCFILES" ; fi
        COUENNELIB_LFLAGS="$bonmin_lflags $COUENNELIB_LFLAGS"
@@ -17462,7 +17460,7 @@ fi
 
   if test $coin_has_asl = yes ; then
 
-$as_echo "#define COIN_HAS_ASL 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_ASL 1" >>confdefs.h
 
     if test -n "$asl_pcfiles" ; then COUENNELIB_PCFILES="$asl_pcfiles $COUENNELIB_PCFILES" ; fi
        COUENNELIB_LFLAGS="$asl_lflags $COUENNELIB_LFLAGS"
@@ -17725,7 +17723,7 @@ fi
 
   if test $coin_has_osicpx = yes ; then
 
-$as_echo "#define COIN_HAS_OSICPX 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_OSICPX 1" >>confdefs.h
 
     if test -n "$osicpx_pcfiles" ; then COUENNELIB_PCFILES="$osicpx_pcfiles $COUENNELIB_PCFILES" ; fi
        COUENNELIB_LFLAGS="$osicpx_lflags $COUENNELIB_LFLAGS"
@@ -17979,7 +17977,7 @@ fi
 
   if test $coin_has_osigrb = yes ; then
 
-$as_echo "#define COIN_HAS_OSIGRB 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_OSIGRB 1" >>confdefs.h
 
     if test -n "$osigrb_pcfiles" ; then COUENNELIB_PCFILES="$osigrb_pcfiles $COUENNELIB_PCFILES" ; fi
        COUENNELIB_LFLAGS="$osigrb_lflags $COUENNELIB_LFLAGS"
@@ -18233,7 +18231,7 @@ fi
 
   if test $coin_has_osimsk = yes ; then
 
-$as_echo "#define COIN_HAS_OSIMSK 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_OSIMSK 1" >>confdefs.h
 
     if test -n "$osimsk_pcfiles" ; then COUENNELIB_PCFILES="$osimsk_pcfiles $COUENNELIB_PCFILES" ; fi
        COUENNELIB_LFLAGS="$osimsk_lflags $COUENNELIB_LFLAGS"
@@ -18487,7 +18485,7 @@ fi
 
   if test $coin_has_osispx = yes ; then
 
-$as_echo "#define COIN_HAS_OSISPX 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_OSISPX 1" >>confdefs.h
 
     if test -n "$osispx_pcfiles" ; then COUENNELIB_PCFILES="$osispx_pcfiles $COUENNELIB_PCFILES" ; fi
        COUENNELIB_LFLAGS="$osispx_lflags $COUENNELIB_LFLAGS"
@@ -18741,7 +18739,7 @@ fi
 
   if test $coin_has_osixpr = yes ; then
 
-$as_echo "#define COIN_HAS_OSIXPR 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_OSIXPR 1" >>confdefs.h
 
     if test -n "$osixpr_pcfiles" ; then COUENNELIB_PCFILES="$osixpr_pcfiles $COUENNELIB_PCFILES" ; fi
        COUENNELIB_LFLAGS="$osixpr_lflags $COUENNELIB_LFLAGS"
@@ -19014,7 +19012,7 @@ fi
 
   if test $coin_has_nauty = yes ; then
 
-$as_echo "#define COIN_HAS_NAUTY 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_NAUTY 1" >>confdefs.h
 
     COUENNELIB_LFLAGS="$nauty_lflags $COUENNELIB_LFLAGS"
        COUENNELIB_CFLAGS="$nauty_cflags $COUENNELIB_CFLAGS"
@@ -19276,7 +19274,7 @@ fi
 
   if test $coin_has_scip = yes ; then
 
-$as_echo "#define COIN_HAS_SCIP 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_SCIP 1" >>confdefs.h
 
     COUENNELIB_LFLAGS="$scip_lflags $COUENNELIB_LFLAGS"
        COUENNELIB_CFLAGS="$scip_cflags $COUENNELIB_CFLAGS"
@@ -19538,7 +19536,7 @@ fi
 
   if test $coin_has_cplex = yes ; then
 
-$as_echo "#define COIN_HAS_CPLEX 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_CPLEX 1" >>confdefs.h
 
     COUENNELIB_LFLAGS="$cplex_lflags $COUENNELIB_LFLAGS"
        COUENNELIB_CFLAGS="$cplex_cflags $COUENNELIB_CFLAGS"
@@ -20350,7 +20348,8 @@ $as_echo "$ac_success" >&6; }
   if test $ac_success = yes ; then
     coin_has_lapack=yes
          lapack_pcfiles="lapack blas"
-    else as_fn_error $? "Could not find dsyev in Lapack from lapack.pc blas.pc." "$LINENO" 5
+    else { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lapack.pc and blas.pc present, but could not find dsyev when trying to link with it." >&5
+$as_echo "$as_me: WARNING: lapack.pc and blas.pc present, but could not find dsyev when trying to link with it." >&2;}
   fi
 
     else
@@ -20454,51 +20453,51 @@ fi
 # and COIN_LAPACK_FUNC[_] and augment the necessary variables for the client packages.
   if test $coin_has_lapack = yes ; then
 
-$as_echo "#define COIN_HAS_LAPACK 1" >>confdefs.h
+$as_echo "#define COUENNE_HAS_LAPACK 1" >>confdefs.h
 
 
 
 
   case "${dsyev_namemangling}" in
    "lower case, no underscore, no extra underscore")
-      $as_echo "#define COIN_LAPACK_FUNC(name,NAME) name" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC(name,NAME) name" >>confdefs.h
 
-      $as_echo "#define COIN_LAPACK_FUNC_(name,NAME) name" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC_(name,NAME) name" >>confdefs.h
  ;;
    "lower case, no underscore, extra underscore")
-      $as_echo "#define COIN_LAPACK_FUNC(name,NAME) name" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC(name,NAME) name" >>confdefs.h
 
-      $as_echo "#define COIN_LAPACK_FUNC_(name,NAME) name ## _" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC_(name,NAME) name ## _" >>confdefs.h
  ;;
    "lower case, underscore, no extra underscore")
-      $as_echo "#define COIN_LAPACK_FUNC(name,NAME) name ## _" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC(name,NAME) name ## _" >>confdefs.h
 
-      $as_echo "#define COIN_LAPACK_FUNC_(name,NAME) name ## _" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC_(name,NAME) name ## _" >>confdefs.h
  ;;
    "lower case, underscore, extra underscore")
-      $as_echo "#define COIN_LAPACK_FUNC(name,NAME) name ## _" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC(name,NAME) name ## _" >>confdefs.h
 
-      $as_echo "#define COIN_LAPACK_FUNC_(name,NAME) name ## __" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC_(name,NAME) name ## __" >>confdefs.h
  ;;
    "upper case, no underscore, no extra underscore")
-      $as_echo "#define COIN_LAPACK_FUNC(name,NAME) NAME" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC(name,NAME) NAME" >>confdefs.h
 
-      $as_echo "#define COIN_LAPACK_FUNC_(name,NAME) NAME" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC_(name,NAME) NAME" >>confdefs.h
  ;;
    "upper case, no underscore, extra underscore")
-      $as_echo "#define COIN_LAPACK_FUNC(name,NAME) NAME" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC(name,NAME) NAME" >>confdefs.h
 
-      $as_echo "#define COIN_LAPACK_FUNC_(name,NAME) NAME ## _" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC_(name,NAME) NAME ## _" >>confdefs.h
  ;;
    "upper case, underscore, no extra underscore")
-      $as_echo "#define COIN_LAPACK_FUNC(name,NAME) NAME ## _" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC(name,NAME) NAME ## _" >>confdefs.h
 
-      $as_echo "#define COIN_LAPACK_FUNC_(name,NAME) NAME ## _" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC_(name,NAME) NAME ## _" >>confdefs.h
  ;;
    "upper case, underscore, extra underscore")
-      $as_echo "#define COIN_LAPACK_FUNC(name,NAME) NAME ## _" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC(name,NAME) NAME ## _" >>confdefs.h
 
-      $as_echo "#define COIN_LAPACK_FUNC_(name,NAME) NAME ## __" >>confdefs.h
+      $as_echo "#define COUENNE_LAPACK_FUNC_(name,NAME) NAME ## __" >>confdefs.h
  ;;
    *)
       { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Unsupported or unknown name-mangling scheme: ${dsyev_namemangling}" >&5
