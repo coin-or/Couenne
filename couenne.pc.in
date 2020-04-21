@@ -8,8 +8,8 @@ Name: Couenne
 Description: Convex Over and Under Envelopes for Nonlinear Estimation
 URL: https://github.com/coin-or/Couenne
 Version: @PACKAGE_VERSION@
-Libs: -L${libdir} -lCouenne
-Libs.private: @COUENNELIB_LFLAGS_NOPC@
 Cflags: -I${includedir}
-Requires:
-Requires.private: @COUENNELIB_PCFILES@
+@COIN_STATIC_BUILD_FALSE@Libs: -L${libdir} -lCouenne
+@COIN_STATIC_BUILD_FALSE@Requires.private: @COUENNELIB_PCFILES@
+@COIN_STATIC_BUILD_TRUE@Libs: -L${libdir} -lCouenne @COUENNELIB_LFLAGS_NOPC@
+@COIN_STATIC_BUILD_TRUE@Requires: @COUENNELIB_PCFILES@
