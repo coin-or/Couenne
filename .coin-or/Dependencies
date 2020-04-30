@@ -1,0 +1,11 @@
+ThirdParty/ASL    https://projects.coin-or.org/svn/BuildTools/ThirdParty/ASL/trunk
+ThirdParty/Metis  https://projects.coin-or.org/svn/BuildTools/ThirdParty/Metis/trunk
+ThirdParty/HSL    https://projects.coin-or.org/svn/BuildTools/ThirdParty/HSL/trunk
+ThirdParty/Mumps  https://projects.coin-or.org/svn/BuildTools/ThirdParty/Mumps/trunk
+CoinUtils         https://projects.coin-or.org/svn/CoinUtils/trunk
+Osi               https://projects.coin-or.org/svn/Osi/trunk
+Clp               https://projects.coin-or.org/svn/Clp/trunk
+Cgl               https://projects.coin-or.org/svn/Cgl/trunk
+Cbc               https://projects.coin-or.org/svn/Cbc/trunk
+Ipopt             https://github.com/coin-or/Ipopt stable/3.13
+Bonmin            https://projects.coin-or.org/svn/Bonmin/trunk

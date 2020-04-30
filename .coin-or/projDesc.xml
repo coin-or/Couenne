@@ -1,180 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type = "text/xsl" href = "http://www.coin-or.org/projects/autoGen.xsl"?>
-<projectData xmlns="coin-or.org"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="coin-or.org http://www.coin-or.org/projects/autoGen.xsd">
-
-        <projectBasics>
-
-                <projectName>Couenne</projectName>
-
-                <projectDescription>
-
-		  Couenne (Convex Over and Under ENvelopes for
-		  Nonlinear Estimation) is a spatial branch &amp; bound
-		  algorithm that implements linearization, bound
-		  reduction, and branching techniques for
-		  Mixed-integer, Nonlinear Programming (MINLP)
-		  problems. The purpose of Couenne is to find global
-		  optima of nonconvex MINLPs.
-
-		</projectDescription>
-		<projectShortDescription>
-		  A branch-and-bound algorithm for mixed integer nonlinear programming problems.
-		</projectShortDescription>
-
-                <projectManager>Pietro Belotti (pietrobelotti at fico dot com)</projectManager>
-
-                <projectHomePage>https://projects.coin-or.org/Couenne</projectHomePage>
-
-                <projectLicense> Eclipse Public License 1.0 </projectLicense>
-                <projectLicenseURL>
-                    http://www.opensource.org/licenses/eclipse-1.0
-                </projectLicenseURL>
-
-                <coinLinkedProjects>
-                     <coinProject><repoName>BuildTools</repoName></coinProject>
-                     <coinProject><repoName>CoinUtils</repoName></coinProject>
-                     <coinProject><repoName>Cgl</repoName></coinProject>
-                     <coinProject><repoName>Osi</repoName></coinProject>
-                     <coinProject><repoName>Clp</repoName></coinProject>
-                     <coinProject><repoName>Ipopt</repoName></coinProject>
-                     <coinProject><repoName>Bonmin</repoName></coinProject>
-                     <coinProject><repoName>Cbc</repoName></coinProject>
-                 </coinLinkedProjects>
-
-                <otherLinkedPackages>
-                <otherPackage>
-                                <packageName>Ampl Solver Library
-                                </packageName>
-                                <packageURL>
-                                http://www.netlib.org/ampl/solvers
-                                </packageURL>
-                                <requiredOrOptional>Optional
-                                </requiredOrOptional>
-                        </otherPackage>
-                <otherPackage>
-                                <packageName>Blas
-                                </packageName>
-                                <packageURL>
-                                http://www.netlib.org/blas
-                                </packageURL>
-                                <requiredOrOptional>Required (any implementation)
-                                </requiredOrOptional>
-                        </otherPackage>
-
-                <!--<otherPackage>
-                    <packageName>CPLEX
-                    </packageName>
-                    <packageURL>
-                      http://www.ilog.com/products/cplex/product/mip.cfm
-                    </packageURL>
-                    <requiredOrOptional>Optional
-                    </requiredOrOptional>
-                  </otherPackage>-->
-
-                        <otherPackage>
-                                <packageName>Lapack
-                                </packageName>
-                                <packageURL>
-                                http://www.netlib.org/lapack
-                                </packageURL>
-                                <requiredOrOptional>Optional (any implementation)
-                                </requiredOrOptional>
-                        </otherPackage>
-
-                        <otherPackage>
-                                <packageName>At least one sparse linear solver (Mumps or MA27)
-                                </packageName>
-                                <packageURL>
-
-                                </packageURL>
-                                <requiredOrOptional>Required
-                                </requiredOrOptional>
-                        </otherPackage>
-
-                </otherLinkedPackages>
-
-                <projectLanguage>C++</projectLanguage>
-
-                <developmentStatus>
-
-                  <activityStatus>Active</activityStatus>
-
-                  <maturityLevel>3</maturityLevel>
-                  <!-- DO NOT USE unless you want to override the automated
-		       system that tracks stable and release versions.
-
-                  <stableVersionNumber>0.4</stableVersionNumber>
- 	
- 	          <releaseNumber>0.4.3</releaseNumber>
-		  -->
-                </developmentStatus>
-
-                <testedPlatforms>
-
-                  <!--<platform>
-                           <operatingSystem>Microsoft Windows</operatingSystem>
-                           <compiler>MSVC++/cl</compiler>
-                     </platform>
-                     <platform>
-                           <operatingSystem>Microsoft Windows</operatingSystem>
-                           <compiler>CYGWIN/cl</compiler>
-                     </platform>
-                     <platform>
-                           <operatingSystem>Microsoft Windows</operatingSystem>
-                           <compiler>MSys/gcc</compiler>
-                     </platform>-->
-                     <platform>
-                           <operatingSystem>Linux</operatingSystem>
-                           <compiler>gcc</compiler>
-                     </platform>
-                     <platform>
-                           <operatingSystem>Microsoft Windows</operatingSystem>
-                           <compiler>CYGWIN/gcc</compiler>
-                     </platform>
-                     <!--<platform>
-                          <operatingSystem>OSX</operatingSystem>
-                          <compiler>gcc</compiler>
-                     </platform>
-                     <platform>
-                          <operatingSystem>Solarix X86</operatingSystem>
-                          <compiler>gcc</compiler>
-                     </platform>
-                     <platform>
-                          <operatingSystem>Solarix X86</operatingSystem>
-                          <compiler>sunpro</compiler>
-                      </platform>-->
-
-                </testedPlatforms>
-
-                <projectCategories>
-
-                      <category>
-                           Optimization deterministic nonlinear nonconvex mixed-integer
-                      </category>
-                </projectCategories>
-
-        </projectBasics>
-
-        <leftMenuLinks>
-
-                <documentation>
-		  http://www.coin-or.org/Doxygen/Couenne/index.html
-		</documentation>
-
-                <sourceCodeDownload>
-                  http://www.coin-or.org/download/source/Couenne
-                </sourceCodeDownload>
-
-                <binaryDownload>
-                    http://www.coin-or.org/download/binary/Couenne
-                </binaryDownload>
-
-                <mailingList>
-                  http://list.coin-or.org/mailman/listinfo/couenne
-                </mailingList>
-
-        </leftMenuLinks>
-
+<projectData xmlns="coin-or.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="coin-or.org http://www.coin-or.org/projects/autoGen.xsd">
+  <projectBasics>
+    <projectName>Couenne</projectName>
+    <projectDescription>
+  Couenne (Convex Over and Under ENvelopes for
+  Nonlinear Estimation) is a spatial branch &amp; bound
+  algorithm that implements linearization, bound
+  reduction, and branching techniques for
+  Mixed-integer, Nonlinear Programming (MINLP)
+  problems. The purpose of Couenne is to find global
+  optima of nonconvex MINLPs.
+    </projectDescription>
+    <projectShortDescription>A branch-and-bound algorithm for mixed integer nonlinear programming problems.</projectShortDescription>
+    <projectManager>Pietro Belotti</projectManager>
+    <projectHomePage>https://github.com/coin-or/Couenne</projectHomePage>
+    <projectLicense>Eclipse Public License 1.0</projectLicense>
+    <projectLicenseURL>http://www.opensource.org/licenses/eclipse-1.0</projectLicenseURL>
+    <coinLinkedProjects>
+      <coinProject>
+        <repoName>BuildTools</repoName>
+      </coinProject>
+      <coinProject>
+        <repoName>CoinUtils</repoName>
+      </coinProject>
+      <coinProject>
+        <repoName>Cgl</repoName>
+      </coinProject>
+      <coinProject>
+        <repoName>Osi</repoName>
+      </coinProject>
+      <coinProject>
+        <repoName>Clp</repoName>
+      </coinProject>
+      <coinProject>
+        <repoName>Ipopt</repoName>
+      </coinProject>
+      <coinProject>
+        <repoName>Bonmin</repoName>
+      </coinProject>
+      <coinProject>
+        <repoName>Cbc</repoName>
+      </coinProject>
+    </coinLinkedProjects>
+    <otherLinkedPackages>
+      <otherPackage>
+        <packageName>Ampl Solver Library</packageName>
+        <packageURL>http://www.netlib.org/ampl/solvers</packageURL>
+        <requiredOrOptional>Optional</requiredOrOptional>
+      </otherPackage>
+      <otherPackage>
+        <packageName>Blas</packageName>
+        <packageURL>http://www.netlib.org/blas</packageURL>
+        <requiredOrOptional>Required (any implementation)</requiredOrOptional>
+      </otherPackage>
+      <otherPackage>
+        <packageName>Lapack</packageName>
+        <packageURL>http://www.netlib.org/lapack</packageURL>
+        <requiredOrOptional>Optional (any implementation)</requiredOrOptional>
+      </otherPackage>
+      <otherPackage>
+        <packageName>At least one sparse linear solver (Mumps or MA27)</packageName>
+        <packageURL/>
+        <requiredOrOptional>Required</requiredOrOptional>
+      </otherPackage>
+    </otherLinkedPackages>
+    <projectLanguage>C++</projectLanguage>
+    <developmentStatus>
+      <activityStatus>Active</activityStatus>
+      <maturityLevel>3</maturityLevel>
+    </developmentStatus>
+    <testedPlatforms>
+      <platform>
+        <operatingSystem>Linux</operatingSystem>
+        <compiler>gcc</compiler>
+      </platform>
+      <platform>
+        <operatingSystem>Microsoft Windows</operatingSystem>
+        <compiler>CYGWIN/gcc</compiler>
+      </platform>
+    </testedPlatforms>
+    <projectCategories>
+      <category>Optimization deterministic nonlinear nonconvex mixed-integer</category>
+    </projectCategories>
+  </projectBasics>
+  <leftMenuLinks>
+    <documentation>http://www.coin-or.org/Doxygen/Couenne/index.html</documentation>
+    <sourceCodeDownload>http://www.coin-or.org/download/source/Couenne</sourceCodeDownload>
+    <binaryDownload>http://www.coin-or.org/download/binary/Couenne</binaryDownload>
+    <mailingList>http://list.coin-or.org/mailman/listinfo/couenne</mailingList>
+  </leftMenuLinks>
 </projectData>

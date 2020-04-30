@@ -6,46 +6,70 @@
 
 # Author:  Andreas Waechter           IBM    2006-04-13
 
-AUTOMAKE_OPTIONS = foreign
-
-EXTRA_DIST = doxydoc/doxygen.conf
-
 ########################################################################
 #                          Subdirectories                              #
 ########################################################################
 
-# subdirs is set by configure as the list of all subdirectories to recurse
-# into
-SUBDIRS = $(subdirs)
+SUBDIRS = src/util \
+	src/expression \
+	src/standardize \
+	src/problem \
+	src/bound_tightening \
+	src/bound_tightening/twoImpliedBT \
+	src/convex \
+	src/branch \
+	src/disjunctive \
+	src/interfaces \
+	src/heuristics \
+	src/cut/sdpcuts \
+	src/cut/crossconv \
+	src
+
+SUBDIRS += src/main 
+
+# We don't want to compile the test subdirectory, unless the test target is
+# specified.  But we need to list it as subdirectory to make sure that it is
+# included in the tarball
+
+if ALWAYS_FALSE
+  SUBDIRS += test
+endif
 
 ########################################################################
 #                           Extra Targets                              #
 ########################################################################
 
 test: all
-	cd Couenne && $(MAKE) test
+	cd test && $(MAKE) test
 
 unitTest: test
 
-tests: all
-	for dir in $(subdirs); do \
-	  if test -r $$dir/test/Makefile; then \
-	    (cd $$dir; $(MAKE) test) \
-	  fi; \
-	done
-
-unitTests: tests
+# Doxygen documentation
 
 doxydoc:
-	cd ${srcdir} && doxygen doxydoc/doxygen.conf
+	doxygen doxydoc/doxygen.conf
 
-.PHONY: test unitTest tests unitTests doxydoc
+clean-doxydoc:
+	( cd doxydoc ; rm -rf html *.log *.tag )
+
+clean-local: clean-doxydoc
+	if test -r test/Makefile; then cd test; $(MAKE) clean; fi
+
+install-exec-local: install-doc
+
+uninstall-local: uninstall-doc
+
+.PHONY: test unitTest doxydoc
+
+########################################################################
+#                  Installation of the pkg-config file                 #
+########################################################################
+
+pkgconfiglibdir = $(libdir)/pkgconfig
+pkgconfiglib_DATA = couenne.pc
 
 ########################################################################
 #                         Maintainer Stuff                             #
 ########################################################################
-
-# Files that are generated and should be cleaned with make distclean
-DISTCLEANFILES = coin_subdirs.txt
 
 include BuildTools/Makemain.inc
