@@ -1,4 +1,3 @@
-// $Id$
 //
 // (C) Copyright XXX 2009
 // All Rights Reserved.

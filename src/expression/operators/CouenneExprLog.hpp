@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprLog.hpp
  * Author:  Pietro Belotti

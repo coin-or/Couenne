@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneBTPerfIndicator.hpp
  * Author:  Pietro Belotti

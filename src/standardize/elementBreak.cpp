@@ -1,4 +1,4 @@
-/* $Id$ */
+/* */
 /*
  * Name:    elementBreak.cpp
  * Author:  Pietro Belotti

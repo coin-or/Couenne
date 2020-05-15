@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneTypes.hpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    writeLP.cpp
  * Author:  Pietro Belotti

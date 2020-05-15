@@ -1,4 +1,3 @@
-## $Id$
 #
 # Copyright (C) 2006 International Business Machines.
 # All Rights Reserved.

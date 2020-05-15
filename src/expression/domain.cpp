@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    domain.cpp
  * Author:  Pietro Belotti

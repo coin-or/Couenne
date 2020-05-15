@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:       conv-exprTrilinear-gencuts.cpp.cpp
  * Source:     GNU C++

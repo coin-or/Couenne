@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneMINLPInterface
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    generateCuts.cpp
  * Author:  Pietro Belotti

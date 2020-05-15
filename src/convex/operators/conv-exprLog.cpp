@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    conv-exprLog.cpp
  * Author:  Pietro Belotti

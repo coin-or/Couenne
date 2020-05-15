@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    conv-exprPow-envelope.cpp
  * Author:  Pietro Belotti

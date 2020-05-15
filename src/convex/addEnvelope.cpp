@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * File:    addEnvelope.cpp
  * Author:  Pietro Belotti, Carnegie Mellon University

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprSum.cpp
  * Author:  Pietro Belotti

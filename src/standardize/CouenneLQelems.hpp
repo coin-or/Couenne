@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    lqelems.hpp
  * Author:  Pietro Belotti

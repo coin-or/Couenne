@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    branchExprAbs.cpp
  * Author:  Pietro Belotti

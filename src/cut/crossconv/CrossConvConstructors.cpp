@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CrossConvConstructors.cpp
  * Author:  Pietro Belotti

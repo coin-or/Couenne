@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneSymmetry.cpp
  * Author:  Jim Ostrowski

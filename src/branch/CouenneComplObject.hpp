@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneComplObject.hpp
  * Authors: Pietro Belotti, Lehigh University

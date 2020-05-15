@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFPphaseNLP.cpp
  * Authors: Pietro Belotti

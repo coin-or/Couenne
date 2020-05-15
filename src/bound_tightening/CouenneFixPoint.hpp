@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFixPoint.hpp
  * Author:  Pietro Belotti

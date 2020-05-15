@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneSdpCuts.hpp
  * Authors: Pietro Belotti

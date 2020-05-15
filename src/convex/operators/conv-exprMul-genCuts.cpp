@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    conv-exprMul-genCuts.cpp
  * Author:  Pietro Belotti

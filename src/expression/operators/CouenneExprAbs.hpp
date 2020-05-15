@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprAbs.hpp
  * Author:  Pietro Belotti

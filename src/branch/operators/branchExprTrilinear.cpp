@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    branchExprTrilinear.cpp
  * Author:  Pietro Belotti

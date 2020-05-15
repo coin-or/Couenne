@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprBound.hpp
  * Author:  Pietro Belotti

@@ -2,7 +2,6 @@
 # All Rights Reserved.
 # This file is distributed under the Eclipse Public License.
 
-## $Id$
 
 # Author: Pietro Belotti, on a template by Pierre Bonami
 

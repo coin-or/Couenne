@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneAggrProbing.cpp
  * Author:  Giacomo Nannicini

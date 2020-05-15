@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprMul.cpp
  * Author:  Pietro Belotti

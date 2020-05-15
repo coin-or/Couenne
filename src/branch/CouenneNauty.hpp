@@ -1,4 +1,4 @@
-/* $Id$ 
+/* 
  *
  * Name:    CouenneNauty.hpp
  * Authors: Jim Ostrowski

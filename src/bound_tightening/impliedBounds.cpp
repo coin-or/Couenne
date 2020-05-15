@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    impliedBounds.cpp
  * Author:  Pietro Belotti

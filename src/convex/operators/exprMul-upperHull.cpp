@@ -1,4 +1,4 @@
-/* $Id$ 
+/* 
  *
  * Name:    exprMul-upperHull.cpp
  * Author:  Pietro Belotti

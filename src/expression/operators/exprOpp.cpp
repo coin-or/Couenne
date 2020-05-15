@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprOpp.cpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFPcreateMILP.cpp
  * Authors: Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneTNLP.cpp
  * Authors: Pietro Belotti

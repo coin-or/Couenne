@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFPpool.cpp
  * Authors: Pietro Belotti

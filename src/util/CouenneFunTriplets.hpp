@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    funtriplets.hpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprInv.hpp
  * Author:  Pietro Belotti

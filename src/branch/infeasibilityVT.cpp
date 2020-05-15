@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    infeasibilityVT.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University

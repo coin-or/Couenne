@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    TwoImpliedConstructors.cpp
  * Author:  Pietro Belotti

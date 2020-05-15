@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    tightenBounds.cpp
  * Author:  Pietro Belotti

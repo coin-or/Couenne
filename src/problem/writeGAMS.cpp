@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    writeGAMS.cpp
  * Author:  Pietro Belotti

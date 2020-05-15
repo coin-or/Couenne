@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    conv-exprQuad.cpp
  * Authors: Pierre Bonami

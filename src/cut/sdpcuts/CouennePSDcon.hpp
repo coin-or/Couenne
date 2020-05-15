@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouennePSDcon.hpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneProblem.cpp
  * Author:  Pietro Belotti

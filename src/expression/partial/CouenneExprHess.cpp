@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneExprHess.cpp
  * Authors: Pietro Belotti, Lehigh University

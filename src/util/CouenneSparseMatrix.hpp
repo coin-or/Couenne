@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneSparseMatrix.hpp
  * Authors: Pietro Belotti, Clemson University

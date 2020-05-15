@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    domain.hpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneAggrProbing.hpp
  * Author:  Giacomo Nannicini

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    getIntegerCandidate.cpp
  * Author:  Pietro Belotti

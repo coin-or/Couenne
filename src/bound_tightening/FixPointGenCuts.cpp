@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    FixPointGenCuts.cpp
  * Author:  Pietro Belotti

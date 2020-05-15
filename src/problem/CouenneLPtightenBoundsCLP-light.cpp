@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneLPtightenBoundsCLP-light.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University

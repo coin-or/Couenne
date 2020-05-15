@@ -1,5 +1,4 @@
-/** $Id$
- *
+/**
  * @file   cons_rowcuts.h
  * @brief  constraint handler for rowcuts constraints
  *         enables separation of convexification cuts during SCIP solution procedure

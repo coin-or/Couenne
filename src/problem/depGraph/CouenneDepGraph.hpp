@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneDepGraph.hpp
  * Author:  Pietro Belotti

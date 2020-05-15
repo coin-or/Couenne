@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprTrilinear.cpp
  * Author:  Pietro Belotti

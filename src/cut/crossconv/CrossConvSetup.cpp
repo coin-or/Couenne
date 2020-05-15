@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CrossConvSetup.cpp
  * Author:  Pietro Belotti

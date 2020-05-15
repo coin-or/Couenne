@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneDisjCuts.hpp
  * Author:  Pietro Belotti

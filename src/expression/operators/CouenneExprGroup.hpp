@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprGroup.hpp
  * Author:  Pietro Belotti

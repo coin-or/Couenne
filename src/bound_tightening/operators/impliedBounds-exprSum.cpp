@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    impliedBounds-exprSum.cpp
  * Author:  Pietro Belotti

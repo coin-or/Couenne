@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFeasPumpConstructors.cpp
  * Authors: Pietro Belotti

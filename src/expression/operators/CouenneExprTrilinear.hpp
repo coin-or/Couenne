@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneExprTrilinear.hpp
  * Author:  Pietro Belotti

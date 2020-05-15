@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprSin.hpp
  * Author:  Pietro Belotti

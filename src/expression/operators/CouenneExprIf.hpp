@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprIf.hpp
  * Author:  Pietro Belotti

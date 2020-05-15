@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    powNewton.cpp
  * Author:  Pietro Belotti

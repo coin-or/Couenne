@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprUnary.hpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFeasPump.hpp
  * Authors: Pietro Belotti

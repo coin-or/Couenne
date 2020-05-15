@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    readASLfg.cpp
  * Author:  Pietro Belotti

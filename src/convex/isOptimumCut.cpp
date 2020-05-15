@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    isOptimumCut.cpp
  * Author:  Pietro Belotti

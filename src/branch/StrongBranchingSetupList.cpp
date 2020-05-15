@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    StrongBranchingSetupList.cpp
  * Authors: Andreas Waechter

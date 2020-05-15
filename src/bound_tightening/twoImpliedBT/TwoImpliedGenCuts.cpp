@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    TwoImpliedGenCuts.cpp
  * Author:  Pietro Belotti

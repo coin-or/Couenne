@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CrossConvGenCuts.cpp
  * Author:  Pietro Belotti

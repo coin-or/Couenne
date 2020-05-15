@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneProblemElem.hpp
  * Author:  Pietro Belotti

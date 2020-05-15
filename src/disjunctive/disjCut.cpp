@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    disjCut.cpp
  * Author:  Pietro Belotti

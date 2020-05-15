@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneCrossConv.hpp
  * Author:  Pietro Belotti

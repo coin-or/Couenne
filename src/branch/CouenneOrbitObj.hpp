@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneOrbitObj.hpp
  * Authors: Jim Ostrowski, University of Waterloo

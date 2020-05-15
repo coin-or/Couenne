@@ -1,4 +1,4 @@
-/* $Id$ */
+/* */
 /*
  * Name:    exprBSin.hpp
  * Author:  Pietro Belotti

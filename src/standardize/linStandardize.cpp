@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    linStandardize.cpp
  * Author:  Pietro Belotti

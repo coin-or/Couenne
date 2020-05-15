@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    auxiliarize.cpp
  * Author:  Pietro Belotti

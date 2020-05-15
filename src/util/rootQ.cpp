@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    rootQ.cpp
  * Author:  Pietro Belotti

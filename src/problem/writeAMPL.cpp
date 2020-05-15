@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    writeAMPL.cpp
  * Author:  Pietro Belotti

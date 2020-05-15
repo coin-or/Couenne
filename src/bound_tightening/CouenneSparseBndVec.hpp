@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneSparseBndVec.hpp
  * Author:  Pietro Belotti

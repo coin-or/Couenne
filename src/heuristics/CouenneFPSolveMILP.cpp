@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFPSolveMILP.cpp
  * Authors: Pietro Belotti
