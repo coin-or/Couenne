@@ -65,14 +65,16 @@ AC_COIN_CHK_PKG(OsiXpr,[CouenneLib],[osi-xpress]) # Osi/Xpress
 #############################################################################
 
 # Nauty library (for symmetry detection)
+AC_COIN_CHK_PKG([Nauty],[CouenneLib],[nauty])
+
 AC_LANG_PUSH(C)
-AC_COIN_CHK_LIB([Nauty],[CouenneLib],[-lnauty],[],[],[nauty])
 
 # SCIP (used in Feasibility Pump)
 AC_COIN_CHK_LIB([SCIP],[CouenneLib],[-lscipsolver],[],[],[SCIPcreate])
 
 # CPLEX (so we can include cplex.h)
 AC_COIN_CHK_LIB([Cplex],[CouenneLib],[-lcplex -lpthread -lm -ldl],[],[],[CPXgetstat])
+
 AC_LANG_POP(C)
 
 # for dsyevx in sdpcuts

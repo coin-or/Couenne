@@ -18,7 +18,7 @@
 /* Define to 1 if the LAPACK package is available */
 #undef COUENNE_HAS_LAPACK
 
-/* Define to 1 if the Nauty package is available */
+/* Define to 1 if Nauty is available. */
 #undef COUENNE_HAS_NAUTY
 
 /* Define to 1 if OsiCpx is available. */
