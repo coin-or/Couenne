@@ -14,7 +14,7 @@
 #include "CouenneConfig.h"
 
 extern "C" {
-#include "nauty.h"
+#include "nauty/nauty.h"
 }
 
 #include <cstdio>
