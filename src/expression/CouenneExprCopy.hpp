@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprCopy.hpp
  * Author:  Pietro Belotti

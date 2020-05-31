@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CutGenSparse.cpp
  * Authors: Andrea Qualizza

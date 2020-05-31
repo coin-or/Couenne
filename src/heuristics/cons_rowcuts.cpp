@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * @file   cons_rowcuts.c
  * @ingroup CONSHDLRS 

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneTwoImplied.hpp
  * Author:  Pietro Belotti

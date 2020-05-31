@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    flattenMul.cpp
  * Author:  Pietro Belotti

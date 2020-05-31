@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CutGen.cpp
  * Authors: Andrea Qualizza

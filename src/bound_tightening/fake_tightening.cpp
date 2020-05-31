@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    fake_tightening.cpp
  * Author:  Pietro Belotti

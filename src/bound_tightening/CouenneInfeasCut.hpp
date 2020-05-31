@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneInfeasCut.hpp
  * Author:  Pietro Belotti

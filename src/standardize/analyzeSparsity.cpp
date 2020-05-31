@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    analyzeSparsity.cpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFPscipSolve.cpp
  * Authors: Timo Berthold, ZIB Berlin

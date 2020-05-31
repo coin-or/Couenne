@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    aggressiveBT.cpp
  * Author:  Pietro Belotti

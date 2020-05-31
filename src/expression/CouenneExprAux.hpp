@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprAux.hpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprNorm.hpp
  * Author:  Pietro Belotti

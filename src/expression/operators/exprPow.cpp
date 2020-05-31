@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprPow.cpp
  * Author:  Pietro Belotti

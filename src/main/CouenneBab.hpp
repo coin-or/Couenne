@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneBab.hpp
  * Author:  Pietro Belotti

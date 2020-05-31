@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneBranchingObject.hpp
  * Authors: Pierre Bonami, IBM Corp.

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    getDisjunctions.cpp
  * Author:  Pietro Belotti

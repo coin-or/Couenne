@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    dsyevx_wrapper.hpp
  * Authors: Andrea Qualizza

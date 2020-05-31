@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprCeil.hpp
  * Author:  Pietro Belotti

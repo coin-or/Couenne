@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    conv-exprMul-reformulate.cpp
  * Author:  Pietro Belotti

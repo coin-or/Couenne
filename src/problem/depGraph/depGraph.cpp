@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    depGraph.cpp
  * Author:  Pietro Belotti

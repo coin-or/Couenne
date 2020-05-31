@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprFloor.hpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneExprSignPow.hpp
  * Author:  Pietro Belotti

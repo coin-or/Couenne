@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    constrStandardize.cpp
  * Author:  Pietro Belotti

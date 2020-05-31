@@ -1,4 +1,4 @@
-/* $Id$ */
+/* */
 /*
  * Name:    fillQuadIndices.cpp
  * Author:  Pietro Belotti

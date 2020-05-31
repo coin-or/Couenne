@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneLPtightenBounds.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University

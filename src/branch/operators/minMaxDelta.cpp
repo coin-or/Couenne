@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    minMaxDelta.cpp
  * Author:  Pietro Belotti

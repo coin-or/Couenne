@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneOrbitBranchingObj.cpp
  * Authors: Jim Ostrowski, University of Waterloo

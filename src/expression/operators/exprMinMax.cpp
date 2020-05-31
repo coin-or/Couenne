@@ -1,4 +1,4 @@
-/* $Id$ */
+/* */
 /*
  * Name:    exprMinMax.cpp
  * Author:  Pietro Belotti

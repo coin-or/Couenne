@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneBTPerfIndicatorConstr.cpp
  * Author:  Pietro Belotti

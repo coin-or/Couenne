@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFPFindSolution.cpp
  * Authors: Pietro Belotti

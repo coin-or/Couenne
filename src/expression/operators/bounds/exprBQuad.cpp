@@ -1,4 +1,4 @@
-/* $Id$ */
+/* */
 /*
  * Name:    exprBQuad.cpp
  * Author:  Pietro Belotti

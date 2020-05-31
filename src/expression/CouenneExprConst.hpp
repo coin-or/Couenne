@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprConst.hpp
  * Author:  Pietro Belotti

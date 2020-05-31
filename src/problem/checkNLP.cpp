@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    checkNLP.cpp
  * Author:  Pietro Belotti

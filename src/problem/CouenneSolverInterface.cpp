@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneSolverInterface.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University

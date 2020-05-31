@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    reformulate.cpp
  * Author:  Pietro Belotti

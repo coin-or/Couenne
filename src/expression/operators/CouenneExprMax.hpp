@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprMax.hpp
  * Author:  Pietro Belotti

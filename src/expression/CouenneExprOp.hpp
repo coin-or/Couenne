@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprOp.hpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    computeMulBrDist.cpp
  * Author:  Pietro Belotti

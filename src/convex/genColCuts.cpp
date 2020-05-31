@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    genColCuts.cpp
  * Author:  Pietro Belotti

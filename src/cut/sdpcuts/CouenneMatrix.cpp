@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneMatrix.cpp
  * Author:  Pietro Belotti

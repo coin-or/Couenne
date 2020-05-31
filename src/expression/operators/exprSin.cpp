@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprSin.cpp
  * Author:  Pietro Belotti

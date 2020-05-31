@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneGlobalCutOff.cpp
  * Author:  Pietro Belotti, Lehigh University

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    impliedBounds-exprMul.cpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneOrbitObj.cpp
  * Authors: Jim Ostrowski, University of Waterloo

@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    branchExprSinCos.cpp
  * Author:  Pietro Belotti

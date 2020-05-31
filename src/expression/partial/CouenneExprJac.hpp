@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneExprJac.hpp
  * Authors: Pietro Belotti, Lehigh University

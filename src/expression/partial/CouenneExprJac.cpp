@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneExprMatr.cpp
  * Authors: Pietro Belotti, Lehigh University

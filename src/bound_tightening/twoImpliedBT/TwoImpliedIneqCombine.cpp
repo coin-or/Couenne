@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    TwoImpliedCombine.cpp
  * Author:  Pietro Belotti

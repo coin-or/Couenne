@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    exprBMul.hpp
  * Author:  Pietro Belotti

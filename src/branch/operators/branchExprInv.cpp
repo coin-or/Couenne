@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    branchExprInv.cpp
  * Author:  Pietro Belotti

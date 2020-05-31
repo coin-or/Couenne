@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    conv-exprDiv.cpp
  * Author:  Pietro Belotti

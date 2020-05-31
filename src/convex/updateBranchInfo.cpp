@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    updateBranchInfo.cpp
  * Author:  Pietro Belotti

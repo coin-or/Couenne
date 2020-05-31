@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    conv-exprPow.cpp
  * Author:  Pietro Belotti

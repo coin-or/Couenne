@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneSOSObject.hpp
  * Authors: Pietro Belotti, Lehigh University

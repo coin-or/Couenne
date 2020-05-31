@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    nl2e.cpp
  * Author:  Pietro Belotti

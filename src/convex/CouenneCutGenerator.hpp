@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneCutGenerator.hpp
  * Author:  Pietro Belotti

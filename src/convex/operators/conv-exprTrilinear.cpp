@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    conv-exprTrilinear.cpp
  * Author:  Pietro Belotti

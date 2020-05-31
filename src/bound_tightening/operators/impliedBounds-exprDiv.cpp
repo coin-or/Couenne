@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    impliedBounds-exprDiv.cpp
  * Author:  Pietro Belotti

@@ -1,4 +1,4 @@
-/* $Id$ */
+/* */
 /*
  * Name:    constraint.cpp
  * Author:  Pietro Belotti

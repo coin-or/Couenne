@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneExprOddPow.hpp
  * Author:  Pietro Belotti

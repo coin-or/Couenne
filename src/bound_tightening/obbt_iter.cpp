@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    obbt.cpp
  * Author:  Pietro Belotti

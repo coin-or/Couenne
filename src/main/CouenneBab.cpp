@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneBab.cpp
  * Author:  Pietro Belotti

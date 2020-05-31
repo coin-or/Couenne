@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    BranchCore.cpp
  * Authors: Jim Ostrowski

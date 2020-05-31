@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneTNLP.hpp
  * Authors: Pietro Belotti, Lehigh University

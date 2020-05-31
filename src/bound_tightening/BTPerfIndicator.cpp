@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    BTPerfIndicator.cpp
  * Author:  Pietro Belotti

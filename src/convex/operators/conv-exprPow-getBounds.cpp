@@ -1,4 +1,4 @@
-/* $Id$ 
+/* 
  *
  * Name:    conv-exprPow-getBounds.cpp
  * Author:  Pietro Belotti

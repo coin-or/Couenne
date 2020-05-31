@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    dsyevx_rapper.cpp
  * Authors: Andrea Qualizza

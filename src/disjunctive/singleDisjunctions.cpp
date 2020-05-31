@@ -1,4 +1,4 @@
-/* $Id$ */
+/* */
 /*
  * Name:    singleDisjunctions.cpp
  * Author:  Pietro Belotti

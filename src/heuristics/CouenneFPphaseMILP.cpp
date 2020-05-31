@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFPphaseMILP.cpp
  * Authors: Pietro Belotti

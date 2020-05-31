@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    conv-exprGroup.cpp
  * Author:  Pietro Belotti

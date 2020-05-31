@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneProblem.hpp
  * Author:  Pietro Belotti, Lehigh University

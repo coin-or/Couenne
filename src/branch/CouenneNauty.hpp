@@ -1,4 +1,4 @@
-/* $Id$ 
+/* 
  *
  * Name:    CouenneNauty.hpp
  * Authors: Jim Ostrowski
@@ -14,7 +14,7 @@
 #include "CouenneConfig.h"
 
 extern "C" {
-#include "nauty.h"
+#include "nauty/nauty.h"
 }
 
 #include <cstdio>

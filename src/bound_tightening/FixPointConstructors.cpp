@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    FixPointConstructors.cpp
  * Author:  Pietro Belotti

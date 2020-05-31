@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneVarObject.hpp
  * Authors: Pietro Belotti, Carnegie Mellon University

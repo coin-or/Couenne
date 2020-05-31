@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    CouenneFPSolveNLP.cpp
  * Authors: Pietro Belotti

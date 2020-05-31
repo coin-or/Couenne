@@ -1,4 +1,4 @@
-/* $Id$
+/*
  *
  * Name:    generateDisjCuts.cpp
  * Author:  Pietro Belotti
