@@ -1,7 +1,7 @@
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
 # This file is distributed under the Eclipse Public License.
-
+#
 # Author: Pietro Belotti, from a template by Pierre Bonami
 
 noinst_LTLIBRARIES = libCouenneStandardize.la

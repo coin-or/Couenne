@@ -1,8 +1,7 @@
-#
 # Copyright (C) 2006 International Business Machines.
 # All Rights Reserved.
 # This file is distributed under the Eclipse Public License.
-
+#
 # Authors:  Andreas Waechter            IBM    2006-12-06
 #           Pietro Belotti
 
@@ -10,9 +9,7 @@
 #                       Names and other basic things                        #
 #############################################################################
 
-AC_PREREQ(2.59)
-
-AC_INIT([Couenne],[trunk],[https://github.com/coin-or/Couenne/issues/new],[coin-or-couenne],[https://github.com/coin-or/Couenne])
+AC_INIT([Couenne],[devel],[https://github.com/coin-or/Couenne/issues/new],[coin-or-couenne],[https://github.com/coin-or/Couenne])
 
 AC_COPYRIGHT([
 Copyright 2006 Carnegie Mellon University, International Business Machines and others.
@@ -93,8 +90,7 @@ AC_LANG_POP(C++)
 #                  Check for doxygen                                        #
 #############################################################################
 
-#AC_COIN_DOXYGEN(CoinUtils Osi Clp Cgl Cbc Ipopt Bonmin)
-AC_COIN_DOXYGEN
+AC_COIN_DOXYGEN(CoinUtils Osi Clp Cgl Cbc Ipopt Bonmin)
 
 ##############################################################################
 #                   Finishing up by writing all the output                   #

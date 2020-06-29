@@ -1,9 +1,10 @@
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
 # This file is distributed under the Eclipse Public License.
-
-
+#
 # Author:  Andreas Waechter           IBM    2006-04-13
+
+include BuildTools/Makemain.inc
 
 ########################################################################
 #                          Subdirectories                              #
@@ -22,17 +23,8 @@ SUBDIRS = src/util \
 	src/heuristics \
 	src/cut/sdpcuts \
 	src/cut/crossconv \
-	src
-
-SUBDIRS += src/main 
-
-# We don't want to compile the test subdirectory, unless the test target is
-# specified.  But we need to list it as subdirectory to make sure that it is
-# included in the tarball
-
-if ALWAYS_FALSE
-  SUBDIRS += test
-endif
+	src \
+	src/main
 
 ########################################################################
 #                           Extra Targets                              #
@@ -64,11 +56,4 @@ uninstall-local: uninstall-doc
 #                  Installation of the pkg-config file                 #
 ########################################################################
 
-pkgconfiglibdir = $(libdir)/pkgconfig
 pkgconfiglib_DATA = couenne.pc
-
-########################################################################
-#                         Maintainer Stuff                             #
-########################################################################
-
-include BuildTools/Makemain.inc

@@ -1,8 +1,6 @@
-#
 # Copyright (C) 2006 International Business Machines and others.
 # All Rights Reserved.
 # This file is distributed under the Eclipse Public License.
-#
 #
 # Authors:  Andreas Waechter           IBM    2006-04-13
 #           Pietro Belotti
@@ -11,8 +9,8 @@
 #                               libCouenne                             #
 ########################################################################
 
-# Name of the library compiled in this directory.  We want it to be installed
-# in the 'lib' directory
+# Name of the library compiled in this directory.
+# We want it to be installed in the 'lib' directory
 lib_LTLIBRARIES = libCouenne.la
 
 # List all source files
