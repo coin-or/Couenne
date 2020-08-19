@@ -69,7 +69,7 @@ namespace Couenne {
 
     struct compare_scalars {
       inline bool operator() (CouenneScalar * const &a, 
-			      CouenneScalar * const &b)
+			      CouenneScalar * const &b) const
       {return a -> getIndex () < b -> getIndex ();}
     };
 
