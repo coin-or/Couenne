@@ -8,6 +8,10 @@
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
+// include CoinTime.hpp before ASL defines filename for https://github.com/coin-or-tools/ThirdParty-ASL/issues/4
+#include "CoinHelperFunctions.hpp"
+#include "CoinTime.hpp"
+
 #include "asl.h"
 
 // Added to avoid compiler issues with gcc 6.2.1 --- see https://github.com/JuliaOpt/CoinOptServices.jl/issues/27#issuecomment-290960312
@@ -16,9 +20,6 @@
 #include "nlp.h"
 #include "getstub.h"
 #include "opcode.hd"
-
-#include "CoinHelperFunctions.hpp"
-#include "CoinTime.hpp"
 
 #include "CouenneProblem.hpp"
 
