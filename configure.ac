@@ -122,7 +122,7 @@ AC_CONFIG_FILES([Makefile
                  doxydoc/doxygen.conf])
 
 # Here put the location and name of the configuration header file
-AC_CONFIG_HEADER([src/config.h src/config_couenne.h])
+AC_CONFIG_HEADERS([src/config.h src/config_couenne.h])
 
 # Finally, we let configure write all the output...
 AC_COIN_FINALIZE
