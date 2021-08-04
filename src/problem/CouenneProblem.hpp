@@ -74,7 +74,7 @@ class Nauty;
 #define COUENNE_EPS_SYMM 1e-8
 
   struct myclass0 {
-    inline bool operator() (register const Node &a, register const Node &b) {
+    inline bool operator() (register const Node &a, register const Node &b) const {
 
       return ((               a.get_code  () <  b.get_code  ())                     ||
 	      ((              a.get_code  () == b.get_code  ()                      &&
@@ -120,7 +120,7 @@ class Nauty;
     
       
   struct myclass {
-    inline bool operator() (register const  Node &a, register const Node &b) {
+    inline bool operator() (register const  Node &a, register const Node &b) const {
       return (a.get_index() < b.get_index() );
     }
   };
