@@ -30,9 +30,9 @@ int genMulCoeff (CouNumber x1, CouNumber y1,
 
 
 // invert interval bounds and current point
-inline void invertInterval (register double &l, register double &u, register double x) {
+inline void invertInterval (double &l, double &u, double x) {
 
-  register double tmp = l; 
+  double tmp = l; 
   l = -u; 
   u = -tmp;
 

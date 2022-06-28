@@ -57,7 +57,7 @@ class COUENNELIB_EXPORT exprLBCos: public exprOp {
 
 inline CouNumber exprLBCos::operator () () {
 
-  register CouNumber 
+  CouNumber 
     l = (*(arglist_ [0])) (),
     u = (*(arglist_ [1])) ();
 
@@ -110,7 +110,7 @@ class COUENNELIB_EXPORT exprUBCos: public exprOp {
 
 inline CouNumber exprUBCos::operator () () {
 
-  register CouNumber 
+  CouNumber 
     l = (*(arglist_ [0])) (),
     u = (*(arglist_ [1])) ();
 

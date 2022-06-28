@@ -62,7 +62,7 @@ int main (int argc, char *argv[]) {
 
   double time_start = CoinCpuTime();
   
-	// register options to prepare for parsing the command line
+	// options to prepare for parsing the command line
 	SmartPtr<Bonmin::RegisteredOptions> roptions = new Bonmin::RegisteredOptions();
 	Bonmin::CouenneSetup::registerAllOptions(roptions);
 #ifdef COUENNE_HAS_ASL

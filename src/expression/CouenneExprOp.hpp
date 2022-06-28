@@ -97,7 +97,7 @@ class COUENNELIB_EXPORT exprOp: public expression {
   expression **clonearglist (Domain *d = NULL) const {
     if (nargs_) {
       expression **al = new expression * [nargs_];
-      for (register int i=0; i<nargs_; i++)
+      for (int i=0; i<nargs_; i++)
 	al [i] = arglist_ [i] -> clone (d);
       return al;
     } else return NULL;

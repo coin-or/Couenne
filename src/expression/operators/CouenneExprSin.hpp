@@ -24,7 +24,7 @@ enum cou_trig {COU_SINE, COU_COSINE};
 
 
 /// normalize angle within [0,b] (typically, pi or 2pi)
-inline CouNumber modulo (register CouNumber a, register CouNumber b)
+inline CouNumber modulo (CouNumber a, CouNumber b)
   {return a - b * floor (a/b);}
 
 

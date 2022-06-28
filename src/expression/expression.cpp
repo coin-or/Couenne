@@ -63,7 +63,7 @@ void exprConst::generateCuts (expression *w, //const OsiSolverInterface &si,
 /// compare generic expression with other expression
 int expression::compare (expression &e1) {
 
-  register int c0 =     code (),
+  int c0 =     code (),
                c1 = e1. code ();
 
   if      (c0 < c1) return -1;
@@ -90,7 +90,7 @@ int expression::compare (expression &e1) {
   // expressions are both variables or constants
 
   {
-    register int 
+    int 
       i0 =     Index (),
       i1 = e1. Index ();
 
@@ -101,7 +101,7 @@ int expression::compare (expression &e1) {
 
   // both are numbers
   {
-    register CouNumber 
+    CouNumber 
       v0 =     Value (), 
       v1 = e1. Value ();
 

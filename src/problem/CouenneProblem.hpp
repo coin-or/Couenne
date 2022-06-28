@@ -60,7 +60,7 @@ class Nauty;
     int sign;
   public:
     void node(int, double, double, double, int, int);
-    inline void color_vertex (register int k) {color = k;}
+    inline void color_vertex (int k) {color = k;}
     inline int get_index () const {return index;}
     inline double get_coeff () const {return coeff;}
     inline double get_lb () const {return lb;}
@@ -68,13 +68,13 @@ class Nauty;
     inline int get_color () const {return color;}
     inline int get_code () const {return code;}
     inline int get_sign () const {return sign;}
-    inline void bounds(register double a, register double b){ lb = a; ub = b;}
+    inline void bounds(double a, double b){ lb = a; ub = b;}
   };
 
 #define COUENNE_EPS_SYMM 1e-8
 
   struct myclass0 {
-    inline bool operator() (register const Node &a, register const Node &b) const {
+    inline bool operator() (const Node &a, const Node &b) const {
 
       return ((               a.get_code  () <  b.get_code  ())                     ||
 	      ((              a.get_code  () == b.get_code  ()                      &&
@@ -120,13 +120,13 @@ class Nauty;
     
       
   struct myclass {
-    inline bool operator() (register const  Node &a, register const Node &b) const {
+    inline bool operator() (const  Node &a, const Node &b) const {
       return (a.get_index() < b.get_index() );
     }
   };
 
 struct less_than_str {
-  inline bool operator() (register const  char *a, register const char *b) const
+  inline bool operator() (const  char *a, const char *b) const
   {return strcmp (a, b) < 0;}
 };
 
@@ -394,7 +394,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   void Compute_Symmetry() const;
   void Print_Orbits() const;
   void ChangeBounds (const double * , const double *, int ) const;
-  inline bool compare (register Node &a, register Node &b) const;
+  inline bool compare (Node &a, Node &b) const;
   Nauty *getNtyInfo () {return nauty_info;}
 
   // bool node_sort (  Node  a, Node  b);

@@ -18,13 +18,13 @@ namespace Couenne {
 
 /* compute Q(x) */
 
-CouNumber Q (register int k, CouNumber x) {
+CouNumber Q (int k, CouNumber x) {
 
-  register CouNumber xp = x, Q = 1.;
+  CouNumber xp = x, Q = 1.;
 
   k *= 2;
 
-  for (register int i=2; i<=k; i++) {
+  for (int i=2; i<=k; i++) {
 
     Q += (CouNumber) i * xp;
     xp *= x;
@@ -44,7 +44,7 @@ CouNumber rootQ (int k) {
   if (k==1) return - 0.5; // for x^3, solution is -1/2
   else {
 
-    register CouNumber 
+    CouNumber 
       l  = - 1.0 + 0.5 / k, 
       u  = - 0.5,
       /* Ql = Q (k, l), Qu = Q (k, u), */
@@ -71,7 +71,7 @@ CouNumber rootQ (int k) {
 #ifdef DEBUG_ROOTQ
 int main () {
 
-  register int k;
+  int k;
   CouNumber x, q;
 
   for (k=6; --k;) {

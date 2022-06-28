@@ -71,8 +71,8 @@ int CouenneDisjCuts::checkDisjSide (OsiSolverInterface &si, OsiCuts *cuts) const
     const double *lvalues  = lbs.getElements ();
 
     for (int j = lbs.getNumElements (); j--;) {
-      register double lb  = *lvalues++;
-      register int    ind = *lindices++;
+      double lb  = *lvalues++;
+      int    ind = *lindices++;
 
       if (lb > upper [ind] + COUENNE_EPS) // fathom node
 	return COUENNE_INFEASIBLE;
@@ -88,8 +88,8 @@ int CouenneDisjCuts::checkDisjSide (OsiSolverInterface &si, OsiCuts *cuts) const
     const double *uvalues  = ubs.getElements ();
 
     for (int j = ubs.getNumElements (); j--;) {
-      register double ub  = *uvalues++;
-      register int    ind = *uindices++;
+      double ub  = *uvalues++;
+      int    ind = *uindices++;
 
       if (ub < lower [ind] - COUENNE_EPS) // fathom node
 	return COUENNE_INFEASIBLE;
@@ -163,7 +163,7 @@ void CouenneDisjCuts::mergeBoxes (int dir, // direction (negative for "<", posit
 
     for (;;) {
 
-      register int diff = *Li - *Ri;
+      int diff = *Li - *Ri;
 
       if      (diff < 0) {if (!--Ln) break; Li++; Le++;}
       else if (diff > 0) {if (!--Rn) break; Ri++; Re++;}

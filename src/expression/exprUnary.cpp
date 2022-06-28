@@ -89,7 +89,7 @@ bool exprUnary::isInteger () {
       (au <  COUENNE_INFINITY) &&
       fabs (al - au) < COUENNE_EPS) { // argument is constant
 
-    register CouNumber fval = (F ()) (al); 
+    CouNumber fval = (F ()) (al); 
 
     // check if f(lb=ub) is integer
     if (fabs (COUENNE_round (fval) - fval) < COUENNE_EPS)
@@ -103,7 +103,7 @@ bool exprUnary::isInteger () {
 // simplify unary operators
 expression *exprUnary:: simplify () {
 
-  register expression *subst;
+  expression *subst;
 
   // Simplify argument g(x) of this expression f(g(x))
   if ((subst = argument_ -> simplify ())) {

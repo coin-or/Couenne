@@ -192,19 +192,19 @@ protected:
 
 
 /// invert all contents
-inline void CoinInvN (register const double *orig, 
-		      register int n, 
-		      register double *inverted) {
+inline void CoinInvN (const double *orig, 
+		      int n, 
+		      double *inverted) {
 
   while (n--) *inverted++ = - *orig++;
 }
 
 
 /// a CoinCopyN with a += on each element
-inline void CoinCopyDisp (register const int *src, 
-			  register int num, 
-			  register int *dst, 
-			  register int displacement) {
+inline void CoinCopyDisp (const int *src, 
+			  int num, 
+			  int *dst, 
+			  int displacement) {
   while (num--)
     *dst++ = *src++ + displacement;
 }

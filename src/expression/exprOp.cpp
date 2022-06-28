@@ -81,7 +81,7 @@ int exprOp::compare (exprOp &e1) {
   if (nargs_ > e1.nargs_) return  1;
 
   // not an exprGroup, compare arguments
-  for (register int i = nargs_; i--;) {
+  for (int i = nargs_; i--;) {
 
     int res = arglist_ [i] -> compare (*(e1. ArgList () [i]));
     if (res) return res;
@@ -161,7 +161,7 @@ void exprOp::replace (exprVar *x, exprVar *w) {
   expression **al = arglist_;
   int index = x -> Index ();
 
-  for (register int i = nargs_; i--; al++)
+  for (int i = nargs_; i--; al++)
 
     switch ((*al) -> Type ()) {
 
@@ -299,7 +299,7 @@ expression *exprOp:: simplify () {
 
 int exprOp::shrink_arglist (CouNumber c, CouNumber null_element) {
 
-  register int i=0, j=0;
+  int i=0, j=0;
 
   bool one_fun = false;
 
@@ -312,7 +312,7 @@ int exprOp::shrink_arglist (CouNumber c, CouNumber null_element) {
     return 0;
 
   // check if there is at least one non-constant expression
-  for (register int k=nargs_; k--;) 
+  for (int k=nargs_; k--;) 
     if (arglist_ [k]) {
       one_fun = true;
       break;

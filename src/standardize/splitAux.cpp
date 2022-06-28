@@ -271,7 +271,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
       linind2 = new int       [nlin + 1];
       lincoe2 = new CouNumber [nlin + 1];
 
-      register int j;
+      int j;
 
       //if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
       //for (j=0; j<mid;  j++) printf ("{%g x%d} ", lincoe [j], linind [j]);

@@ -16,17 +16,17 @@
 namespace Couenne {
 
 /// the operator itself
-inline CouNumber inv (register CouNumber arg) 
+inline CouNumber inv (CouNumber arg) 
 {return 1. / arg;}
 
 
 /// derivative of inv (x)
-inline CouNumber oppInvSqr (register CouNumber x) 
+inline CouNumber oppInvSqr (CouNumber x) 
 {return (- inv (x*x));}
 
 
 /// inv_dblprime, second derivative of inv (x)
-inline CouNumber inv_dblprime (register CouNumber x) 
+inline CouNumber inv_dblprime (CouNumber x) 
 {return (2 * inv (x*x*x));}
 
 

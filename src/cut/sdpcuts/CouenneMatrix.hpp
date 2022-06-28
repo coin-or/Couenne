@@ -68,8 +68,8 @@ namespace Couenne {
   public:
 
     struct compare_scalars {
-      inline bool operator() (register CouenneScalar * const &a, 
-			      register CouenneScalar * const &b) const
+      inline bool operator() (CouenneScalar * const &a, 
+			      CouenneScalar * const &b) const
       {return a -> getIndex () < b -> getIndex ();}
     };
 
@@ -106,8 +106,8 @@ namespace Couenne {
   public:
 
     struct compare_pair_ind {
-      inline bool operator() (register const std::pair <int, CouenneSparseVector *> &a, 
-			      register const std::pair <int, CouenneSparseVector *> &b) const
+      inline bool operator() (const std::pair <int, CouenneSparseVector *> &a, 
+			      const std::pair <int, CouenneSparseVector *> &b) const
       {return a. first < b. first;}
     };
 

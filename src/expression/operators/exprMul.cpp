@@ -38,7 +38,7 @@ exprMul::exprMul (expression *arg0, expression *arg1):
 
   if (compareExpr (arglist_, arglist_ + 1) > 0) {
 
-    register expression
+    expression
            *swap = arglist_ [0];
     arglist_ [0] = arglist_ [1];
     arglist_ [1] = swap;
@@ -100,7 +100,7 @@ expression *exprMul::simplify () {
     // TODO
   }
 
-  for (register int i=0; i<nargs_; i++) {
+  for (int i=0; i<nargs_; i++) {
 
     // check for null operands in multiplications
 
@@ -188,7 +188,7 @@ int exprMul::Linearity () {
   if (lin0 >= NONLINEAR) return NONLINEAR;
   if (lin0 == ZERO)      return ZERO;
 
-  for (register int i=1; i<nargs_; i++) {
+  for (int i=1; i<nargs_; i++) {
 
     int lin = arglist_ [i] -> Linearity ();
 

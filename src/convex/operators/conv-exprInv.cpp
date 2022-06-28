@@ -54,7 +54,7 @@ void exprInv::getBounds (expression *&lb, expression *&ub) {
 // compute VALUE of lower and upper bound of expression
 void exprInv::getBounds (CouNumber &lb, CouNumber &ub) {
 
-  register CouNumber lba, uba;
+  CouNumber lba, uba;
 
   argument_ -> getBounds (lba, uba);
 

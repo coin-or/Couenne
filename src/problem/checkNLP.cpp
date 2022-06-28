@@ -33,7 +33,7 @@ bool CouenneProblem::checkNLP (const double *solution, double &obj, bool recompu
 
   // pre-check on original variables --- this is done after every LP,
   // and should be efficient
-  for (register int i=0; i < nOrigVars_ - ndefined_; i++) {
+  for (int i=0; i < nOrigVars_ - ndefined_; i++) {
 
     if (variables_ [i] -> Multiplicity () <= 0) 
       continue;
@@ -588,7 +588,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
 
     const bool *initIsInt = getRecordBestSol()->getInitIsInt();
     printf("Integrality:\n");
-    for (register int i=0; i<nVars(); i++) {
+    for (int i=0; i<nVars(); i++) {
 
       if (variables_ [i] -> Multiplicity () <= 0) 
 	continue;
@@ -600,7 +600,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
     printf("\n");
 
     printf("VAR:\n");
-    for (register int i=0; i<nVars(); i++) {
+    for (int i=0; i<nVars(); i++) {
 
       if (variables_ [i] -> Multiplicity () <= 0) 
 	continue;
@@ -612,7 +612,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
     printf("\n");
 
     printf("AUX:\n");
-    for (register int i=0; i<nVars(); i++) {
+    for (int i=0; i<nVars(); i++) {
 
       if (variables_ [i] -> Multiplicity () <= 0) 
 	continue;
@@ -624,7 +624,7 @@ bool CouenneProblem::checkNLP2(const double *solution,
     printf("\n");
 
     printf("mult 0:\n");
-    for (register int i=0; i<nVars(); i++) {
+    for (int i=0; i<nVars(); i++) {
 
       if (variables_ [i] -> Multiplicity () <= 0) { 
 	printf(" %d", i);

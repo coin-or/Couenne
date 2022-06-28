@@ -39,10 +39,10 @@ typedef struct {
 
 // compare two threshold values ///////////////////////////////////
 
-int compthres (register const void *t1, 
-	       register const void *t2) {
+int compthres (const void *t1, 
+	       const void *t2) {
 
-  register double
+  double
     a1 = (*(threshold **) t1) -> alpha,
     a2 = (*(threshold **) t2) -> alpha;
 
@@ -60,10 +60,10 @@ struct indPosPair {
 
 // compare two pairs (index,value) ///////////////////////////////////
 
-int compPair (register const void *p1, 
-	      register const void *p2) {
+int compPair (const void *p1, 
+	      const void *p2) {
 
-  register int
+  int
     i1 = ((struct indPosPair *) p1) -> index,
     i2 = ((struct indPosPair *) p2) -> index;
 
@@ -660,7 +660,7 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 	  printf ("    swap'em: %g, %g\n", newL, newU);
 #endif
 
-	  register double tmp = newL <= - COUENNE_INFINITY / 10 ?   COUENNE_INFINITY : newL;
+	  double tmp = newL <= - COUENNE_INFINITY / 10 ?   COUENNE_INFINITY : newL;
 	  newL                = newU >=   COUENNE_INFINITY / 10 ? - COUENNE_INFINITY : newU;
 	  newU                = tmp;
 	}

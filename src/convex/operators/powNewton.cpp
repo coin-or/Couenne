@@ -44,7 +44,7 @@ CouNumber powNewton (CouNumber xc, CouNumber yc,
   //
   // x(k+1) = x(k) - F(x(k))/F'(x(k))
 
-  register CouNumber xk = xc;
+  CouNumber xk = xc;
 
   CouNumber fk  = f (xk) - yc,
             fpk = fp (xk),
@@ -87,7 +87,7 @@ CouNumber powNewton (CouNumber xc, CouNumber yc, funtriplet *tri) {
   //
   // x(k+1) = x(k) - f(x(k))/f'(x(k))
 
-  register CouNumber xk = xc;
+  CouNumber xk = xc;
 
   CouNumber fk  = tri -> F (xk) - yc,
             fpk = tri -> Fp (xk),
@@ -111,17 +111,17 @@ CouNumber powNewton (CouNumber xc, CouNumber yc, funtriplet *tri) {
 #else
 
 /// the operator itself
-inline CouNumber inv (register CouNumber arg) 
+inline CouNumber inv (CouNumber arg) 
 {return 1.0 / arg;}
 
 
 /// derivative of inv (x)
-inline CouNumber oppInvSqr (register CouNumber x) 
+inline CouNumber oppInvSqr (CouNumber x) 
 {return (- inv (x*x));}
 
 
 /// inv_dblprime, second derivative of inv (x)
-inline CouNumber inv_dblprime (register CouNumber x) 
+inline CouNumber inv_dblprime (CouNumber x) 
 {return (2 * inv (x*x*x));}
 
 
@@ -138,7 +138,7 @@ int main (int argc, char **argv) {
 
   //expon = atof (argv [1]);
 
-  for (register int i=1; i--;)
+  for (int i=1; i--;)
     r = powNewton (xc, yc, f, fp, fpp);
 
   printf ("xc = %.14f: xk = %.15f, slope %.15f -- %.15f ==> [%.15f = -1?]\n", 

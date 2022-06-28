@@ -64,7 +64,7 @@ expression *exprSum::simplify () {
   CouNumber total     = 0;
   bool      found_one = false;
 
-  for (register int i=0; i<nargs_; i++) {
+  for (int i=0; i<nargs_; i++) {
 
     // check for constant operands in multiplications
 
@@ -100,7 +100,7 @@ expression *exprSum:: differentiate (int index) {
 
   expression **arglist = new expression * [nargs_];
 
-  register int nonconst = 0;
+  int nonconst = 0;
 
   for (int i = 0; i < nargs_; i++) 
     if (arglist_ [i] -> dependsOn (index))
@@ -148,8 +148,8 @@ int exprSum::Linearity () {
 
   int linmax = arglist_ [0] -> Linearity ();
 
-  for (register int i=1; i<nargs_; i++) {
-    register int lin = arglist_ [i] -> Linearity ();
+  for (int i=1; i<nargs_; i++) {
+    int lin = arglist_ [i] -> Linearity ();
     if (lin > linmax) linmax = lin;
   }
   return linmax;

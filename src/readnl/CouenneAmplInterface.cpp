@@ -449,7 +449,7 @@ bool CouenneAmplInterface::readnl() {
 
   // count all linear terms
   if (A_colstarts && A_vals)         // Constraints' linear info is stored in A_vals
-    for (register int j = A_colstarts [n_var]; j--;) {
+    for (int j = A_colstarts [n_var]; j--;) {
 
       real coeff = A_vals [j];
 
@@ -457,7 +457,7 @@ bool CouenneAmplInterface::readnl() {
 	nterms [A_rownos [j]] ++;
     }
   else {                             // Constraints' linear info is stored in Cgrad
-    for (register int i = 0; i < n_con; i++)
+    for (int i = 0; i < n_con; i++)
       for (congrad = Cgrad [i]; 
 	   congrad; 
 	   congrad = congrad -> next) 
@@ -470,7 +470,7 @@ bool CouenneAmplInterface::readnl() {
   CouNumber **coeff  = new CouNumber * [n_con];
   int       **indexL = new int       * [n_con];
 
-  for (register int i = n_con; i--;) 
+  for (int i = n_con; i--;) 
     *indexL++ = NULL;
 
   indexL -= n_con;
@@ -480,7 +480,7 @@ bool CouenneAmplInterface::readnl() {
 
   if (A_colstarts && A_vals)         // Constraints' linear info is stored in A_vals
     for (int j = 0; j < n_var; j++)
-      for (register int i = A_colstarts [j], k = A_colstarts [j+1] - i; k--; i++) {
+      for (int i = A_colstarts [j], k = A_colstarts [j+1] - i; k--; i++) {
 
 	int rowno = A_rownos [i],
 	    nt    = nterms [rowno] --;
@@ -634,28 +634,28 @@ bool CouenneAmplInterface::readnl() {
     real *Uvx_copy = Uvx;
 
     if (!Uvx_copy)
-      for (register int i=0; i<n_var; i++) {
+      for (int i=0; i<n_var; i++) {
 
-	register int j = 2*i;
+	int j = 2*i;
 
         problem -> Lb (i) = LUv[j]   <= -COUENNE_INFINITY ? -COUENNE_INFINITY : LUv[j]  ;
         problem -> Ub (i) = LUv[j+1] >=  COUENNE_INFINITY ?  COUENNE_INFINITY : LUv[j+1];
       }
     else
-      for (register int i=n_var; i--;) {
+      for (int i=n_var; i--;) {
 	problem -> Lb (i) = LUv [i]      <= -COUENNE_INFINITY ? -COUENNE_INFINITY : LUv[i];
 	problem -> Ub (i) = Uvx_copy [i] >=  COUENNE_INFINITY ?  COUENNE_INFINITY : Uvx_copy[i];
       }
 
   } else
-    for (register int i=n_var; i--;) {
+    for (int i=n_var; i--;) {
     	problem -> Lb (i) = - COUENNE_INFINITY;
     	problem -> Ub (i) =   COUENNE_INFINITY;
     }
 
   // initial x ////////////////////////////////////////////////////////////////////
 
-  for (register int i=n_var; i--;) 
+  for (int i=n_var; i--;) 
 
     if (X0 && havex0 [i]) problem -> X (i) = X0 [i]; 
 
@@ -672,7 +672,7 @@ bool CouenneAmplInterface::readnl() {
       problem -> X (i) = x;
     }
 
-  for (register int i=n_var; i < problem -> nDefVars() ; i++) {  //FIXME: shouldn't this loop go until n_var + problem -> nDefVars() ?
+  for (int i=n_var; i < problem -> nDefVars() ; i++) {  //FIXME: shouldn't this loop go until n_var + problem -> nDefVars() ?
 
   	problem -> X  (i) =  0.;
   	problem -> Lb (i) = -COUENNE_INFINITY;

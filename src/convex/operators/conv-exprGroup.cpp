@@ -80,7 +80,7 @@ void exprGroup::getBounds (expression *&lb, expression *&ub) {
 //   // count linear and constant terms
 //   int nlin = lcoeff_.size();
 //   if (fabs (c0_) > COUENNE_EPS) nlin++;
-//   //  for (register int *ind = index_; *ind++>=0; nlin++);
+//   //  for (int *ind = index_; *ind++>=0; nlin++);
 
 //   expression 
 //     **linall = new expression * [nlin + 1], // linear arglist for lower bound

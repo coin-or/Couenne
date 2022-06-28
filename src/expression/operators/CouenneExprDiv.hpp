@@ -121,7 +121,7 @@ inline CouNumber exprDiv::operator () ()
 /// check if bounding box is suitable for a multiplication/division
 /// convexification constraint
 
-inline bool is_boundbox_regular (register CouNumber b1, register CouNumber b2) {
+inline bool is_boundbox_regular (CouNumber b1, CouNumber b2) {
 
   // Why SAFE_COEFFICIENT and not COUENNE_INFINITY? Because
   // OsiRowCut::set[LU]b do not work for values more than
