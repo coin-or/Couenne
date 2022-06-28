@@ -20,10 +20,10 @@
 
 using namespace Couenne;
 
-/// Add cut around curve x*y=k 
+/// Add cut around curve x*y=k
 
 void contourCut (const CouenneCutGenerator *cg,
-		 OsiCuts &cs, 
+		 OsiCuts &cs,
 		 CouNumber xp, CouNumber yp, // current point
 		 CouNumber wb,               // bound on w
 		 int sign,                   // is wb lower or upper?
@@ -43,10 +43,10 @@ void contourCut (const CouenneCutGenerator *cg,
       ysign = (y1 >= 0) ? 1 : -1; // point" lies
 
   if      (((xsign > 0) ? xp : -xp) <= COUENNE_EPS)
-    if    (((ysign > 0) ? yp : -yp) <= COUENNE_EPS) { 
+    if    (((ysign > 0) ? yp : -yp) <= COUENNE_EPS) {
 
       // opposite orthant, put in the right one where constraint is violated
-      xp = yp = sqrt (fabs (wb))/2; 
+      xp = yp = sqrt (fabs (wb))/2;
       if (xsign<0) xp = -xp;
       if (ysign<0) yp = -yp;
     }                                                // otherwise, must cross one axis only:
@@ -56,13 +56,13 @@ void contourCut (const CouenneCutGenerator *cg,
   // pt here describes a function of the form wb*x^(-1)
   kpowertriplet pt (-1, wb);
 
-  CouNumber 
+  CouNumber
     // tangent point closest to current point
     xt = powNewton (xp, yp, &pt),
     *lb = cg -> Problem () -> Lb (),
     *ub = cg -> Problem () -> Ub (),
     xL = lb [xi], xU = ub [xi],
-    yL = lb [yi], yU = ub [yi];  
+    yL = lb [yi], yU = ub [yi];
 
   if (xt == 0.) // no tangents are possible
     return;
@@ -77,9 +77,9 @@ void contourCut (const CouenneCutGenerator *cg,
 
   // coefficient of w in the lifted cut
   CouNumber
-    alpha = ((fabs (x1) < COUENNE_INFINITY) && 
+    alpha = ((fabs (x1) < COUENNE_INFINITY) &&
 	     (fabs (y1) < COUENNE_INFINITY) &&
-	     (fabs (x1*y1 - wb) > 0.)) ? 
+	     (fabs (x1*y1 - wb) > 0.)) ?
     ((2*wb/xt - y1 - wb*x1 / (xt*xt)) / (x1*y1 - wb)) : 0;
 
   //printf ("+++++ %d %d %d. [%c] xp (%g,%g) wb %g out(%g,%g) in(%g,%g) --> [%g,%g] alpha %g\n",
@@ -93,13 +93,13 @@ void contourCut (const CouenneCutGenerator *cg,
 
 
 // Unified procedure to create convexification cuts for an expression of the form w = x*y
-void Couenne::unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs, 
+void Couenne::unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
 			       int xi, CouNumber x0, CouNumber xl, CouNumber xu,
 			       int yi, CouNumber y0, CouNumber yl, CouNumber yu,
 			       int wi, CouNumber w0, CouNumber wl, CouNumber wu,
 			       t_chg_bounds *chg, enum expression::auxSign sign) {
 
-  bool cLX,  cRX,  cLY,  cRY,  cLW,  cRW = 
+  bool cLX,  cRX,  cLY,  cRY,  cLW,  cRW =
        cLX = cRX = cLY = cRY = cLW = true;
 
   if (!(cg -> isFirst ()) && chg) {
@@ -160,7 +160,7 @@ void Couenne::unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
   //
   //    alpha = [-yu + l/xt - l/(xt^2)(xu-xt)] / (xu*yu - l)
 
-  if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepSimple || 
+  if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepSimple ||
       fabs (wu - wl) < COUENNE_EPS) {
 
     if ((x0 > xl + COUENNE_EPS) && (y0 > yl + COUENNE_EPS) &&
@@ -175,7 +175,7 @@ void Couenne::unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
 	else if ((xyl >= wl) && (xu*yu <  wl)) contourCut (cg,cs, x0,y0, wl, -1, xu,yu, xl,yl, xi,yi,wi);
       }
 
-      // Similarly for w <= u < 0 
+      // Similarly for w <= u < 0
 
       if (cRW && (wu < 0) && (x0*y0 > wu) && (sign != expression::AUX_LEQ)) { // that is, if (x0,y0) is out of the contour
 
@@ -188,8 +188,8 @@ void Couenne::unifiedProdCuts (const CouenneCutGenerator *cg, OsiCuts &cs,
     }
   } else
     if (cg -> Problem () -> MultilinSep () == CouenneProblem::MulSepTight)
-      upperEnvHull (cg, cs, 
-		    xi, x0, xl, xu, 
+      upperEnvHull (cg, cs,
+		    xi, x0, xl, xu,
 		    yi, y0, yl, yu,
 		    wi, w0, wl, wu);
 }

@@ -42,26 +42,26 @@ namespace Couenne {
     virtual void getBounds (CouNumber &lb, CouNumber &ub);
 
     /// generate equality between *this and *w
-    void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		       OsiCuts &cs, const CouenneCutGenerator *cg, 
-		       t_chg_bounds * = NULL, int = -1, 
-		       CouNumber = -COUENNE_INFINITY, 
+    void generateCuts (expression *w, //const OsiSolverInterface &si,
+		       OsiCuts &cs, const CouenneCutGenerator *cg,
+		       t_chg_bounds * = NULL, int = -1,
+		       CouNumber = -COUENNE_INFINITY,
 		       CouNumber =  COUENNE_INFINITY);
 
     /// code for comparison
-    virtual enum expr_type code () 
+    virtual enum expr_type code ()
     {return COU_EXPRTRILINEAR;}
 
     /// implied bound processing
-    bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, 
+    bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *,
 		       enum Couenne::expression::auxSign = Couenne::expression::AUX_EQ);
 
     /// set up branching object by evaluating many branching points for
     /// each expression's arguments
-    virtual CouNumber selectBranch (const CouenneObject *obj, 
+    virtual CouNumber selectBranch (const CouenneObject *obj,
 				    const OsiBranchingInformation *info,
-				    expression * &var, 
-				    double * &brpts, 
+				    expression * &var,
+				    double * &brpts,
 				    double * &brDist, // distance of current LP
 				    // point to new convexifications
 				    int &way);

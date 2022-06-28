@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: methods of the classes CouenneConstraint and LinearConstraint
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -19,12 +19,12 @@ using namespace Couenne;
 void CouenneConstraint::print (std::ostream &out) {
 
   bool samebounds = ((lb_ -> Type () == CONST) &&
-		     (ub_ -> Type () == CONST) && 
+		     (ub_ -> Type () == CONST) &&
 		     (fabs (lb_ -> Value () - ub_ -> Value ()) < COUENNE_EPS));
 
   // left hand side (a in a <= h(x) <= b)
 
-  if (lb_ && 
+  if (lb_ &&
       !samebounds &&
       ((lb_ -> Type  () != CONST) ||
        (lb_ -> Value () > - COUENNE_INFINITY))) {
@@ -39,14 +39,14 @@ void CouenneConstraint::print (std::ostream &out) {
 
   // right hand side
 
-  if (ub_ && ((ub_ -> Type  () != CONST) || 
+  if (ub_ && ((ub_ -> Type  () != CONST) ||
 	      (ub_ -> Value () <  COUENNE_INFINITY))) {
 
     out << ' ';
     if (!samebounds) out << "<";
     out << "= "; fflush (stdout);
     ub_ -> print (out); fflush (stdout);
-  } 
+  }
 
   out << std::endl;
 }

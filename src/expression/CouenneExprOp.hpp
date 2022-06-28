@@ -42,13 +42,13 @@ class COUENNELIB_EXPORT exprOp: public expression {
     {return N_ARY;}
 
   /// Constructor
-  exprOp (expression **arglist, int nargs):  //< non-leaf expression, with argument list 
+  exprOp (expression **arglist, int nargs):  //< non-leaf expression, with argument list
     arglist_ (arglist),
     nargs_   (nargs)
     {}
 
   /// Constructor with two arguments (for convenience)
-  exprOp (expression *arg0, expression *arg1):  //< two arguments 
+  exprOp (expression *arg0, expression *arg1):  //< two arguments
     arglist_ (new expression * [2]),
     nargs_   (2)
     {arglist_ [0] = arg0; arglist_ [1] = arg1;}
@@ -63,15 +63,15 @@ class COUENNELIB_EXPORT exprOp: public expression {
     nargs_   (e.nArgs ()) {}
 
   /// return argument list
-  inline expression **ArgList () const 
+  inline expression **ArgList () const
   {return arglist_;}
 
   /// set arglist (used in deleting nodes without deleting children)
-  virtual inline void ArgList (expression **al) 
+  virtual inline void ArgList (expression **al)
   {arglist_ = al;}
 
   /// return number of arguments
-  inline int nArgs () const 
+  inline int nArgs () const
   {return nargs_;}
 
   /// I/O

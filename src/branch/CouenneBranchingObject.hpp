@@ -29,7 +29,7 @@ class CouenneProblem;
 #define COUENNE_NEAR_BOUND 1e-2
 
 
-/** "Spatial" branching object. 
+/** "Spatial" branching object.
  *
  *  Branching can also be performed on continuous variables.
  */
@@ -41,13 +41,13 @@ public:
   /// Constructor
   CouenneBranchingObject (OsiSolverInterface *solver,
 			  const OsiObject *originalObject,
-			  JnlstPtr jnlst, 
+			  JnlstPtr jnlst,
 			  CouenneCutGenerator *c,
 			  CouenneProblem *p,
-			  expression *var, 
-			  int way, 
-			  CouNumber brpoint, 
-			  bool doFBBT, 
+			  expression *var,
+			  int way,
+			  CouNumber brpoint,
+			  bool doFBBT,
 			  bool doConvCuts);
 
   /// Copy constructor
@@ -70,7 +70,7 @@ public:
 
   /** \brief Execute the actions required to branch, as specified by the
 	     current state of the branching object, and advance the object's
-	     state. 
+	     state.
 	     Returns change in guessed objective on next branch
   */
   virtual double branch (OsiSolverInterface * solver = NULL);

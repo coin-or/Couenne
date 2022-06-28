@@ -26,7 +26,7 @@ using namespace Couenne;
 void Couenne::addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
 			      int wi, int xi,
 			      CouNumber x, CouNumber y,
-			      CouNumber k, 
+			      CouNumber k,
 			      CouNumber l, CouNumber u,
 			      int sign, bool signpower) {
 
@@ -52,7 +52,7 @@ void Couenne::addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
   //
   // 1) still valid cuts, but
   //
-  // 2) a very abrupt change in their coefficients; 
+  // 2) a very abrupt change in their coefficients;
   //
   // 3) cuts that may result in an LP solution far away from x (this
   //    behavior recalls that of bundle methods for NDO);
@@ -66,19 +66,19 @@ void Couenne::addPowEnvelope (const CouenneCutGenerator *cg, OsiCuts &cs,
   // Thanks to Sergey for pointing this out.
 
   if (l < - powThres + 1) {
-    l = - powThres + 1; // keeps bounds reasonably large 
+    l = - powThres + 1; // keeps bounds reasonably large
     //l = x - step;
     if (u > powThres - 1) {
       u = powThres - 1;
     //u = x + step;
     }
-  } else 
+  } else
     if (u > powThres - 1) {
       u = powThres - 1;
       //u = x + step;
     }
 
   // convex envelope
-  cg -> addEnvelope (cs, sign, &pt, 
+  cg -> addEnvelope (cs, sign, &pt,
 		     wi, xi, x, l, u);
 }

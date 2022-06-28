@@ -1,4 +1,4 @@
-/* 
+/*
  *
  * Name:    CouenneNauty.cpp
  * Authors: Jim Ostrowski
@@ -28,7 +28,7 @@ Nauty::Nauty(int vertices)
   n_ = vertices;
   m_ = (n_ + WORDSIZE - 1)/WORDSIZE;
 
-  //printf ("size of long = %d (%d)\nwordsize = %d\nn,m = %d,%d\n", 
+  //printf ("size of long = %d (%d)\nwordsize = %d\nn,m = %d,%d\n",
   //          SIZEOF_LONG, sizeof (long), WORDSIZE, n_, m_);
 
   nauty_check (WORDSIZE, m_, n_, NAUTYVERSIONID);
@@ -38,7 +38,7 @@ Nauty::Nauty(int vertices)
 #define MULTIPLIER 2
 
   G_ = (graph *) malloc(MULTIPLIER * m_ * n_ * sizeof(int));
-  lab_ = (int *) malloc(MULTIPLIER * n_ * sizeof(int));  
+  lab_ = (int *) malloc(MULTIPLIER * n_ * sizeof(int));
   ptn_ = (int *) malloc(MULTIPLIER * n_ * sizeof(int));
   active_ = NULL;
   orbits_ = (int *) malloc(MULTIPLIER * n_ * sizeof(int));
@@ -47,7 +47,7 @@ Nauty::Nauty(int vertices)
   worksize_ = 100*m_;
   workspace_ = (setword *) malloc(MULTIPLIER * worksize_*sizeof(setword));
   canonG_ = NULL;
-  if (G_ == 0 || lab_ == 0 || ptn_ == 0 || 
+  if (G_ == 0 || lab_ == 0 || ptn_ == 0 ||
       orbits_ == 0 || options_ == 0 || stats_ == 0 ||
       workspace_ == 0) assert(0);
 
@@ -119,7 +119,7 @@ Nauty::addElement(int ix, int jx)
   }
 }
 
-void 
+void
 Nauty::clearPartitions()
 {
   for (int j = 0; j < n_; j++) {
@@ -143,7 +143,7 @@ Nauty::computeAuto()
   // Here we only implement the partitions
   // [ fix1 | fix0 (union) free | constraints ]
   int ix = 0;
-  
+
   for( int color = 1; color <= n_; color++){
     for (int j = 0; j < n_; j++) {
       if (vstat_[j] == color) {
@@ -154,7 +154,7 @@ Nauty::computeAuto()
     }
      if (ix > 0) ptn_[ix-1] = 0;
   }
-  
+
   /*
   for (int j = 0; j < n_; j++)
     printf("ptn %d = %d      lab = %d \n", j, ptn_[j], lab_[j]);
@@ -165,8 +165,8 @@ Nauty::computeAuto()
   // Now the constraints if needed
 
   // Compute Partition
-    
-  nauty(G_, lab_, ptn_, active_, orbits_, options_, 
+
+  nauty(G_, lab_, ptn_, active_, orbits_, options_,
         stats_, workspace_, worksize_, m_, n_, canonG_);
   autoComputed_ = true;
 
@@ -175,7 +175,7 @@ Nauty::computeAuto()
   nautyCalls_++;
   nautyTime_ += endCPU - startCPU;
   // Need to make sure all generators are written
-  if (afp_) fflush(afp_);   
+  if (afp_) fflush(afp_);
 }
 
 void
@@ -186,7 +186,7 @@ Nauty::deleteElement(int ix, int jx)
   set *gv = GRAPHROW(G_, ix, m_);
   if (ISELEMENT(gv, jx)) {
     DELELEMENT(gv, jx);
-  } 
+  }
   autoComputed_ = false;
 }
 
@@ -278,7 +278,7 @@ Nauty::isConstraintOrbit(const std::vector<int> &orbit) const
     if (*it >= n_) return true;
   }
   return false;
-  
+
 }
 
 bool
@@ -289,16 +289,16 @@ Nauty::isMixedFreeZeroOrbit(const std::vector<int> &orbit) const
 
   for(std::vector<int>::const_iterator it = orbit.begin();
       it != orbit.end(); ++it) {
-    if (*it >= n_) return false;    
+    if (*it >= n_) return false;
     if (vstat_[*it] == FREE) containsFree = true;
-    if (vstat_[*it] == FIX_AT_ZERO) containsZero = true;    
+    if (vstat_[*it] == FIX_AT_ZERO) containsZero = true;
     if (containsFree && containsZero) break;
-  }  
+  }
   return (containsFree && containsZero);
 }
 */
 
-void 
+void
 Nauty::setWriteAutoms(const std::string &fname)
 {
   afp_ = fopen(fname.c_str(), "w");
@@ -308,7 +308,7 @@ Nauty::setWriteAutoms(const std::string &fname)
 
 }
 
-void 
+void
 Nauty::unsetWriteAutoms()
 {
   fclose(afp_);

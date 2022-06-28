@@ -30,7 +30,7 @@ struct objPri {
 };
 
 bool compPri (struct objPri *one, struct objPri *two)  {
-  return (one -> priority_ < 
+  return (one -> priority_ <
 	  two -> priority_);
 }
 
@@ -39,8 +39,8 @@ using namespace Couenne;
 void eliminateIntegerObjects (OsiSolverInterface *model);
 void eliminateIntegerObjects (CbcModel           *model);
 
-/// Default Constructor 
-CouenneChooseVariable::CouenneChooseVariable (): 
+/// Default Constructor
+CouenneChooseVariable::CouenneChooseVariable ():
   OsiChooseVariable (),
   problem_ (NULL) {}
 
@@ -54,23 +54,23 @@ CouenneChooseVariable::CouenneChooseVariable (const OsiSolverInterface *si,
   jnlst_   (jnlst) {}
 
 
-/// Copy constructor 
+/// Copy constructor
 CouenneChooseVariable::CouenneChooseVariable (const CouenneChooseVariable &source):
   OsiChooseVariable (source),
   problem_ (source.problem_),
   jnlst_   (source.jnlst_) {}
 
 
-/// Assignment operator 
+/// Assignment operator
 CouenneChooseVariable & CouenneChooseVariable::operator= (const CouenneChooseVariable& rhs) {
-  problem_ = rhs.problem_; 
+  problem_ = rhs.problem_;
   jnlst_   = rhs.jnlst_;
   return *this;
 }
 
 
 /// Sets up strong list and clears all if initialize is true.
-/// Returns number of infeasibilities. 
+/// Returns number of infeasibilities.
 /// If returns -1 then node is found infeasible
 int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initialize) {
 
@@ -78,16 +78,16 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
 
   int n = problem_ -> nVars ();
 
-  problem_ -> domain () -> push 
+  problem_ -> domain () -> push
     (n,
-     info -> solution_, 
-     info -> lower_, 
+     info -> solution_,
+     info -> lower_,
      info -> upper_);
 
   jnlst_ -> Printf (Ipopt::J_ITERSUMMARY, J_BRANCHING, "----------------- setup list\n");
   if (jnlst_ -> ProduceOutput (Ipopt::J_DETAILED, J_BRANCHING)) {
     printf ("----------------- setup list\n");
-    for (int i=0; i<problem_ -> domain () -> current () -> Dimension (); i++) 
+    for (int i=0; i<problem_ -> domain () -> current () -> Dimension (); i++)
       if (problem_ -> Var (i) -> Multiplicity () > 0) {
 	printf ("%4d %20.4g [%20.4g %20.4g]", i, info -> solution_ [i], info -> lower_ [i], info -> upper_ [i]);
 	if (problem_ -> Var (i) -> Type () == AUX) {
@@ -101,7 +101,7 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
   int retval;
 
   // Make it stable, in OsiChooseVariable::setupList() numberObjects must be 0.
-  //  retval = (solver_ -> numberObjects ()) ? 
+  //  retval = (solver_ -> numberObjects ()) ?
   //    OsiChooseVariable::setupList (info, initialize) : 0;
 
   // Copied OsiChooseVariable::setupList to adjust it to Orbital Branching
@@ -183,11 +183,11 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
 
     for (int i=0; i<numberObjects; ++i) {
 
-      int 
+      int
 	currIndex = listPri [i] -> objIndex_,
 	priority  = listPri [i] -> priority_;
 
-      if ((minPriority >= 0) && 
+      if ((minPriority >= 0) &&
 	  (priority > minPriority))
 	break;
 
@@ -197,7 +197,7 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
       //printf ("<%d:%d,%e> ", currIndex, priority, infeas);
 
       if (((minPriority < 0) || (priority == minPriority)) &&
-	  (infeas > maxInfeas)) { 
+	  (infeas > maxInfeas)) {
 
 	// printf (" bingo! ");
 
@@ -221,7 +221,7 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
       }
     }
 
-    // if (feasible) 
+    // if (feasible)
     //   if (!numberUnsatisfied_)
     // 	printf ("no violations ");
     //   else
@@ -260,7 +260,7 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
 
       int way;
       //double value = object [i] -> infeasibility (info,way); // TODO: use checkInfeasibility instead
-      double value = object [i] -> checkInfeasibility (info); // 
+      double value = object [i] -> checkInfeasibility (info); //
 
       if (value > 0.) {
 
@@ -277,7 +277,7 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
 	if (priorityLevel < bestPriority) {
 
 	  for (int j=0; j<maximumStrong; j++) {
-	    
+	
 	    if (list_ [j] >= 0) {
 
 	      int iObject = list_[j];
@@ -290,7 +290,7 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
 
 	  bestPriority = priorityLevel;
 	  check = 0.;
-	} 
+	}
 
 	if ((priorityLevel == bestPriority) // only consider those with equal priority
 	    && (value > check)
@@ -337,16 +337,16 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
       	}
       }
       if (numberOnList_) {
-      	// Sort 
+      	// Sort
       	CoinSort_2(useful_,useful_+numberOnList_,list_);
       	// move others
       	int i = numberOnList_;
-      	for (;putOther<numberObjects;putOther++) 
+      	for (;putOther<numberObjects;putOther++)
       	  list_[i++]=list_[putOther];
       	assert (i==numberUnsatisfied_);
       	if (!numberStrong_)
       	  numberOnList_=0;
-      } 
+      }
 #endif
     } else {
       // infeasible
@@ -378,15 +378,15 @@ int CouenneChooseVariable::setupList (OsiBranchingInformation *info, bool initia
 
 
 /// choose object to branch based on earlier setup
-// int CouenneChooseVariable::chooseVariable (OsiSolverInterface * solver, 
-// 					   OsiBranchingInformation *info, 
+// int CouenneChooseVariable::chooseVariable (OsiSolverInterface * solver,
+// 					   OsiBranchingInformation *info,
 // 					   bool fixVariables) {
 
 //   // !!!should go -- just choose the first element
-//   problem_ -> domain () -> push 
+//   problem_ -> domain () -> push
 //     (problem_ -> nVars (),
-//      info -> solution_, 
-//      info -> lower_, 
+//      info -> solution_,
+//      info -> lower_,
 //      info -> upper_);
 
 //   int retval = OsiChooseVariable::chooseVariable (solver, info, fixVariables);
@@ -403,12 +403,12 @@ bool CouenneChooseVariable::feasibleSolution (const OsiBranchingInformation * in
 
 #ifdef FM_CHECKNLP2
   bool isFeas = problem_->checkNLP2(solution,
-				    0, 
+				    0,
 				    false, // do not care about obj
 				    true,  // stopAtFirstViol
 				    true,  // checkAll
 				    problem_ -> getFeasTol());
-  
+
   return isFeas;
 #else
   int indobj = problem_ -> Obj (0) -> Body () -> Index ();
@@ -421,7 +421,7 @@ bool CouenneChooseVariable::feasibleSolution (const OsiBranchingInformation * in
 /// Add list of options to be read from file
 void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions) {
 
-  roptions -> AddStringOption2 
+  roptions -> AddStringOption2
     ("enable_sos",
      "Use Special Ordered Sets (SOS) as indicated in the MINLP model",
      "no",
@@ -450,7 +450,7 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
      "Chooses branching point selection strategy",
      "mid-point",
      "lp-clamped", "LP point clamped in [k,1-k] of the bound intervals (k defined by lp_clamp)",
-     "lp-central", "LP point if within [k,1-k] of the bound intervals, middle point otherwise" 
+     "lp-central", "LP point if within [k,1-k] of the bound intervals, middle point otherwise"
      "(k defined by branch_lp_clamp)",
      "balanced", "minimizes max distance from curve to convexification",
      "min-area", "minimizes total area of the two convexifications",
@@ -458,7 +458,7 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
      "no-branch", "do not branch, return null infeasibility; for testing purposes only",
      "");
 
-  std::string br_ops [] = {"prod", "div", "exp", "log", "trig", 
+  std::string br_ops [] = {"prod", "div", "exp", "log", "trig",
 			   "pow",  "negpow", "sqr", "cube", ""};
 
   for (int i=0; br_ops [i] != ""; i++) {
@@ -476,7 +476,7 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
        "common",    "use strategy defined for generic operators",
        "lp-clamped", "LP point clamped in [k,1-k] of the bound intervals "
        "(k defined by lp_clamp_${this operator}$)",
-       "lp-central", "LP point if within [k,1-k] of the bound intervals, middle point otherwise" 
+       "lp-central", "LP point if within [k,1-k] of the bound intervals, middle point otherwise"
        "(k defined by branch_lp_clamp_${this operator}$)",
        "balanced",  "minimizes max distance from curve to convexification",
        "min-area",  "minimizes total area of the two convexifications",
@@ -533,7 +533,7 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
      "no", "Use Violation Transfer with $\\sum |\\pi_i a_{ij}|$",
      "yes","Use Reduced cost branching with $|\\sum \\pi_i a_{ij}|$");
 
-  roptions -> AddStringOption2 
+  roptions -> AddStringOption2
     ("orbital_branching",
      "detect symmetries and apply orbital branching",
      "no",
@@ -554,11 +554,11 @@ void CouenneChooseVariable::registerOptions (Ipopt::SmartPtr <Bonmin::Registered
 
 int gutsofEIO (OsiObject **objects, int nco) {
 
-  int 
-    nRealObj, 
+  int
+    nRealObj,
     currObj  = 0;
 
-  for (; currObj < nco; ++currObj) 
+  for (; currObj < nco; ++currObj)
 
     if ((NULL != dynamic_cast <CbcSimpleInteger *> (objects [currObj])) ||
 	(NULL != dynamic_cast <OsiSimpleInteger *> (objects [currObj]))) {
@@ -574,10 +574,10 @@ int gutsofEIO (OsiObject **objects, int nco) {
 
     if (NULL == objects [nRealObj]) {
 
-      if (currObj < 0) 
+      if (currObj < 0)
 	currObj = nRealObj + 1;
 
-      while ((currObj < nco) && 
+      while ((currObj < nco) &&
 	     (NULL == objects [currObj]))
 	++currObj;
 

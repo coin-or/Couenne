@@ -32,8 +32,8 @@
 #include "BonCouenneInterface.hpp"
 
 // for printing of statistics
-#include "CbcCutGenerator.hpp"      
-#include "CouenneCutGenerator.hpp" 
+#include "CbcCutGenerator.hpp"
+#include "CouenneCutGenerator.hpp"
 #include "CouenneProblem.hpp"
 
 #ifdef COUENNE_HAS_SCIP
@@ -86,7 +86,7 @@ int main (int argc, char *argv[]) {
 #endif
 
   double time_start = CoinCpuTime();
-  
+
   // options to prepare for parsing the command line
   SmartPtr<Bonmin::RegisteredOptions> roptions = new Bonmin::RegisteredOptions();
   Couenne::CouenneSetup::registerAllOptions(roptions);
@@ -150,12 +150,12 @@ int main (int argc, char *argv[]) {
     double timeLimit = 0;
     options -> GetNumericValue ("time_limit", timeLimit, "couenne.");
     couenne.setDoubleParameter (Bonmin::BabSetupBase::MaxTime, timeLimit - (time_start = (CoinCpuTime () - time_start)));
-  
+
     if (!userinterface->addBabPlugins(bb))
       return EXIT_FAILURE;
 
     bb (couenne); // do branch and bound
-    
+
     // retrieve test value to check
     double global_opt;
     options -> GetNumericValue ("couenne_check", global_opt, "couenne.");
@@ -163,10 +163,10 @@ int main (int argc, char *argv[]) {
     if (global_opt < COUENNE_INFINITY) { // some value found in couenne.opt
       double opt = bb.model (). getBestPossibleObjValue ();
 
-      jnlst -> Printf(Ipopt::J_SUMMARY, J_PROBLEM, "Global Optimum Test on %-40s %s\n", 
-		      problem -> problemName ().c_str (), 
-		      (fabs (opt - global_opt) / 
-		       (1. + CoinMax (fabs (opt), fabs (global_opt))) < PRINTED_PRECISION) ? 
+      jnlst -> Printf(Ipopt::J_SUMMARY, J_PROBLEM, "Global Optimum Test on %-40s %s\n",
+		      problem -> problemName ().c_str (),
+		      (fabs (opt - global_opt) /
+		       (1. + CoinMax (fabs (opt), fabs (global_opt))) < PRINTED_PRECISION) ?
 		      "OK" : "FAILED");
 
     } else if (couenne.displayStats ()) { // print statistics
@@ -184,11 +184,11 @@ int main (int argc, char *argv[]) {
 		      "%6d [root] %8d [tot] %6g [sep] %8g [time] %8g [bb] "
 		      "%20e [lower] %20e [upper] %7d [nodes]\n",// %s %s\n",
 		      problem -> problemName ().c_str (),
-		      problem -> nOrigVars   (), 
-		      problem -> nOrigIntVars(), 
+		      problem -> nOrigVars   (),
+		      problem -> nOrigIntVars(),
 		      problem -> nOrigCons   (),
 		      problem -> nVars       () - problem -> nOrigVars (),
-		      nr, nt, st, 
+		      nr, nt, st,
 		      CoinCpuTime () - time_start,
 		      cg ? (CoinCpuTime () - cg -> rootTime ()) : CoinCpuTime (),
 		      bb.model (). getBestPossibleObjValue (),
@@ -199,7 +199,7 @@ int main (int argc, char *argv[]) {
 		      //bb.iterationCount (),
 		      //status.c_str (), message.c_str ()
 		      );
-    }    
+    }
 
     if (!userinterface->writeSolution(bb))
       return EXIT_FAILURE;
@@ -211,27 +211,27 @@ int main (int argc, char *argv[]) {
     //And we will output file with information on what has been changed in the problem to make it fail.
     //Now depending on what algorithm has been called (B-BB or other) the failed problem may be at different place.
     //    const OsiSolverInterface &si1 = (algo > 0) ? nlpSolver : *model.solver();
-     
+
   } catch(Bonmin::OsiTMINLPInterface::SimpleError &E) {
     std::cerr<<E.className()<<"::"<<E.methodName()
 	     <<std::endl
 	     <<E.message()<<std::endl;
-    
+
   } catch(CoinError &E) {
     std::cerr<<E.className()<<"::"<<E.methodName()
 	     <<std::endl
 	     <<E.message()<<std::endl;
-    
+
   } catch (Ipopt::OPTION_INVALID &E) {
     std::cerr<<"Ipopt exception : "<<E.Message()<<std::endl;
-   
+
   } catch (int generic_error) {
     if (generic_error == infeasible)
       jnlst->Printf(Ipopt::J_SUMMARY, J_PROBLEM, "problem infeasible\n");
   }
-  
+
   delete userinterface;
-  
+
   return EXIT_SUCCESS;
 }
 

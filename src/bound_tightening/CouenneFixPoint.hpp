@@ -46,8 +46,8 @@ namespace Couenne {
     {return new CouenneFixPoint (*this);}
 
     /// the main CglCutGenerator
-    void generateCuts (const OsiSolverInterface &, 
-		       OsiCuts &, 
+    void generateCuts (const OsiSolverInterface &,
+		       OsiCuts &,
 		       const CglTreeInfo = CglTreeInfo ())
 #if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
     const

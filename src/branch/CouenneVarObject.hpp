@@ -25,9 +25,9 @@ public:
 
   /// Constructor with information for branching point selection strategy
   CouenneVarObject (CouenneCutGenerator *c,
-		    CouenneProblem *p, 
-		    exprVar *ref, 
-		    Bonmin::BabSetupBase *base, 
+		    CouenneProblem *p,
+		    exprVar *ref,
+		    Bonmin::BabSetupBase *base,
 		    JnlstPtr jnlst,
 		    int varSelection); //< either OSI_SIMPLE or OSI_STRONG
 
@@ -56,7 +56,7 @@ public:
 
   /// create CouenneBranchingObject or CouenneThreeWayBranchObj based
   /// on this object
-  virtual OsiBranchingObject *createBranch (OsiSolverInterface*, 
+  virtual OsiBranchingObject *createBranch (OsiSolverInterface*,
 					    const OsiBranchingInformation*, int) const;
 
   /// fix nonlinear coordinates of current integer-nonlinear feasible solution
@@ -73,8 +73,8 @@ protected:
   int varSelection_;
 
   /// Method computing the branching point
-  CouNumber computeBranchingPoint (const OsiBranchingInformation *info, 
-				   int& bestWay, 
+  CouNumber computeBranchingPoint (const OsiBranchingInformation *info,
+				   int& bestWay,
 				   const CouenneObject *&criticalObject) const;
 };
 

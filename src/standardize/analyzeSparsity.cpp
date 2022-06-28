@@ -28,7 +28,7 @@ using namespace Couenne;
 /// analyze sparsity of potential exprQuad/exprGroup and change
 /// linear/quadratic maps accordingly, if necessary by adding new
 /// auxiliary variables and including them in the linear map
-void CouenneProblem::analyzeSparsity (CouNumber c0, 
+void CouenneProblem::analyzeSparsity (CouNumber c0,
 				      LinMap &lmap,
 				      QuadMap &qmap) {
 
@@ -48,7 +48,7 @@ void CouenneProblem::analyzeSparsity (CouNumber c0,
       first  = i -> first.first,
       second = i -> first.second;
 
-    if (occur.find (first) == occur.end ()) 
+    if (occur.find (first) == occur.end ())
       occur.insert (first);
 
     if (first != second) {
@@ -58,16 +58,16 @@ void CouenneProblem::analyzeSparsity (CouNumber c0,
   }
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf ("qmap has %d element, occur has %d, md*s*(s+1)/2 = %g\n", 
-	    (int)qmap.Map().size (), 
+    printf ("qmap has %d element, occur has %d, md*s*(s+1)/2 = %g\n",
+	    (int)qmap.Map().size (),
 	    (int)occur.size (),
 	    MIN_DENSITY * (double) (occur.size ()) * ((double) (occur.size ()) + 1.) / 2);
   }
 
   int nterms = occur.size ();
-  
+
   if (useQuadratic_ &&
-      (((qmap.Map().size () >= MIN_DENSITY * nterms * (nterms+1) / 2) && 
+      (((qmap.Map().size () >= MIN_DENSITY * nterms * (nterms+1) / 2) &&
 	(nterms >= 2))
       //|| (nsquares > nterms/2)
        || (nsquares >= occur.size ()))
@@ -83,11 +83,11 @@ void CouenneProblem::analyzeSparsity (CouNumber c0,
     int indI = i -> first.first,
         indJ = i -> first.second;
 
-    exprAux *aux = (indI != indJ) ? 
-      addAuxiliary 
+    exprAux *aux = (indI != indJ) ?
+      addAuxiliary
       (new exprMul (new exprClone (Var (indI)),
-		    new exprClone (Var (indJ)))) : 
-      addAuxiliary 
+		    new exprClone (Var (indJ)))) :
+      addAuxiliary
       (new exprPow (new exprClone (Var (indI)),
 		    new exprConst (2.)));
 
@@ -99,7 +99,7 @@ void CouenneProblem::analyzeSparsity (CouNumber c0,
   if (qmap.Map().size () == 1) {
 
     // very simple case: we have a linear term plus a single bilinear
-    // x*y (or square x^2) term. 
+    // x*y (or square x^2) term.
   }
 
   qmap.Map().erase (qmap.Map().begin (), qmap.Map().end ());

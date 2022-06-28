@@ -33,7 +33,7 @@ expression *exprSub::simplify () {
   }
 
   // check for other special cases
-  if ((*arglist_) -> Type () == CONST) { // expr = c1 - f2 
+  if ((*arglist_) -> Type () == CONST) { // expr = c1 - f2
 
     CouNumber c0 = (*arglist_) -> Value ();
 
@@ -129,8 +129,8 @@ bool exprSub::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   if ((xi == -1) && (yi == -1)) // both x and y are constant
     return false;
 
-  CouNumber xl, xu, yl, yu, 
-    wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind], 
+  CouNumber xl, xu, yl, yu,
+    wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
     wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
   if (xi==-1) xl =         xu = arglist_ [0] -> Value ();
@@ -143,7 +143,7 @@ bool exprSub::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   // w >= l
 
-  bool 
+  bool
     xInt = arglist_ [0] -> isInteger (),
     yInt = arglist_ [1] -> isInteger ();
 

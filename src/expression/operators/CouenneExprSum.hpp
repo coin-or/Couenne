@@ -31,7 +31,7 @@ class COUENNELIB_EXPORT exprSum: public exprOp {
 
   /// Empty destructor
   virtual ~exprSum () {}
- 
+
   /// Cloning method
   virtual expression *clone (Domain *d = NULL) const
     {return new exprSum (clonearglist (d), nargs_);}
@@ -44,7 +44,7 @@ class COUENNELIB_EXPORT exprSum: public exprOp {
   virtual CouNumber operator () ();
 
   /// Differentiation
-  virtual expression *differentiate (int index); 
+  virtual expression *differentiate (int index);
 
   /// Simplification
   virtual expression *simplify ();
@@ -63,20 +63,20 @@ class COUENNELIB_EXPORT exprSum: public exprOp {
   virtual exprAux *standardize (CouenneProblem *p, bool addAux = true);
 
   /// Special version for linear constraints
-  virtual void generateCuts (expression *, //const OsiSolverInterface &, 
+  virtual void generateCuts (expression *, //const OsiSolverInterface &,
 			     OsiCuts &, const CouenneCutGenerator *,
-			     t_chg_bounds * = NULL, int = -1, 
-			     CouNumber = -COUENNE_INFINITY, 
+			     t_chg_bounds * = NULL, int = -1,
+			     CouNumber = -COUENNE_INFINITY,
 			     CouNumber =  COUENNE_INFINITY);
 
   /// Code for comparison
-  virtual enum expr_type code () 
+  virtual enum expr_type code ()
     {return COU_EXPRSUM;}
 
   /** Implied bound.
-   *  An expression 
+   *  An expression
    *
-   *  \f$w = a0 + \sum_{i\in I1} a_i x_i + \sum_{i\in I2} a_i x_i\f$ 
+   *  \f$w = a0 + \sum_{i\in I1} a_i x_i + \sum_{i\in I2} a_i x_i\f$
    *
    *  is given such that all \f$a_i\f$ are positive for \f$i \in I1\f$ and
    *  negative for \f$i \in I2\f$. If the bounds on \f$w \in [l,u]\f$, implied
@@ -104,8 +104,8 @@ class COUENNELIB_EXPORT exprSum: public exprOp {
 protected:
 
   /// inferring bounds on factors of a product
-  int impliedBoundSum (CouNumber wl, 
-		       CouNumber wu, 
+  int impliedBoundSum (CouNumber wl,
+		       CouNumber wu,
 		       std::vector <CouNumber> &xl,
 		       std::vector <CouNumber> &xu,
 		       std::vector <std::pair <int, CouNumber> > &nl,

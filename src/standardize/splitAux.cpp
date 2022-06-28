@@ -33,7 +33,7 @@ void elementBreak (expression *, int &, CouNumber &);
 /// split a constraint aw + f(x) >/</= c into w's index (returned)
 /// and rest = (-f(x) + c)/a
 
-int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest, 
+int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest,
 			      bool *wentAux, enum expression::auxSign &sign) {
 
   int auxInd = -1,          // index of the auxiliary to be extracted
@@ -41,7 +41,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
   expression **alist = body -> ArgList ();
 
-  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) 
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE))
     {printf ("  Splitting expression: "); body -> print (); printf ("\n");}
 
   switch (code) { // constraint h(x) = 0 may be in different forms:
@@ -59,13 +59,13 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     auxInd = (*alist) -> Index ();
 
     if (auxInd < 0) // first argument is not a variable
-      elementBreak (*alist, auxInd, coeff); // check first element 
+      elementBreak (*alist, auxInd, coeff); // check first element
 
     if ((auxInd < 0) ||       // first argument is not a variable
 	wentAux [auxInd] ||   // it was, and it already became an auxiliary
 	(alist [1] -> dependsOn (auxInd, TAG_AND_RECURSIVE) >= 1)) {
-                              // it is not an auxiliary, but the remaining 
-                              // expression depends on it 
+                              // it is not an auxiliary, but the remaining
+                              // expression depends on it
 
       auxInd = (alist [1]) -> Index ();
 
@@ -75,7 +75,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
       if ((auxInd < 0) ||       // no index found
 	  wentAux [auxInd] ||   // or, found but invalid
-	  (alist [0] -> dependsOn (auxInd, TAG_AND_RECURSIVE) >= 1)) 
+	  (alist [0] -> dependsOn (auxInd, TAG_AND_RECURSIVE) >= 1))
 	                        // or, variable depends upon itself
 	return -1;
 
@@ -85,11 +85,11 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     //////////////////////
 
     // what remains is the "independent" expression
-    expression *clone = alist [1 - pos] -> clone (&domain_); 
+    expression *clone = alist [1 - pos] -> clone (&domain_);
 
     expression *auxdef;
 
-    if      (coeff ==  1.) auxdef =                                     clone;  // if coefficient is  1, do nothing      
+    if      (coeff ==  1.) auxdef =                                     clone;  // if coefficient is  1, do nothing
     else if (coeff == -1.) auxdef = new exprOpp                        (clone); // if coefficient is -1, return -f(x)
     else                   auxdef = new exprMul (new exprConst (coeff), clone); // else multiply it by coefficient
 
@@ -125,8 +125,8 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
     if (code != COU_EXPRSUM) {
 
-      exprGroup *egBody = dynamic_cast <exprGroup *> (body -> isaCopy () ? 
-						      body -> Copy () : 
+      exprGroup *egBody = dynamic_cast <exprGroup *> (body -> isaCopy () ?
+						      body -> Copy () :
 						      body);
       exprGroup::lincoeff &lcoe = egBody -> lcoeff ();
 
@@ -142,7 +142,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
 	// prefer non-integer. If integer, only take it if none chosen yet
 	if ((j > maxindex) &&
-	    !(wentAux [j]) && 
+	    !(wentAux [j]) &&
 	    (fabs (lcoe [i]. second) > COUENNE_EPS) &&
 	    (!(lcoe [i].first -> isInteger ()) || (which==1))) {
 
@@ -172,7 +172,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
       }
     }
 
-    if (which != 1) 
+    if (which != 1)
       which_was_set = true;
     else which = -1;
 
@@ -196,7 +196,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	expression *cut = alist [i];
 	alist [i] = new exprConst (0.);
 
-	// not enough... check now linear (and quadratic!) terms 
+	// not enough... check now linear (and quadratic!) terms
 
 	if (body -> dependsOn (index, TAG_AND_RECURSIVE) == 0) {
 
@@ -225,7 +225,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     expression **newarglist;
 
     if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-      printf (" [[ind %d, coe %.1g, wh %d, nargs %d, nlin %d]] ", 
+      printf (" [[ind %d, coe %.1g, wh %d, nargs %d, nlin %d]] ",
 	      maxindex, auxcoe, which, nargs, nlin);
     }
 
@@ -254,14 +254,14 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     CouNumber *lincoe2 = NULL;
 
     // in case this was (and will be) an exprQuad
-    int *qindI = NULL, 
+    int *qindI = NULL,
         *qindJ = NULL;
     CouNumber *qcoe = NULL;
 
     if (nlin > 0) { // there is an element in the linear sum to be drawn
 
-      exprGroup *egBody = dynamic_cast <exprGroup *> (body -> isaCopy () ? 
-						      body -> Copy () : 
+      exprGroup *egBody = dynamic_cast <exprGroup *> (body -> isaCopy () ?
+						      body -> Copy () :
 						      body);
 
       exprGroup::lincoeff &lcoe = egBody -> lcoeff ();
@@ -292,8 +292,8 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
       if (code == COU_EXPRQUAD) { // copy quadratic elements
 
-	exprQuad *eq = dynamic_cast <exprQuad *> (body -> isaCopy () ? 
-						  body -> Copy () : 
+	exprQuad *eq = dynamic_cast <exprQuad *> (body -> isaCopy () ?
+						  body -> Copy () :
 						  body);
 
 	int nqt = eq -> getnQTerms (), j=0;
@@ -304,12 +304,12 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
 	exprQuad::sparseQ &M = eq -> getQ ();
 
-	for (exprQuad::sparseQ::iterator row = M.begin (); 
+	for (exprQuad::sparseQ::iterator row = M.begin ();
 	     row != M.end (); ++row) {
 
 	  int xind = row -> first -> Index ();
 
-	  for (exprQuad::sparseQcol::iterator col = row -> second.begin (); 
+	  for (exprQuad::sparseQcol::iterator col = row -> second.begin ();
 	       col != row -> second.end (); ++col, ++j) {
 
 	    qindI [j] = xind;
@@ -332,8 +332,8 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     // all is ready to take the independent stuff to the other side of
     // the inequality.
 
-    if ((code == COU_EXPRQUAD) || 
-	((code == COU_EXPRGROUP) && (nlin > 0))) { 
+    if ((code == COU_EXPRQUAD) ||
+	((code == COU_EXPRGROUP) && (nlin > 0))) {
 
       // an exprGroup with at least one linear term left
       //
@@ -367,7 +367,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	  //delete *newarglist;
 	  delete [] newarglist;
 	}
-	else if ((nargs <= 1) && 
+	else if ((nargs <= 1) &&
 		 ((*newarglist) -> code () == COU_EXPROPP) &&
 		 (fabs (auxcoe - 1) < COUENNE_EPS))
 	  //*mullist = new exprSum (newarglist, nargs);
@@ -375,10 +375,10 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	else { // multiple nonlinear terms, multiply them by -1/auxcoe
 
 	  if (nargs <= 1)
-	    *mullist = new exprMul (new exprConst (-1. / auxcoe), 
+	    *mullist = new exprMul (new exprConst (-1. / auxcoe),
 				    *newarglist); // !!! one more leak?
-	  else 
-	    *mullist = new exprMul (new exprConst (-1. / auxcoe), 
+	  else
+	    *mullist = new exprMul (new exprConst (-1. / auxcoe),
 				    new exprSum (newarglist, nargs));
 	}
 
@@ -405,7 +405,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	  CouNumber val = (*newarglist) -> Value () - rhs;
 	  //delete *newarglist;
 	  *newarglist = new exprConst (val);
-	} 
+	}
 	else newarglist [nargs++] = new exprConst (-rhs);
       }
 
@@ -420,7 +420,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
       if (auxcoe == -1.)
 	rest = auxDef;
-      else if ((auxcoe == 1.) && 
+      else if ((auxcoe == 1.) &&
 	       (auxDef -> code () == COU_EXPROPP))
 	rest = auxDef -> Argument ();
       else
@@ -440,7 +440,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 
 	  // TODO: if it's a c*(ax+b) return new exprGroup with (c*a, c*b)
 
-	  rest = new exprMul (new exprConst (-1./auxcoe), 
+	  rest = new exprMul (new exprConst (-1./auxcoe),
 			      ((auxDef -> Type () == AUX) ||
 			       (auxDef -> Type () == VAR)) ? new exprClone (auxDef) : auxDef);
 	}
@@ -476,8 +476,8 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
   // standardize remaining of the expression
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf   ("  Standardize rest (2nd level). Rest: "); fflush (stdout); rest -> print (); 
-    printf ("\n                                Body: "); fflush (stdout); body -> print (); 
+    printf   ("  Standardize rest (2nd level). Rest: "); fflush (stdout); rest -> print ();
+    printf ("\n                                Body: "); fflush (stdout); body -> print ();
   }
 
   // second argument is set to false so as to instruct standardize not
@@ -499,7 +499,7 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
     //delete aux; // segfaults on simplified expressions? (see test/simple.nl)
   }
 
-  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) 
+  if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE))
     {printf (" ==> (%d)", auxInd); rest -> print (); printf ("\n");}
 
   return auxInd;

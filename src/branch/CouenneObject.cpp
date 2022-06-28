@@ -42,14 +42,14 @@ CouenneObject::CouenneObject ():
 
 /// Constructor with information for branching point selection strategy
 CouenneObject::CouenneObject (CouenneCutGenerator *cutgen,
-			      CouenneProblem *p, 
-			      exprVar *ref, 
-			      Bonmin::BabSetupBase *base, 
+			      CouenneProblem *p,
+			      exprVar *ref,
+			      Bonmin::BabSetupBase *base,
 			      JnlstPtr jnlst):
   OsiObject (),
 
   cutGen_         (cutgen),
-  problem_        (p),  
+  problem_        (p),
   reference_      (ref),
   strategy_       (MID_INTERVAL),
   jnlst_          (jnlst),
@@ -68,22 +68,22 @@ CouenneObject::CouenneObject (CouenneCutGenerator *cutgen,
   // debug output ////////////////////////////////////////////
 
   if (reference_ &&
-      (reference_ -> Type () == AUX) && 
+      (reference_ -> Type () == AUX) &&
       jnlst_ -> ProduceOutput (J_SUMMARY, J_BRANCHING)) {
 
-    printf ("created Expression Object: "); reference_ -> print (); 
+    printf ("created Expression Object: "); reference_ -> print ();
     if (reference_ -> Image ()) {
-      printf (" := "); 
+      printf (" := ");
       reference_ -> Image () -> print ();
     }
 
-    printf (" with %s strategy [clamp=%g, alpha=%g]\n", 
-	    (strategy_ == LP_CLAMPED)   ? "lp-clamped" : 
-	    (strategy_ == LP_CENTRAL)   ? "lp-central" : 
-	    (strategy_ == BALANCED)     ? "balanced"   : 
-	    (strategy_ == MIN_AREA)     ? "min-area"   : 
-	    (strategy_ == MID_INTERVAL) ? "mid-point"  : 
-	    (strategy_ == NO_BRANCH)    ? "no-branching (null infeasibility)" : 
+    printf (" with %s strategy [clamp=%g, alpha=%g]\n",
+	    (strategy_ == LP_CLAMPED)   ? "lp-clamped" :
+	    (strategy_ == LP_CENTRAL)   ? "lp-central" :
+	    (strategy_ == BALANCED)     ? "balanced"   :
+	    (strategy_ == MIN_AREA)     ? "min-area"   :
+	    (strategy_ == MID_INTERVAL) ? "mid-point"  :
+	    (strategy_ == NO_BRANCH)    ? "no-branching (null infeasibility)" :
 	                                  "no strategy",
 	    lp_clamp_, alpha_);
   }
@@ -91,13 +91,13 @@ CouenneObject::CouenneObject (CouenneCutGenerator *cutgen,
 
 
 /// Constructor with lesser information, used for infeasibility only
-CouenneObject::CouenneObject (exprVar *ref, 
-			      Bonmin::BabSetupBase *base, 
+CouenneObject::CouenneObject (exprVar *ref,
+			      Bonmin::BabSetupBase *base,
 			      JnlstPtr jnlst):
 
   OsiObject (),
-  cutGen_         (NULL),  
-  problem_        (NULL),  
+  cutGen_         (NULL),
+  problem_        (NULL),
   reference_      (ref),
   strategy_       (MID_INTERVAL),
   jnlst_          (jnlst),
@@ -142,7 +142,7 @@ double CouenneObject::intInfeasibility (double value, double lb, double ub) cons
   if      (value < lb) value = lb;
   else if (value > ub) value = ub;
 
-  return CoinMin (value - floor (value + COUENNE_EPS), 
+  return CoinMin (value - floor (value + COUENNE_EPS),
 		          ceil  (value - COUENNE_EPS) - value);
 }
 
@@ -166,14 +166,14 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
   }
 
   // copy current point into Couenne
-  problem_ -> domain () -> push 
+  problem_ -> domain () -> push
     (problem_ -> nVars (),
      info -> solution_,
      info -> lower_,
      info -> upper_,
      false);
 
-  CouNumber  
+  CouNumber
     *brPts  = NULL,         // branching point(s)
     *brDist = NULL;         // distances from current LP point to each
 			    // new convexification (usually two)
@@ -183,7 +183,7 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
   CouNumber improv;
 
   if (reference_ -> Image ())  // not used out of debug
-    improv = reference_ -> Image () -> 
+    improv = reference_ -> Image () ->
       selectBranch (this, info,                      // input parameters
 		    brVar, brPts, brDist, whichWay); // result: who, where, distance, and direction
   else {
@@ -191,8 +191,8 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
     // reference_ -> Image () == NULL implies this is an integer object
 
     brVar = reference_;
-    brPts  = (double *) realloc (brPts,      sizeof (double)); 
-    brDist = (double *) realloc (brDist, 2 * sizeof (double)); 
+    brPts  = (double *) realloc (brPts,      sizeof (double));
+    brDist = (double *) realloc (brDist, 2 * sizeof (double));
 
     double point = info -> solution_ [reference_ -> Index ()];
 
@@ -216,7 +216,7 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
     int index = brVar -> Index ();
     downEstimate_ = *brPts - info -> upper_ [index];          // notice upper&lower inverted
     upEstimate_   =          info -> lower_ [index] - *brPts;
-  } else 
+  } else
   */
 
   if (pseudoMultType_ == PROJECTDIST) {
@@ -224,36 +224,36 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
     upEstimate_   = brDist [1];
   } else setEstimates (info, NULL, brPts);
 
-  /// Debug output 
+  /// Debug output
   if (jnlst_ -> ProduceOutput (J_MOREMATRIX, J_BRANCHING)) {
-    printf ("brpts for "); reference_ -> print (); 
+    printf ("brpts for "); reference_ -> print ();
     if (reference_ -> Image ()) {printf (" := "); reference_ -> Image () -> print ();}
     printf (" is on "); brVar -> print ();
-    printf (" @ %.12g [%.12g,%.12g]\n", *brPts, 
-	    problem_ -> Lb (brVar -> Index ()), 
+    printf (" @ %.12g [%.12g,%.12g]\n", *brPts,
+	    problem_ -> Lb (brVar -> Index ()),
 	    problem_ -> Ub (brVar -> Index ()));
 
     if (brVar) {
 
       if (improv <= COUENNE_EPS) {
 	printf ("### warning, infeas = %g for ", improv);
-	reference_ -> print (); 
+	reference_ -> print ();
 	if (reference_ -> Image ()) {printf (":="); reference_ -> Image () -> print ();}
 	printf ("\n");
       }
 
       int index = brVar -> Index ();
-      if (info -> lower_ [index] >= 
+      if (info -> lower_ [index] >=
 	  info -> upper_ [index] - COUENNE_EPS) {
-	printf ("### warning, tiny bounding box [%g,%g] for x_%d\n", 
+	printf ("### warning, tiny bounding box [%g,%g] for x_%d\n",
 		info -> lower_ [index],
 		info -> upper_ [index], index);
       }
     }
   }
 
-  // create branching object /////////////////////////////////////// 
-  OsiBranchingObject *brObj = new CouenneBranchingObject 
+  // create branching object ///////////////////////////////////////
+  OsiBranchingObject *brObj = new CouenneBranchingObject
     (si, this, jnlst_, cutGen_, problem_, brVar, way, *brPts, doFBBT_, doConvCuts_);
 
   problem_ -> domain () -> pop (); // Couenne discards current point
@@ -266,7 +266,7 @@ OsiBranchingObject *CouenneObject::createBranch (OsiSolverInterface *si,
 
 
 /// computes a not-too-bad point where to branch, in the "middle" of an interval
-CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u, 
+CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
 				      const OsiBranchingInformation *info) const {
 
   CouNumber curAlpha = alpha_;
@@ -280,9 +280,9 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
     double
       lb = objInd >= 0 ? info -> lower_ [objInd] : problem_ -> Obj (0) -> Body () -> Value (),
       ub = problem_ -> getCutOff (),
-      currentGap = 
+      currentGap =
       (ub >  COUENNE_INFINITY    / 10 ||
-       lb < -Couenne_large_bound / 10) ? 1.e3 : 
+       lb < -Couenne_large_bound / 10) ? 1.e3 :
       fabs (ub - lb) / (1.e-3 + CoinMin (fabs (ub), fabs (lb)));
 
 #if 1
@@ -290,7 +290,7 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
 
       currentGap *= 1e3;
 
-      assert ((currentGap >= 0.) && 
+      assert ((currentGap >= 0.) &&
 	      (currentGap <= 1.));
 
       curAlpha = currentGap * alpha_ + (1 - currentGap);
@@ -301,7 +301,7 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
     curAlpha += (1 - alpha_) / (1. + currentGap);
 #endif
 
-    // printf ("using %g rather than %g. cutoff %g, lb %g, gap %g\n", 
+    // printf ("using %g rather than %g. cutoff %g, lb %g, gap %g\n",
     // 	    curAlpha, alpha_,
     // 	    problem_ -> getCutOff (),
     // 	    lb, currentGap);
@@ -334,11 +334,11 @@ CouNumber CouenneObject::midInterval (CouNumber x, CouNumber l, CouNumber u,
 
 
 /// pick branching point based on current strategy
-CouNumber CouenneObject::getBrPoint (funtriplet *ft, CouNumber x0, CouNumber l, CouNumber u, 
+CouNumber CouenneObject::getBrPoint (funtriplet *ft, CouNumber x0, CouNumber l, CouNumber u,
 				     const OsiBranchingInformation *info) const {
 
-  if ((l < -COUENNE_EPS) && 
-      (u >  COUENNE_EPS) && 
+  if ((l < -COUENNE_EPS) &&
+      (u >  COUENNE_EPS) &&
       (-l/u >= THRES_ZERO_SYMM) &&
       (-u/l >= THRES_ZERO_SYMM))
     return 0.; // this happens when [l,u] is quite symmetrical w.r.t. 0
@@ -368,10 +368,10 @@ double CouenneObject::infeasibility (const OsiBranchingInformation *info, int &w
     return 0;
   }
 
-  problem_ -> domain () -> push 
+  problem_ -> domain () -> push
     (problem_ -> nVars (),
-     info -> solution_, 
-     info -> lower_, 
+     info -> solution_,
+     info -> lower_,
      info -> upper_,
      false);
 
@@ -399,7 +399,7 @@ double CouenneObject::infeasibility (const OsiBranchingInformation *info, int &w
   }
   else setEstimates (info, &retval, NULL);
 
-  return (isInt ? 
+  return (isInt ?
     CoinMax (retval, intInfeasibility (point, info -> lower_ [refInd], info -> upper_ [refInd])) :
     retval);
 }
@@ -410,15 +410,15 @@ double CouenneObject::infeasibility (const OsiBranchingInformation *info, int &w
 /// CouenneVarObject::infeasibility()
 double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) const {
 
-  int refInd = reference_ -> Index ();  
+  int refInd = reference_ -> Index ();
 
   if (reference_ -> Type () == VAR)
-    return (reference_ -> isInteger ()) ? 
+    return (reference_ -> isInteger ()) ?
       intInfeasibility (info -> solution_ [refInd],
 			info -> lower_    [refInd],
 			info -> upper_    [refInd]) : 0.;
 
-  double 
+  double
     vval = info -> solution_ [reference_ -> Index ()],
     fval = (*(reference_ -> Image ())) (),
     denom  = CoinMax (1., reference_ -> Image () -> gradientNorm (info -> solution_));
@@ -433,16 +433,16 @@ double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) c
     fval = COUENNE_INFINITY;
 
   double
-    retval = 
-    ((reference_ -> sign () == expression::AUX_GEQ) && (vval >= fval)) ? 0. : 
+    retval =
+    ((reference_ -> sign () == expression::AUX_GEQ) && (vval >= fval)) ? 0. :
     ((reference_ -> sign () == expression::AUX_LEQ) && (vval <= fval)) ? 0. : fabs (vval - fval),
 
-    ratio = (CoinMax (1., fabs (vval)) / 
+    ratio = (CoinMax (1., fabs (vval)) /
 	     CoinMax (1., fabs (fval)));
 
   //jnlst_ -> Printf (J_DETAILED, J_BRANCHING, "checkinf --> v=%e f=%e den=%e ret=%e ratio=%e\n", vval, fval, denom, retval, ratio);
 
-  if ((ratio < 2)  && 
+  if ((ratio < 2)  &&
       (ratio > .5) &&
       ((retval /= denom) < CoinMin (COUENNE_EPS, feas_tolerance_)))
     retval = 0.;
@@ -450,8 +450,8 @@ double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) c
   if (//(retval > 0.) &&
       (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING))) {
 
-    printf ("  infeas %g: ", retval); 
-    reference_             -> print (); 
+    printf ("  infeas %g: ", retval);
+    reference_             -> print ();
     if (reference_ -> Image ()) {printf (" := "); reference_ -> Image () -> print ();}
     printf ("\n");
   }
@@ -463,7 +463,7 @@ double CouenneObject::checkInfeasibility (const OsiBranchingInformation *info) c
   if (retval > 1.e40)
     retval = 1.e20;
 
-  return (reference_ -> isInteger ()) ? 
+  return (reference_ -> isInteger ()) ?
     CoinMax (retval, intInfeasibility (info -> solution_ [refInd],
 				       info -> lower_    [refInd],
 				       info -> upper_    [refInd])) :
@@ -505,7 +505,7 @@ void CouenneObject::setParameters (Bonmin::BabSetupBase *base) {
     base -> options () -> GetNumericValue ("branch_midpoint_alpha", alpha_, "couenne.");
   }
 
-  if (strategy_ == LP_CLAMPED || 
+  if (strategy_ == LP_CLAMPED ||
       strategy_ == LP_CENTRAL)
     base -> options () -> GetNumericValue ("branch_lp_clamp", lp_clamp_, "couenne.");
 
@@ -529,7 +529,7 @@ void CouenneObject::setParameters (Bonmin::BabSetupBase *base) {
       else                                      br_operator = "pow";
     } break;
 
-    case COU_EXPRMUL: 
+    case COU_EXPRMUL:
       br_operator = (reference_ -> Image () -> ArgList () [0] -> Index () !=
 		     reference_ -> Image () -> ArgList () [1] -> Index ()) ?
 	"prod" : "sqr";
@@ -581,7 +581,7 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
 
   //bool isInteger = reference_ -> isInteger ();
 
-  CouNumber 
+  CouNumber
     *up   = &upEstimate_,
     *down = &downEstimate_,
      point = 0.,
@@ -609,7 +609,7 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   else if (brpoint &&
 	   ((pseudoMultType_ == INTERVAL_BR) ||
 	    (pseudoMultType_ == INTERVAL_BR_REV)))
-    
+
     point = *brpoint;
 
   //printf ("point = %g [%s]\n", point, reference_ -> isInteger () ? "int" : "frac");
@@ -635,9 +635,9 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   ///////////////////////////////////////////////////////////
   switch (pseudoMultType_) {
 
-  case INFEASIBILITY: 
+  case INFEASIBILITY:
 
-    if (infeasibility) 
+    if (infeasibility)
       upEstimate_ = downEstimate_ = *infeasibility;
 
     break;
@@ -654,13 +654,13 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
   case PROJECTDIST: // taken care of in selectBranch procedure
     break;
 
-  default: 
+  default:
     printf ("Couenne: invalid estimate setting procedure\n");
     exit (-1);
   }
 
   /*if (downEstimate_ <= 0.0 || upEstimate_ <= 0.0)
-     printf ("%g [%g,%g] ---> [%g,%g]\n", 
+     printf ("%g [%g,%g] ---> [%g,%g]\n",
  	    point,
  	    lower,
  	    upper,
@@ -668,7 +668,7 @@ void CouenneObject::setEstimates (const OsiBranchingInformation *info,
 
   /*if (reference_ -> isInteger ()) {
 
-    CouNumber 
+    CouNumber
       fracDn =       point  - floor (point),
       fracUp = ceil (point) -        point;
 

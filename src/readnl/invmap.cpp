@@ -42,8 +42,8 @@ static int pair_compare (const void *p1, const void *p2) {
 
   /* FIX! weak cast for 64 bit machines */
 
-  size_t f1 = Intcast (((AslCouPair *) p1) -> fp); 
-  size_t f2 = Intcast (((AslCouPair *) p2) -> fp); 
+  size_t f1 = Intcast (((AslCouPair *) p1) -> fp);
+  size_t f2 = Intcast (((AslCouPair *) p2) -> fp);
 
   if      (f1 < f2) return -1;
   else if (f1 > f2) return  1;
@@ -65,7 +65,7 @@ size_t getOperator (efunc *f) {
 
   /* FIX cast for 64 bit machines */
 
-  if ((Intcast f <  N_OPS) && 
+  if ((Intcast f <  N_OPS) &&
       (Intcast f > -N_OPS))
     return Intcast f;
 
@@ -90,7 +90,7 @@ size_t getOperator (efunc *f) {
   /* find int operator through binary search */
   res = (AslCouPair *) bsearch (&key, opmap, N_OPS, sizeof (AslCouPair), pair_compare);
 
-  if (!res) 
+  if (!res)
     return -1;
 
   return res -> op;

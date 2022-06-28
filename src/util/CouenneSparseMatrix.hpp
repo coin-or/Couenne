@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Clemson University
  * Purpose: Definition of a sparse Matrix for use in distance
  *          measurements in Feasibility Pump
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -18,10 +18,10 @@ namespace Couenne {
 
   public:
 
-    /// Constructor 
+    /// Constructor
     CouenneSparseMatrix ();
 
-    /// Copy constructor 
+    /// Copy constructor
     CouenneSparseMatrix (const CouenneSparseMatrix &);
 
     /// Assignment

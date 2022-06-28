@@ -42,10 +42,10 @@ namespace Couenne {
 
     /// The main CglCutGenerator; not implemented yet
     void generateCuts(const OsiSolverInterface & solver,
-		      OsiCuts& cuts, 
+		      OsiCuts& cuts,
 		      const CglTreeInfo = CglTreeInfo ()) const;
 
-  protected:    
+  protected:
 
     /// Pointer to the CouenneProblem representation
     CouenneSetup* couenne_;

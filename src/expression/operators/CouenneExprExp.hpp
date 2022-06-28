@@ -24,7 +24,7 @@ class COUENNELIB_EXPORT exprExp: public exprUnary {
  public:
 
   /// Constructor
-  exprExp (expression *al): 
+  exprExp (expression *al):
     exprUnary (al) {} //< non-leaf expression, with argument list
 
   /// Cloning method
@@ -43,7 +43,7 @@ class COUENNELIB_EXPORT exprExp: public exprUnary {
   {return (argument_ -> Index () < 0) ? 0. : exp (x [argument_ -> Index ()]);}
 
   /// Differentiation
-  expression *differentiate (int index); 
+  expression *differentiate (int index);
 
   /// Get lower and upper bound of an expression (if any)
   void getBounds (expression *&, expression *&);
@@ -52,10 +52,10 @@ class COUENNELIB_EXPORT exprExp: public exprUnary {
   virtual void getBounds (CouNumber &lb, CouNumber&ub);
 
   /// Generate convexification cuts for this expression
-  void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		     OsiCuts &cs, const CouenneCutGenerator *cg, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
+  void generateCuts (expression *w, //const OsiSolverInterface &si,
+		     OsiCuts &cs, const CouenneCutGenerator *cg,
+		     t_chg_bounds * = NULL, int = -1,
+		     CouNumber = -COUENNE_INFINITY,
 		     CouNumber =  COUENNE_INFINITY);
 
   /// Code for comparisons
@@ -66,10 +66,10 @@ class COUENNELIB_EXPORT exprExp: public exprUnary {
 
   /// Set up branching object by evaluating many branching points for
   /// each expression's arguments
-  virtual CouNumber selectBranch (const CouenneObject *obj, 
+  virtual CouNumber selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression * &var, 
-				  double * &brpts, 
+				  expression * &var,
+				  double * &brpts,
  				  double * &brDist, // distance of current LP
 					  	    // point to new convexifications
 				  int &way);
@@ -88,7 +88,7 @@ class COUENNELIB_EXPORT exprExp: public exprUnary {
   virtual bool isCuttable (CouenneProblem *problem, int index) const;
 
   /// either CONVEX, CONCAVE, AFFINE, or NONCONVEX
-  //virtual enum convexity convexity () 
+  //virtual enum convexity convexity ()
   //{return CONVEX;}
 };
 

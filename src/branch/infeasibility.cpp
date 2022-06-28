@@ -31,21 +31,21 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
   assert (reference_);
   int index = reference_ -> Index ();
 
-  /*printf ("===INFEAS %d = %g [%g,%g]\n", 
-	  index, 
-	  info -> solution_ [index], 
+  /*printf ("===INFEAS %d = %g [%g,%g]\n",
+	  index,
+	  info -> solution_ [index],
 	  info -> lower_ [index],
 	  info -> upper_ [index]);*/
 
-  /*if (info -> lower_ [index] >= 
+  /*if (info -> lower_ [index] >=
       info -> upper_ [index] - CoinMin (COUENNE_EPS, feas_tolerance_))
-    return (reference_ -> isInteger ()) ? 
+    return (reference_ -> isInteger ()) ?
     intInfeasibility (info -> solution_ [index]) : 0.;*/
 
-  problem_ -> domain () -> push 
+  problem_ -> domain () -> push
     (problem_ -> nVars (),
-     info -> solution_, 
-     info -> lower_, 
+     info -> solution_,
+     info -> lower_,
      info -> upper_,
      false); // point is not copied, only its pointer
 
@@ -61,7 +61,7 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
     const std::set <int> &dependence = problem_ -> Dependence () [index];
 
     printf ("infeasVar x%d %-10g [", reference_ -> Index (), retval);
-    reference_             -> print (); 
+    reference_             -> print ();
     if ((dependence.size () == 0) && (reference_ -> Image ())) { // if no list, print image
       printf (" := ");
       reference_ -> Image () -> print ();
@@ -89,8 +89,8 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
       setEstimates (info, &retval, &brkPt);
 
     if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
-      printf("index = %d up = %e down = %e bounds [%e,%e] brpt = %e inf = %e\n", 
-  	     index, upEstimate_, downEstimate_, 
+      printf("index = %d up = %e down = %e bounds [%e,%e] brpt = %e inf = %e\n",
+  	     index, upEstimate_, downEstimate_,
  	     info -> lower_ [index],
 	     info -> upper_ [index], brkPt, retval);
     }
@@ -101,23 +101,23 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
 
   problem_ -> domain () -> pop (); // domain not used below
 
-  int refInd = reference_ -> Index ();  
+  int refInd = reference_ -> Index ();
 
   if (reference_ -> isInteger ()) {
     CouNumber intinfeas = intInfeasibility (info -> solution_ [refInd],
 					    info -> lower_    [refInd],
 					    info -> upper_    [refInd]);
-    if ((intinfeas > retval) && 
-	(intinfeas > info -> integerTolerance_)) 
+    if ((intinfeas > retval) &&
+	(intinfeas > info -> integerTolerance_))
       retval = intinfeas;
   }
 
-  //printf ("infVar x%d ==> returning %g\n", reference_ -> Index (), (reference_ -> isInteger ()) ? 
+  //printf ("infVar x%d ==> returning %g\n", reference_ -> Index (), (reference_ -> isInteger ()) ?
   //CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
   //retval);
 
-  jnlst_ -> Printf (J_DETAILED, J_BRANCHING, 
-  		    "infVar x%d ==> returning %e\n", reference_ -> Index (), (reference_ -> isInteger ()) ? 
+  jnlst_ -> Printf (J_DETAILED, J_BRANCHING,
+  		    "infVar x%d ==> returning %e\n", reference_ -> Index (), (reference_ -> isInteger ()) ?
   		    CoinMax (retval, intInfeasibility (info -> solution_ [refInd],
 						       info -> lower_    [refInd],
 						       info -> upper_    [refInd])) :
@@ -125,7 +125,7 @@ double CouenneVarObject::infeasibility (const OsiBranchingInformation *info, int
 
   return retval;
 
-  // (reference_ -> isInteger ()) ? 
+  // (reference_ -> isInteger ()) ?
   //   CoinMax (retval, intInfeasibility (info -> solution_ [reference_ -> Index ()])) :
   //   retval;
 }
@@ -143,11 +143,11 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
 				 // nowhere an independent
 
     // check first if this variable is fixed. If so, it's useless to branch on it
-    if (fabs (info -> upper_ [indexVar] - 
-	      info -> lower_ [indexVar]) / 
+    if (fabs (info -> upper_ [indexVar] -
+	      info -> lower_ [indexVar]) /
 	(1. + fabs (info -> solution_ [indexVar])) < COUENNE_EPS)
 
-      return (reference_ -> isInteger ()) ? 
+      return (reference_ -> isInteger ()) ?
 	intInfeasibility (info -> solution_ [indexVar],
 			  info -> lower_    [indexVar],
 			  info -> upper_    [indexVar]) : 0;
@@ -156,13 +156,13 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
     // might make sense to branch on it
     const CouenneObject *obj = problem_ -> Objects () [reference_ -> Index ()];
 
-    double retval = (obj -> Reference ()) ? 
+    double retval = (obj -> Reference ()) ?
       (1. - 1. / (1. + info -> upper_ [indexVar] - info -> lower_ [indexVar])) *
       weiSum * obj -> checkInfeasibility (info) : 0.;
 
     //return retval;
 
-    return (reference_ -> isInteger ()) ? 
+    return (reference_ -> isInteger ()) ?
       CoinMax (retval, intInfeasibility (info -> solution_ [indexVar],
 					 info -> lower_    [indexVar],
 					 info -> upper_    [indexVar])) :
@@ -170,7 +170,7 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
 
   } else {
 
-    CouNumber 
+    CouNumber
       infsum = 0.,
       infmax = 0.,
       infmin = COIN_DBL_MAX;
@@ -188,7 +188,7 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
       infsum += infeas;
     }
 
-    double retval = 
+    double retval =
       ((infmax < 1.e20) ? // avoid returning zero infeasibility in
                           // almost fixed variables that are at some
                           // denominator (see example triv1.nl from
@@ -202,14 +202,14 @@ double CouenneVarObject::checkInfeasibility (const OsiBranchingInformation * inf
       // x84=x83/x5 in csched1.nl)
        (1. - 1. / (1. + info -> upper_ [indexVar] - info -> lower_ [indexVar])) : 1.) *
       // to consider maximum, minimum, and sum/avg of the infeasibilities
-      (weiSum * infsum + 
-       weiAvg * (infsum / CoinMax (1., (CouNumber) dependence.size ())) + 
-       weiMin * infmin + 
+      (weiSum * infsum +
+       weiAvg * (infsum / CoinMax (1., (CouNumber) dependence.size ())) +
+       weiMin * infmin +
        weiMax * infmax);
 
     //return retval;
 
-    return (reference_ -> isInteger ()) ? 
+    return (reference_ -> isInteger ()) ?
       CoinMax (retval, intInfeasibility (info -> solution_ [indexVar],
 					 info -> lower_    [indexVar],
 					 info -> upper_    [indexVar])) :

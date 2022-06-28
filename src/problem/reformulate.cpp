@@ -30,18 +30,18 @@ using namespace Couenne;
 
 /// preprocess problem in order to extract linear relaxations etc.
 void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
-  
+
   double now = CoinCpuTime ();
 
   if (nVars () > THRESHOLD_OUTPUT_REFORMULATE) {
-    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Reformulating problem: "); 
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Reformulating problem: ");
     fflush (stdout);
   }
 
   if (domain_.current () == NULL) {
 
     // create room for problem's variables and bounds, if no domain exists
-    CouNumber 
+    CouNumber
       *x  = (CouNumber *) malloc (nVars() * sizeof (CouNumber)),
       *lb = (CouNumber *) malloc (nVars() * sizeof (CouNumber)),
       *ub = (CouNumber *) malloc (nVars() * sizeof (CouNumber));
@@ -113,10 +113,10 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   int objind = objectives_ [0] -> Body () -> Index ();
   cutoff = objind >= 0 ? X (objind) : objectives_ [0] -> Body () -> Value ();
   if(checkNLP2(X(), cutoff, false, // do not care about obj value
-	       true, // stop at first viol 
+	       true, // stop at first viol
 	       true, // checkAll
 	       getFeasTol())) {
-    
+
     jnlst_ -> Printf (Ipopt::J_ERROR, J_PROBLEM,
 		      "Couenne: initial solution (value %g) is MINLP feasible\n",
 		      cutoff);
@@ -129,7 +129,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 #ifdef FM_UP_BND
     setCutOff(getRecordBestSol()->getModSolVal());
 #else
-    setCutOff(getRecordBestSol()->getModSolVal(), 
+    setCutOff(getRecordBestSol()->getModSolVal(),
 	      getRecordBestSol()->getModSol(nVars()));
 #endif
 #endif /* not FM_TRACE_OPTSOL */
@@ -152,13 +152,13 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 #ifdef FM_UP_BND
     setCutOff (cutoff);
 #else
-    setCutOff (cutoff, X ());    
+    setCutOff (cutoff, X ());
 #endif
 #endif /* not FM_TRACE_OPTSOL */
 
   }
 #endif /* not FM_CHECKNLP2 */
- 
+
   // fill dependence_ structure
   fillDependence (bonBase_, cg);
 
@@ -194,7 +194,7 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
 
   if (bonBase_) {
 
-    CouNumber 
+    CouNumber
       art_cutoff =  COIN_DBL_MAX,
       art_lower  = -COIN_DBL_MAX;
 
@@ -217,9 +217,9 @@ void CouenneProblem::reformulate (CouenneCutGenerator *cg) {
   createUnusedOriginals ();
 
   if (nOrigVars_  > THRESHOLD_OUTPUT_REFORMULATE)
-    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "%.1f seconds\n", CoinCpuTime () - now); 
-  else if (nVars () > 2*THRESHOLD_OUTPUT_REFORMULATE) 
-    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Reformulation: %.1f seconds\n", CoinCpuTime () - now); 
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "%.1f seconds\n", CoinCpuTime () - now);
+  else if (nVars () > 2*THRESHOLD_OUTPUT_REFORMULATE)
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Reformulation: %.1f seconds\n", CoinCpuTime () - now);
 
   if (orbitalBranching_)
     setupSymmetry ();

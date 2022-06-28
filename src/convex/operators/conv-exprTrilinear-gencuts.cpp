@@ -3,7 +3,7 @@
  * Name:       conv-exprTrilinear-gencuts.cpp.cpp
  * Source:     GNU C++
  * Author:     Sonia Cafieri
- * Purpose:    generate inequalities defining the convex envelope of a 
+ * Purpose:    generate inequalities defining the convex envelope of a
  *             trilinear monomial
  * History:    Nov 2010 work started
  */
@@ -49,7 +49,7 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
   // number of cuts
   int defcons_size = 20;
   // bounds on cuts
-  double *bnd = new double [12];    
+  double *bnd = new double [12];
 
   CouNumber cf = 1.;
 
@@ -59,7 +59,7 @@ void TriLinCuts (double *vlb, double *vub, int *varIndices,
     ind[i] = new int[6];
   }
 
-  int *ibnd; 
+  int *ibnd;
   ibnd = new int[3];
   ibnd[0] = varIndices[0]; ibnd[1] = varIndices[1]; ibnd[2] = varIndices[2];
 #ifdef DEBUG
@@ -68,8 +68,8 @@ std::cout << "vlb[ibnd[0]] =" << vlb[ibnd[0]] << "  vub[ibnd[0]] =" << vub[ibnd[
 std::cout << "vlb[ibnd[1]] =" << vlb[ibnd[1]] << "  vub[ibnd[1]] =" << vub[ibnd[1]] << std::endl;
 std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[2]] << std::endl;
 #endif
- 
-  // compute the 6 permutations of the 3 variables 
+
+  // compute the 6 permutations of the 3 variables
   permutation3(ind,ibnd);
 
   int i, flag=0, idx=0;
@@ -79,43 +79,43 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
       idx = i;   // store the index of the permutation satisfying the condition
       flag = 1;  // this is case 1
     }
-    i++; 
+    i++;
   }
   i = 0;
   while(i < 6 && flag == 0) {
-    if(vlb[ind[i][0]] >=0 && vlb[ind[i][1]] <=0 && vlb[ind[i][2]] <=0 
+    if(vlb[ind[i][0]] >=0 && vlb[ind[i][1]] <=0 && vlb[ind[i][2]] <=0
        && vub[ind[i][1]] >=0 && vub[ind[i][2]] >=0) {
       idx = i;   // store the index of the permutation satisfying the condition
       flag = 2;  // this is case 2
     }
-    i++; 
+    i++;
   }
   i = 0;
   while(i < 6 && flag == 0) {
-    if(vlb[ind[i][0]] <=0 && vlb[ind[i][1]] <=0 && vlb[ind[i][2]] <=0 
+    if(vlb[ind[i][0]] <=0 && vlb[ind[i][1]] <=0 && vlb[ind[i][2]] <=0
        && vub[ind[i][0]] >=0 && vub[ind[i][1]] >=0 && vub[ind[i][2]] >=0) {
       idx = i;   // store the index of the permutation satisfying the condition
       flag = 3;  // this is case 3
     }
-    i++; 
+    i++;
   }
   i = 0;
   while(i < 6 && flag == 0) {
-    if(vlb[ind[i][0]] >=0 && vlb[ind[i][1]] <=0 && vlb[ind[i][2]] <=0 
+    if(vlb[ind[i][0]] >=0 && vlb[ind[i][1]] <=0 && vlb[ind[i][2]] <=0
        && vub[ind[i][1]] >=0 && vub[ind[i][2]] <=0) {
       idx = i;   // store the index of the permutation satisfying the condition
       flag = 4;  // this is case 4
     }
-    i++; 
+    i++;
   }
   i = 0;
   while(i < 6 && flag == 0) {
-    if(vlb[ind[i][0]] <=0 && vlb[ind[i][1]] <=0 && vlb[ind[i][2]] <=0 
+    if(vlb[ind[i][0]] <=0 && vlb[ind[i][1]] <=0 && vlb[ind[i][2]] <=0
        && vub[ind[i][0]] >=0 && vub[ind[i][1]] >=0 && vub[ind[i][2]] <=0) {
       idx = i;   // store the index of the permutation satisfying the condition
       flag = 5;  // this is case 5
     }
-    i++; 
+    i++;
   }
   i = 0;
   while(i < 6 && flag == 0) {
@@ -123,7 +123,7 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
       idx = i;   // store the index of the permutation satisfying the condition
       flag = 6;  // this is case 6
     }
-    i++; 
+    i++;
   }
   i = 0;
   while(i < 6 && flag == 0) {
@@ -131,7 +131,7 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
       idx = i;   // store the index of the permutation satisfying the condition
       flag = 7;  // this is case 7
     }
-    i++; 
+    i++;
   }
   i = 0;
   while(i < 6 && flag == 0) {
@@ -139,25 +139,25 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
       idx = i;   // store the index of the permutation satisfying the condition
       flag = 8;  // this is case 8
     }
-    i++; 
+    i++;
   }
   i = 0;
   while(i < 6 && flag == 0) {
-    if(vlb[ind[i][0]] >=0 && vlb[ind[i][1]] <=0 && vub[ind[i][1]] <=0 
+    if(vlb[ind[i][0]] >=0 && vlb[ind[i][1]] <=0 && vub[ind[i][1]] <=0
        && vlb[ind[i][2]] <=0 && vub[ind[i][2]] <=0) {
       idx = i;   // store the index of the permutation satisfying the condition
       flag = 9;  // this is case 9
     }
-    i++; 
+    i++;
   }
   i = 0;
   while(i < 6 && flag == 0) {
-    if(vlb[ind[i][0]] <=0 && vub[ind[i][0]] <=0 && vlb[ind[i][1]] <=0 && vub[ind[i][1]] <=0 
+    if(vlb[ind[i][0]] <=0 && vub[ind[i][0]] <=0 && vlb[ind[i][1]] <=0 && vub[ind[i][1]] <=0
        && vlb[ind[i][2]] <=0 && vub[ind[i][2]] <=0) {
       idx = i;   // store the index of the permutation satisfying the condition
       flag = 10;  // this is case 10
     }
-    i++; 
+    i++;
   }
 
   if (flag==0) {
@@ -166,8 +166,8 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
   }
 
   // var indices
-  v1 = ind[idx][0]; 
-  v2 = ind[idx][1]; 
+  v1 = ind[idx][0];
+  v2 = ind[idx][1];
   v3 = ind[idx][2];
   v4 = varIndices [3];
 
@@ -204,8 +204,8 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
     std::cout << " -- case 1 --" << std::endl;
 #endif
 
-    double theta  = xL1*xU2*xU3 - xU1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xU3; 
-    double theta1 = xU1*xL2*xL3 - xU1*xU2*xU3 - xL1*xL2*xL3 + xL1*xU2*xL3; 
+    double theta  = xL1*xU2*xU3 - xU1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xU3;
+    double theta1 = xU1*xL2*xL3 - xU1*xU2*xU3 - xL1*xL2*xL3 + xL1*xU2*xL3;
 
     defcons_size = 12;
 
@@ -213,21 +213,21 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
 
     for(int ii = 0; ii < defcons_size; ii++) {
 
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
+      cutIndices [ii][0] = v1;
+      cutIndices [ii][1] = v2;
+      cutIndices [ii][2] = v3;
+      cutIndices [ii][3] = v4;
 
       cutCoeff [ii][3] = 1.;
     }
- 
+
     cutCoeff [0][0] = -xU2*xU3; cutCoeff [0][1] = -xU1*xU3; cutCoeff [0][2] = -xU1*xU2;  bnd[0] = - 2.*xU1*xU2*xU3;
     cutCoeff [1][0] = -xU2*xL3; cutCoeff [1][1] = -xL1*xU3; cutCoeff [1][2] = -xL1*xU2;  bnd[1] = - xL1*xU2*xL3 - xL1*xU2*xU3;
     cutCoeff [2][0] = -xU2*xL3; cutCoeff [2][1] = -xL1*xL3; cutCoeff [2][2] = -xL1*xL2;  bnd[2] = - xL1*xU2*xL3 - xL1*xL2*xL3;
-    cutCoeff [3][0] = -xL2*xU3; cutCoeff [3][1] = -xU1*xL3; cutCoeff [3][2] = -xU1*xL2;  bnd[3] = - xU1*xL2*xU3 - xU1*xL2*xL3; 
+    cutCoeff [3][0] = -xL2*xU3; cutCoeff [3][1] = -xU1*xL3; cutCoeff [3][2] = -xU1*xL2;  bnd[3] = - xU1*xL2*xU3 - xU1*xL2*xL3;
     cutCoeff [4][0] = -xL2*xL3; cutCoeff [4][1] = -xU1*xL3; cutCoeff [4][2] = -xL1*xL2;  bnd[4] = - xU1*xL2*xL3 - xL1*xL2*xL3;
     cutCoeff [5][0] = -xL2*xU3; cutCoeff [5][1] = -xL1*xU3; cutCoeff [5][2] = -(theta/(xU3-xL3));
-    bnd[5] = (-(theta*xL3)/(xU3-xL3)) - xL1*xU2*xU3 - xU1*xL2*xU3 + xU1*xU2*xL3; 
+    bnd[5] = (-(theta*xL3)/(xU3-xL3)) - xL1*xU2*xU3 - xU1*xL2*xU3 + xU1*xU2*xL3;
 
     cutCoeff [6][0] = -xU2*xL3; cutCoeff [6][1] = -xU1*xL3; cutCoeff [6][2] = -xU1*xU2;  bnd[6] = - 2.*xU1*xU2*xL3;
     cutCoeff [7][0] = -xL2*xL3; cutCoeff [7][1] = -xU1*xU3; cutCoeff [7][2] = -xU1*xL2;  bnd[7] = - xU1*xL2*xU3 - xU1*xL2*xL3;
@@ -249,9 +249,9 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
     defcons_size = 12;
 
     prepareVectors (defcons_size);
- 
-    // compute the 6 permutations of the 3 variables 
-    ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
+
+    // compute the 6 permutations of the 3 variables
+    ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3;
     permutation3(ind,ibnd);
     int i, flagg=0, idx=0;
     i = 0;
@@ -262,7 +262,7 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
 	  idx = i;   // store the index of the permutation satisfying the condition
 	  flagg = 1;  // condition is satisfied
 	}
-      i++; 
+      i++;
     }
     if (flagg==0) {
       std::cout << "ERROR!!!" << std::endl; exit(0);
@@ -275,25 +275,25 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
 
     for(int ii = 0; ii < defcons_size; ii++) {
 
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
+      cutIndices [ii][0] = v1;
+      cutIndices [ii][1] = v2;
+      cutIndices [ii][2] = v3;
+      cutIndices [ii][3] = v4;
       cutCoeff [ii][3] = 1.;
     }
 
     double theta1 = xL1*xL2*xL3 - xU1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xU3;
     double theta2 = xU1*xL2*xU3 - xU1*xU2*xL3 - xL1*xL2*xU3 + xL1*xU2*xU3;
 
-    cutCoeff [0][0] = -xU2*xU3; cutCoeff [0][1] = -xU1*xU3; cutCoeff [0][2] = -xU1*xU2;  bnd[0] = - 2.*xU1*xU2*xU3; 
+    cutCoeff [0][0] = -xU2*xU3; cutCoeff [0][1] = -xU1*xU3; cutCoeff [0][2] = -xU1*xU2;  bnd[0] = - 2.*xU1*xU2*xU3;
     cutCoeff [1][0] = -xL2*xL3; cutCoeff [1][1] = -xU1*xL3; cutCoeff [1][2] = -xU1*xL2;  bnd[1] = - 2.*xU1*xL2*xL3;
     cutCoeff [2][0] = -xU2*xL3; cutCoeff [2][1] = -xL1*xU3; cutCoeff [2][2] = -xL1*xU2;  bnd[2] = - xL1*xU2*xL3 - xL1*xU2*xU3;
     cutCoeff [3][0] = -xU2*xL3; cutCoeff [3][1] = -xL1*xL3; cutCoeff [3][2] = -xL1*xL2;  bnd[3] = - xL1*xU2*xL3 - xL1*xL2*xL3;
-    cutCoeff [4][0] = -xL2*xU3; cutCoeff [4][1] = -(theta1/(xL2-xU2)); cutCoeff [4][2] = -xL1*xL2;  
+    cutCoeff [4][0] = -xL2*xU3; cutCoeff [4][1] = -(theta1/(xL2-xU2)); cutCoeff [4][2] = -xL1*xL2;
     bnd[4] = (-(theta1*xU2)/(xL2-xU2)) - xL1*xL2*xL3 - xU1*xL2*xU3 + xU1*xU2*xL3;
     cutCoeff [5][0] = -xL2*xU3; cutCoeff [5][1] = -xL1*xU3; cutCoeff [5][2] = -(theta2/(xU3-xL3));
     bnd[5] = (-(theta2*xL3)/(xU3-xL3)) - xU1*xL2*xU3 - xL1*xU2*xU3 + xU1*xU2*xL3;
-      
+
     if (  vlb[v1]*vlb[v2]*vlb[v3] + vub[v1]*vub[v2]*vub[v3]
 	  >= vub[v1]*vlb[v2]*vlb[v3] + vlb[v1]*vub[v2]*vub[v3]) {
 
@@ -304,7 +304,7 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
       cutCoeff [7][0] = -xU2*xL3; cutCoeff [7][1] = -xU1*xL3; cutCoeff [7][2] = -xU1*xU2;  bnd[7] = - 2.*xU1*xU2*xL3;
       cutCoeff [8][0] = -xU2*xU3; cutCoeff [8][1] = -xL1*xU3; cutCoeff [8][2] = -xL1*xL2;  bnd[8] = - xL1*xU2*xU3 - xL1*xL2*xU3;
       cutCoeff [9][0] = -xU2*xU3; cutCoeff [9][1] = -xL1*xL3; cutCoeff [9][2] = -xL1*xU2;  bnd[9] = - xL1*xU2*xU3 - xL1*xU2*xL3;
-      cutCoeff [10][0] = -xL2*xL3; cutCoeff [10][1] = -xL1*xL3; cutCoeff [10][2] = -(theta1c/(xL3-xU3));  
+      cutCoeff [10][0] = -xL2*xL3; cutCoeff [10][1] = -xL1*xL3; cutCoeff [10][2] = -(theta1c/(xL3-xU3));
       bnd[10] = (-(theta1c*xU3)/(xL3-xU3)) - xU1*xL2*xL3 - xL1*xU2*xL3 + xU1*xU2*xU3;
       cutCoeff [11][0] = -xL2*xL3; cutCoeff [11][1] = -(theta2c/(xL2-xU2)); cutCoeff [11][2] = -xL1*xL2;
       bnd[11] = (-(theta2c*xU2)/(xL2-xU2)) - xU1*xL2*xL3 - xL1*xL2*xU3 + xU1*xU2*xU3;
@@ -316,13 +316,13 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
       cutCoeff [6][0] = -xL2*xU3; cutCoeff [6][1] = -xU1*xU3; cutCoeff [6][2] = -xU1*xL2;  bnd[6] = - 2.*xU1*xL2*xU3;
       cutCoeff [7][0] = -xU2*xL3; cutCoeff [7][1] = -xU1*xL3; cutCoeff [7][2] = -xU1*xU2;  bnd[7] = - 2.*xU1*xU2*xL3;
       cutCoeff [8][0] = -xL2*xL3; cutCoeff [8][1] = -xL1*xL3; cutCoeff [8][2] = -xL1*xU2;  bnd[8] = - xL1*xL2*xL3 - xL1*xU2*xL3;
-      cutCoeff [9][0] = -xL2*xL3; cutCoeff [9][1] = -xL1*xU3; cutCoeff [9][2] = -xL1*xL2;  bnd[9] = - xL1*xL2*xL3 - xL1*xL2*xU3; 
-      cutCoeff [10][0] = -xU2*xU3; cutCoeff [10][1] = -xL1*xU3; cutCoeff [10][2] = -(theta1c/(xU3-xL3));  
-      bnd[10] = (-(theta1c*xL3)/(xU3-xL3)) - xU1*xU2*xU3 - xL1*xL2*xU3 + xU1*xL2*xL3; 
+      cutCoeff [9][0] = -xL2*xL3; cutCoeff [9][1] = -xL1*xU3; cutCoeff [9][2] = -xL1*xL2;  bnd[9] = - xL1*xL2*xL3 - xL1*xL2*xU3;
+      cutCoeff [10][0] = -xU2*xU3; cutCoeff [10][1] = -xL1*xU3; cutCoeff [10][2] = -(theta1c/(xU3-xL3));
+      bnd[10] = (-(theta1c*xL3)/(xU3-xL3)) - xU1*xU2*xU3 - xL1*xL2*xU3 + xU1*xL2*xL3;
       cutCoeff [11][0] = -xU2*xU3; cutCoeff [11][1] = -(theta2c/(xU2-xL2)); cutCoeff [11][2] = -xL1*xU2;
-      bnd[11] = (-(theta2c*xL2)/(xU2-xL2)) - xU1*xU2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3; 
+      bnd[11] = (-(theta2c*xL2)/(xU2-xL2)) - xU1*xU2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3;
     }
-      
+
   } // end if case 2
 
   /*----------------------------------------------------------------------------------------*/
@@ -343,7 +343,7 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
        <= vub[v1]*vlb[v2]*vub[v3] + 2.*vlb[v1]*vub[v2]*vlb[v3] &&
        vlb[v1]*vlb[v2]*vlb[v3] + vub[v1]*vlb[v2]*vub[v3] + vlb[v1]*vub[v2]*vub[v3]
        <= vub[v1]*vub[v2]*vlb[v3] + 2.*vlb[v1]*vlb[v2]*vub[v3] ) {
-    
+
       double theta3x = 0.5*(xL1*xU2*xU3 + xL1*xL2*xL3 - xU1*xU2*xL3 - xU1*xL2*xU3)/(xL1-xU1);
       double theta3y = 0.5*(xU1*xL2*xU3 + xL1*xL2*xL3 - xU1*xU2*xL3 - xL1*xU2*xU3)/(xL2-xU2);
       double theta3z = 0.5*(xU1*xU2*xL3 + xL1*xL2*xL3 - xU1*xL2*xU3 - xL1*xU2*xU3)/(xL3-xU3);
@@ -354,10 +354,10 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
 
       for(int ii = 0; ii < 5; ii++) {
 
-	cutIndices [ii][0] = v1; 
-	cutIndices [ii][1] = v2; 
-	cutIndices [ii][2] = v3; 
-	cutIndices [ii][3] = v4;     
+	cutIndices [ii][0] = v1;
+	cutIndices [ii][1] = v2;
+	cutIndices [ii][2] = v3;
+	cutIndices [ii][3] = v4;
 
 	cutCoeff [ii][3] = 1.;
       }
@@ -367,15 +367,15 @@ std::cout << "vlb[ibnd[2]] =" << vlb[ibnd[2]] << "  vub[ibnd[2]] =" << vub[ibnd[
       cutCoeff [2][0] = -xU2*xU3; cutCoeff [2][1] = -xU1*xU3; cutCoeff [2][2] = -xU1*xU2;  bnd[2] = - 2.*xU1*xU2*xU3;
       cutCoeff [3][0] = -xL2*xL3; cutCoeff [3][1] = -xU1*xL3; cutCoeff [3][2] = -xU1*xL2;  bnd[3] = - 2.*xU1*xL2*xL3;
       cutCoeff [4][0] = -theta3x; cutCoeff [4][1] = -theta3y; cutCoeff [4][2] = -theta3z;  bnd[4] = theta3c;
- 
+
       last=4;
 
-    } else if (vub[v1]*vub[v2]*vlb[v3] + vub[v1]*vlb[v2]*vub[v3] + vlb[v1]*vub[v2]*vub[v3] 
+    } else if (vub[v1]*vub[v2]*vlb[v3] + vub[v1]*vlb[v2]*vub[v3] + vlb[v1]*vub[v2]*vub[v3]
 	       >= vlb[v1]*vlb[v2]*vlb[v3] + 2.*vub[v1]*vub[v2]*vub[v3]) {
 #ifdef DEBUG
 std::cout << "else if " << std::endl;
 #endif
-         
+
       double theta1 = xU1*xU2*xL3 - xL1*xL2*xL3 - xU1*xU2*xU3 + xU1*xL2*xU3;
       double theta2 = xU1*xL2*xU3 - xL1*xL2*xL3 - xU1*xU2*xU3 + xL1*xU2*xU3;
       double theta3 = xU1*xU2*xL3 - xL1*xL2*xL3 - xU1*xU2*xU3 + xL1*xU2*xU3;
@@ -385,10 +385,10 @@ std::cout << "else if " << std::endl;
 
       for(int ii = 0; ii < 6; ii++) {
 
-	cutIndices [ii][0] = v1; 
-	cutIndices [ii][1] = v2; 
-	cutIndices [ii][2] = v3; 
-	cutIndices [ii][3] = v4;     
+	cutIndices [ii][0] = v1;
+	cutIndices [ii][1] = v2;
+	cutIndices [ii][2] = v3;
+	cutIndices [ii][3] = v4;
 
 	cutCoeff [ii][3] = 1.;
       }
@@ -396,9 +396,9 @@ std::cout << "else if " << std::endl;
       cutCoeff [0][0] = -xU2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xU2;  bnd[0] = - 2.*xL1*xU2*xL3;
       cutCoeff [1][0] = -xL2*xU3; cutCoeff [1][1] = -xL1*xU3; cutCoeff [1][2] = -xL1*xL2;  bnd[1] = - 2.*xL1*xL2*xU3;
       cutCoeff [2][0] = -xL2*xL3; cutCoeff [2][1] = -xU1*xL3; cutCoeff [2][2] = -xU1*xL2;  bnd[2] = - 2.*xU1*xL2*xL3;
-      cutCoeff [3][0] = -(theta1/(xU1-xL1)); cutCoeff [3][1] = -xU1*xU3; cutCoeff [3][2] = -xU1*xU2;  
+      cutCoeff [3][0] = -(theta1/(xU1-xL1)); cutCoeff [3][1] = -xU1*xU3; cutCoeff [3][2] = -xU1*xU2;
       bnd[3] = (-(theta1*xL1)/(xU1-xL1)) - xU1*xU2*xL3 - xU1*xL2*xU3 + xL1*xL2*xL3;
-      cutCoeff [4][0] = -xU2*xU3; cutCoeff [4][1] = -xU1*xU3; cutCoeff [4][2] = -(theta2/(xU3-xL3));  
+      cutCoeff [4][0] = -xU2*xU3; cutCoeff [4][1] = -xU1*xU3; cutCoeff [4][2] = -(theta2/(xU3-xL3));
       bnd[4] = (-(theta2*xL3)/(xU3-xL3)) - xU1*xL2*xU3 - xL1*xU2*xU3 + xL1*xL2*xL3;
       cutCoeff [5][0] = -xU2*xU3; cutCoeff [5][1] = -(theta3/(xU2-xL2)); cutCoeff [5][2] = -xU1*xU2;
       bnd[5] = (-(theta3*xL2)/(xU2-xL2)) - xU1*xU2*xL3 - xL1*xU2*xU3 + xL1*xL2*xL3;
@@ -409,19 +409,19 @@ std::cout << "else if " << std::endl;
 #ifdef DEBUG
 std::cout << "else " << std::endl;
 #endif
-      // compute the 6 permutations of the 3 variables 
-      ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
+      // compute the 6 permutations of the 3 variables
+      ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3;
       permutation3(ind,ibnd);
       int i, flagg=0, idx=0;
       i = 0;
       while(i < 6 && flagg == 0) {
-	if (((vlb[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] 
+	if (((vlb[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]
 	     >= vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]] + 2.*vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]]) ))
 	  {
 	    idx = i;   // store the index of the permutation satisfying the condition
 	    flagg = 1;  // condition is satisfied
 	  }
-	i++; 
+	i++;
       }
       if (flagg==0) {
 	std::cout << "ERROR!!!" << std::endl; exit(0);
@@ -432,7 +432,7 @@ std::cout << "else " << std::endl;
       double xL2(vlb[v2]); double xU2(vub[v2]);
       double xL3(vlb[v3]); double xU3(vub[v3]);
 
-      //} else if (vlb[v1]*vlb[v2]*vlb[v3] + vub[v1]*vub[v2]*vlb[v3] + vub[v1]*vlb[v2]*vub[v3] 
+      //} else if (vlb[v1]*vlb[v2]*vlb[v3] + vub[v1]*vub[v2]*vlb[v3] + vub[v1]*vlb[v2]*vub[v3]
       //         >= vlb[v1]*vub[v2]*vub[v3] + 2.*vub[v1]*vlb[v2]*vlb[v3]) {
 
       defcons_size = 6;
@@ -440,10 +440,10 @@ std::cout << "else " << std::endl;
 
       for(int ii = 0; ii < 6; ii++) {
 
-	cutIndices [ii][0] = v1; 
-	cutIndices [ii][1] = v2; 
-	cutIndices [ii][2] = v3; 
-	cutIndices [ii][3] = v4;     
+	cutIndices [ii][0] = v1;
+	cutIndices [ii][1] = v2;
+	cutIndices [ii][2] = v3;
+	cutIndices [ii][3] = v4;
 
 	cutCoeff [ii][3] = 1.;
       }
@@ -455,9 +455,9 @@ std::cout << "else " << std::endl;
       cutCoeff [0][0] = -xU2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xU2;  bnd[0] = - 2.*xL1*xU2*xL3;
       cutCoeff [1][0] = -xL2*xU3; cutCoeff [1][1] = -xL1*xU3; cutCoeff [1][2] = -xL1*xL2;  bnd[1] = - 2.*xL1*xL2*xU3;
       cutCoeff [2][0] = -xU2*xU3; cutCoeff [2][1] = -xU1*xU3; cutCoeff [2][2] = -xU1*xU2;  bnd[2] = - 2.*xU1*xU2*xU3;
-      cutCoeff [3][0] = -xL2*xL3; cutCoeff [3][1] = -(theta1/(xL2-xU2)); cutCoeff [3][2] = -xU1*xL2;  
+      cutCoeff [3][0] = -xL2*xL3; cutCoeff [3][1] = -(theta1/(xL2-xU2)); cutCoeff [3][2] = -xU1*xL2;
       bnd[3] = (-(theta1*xU2)/(xL2-xU2)) - xL1*xL2*xL3 - xU1*xL2*xU3 + xL1*xU2*xU3;
-      cutCoeff [4][0] = -(theta2/(xU1-xL1)); cutCoeff [4][1] = -xU1*xL3; cutCoeff [4][2] = -xU1*xL2;  
+      cutCoeff [4][0] = -(theta2/(xU1-xL1)); cutCoeff [4][1] = -xU1*xL3; cutCoeff [4][2] = -xU1*xL2;
       bnd[4] = (-(theta2*xL1)/(xU1-xL1)) - xU1*xU2*xL3 - xU1*xL2*xU3 + xL1*xU2*xU3;
       cutCoeff [5][0] = -xL2*xL3; cutCoeff [5][1] = -xU1*xL3; cutCoeff [5][2] = -(theta3/(xL3-xU3));
       bnd[5] = (-(theta3*xU3)/(xL3-xU3)) - xL1*xL2*xL3 - xU1*xU2*xL3 + xL1*xU2*xU3;
@@ -473,7 +473,7 @@ std::cout << "else " << std::endl;
        >= vlb[v1]*vub[v2]*vlb[v3] + 2.*vub[v1]*vlb[v2]*vub[v3] &&
        vub[v1]*vlb[v2]*vlb[v3] + vlb[v1]*vub[v2]*vlb[v3] + vub[v1]*vub[v2]*vub[v3]
        >= vlb[v1]*vlb[v2]*vub[v3] + 2.*vub[v1]*vub[v2]*vlb[v3] ) {
-   
+
 #ifdef DEBUG
 std::cout << "2 - if " << std::endl;
 #endif
@@ -486,10 +486,10 @@ std::cout << "2 - if " << std::endl;
 
       for(int ii = last+1; ii <= last+5; ii++) {
 
-	cutIndices [ii][0] = v1; 
-        cutIndices [ii][1] = v2; 
-        cutIndices [ii][2] = v3; 
-        cutIndices [ii][3] = v4;     
+	cutIndices [ii][0] = v1;
+        cutIndices [ii][1] = v2;
+        cutIndices [ii][2] = v3;
+        cutIndices [ii][3] = v4;
 	cutCoeff [ii][3] = 1.;
       }
 
@@ -501,7 +501,7 @@ std::cout << "2 - if " << std::endl;
 
       defcons_size = last+6;
 
-    } else if (vub[v1]*vlb[v2]*vlb[v3] + vlb[v1]*vub[v2]*vlb[v3] + vlb[v1]*vlb[v2]*vub[v3] 
+    } else if (vub[v1]*vlb[v2]*vlb[v3] + vlb[v1]*vub[v2]*vlb[v3] + vlb[v1]*vlb[v2]*vub[v3]
 	       <= vub[v1]*vub[v2]*vub[v3] + 2.*vlb[v1]*vlb[v2]*vlb[v3]) {
 #ifdef DEBUG
 std::cout << "2 - else if" << std::endl;
@@ -515,18 +515,18 @@ std::cout << "2 - else if" << std::endl;
 
       for(int ii = last+1; ii <= last+6; ii++) {
 
-	cutIndices [ii][0] = v1; 
-	cutIndices [ii][1] = v2; 
-	cutIndices [ii][2] = v3; 
-	cutIndices [ii][3] = v4;     
+	cutIndices [ii][0] = v1;
+	cutIndices [ii][1] = v2;
+	cutIndices [ii][2] = v3;
+	cutIndices [ii][3] = v4;
 
 	cutCoeff [ii][3] = 1.;
       }
-        
+
       cutCoeff [last+1][0] = -xU2*xL3; cutCoeff [last+1][1] = -xU1*xL3; cutCoeff [last+1][2] = -xU1*xU2;  bnd[last+1] = - 2.*xU1*xU2*xL3;
-      cutCoeff [last+2][0] = -xL2*xU3; cutCoeff [last+2][1] = -xU1*xU3; cutCoeff [last+2][2] = -xU1*xL2;  bnd[last+2] = - 2.*xU1*xL2*xU3;       
+      cutCoeff [last+2][0] = -xL2*xU3; cutCoeff [last+2][1] = -xU1*xU3; cutCoeff [last+2][2] = -xU1*xL2;  bnd[last+2] = - 2.*xU1*xL2*xU3;
       cutCoeff [last+3][0] = -xU2*xU3; cutCoeff [last+3][1] = -xL1*xU3; cutCoeff [last+3][2] = -xL1*xU2;  bnd[last+3] = - 2.*xL1*xU2*xU3;
-      cutCoeff [last+4][0] = -xL2*xL3; cutCoeff [last+4][1] = -xL1*xL3; cutCoeff [last+4][2] = -(theta1/(xL3-xU3));  
+      cutCoeff [last+4][0] = -xL2*xL3; cutCoeff [last+4][1] = -xL1*xL3; cutCoeff [last+4][2] = -(theta1/(xL3-xU3));
       bnd[last+4] = (-(theta1*xU3)/(xL3-xU3)) - xU1*xL2*xL3 - xL1*xU2*xL3 + xU1*xU2*xU3;
       cutCoeff [last+5][0] = -(theta2/(xL1-xU1)); cutCoeff [last+5][1] = -xL1*xL3; cutCoeff [last+5][2] = -xL1*xL2;
       bnd[last+5] = (-(theta2*xU1)/(xL1-xU1)) - xL1*xL2*xU3 - xL1*xU2*xL3 + xU1*xU2*xU3;
@@ -536,14 +536,14 @@ std::cout << "2 - else if" << std::endl;
       defcons_size = last+7;
 
     } else //if (vlb[v1]*vub[v2]*vlb[v3] + vlb[v1]*vlb[v2]*vub[v3] + vub[v1]*vub[v2]*vub[v3]
-	   //    <= vub[v1]*vlb[v2]*vlb[v3] + 2.*vlb[v1]*vub[v2]*vub[v3]) 
+	   //    <= vub[v1]*vlb[v2]*vlb[v3] + 2.*vlb[v1]*vub[v2]*vub[v3])
       {
 #ifdef DEBUG
 std::cout << "2 - another else if" << std::endl;
 std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 #endif
-      // compute the 6 permutations of the 3 variables 
-      //ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
+      // compute the 6 permutations of the 3 variables
+      //ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3;
       permutation3(ind,ibnd);
       int i, flagg=0, idx=0;
       i = 0;
@@ -554,7 +554,7 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 	    idx = i;   // store the index of the permutation satisfying the condition
 	    flagg = 1;  // condition is satisfied
 	  }
-	i++; 
+	i++;
       }
       if (flagg==0) {
 	std::cout << "ERROR!!!" << std::endl; exit(0);
@@ -573,27 +573,27 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 
       for(int ii = last+1; ii <= last+6; ii++) {
 
-	cutIndices [ii][0] = v1; 
-	cutIndices [ii][1] = v2; 
-	cutIndices [ii][2] = v3; 
-	cutIndices [ii][3] = v4;     
+	cutIndices [ii][0] = v1;
+	cutIndices [ii][1] = v2;
+	cutIndices [ii][2] = v3;
+	cutIndices [ii][3] = v4;
 
 	cutCoeff [ii][3] = 1.;
       }
-       
+
       cutCoeff [last+1][0] = -xL2*xL3; cutCoeff [last+1][1] = -xL1*xL3; cutCoeff [last+1][2] = -xL1*xL2;  bnd[last+1] = - 2.*xL1*xL2*xL3;
       cutCoeff [last+2][0] = -xU2*xL3; cutCoeff [last+2][1] = -xU1*xL3; cutCoeff [last+2][2] = -xU1*xU2;  bnd[last+2] = - 2.*xU1*xU2*xL3;
       cutCoeff [last+3][0] = -xL2*xU3; cutCoeff [last+3][1] = -xU1*xU3; cutCoeff [last+3][2] = -xU1*xL2;  bnd[last+3] = - 2.*xU1*xL2*xU3;
-      cutCoeff [last+4][0] = -(theta1/(xL1-xU1)); cutCoeff [last+4][1] = -xL1*xU3; cutCoeff [last+4][2] = -xL1*xU2;  
-      bnd[last+4] = (-(theta1*xU1)/(xL1-xU1)) - xL1*xL2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3; 
-      cutCoeff [last+5][0] = -xU2*xU3; cutCoeff [last+5][1] = -(theta2/(xU2-xL2)); cutCoeff [last+5][2] = -xL1*xU2;  
-      bnd[last+5] = (-(theta2*xL2)/(xU2-xL2)) - xU1*xU2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3; 
-      cutCoeff [last+6][0] = -xU2*xU3; cutCoeff [last+6][1] = -xL1*xU3; cutCoeff [last+6][2] = -(theta3/(xU3-xL3));  
+      cutCoeff [last+4][0] = -(theta1/(xL1-xU1)); cutCoeff [last+4][1] = -xL1*xU3; cutCoeff [last+4][2] = -xL1*xU2;
+      bnd[last+4] = (-(theta1*xU1)/(xL1-xU1)) - xL1*xL2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3;
+      cutCoeff [last+5][0] = -xU2*xU3; cutCoeff [last+5][1] = -(theta2/(xU2-xL2)); cutCoeff [last+5][2] = -xL1*xU2;
+      bnd[last+5] = (-(theta2*xL2)/(xU2-xL2)) - xU1*xU2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3;
+      cutCoeff [last+6][0] = -xU2*xU3; cutCoeff [last+6][1] = -xL1*xU3; cutCoeff [last+6][2] = -(theta3/(xU3-xL3));
       bnd[last+6] = (-(theta3*xL3)/(xU3-xL3)) - xL1*xL2*xU3 - xU1*xU2*xU3 + xU1*xL2*xL3;
 
       defcons_size = last+7;
-    } 
-    
+    }
+
   } // end if case 3
 
   /*----------------------------------------------------------------------------------------*/
@@ -612,10 +612,10 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     prepareVectors (defcons_size);
 
     for(int ii = 0; ii < defcons_size; ii++) {
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
+      cutIndices [ii][0] = v1;
+      cutIndices [ii][1] = v2;
+      cutIndices [ii][2] = v3;
+      cutIndices [ii][3] = v4;
       cutCoeff [ii][3] = 1.;
     }
 
@@ -623,18 +623,18 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     cutCoeff [1][0] = -xU2*xL3; cutCoeff [1][1] = -xL1*xU3; cutCoeff [1][2] = -xL1*xU2;  bnd[1] = - xL1*xU2*xL3 - xL1*xU2*xU3;
     cutCoeff [2][0] = -xU2*xL3; cutCoeff [2][1] = -xL1*xL3; cutCoeff [2][2] = -xL1*xL2;  bnd[2] = - xL1*xU2*xL3 - xL1*xL2*xL3;
     cutCoeff [3][0] = -xL2*xU3; cutCoeff [3][1] = -xU1*xU3; cutCoeff [3][2] = -xU1*xU2;  bnd[3] = - xU1*xL2*xU3 - xU1*xU2*xU3;
-    cutCoeff [4][0] = -xU2*xU3; cutCoeff [4][1] = -xL1*xU3; cutCoeff [4][2] = -xU1*xU2;  bnd[4] = - xL1*xU2*xU3 - xU1*xU2*xU3; 
+    cutCoeff [4][0] = -xU2*xU3; cutCoeff [4][1] = -xL1*xU3; cutCoeff [4][2] = -xU1*xU2;  bnd[4] = - xL1*xU2*xU3 - xU1*xU2*xU3;
     cutCoeff [5][0] = -xL2*xU3; cutCoeff [5][1] = -(theta/(xL2-xU2)); cutCoeff [5][2] = -xL1*xL2;
     bnd[5] = (-(theta*xU2)/(xL2-xU2)) - xU1*xL2*xU3 - xL1*xL2*xL3 + xU1*xU2*xL3;
- 
+
     cutCoeff [6][0] = -xU2*xL3; cutCoeff [6][1] = -xU1*xL3; cutCoeff [6][2] = -xU1*xU2;  bnd[6] = - 2.*xU1*xU2*xL3;
     cutCoeff [7][0] = -xU2*xU3; cutCoeff [7][1] = -xU1*xU3; cutCoeff [7][2] = -xU1*xL2;  bnd[7] = - xU1*xU2*xU3 - xU1*xL2*xU3;
     cutCoeff [8][0] = -xL2*xL3; cutCoeff [8][1] = -xL1*xL3; cutCoeff [8][2] = -xL1*xU2;  bnd[8] = - xL1*xU2*xL3 - xL1*xL2*xL3;
     cutCoeff [9][0] = -xL2*xL3; cutCoeff [9][1] = -xL1*xU3; cutCoeff [9][2] = -xL1*xL2;  bnd[9] = - xL1*xL2*xU3 - xL1*xL2*xL3;
-    cutCoeff [10][0] = -xL2*xU3; cutCoeff [10][1] = -xL1*xU3; cutCoeff [10][2] = -xU1*xL2;  bnd[10] = - xL1*xL2*xU3 - xU1*xL2*xU3; 
+    cutCoeff [10][0] = -xL2*xU3; cutCoeff [10][1] = -xL1*xU3; cutCoeff [10][2] = -xU1*xL2;  bnd[10] = - xL1*xL2*xU3 - xU1*xL2*xU3;
     cutCoeff [11][0] = -xU2*xU3; cutCoeff [11][1] = -(theta1/(xU2-xL2)); cutCoeff [11][2] = -xL1*xU2;
     bnd[11] = (-(theta1*xL2)/(xU2-xL2)) - xL1*xU2*xL3 - xU1*xU2*xU3 + xU1*xL2*xL3;
-      
+
   } // end if case 4
 
   /*----------------------------------------------------------------------------------------*/
@@ -649,20 +649,20 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     defcons_size = 12;
     prepareVectors (defcons_size);
 
-    // compute the permutations of the 3 variables 
-    ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
+    // compute the permutations of the 3 variables
+    ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3;
     ind[0][0] = ibnd[0]; ind[0][1] = ibnd[1]; ind[0][2] = ibnd[2];
     ind[1][0] = ibnd[1]; ind[1][1] = ibnd[0]; ind[1][2] = ibnd[2];
     int i, flagg=0, idx=0;
     i = 0;
     while(i < 2 && flagg == 0) {
       if(vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
-	 >= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]) 
+	 >= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]])
 	{
 	  idx = i;   // store the index of the permutation satisfying the condition
 	  flagg = 1;  // condition is satisfied
 	}
-      i++; 
+      i++;
     }
     if (flagg==0) {
       std::cout << "ERROR!!!" << std::endl; exit(0);
@@ -678,10 +678,10 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 
     for(int ii = 0; ii < defcons_size; ii++) {
 
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
+      cutIndices [ii][0] = v1;
+      cutIndices [ii][1] = v2;
+      cutIndices [ii][2] = v3;
+      cutIndices [ii][3] = v4;
       cutCoeff [ii][3] = 1.;
     }
 
@@ -694,11 +694,11 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
       double theta1 = xU1*xU2*xL3 - xL1*xL2*xL3 - xU1*xU2*xU3 + xU1*xL2*xU3;
       double theta2 = xU1*xU2*xL3 - xL1*xL2*xL3 - xU1*xU2*xU3 + xL1*xU2*xU3;
 
-      cutCoeff [0][0] = -xU2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xU2;  bnd[0] = - 2.*xL1*xU2*xL3; 
+      cutCoeff [0][0] = -xU2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xU2;  bnd[0] = - 2.*xL1*xU2*xL3;
       cutCoeff [1][0] = -xL2*xL3; cutCoeff [1][1] = -xU1*xL3; cutCoeff [1][2] = -xU1*xL2;  bnd[1] = - 2.*xU1*xL2*xL3;
       cutCoeff [2][0] = -xU2*xU3; cutCoeff [2][1] = -xL1*xU3; cutCoeff [2][2] = -xL1*xL2;  bnd[2] = - xL1*xU2*xU3 - xL1*xL2*xU3;
       cutCoeff [3][0] = -xL2*xU3; cutCoeff [3][1] = -xU1*xU3; cutCoeff [3][2] = -xL1*xL2;  bnd[3] = - xU1*xL2*xU3 - xL1*xL2*xU3;
-      cutCoeff [4][0] = -(theta1/(xU1-xL1)); cutCoeff [4][1] = -xU1*xU3; cutCoeff [4][2] = -xU1*xU2;  
+      cutCoeff [4][0] = -(theta1/(xU1-xL1)); cutCoeff [4][1] = -xU1*xU3; cutCoeff [4][2] = -xU1*xU2;
       bnd[4] = (-(theta1*xL1)/(xU1-xL1)) - xU1*xU2*xL3 - xU1*xL2*xU3 + xL1*xL2*xL3;
       cutCoeff [5][0] = -xU2*xU3; cutCoeff [5][1] = -(theta2/(xU2-xL2)); cutCoeff [5][2] = -xU1*xU2;
       bnd[5] = (-(theta2*xL2)/(xU2-xL2)) - xU1*xU2*xL3 - xL1*xU2*xU3 + xL1*xL2*xL3;
@@ -712,9 +712,9 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 
       cutCoeff [0][0] = -xU2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xU2;  bnd[0] = - 2.*xL1*xU2*xL3;
       cutCoeff [1][0] = -xL2*xL3; cutCoeff [1][1] = -xU1*xL3; cutCoeff [1][2] = -xU1*xL2;  bnd[1] = - 2.*xU1*xL2*xL3;
-      cutCoeff [2][0] = -xL2*xU3; cutCoeff [2][1] = -xU1*xU3; cutCoeff [2][2] = -xU1*xU2;  bnd[2] = - xU1*xL2*xU3 - xU1*xU2*xU3; 
-      cutCoeff [3][0] = -xU2*xU3; cutCoeff [3][1] = -xL1*xU3; cutCoeff [3][2] = -xU1*xU2;  bnd[3] = - xL1*xU2*xU3 - xU1*xU2*xU3; 
-      cutCoeff [4][0] = -(theta1/(xL1-xU1)); cutCoeff [4][1] = -xL1*xU3; cutCoeff [4][2] = -xL1*xL2;  
+      cutCoeff [2][0] = -xL2*xU3; cutCoeff [2][1] = -xU1*xU3; cutCoeff [2][2] = -xU1*xU2;  bnd[2] = - xU1*xL2*xU3 - xU1*xU2*xU3;
+      cutCoeff [3][0] = -xU2*xU3; cutCoeff [3][1] = -xL1*xU3; cutCoeff [3][2] = -xU1*xU2;  bnd[3] = - xL1*xU2*xU3 - xU1*xU2*xU3;
+      cutCoeff [4][0] = -(theta1/(xL1-xU1)); cutCoeff [4][1] = -xL1*xU3; cutCoeff [4][2] = -xL1*xL2;
       bnd[4] = (-(theta1*xU1)/(xL1-xU1)) - xL1*xL2*xL3 - xL1*xU2*xU3 + xU1*xU2*xL3;
       cutCoeff [5][0] = -xL2*xU3; cutCoeff [5][1] = -(theta2/(xL2-xU2)); cutCoeff [5][2] = -xL1*xL2;
       bnd[5] = (-(theta2*xU2)/(xL2-xU2)) - xL1*xL2*xL3 - xU1*xL2*xU3 + xU1*xU2*xL3;
@@ -727,7 +727,7 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     cutCoeff [7][0] = -xU2*xL3; cutCoeff [7][1] = -xU1*xL3; cutCoeff [7][2] = -xU1*xU2;  bnd[7] = - 2.*xU1*xU2*xL3;
     cutCoeff [8][0] = -xL2*xU3; cutCoeff [8][1] = -xL1*xU3; cutCoeff [8][2] = -xU1*xL2;  bnd[8] = - xL1*xL2*xU3 - xU1*xL2*xU3;
     cutCoeff [9][0] = -xU2*xU3; cutCoeff [9][1] = -xU1*xU3; cutCoeff [9][2] = -xU1*xL2;  bnd[9] = - xU1*xU2*xU3 - xU1*xL2*xU3;
-    cutCoeff [10][0] = -(theta1c/(xL1-xU1)); cutCoeff [10][1] = -xL1*xU3; cutCoeff [10][2] = -xL1*xU2;  
+    cutCoeff [10][0] = -(theta1c/(xL1-xU1)); cutCoeff [10][1] = -xL1*xU3; cutCoeff [10][2] = -xL1*xU2;
     bnd[10] = (-(theta1c*xU1)/(xL1-xU1)) - xL1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xL3;
     cutCoeff [11][0] = -xU2*xU3; cutCoeff [11][1] = -(theta2c/(xU2-xL2)); cutCoeff [11][2] = -xL1*xU2;
     bnd[11] = (-(theta2c*xL2)/(xU2-xL2)) - xU1*xU2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3;
@@ -750,14 +750,14 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 
     for (int ii = 0; ii < defcons_size; ii++) {
 
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
+      cutIndices [ii][0] = v1;
+      cutIndices [ii][1] = v2;
+      cutIndices [ii][2] = v3;
+      cutIndices [ii][3] = v4;
 
       cutCoeff [ii][3] = 1.;
     }
-    
+
     cutCoeff [0][0] = -xL2*xL3; cutCoeff [0][1] = -xU1*xL3; cutCoeff [0][2] = -xU1*xL2;  bnd[0] = - 2.*xU1*xL2*xL3;
     cutCoeff [1][0] = -xU2*xU3; cutCoeff [1][1] = -xL1*xL3; cutCoeff [1][2] = -xL1*xU2;  bnd[1] = - xL1*xU2*xU3 - xL1*xU2*xL3;
     cutCoeff [2][0] = -xU2*xU3; cutCoeff [2][1] = -xL1*xU3; cutCoeff [2][2] = -xL1*xL2;  bnd[2] = - xL1*xU2*xU3 - xL1*xL2*xU3;
@@ -767,14 +767,14 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     bnd[5] = (-(theta*xL1)/(xU1-xL1)) - xU1*xU2*xL3 - xU1*xL2*xU3 + xL1*xL2*xL3;
 
     cutCoeff [6][0] = -xL2*xL3; cutCoeff [6][1] = -xL1*xL3; cutCoeff [6][2] = -xL1*xL2;  bnd[6] = - 2.*xL1*xL2*xL3;
-    cutCoeff [7][0] = -xL2*xU3; cutCoeff [7][1] = -xL1*xU3; cutCoeff [7][2] = -xU1*xL2;  bnd[7] = - xL1*xL2*xU3 - xU1*xL2*xU3; 
-    cutCoeff [8][0] = -xU2*xU3; cutCoeff [8][1] = -xU1*xU3; cutCoeff [8][2] = -xU1*xL2;  bnd[8] = - xU1*xU2*xU3 - xU1*xL2*xU3; 
+    cutCoeff [7][0] = -xL2*xU3; cutCoeff [7][1] = -xL1*xU3; cutCoeff [7][2] = -xU1*xL2;  bnd[7] = - xL1*xL2*xU3 - xU1*xL2*xU3;
+    cutCoeff [8][0] = -xU2*xU3; cutCoeff [8][1] = -xU1*xU3; cutCoeff [8][2] = -xU1*xL2;  bnd[8] = - xU1*xU2*xU3 - xU1*xL2*xU3;
     cutCoeff [9][0] = -xU2*xU3; cutCoeff [9][1] = -xU1*xL3; cutCoeff [9][2] = -xU1*xU2;  bnd[9] = - xU1*xU2*xU3 - xU1*xU2*xL3;
-    cutCoeff [10][0] = -xU2*xL3; cutCoeff [10][1] = -xU1*xL3; cutCoeff [10][2] = -xL1*xU2;  bnd[10] = - xL1*xU2*xL3 - xU1*xU2*xL3; 
+    cutCoeff [10][0] = -xU2*xL3; cutCoeff [10][1] = -xU1*xL3; cutCoeff [10][2] = -xL1*xU2;  bnd[10] = - xL1*xU2*xL3 - xU1*xU2*xL3;
     cutCoeff [11][0] = -(theta1/(xL1-xU1)); cutCoeff [11][1] = -xL1*xU3; cutCoeff [11][2] = -xL1*xU2;
     bnd[11] = (-(theta1*xU1)/(xL1-xU1)) - xL1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xL3;
   } // end if case 6
-    
+
   /*----------------------------------------------------------------------------------------*/
 
   // case 7
@@ -789,11 +789,11 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     if ((vlb[v1]<=EPSILONT && vlb[v2]<=EPSILONT && vlb[v3]<=EPSILONT) ||
         (vlb[v1]==vlb[v2] && vlb[v1]==vlb[v3] && vub[v1]==vub[v2] && vub[v1]==vub[v3])) {
 #ifdef DEBUG
-      std::cout << " -- epsilonT --" << std::endl; 
+      std::cout << " -- epsilonT --" << std::endl;
 #endif
     } else {
-      // compute the 6 permutations of the 3 variables 
-      ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
+      // compute the 6 permutations of the 3 variables
+      ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3;
       permutation3(ind,ibnd);
       int i, flagg=0, idx=0;
       i = 0;
@@ -801,17 +801,17 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 	if(vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
 	   <= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] &&
 	   vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
-	   <= vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]) 
+	   <= vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]])
 	  {
 	    idx = i;   // store the index of the permutation satisfying the condition
 	    flagg = 1;  // condition is satisfied
 	  }
-	i++; 
+	i++;
       }
       if (flagg==0) {
 	std::cout << "ERROR!!!" << std::endl; exit(0);
       }
-    
+
       v1 = ind[idx][0]; v2 = ind[idx][1]; v3 = ind[idx][2];
     }
 
@@ -828,33 +828,33 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     double theta2 = xL1*xL2*xU3 - xU1*xL2*xL3 - xL1*xU2*xU3 + xL1*xU2*xL3;
 
     for(int ii = 0; ii < defcons_size; ii++) {
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
+      cutIndices [ii][0] = v1;
+      cutIndices [ii][1] = v2;
+      cutIndices [ii][2] = v3;
+      cutIndices [ii][3] = v4;
 
       cutCoeff [ii][3] = 1.;
     }
-    
-    cutCoeff [0][0] = -xL2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xL2;  bnd[0] = - 2.*xL1*xL2*xL3; 
+
+    cutCoeff [0][0] = -xL2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xL2;  bnd[0] = - 2.*xL1*xL2*xL3;
     cutCoeff [1][0] = -xU2*xU3; cutCoeff [1][1] = -xU1*xU3; cutCoeff [1][2] = -xU1*xU2;  bnd[1] = - 2.*xU1*xU2*xU3;
     cutCoeff [2][0] = -xL2*xU3; cutCoeff [2][1] = -xL1*xU3; cutCoeff [2][2] = -xU1*xL2;  bnd[2] = - xL1*xL2*xU3 - xU1*xL2*xU3;
     cutCoeff [3][0] = -xU2*xL3; cutCoeff [3][1] = -xU1*xL3; cutCoeff [3][2] = -xL1*xU2;  bnd[3] = - xU1*xU2*xL3 - xL1*xU2*xL3;
-    cutCoeff [4][0] = -(theta1/(xU1-xL1)); cutCoeff [4][1] = -xU1*xL3; cutCoeff [4][2] = -xU1*xL2;  
+    cutCoeff [4][0] = -(theta1/(xU1-xL1)); cutCoeff [4][1] = -xU1*xL3; cutCoeff [4][2] = -xU1*xL2;
     bnd[4] = (-(theta1*xL1)/(xU1-xL1)) - xU1*xU2*xL3 - xU1*xL2*xU3 + xL1*xU2*xU3;
     cutCoeff [5][0] = -(theta2/(xL1-xU1)); cutCoeff [5][1] = -xL1*xU3; cutCoeff [5][2] = -xL1*xU2;
-    bnd[5] = (-(theta2*xU1)/(xL1-xU1)) - xL1*xL2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3; 
+    bnd[5] = (-(theta2*xU1)/(xL1-xU1)) - xL1*xL2*xU3 - xL1*xU2*xL3 + xU1*xL2*xL3;
     //}
-    cutCoeff [6][0] = -xL2*xL3; cutCoeff [6][1] = -xU1*xL3; cutCoeff [6][2] = -xU1*xU2;  bnd[6] = - xU1*xU2*xL3 - xU1*xL2*xL3; 
+    cutCoeff [6][0] = -xL2*xL3; cutCoeff [6][1] = -xU1*xL3; cutCoeff [6][2] = -xU1*xU2;  bnd[6] = - xU1*xU2*xL3 - xU1*xL2*xL3;
     cutCoeff [7][0] = -xU2*xL3; cutCoeff [7][1] = -xL1*xL3; cutCoeff [7][2] = -xU1*xU2;  bnd[7] = - xU1*xU2*xL3 - xL1*xU2*xL3;
-    cutCoeff [8][0] = -xL2*xL3; cutCoeff [8][1] = -xU1*xU3; cutCoeff [8][2] = -xU1*xL2;  bnd[8] = - xU1*xL2*xU3 - xU1*xL2*xL3; 
+    cutCoeff [8][0] = -xL2*xL3; cutCoeff [8][1] = -xU1*xU3; cutCoeff [8][2] = -xU1*xL2;  bnd[8] = - xU1*xL2*xU3 - xU1*xL2*xL3;
     cutCoeff [9][0] = -xU2*xU3; cutCoeff [9][1] = -xL1*xL3; cutCoeff [9][2] = -xL1*xU2;  bnd[9] = - xL1*xU2*xU3 - xL1*xU2*xL3;
     cutCoeff [10][0] = -xL2*xU3; cutCoeff [10][1] = -xU1*xU3; cutCoeff [10][2] = -xL1*xL2;  bnd[10] = - xU1*xL2*xU3 - xL1*xL2*xU3;
-    cutCoeff [11][0] = -xU2*xU3; cutCoeff [11][1] = -xL1*xU3; cutCoeff [11][2] = -xL1*xL2;  bnd[11] = - xL1*xU2*xU3 - xL1*xL2*xU3; 
+    cutCoeff [11][0] = -xU2*xU3; cutCoeff [11][1] = -xL1*xU3; cutCoeff [11][2] = -xL1*xL2;  bnd[11] = - xL1*xU2*xU3 - xL1*xL2*xU3;
   } // end if case 7
 
   /*----------------------------------------------------------------------------------------*/
-      
+
   // case 8
   if(flag == 8) {
 #ifdef DEBUG
@@ -864,8 +864,8 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     defcons_size = 12;
     prepareVectors (defcons_size);
 
-    // compute the 6 permutations of the 3 variables 
-    ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
+    // compute the 6 permutations of the 3 variables
+    ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3;
     permutation3(ind,ibnd);
     int i, flagg=0, idx=0;
     i = 0;
@@ -876,12 +876,12 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 	   vlb[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
 	   >= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]) ||
 	  (vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
-	   >= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]])) ) 
+	   >= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]])) )
 	{
 	  idx = i;   // store the index of the permutation satisfying the condition
 	  flagg = 1;  // condition is satisfied
 	}
-      i++; 
+      i++;
     }
     if (flagg==0) {
       std::cout << "ERROR!!!" << std::endl; exit(0);
@@ -894,17 +894,17 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 
     for(int ii = 0; ii < defcons_size; ii++) {
 
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
+      cutIndices [ii][0] = v1;
+      cutIndices [ii][1] = v2;
+      cutIndices [ii][2] = v3;
+      cutIndices [ii][3] = v4;
       cutCoeff [ii][3] = 1.;
     }
-    
-    // compute the 6 permutations of the 3 variables 
+
+    // compute the 6 permutations of the 3 variables
     //if(vub[v3]<=0) {
-    cutCoeff [0][0] = -xU2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xL2;  bnd[0] = - xL1*xU2*xL3 - xL1*xL2*xL3; 
-    cutCoeff [1][0] = -xU2*xL3; cutCoeff [1][1] = -xL1*xU3; cutCoeff [1][2] = -xL1*xU2;  bnd[1] = - xL1*xU2*xL3 - xL1*xU2*xU3; 
+    cutCoeff [0][0] = -xU2*xL3; cutCoeff [0][1] = -xL1*xL3; cutCoeff [0][2] = -xL1*xL2;  bnd[0] = - xL1*xU2*xL3 - xL1*xL2*xL3;
+    cutCoeff [1][0] = -xU2*xL3; cutCoeff [1][1] = -xL1*xU3; cutCoeff [1][2] = -xL1*xU2;  bnd[1] = - xL1*xU2*xL3 - xL1*xU2*xU3;
     cutCoeff [2][0] = -xL2*xU3; cutCoeff [2][1] = -xU1*xL3; cutCoeff [2][2] = -xU1*xL2;  bnd[2] = - xU1*xL2*xU3 - xU1*xL2*xL3;
     cutCoeff [3][0] = -xL2*xU3; cutCoeff [3][1] = -xU1*xU3; cutCoeff [3][2] = -xU1*xU2;  bnd[3] = - xU1*xL2*xU3 - xU1*xU2*xU3;
     cutCoeff [4][0] = -xL2*xL3; cutCoeff [4][1] = -xU1*xL3; cutCoeff [4][2] = -xL1*xL2;  bnd[4] = - xU1*xL2*xL3 - xL1*xL2*xL3;
@@ -922,7 +922,7 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
       cutCoeff [7][0] = -xU2*xL3; cutCoeff [7][1] = -xU1*xL3; cutCoeff [7][2] = -xU1*xU2;  bnd[7] = - 2.*xU1*xU2*xL3;
       cutCoeff [8][0] = -xL2*xL3; cutCoeff [8][1] = -xU1*xU3; cutCoeff [8][2] = -xU1*xL2;  bnd[8] = - xU1*xL2*xU3 - xU1*xL2*xL3;
       cutCoeff [9][0] = -xU2*xU3; cutCoeff [9][1] = -xL1*xL3; cutCoeff [9][2] = -xL1*xU2;  bnd[9] = - xL1*xU2*xU3 - xL1*xU2*xL3;
-      cutCoeff [10][0] = -xL2*xL3; cutCoeff [10][1] = -xL1*xL3; cutCoeff [10][2] = -(theta1c/(xL3-xU3));  
+      cutCoeff [10][0] = -xL2*xL3; cutCoeff [10][1] = -xL1*xL3; cutCoeff [10][2] = -(theta1c/(xL3-xU3));
       bnd[10] = (-(theta1c*xU3)/(xL3-xU3)) - xU1*xL2*xL3 - xL1*xU2*xL3 + xU1*xU2*xU3;
       cutCoeff [11][0] = -xU2*xU3; cutCoeff [11][1] = -xU1*xU3; cutCoeff [11][2] = -(theta2c/(xU3-xL3));
       bnd[11] = (-(theta2c*xL3)/(xU3-xL3)) - xU1*xL2*xU3 - xL1*xU2*xU3 + xL1*xL2*xL3;
@@ -937,12 +937,12 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
       cutCoeff [7][0] = -xU2*xL3; cutCoeff [7][1] = -xU1*xL3; cutCoeff [7][2] = -xU1*xU2;  bnd[7] = - 2.*xU1*xU2*xL3;
       cutCoeff [8][0] = -xL2*xL3; cutCoeff [8][1] = -xL1*xL3; cutCoeff [8][2] = -xL1*xU2;  bnd[8] = - xL1*xL2*xL3 - xL1*xU2*xL3;
       cutCoeff [9][0] = -xU2*xU3; cutCoeff [9][1] = -xU1*xU3; cutCoeff [9][2] = -xU1*xL2;  bnd[9] = - xU1*xL2*xU3 - xU1*xU2*xU3;
-      cutCoeff [10][0] = -xL2*xL3; cutCoeff [10][1] = -(theta1c/(xL2-xU2)); cutCoeff [10][2] = -xU1*xL2;  
-      bnd[10] = (-(theta1c*xU2)/(xL2-xU2)) - xL1*xL2*xL3 - xU1*xL2*xU3 + xL1*xU2*xU3; 
+      cutCoeff [10][0] = -xL2*xL3; cutCoeff [10][1] = -(theta1c/(xL2-xU2)); cutCoeff [10][2] = -xU1*xL2;
+      bnd[10] = (-(theta1c*xU2)/(xL2-xU2)) - xL1*xL2*xL3 - xU1*xL2*xU3 + xL1*xU2*xU3;
       cutCoeff [11][0] = -xU2*xU3; cutCoeff [11][1] = -(theta2c/(xU2-xL2)); cutCoeff [11][2] = -xL1*xU2;
       bnd[11] = (-(theta2c*xL2)/(xU2-xL2)) - xL1*xU2*xL3 - xU1*xU2*xU3 + xU1*xL2*xL3;
     }
-    //} 
+    //}
   } // end if case 8
 
   /*----------------------------------------------------------------------------------------*/
@@ -956,8 +956,8 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     defcons_size = 12;
     prepareVectors (defcons_size);
 
-    // compute the 6 permutations of the 3 variables 
-    ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
+    // compute the 6 permutations of the 3 variables
+    ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3;
     permutation3(ind,ibnd);
     int i, flagg=0, idx=0;
     i = 0;
@@ -966,7 +966,7 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 	 ((vlb[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
 	   <= vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] &&
 	   vlb[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
-	   <= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]) || 
+	   <= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]) ||
 	  (vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]
 	   <= vlb[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]] &&
 	   vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]
@@ -975,7 +975,7 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 	  idx = i;   // store the index of the permutation satisfying the condition
 	  flagg = 1;  // condition is satisfied
 	}
-      i++; 
+      i++;
     }
     if (flagg==0) {
       std::cout << "ERROR!!!" << std::endl; exit(0);
@@ -988,13 +988,13 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
 
     for (int ii = 0; ii < defcons_size; ii++) {
 
-      cutIndices [ii][0] = v1; 
-      cutIndices [ii][1] = v2; 
-      cutIndices [ii][2] = v3; 
-      cutIndices [ii][3] = v4;     
+      cutIndices [ii][0] = v1;
+      cutIndices [ii][1] = v2;
+      cutIndices [ii][2] = v3;
+      cutIndices [ii][3] = v4;
       cutCoeff [ii][3] = 1.;
     }
-    
+
     //if(vlb[v1]>=0) {
     if(vlb[v1]*vlb[v2]*vlb[v3] + vub[v1]*vub[v2]*vub[v3]
        <= vub[v1]*vub[v2]*vlb[v3] + vlb[v1]*vlb[v2]*vub[v3] &&
@@ -1008,7 +1008,7 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
       cutCoeff [1][0] = -xL2*xL3; cutCoeff [1][1] = -xU1*xL3; cutCoeff [1][2] = -xU1*xL2;  bnd[1] = - 2.*xU1*xL2*xL3;
       cutCoeff [2][0] = -xL2*xU3; cutCoeff [2][1] = -xU1*xU3; cutCoeff [2][2] = -xL1*xL2;  bnd[2] = - xU1*xL2*xU3 - xL1*xL2*xU3;
       cutCoeff [3][0] = -xU2*xL3; cutCoeff [3][1] = -xL1*xL3; cutCoeff [3][2] = -xU1*xU2;  bnd[3] = - xU1*xU2*xL3 - xL1*xU2*xL3;
-      cutCoeff [4][0] = -(theta1/(xL1-xU1)); cutCoeff [4][1] = -xL1*xL3; cutCoeff [4][2] = -xL1*xL2;  
+      cutCoeff [4][0] = -(theta1/(xL1-xU1)); cutCoeff [4][1] = -xL1*xL3; cutCoeff [4][2] = -xL1*xL2;
       bnd[4] = (-(theta1*xU1)/(xL1-xU1)) - xL1*xL2*xU3 - xL1*xU2*xL3 + xU1*xU2*xU3;
       cutCoeff [5][0] = -(theta2/(xU1-xL1)); cutCoeff [5][1] = -xU1*xU3; cutCoeff [5][2] = -xU1*xU2;
       bnd[5] = (-(theta2*xL1)/(xU1-xL1)) - xU1*xL2*xU3 - xU1*xU2*xL3 + xL1*xL2*xL3;
@@ -1025,7 +1025,7 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
       cutCoeff [1][0] = -xL2*xL3; cutCoeff [1][1] = -xU1*xL3; cutCoeff [1][2] = -xU1*xL2;  bnd[1] = - 2.*xU1*xL2*xL3;
       cutCoeff [2][0] = -xL2*xU3; cutCoeff [2][1] = -xU1*xU3; cutCoeff [2][2] = -xU1*xU2;  bnd[2] = - xU1*xL2*xU3 - xU1*xU2*xU3;
       cutCoeff [3][0] = -xU2*xL3; cutCoeff [3][1] = -xL1*xL3; cutCoeff [3][2] = -xL1*xL2;  bnd[3] = - xL1*xL2*xL3 - xL1*xU2*xL3;
-      cutCoeff [4][0] = -xU2*xL3; cutCoeff [4][1] = -(theta1/(xU2-xL2)); cutCoeff [4][2] = -xU1*xU2;  
+      cutCoeff [4][0] = -xU2*xL3; cutCoeff [4][1] = -(theta1/(xU2-xL2)); cutCoeff [4][2] = -xU1*xU2;
       bnd[4] = (-(theta1*xL2)/(xU2-xL2)) - xU1*xU2*xU3 - xL1*xU2*xL3 + xL1*xL2*xU3;
       cutCoeff [5][0] = -xL2*xU3; cutCoeff [5][1] = -(theta2/(xL2-xU2)); cutCoeff [5][2] = -xL1*xL2;
       bnd[5] = (-(theta2*xU2)/(xL2-xU2)) - xL1*xL2*xL3 - xU1*xL2*xU3 + xU1*xU2*xL3;
@@ -1051,7 +1051,7 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
     defcons_size = 12;
     prepareVectors (defcons_size);
 
-    ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3; 
+    ibnd[0] = v1; ibnd[1] = v2; ibnd[2] = v3;
     permutation3(ind,ibnd);
     int i, flagg=0, idx=0;
     i = 0;
@@ -1059,12 +1059,12 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
       if(vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
 	 >= vlb[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vub[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]] &&
 	 vub[ind[i][0]]*vlb[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vub[ind[i][1]]*vub[ind[i][2]]
-	 >= vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]]) 
+	 >= vub[ind[i][0]]*vub[ind[i][1]]*vlb[ind[i][2]] + vlb[ind[i][0]]*vlb[ind[i][1]]*vub[ind[i][2]])
 	{
 	  idx = i;   // store the index of the permutation satisfying the condition
 	  flagg = 1;  // condition is satisfied
 	}
-      i++; 
+      i++;
     }
     if (flagg==0) {
        std::cout << "ERROR!!!" << std::endl; exit(0);
@@ -1076,15 +1076,15 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
       double xL3(vlb[v3]); double xU3(vub[v3]);
 
       for(int ii = 0; ii < defcons_size; ii++) {
- 
-        cutIndices [ii][0] = v1; 
-        cutIndices [ii][1] = v2; 
-        cutIndices [ii][2] = v3; 
-        cutIndices [ii][3] = v4;     
+
+        cutIndices [ii][0] = v1;
+        cutIndices [ii][1] = v2;
+        cutIndices [ii][2] = v3;
+        cutIndices [ii][3] = v4;
         cutCoeff [ii][3] = 1.;
       }
-    
-    // compute the 6 permutations of the 3 variables 
+
+    // compute the 6 permutations of the 3 variables
       cutCoeff [0][0] = -xL2*xL3; cutCoeff [0][1] = -xU1*xL3; cutCoeff [0][2] = -xU1*xU2;  bnd[0] = - xU1*xU2*xL3 - xU1*xL2*xL3;
       cutCoeff [1][0] = -xU2*xU3; cutCoeff [1][1] = -xL1*xL3; cutCoeff [1][2] = -xL1*xU2;  bnd[1] = - xL1*xU2*xU3 - xL1*xU2*xL3;
       cutCoeff [2][0] = -xU2*xL3; cutCoeff [2][1] = -xL1*xL3; cutCoeff [2][2] = -xU1*xU2;  bnd[2] = - xU1*xU2*xL3 - xL1*xU2*xL3;
@@ -1104,7 +1104,7 @@ std::cout << "v1 = " << v1 << " v2 =" << v2 << "  v3 =" << v3 << std::endl;
       cutCoeff [7][0] = -xU2*xU3; cutCoeff [7][1] = -xU1*xU3; cutCoeff [7][2] = -xU1*xU2;  bnd[7] = - 2.*xU1*xU2*xU3;
       cutCoeff [8][0] = -xL2*xU3; cutCoeff [8][1] = -xL1*xU3; cutCoeff [8][2] = -xU1*xL2;  bnd[8] = - xL1*xL2*xU3 - xU1*xL2*xU3;
       cutCoeff [9][0] = -xU2*xL3; cutCoeff [9][1] = -xU1*xL3; cutCoeff [9][2] = -xL1*xU2;  bnd[9] = - xL1*xU2*xL3 - xU1*xU2*xL3;
-      cutCoeff [10][0] = -(theta1c/(xL1-xU1)); cutCoeff [10][1] = -xL1*xU3; cutCoeff [10][2] = -xL1*xU2;  
+      cutCoeff [10][0] = -(theta1c/(xL1-xU1)); cutCoeff [10][1] = -xL1*xU3; cutCoeff [10][2] = -xL1*xU2;
       bnd[10] = (-(theta1c*xU1)/(xL1-xU1)) - xL1*xU2*xL3 - xL1*xL2*xU3 + xU1*xL2*xL3;
       cutCoeff [11][0] = -(theta2c/(xU1-xL1)); cutCoeff [11][1] = -xU1*xL3; cutCoeff [11][2] = -xU1*xL2;
       bnd[11] = (-(theta2c*xL1)/(xU1-xL1)) - xU1*xU2*xL3 - xU1*xL2*xU3 + xL1*xU2*xU3;
@@ -1143,9 +1143,9 @@ std::cout << ii << ") cutLb =" << cutLb[ii] << " " << "cutUb = " << cutUb[ii] <<
 
 
 // generate cuts for trilinear expressions
-void exprTrilinear::generateCuts (expression *w, 
+void exprTrilinear::generateCuts (expression *w,
 				  OsiCuts &cs, const CouenneCutGenerator *cg,
-				  t_chg_bounds *chg, int wind, 
+				  t_chg_bounds *chg, int wind,
 				  CouNumber lbw, CouNumber ubw) {
 
   expression **args = w -> Image () -> ArgList ();
@@ -1155,7 +1155,7 @@ void exprTrilinear::generateCuts (expression *w,
   enum auxSign sign = cg -> Problem () -> Var (w -> Index ()) -> sign ();
 
   for (int i=0; i<3; i++)
-    varInd [i] = args [i] -> Index (); 
+    varInd [i] = args [i] -> Index ();
 
   varInd [3] = w -> Index ();	
 
@@ -1186,9 +1186,9 @@ void exprTrilinear::generateCuts (expression *w,
 
     if ((fixed_prod < COUENNE_EPS) || (n_var_fixed == 3)) {
 
-      if (!(cg->createCut (cs, 
-			   (sign == expression::AUX_LEQ) ? - COIN_DBL_MAX : fixed_prod, 
-			   (sign == expression::AUX_GEQ) ?   COIN_DBL_MAX : fixed_prod, 
+      if (!(cg->createCut (cs,
+			   (sign == expression::AUX_LEQ) ? - COIN_DBL_MAX : fixed_prod,
+			   (sign == expression::AUX_GEQ) ?   COIN_DBL_MAX : fixed_prod,
 			   w -> Index (), 1))) {
 
 	cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "exprTriLin: variable should be fixed but cut can't be added: ");
@@ -1206,7 +1206,7 @@ void exprTrilinear::generateCuts (expression *w,
 	      // fixed. Revert to exprMul
 
 	{
-	  int 
+	  int
 	    xi = (!isFixed [0]) ? 0 : (!isFixed [1]) ? 1 : 2,
 	    yi = (!isFixed [2]) ? 2 : (!isFixed [1]) ? 1 : 0;
 
@@ -1226,8 +1226,8 @@ void exprTrilinear::generateCuts (expression *w,
 	    wl = lb [varInd [3]],
 	    wu = ub [varInd [3]];
 
-	  unifiedProdCuts (cg, cs, 
-			   xi,         (*(arglist_ [0])) (), xl, xu, 
+	  unifiedProdCuts (cg, cs,
+			   xi,         (*(arglist_ [0])) (), xl, xu,
 			   yi,         (*(arglist_ [1])) (), yl, yu,
 			   varInd [3], (*w) (),              wl, wu,
 			   chg, sign);
@@ -1235,18 +1235,18 @@ void exprTrilinear::generateCuts (expression *w,
 
 	break;
 
-      case 2: 
+      case 2:
 
 	{ // easy... cut is w = (f1 * f2) * v3, where f* are fixed and v* is remaining
 
 	  int varInd = (!isFixed [0]) ? 0 : (!isFixed [1]) ? 1 : 2;
 
-	  double 
-	    lb = ((sign == expression::AUX_LEQ) ? - COIN_DBL_MAX : 0), 
+	  double
+	    lb = ((sign == expression::AUX_LEQ) ? - COIN_DBL_MAX : 0),
 	    ub = ((sign == expression::AUX_GEQ) ?   COIN_DBL_MAX : 0);
 
 	  if (!(cg->createCut (cs, lb, ub, w -> Index (), 1, ArgList () [varInd] -> Index (), -fixed_prod))) {
-	    cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "exprTriLin: variable should be fixed but cut can't be added: "); 
+	    cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "exprTriLin: variable should be fixed but cut can't be added: ");
 	    if (cg -> Problem () -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_CONVEXIFYING)) w -> print ();
 	    cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "\n");
 	  }
@@ -1254,7 +1254,7 @@ void exprTrilinear::generateCuts (expression *w,
 
 	break;
 
-      default: 
+      default:
 	cg -> Problem () -> Jnlst () -> Printf (Ipopt::J_ERROR, J_CONVEXIFYING, "exprTriLin: Error, there should be one or two fixed variables");
 	break;
       }
@@ -1270,8 +1270,8 @@ void exprTrilinear::generateCuts (expression *w,
 	      cutLb, cutUb);
 
   // sanity check on returned vectors
-  assert (cutIndices.size () == cutCoeff.size () && 
-	  cutIndices.size () == cutLb.size    () && 
+  assert (cutIndices.size () == cutCoeff.size () &&
+	  cutIndices.size () == cutLb.size    () &&
 	  cutIndices.size () == cutUb.size    ());
 
   //printf ("trilinear cuts:\n");
@@ -1291,10 +1291,10 @@ void exprTrilinear::generateCuts (expression *w,
     if ((cutLb [i] > - COUENNE_INFINITY/10) ||
 	(cutUb [i] <   COUENNE_INFINITY/10)) {
 
-      int 
+      int
 	size = (int) cutIndices [i].size (),
 	*ind  = new int [size];
-      
+
       double *coe = new double [size];
 
       int cardCut = 0;
@@ -1316,7 +1316,7 @@ void exprTrilinear::generateCuts (expression *w,
 
 	double *sol = cg -> Problem () -> bestSol ();
 	const double
-	  *lb = cg -> Problem () -> Lb (), 
+	  *lb = cg -> Problem () -> Lb (),
 	  *ub = cg -> Problem () -> Ub ();
 
 	int nVars = cg -> Problem () -> nVars ();

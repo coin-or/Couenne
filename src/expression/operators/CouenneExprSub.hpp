@@ -24,7 +24,7 @@ class COUENNELIB_EXPORT exprSub: public exprOp {
  public:
 
   /// Constructor
-  exprSub  (expression **al, int n = 2): 
+  exprSub  (expression **al, int n = 2):
     exprOp (al, n) {} //< non-leaf expression, with argument list
 
   /// Constructor with two explicit elements
@@ -43,7 +43,7 @@ class COUENNELIB_EXPORT exprSub: public exprOp {
   CouNumber operator () ();
 
   /// Differentiation
-  expression *differentiate (int index); 
+  expression *differentiate (int index);
 
   /// Simplification
   expression *simplify ();
@@ -69,10 +69,10 @@ class COUENNELIB_EXPORT exprSub: public exprOp {
   virtual exprAux *standardize (CouenneProblem *p, bool addAux = true);
 
   /// Special version for linear constraints
-  virtual void generateCuts (expression *, //const OsiSolverInterface &, 
+  virtual void generateCuts (expression *, //const OsiSolverInterface &,
 			     OsiCuts &, const CouenneCutGenerator *,
 			     t_chg_bounds * = NULL, int = -1,
-			     CouNumber = -COUENNE_INFINITY, 
+			     CouNumber = -COUENNE_INFINITY,
 			     CouNumber =  COUENNE_INFINITY);
 
   /// Code for comparisons

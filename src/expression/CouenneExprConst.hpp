@@ -22,7 +22,7 @@ namespace Couenne {
 
 class COUENNELIB_EXPORT exprConst: public expression {
 
-private: 
+private:
 
   /// the value of this constant
   CouNumber value_;
@@ -34,11 +34,11 @@ public:
   {return CONST;}
 
   /// value of expression
-  inline CouNumber Value () const 
+  inline CouNumber Value () const
   {return value_;}
 
   /// Constructor
-  exprConst (CouNumber value): 
+  exprConst (CouNumber value):
     value_ (value) {}
 
   /// Copy constructor
@@ -50,16 +50,16 @@ public:
   {return new exprConst (value_);}
 
   /// I/O
-  void print (std::ostream &out = std::cout, 
+  void print (std::ostream &out = std::cout,
 	      bool = false) const
   {out << value_;}
 
   /// return constant's value
-  inline CouNumber operator() () 
+  inline CouNumber operator() ()
   {return value_;}
 
   /// differentiation
-  inline expression *differentiate (int) 
+  inline expression *differentiate (int)
   {return new exprConst (0.);}
 
   /// dependence on variable set
@@ -81,23 +81,23 @@ public:
   {lower = upper = value_;}
 
   /// generate convexification cut for constraint w = this
-  void generateCuts (expression *, //const OsiSolverInterface &, 
-		     OsiCuts &, const CouenneCutGenerator *, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
+  void generateCuts (expression *, //const OsiSolverInterface &,
+		     OsiCuts &, const CouenneCutGenerator *,
+		     t_chg_bounds * = NULL, int = -1,
+		     CouNumber = -COUENNE_INFINITY,
 		     CouNumber =  COUENNE_INFINITY);
 
   /// code for comparisons
-  virtual inline enum expr_type code () 
+  virtual inline enum expr_type code ()
   {return COU_EXPRCONST;}
 
   /// is this expression integer?
-  virtual inline bool isInteger () 
+  virtual inline bool isInteger ()
   {return Couenne::isInteger (value_);}
 
   /// used in rank-based branching variable choice
   virtual inline int rank ()
-  {return 0;} 
+  {return 0;}
 };
 
 }

@@ -19,16 +19,16 @@ using namespace Couenne;
 
 /// generate convexification cut for constraint w = x*y
 
-void exprMul::generateCuts (expression *w, 
+void exprMul::generateCuts (expression *w,
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
-			    t_chg_bounds *chg, int wind, 
+			    t_chg_bounds *chg, int wind,
 			    CouNumber lbw, CouNumber ubw) {
 
   expression *xe = arglist_ [0];
   expression *ye = arglist_ [1];
 
-  int wi = w  -> Index (), 
-      xi = xe -> Index (), 
+  int wi = w  -> Index (),
+      xi = xe -> Index (),
       yi = ye -> Index ();
 
   // if expression is x*c or c*y, with c constant from the problem
@@ -44,8 +44,8 @@ void exprMul::generateCuts (expression *w,
 
   // is one of the two constant?
 
-  if (is0const) c0 = xe -> Value ();  
-  if (is1const) c1 = ye -> Value ();  
+  if (is0const) c0 = xe -> Value ();
+  if (is1const) c1 = ye -> Value ();
 
   // compute bounds
 
@@ -59,7 +59,7 @@ void exprMul::generateCuts (expression *w,
   if (ubw < wu) wu = ubw;
 
   // check if either operator got constant because of the branching
-  // rules: 
+  // rules:
 
   bool i0s, i1s = i0s = false;
 
@@ -72,7 +72,7 @@ void exprMul::generateCuts (expression *w,
     if (is1const) i0s = (fabs (c1)                 * (xu-xl) < COUENNE_EPS);
     else          i0s = ((fabs (yu) + fabs (yl))   * (xu-xl) < COUENNE_EPS);
 
-    if (i0s) 
+    if (i0s)
       c0 = 0.5 * (xl+xu);
   }
 
@@ -83,7 +83,7 @@ void exprMul::generateCuts (expression *w,
     if (is0const) i1s = (fabs (c0)                 * (yu-yl) < COUENNE_EPS);
     else          i1s = ((fabs (xu) + fabs (xl))   * (yu-yl) < COUENNE_EPS);
 
-    if (i1s) 
+    if (i1s)
       c1 = 0.5 * (yl+yu);
   }
 
@@ -126,10 +126,10 @@ void exprMul::generateCuts (expression *w,
   // out of the hyperbola's belly
 
   unifiedProdCuts (cg, cs,
-		   xi, (*(arglist_ [0])) (), xl, xu, 
+		   xi, (*(arglist_ [0])) (), xl, xu,
 		   yi, (*(arglist_ [1])) (), yl, yu,
 		   wi, (*w) (),              wl, wu,
-		   //sign == expression::AUX_LEQ ? -COIN_DBL_MAX : wl, 
+		   //sign == expression::AUX_LEQ ? -COIN_DBL_MAX : wl,
 		   //sign == expression::AUX_GEQ ?  COIN_DBL_MAX : wu,
 		   chg, sign);
 }

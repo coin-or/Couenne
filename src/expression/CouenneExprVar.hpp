@@ -2,7 +2,7 @@
  *
  * Name:    exprVar.hpp
  * Author:  Pietro Belotti
- * Purpose: definition of the class exprVar for variables 
+ * Purpose: definition of the class exprVar for variables
  *
  * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Eclipse Public License (EPL)
@@ -90,7 +90,7 @@ class COUENNELIB_EXPORT exprVar: public expression {
   {out << "x_" << varIndex_;}
 
   /// return the value of the variable
-  virtual inline CouNumber operator () () 
+  virtual inline CouNumber operator () ()
   {return domain_ -> x (varIndex_);}
 
   /// return l-2 norm of gradient at given point
@@ -98,16 +98,16 @@ class COUENNELIB_EXPORT exprVar: public expression {
   {return 1.;}
 
   /// differentiation
-  virtual inline expression *differentiate (int index) 
+  virtual inline expression *differentiate (int index)
   {return new exprConst ((index == varIndex_) ? 1. : 0.);}
 
   /// fill in the set with all indices of variables appearing in the
   /// expression
-  virtual inline int DepList (std::set <int> &deplist, 
+  virtual inline int DepList (std::set <int> &deplist,
 			      enum dig_type type = ORIG_ONLY) {
 
     if (deplist.find (varIndex_) == deplist.end ()) {
-      deplist.insert (varIndex_); 
+      deplist.insert (varIndex_);
       return 1;
     }
     return 0;
@@ -118,7 +118,7 @@ class COUENNELIB_EXPORT exprVar: public expression {
   virtual inline void crossBounds () {}
 
   /// simplify
-  virtual inline expression *simplify () 
+  virtual inline expression *simplify ()
   {return NULL;}
 
   /// get a measure of "how linear" the expression is (see CouenneTypes.hpp)
@@ -153,29 +153,29 @@ class COUENNELIB_EXPORT exprVar: public expression {
   //}
 
   /// generate cuts for expression associated with this auxiliary
-  virtual void generateCuts (//const OsiSolverInterface &, 
-			     OsiCuts &, const CouenneCutGenerator *, 
-			     t_chg_bounds * = NULL, int = -1, 
-			     CouNumber = -COUENNE_INFINITY, 
+  virtual void generateCuts (//const OsiSolverInterface &,
+			     OsiCuts &, const CouenneCutGenerator *,
+			     t_chg_bounds * = NULL, int = -1,
+			     CouNumber = -COUENNE_INFINITY,
 			     CouNumber =  COUENNE_INFINITY) {}
 
   /// generate convexification cut for constraint w = this
-  virtual void generateCuts (expression *w, 
-			     //const OsiSolverInterface &si, 
-			     OsiCuts &cs, const CouenneCutGenerator *cg, 
-			     t_chg_bounds * = NULL, int = -1, 
-			     CouNumber = -COUENNE_INFINITY, 
+  virtual void generateCuts (expression *w,
+			     //const OsiSolverInterface &si,
+			     OsiCuts &cs, const CouenneCutGenerator *cg,
+			     t_chg_bounds * = NULL, int = -1,
+			     CouNumber = -COUENNE_INFINITY,
 			     CouNumber =  COUENNE_INFINITY);
 
   /// code for comparison
-  virtual inline enum expr_type code () 
+  virtual inline enum expr_type code ()
   {return COU_EXPRVAR;}
 
   /// implied bound processing
   virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, enum auxSign = expression::AUX_EQ);
 
   /// rank of an original variable is always one
-  virtual inline int rank () 
+  virtual inline int rank ()
   {return 1;}
 
   /// update dependence set with index of this variable
@@ -208,13 +208,13 @@ class COUENNELIB_EXPORT exprVar: public expression {
 
   /// return proper object to handle expression associated with this
   /// variable (NULL if this is not an auxiliary)
-  virtual CouenneObject *properObject (CouenneCutGenerator *c, 
-				       CouenneProblem *p, 
-				       Bonmin::BabSetupBase *base, 
+  virtual CouenneObject *properObject (CouenneCutGenerator *c,
+				       CouenneProblem *p,
+				       Bonmin::BabSetupBase *base,
 				       JnlstPtr jnlst_);
 
   /// return its sign in the definition constraint
-  virtual inline enum auxSign sign () const 
+  virtual inline enum auxSign sign () const
   {return expression::AUX_UNDEF;}
 };
 

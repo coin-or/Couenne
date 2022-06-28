@@ -61,17 +61,17 @@ void CouenneProblem::decomposeTerm (expression *term,
 
   case COU_EXPRQUAD: { /// a quadratic form
 
-    exprQuad *t = dynamic_cast <exprQuad *> (term -> isaCopy () ? 
-					     term -> Copy () : 
+    exprQuad *t = dynamic_cast <exprQuad *> (term -> isaCopy () ?
+					     term -> Copy () :
 					     term);
     exprQuad::sparseQ &M = t -> getQ ();
 
-    for (exprQuad::sparseQ::iterator row = M.begin (); 
+    for (exprQuad::sparseQ::iterator row = M.begin ();
 	 row != M.end (); ++row) {
 
       int xind = row -> first -> Index ();
 
-      for (exprQuad::sparseQcol::iterator col = row -> second.begin (); 
+      for (exprQuad::sparseQcol::iterator col = row -> second.begin ();
 	   col != row -> second.end (); ++col) {
 	qmap.insert (xind, col -> first -> Index (), initCoe * col -> second);
       }
@@ -80,8 +80,8 @@ void CouenneProblem::decomposeTerm (expression *term,
 
   case COU_EXPRGROUP: { /// a linear term
 
-    exprGroup *t = dynamic_cast <exprGroup *> (term -> isaCopy () ? 
-					       term -> Copy () : 
+    exprGroup *t = dynamic_cast <exprGroup *> (term -> isaCopy () ?
+					       term -> Copy () :
 					       term);
     exprGroup::lincoeff &lcoe = t -> lcoeff ();
 
@@ -138,7 +138,7 @@ void CouenneProblem::decomposeTerm (expression *term,
       if      (fabs (expon - 1) < COUENNE_EPS) lmap.insert (index, coe);
       else if (fabs (expon - 2) < COUENNE_EPS) qmap.insert (index, index, coe);
       else {
-	exprAux *aux = addAuxiliary 
+	exprAux *aux = addAuxiliary
 	  (new exprPow (new exprClone (Var (index)),
 			new exprConst (expon)));
 
@@ -152,7 +152,7 @@ void CouenneProblem::decomposeTerm (expression *term,
 
       int ind0, ind1;
 
-      std::map <int, CouNumber>::iterator one = indices.begin (), 
+      std::map <int, CouNumber>::iterator one = indices.begin (),
 	two = one;
       ++two; // now "two" points to the other variable
 
@@ -173,14 +173,14 @@ void CouenneProblem::decomposeTerm (expression *term,
       qmap.insert (ind0, ind1, coe);
     } break;
 
-    default: { 
+    default: {
 
       // create new auxiliary variable containing product of 3+ factors
 
       expression **al = new expression * [indices.size ()];
       std::map <int, CouNumber>::iterator one = indices.begin ();
 
-      for (int i=0; one != indices.end (); ++one, i++) 
+      for (int i=0; one != indices.end (); ++one, i++)
 	if (fabs (one -> second - 1) > COUENNE_EPS) {
 	  exprAux *aux = addAuxiliary (new exprPow (new exprClone (Var (one -> first)),
 						    new exprConst (one -> second)));
@@ -201,9 +201,9 @@ void CouenneProblem::decomposeTerm (expression *term,
 
   case COU_EXPRPOW: { // expression = f(x)^g(x) ////////////////////////////////////////////////
 
-    expression **al = term -> ArgList (); 
+    expression **al = term -> ArgList ();
 
-    if (al [1] -> Type () != CONST) { 
+    if (al [1] -> Type () != CONST) {
 
       // non-constant exponent, standardize the whole term and add
       // linear component (single aux)
@@ -226,17 +226,17 @@ void CouenneProblem::decomposeTerm (expression *term,
       if      (fabs (expon - 1.) == 0.) lmap.insert (ind,      initCoe);
       else if (fabs (expon - 2.) == 0.) qmap.insert (ind, ind, initCoe);
       else {
-	exprAux *aux2 = addAuxiliary 
+	exprAux *aux2 = addAuxiliary
 	  (new exprPow (new exprClone (aux), new exprConst (expon))); // TODO: FIX!
 	lmap.insert (aux2 -> Index (), initCoe);
       }
     }
   } break;
 
-  default: { /// otherwise, simply standardize expression 
+  default: { /// otherwise, simply standardize expression
 
     expression *aux = term -> standardize (this);
-    if (!aux) 
+    if (!aux)
       aux = term;
     lmap.insert (aux -> Index (), initCoe);
   } break;

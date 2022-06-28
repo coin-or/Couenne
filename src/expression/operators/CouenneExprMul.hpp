@@ -46,7 +46,7 @@ class COUENNELIB_EXPORT exprMul: public exprOp {
   virtual CouNumber gradientNorm (const double *x);
 
   /// differentiation
-  expression *differentiate (int index); 
+  expression *differentiate (int index);
 
   /// simplification
   expression *simplify ();
@@ -65,26 +65,26 @@ class COUENNELIB_EXPORT exprMul: public exprOp {
   virtual exprAux *standardize (CouenneProblem *p, bool addAux = true);
 
   /// generate equality between *this and *w
-  virtual void generateCuts (expression *w, //const OsiSolverInterface &si, 
-			     OsiCuts &cs, const CouenneCutGenerator *cg, 
-			     t_chg_bounds * = NULL, int = -1, 
-			     CouNumber = -COUENNE_INFINITY, 
+  virtual void generateCuts (expression *w, //const OsiSolverInterface &si,
+			     OsiCuts &cs, const CouenneCutGenerator *cg,
+			     t_chg_bounds * = NULL, int = -1,
+			     CouNumber = -COUENNE_INFINITY,
 			     CouNumber =  COUENNE_INFINITY);
 
   /// code for comparison
-  virtual enum expr_type code () 
+  virtual enum expr_type code ()
   {return COU_EXPRMUL;}
 
   /// implied bound processing
-  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *, 
+  virtual bool impliedBound (int, CouNumber *, CouNumber *, t_chg_bounds *,
 			     enum Couenne::expression::auxSign = Couenne::expression::AUX_EQ);
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
-  virtual CouNumber selectBranch (const CouenneObject *obj, 
+  virtual CouNumber selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression * &var, 
-				  double * &brpts, 
+				  expression * &var,
+				  double * &brpts,
  				  double * &brDist, // distance of current LP
 					  	    // point to new convexifications
 				  int &way);
@@ -97,8 +97,8 @@ class COUENNELIB_EXPORT exprMul: public exprOp {
 protected:
 
   /// inferring bounds on factors of a product
-  int impliedBoundMul (CouNumber wl, 
-		       CouNumber wu, 
+  int impliedBoundMul (CouNumber wl,
+		       CouNumber wu,
 		       std::vector <CouNumber> &xl,
 		       std::vector <CouNumber> &xu,
 		       std::vector <std::pair <int, CouNumber> > &nl,
@@ -129,7 +129,7 @@ inline CouNumber exprMul:: operator () () {
 
 /// unified convexification of products and divisions
 COUENNELIB_EXPORT
-void unifiedProdCuts (const CouenneCutGenerator *, OsiCuts &, 
+void unifiedProdCuts (const CouenneCutGenerator *, OsiCuts &,
 		      int, CouNumber, CouNumber, CouNumber,
 		      int, CouNumber, CouNumber, CouNumber,
 		      int, CouNumber, CouNumber, CouNumber,
@@ -138,7 +138,7 @@ void unifiedProdCuts (const CouenneCutGenerator *, OsiCuts &,
 
 /// better cuts than those from unifiedProdCuts
 COUENNELIB_EXPORT
-void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs, 
+void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 		   int xi, CouNumber x0, CouNumber xl, CouNumber xu,
 		   int yi, CouNumber y0, CouNumber yl, CouNumber yu,
 		   int wi, CouNumber w0, CouNumber wl, CouNumber wu);

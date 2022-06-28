@@ -20,10 +20,10 @@ using namespace Couenne;
 
 /// set up branching object by evaluating many branching points for
 /// each expression's arguments
-CouNumber exprQuad::selectBranch (const CouenneObject *obj, 
+CouNumber exprQuad::selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression *&var, 
-				  double * &brpts, 
+				  expression *&var,
+				  double * &brpts,
 				  double * &brDist, // distance of current LP
 					 	    // point to new convexifications
 				  int &way) {
@@ -34,8 +34,8 @@ CouNumber exprQuad::selectBranch (const CouenneObject *obj,
   CouNumber delta = (*(obj -> Reference ())) () - (*this) ();
 
   /*printf ("infeasibility: ");
-  obj -> Reference () -> print (); 
-  printf (" [%g=%g] := ", 
+  obj -> Reference () -> print ();
+  printf (" [%g=%g] := ",
 	  (*(obj -> Reference ())) (), info -> solution_ [obj -> Reference () -> Index ()]);
 	  print (); printf (" [%g]\n", (*this) ());*/
 
@@ -48,10 +48,10 @@ CouNumber exprQuad::selectBranch (const CouenneObject *obj,
   // branching is done on the eigenvector corresponding to the minimum
   // or maximum eigenvalue
 
-  std::vector <std::pair <CouNumber, 
+  std::vector <std::pair <CouNumber,
     std::vector <std::pair <exprVar *, CouNumber> > > >::iterator         fi = eigen_.begin ();
 
-  std::vector <std::pair <CouNumber, 
+  std::vector <std::pair <CouNumber,
     std::vector <std::pair <exprVar *, CouNumber> > > >::reverse_iterator ri = eigen_.rbegin ();
 
   CouNumber max_span = -COUENNE_INFINITY;
@@ -64,7 +64,7 @@ CouNumber exprQuad::selectBranch (const CouenneObject *obj,
 	 ((delta > 0.) && (ri != eigen_. rend ())));  // && (ri -> first > 0.));
        ++fi, ++ri) {
 
-    std::vector <std::pair <exprVar *, CouNumber> > &ev = 
+    std::vector <std::pair <exprVar *, CouNumber> > &ev =
       (delta < 0.) ? fi -> second : ri -> second;
 
     if (((delta < 0.) && (fi -> first > 0.)) ||
@@ -80,7 +80,7 @@ CouNumber exprQuad::selectBranch (const CouenneObject *obj,
 
       int index = j -> first -> Index ();
 
-      CouNumber 
+      CouNumber
 	lb = info -> lower_ [index],
 	ub = info -> upper_ [index];
 
@@ -103,7 +103,7 @@ CouNumber exprQuad::selectBranch (const CouenneObject *obj,
 
 	  *brpts = obj -> midInterval (info -> solution_ [index], lb, ub, info);
 
-	  if (changed_sign) 
+	  if (changed_sign)
 	    break;
 
 	  if (span >= 0) max_span = span; // finite, keep searching
@@ -126,7 +126,7 @@ CouNumber exprQuad::selectBranch (const CouenneObject *obj,
 	ub = i -> second.second,
 	span = ub - lb;
 
-      if ((span > COUENNE_EPS) && 
+      if ((span > COUENNE_EPS) &&
 	  (span > max_span)) {
 
 	var = i -> first;
@@ -143,9 +143,9 @@ CouNumber exprQuad::selectBranch (const CouenneObject *obj,
 				   info -> lower_ [ind],
 				   info -> upper_ [ind], info);
     }
-    else *brpts = obj -> midInterval (info -> solution_ [ind], 
+    else *brpts = obj -> midInterval (info -> solution_ [ind],
 				      info -> lower_ [ind],
-				      info -> upper_ [ind], info);	  
+				      info -> upper_ [ind], info);	
     //return fabs (delta);
   }
 

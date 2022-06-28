@@ -40,10 +40,10 @@ void CouenneProblem::setBase (Bonmin::BabSetupBase *base) {
 }
 
 // tricky... smaller values cut the optimum in OS unitTest
-const CouNumber SafeCutoff = 1e-4; 
+const CouNumber SafeCutoff = 1e-4;
 
 // absolute difference
-const CouNumber SafeDelta = 1e-2; 
+const CouNumber SafeDelta = 1e-2;
 
 /// initialize auxiliary variables from original variables in the
 /// nonlinear problem
@@ -108,7 +108,7 @@ void CouenneProblem::initAuxs () const {
     // and handle only those with nonzero multiplicity
     if (var -> Type () == AUX) {
 
-      Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
+      Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM,
 			  "w_%04d [%10g,%10g] ", ord, Lb (ord), Ub (ord));
 
       CouNumber l, u;
@@ -119,11 +119,11 @@ void CouenneProblem::initAuxs () const {
       var -> Lb () -> print (); printf ("\n");
       var -> Ub () -> print (); printf ("\n");*/
 
-      Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
-			  " ( --> w_%04d [%10g,%10g] ) vs [%10g %10g]", 
+      Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM,
+			  " ( --> w_%04d [%10g,%10g] ) vs [%10g %10g]",
 			  ord, l, u, Lb (ord), Ub (ord));
 
-      // set bounds 
+      // set bounds
       if ((var -> sign () != expression::AUX_LEQ) && ((Lb (ord) = CoinMax (Lb (ord), l)) <= -COUENNE_INFINITY)) Lb (ord) = -COIN_DBL_MAX;
       if ((var -> sign () != expression::AUX_GEQ) && ((Ub (ord) = CoinMin (Ub (ord), u)) >=  COUENNE_INFINITY)) Ub (ord) =  COIN_DBL_MAX;
 
@@ -148,7 +148,7 @@ void CouenneProblem::initAuxs () const {
 
       X (ord) = CoinMax (Lb (ord), CoinMin (Ub (ord), X (ord)));
 
-      Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM, 
+      Jnlst () -> Printf (Ipopt::J_MOREMATRIX, J_PROBLEM,
 			  " --> [%10g,%10g] (%g)\n", Lb (ord), Ub (ord), X (ord));
     }
   }
@@ -169,7 +169,7 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
   if (ndefined_ > 0)
     for (int i = 0; i < nVars (); ++i) {
       int ii = numbering_ [i];
-      if (ii >= nOrigVars_ - ndefined_ && 
+      if (ii >= nOrigVars_ - ndefined_ &&
 	  ii <  nOrigVars_)
 	X (ii) = (*(commonexprs_ [ii - nOrigVars_ + ndefined_])) ();
     }
@@ -203,7 +203,7 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 
 	// if (Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_PROBLEM)) {
 	//   printf ("checking "); var -> print ();
-	//   printf (" = %g = %g. Sign: %d, int: %d, [%g,%g]", 
+	//   printf (" = %g = %g. Sign: %d, int: %d, [%g,%g]",
 	// 	  X (index), (*(var -> Image ())) (),
 	// 	  var -> sign (), isInt, l, u);
 	// }
@@ -212,9 +212,9 @@ void CouenneProblem::getAuxs (CouNumber * x) const {
 	    ((index >= nOrigVars_) ||
 	     (index  < nOrigVars_ - ndefined_)))
 	  x = (*(var -> Image ())) ();  // addresses of x[] and X() are equal
-    
-	x = 
-	  CoinMax ((var -> sign () != expression::AUX_LEQ) ? (isInt ? ceil  (l - COUENNE_EPS) : l) : -COIN_DBL_MAX, 
+
+	x =
+	  CoinMax ((var -> sign () != expression::AUX_LEQ) ? (isInt ? ceil  (l - COUENNE_EPS) : l) : -COIN_DBL_MAX,
 	  CoinMin ((var -> sign () != expression::AUX_GEQ) ? (isInt ? floor (u + COUENNE_EPS) : u) :  COIN_DBL_MAX, x));
 
 	// feasibility heuristic: if semiaux, round value to nearest integer if variable is integer
@@ -253,7 +253,7 @@ void CouenneProblem::fillObjCoeff (double *&obj) {
     obj [body -> Index ()] = 1; //(sense == MINIMIZE) ? 1 : -1;
     break;
 
-  case COU_EXPRSUB: { // 
+  case COU_EXPRSUB: { //
 
     expression **arglist = body -> ArgList ();
 
@@ -262,37 +262,37 @@ void CouenneProblem::fillObjCoeff (double *&obj) {
 
   } break;
 
-  case COU_EXPRGROUP: { // 
+  case COU_EXPRGROUP: { //
 
-    exprGroup *eg    = dynamic_cast <exprGroup *> (body -> isaCopy () ? 
+    exprGroup *eg    = dynamic_cast <exprGroup *> (body -> isaCopy () ?
 						   body -> Copy () :
 						   body);
 
     const exprGroup::lincoeff &lcoe = eg -> lcoeff ();
 
     //    if (sense == MINIMIZE) while (*index >= 0) obj [*index++] =  *coeff++;
-    //    else                   while (*index >= 0) obj [*index++] = -*coeff++;      
+    //    else                   while (*index >= 0) obj [*index++] = -*coeff++;
 
     for (int n = (int) lcoe.size (), i=0; n--; i++)
       //exprGroup::lincoeff::iterator el = lcoe.begin (); el != lcoe.end (); ++el)
       obj [lcoe [i]. first -> Index ()] = lcoe [i]. second;
-    //(sense == MINIMIZE) ? 
-    //(lcoe [i]. second) : 
+    //(sense == MINIMIZE) ?
+    //(lcoe [i]. second) :
     //-(lcoe [i]. second);
 
   } // no break, as exprGroup is derived from exprSum
 
-  case COU_EXPRSUM: { // 
+  case COU_EXPRSUM: { //
 
     expression **arglist = body -> ArgList ();
 
     for (int i = body -> nArgs (); i--;)
       switch ((arglist [i]) -> code ()) {
 
-      case COU_EXPRCONST: 
+      case COU_EXPRCONST:
 	break;
 
-      case COU_EXPRVAR: 
+      case COU_EXPRVAR:
 	obj [arglist [i] -> Index ()] = 1; //(sense == MINIMIZE) ? 1 : -1;
 	break;
 
@@ -305,7 +305,7 @@ void CouenneProblem::fillObjCoeff (double *&obj) {
 	else            obj [mulArgList [1] -> Index ()] = mulArgList [0] -> Value ();
       }	break;
 
-      default: 
+      default:
 	Jnlst()->Printf(Ipopt::J_ERROR, J_PROBLEM,
 			"Couenne: invalid element of sum\nAborting\n");
 	exit (-1);
@@ -325,12 +325,12 @@ void CouenneProblem::fillObjCoeff (double *&obj) {
 /// set cutoff from NLP solution
 void CouenneProblem::setCutOff (CouNumber cutoff, const double *s) const {
 
-  if (cutoff > COUENNE_INFINITY/2) 
+  if (cutoff > COUENNE_INFINITY/2)
     return;
 
   int indobj = objectives_ [0] -> Body () -> Index ();
 
-  // AW: Should we use the value of the objective variable computed by 
+  // AW: Should we use the value of the objective variable computed by
   //     Couenne here?
   if ((indobj >= 0) && (cutoff < pcutoff_ -> getCutOff () - COUENNE_EPS)) {
 
@@ -365,14 +365,14 @@ void CouenneProblem::installCutOff () const {
   // all problem are assumed to be minimization
   double cutoff = pcutoff_ -> getCutOff();
 
-  if (cutoff > COUENNE_INFINITY) 
+  if (cutoff > COUENNE_INFINITY)
     return;
 
   int indobj = objectives_ [0] -> Body () -> Index ();
 
   //assert (indobj >= 0);
 
-  if (indobj < 0) 
+  if (indobj < 0)
     return;
 
   //Jnlst () -> Printf (Ipopt::J_WARNING, J_PROBLEM,
@@ -406,7 +406,7 @@ void CouenneProblem::realign () {
 
   // link variables to problem's domain
   for (std::vector <CouenneObjective *>::iterator i = objectives_.begin ();
-       i != objectives_.end (); ++i) 
+       i != objectives_.end (); ++i)
     (*i) -> Body () -> realign (this);
 
 
@@ -450,7 +450,7 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
      "yes",  ""
     );
 
-  roptions -> AddStringOption2 
+  roptions -> AddStringOption2
     ("redcost_bt",
      "Reduced cost bound tightening",
      "yes",
@@ -458,7 +458,7 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
      "yes","",
      "This bound reduction technique uses the reduced costs of the LP in order to infer better variable bounds.");
 
-  roptions -> AddStringOption2 
+  roptions -> AddStringOption2
     ("use_quadratic",
      "Use quadratic expressions and related exprQuad class",
      "no",
@@ -468,7 +468,7 @@ void CouenneProblem::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions
      "Envelopes for these expressions are generated through alpha-convexification."
     );
 
-  roptions -> AddStringOption2 
+  roptions -> AddStringOption2
     ("optimality_bt",
      "Optimality-based (expensive) bound tightening (OBBT)",
      "yes",
@@ -493,7 +493,7 @@ If k>=0, apply with probability 2^(k - level), level being the current depth of 
      -1, MAX_FBBT_ITER,
      "Set to -1 to impose no upper limit");
 
-  roptions -> AddStringOption2 
+  roptions -> AddStringOption2
     ("aggressive_fbbt",
      "Aggressive feasibility-based bound tightening (to use with NLP points)",
      "yes",
@@ -527,7 +527,7 @@ If k>=0, apply with probability 2^(k - level), level being the current depth of 
      "var_obj",  "use one object for each variable",
      "expr_obj", "use one object for each nonlinear expression");
 
-  roptions -> AddStringOption2 
+  roptions -> AddStringOption2
     ("delete_redundant",
      "Eliminate redundant variables, which appear in the problem as x_k = x_h",
      "yes",

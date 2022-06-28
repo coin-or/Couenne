@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of operators to compute lower/upper bounds of divisions
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -20,12 +20,12 @@ static inline CouNumber safeDiv (CouNumber a, CouNumber b, int sign) {
 
   if (fabs (a) < COUENNE_EPS) return 0;
   //    if (fabs (b) < COUENNE_EPS)) return 0;
-  //    else return 0 
+  //    else return 0
 
   if (fabs (b) < COUENNE_EPS) return ((sign < 0) ? -COUENNE_INFINITY :  COUENNE_INFINITY);
 
   if (a >  COUENNE_INFINITY) return ((sign < 0) ? -COUENNE_INFINITY :  COUENNE_INFINITY);
-  if (a < -COUENNE_INFINITY) return ((sign < 0) ? -COUENNE_INFINITY :  COUENNE_INFINITY); 
+  if (a < -COUENNE_INFINITY) return ((sign < 0) ? -COUENNE_INFINITY :  COUENNE_INFINITY);
 
   return a/b;
 }
@@ -39,7 +39,7 @@ class COUENNELIB_EXPORT exprLBDiv: public exprOp {
  public:
 
   /// Constructors, destructor
-  exprLBDiv  (expression **al, int n): 
+  exprLBDiv  (expression **al, int n):
     exprOp (al, n) {} //< non-leaf expression, with argument list
 
   /// cloning method
@@ -67,7 +67,7 @@ inline CouNumber exprLBDiv::operator () () {
   CouNumber N = (*(arglist_ [1])) ();
   CouNumber d = (*(arglist_ [2])) ();
   CouNumber D = (*(arglist_ [3])) ();
-                                               // (n,N,d,D)     lb 
+                                               // (n,N,d,D)     lb
   if (d > 0)                                   // (?,?,+,+)
     if   (n > 0)    return safeDiv (n,D,-1);      // (+,+,+,+) --> n/D
     else            return safeDiv (n,d,-1);      // (-,?,+,+) --> n/d
@@ -87,7 +87,7 @@ class COUENNELIB_EXPORT exprUBDiv: public exprOp {
  public:
 
   /// Constructors, destructor
-  exprUBDiv  (expression **al, int n): 
+  exprUBDiv  (expression **al, int n):
     exprOp (al, n) {} //< non-leaf expression, with argument list
 
   /// cloning method
@@ -116,7 +116,7 @@ inline CouNumber exprUBDiv::operator () () {
   CouNumber d = (*(arglist_ [2])) ();
   CouNumber D = (*(arglist_ [3])) ();
 
-  if (d > 0)                                     // (n,N,d,D)     lb 
+  if (d > 0)                                     // (n,N,d,D)     lb
     if   (N < 0) return safeDiv (N,D,1);         // (-,-,+,+) --> N/D
     else         return safeDiv (N,d,1);         // (?,+,+,+) --> N/d
   else { // d <= 0

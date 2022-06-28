@@ -35,17 +35,17 @@ public:
   /// Constructor from solver (so we can set up arrays etc)
   CouenneChooseVariable (const OsiSolverInterface *, CouenneProblem *, JnlstPtr jnlst);
 
-  /// Copy constructor 
+  /// Copy constructor
   CouenneChooseVariable (const CouenneChooseVariable &);
 
-  /// Assignment operator 
+  /// Assignment operator
   CouenneChooseVariable &operator= (const CouenneChooseVariable &);
 
   /// Clone
   virtual OsiChooseVariable *clone() const
   {return new CouenneChooseVariable (*this);}
 
-  /// Destructor 
+  /// Destructor
   virtual ~CouenneChooseVariable () {}
 
   /// Sets up strong list and clears all if initialize is true.
@@ -60,8 +60,8 @@ public:
 				 const OsiObject ** objects);
 
   // choose object to branch based on earlier setup
-  //   virtual int chooseVariable (OsiSolverInterface * solver, 
-  // 			      OsiBranchingInformation *info, 
+  //   virtual int chooseVariable (OsiSolverInterface * solver,
+  // 			      OsiBranchingInformation *info,
   // 			      bool fixVariables);
 
   /// Add list of options to be read from file

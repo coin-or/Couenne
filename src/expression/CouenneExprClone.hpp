@@ -5,7 +5,7 @@
  * Purpose: definition of the clone class (different from exprCopy in
  *          that evaluation is propagated)
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -19,14 +19,14 @@
 
 namespace Couenne {
 
-/// expression clone (points to another expression) 
+/// expression clone (points to another expression)
 
 class COUENNELIB_EXPORT exprClone: public exprCopy {
 
  public:
 
   /// Constructor
-  exprClone  (expression *copy): 
+  exprClone  (expression *copy):
     exprCopy (getOriginal (copy)) {}
 
   /// copy constructor
@@ -51,15 +51,15 @@ class COUENNELIB_EXPORT exprClone: public exprCopy {
   }
 
   /// Printing
-  virtual void print (std::ostream &out = std::cout, 
+  virtual void print (std::ostream &out = std::cout,
 		      bool descend      = false) const;
 
   /// value
-  inline CouNumber Value () const 
+  inline CouNumber Value () const
   {return copy_ -> Value ();}
 
   /// null function for evaluating the expression
-  inline CouNumber operator () () 
+  inline CouNumber operator () ()
   {return ((*copy_) ());}
 };
 

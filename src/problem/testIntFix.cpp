@@ -16,15 +16,15 @@ using namespace Couenne;
 
 // test if fixing a variable yields an infeasible (or dually
 // infeasible) problem
-int CouenneProblem::testIntFix (int index, 
-				CouNumber xFrac, 
+int CouenneProblem::testIntFix (int index,
+				CouNumber xFrac,
 				enum fixType *fixed,
 				CouNumber *xInt,
 				CouNumber *dualL, CouNumber *dualR,
 				CouNumber *olb,   CouNumber *oub,
 				bool patient) const {
-  int 
-    ncols  = nVars (), 
+  int
+    ncols  = nVars (),
     retval = 0,
     objind = Obj (0) -> Body () -> Index ();
 
@@ -38,22 +38,22 @@ int CouenneProblem::testIntFix (int index,
 
   // try rounding down ///////////////////////////////////////////////////////////////////////
 
-  Lb (index) = Ub (index) = floor (xFrac); 
+  Lb (index) = Ub (index) = floor (xFrac);
 
   // useless
   /*for (int j = 0; j<ncols; j++) {
-    f_chg [j].setLower (t_chg_bounds::UNCHANGED); 
+    f_chg [j].setLower (t_chg_bounds::UNCHANGED);
     f_chg [j].setUpper (t_chg_bounds::UNCHANGED);
     }*/
 
-  f_chg [index].setLower (t_chg_bounds::CHANGED); 
+  f_chg [index].setLower (t_chg_bounds::CHANGED);
   f_chg [index].setUpper (t_chg_bounds::CHANGED);
 
   bool feasLeft = btCore (f_chg); // true if feasible with fake bound
 
   dualL [index] = dualBound;
 
-  // save new bounds 
+  // save new bounds
   CoinCopyN (Lb (), ncols, llb);
   CoinCopyN (Ub (), ncols, lub);
 
@@ -63,14 +63,14 @@ int CouenneProblem::testIntFix (int index,
 
   // try rounding up ///////////////////////////////////////////////////////////////////////
 
-  Lb (index) = Ub (index) = ceil (xFrac); 
+  Lb (index) = Ub (index) = ceil (xFrac);
 
   for (int j = 0; j<ncols; j++) {
-    f_chg [j].setLower (t_chg_bounds::UNCHANGED); 
+    f_chg [j].setLower (t_chg_bounds::UNCHANGED);
     f_chg [j].setUpper (t_chg_bounds::UNCHANGED);
   }
 
-  f_chg [index].setLower (t_chg_bounds::CHANGED); 
+  f_chg [index].setLower (t_chg_bounds::CHANGED);
   f_chg [index].setUpper (t_chg_bounds::CHANGED);
 
   bool feasRight = btCore (f_chg); // true if feasible with fake bound
@@ -104,18 +104,18 @@ int CouenneProblem::testIntFix (int index,
 
     if (!feasRight) {
 
-      jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, 
+      jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC,
 			"test on %d -> Infeasible.\n ", index);
       retval = -1; // case 2
 
     } else {
 
       // ceil is feasible, floor is not.
-      jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, 
+      jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC,
 			"test on %d -> Right feasible, fix to %g.\n", index, ceil (xFrac));
 
       fixed [index] = FIXED;
-      Lb (index) = Ub (index) = olb [index] = oub [index] = xInt [index] = ceil (xFrac); 
+      Lb (index) = Ub (index) = olb [index] = oub [index] = xInt [index] = ceil (xFrac);
       //printf ("0 fixed %d [%g,%g,%g]\n", i, Lb (i), Ub (i), xInt [i]);
       retval++;
       //printf ("+++ 1 %d\n", i);
@@ -133,11 +133,11 @@ int CouenneProblem::testIntFix (int index,
   else if (!feasRight) {
 
     // floor is feasible, ceil is not.
-    jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, 
+    jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC,
 		      "test on %d -> Left feasible, fix to %g.\n", index, floor (xFrac));
 
     fixed [index] = FIXED;
-    Lb (index) = Ub (index) = olb [index] = oub [index] = xInt [index] = floor (xFrac); 
+    Lb (index) = Ub (index) = olb [index] = oub [index] = xInt [index] = floor (xFrac);
     //printf ("1 fixed %d [%g,%g,%g]\n", i, Lb (i), Ub (i), xInt [i]);
     retval++;
     //printf ("+++ 2 %d\n", i);
@@ -171,19 +171,19 @@ int CouenneProblem::testIntFix (int index,
 
       fixed [index] = FIXED;
 
-      Lb (index) = Ub (index) = olb [index] = oub [index] = xInt [index] = 
+      Lb (index) = Ub (index) = olb [index] = oub [index] = xInt [index] =
 	((dualL [index] < dualR [index] - COUENNE_EPS) ? floor (xFrac) :
 	 (dualL [index] > dualR [index] + COUENNE_EPS) ? ceil  (xFrac) :
 	 ((CoinDrand48 () < 0.5) ? floor (xFrac) : ceil (xFrac)));
-      
-      jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, 
-			"test on %d -> Both feasible, lost patience, fixed to %g.\n", 
+
+      jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC,
+			"test on %d -> Both feasible, lost patience, fixed to %g.\n",
 			index, xInt [index]);
 
       //printf ("1 fixed %d [%g,%g,%g]\n", i, Lb (i), Ub (i), xInt [i]);
       retval++;
       //printf ("+++ 2 %d\n", i);
-    } else if (retval >= 0) jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, 
+    } else if (retval >= 0) jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC,
 					      "test on %d -> Both feasible, skip this turn.\n", index);
   }
 

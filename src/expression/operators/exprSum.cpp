@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of sum expressions
  *
- * (C) Carnegie-Mellon University, 2006-07. 
+ * (C) Carnegie-Mellon University, 2006-07.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -17,13 +17,13 @@
 using namespace Couenne;
 
 /// Constructor
-exprSum::exprSum  (expression **al, int n): 
+exprSum::exprSum  (expression **al, int n):
   exprOp (al, n) { //< non-leaf expression, with argument list
 
   if (al==NULL) {
     arglist_ = new expression * [1];
     *arglist_ = new exprConst (0);
-    nargs_ = 1;    
+    nargs_ = 1;
   }
 
   // commutative operator, sort elements
@@ -72,7 +72,7 @@ expression *exprSum::simplify () {
 
       total += arglist_ [i] -> Value ();
       found_one = true;
-      delete arglist_ [i]; 
+      delete arglist_ [i];
       arglist_ [i] = NULL;
     }
   }
@@ -102,7 +102,7 @@ expression *exprSum:: differentiate (int index) {
 
   int nonconst = 0;
 
-  for (int i = 0; i < nargs_; i++) 
+  for (int i = 0; i < nargs_; i++)
     if (arglist_ [i] -> dependsOn (index))
       arglist [nonconst++] = arglist_ [i] -> differentiate (index);
 

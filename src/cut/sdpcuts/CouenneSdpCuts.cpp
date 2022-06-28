@@ -45,8 +45,8 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
   // 1) Construct matrix with entries x_i, x_j
 
-  for (std::vector <exprVar *>::iterator 
-	 i  = p -> Variables (). begin (); 
+  for (std::vector <exprVar *>::iterator
+	 i  = p -> Variables (). begin ();
        i   != p -> Variables (). end   (); ++i)
 
     if ((*i) -> Type () == AUX) {
@@ -54,11 +54,11 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
       expression *image = (*i) -> Image ();
 
       /// either it is x_i x_j
-      if ((image -> code () == COU_EXPRMUL) && 
-	  (image -> ArgList () [0] -> Type () != CONST) && 
+      if ((image -> code () == COU_EXPRMUL) &&
+	  (image -> ArgList () [0] -> Type () != CONST) &&
 	  (image -> ArgList () [1] -> Type () != CONST)) {
 
-	int 
+	int
 	  index0 = image -> ArgList () [0] -> Index (),
 	  index1 = image -> ArgList () [1] -> Index ();
 
@@ -75,8 +75,8 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
       }
 
       /// or it is x_i ^ 2
-      if ((image -> code () == COU_EXPRPOW) && 
-	  (image -> ArgList () [0] -> Type  () != CONST) && 
+      if ((image -> code () == COU_EXPRPOW) &&
+	  (image -> ArgList () [0] -> Type  () != CONST) &&
 	  (image -> ArgList () [1] -> Value () == 2.)) {
 
 	int index0 = image -> ArgList () [0] -> Index ();
@@ -104,7 +104,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
   if (fillMissingTerms_) {
 
-    for (std::vector <CouenneExprMatrix *>::iterator 
+    for (std::vector <CouenneExprMatrix *>::iterator
 	   i  = minors_ . begin ();
 	 i   != minors_ . end   (); ++i) {
 
@@ -115,13 +115,13 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 
       std::set <int> varNumIndices;
 
-      for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator 
+      for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator
 	     rowIt  = (*i) -> getRows (). begin ();
 	   rowIt   != (*i) -> getRows (). end   (); ++rowIt) {
 
 	varNumIndices. insert (rowIt -> first);
 
-	for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
+	for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator
 	       elemIt  = rowIt -> second -> getElements () . begin ();
 	     elemIt   != rowIt -> second -> getElements () . end   (); ++elemIt)
 
@@ -131,15 +131,15 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
       // Second: check every row for elements (i,j) not in this row by
       // parallel scanning of varNumINdices
 
-      for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator 
-	     rowIt  = (*i) -> getRows (). begin (); 
+      for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator
+	     rowIt  = (*i) -> getRows (). begin ();
 	   rowIt   != (*i) -> getRows (). end   (); ++rowIt) {
 
 	int rowInd = rowIt -> first;
 
 	std::set <int>::iterator vniIt = varNumIndices . begin ();
 
-	for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
+	for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator
 	       elemIt  = rowIt -> second -> getElements () . begin ();
 	     elemIt   != rowIt -> second -> getElements () . end   (); ++elemIt) {
 
@@ -158,7 +158,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 	      exprAux *yIJ = problem_ -> addAuxiliary (image);
 
 	      // seek expression in the set
-	      if (problem_ -> AuxSet () -> find (yIJ) == 
+	      if (problem_ -> AuxSet () -> find (yIJ) ==
 		  problem_ -> AuxSet () -> end ()) {
 
 	        // no such expression found in the set, create entry therein
@@ -180,7 +180,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
       }
     }
 
-    // post-rescan: update 
+    // post-rescan: update
     //
     // numbering_
     // domain_
@@ -195,7 +195,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
   // 3) Bottom-right border each block with a row vector, a column vector,
   // and the constant 1
 
-  for (std::vector <CouenneExprMatrix *>::iterator 
+  for (std::vector <CouenneExprMatrix *>::iterator
 	 i  = minors_ . begin ();
        i   != minors_ . end   (); ++i) {
 
@@ -207,13 +207,13 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
     	    (*i) -> getCols () . size ());
 #endif
 
-    for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator 
-	   j  = (*i) -> getCols () . begin (); 
+    for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator
+	   j  = (*i) -> getCols () . begin ();
 	 j   != (*i) -> getCols () . end   (); ++j)
 
       (*i) -> varIndices () . push_back (problem_ -> Var (j -> first));
 
-    for (std::vector <expression *>::iterator 
+    for (std::vector <expression *>::iterator
 	   j  = (*i) -> varIndices () . begin ();
 	 j   != (*i) -> varIndices () . end   (); ++j) {
 
@@ -236,13 +236,13 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
   //    minors for each such constraint
 
   if (p -> ConstraintClass ("PSDcon"))
-    for (std::vector <CouenneConstraint *>::iterator 
-	   i  = p -> ConstraintClass ("PSDcon") -> begin (); 
+    for (std::vector <CouenneConstraint *>::iterator
+	   i  = p -> ConstraintClass ("PSDcon") -> begin ();
 	 i   != p -> ConstraintClass ("PSDcon") -> end   (); ++i) {
 
       CouennePSDcon *con = dynamic_cast <CouennePSDcon *> (*i);
 
-      if (!con) 
+      if (!con)
 	continue;
 
       minors_ . push_back (con -> getX ());
@@ -253,7 +253,7 @@ CouenneSdpCuts::CouenneSdpCuts (CouenneProblem *p,
 /// Destructor
 CouenneSdpCuts::~CouenneSdpCuts () {
 
-  for (std::vector <CouenneExprMatrix *>::iterator 
+  for (std::vector <CouenneExprMatrix *>::iterator
   	 i  = minors_ . begin ();
        i   != minors_ . end   (); ++i)
 
@@ -271,7 +271,7 @@ CouenneSdpCuts::CouenneSdpCuts (const CouenneSdpCuts &rhs):
   useSparsity_      (rhs. useSparsity_),
   fillMissingTerms_ (rhs. fillMissingTerms_) {
 
-  for (std::vector <CouenneExprMatrix *>::const_iterator 
+  for (std::vector <CouenneExprMatrix *>::const_iterator
   	 i  = rhs.minors_ . begin ();
        i   != rhs.minors_ . end   (); ++i)
 
@@ -289,7 +289,7 @@ CouenneSdpCuts &CouenneSdpCuts::operator= (const CouenneSdpCuts &rhs) {
   useSparsity_      = rhs. useSparsity_;
   fillMissingTerms_ = rhs. fillMissingTerms_;
 
-  for (std::vector <CouenneExprMatrix *>::const_iterator 
+  for (std::vector <CouenneExprMatrix *>::const_iterator
   	 i  = rhs.minors_ . begin ();
        i   != rhs.minors_ . end   (); ++i)
 
@@ -327,7 +327,7 @@ sorted in non-decreasing order, hence selecting 1 will provide cuts on the most 
   roptions -> AddStringOption2
     ("sdp_cuts_neg_ev",
      "Only use negative eigenvalues to create sdp cuts.",
-     "yes", 
+     "yes",
      "no", "use all eigenvalues regardless of their sign.",
      "yes", "exclude all non-negative eigenvalues."
     );
@@ -337,7 +337,7 @@ sorted in non-decreasing order, hence selecting 1 will provide cuts on the most 
   roptions -> AddStringOption2
     ("sdp_cuts_sparsify",
      "Make cuts sparse by greedily reducing X one column at a time before extracting eigenvectors.",
-     "no", 
+     "no",
      "no", "",
      "yes", ""
     );
@@ -345,7 +345,7 @@ sorted in non-decreasing order, hence selecting 1 will provide cuts on the most 
   roptions -> AddStringOption2
     ("sdp_cuts_fillmissing",
      "Create fictitious auxiliary variables to fill non-fully dense minors. Can make a difference when Q has at least one zero term.",
-     "no", 
+     "no",
      "no", "Do not create auxiliaries and simply use Fourier-Motzkin to substitute a missing auxiliary y_ij with inequalities that use bounds and the definition y_ij = x_i x_j \
 Advantage: limits the creation of auxiliaries, reformulation stays small. Default.",
      "yes", "Create (at the beginning) auxiliaries that are linearized (through McCormick) and used within an SDP cut. This allows tighter cuts although it increases the size \
@@ -356,7 +356,7 @@ of the reformulation and hence of the linear relaxation."
   roptions -> AddStringOption2
     ("sdp_cuts_",
      "",
-     "yes", 
+     "yes",
      "no", "",
      "yes", ""
     );

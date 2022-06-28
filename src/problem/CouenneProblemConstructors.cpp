@@ -50,7 +50,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
 				Bonmin::BabSetupBase *base,
 				JnlstPtr jnlst):
   problemName_ (""),
-  auxSet_    (NULL), 
+  auxSet_    (NULL),
   curnvars_  (-1),
   nIntVars_  (0),
   optimum_   (NULL),
@@ -151,7 +151,7 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   useQuadratic_ (p.useQuadratic_),  // ditto
   feas_tolerance_ (p.feas_tolerance_),
   dependence_   (p.dependence_),
-  objects_      (p.objects_), // NO! have to copy all of them 
+  objects_      (p.objects_), // NO! have to copy all of them
   integerRank_  (NULL),
   numberInRank_ (p.numberInRank_),
   maxCpuTime_   (p.maxCpuTime_),
@@ -190,7 +190,7 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   for (int i=0; i < p.nObjs (); i++) objectives_  . push_back (p.Obj (i) -> clone (&domain_));
   for (int i=0; i < p.nCons (); i++) constraints_ . push_back (p.Con (i) -> clone (&domain_));
 
-  if (p.optimum_) 
+  if (p.optimum_)
     optimum_ = CoinCopyOfArray (p.optimum_, nVars ());
 
   // clear all spurious variables pointers not referring to the variables_ vector
@@ -306,7 +306,7 @@ void CouenneProblem::initOptions (Ipopt::SmartPtr<Ipopt::OptionsList> options) {
 
   options -> GetStringValue ("orbital_branching",   s, "couenne."); orbitalBranching_ = (s == "yes");
 
-  options -> GetStringValue ("quadrilinear_decomp", s, "couenne."); 
+  options -> GetStringValue ("quadrilinear_decomp", s, "couenne.");
   if      (s == "rAI")     trilinDecompType_ = rAI;
   else if (s == "tri+bi")  trilinDecompType_ = tri_bi;
   else if (s == "bi+tri")  trilinDecompType_ = bi_tri;

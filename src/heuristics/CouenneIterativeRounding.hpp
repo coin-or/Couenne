@@ -1,4 +1,4 @@
-// (C) Copyright International Business Machines Corporation 2007 
+// (C) Copyright International Business Machines Corporation 2007
 // All Rights Reserved.
 // This code is published under the Eclipse Public License (EPL).
 //
@@ -39,22 +39,22 @@ namespace Couenne{
     /** Default constructor.*/
     CouenneIterativeRounding();
     /** Constructor with model and Couenne problems.*/
-    CouenneIterativeRounding(Bonmin::OsiTMINLPInterface* nlp, 
+    CouenneIterativeRounding(Bonmin::OsiTMINLPInterface* nlp,
 			     OsiSolverInterface* cinlp,
 			     CouenneProblem* couenne,
 			     Ipopt::SmartPtr<Ipopt::OptionsList> options);
     /** Copy constructor.*/
     CouenneIterativeRounding(const CouenneIterativeRounding &other);
-    
+
     /** Destructor*/
     virtual ~CouenneIterativeRounding();
-    
+
     /** Clone.*/
     virtual CbcHeuristic * clone() const;
-    
+
     /** Assignment operator */
     CouenneIterativeRounding & operator=(const CouenneIterativeRounding &rhs);
-    
+
     /** Set the minlp solver.*/
     void setNlp (Bonmin::OsiTMINLPInterface* nlp, OsiSolverInterface* cinlp);
 
@@ -66,11 +66,11 @@ namespace Couenne{
     /** Does nothing. */
     void resetModel(CbcModel * model){}
     /** Run heuristic, return 1 if a better solution than the one
-        passed is found and 0 otherwise. 
+        passed is found and 0 otherwise.
 	\argument objectiveValue
         Best known solution in input and value of solution found in
-        output 
-	\argument newSolution 
+        output
+	\argument newSolution
 	Solution found by heuristic.
       */
     int solution(double & objectiveValue, double * newSolution);
@@ -79,7 +79,7 @@ namespace Couenne{
     void setMaxRoundingIter(int value){
       maxRoundingIter_ = value;
     }
-    
+
     /** Set maximum number of points that we try to round in F-IR */
     void setMaxFirPoints(int value){
       maxFirPoints_ = value;

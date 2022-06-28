@@ -21,12 +21,12 @@ using namespace Couenne;
 /// generic approach for negative powers (used by expr{Pow,Inv}::selectBranch())
 CouNumber negPowSelectBranch (const CouenneObject *obj,
 			      const OsiBranchingInformation *info,
-			      double * &brpts, 
+			      double * &brpts,
 			      double * &brDist, // distance of current LP
 				                // point to new convexifications
 			      int &way,
 			      CouNumber k,
-			      CouNumber x0, CouNumber y0, 
+			      CouNumber x0, CouNumber y0,
 			      CouNumber l,  CouNumber u);
 
 
@@ -35,7 +35,7 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
 CouNumber exprPow::selectBranch (const CouenneObject *obj,
 				 const OsiBranchingInformation *info,
 				 expression *&var,
-				 double * &brpts, 
+				 double * &brpts,
 				 double * &brDist, // distance of current LP
 						   // point to new convexifications
 				 int &way) {
@@ -45,7 +45,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
   var = arglist_ [0];
 
-  int 
+  int
     ind = arglist_ [0]        -> Index (),
     wi  = obj -> Reference () -> Index ();
 
@@ -59,8 +59,8 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
             u  = info -> upper_    [ind];
 
   /*printf ("selbra for "); print ();
-  printf ("%g [%g,%g] -> %g [%g,%g]\n", 
-	  x0, l, u, y0, 
+  printf ("%g [%g,%g] -> %g [%g,%g]\n",
+	  x0, l, u, y0,
 	  info -> lower_    [wi],
 	  info -> upper_    [wi]);*/
 
@@ -92,7 +92,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
   if (isInt && !((1 == intk % 2) || issignpower_)) {
 
-    if ((l < - COUENNE_INFINITY) && 
+    if ((l < - COUENNE_INFINITY) &&
 	(u >   COUENNE_INFINITY)) { // infinite bounds
 
       if (y0 < pow (x0, k)) { // good side
@@ -121,9 +121,9 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
       way = THREE_CENTER;
 
-      return CoinMin (x0 - brpts [0], 
-		      CoinMin (brpts [1] - x0, 
-			       projectSeg (x0, y0, 
+      return CoinMin (x0 - brpts [0],
+		      CoinMin (brpts [1] - x0,
+			       projectSeg (x0, y0,
 					   brpts [0], pow (brpts [0], k),
 					   brpts [1], pow (brpts [1], k), -1)));*/
 
@@ -149,7 +149,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 	b0 = brpts [0] = -alpha + lambdaL * (alpha - yroot),
 	b1 = brpts [1] =  alpha + lambdaR * (yroot - alpha);
       way = THREE_CENTER;
-      return CoinMin (projectSeg (x0, y0, b0, pow (b0, k), b1, pow (b1, k), -1), 
+      return CoinMin (projectSeg (x0, y0, b0, pow (b0, k), b1, pow (b1, k), -1),
 		      CoinMin (x0 - b0, b1 - x0));      */
     }
 
@@ -165,10 +165,10 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
       //printf ("  ----> brptPow %g\n", *brpts);
 
-      return CoinMin (brDist [0] = x0 - *brpts, 
+      return CoinMin (brDist [0] = x0 - *brpts,
 		      brDist [1] = projectSeg
-		      (x0,     y0, 
-		       *brpts, safe_pow (*brpts, k, issignpower_), 
+		      (x0,     y0,
+		       *brpts, safe_pow (*brpts, k, issignpower_),
 		       u,      safe_pow (u, k, issignpower_), -1));
     }
 
@@ -183,10 +183,10 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
       return CoinMin (brDist [1] = *brpts - x0,
 		      brDist [0] = projectSeg
-		      (x0,     y0, 
+		      (x0,     y0,
 		       l,      safe_pow (l,      k, issignpower_),
 		       *brpts, safe_pow (*brpts, k, issignpower_), -1));
-    } 
+    }
 
     // both bounds are finite ///////////////////////////////////////////////
 
@@ -204,7 +204,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 	    projectSeg (x0, y0, *brpts, safe_pow (*brpts,k),      u, safe_pow (u,k), 0));*/
 
     // Min area  -- exact distance
-    CouNumber retval = 
+    CouNumber retval =
       CoinMin (brDist [0] = projectSeg (x0, y0, l,      safe_pow (l,      k, issignpower_), *brpts, safe_pow (*brpts, k, issignpower_), 0),
 	       brDist [1] = projectSeg (x0, y0, *brpts, safe_pow (*brpts, k, issignpower_),      u, safe_pow (u,      k, issignpower_), 0));
 
@@ -214,8 +214,8 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     /*      brpts = (double *) realloc (brpts, sizeof (double));
      *brpts = midInterval (x0, l, u, info);
-     way = 
-     (l < - COUENNE_INFINITY) ? TWO_RIGHT : 
+     way =
+     (l < - COUENNE_INFINITY) ? TWO_RIGHT :
      (u >   COUENNE_INFINITY) ? TWO_LEFT  : TWO_RAND;
 
      return fabs (y0 - pow (x0, k)); // not an exact measure
@@ -238,7 +238,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 	((l < - COUENNE_INFINITY) && (y0 < pow0))            ||
 	((u >   COUENNE_INFINITY) && (y0 > pow0))) {
 
-      if (((y0 > 0) && (y0 < pow0)) ||  
+      if (((y0 > 0) && (y0 < pow0)) ||
 	  ((y0 < 0) && (y0 > pow0))) {
 
 	*brpts = 0;
@@ -283,7 +283,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     /*if (u > l + COUENNE_EPS) {
       *brpts = safe_pow ((safe_pow (u, k) - safe_pow (l,k)) / (k* (u-l)), 1./(k-1.));
-      if (u<0) 
+      if (u<0)
 	*brpts = -*brpts;
 	}*/
   }
@@ -296,9 +296,9 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     if (((l < - COUENNE_INFINITY) && (u > COUENNE_INFINITY)) || // ]-inf,+inf[
 	((l < - COUENNE_INFINITY) && (y0 < pow0))            ||
-	((u >   COUENNE_INFINITY) && (y0 > pow0))) { 
+	((u >   COUENNE_INFINITY) && (y0 > pow0))) {
 
-      if (((x0 > 0.) && (y0 > pow0)) ||  
+      if (((x0 > 0.) && (y0 > pow0)) ||
 	  ((x0 < 0.) && (y0 < pow0))) { // in the same orthant as the
 					// curve (i.e. first or third
 					// orthant)
@@ -345,7 +345,7 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
     /*if (u > l + COUENNE_EPS) {
       *brpts = safe_pow ((safe_pow (u, k) - safe_pow (l,k)) / (k* (u-l)), 1./(k-1.));
-      if (u<0) 
+      if (u<0)
 	*brpts = -*brpts;
     } else *brpts = 0.5*(l+u);*/
   }
@@ -377,17 +377,17 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 	powertriplet pt (k, issignpower_);
 	*brpts = obj -> getBrPoint (&pt, x0, l, u, info);
       }
-      
+
       way = TWO_LEFT;
 
       if (l < 0. && !issignpower_) l = 0.;
 
-      CouNumber 
+      CouNumber
 	powbpt = issignpower_ ? COUENNE_sign(*brpts) * pow (fabs (*brpts), k) : pow (*brpts, k),
 	projL  = projectSeg (x0, y0, l, issignpower_ ? COUENNE_sign(u) * pow(fabs(u),k) : pow (l, k), *brpts, powbpt, -1);
 
-      return (brDist[0] = brDist[1] = (u > COUENNE_INFINITY) ? 
-	CoinMin (projL, *brpts - x0) : 
+      return (brDist[0] = brDist[1] = (u > COUENNE_INFINITY) ?
+	CoinMin (projL, *brpts - x0) :
 	CoinMin (projL, projectSeg (x0,y0, *brpts, powbpt, u, pow(u,k), -1)));
     }
 
@@ -411,12 +411,12 @@ CouNumber exprPow::selectBranch (const CouenneObject *obj,
 
       if (l < 0 && !issignpower_) l = 0.;
 
-      CouNumber 
+      CouNumber
 	powbpt = pow (*brpts, k),
 	projL  = projectSeg (x0, y0, l, pow (l, k), *brpts, powbpt, +1);
 
-      return (brDist[0] = brDist[1] = (u > COUENNE_INFINITY) ? 
-	CoinMin (projL, powbpt - y0) : 
+      return (brDist[0] = brDist[1] = (u > COUENNE_INFINITY) ?
+	CoinMin (projL, powbpt - y0) :
 	CoinMin (projL, projectSeg (x0, y0, *brpts, powbpt, u, pow (u,k), +1)));
 
     } else { // on the convex side. We don't care if u is infinite

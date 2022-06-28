@@ -15,7 +15,7 @@ using namespace Couenne;
 
 /// sets the initial solution for the NLP solver
 void CouenneMINLPInterface::setInitSol (const CouNumber *sol) {
-  
+
 }
 
 /// solves and returns the optimal objective function and the
@@ -114,7 +114,7 @@ register_general_options
 					0.,true, 1.,
 					"");
   roptions->setOptionExtraInfo("random_point_perturbation_interval",8);
-					   
+					
 
   roptions->AddLowerBoundedIntegerOption
     ("num_iterations_suspect",
@@ -124,7 +124,7 @@ register_general_options
      " node is considered to be suspect and it will be outputed in a file (set to -1 to deactivate this).");
   roptions->setOptionExtraInfo("num_iterations_suspect",15);
 
-  
+
 
   roptions->AddLowerBoundedIntegerOption("num_retry_unsolved_random_point",
 					 "Number $k$ of times that the algorithm will try to resolve an unsolved NLP with a random starting point "
@@ -169,7 +169,7 @@ static void register_OA_options
 (SmartPtr<RegisteredOptions> roptions)
 {
   roptions->SetRegisteringCategory("Outer Approximation cuts generation", RegisteredOptions::BonminCategory);
-  
+
   roptions->AddStringOption2("disjunctive_cut_type",
 			     "Determine if and what kind of disjunctive cuts should be computed.",
 			     "none",
@@ -199,7 +199,7 @@ static void register_OA_options
                              "sglobal-slocal", "Strengthened global and strengthened local cuts",
                              "");
   roptions->setOptionExtraInfo("cut_strengthening_type",7);
-  
+
   roptions->AddLowerBoundedNumberOption("tiny_element","Value for tiny element in OA cut",
 					-0.,0,1e-08,
 					"We will remove \"cleanly\" (by relaxing cut) an element lower"
@@ -240,7 +240,7 @@ CouenneMINLPInterface::registerOptions
 #ifdef COUENNE_HAS_IPOPT
     IpoptSolver::RegisterOptions(roptions);
 #endif
-  }   
+  }
   catch(RegisteredOptions::OPTION_ALREADY_REGISTERED) {
     // skipping
   }
@@ -249,7 +249,7 @@ CouenneMINLPInterface::registerOptions
 }
 
 /** To set some application specific defaults. */
-void 
+void
 CouenneMINLPInterface::setAppDefaultOptions(SmartPtr<OptionsList> Options)
 {}
 
@@ -282,24 +282,24 @@ CouenneMINLPInterface::Messages::Messages
   ADD_MSG(LOG_HEAD, std_m, 1,
           "\n          "
           "    Num      Status      Obj             It       time");
-  ADD_MSG(LOG_FIRST_LINE, std_m, 1, 
+  ADD_MSG(LOG_FIRST_LINE, std_m, 1,
           "    %-8d %-11s %-23.16g %-8d %-3g");
   ADD_MSG(LOG_LINE, std_m, 1, " %c  r%-7d %-11s %-23.16g %-8d %-3g");
 
   ADD_MSG(ALTERNATE_OBJECTIVE, std_m, 1, "Objective value recomputed with alternate objective: %g.");
-  
-  ADD_MSG(WARN_RESOLVE_BEFORE_INITIAL_SOLVE, warn_m, 1, 
+
+  ADD_MSG(WARN_RESOLVE_BEFORE_INITIAL_SOLVE, warn_m, 1,
 	  "resolve called before any call to initialSol  can not use warm starts.");
   ADD_MSG(ERROR_NO_TNLPSOLVER, warn_m, 1,"Can not parse options when no IpApplication has been created");
   ADD_MSG(WARNING_NON_CONVEX_OA, warn_m, 1,
-          "OA on non-convex constraint is very experimental.");                          
+          "OA on non-convex constraint is very experimental.");
   ADD_MSG(SOLVER_DISAGREE_STATUS, warn_m, 1, "%s says problem %s, %s says %s.");
   ADD_MSG(SOLVER_DISAGREE_VALUE, warn_m, 1, "%s gives objective %.16g, %s gives %.16g.");
 
 }
 
 
-void  
+void
 CouenneMINLPInterface::OaMessageHandler::print(OsiRowCut &row){
   FILE * fp = filePointer();
   const int &n = row.row().getNumElements();
@@ -310,7 +310,7 @@ CouenneMINLPInterface::OaMessageHandler::print(OsiRowCut &row){
     fprintf(fp,"%g, x%d",val[i], idx[i]);
     if(i && i % 7 == 0)
       fprintf(fp,"\n");
-  } 
+  }
 }
 
 CouenneMINLPInterface::OaMessages::OaMessages(): CoinMessages((int) OA_MESSAGES_DUMMY_END){
@@ -380,14 +380,14 @@ CouenneMINLPInterface::CouenneMINLPInterface():
   oaHandler_->setLogLevel(0);
 }
 
-void 
+void
 CouenneMINLPInterface::initialize(Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions,
 				  Ipopt::SmartPtr<Ipopt::OptionsList> options,
 				  Ipopt::SmartPtr<Ipopt::Journalist> journalist,
 				  Ipopt::SmartPtr<TMINLP> tminlp){
   if(!IsValid(app_))
     createApplication(roptions, options, journalist);
-  setModel(tminlp); 
+  setModel(tminlp);
 }
 
 void CouenneMINLPInterface::setSolver(Ipopt::SmartPtr<TNLPSolver> app){
@@ -412,7 +412,7 @@ CouenneMINLPInterface::createApplication(Ipopt::SmartPtr<Bonmin::RegisteredOptio
 #else
     throw SimpleError("createApplication",
 		      "Bonmin not configured to run with FilterSQP.");
-#endif    
+#endif
   }
   else if(s == EIpopt){
     testOthers_ = false;
@@ -431,19 +431,19 @@ CouenneMINLPInterface::createApplication(Ipopt::SmartPtr<Bonmin::RegisteredOptio
 		      "Bonmin not configured to run with Ipopt.");
 #endif
 #ifdef COUENNE_HAS_IPOPT
-    debug_apps_.push_back(new IpoptSolver(roptions, options, journalist)); 
+    debug_apps_.push_back(new IpoptSolver(roptions, options, journalist));
 #endif
     testOthers_ = true;
   }
   if (!app_->Initialize("")) {
     throw CoinError("Error during initialization of app_","createApplication", "CouenneMINLPInterface");
   }
-  for(std::list<Ipopt::SmartPtr<TNLPSolver> >::iterator i = debug_apps_.begin() ; 
+  for(std::list<Ipopt::SmartPtr<TNLPSolver> >::iterator i = debug_apps_.begin() ;
       i != debug_apps_.end() ; i++){
     (*i)->Initialize("");
   }
   extractInterfaceParams();
-  
+
 }
 
 /** Facilitator to allocate a tminlp and an application. */
@@ -574,7 +574,7 @@ CouenneMINLPInterface::CouenneMINLPInterface (const CouenneMINLPInterface &sourc
 
 }
 
-OsiSolverInterface * 
+OsiSolverInterface *
 CouenneMINLPInterface::clone(bool copyData ) const
 {
   if(copyData)
@@ -779,7 +779,7 @@ CouenneMINLPInterface::resolveForCost(int numsolve, bool keepWarmStart)
   // we might have, and acquire a new one before returning.
   delete warmstart_;
   warmstart_ = NULL;
- 
+
   Coin::SmartPtr<SimpleReferencedPtr<CoinWarmStart> > ws_backup = NULL;
   if(!exposeWarmStart_ && keepWarmStart){
     //if warm start is not exposed, we need to store the current starting point to
@@ -867,7 +867,7 @@ CouenneMINLPInterface::resolveForRobustness(int numsolve)
   // we might have, and acquire a new one before returning.
   delete warmstart_;
   warmstart_ = NULL;
-  
+
 
   CoinWarmStart * ws_backup = NULL;
   if(!exposeWarmStart_){
@@ -937,7 +937,7 @@ CouenneMINLPInterface::resolveForRobustness(int numsolve)
         app_->setWarmStart(ws_backup, problem_);
         delete ws_backup;
       }
-        
+
       return; //we have found a solution and continue
     }
   }
@@ -999,7 +999,7 @@ CouenneMINLPInterface::getColUpper() const
 
 
 ///get name of variables
-const OsiSolverInterface::OsiNameVec& 
+const OsiSolverInterface::OsiNameVec&
 CouenneMINLPInterface::getVarNames() {
   return getColNames();
 }
@@ -1217,7 +1217,7 @@ CouenneMINLPInterface::setColLower( const double* array )
 void
 CouenneMINLPInterface::setColUpper( const double* array )
 {
-  problem_->SetVariablesUpperBounds(problem_->num_variables(), 
+  problem_->SetVariablesUpperBounds(problem_->num_variables(),
 				    array);
   hasBeenOptimized_ = false;
 }
@@ -1307,7 +1307,7 @@ CouenneMINLPInterface::getEmptyWarmStart () const
 {return app_->getEmptyWarmStart();}
 
 /** Get warmstarting information */
-CoinWarmStart* 
+CoinWarmStart*
 CouenneMINLPInterface::getWarmStart() const
 {
   if (exposeWarmStart_) {
@@ -1319,7 +1319,7 @@ CouenneMINLPInterface::getWarmStart() const
 }
 /** Set warmstarting information. Return true/false depending on whether
     the warmstart information was accepted or not. */
-bool 
+bool
 CouenneMINLPInterface::setWarmStart(const CoinWarmStart* ws)
 {
   if (exposeWarmStart_) {
@@ -1330,7 +1330,7 @@ CouenneMINLPInterface::setWarmStart(const CoinWarmStart* ws)
   }
 }
 /** Get warmstarting information */
-CoinWarmStart* 
+CoinWarmStart*
 CouenneMINLPInterface::internal_getWarmStart() const
 {
   if (exposeWarmStart_ && warmstart_) {
@@ -1342,7 +1342,7 @@ CouenneMINLPInterface::internal_getWarmStart() const
 }
 /** Set warmstarting information. Return true/false depending on whether
     the warmstart information was accepted or not. */
-bool 
+bool
 CouenneMINLPInterface::internal_setWarmStart(const CoinWarmStart* ws)
 {
   delete warmstart_;
@@ -1653,7 +1653,7 @@ int CouenneMINLPInterface::initializeJacobianArrays()
   //  constTypesNum_ = new int[getNumRows()];
   for(int i = 0; i < getNumRows() ; i++) {
     if(constTypes_[i]==TNLP::NON_LINEAR) {
-      //constTypesNum_[i] = 
+      //constTypesNum_[i] =
       nNonLinear_++;
     }
   }
@@ -1661,7 +1661,7 @@ int CouenneMINLPInterface::initializeJacobianArrays()
 }
 
 
-double 
+double
 CouenneMINLPInterface::getConstraintsViolation(const double *x, double &obj)
 {
   int numcols = getNumCols();
@@ -1769,10 +1769,10 @@ CouenneMINLPInterface::getOuterApproximation(OsiCuts &cs, const double * x, bool
 
   //double *xx = new double [n];
 
-  // x ---> xx 
-  // 
-  // 
-  // 
+  // x ---> xx
+  //
+  //
+  //
 
 
 
@@ -1798,7 +1798,7 @@ CouenneMINLPInterface::getOuterApproximation(OsiCuts &cs, const double * x, bool
 
   double infty = getInfinity();
   double nlp_infty = infty_;
-  
+
   for(int rowIdx = 0; rowIdx < m ; rowIdx++) {
     if(constTypes_[rowIdx] == TNLP::NON_LINEAR) {
 #if 0
@@ -1827,7 +1827,7 @@ CouenneMINLPInterface::getOuterApproximation(OsiCuts &cs, const double * x, bool
 	  if(duals[rowIdx] <= 0)// >= inequality
 	    ub[numCuts] = infty;
 	}
-      
+
       numCuts++;
     }
     else
@@ -1984,8 +1984,8 @@ CouenneMINLPInterface::getOuterApproximation(OsiCuts &cs, const double * x, bool
 /** Get the outer approximation of a single constraint at the point x.
  */
 void
-CouenneMINLPInterface::getConstraintOuterApproximation(OsiCuts &cs, int rowIdx, 
-						       const double * x, 
+CouenneMINLPInterface::getConstraintOuterApproximation(OsiCuts &cs, int rowIdx,
+						       const double * x,
 						       const double * x2, bool global)
 {
   double g;
@@ -2007,7 +2007,7 @@ CouenneMINLPInterface::getConstraintOuterApproximation(OsiCuts &cs, int rowIdx,
   const double dual = (getRowPrice() + 2 * getNumCols())[rowIdx];
   double infty = getInfinity();
   double nlp_infty = infty_;
-  
+
   if(rowLower > - nlp_infty)
     lb = rowLower - g;
   else
@@ -2067,7 +2067,7 @@ CouenneMINLPInterface::switchToFeasibilityProblem(int n,const double * x_bar,con
   feasibilityProblem_->setSigma(s);
   feasibilityProblem_->setNorm(L);
   feasibilityProblem_->set_use_cutoff_constraint(false);
-  feasibilityProblem_->set_use_local_branching_constraint(false);  
+  feasibilityProblem_->set_use_local_branching_constraint(false);
   problem_to_optimize_ = GetRawPtr(feasibilityProblem_);
   feasibility_mode_ = true;
 }
@@ -2081,8 +2081,8 @@ CouenneMINLPInterface::switchToFeasibilityProblem(int n,const double * x_bar,con
   feasibilityProblem_->set_use_feasibility_pump_objective(false);
   feasibilityProblem_->set_dist2point_obj(n,(const Number *) x_bar,(const Index *) inds);
   feasibilityProblem_->set_use_cutoff_constraint(false);
-  feasibilityProblem_->set_use_local_branching_constraint(true);  
-  feasibilityProblem_->set_rhs_local_branching_constraint(rhs_local_branching_constraint);  
+  feasibilityProblem_->set_use_local_branching_constraint(true);
+  feasibilityProblem_->set_rhs_local_branching_constraint(rhs_local_branching_constraint);
   problem_to_optimize_ = GetRawPtr(feasibilityProblem_);
   feasibility_mode_ = true;
 }
@@ -2094,7 +2094,7 @@ CouenneMINLPInterface::switchToOriginalProblem(){
 }
 
 double
-CouenneMINLPInterface::solveFeasibilityProblem(int n,const double * x_bar,const int *inds, 
+CouenneMINLPInterface::solveFeasibilityProblem(int n,const double * x_bar,const int *inds,
 					       double a, double s, int L)
 {
   if(! IsValid(feasibilityProblem_)) {
@@ -2106,7 +2106,7 @@ CouenneMINLPInterface::solveFeasibilityProblem(int n,const double * x_bar,const 
   feasibilityProblem_->setSigma(s);
   feasibilityProblem_->setNorm(L);
   feasibilityProblem_->set_use_cutoff_constraint(false);
-  feasibilityProblem_->set_use_local_branching_constraint(false);  
+  feasibilityProblem_->set_use_local_branching_constraint(false);
   nCallOptimizeTNLP_++;
   totalNlpSolveTime_-=CoinCpuTime();
   SmartPtr<TNLPSolver> app2 = app_->clone();
@@ -2118,7 +2118,7 @@ CouenneMINLPInterface::solveFeasibilityProblem(int n,const double * x_bar,const 
 }
 
 double
-CouenneMINLPInterface::solveFeasibilityProblem(int n,const double * x_bar,const int *inds, 
+CouenneMINLPInterface::solveFeasibilityProblem(int n,const double * x_bar,const int *inds,
 					       int L, double cutoff)
 {
   if(! IsValid(feasibilityProblem_)) {
@@ -2131,7 +2131,7 @@ CouenneMINLPInterface::solveFeasibilityProblem(int n,const double * x_bar,const 
   feasibilityProblem_->setNorm(L);
   feasibilityProblem_->set_use_cutoff_constraint(true);
   feasibilityProblem_->set_cutoff(cutoff);
-  feasibilityProblem_->set_use_local_branching_constraint(false);  
+  feasibilityProblem_->set_use_local_branching_constraint(false);
   nCallOptimizeTNLP_++;
   totalNlpSolveTime_-=CoinCpuTime();
   SmartPtr<TNLPSolver> app2 = app_->clone();
@@ -2155,7 +2155,7 @@ CouenneMINLPInterface::getFeasibilityOuterApproximation(int n,const double * x_b
 static bool WarnedForNonConvexOa=false;
 
 void
-CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si, 
+CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
 					       const double * x, bool getObj)
 {
   double * rowLow = NULL;
@@ -2192,7 +2192,7 @@ CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
   assert(m==getNumRows());
   double infty = si.getInfinity();
   double nlp_infty = infty_;
-  
+
   for(int i = 0 ; i < m ; i++) {
     if(constTypes_[i] == TNLP::NON_LINEAR) {
       //If constraint is range not binding prepare to remove it
@@ -2215,7 +2215,7 @@ CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
         rowUp[i] =  (rowUpper[i] - g[i]) + 1e-07;
       else
         rowUp[i] = infty;
-      
+
       //If equality or ranged constraint only add one side by looking at sign of dual multiplier
       if(rowLower[i] > -nlp_infty && rowUpper[i] < nlp_infty)
 	{
@@ -2241,8 +2241,8 @@ CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
     }
   }
 
-  
-  
+
+
   //Then convert everything to a CoinPackedMatrix
   //Go through values, clean coefficients and fix bounds
   for(int i = 0 ; i < nnz_jac_g ; i++) {
@@ -2252,7 +2252,7 @@ CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
 		  rowLower[jRow_[i]], rowUpper[jRow_[i]],
 		  x[jCol_[i]],
 		  rowLow[jRow_[i]],
-		  rowUp[jRow_[i]], tiny_, veryTiny_)) {      
+		  rowUp[jRow_[i]], tiny_, veryTiny_)) {
 	rowLow[jRow_[i]] += jValues_[i] * x[jCol_ [i]];
 	rowUp[jRow_[i]] += jValues_[i] *x[jCol_[i]];
       }
@@ -2261,11 +2261,11 @@ CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
       double value = jValues_[i] * getColSolution()[jCol_[i]];
       rowLow[jRow_[i]] += value;
       rowUp[jRow_[i]] += value;
-    } 
+    }
   }
   CoinPackedMatrix mat(true, jRow_, jCol_, jValues_, nnz_jac_g);
   mat.setDimensions(m,n); // In case matrix was empty, this should be enough
-  
+
   //remove non-bindings equality constraints
   mat.deleteRows(numNonBindings, nonBindings);
 
@@ -2273,8 +2273,8 @@ CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
   double *obj = new double[numcols];
   for(int i = 0 ; i < numcols ; i++)
     obj[i] = 0.;
-  
-  
+
+
   si.loadProblem(mat, getColLower(), getColUpper(), obj, rowLow, rowUp);
   delete [] rowLow;
   delete [] rowUp;
@@ -2288,7 +2288,7 @@ CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
     bool addObjVar = false;
     if(problem_->hasLinearObjective()){
       //Might be in trouble if objective has a constant part
-      // for now just check that f(0) = 0. 
+      // for now just check that f(0) = 0.
       // If it is not adding a constant term does not seem supported by Osi
       // for now
       double zero;
@@ -2296,7 +2296,7 @@ CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
       si.setDblParam(OsiObjOffset, -zero);
       //if(fabs(zero - 0) > 1e-10)
       //addObjVar = true;
-      //else { 
+      //else {
       //Copy the linear objective and don't create a dummy variable.
       problem_to_optimize_->eval_grad_f(n, x, 1,obj);
       si.setObjective(obj);
@@ -2311,7 +2311,7 @@ CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
       //(alpha should be empty in the matrix with a coefficient of -1 and unbounded)
       CoinPackedVector a;
       si.addCol(a,-si.getInfinity(), si.getInfinity(), 1.);
-  
+
       // Now get the objective cuts
       // get the gradient, pack it and add the cut
       problem_to_optimize_->eval_grad_f(n, x, 1,obj);
@@ -2357,9 +2357,9 @@ CouenneMINLPInterface::extractLinearRelaxation(OsiSolverInterface &si,
 }
 
 /** Add a collection of linear cuts to problem formulation.*/
-void 
+void
 CouenneMINLPInterface::applyRowCuts(int numberCuts, const OsiRowCut * cuts)
-{ 
+{
   if(numberCuts)
     freeCachedRowRim();
   const OsiRowCut ** cutsPtrs = new const OsiRowCut*[numberCuts];
@@ -2383,15 +2383,15 @@ CouenneMINLPInterface::solveAndCheckErrors(bool warmStarted, bool throwOnFailure
   totalNlpSolveTime_+=CoinCpuTime();
   nCallOptimizeTNLP_++;
   hasBeenOptimized_ = true;
- 
- 
+
+
   //Options should have been printed if not done already turn off Ipopt output
   if(!hasPrintedOptions) {
     hasPrintedOptions = 1;
     //app_->Options()->SetIntegerValue("print_level",0, true, true);
     app_->options()->SetStringValue("print_user_options","no", false, true);
   }
-  
+
   bool otherDisagree = false ;
 #if 0
   if(optimizationStatus_ == TNLPSolver::notEnoughFreedom)//Too few degrees of freedom
@@ -2399,14 +2399,14 @@ CouenneMINLPInterface::solveAndCheckErrors(bool warmStarted, bool throwOnFailure
       (*messageHandler())<<"Too few degrees of freedom...."<<CoinMessageEol;
       int numrows = getNumRows();
       int numcols = getNumCols();
-    
+
       const double * colLower = getColLower();
       const double * colUpper = getColUpper();
-    
-    
+
+
       const double * rowLower = getRowLower();
       const double * rowUpper = getRowUpper();
-    
+
       int numberFixed = 0;
       for(int i = 0 ; i < numcols ; i++)
 	{
@@ -2421,7 +2421,7 @@ CouenneMINLPInterface::solveAndCheckErrors(bool warmStarted, bool throwOnFailure
 	  if(rowUpper[i] - rowLower[i] <= INT_BIAS)
 	    {
 	      numberEqualities++;
-	    }	  
+	    }	
 	}
       if(numcols - numberFixed > numberEqualities || numcols < numberEqualities)
 	{
@@ -2431,7 +2431,7 @@ CouenneMINLPInterface::solveAndCheckErrors(bool warmStarted, bool throwOnFailure
 	}
       double * saveColLow = CoinCopyOfArray(getColLower(), getNumCols());
       double * saveColUp = CoinCopyOfArray(getColUpper(), getNumCols());
-    
+
       for(int i = 0; i < numcols && numcols - numberFixed <= numberEqualities ; i++)
 	{
 	  if(colUpper[i] - colLower[i] <= INT_BIAS)
@@ -2452,7 +2452,7 @@ CouenneMINLPInterface::solveAndCheckErrors(bool warmStarted, bool throwOnFailure
       delete [] saveColUp;
       return;
     }
-  else 
+  else
 #endif
     if(!app_->isRecoverable(optimizationStatus_))//Solver failed and the error can not be recovered, throw it
       {
@@ -2476,14 +2476,14 @@ CouenneMINLPInterface::solveAndCheckErrors(bool warmStarted, bool throwOnFailure
 	    otherDisagree = true;
 	    messageHandler()->message(SOLVER_DISAGREE_STATUS, messages_)
 	      <<app_->solverName()<<statusAsString()
-	      <<(*i)->solverName()<<statusAsString(otherStatus)<<CoinMessageEol; 
+	      <<(*i)->solverName()<<statusAsString(otherStatus)<<CoinMessageEol;
 	  }
 	  else if(isProvenOptimal() && !eq(problem_->obj_value(),problem_copy->obj_value()))
 	    {
 	      otherDisagree = true;
 	      messageHandler()->message(SOLVER_DISAGREE_VALUE, messages_)
 		<<app_->solverName()<<problem_->obj_value()
-		<<(*i)->solverName()<<problem_copy->obj_value()<<CoinMessageEol; 
+		<<(*i)->solverName()<<problem_copy->obj_value()<<CoinMessageEol;
 	    }
         }
       }
@@ -2530,7 +2530,7 @@ CouenneMINLPInterface::solveAndCheckErrors(bool warmStarted, bool throwOnFailure
     }
     if(integerSol&&isProvenOptimal()){
       double help= problem_->evaluateUpperBoundingFunction(sol);
-     
+
 
       OsiAuxInfo * auxInfo = getAuxiliaryInfo();
       Bonmin::AuxInfo * bonInfo = dynamic_cast<Bonmin::AuxInfo *>(auxInfo);
@@ -2553,11 +2553,11 @@ CouenneMINLPInterface::solveAndCheckErrors(bool warmStarted, bool throwOnFailure
   }
   messageHandler()->message(IPOPT_SUMMARY, messages_)
     <<whereFrom<<optimizationStatus_<<app_->IterationCount()<<app_->CPUTime()<<CoinMessageEol;
-  
+
   if((nCallOptimizeTNLP_ % 20) == 1)
     messageHandler()->message(LOG_HEAD, messages_)<<CoinMessageEol;
-  
-  
+
+
   if ( (numIterationSuspect_ >= 0 && (getIterationCount()>numIterationSuspect_ || isAbandoned())) ||
        ( otherDisagree )){
     messageHandler()->message(SUSPECT_PROBLEM,
@@ -2569,7 +2569,7 @@ CouenneMINLPInterface::solveAndCheckErrors(bool warmStarted, bool throwOnFailure
     subProbName+=os.str();
     problem_->outputDiffs(subProbName, NULL/*getVarNames()*/);
   }
-  
+
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -2584,7 +2584,7 @@ void CouenneMINLPInterface::initialSolve()
   // Discard warmstart_ if we had one
   delete warmstart_;
   warmstart_ = NULL;
-  
+
   if(!hasPrintedOptions) {
     int printOptions;
     app_->options()->GetEnumValue("print_user_options",printOptions,"bonmin.");
@@ -2592,23 +2592,23 @@ void CouenneMINLPInterface::initialSolve()
       app_->options()->SetStringValue("print_user_options","yes",true,true);
   }
   if(exposeWarmStart_)
-    app_->disableWarmStart(); 
+    app_->disableWarmStart();
   solveAndCheckErrors(0,1,"initialSolve");
-  
+
   //Options should have been printed if not done already turn off Ipopt output
   if(!hasPrintedOptions) {
     hasPrintedOptions = 1;
     app_->options()->SetStringValue("print_user_options","no");
     app_->options()->SetIntegerValue("print_level",0);
   }
-  
+
   messageHandler()->message(LOG_FIRST_LINE, messages_)<<nCallOptimizeTNLP_
 						      <<statusAsString()
                                                       <<getObjValue()
                                                       <<app_->IterationCount()
                                                       <<app_->CPUTime()
                                                       <<CoinMessageEol;
-  
+
   int numRetry = firstSolve_ ? numRetryInitial_ : numRetryResolve_;
   if(isAbandoned()) {
     resolveForRobustness(numRetryUnsolved_);
@@ -2637,7 +2637,7 @@ CouenneMINLPInterface::resolve()
 {
   assert(IsValid(app_));
   assert(IsValid(problem_));
-  
+
   int has_warmstart = warmstart_ == NULL ? 0 : 1;
   if(warmstart_ == NULL) has_warmstart = 0;
   else if(!app_->warmStartIsValid(warmstart_)) has_warmstart = 1;
@@ -2662,13 +2662,13 @@ CouenneMINLPInterface::resolve()
     app_->enableWarmStart();
   else app_->disableWarmStart();
   solveAndCheckErrors(1,1,"resolve");
-  
+
   messageHandler()->message(LOG_FIRST_LINE, messages_)<<nCallOptimizeTNLP_
 						      <<statusAsString()
                                                       <<getObjValue()
                                                       <<app_->IterationCount()
                                                       <<app_->CPUTime()<<CoinMessageEol;
-  
+
   if(isAbandoned()) {
     resolveForRobustness(numRetryUnsolved_);
   }
@@ -2758,15 +2758,15 @@ CouenneMINLPInterface::extractInterfaceParams()
       maxRandomRadius_ = 10.;
     }
 #endif
-   
+
     int oaCgLogLevel = 0;
     app_->options()->GetIntegerValue("oa_cuts_log_level", oaCgLogLevel,"bonmin.");
-    oaHandler_->setLogLevel(oaCgLogLevel); 
-    
+    oaHandler_->setLogLevel(oaCgLogLevel);
+
     int exposeWs = false;
     app_->options()->GetEnumValue("warm_start", exposeWs, "bonmin.");
     setExposeWarmStart(exposeWs > 0);
-    
+
     app_->options()->GetIntegerValue("num_retry_unsolved_random_point", numRetryUnsolved_,"bonmin.");
     app_->options()->GetIntegerValue("num_resolve_at_root", numRetryInitial_,"bonmin.");
     app_->options()->GetIntegerValue("num_resolve_at_node", numRetryResolve_,"bonmin.");
@@ -2868,7 +2868,7 @@ const double * CouenneMINLPInterface::getObjCoefficients() const
   bool new_x = true;
   const double* x_sol = problem_->x_sol();
   bool retval = problem_->eval_grad_f(n, x_sol, new_x, obj_);
-  
+
   if (!retval) {
     // Let's see if that happens - it will cause a crash
     fprintf(stderr, "ERROR WHILE EVALUATING GRAD_F in CouenneMINLPInterface::getObjCoefficients()\n");

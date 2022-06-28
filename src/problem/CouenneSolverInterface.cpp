@@ -3,7 +3,7 @@
  * Name:    CouenneSolverInterface.cpp
  * Authors: Pietro Belotti, Carnegie Mellon University
  *          Andreas Waechter, IBM Corp.
- * Purpose: Implementation of the OsiSolverInterface::resolve () method 
+ * Purpose: Implementation of the OsiSolverInterface::resolve () method
  *
  * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Eclipse Public License (EPL)
@@ -15,15 +15,15 @@
 #include "CouenneProblemElem.hpp"
 #include "CouenneCutGenerator.hpp"
 
-#include "CouenneRecordBestSol.hpp"                         
+#include "CouenneRecordBestSol.hpp"
 
 //#define FM_CHECK
 
 namespace Couenne {
 
 /// constructor
-template <class T> 
-CouenneSolverInterface<T>::CouenneSolverInterface 
+template <class T>
+CouenneSolverInterface<T>::CouenneSolverInterface
 (CouenneCutGenerator *cg /*= NULL*/):
 
   T (),
@@ -37,8 +37,8 @@ CouenneSolverInterface<T>::CouenneSolverInterface
 
 
 /// copy constructor
-template <class T> 
-CouenneSolverInterface<T>::CouenneSolverInterface 
+template <class T>
+CouenneSolverInterface<T>::CouenneSolverInterface
 (const CouenneSolverInterface &src):
 
   OsiSolverInterface    (src),
@@ -48,24 +48,24 @@ CouenneSolverInterface<T>::CouenneSolverInterface
   knowOptimal_          (src.knowOptimal_),
   knowDualInfeasible_   (src.knowDualInfeasible_)
   // ,beforeFirstRootLP_    (src.beforeFirstRootLP_)
-  // ,rootLB_               (src.rootLB_) 
+  // ,rootLB_               (src.rootLB_)
 {}
 
 
 /// Destructor
-template <class T> 
+template <class T>
 CouenneSolverInterface<T>::~CouenneSolverInterface () {
   //  if (cutgen_)
   //    delete cutgen_;
 }
 
 
-/// Solve initial LP relaxation 
-template <class T> 
+/// Solve initial LP relaxation
+template <class T>
 void CouenneSolverInterface<T>::initialSolve () {
 
-  knowInfeasible_     = 
-  knowOptimal_        = 
+  knowInfeasible_     =
+  knowOptimal_        =
   knowDualInfeasible_ = false;
 
   T::initialSolve ();
@@ -78,7 +78,7 @@ void CouenneSolverInterface<T>::initialSolve () {
 
   // printf ("init solution: (");
   // for (int i=0; i< T::getNumCols (); i++)
-  //   printf ("%g [%g,%g] ", 
+  //   printf ("%g [%g,%g] ",
   // 	    T::getColSolution () [i],
   // 	    T::getColLower    () [i],
   // 	    T::getColUpper    () [i]);
@@ -103,12 +103,12 @@ bool CouenneSolverInterface<T>::isProvenPrimalInfeasible() const {
   return knowInfeasible_ || T::isProvenPrimalInfeasible();
 }
 
-template <class T> 
+template <class T>
 bool CouenneSolverInterface<T>::isProvenOptimal() const {
   return knowOptimal_ || T::isProvenOptimal();
 }
 
-template <class T> 
+template <class T>
 bool CouenneSolverInterface<T>::isProvenDualInfeasible() const {
   return knowDualInfeasible_ || T::isProvenDualInfeasible();
 }
@@ -118,7 +118,7 @@ void sparse2dense (int, t_chg_bounds *, int *&, int &);
 
 
 /// Resolve an LP relaxation after problem modification
-template <class T> 
+template <class T>
 void CouenneSolverInterface<T>::resolve () {
 
   static int count = -1;
@@ -131,8 +131,8 @@ void CouenneSolverInterface<T>::resolve () {
     T::writeMps (filename);
   }
 
-  knowInfeasible_     = 
-  knowOptimal_        = 
+  knowInfeasible_     =
+  knowOptimal_        =
   knowDualInfeasible_ = false;
 
   const CoinWarmStart *ws = NULL;
@@ -155,21 +155,21 @@ void CouenneSolverInterface<T>::resolve () {
 
   int objind = cutgen_ -> Problem () -> Obj (0) -> Body () -> Index ();
 
-  CouNumber 
+  CouNumber
     //objval     = T::getObjValue (),
     curCutoff  = cutgen_ -> Problem () -> getCutOff (),
     objvalGlob = objind >= 0 ? T::getColSolution () [objind] : cutgen_ -> Problem () -> Obj (0) -> Body () -> Value ();
 
   // check if resolve found new integer solution
-  bool isChecked = false;  
+  bool isChecked = false;
 #ifdef FM_CHECKNLP2
   double curBestVal = 1.e50;
-  if(cutgen_->Problem()->getRecordBestSol()->getHasSol()) { 
-    curBestVal =  cutgen_->Problem()->getRecordBestSol()->getVal(); 
+  if(cutgen_->Problem()->getRecordBestSol()->getHasSol()) {
+    curBestVal =  cutgen_->Problem()->getRecordBestSol()->getVal();
   }
   curBestVal = (curBestVal < curCutoff ? curBestVal : curCutoff);
   if(isProvenOptimal()) {
-    isChecked = cutgen_->Problem()->checkNLP2(T::getColSolution(), 
+    isChecked = cutgen_->Problem()->checkNLP2(T::getColSolution(),
 					      curBestVal, false,
                                               true, // stopAtFirstViol
                                               true, // checkALL
@@ -177,7 +177,7 @@ void CouenneSolverInterface<T>::resolve () {
     if(isChecked) {
       objvalGlob = cutgen_->Problem()->getRecordBestSol()->getModSolVal();
       if(!(objvalGlob < curBestVal - COUENNE_EPS)) {
-        isChecked = false; 
+        isChecked = false;
       }
     }
   }
@@ -231,7 +231,7 @@ void CouenneSolverInterface<T>::resolve () {
     delete [] x;
   }
 
-  cutgen_->Problem()->getRecordBestSol()->update(T::getColSolution(), 
+  cutgen_->Problem()->getRecordBestSol()->update(T::getColSolution(),
 						 cutgen_->Problem()->nVars(),
 						 objvalGlob,
 						 cutgen_->Problem()->getFeasTol());
@@ -259,10 +259,10 @@ void CouenneSolverInterface<T>::resolve () {
 	(!(nsi -> isProvenOptimal ()) && !isProvenOptimal ())) {
 
       if (nsi -> isProvenOptimal () &&
-	  (fabs (nsi -> getObjValue () - T::getObjValue ()) / 
+	  (fabs (nsi -> getObjValue () - T::getObjValue ()) /
 	   (1. + fabs (nsi -> getObjValue ()) + fabs (T::getObjValue ())) > 1e-2))
 
-	printf ("Warning: discrepancy between saved %g and current %g [%g], file %s\n", 
+	printf ("Warning: discrepancy between saved %g and current %g [%g], file %s\n",
 		nsi -> getObjValue (),  T::getObjValue (),
 		nsi -> getObjValue () - T::getObjValue (),
 		filename);
@@ -277,43 +277,43 @@ void CouenneSolverInterface<T>::resolve () {
 	(!(csi -> isProvenOptimal ()) && !isProvenOptimal ())) {
 
       if (csi -> isProvenOptimal () &&
-	  (fabs (csi -> getObjValue () - getObjValue ()) / 
+	  (fabs (csi -> getObjValue () - getObjValue ()) /
 	   (1. + fabs (csi -> getObjValue ()) + fabs (getObjValue ())) > 1e-2))
 
-	printf ("Warning: discrepancy between cloned %g and current %g [%g]\n", 
+	printf ("Warning: discrepancy between cloned %g and current %g [%g]\n",
 		csi -> getObjValue (),  getObjValue (),
 		csi -> getObjValue () - getObjValue ());
     }
 
     delete nsi;
     delete csi;
-    
+
     delete ws;
 
-    //else printf ("Warning: discrepancy between statuses %s -- %s feasible\n", 
+    //else printf ("Warning: discrepancy between statuses %s -- %s feasible\n",
     //filename, isProvenOptimal () ? "current" : "saved");
   }
 }
 
 
 /// Create a hot start snapshot of the optimization process.
-template <class T> 
-void CouenneSolverInterface<T>::markHotStart () 
+template <class T>
+void CouenneSolverInterface<T>::markHotStart ()
 {OsiSolverInterface::markHotStart ();} // OsiClpSolverInterface::markHotStart() seems not to work
 
 
 /// Delete the hot start snapshot.
-template <class T> 
-void CouenneSolverInterface<T>::unmarkHotStart () 
+template <class T>
+void CouenneSolverInterface<T>::unmarkHotStart ()
 {OsiSolverInterface::unmarkHotStart();}
 
 
 /// Optimize starting from the hot start snapshot.
-template <class T> 
+template <class T>
 void CouenneSolverInterface<T>::solveFromHotStart () {
 
-  knowInfeasible_     = 
-  knowOptimal_        = 
+  knowInfeasible_     =
+  knowOptimal_        =
   knowDualInfeasible_ = false;
 
   resolve();
@@ -338,7 +338,7 @@ void CouenneSolverInterface<T>::solveFromHotStart () {
 
 /// Get the objective function value. Modified due to possible
 /// constant objectives passed to Couenne
-template <class T> 
+template <class T>
 inline double CouenneSolverInterface<T>::getObjValue() const {
   return cutgen_ -> Problem () -> constObjVal () + T::getObjValue();
 }

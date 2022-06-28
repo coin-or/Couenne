@@ -3,7 +3,7 @@
  * Name:    CouenneFPscipSolve.cpp
  * Authors: Timo Berthold, ZIB Berlin
  * Purpose: call SCIP
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -42,7 +42,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
   const SCIP_Real* coeffs;
   const SCIP_Real* lhss;
   const SCIP_Real* rhss;
-  const int* indices; 
+  const int* indices;
 
   SCIP_Real timelimit;
 
@@ -89,7 +89,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
   rowlengths = matrix -> getVectorLengths();
   coeffs     = matrix -> getElements();
   indices    = matrix -> getIndices();
-     
+
   // access tabuPool_ in this class
 
   if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_NLPHEURISTIC)) {
@@ -99,13 +99,13 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
   // initialize SCIP
   SCIP_CALL( SCIPcreate (&scip) );
   assert(scip != NULL);
-   
+
   // include default SCIP plugins
   SCIP_CALL( SCIPincludeDefaultPlugins(scip) );
 
   // include row cut constraint hanlder
   if( milpCuttingPlane_ == FP_CUT_INTEGRATED )
-    { 
+    {
       SCIP_CALL( SCIPincludeConshdlrRowcuts(scip, couenneCG_, milp_) );
     }
 
@@ -120,16 +120,16 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
   SCIP_CALL( SCIPallocMemoryArray(scip, &tabuvars      , 2*nvars) ); // fix to nvars + nIntvars
   SCIP_CALL( SCIPallocMemoryArray(scip, &tabubounds    , 2*nvars) );
   SCIP_CALL( SCIPallocMemoryArray(scip, &tabuboundtypes, 2*nvars) );
-     
+
   // one variable for objective !!!!!!!!!
 
-  // create variables 
+  // create variables
   for (int i=0; i<nvars; i++) {
 
-    char varname[SCIP_MAXSTRLEN];  
+    char varname[SCIP_MAXSTRLEN];
 
-    bool neglect = 
-      (i < problem_ -> nVars ()) && 
+    bool neglect =
+      (i < problem_ -> nVars ()) &&
       (problem_ -> Var (i) -> Multiplicity () <= 0);
 
     // check that all data is in valid ranges
@@ -143,10 +143,10 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 
     // all variables are named x_i
     (void) SCIPsnprintf(varname, SCIP_MAXSTRLEN, "x_%d", i);
-    SCIP_CALL( SCIPcreateVar(scip, &vars[i], varname, 
+    SCIP_CALL( SCIPcreateVar(scip, &vars[i], varname,
 			     CoinMin (lbs [i], ubs [i]),
 			     CoinMax (lbs [i], ubs [i]),
-			     objs [i], 
+			     objs [i],
 			     vartypes[i] == 0 ? SCIP_VARTYPE_CONTINUOUS : (vartypes[i] == 1 ? SCIP_VARTYPE_BINARY : SCIP_VARTYPE_INTEGER),
 			     TRUE, FALSE, NULL, NULL, NULL, NULL, NULL) );
 
@@ -154,7 +154,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
     SCIP_CALL( SCIPaddVar(scip, vars[i]) );
   }
 
-  for (std::set <CouenneFPsolution, compareSol>:: iterator i = tabuPool_ . begin (); 
+  for (std::set <CouenneFPsolution, compareSol>:: iterator i = tabuPool_ . begin ();
        i != tabuPool_ . end (); ++i) {
 
     const double *x = i -> x ();
@@ -165,7 +165,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 
     for (int j = 0; j < i -> n (); ++j) {
 
-      if (problem_ -> Var (j) -> isInteger () && 
+      if (problem_ -> Var (j) -> isInteger () &&
 	  (problem_ -> Var (j) -> Multiplicity () > 0) &&
 	  (fabs (ubs [j] - lbs [j]) > .5)) {
 
@@ -205,16 +205,16 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 	  tabubounds     [nEntries]   = x_rounded + 1.;
 	  tabuboundtypes [nEntries++] = SCIP_BOUNDTYPE_LOWER;
 	}
-      } 
+      }
     }
 
     if (nEntries != 0) {
 
       SCIP_CALL (SCIPcreateConsBounddisjunction (scip, &tabucons, "Tabu Solution", nEntries,
-						 tabuvars, tabuboundtypes, tabubounds,  
-						 TRUE,  TRUE,  TRUE,  TRUE,  TRUE, 
+						 tabuvars, tabuboundtypes, tabubounds,
+						 TRUE,  TRUE,  TRUE,  TRUE,  TRUE,
 						 FALSE, FALSE, FALSE, FALSE, FALSE));
-      
+
       SCIP_CALL( SCIPaddCons(scip, tabucons) );
       //SCIP_CALL (SCIPprintCons (scip, tabucons, NULL));
       SCIP_CALL (SCIPreleaseCons (scip, &tabucons));
@@ -234,11 +234,11 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
     checkInfinity(scip, rhss[i], infinity);
 
     // create an empty linear constraint
-    SCIP_CALL( SCIPcreateConsLinear(scip, &cons, consname, 0, NULL, NULL, lhss[i], rhss[i], 
+    SCIP_CALL( SCIPcreateConsLinear(scip, &cons, consname, 0, NULL, NULL, lhss[i], rhss[i],
 				    TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE) );
 
     // add variables to constraint
-    for(int j=rowstarts[i]; j<rowstarts[i]+rowlengths[i]; j++)        
+    for(int j=rowstarts[i]; j<rowstarts[i]+rowlengths[i]; j++)
       {
 	checkInfinity(scip, coeffs[j], infinity);
 	SCIP_CALL( SCIPaddCoefLinear(scip, cons, vars[indices[j]], coeffs[j]) );
@@ -246,9 +246,9 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 
     // add constraint to SCIP
     SCIP_CALL( SCIPaddCons(scip, cons) );
-    SCIP_CALL( SCIPreleaseCons(scip, &cons) );        
+    SCIP_CALL( SCIPreleaseCons(scip, &cons) );
   }
-  
+
   // determine the method to solve the MILP
   if (milpMethod_ == 0 && niter == 0)
     {
@@ -256,7 +256,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
       // deeper in the tree, we will solve the MILP by a FP heuristic
       if( depth == 0 )
 	currentmilpmethod = 2;
-      else 
+      else
 	currentmilpmethod = 4;
     }
   else if (milpMethod_ != 0)
@@ -268,27 +268,27 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 
     // reset parameters if MILP is solved agian
     SCIP_CALL( SCIPresetParams(scip) );
-        
+
     // deactivate SCIP output
     if (!(problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_WARNING, J_NLPHEURISTIC))) {
       SCIP_CALL( SCIPsetIntParam(scip, "display/verblevel", 0) );
     }
-        
+
     // do not abort subproblem on CTRL-C
     SCIP_CALL( SCIPsetBoolParam(scip, "misc/catchctrlc", FALSE) );
 
     // set time limit
     timelimit = problem_ -> getMaxCpuTime () - CoinCpuTime ();
 
-    if (timelimit < 0) 
+    if (timelimit < 0)
       break;
 
-    SCIP_CALL( SCIPsetRealParam(scip, "limits/time", timelimit) );        
+    SCIP_CALL( SCIPsetRealParam(scip, "limits/time", timelimit) );
 
     if (problem_ -> Jnlst () -> ProduceOutput (Ipopt::J_WARNING, J_NLPHEURISTIC)) {
       SCIPinfoMessage(scip, NULL, "using MILP method: %d\n",currentmilpmethod);
     }
-        
+
     // tune SCIP differently, depending on the chosen method to solve the MILP
     /// -1. MILP and stop at first solution found (similar to other FP implementations and mainly done for comparison with them)
     ///  0. Let Couenne choose
@@ -309,30 +309,30 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 	SCIP_CALL( SCIPsetIntParam(scip, "limits/bestsol", 1) );
 	break;
 
-      case 1: // Be aggressive in finding feasible solutions, but lazy about the dual bound. 
+      case 1: // Be aggressive in finding feasible solutions, but lazy about the dual bound.
 	// Set limits on overall nodes and stall nodes (nodes without incumbent improvement).
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/stallnodes", 1000) );
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/nodes", 10000) );
 	SCIP_CALL( SCIPsetRealParam   (scip, "limits/gap", .001) );
 
-	// disable expensive cutting plane separation 
+	// disable expensive cutting plane separation
 	//SCIP_CALL( SCIPsetSeparating(scip, SCIP_PARAMSETTING_FAST, TRUE) );
-        
-	// disable expensive presolving 
+
+	// disable expensive presolving
 	//SCIP_CALL( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
 
-	// use aggressive primal heuristics 
+	// use aggressive primal heuristics
 	SCIP_CALL( SCIPsetHeuristics(scip, SCIP_PARAMSETTING_AGGRESSIVE, TRUE) );
-        
+
 	// use best estimate node selection
 	/*
 	  if( SCIPfindNodesel(scip, "estimate") != NULL )
 	  {
-	    SCIP_CALL( SCIPsetIntParam(scip, "nodeselection/estimate/stdpriority", INT_MAX/4) ); 
+	    SCIP_CALL( SCIPsetIntParam(scip, "nodeselection/estimate/stdpriority", INT_MAX/4) );
 	  }
 	*/
 
-	// use inference branching 
+	// use inference branching
 	/*
 	  if( SCIPfindBranchrule(scip, "inference") != NULL )
 	  {
@@ -340,7 +340,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 	  }
 	*/
 
-	// disable conflict analysis 
+	// disable conflict analysis
 	/*
 	  SCIP_CALL( SCIPsetBoolParam(scip, "conflict/useprop", FALSE) );
 	  SCIP_CALL( SCIPsetBoolParam(scip, "conflict/useinflp", FALSE) );
@@ -366,16 +366,16 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
       case 3: // solve the MILP with RENS. Disable most other features, enable RENS
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/nodes", 1) );
 
-	// disable cutting plane separation 
+	// disable cutting plane separation
 	SCIP_CALL( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );
-        
-	// disable expensive presolving 
+
+	// disable expensive presolving
 	SCIP_CALL( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
 
-	// besides RENS, only use cheap heuristics 
+	// besides RENS, only use cheap heuristics
 	SCIP_CALL( SCIPsetHeuristics(scip, SCIP_PARAMSETTING_FAST, TRUE) );
 
-	// use inference branching 
+	// use inference branching
 	if( SCIPfindBranchrule(scip, "inference") != NULL )
 	  {
 	    SCIP_CALL( SCIPsetIntParam(scip, "branching/inference/priority", INT_MAX/4) );
@@ -388,7 +388,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 	    SCIP_CALL( SCIPsetRealParam(scip, "heuristics/rens/minfixingrate", 0.0) );
 	  }
 	if( milpCuttingPlane_ == FP_CUT_INTEGRATED )
-	  { 
+	  {
 	    SCIP_CALL( SCIPsetLongintParam(scip, "constraints/rowcuts/maxcuttingrounds", 0) );
 	  }
 	break;
@@ -396,16 +396,16 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
       case 4: // solve the MILP with Feasibility Pump. Disable most other features, enable stage 3 for feaspump
 	SCIP_CALL( SCIPsetLongintParam(scip, "limits/nodes", 1) );
 
-	// disable cutting plane separation 
+	// disable cutting plane separation
 	SCIP_CALL( SCIPsetSeparating(scip, SCIP_PARAMSETTING_OFF, TRUE) );
-        
-	// disable expensive presolving 
+
+	// disable expensive presolving
 	SCIP_CALL( SCIPsetPresolving(scip, SCIP_PARAMSETTING_FAST, TRUE) );
 
-	// besides feaspump, only use cheap heuristics 
+	// besides feaspump, only use cheap heuristics
 	SCIP_CALL( SCIPsetHeuristics(scip, SCIP_PARAMSETTING_FAST, TRUE) );
 
-	// use inference branching 
+	// use inference branching
 	if( SCIPfindBranchrule(scip, "inference") != NULL )
 	  {
 	    SCIP_CALL( SCIPsetIntParam(scip, "branching/inference/priority", INT_MAX/4) );
@@ -430,7 +430,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 	      }
 	  }
 	if( milpCuttingPlane_ == FP_CUT_INTEGRATED )
-	  { 
+	  {
 	    SCIP_CALL( SCIPsetLongintParam(scip, "constraints/rowcuts/maxcuttingrounds", 0) );
 	  }
 	break;
@@ -535,7 +535,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
     SCIP_CALL( SCIPwriteOrigProblem(scip, "debug.lp", NULL, FALSE) );
     SCIP_CALL( SCIPwriteParams(scip, "debug.set", FALSE,TRUE) );
 #endif
-     
+
     // solve the MILP
                                                 //   /|
                                                 //  / +---------+
@@ -568,7 +568,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
     }
 
     nscipsols =  SCIPgetNSols(scip);
-     
+
     // copy the solution
     if( nscipsols)
       {
@@ -601,12 +601,12 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 	cutoffbound = obj > 0 ? 2*obj : obj / 2.0;
 
 	// insert other SCIP solutions into solution pool
-	// do not store too many or too poor solutions 
-	for(int i=1; i<nscipsols && nstoredsols < 10 && 
+	// do not store too many or too poor solutions
+	for(int i=1; i<nscipsols && nstoredsols < 10 &&
 	      (objval = SCIPgetSolOrigObj(scip,scipsols[i])) <= cutoffbound; i++){
 
 	  double* tmpsol = new CouNumber [nvars];
-           
+
 	  // get solution values
 	  SCIP_CALL( SCIPgetSolVals(scip, scipsols[i], problem_ -> nVars (), vars, tmpsol) );
 	  CouenneFPsolution couennesol = CouenneFPsolution (problem_, tmpsol);
@@ -614,7 +614,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 	  delete [] tmpsol;
 
 	  // add solutions to the pool if they are not in the tabu list
-	  if (   tabuPool_      . find (couennesol) == tabuPool_      . end () 
+	  if (   tabuPool_      . find (couennesol) == tabuPool_      . end ()
 	      && pool_ -> Set (). find (couennesol) == pool_ -> Set() . end ()
 	      ){
 
@@ -632,7 +632,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
 	  {
 	    ++currentmilpmethod;
 	    *nsuciter = 0;
-	  }          
+	  }
       }
     //try to use a more aggressive, more expensive way to solve the MILP
     else if( milpMethod_ == 0 && currentmilpmethod > 1 )
@@ -646,7 +646,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
       }
     else {
 
-      obj = COIN_DBL_MAX;  
+      obj = COIN_DBL_MAX;
     }
 
   } while (solveagain);
@@ -654,7 +654,7 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
   ////////////////////////////////////////////////////////////////
 
  TERMINATION:
-   
+
   // release variables before freeing them
   for (int i=0; i<nvars; i++) {
     SCIP_CALL( SCIPreleaseVar(scip, &vars[i]) );
@@ -672,8 +672,8 @@ SCIP_RETCODE CouenneFeasPump::ScipSolve (const double *nSol, double* &sol, int n
   delete [] ubs;
 
   SCIP_CALL( SCIPfree(&scip) );
-   
-  BMScheckEmptyMemory();     
+
+  BMScheckEmptyMemory();
 
   return SCIP_OKAY;
 }

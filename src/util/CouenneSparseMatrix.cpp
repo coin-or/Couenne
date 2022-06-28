@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Clemson University
  * Purpose: Implementation of a sparse Matrix for use in distance
  *          measurements in Feasibility Pump
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -33,11 +33,11 @@ CouenneSparseMatrix::~CouenneSparseMatrix () {
   }
 }
 
-/// Copy constructor 
+/// Copy constructor
 CouenneSparseMatrix::CouenneSparseMatrix (const CouenneSparseMatrix &rhs)
 {operator= (rhs);}
 
-/// Assignment 
+/// Assignment
 CouenneSparseMatrix &CouenneSparseMatrix::operator= (const CouenneSparseMatrix &rhs) {
 
   num_ = rhs.num_;
@@ -50,5 +50,5 @@ CouenneSparseMatrix &CouenneSparseMatrix::operator= (const CouenneSparseMatrix &
 }
 
 /// Clone
-CouenneSparseMatrix *CouenneSparseMatrix::clone () 
+CouenneSparseMatrix *CouenneSparseMatrix::clone ()
 {return new CouenneSparseMatrix (*this);}

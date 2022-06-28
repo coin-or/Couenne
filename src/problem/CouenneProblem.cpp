@@ -36,11 +36,11 @@
 
 using namespace Couenne;
 
-/// methods to add objective function. 
+/// methods to add objective function.
 
 void CouenneProblem::addObjective (expression *newobj, const std::string &sense) {
   objectives_ . push_back
-    (new CouenneObjective ((sense == "min") ? 
+    (new CouenneObjective ((sense == "min") ?
 			   newobj : new exprOpp (new exprClone (newobj))));
 }
 
@@ -57,20 +57,20 @@ void CouenneProblem::addEQConstraint (expression *body, expression *rhs) {
 /// "greater than" constraint
 void CouenneProblem::addGEConstraint (expression *body, expression *rhs) {
   if (!rhs) rhs = new exprConst (0.);
-  constraints_ . push_back (new CouenneConstraint 
+  constraints_ . push_back (new CouenneConstraint
 			    (body, rhs, new exprConst (COUENNE_INFINITY)));
 }
 
 /// "smaller than" constraint
 void CouenneProblem::addLEConstraint (expression *body, expression *rhs) {
   if (!rhs) rhs = new exprConst (0.);
-  constraints_ . push_back (new CouenneConstraint 
+  constraints_ . push_back (new CouenneConstraint
 			    (body, new exprConst (-COUENNE_INFINITY), rhs));
 }
 
 /// Add (non linear) objective function
 void CouenneProblem::setObjective (int indObj, expression * newObj, const std::string &sense) {
-  objectives_ [indObj] = (new CouenneObjective ((sense == "min") ? 
+  objectives_ [indObj] = (new CouenneObjective ((sense == "min") ?
 						newObj : new exprOpp (new exprClone (newObj))));
 }
 
@@ -88,13 +88,13 @@ void CouenneProblem::addRNGConstraint (expression *body, expression *lb, express
 
 expression *CouenneProblem::addVariable (bool isDiscrete, Domain *d) {
 
-  exprVar *var = (isDiscrete) ? 
+  exprVar *var = (isDiscrete) ?
     (new exprIVar (variables_ . size (), d)) :
     (new exprVar  (variables_ . size (), d));
 
   variables_ . push_back (var);
 
-  if (isDiscrete) 
+  if (isDiscrete)
     nIntVars_++;
 
   nOrigVars_++;
@@ -120,7 +120,7 @@ exprAux *CouenneProblem::addAuxiliary (expression *symbolic) {
   exprAux *w = new exprAux (symbolic,
 			    var_ind,
 			    1 + symbolic -> rank (),
-			    exprAux::Unset, 
+			    exprAux::Unset,
 			    &domain_);
   //symbolic -> isInteger () ? exprAux::Integer : exprAux::Continuous);
 
@@ -147,7 +147,7 @@ exprAux *CouenneProblem::addAuxiliary (expression *symbolic) {
 
 
 /// translates pair (indices, coefficients) into vector with pointers to variables
-void CouenneProblem::indcoe2vector (int *indexL, 
+void CouenneProblem::indcoe2vector (int *indexL,
 				    CouNumber *coeff,
 				    std::vector <std::pair <exprVar *, CouNumber> > &lcoeff) {
   // TODO: sort
@@ -265,7 +265,7 @@ void CouenneProblem::fillIntegerRank () const {
 
 //   domain_ . current () -> resize (nNew);
 
-//   // post-rescan: update 
+//   // post-rescan: update
 //   //
 //   // numbering_
 //   // domain_
@@ -285,7 +285,7 @@ CouNumber *CouenneProblem::getCutOffSol () const
 {return pcutoff_ -> getCutOffSol ();}
 
 /// Provide Journalist
-ConstJnlstPtr CouenneProblem::Jnlst () const 
+ConstJnlstPtr CouenneProblem::Jnlst () const
 {return ConstPtr (jnlst_);}
 
 // set lastPrioSort_

@@ -3,7 +3,7 @@
  * Name:    dsyevx_rapper.cpp
  * Authors: Andrea Qualizza
  *          Pietro Belotti
- * Purpose: 
+ * Purpose:
  *
  * This file is licensed under the Eclipse Public License (EPL)
  */
@@ -42,11 +42,11 @@ extern "C" {
 				  int    *);
 }
 
-int dsyevx_interface (int n, double *A, int &m, 
-		      double * &w, 
-		      double * &z, // output values 
+int dsyevx_interface (int n, double *A, int &m,
+		      double * &w,
+		      double * &z, // output values
 		      double tolerance,
-		      double lb_ev, 
+		      double lb_ev,
 		      double ub_ev,
 		      int firstidx,
 		      int lastidx) {
@@ -82,8 +82,8 @@ int dsyevx_interface (int n, double *A, int &m,
   int info; // output status
 
   int *ifail = new int [n];
-  int *iwork = new int [5*n]; 
- 
+  int *iwork = new int [5*n];
+
   double abstol = tolerance;	// absolute tolerance
   double vl     = lb_ev;	// minimum eigenvalue wanted
   double vu     = ub_ev;	// maximum
@@ -95,10 +95,10 @@ int dsyevx_interface (int n, double *A, int &m,
 
   COUENNE_LAPACK_FUNC
     (dsyevx,DSYEVX)
-    (&jobz, &range, &uplo, &n, 
-     A, &lda, 
+    (&jobz, &range, &uplo, &n,
+     A, &lda,
      &vl, &vu, &il, &iu,
-     &abstol, &m, 
+     &abstol, &m,
      w, z, &ldz, work, &lwork, iwork, ifail, &info);
 
   if (info) {

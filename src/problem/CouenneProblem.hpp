@@ -102,7 +102,7 @@ class Nauty;
     // 		  if(a.get_ub() < b.get_ub())
     // 		    is_less = 1;
     // 		  else{
-    // 		    if(a.get_ub() == b.get_ub()) {		    
+    // 		    if(a.get_ub() == b.get_ub()) {		
     // 		      if(a.get_index() < b.get_index())
     // 			is_less = 1;
     // 		    }
@@ -117,8 +117,8 @@ class Nauty;
 
     }
   } ;
-    
-      
+
+
   struct myclass {
     inline bool operator() (const  Node &a, const Node &b) const {
       return (a.get_index() < b.get_index() );
@@ -197,7 +197,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   std::vector <CouenneConstraint *> constraints_; ///< Constraints
 
   /// AMPL's common expressions (read from AMPL through structures cexps and cexps1)
-  std::vector <expression *> commonexprs_; 
+  std::vector <expression *> commonexprs_;
 
   mutable Domain domain_; ///< current point and bounds;
 
@@ -328,7 +328,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   /// Branch-and-Bound
   bool checkAuxBounds_;
 
-  /// return type of decomposition of quadrilinear terms    
+  /// return type of decomposition of quadrilinear terms
   enum TrilinDecompType trilinDecompType_;
 
   /// constant value of the objective if no variable is declared in it
@@ -343,7 +343,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   CouenneBTPerfIndicator *OBBTperfIndicator_;
 
   /// Return particular constraint class. Classes:
-  /// 
+  ///
   /// 1) "convex": convex constraints;
   /// 2) "PSDcon": constraints of the form X \succeq 0
   /// 3) "normal": regular constraints
@@ -353,7 +353,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   /// generated DURING standardization, but necessary to avoid
   /// meddling with different spaces
   CouenneSdpCuts *sdpCutGen_;
-  
+
  public:
 
   CouenneProblem  (ASL * = NULL,
@@ -378,7 +378,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   inline int nOrigIntVars () const {return nOrigIntVars_;}             ///< Number of original integers
   inline int nIntVars     () const {return nIntVars_;}                 ///< Number of integer variables
   inline int nVars        () const {return (int) variables_. size ();} ///< Total number of variables
-  
+
   void setNDefVars (int ndefined__) {ndefined_ = ndefined__;}
 
   // Symmetry Info
@@ -387,7 +387,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   mutable std::vector<Node> node_info;
   mutable Nauty *nauty_info;
 
-  myclass0  node_sort; 
+  myclass0  node_sort;
   myclass index_sort;
 
   void sym_setup();
@@ -402,8 +402,8 @@ class COUENNELIB_EXPORT CouenneProblem {
 
   /// empty if no NTY, symmetry data structure setup otherwise
   void setupSymmetry ();
-  
-  /// get evaluation order index 
+
+  /// get evaluation order index
   inline int evalOrder (int i) const
   {return numbering_ [i];}
 
@@ -416,25 +416,25 @@ class COUENNELIB_EXPORT CouenneProblem {
   inline CouenneObjective  *Obj (int i) const {return objectives_  [i];} ///< i-th objective
 
   /// Return pointer to i-th variable
-  inline exprVar *Var   (int i) const 
+  inline exprVar *Var   (int i) const
   {return variables_ [i];}
 
   /// Return vector of variables (symbolic representation)
-  inline std::vector <exprVar *> &Variables () 
+  inline std::vector <exprVar *> &Variables ()
   {return variables_;}
 
   /// Return pointer to set for comparisons
-  inline std::set <exprAux *, compExpr> *& AuxSet () 
+  inline std::set <exprAux *, compExpr> *& AuxSet ()
   {return auxSet_;}
 
   /// Return pointer to dependence graph
-  inline DepGraph *getDepGraph () 
+  inline DepGraph *getDepGraph ()
   {return graph_;}
 
   /// return current point & bounds
   inline Domain *domain () const
   {return &domain_;}
-  
+
   inline std::vector <expression *>& commonExprs() { return commonexprs_; }
 
   // Get and set current variable and bounds
@@ -452,7 +452,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   CouNumber    bestObj () const {return bestObj_;} ///< Objective of best known solution
 
   /// Get vector of commuted variables
-  bool *&Commuted () 
+  bool *&Commuted ()
   {return commuted_;}
 
   /// Add (non linear) objective function
@@ -462,7 +462,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   void addEQConstraint  (expression *, expression * = NULL); ///< Add equality constraint \f$ h(x) = b\f$
   void addGEConstraint  (expression *, expression * = NULL); ///< Add \f$\ge\f$ constraint, \f$h(x)\ge b\f$
   void addLEConstraint  (expression *, expression * = NULL); ///< Add \f$\le\f$ constraint, \f$h(x)\le b\f$
-  void addRNGConstraint (expression *, expression * = NULL, 
+  void addRNGConstraint (expression *, expression * = NULL,
 			               expression * = NULL); ///< Add range constraint, \f$a\le h(x)\le b\f$
 
   /// Add (non linear) objective function
@@ -509,7 +509,7 @@ class COUENNELIB_EXPORT CouenneProblem {
 
   /// Write nonlinear problem to a .mod file (with lots of defined
   /// variables)
-  /// 
+  ///
   /// @param fname Name of the .mod file to be written
   ///
   /// @param aux controls the use of auxiliaries. If true, a problem
@@ -522,7 +522,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   void writeAMPL (const std::string &fname, bool aux);
 
   /// Write nonlinear problem to a .gms file
-  /// 
+  ///
   /// @param fname Name of the .gams file to be written.
   void writeGAMS (const std::string &fname);
 
@@ -542,7 +542,7 @@ class COUENNELIB_EXPORT CouenneProblem {
 
   /// tighten bounds using propagation, implied bounds and reduced costs
   bool boundTightening (t_chg_bounds *,
-			const CglTreeInfo info, 
+			const CglTreeInfo info,
 			Bonmin::BabInfo * = NULL) const;
 
   /// core of the bound tightening procedure
@@ -560,7 +560,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   /// portions of the solution space by fathoming on
   /// bounds/infeasibility
   bool aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
-		     t_chg_bounds *, 
+		     t_chg_bounds *,
 		     const CglTreeInfo &info,
 		     Bonmin::BabInfo * = NULL) const;
 
@@ -573,7 +573,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   /// \f$x\f$ in an expression \f$w = f(x)\f$ to the bounds of \f$w\f$.
   int tightenBounds (t_chg_bounds *) const;
 
-  /// "Backward" bound tightening, aka implied bounds. 
+  /// "Backward" bound tightening, aka implied bounds.
   int impliedBounds (t_chg_bounds *) const;
 
   /// Look for quadratic terms to be used with SDP cuts
@@ -586,7 +586,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   /// as argument
   void auxiliarize (exprVar *, exprVar * = NULL);
 
-  /// Set cutoff 
+  /// Set cutoff
   void setCutOff (CouNumber cutoff, const CouNumber *sol = NULL) const;
 
   /// Reset cutoff
@@ -618,8 +618,8 @@ class COUENNELIB_EXPORT CouenneProblem {
   static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions);
 
   /// standardization of linear exprOp's
-  exprAux *linStandardize (bool addAux, 
-			   CouNumber c0, 
+  exprAux *linStandardize (bool addAux,
+			   CouNumber c0,
 			   LinMap  &lmap,
 			   QuadMap &qmap);
 
@@ -657,7 +657,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   /// return problem name
   const std::string &problemName () const
   {return problemName_;}
-  
+
   void setProblemName(std::string& problemName__)
   { problemName_ = problemName__; }
 
@@ -671,7 +671,7 @@ class COUENNELIB_EXPORT CouenneProblem {
 
   /// find SOS constraints in problem
   int findSOS (CbcModel *CbcModelPtr,
-	       OsiSolverInterface *solver, 
+	       OsiSolverInterface *solver,
 	       OsiObject ** objects);
 
   /// set maximum CPU time
@@ -697,7 +697,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   void restoreUnusedOriginals (CouNumber * = NULL) const;
 
   /// return indices of neglected redundant variables
-  int *unusedOriginalsIndices () 
+  int *unusedOriginalsIndices ()
   {return unusedOriginalsIndices_;}
 
   /// number of unused originals
@@ -719,7 +719,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   /// set the value for checkAuxBounds. When true, all MINLP feasible
   /// solutions will additionally be tested for feasibility with
   /// respect to auxiliary variable bounds. This is normally not needed.
-  void setCheckAuxBounds (bool value) 
+  void setCheckAuxBounds (bool value)
   {checkAuxBounds_ = value;}
 
   /// return true if bounds of auxiliary variables have to be satisfied
@@ -727,7 +727,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   bool checkAuxBounds () const
   {return checkAuxBounds_;}
 
-  /// return type of decomposition of quadrilinear terms    
+  /// return type of decomposition of quadrilinear terms
   enum TrilinDecompType getTrilinDecompType ()
   {return trilinDecompType_;}
 
@@ -756,22 +756,22 @@ protected:
 		    t_chg_bounds *f_chg) const;
 
   /// Optimality Based Bound Tightening -- inner loop
-  int obbtInner (OsiSolverInterface *, 
+  int obbtInner (OsiSolverInterface *,
 		 OsiCuts &,
-		 t_chg_bounds *, 
+		 t_chg_bounds *,
 		 Bonmin::BabInfo *) const;
 
-  int obbt_iter (OsiSolverInterface *csi, 
-		 t_chg_bounds *chg_bds, 
-		 const CoinWarmStart *warmstart, 
+  int obbt_iter (OsiSolverInterface *csi,
+		 t_chg_bounds *chg_bds,
+		 const CoinWarmStart *warmstart,
 		 Bonmin::BabInfo *babInfo,
 		 double *objcoe,
-		 int sense, 
+		 int sense,
 		 int index) const;
 
-  int call_iter (OsiSolverInterface *csi, 
-		 t_chg_bounds *chg_bds, 
-		 const CoinWarmStart *warmstart, 
+  int call_iter (OsiSolverInterface *csi,
+		 t_chg_bounds *chg_bds,
+		 const CoinWarmStart *warmstart,
 		 Bonmin::BabInfo *babInfo,
 		 double *objcoe,
 		 enum nodeType type,
@@ -780,14 +780,14 @@ protected:
   /// analyze sparsity of potential exprQuad/exprGroup and change
   /// linear/quadratic maps accordingly, if necessary by adding new
   /// auxiliary variables and including them in the linear map
-  void analyzeSparsity (CouNumber, 
+  void analyzeSparsity (CouNumber,
 			LinMap &,
 			QuadMap &);
 
   /// re-organizes multiplication and stores indices (and exponents) of
   /// its variables
-  void flattenMul (expression *mul, 
-		   CouNumber &coe, 
+  void flattenMul (expression *mul,
+		   CouNumber &coe,
 		   std::map <int, CouNumber> &indices);
 
   /// clear all spurious variables pointers not referring to the variables_ vector
@@ -800,8 +800,8 @@ protected:
   void fillIntegerRank () const;
 
   /// Test fixing of an integer variable (used in getIntegerCandidate())
-  int testIntFix (int index, 
-		  CouNumber xFrac, 
+  int testIntFix (int index,
+		  CouNumber xFrac,
 		  enum fixType *fixed,
 		  CouNumber *xInt,
 		  CouNumber *dualL, CouNumber *dualR,
@@ -810,15 +810,15 @@ protected:
 
 public:
 
-  /// 
-  inline int getLastPrioSort() const 
+  ///
+  inline int getLastPrioSort() const
   {return lastPrioSort_;}
 
   ///
   void setLastPrioSort (int givenLastPS);
 
   /// returns recorded best solution
-  inline CouenneRecordBestSol *getRecordBestSol() const 
+  inline CouenneRecordBestSol *getRecordBestSol() const
   {return recBSol;}
 
   /// returns feasibility tolerance
@@ -827,13 +827,13 @@ public:
   /// Recompute objective value for sol
   double checkObj(const CouNumber *sol, const double &precision) const;
 
-  /// check integrality of vars in sol with index between from and upto 
-  /// (original vars only if origVarOnly == true); 
+  /// check integrality of vars in sol with index between from and upto
+  /// (original vars only if origVarOnly == true);
   /// return true if all integer vars are within precision of an integer value
   bool checkInt(const CouNumber *sol,
-		const int from, const int upto, 
+		const int from, const int upto,
 		const std::vector<int> listInt,
-		const bool origVarOnly, 
+		const bool origVarOnly,
 		const bool stopAtFirstViol,
 		const double precision, double &maxViol) const;
 
@@ -855,29 +855,29 @@ public:
   /// Return true if either solution or recomputed_solution obtained
   /// using getAuxs() from the original variables in solution is feasible
   /// within precision (the solution with minimum violation is then stored
-  /// in recBSol->modSol, as well as its value and violation); 
+  /// in recBSol->modSol, as well as its value and violation);
   /// return false otherwise.
   /// If stopAtFirstViol == true, recBSol->modSol is meaningless upon return.
   /// If stopAtFirstViol == false, recBSol->modSol contains the solution
-  /// with minimum violation, although this violation might be larger than 
+  /// with minimum violation, although this violation might be larger than
   /// precision.
   /// This is useful for cases where the current solution must be considered
-  /// valid (e.g., because Cbc is going to accept it anyway), although it 
+  /// valid (e.g., because Cbc is going to accept it anyway), although it
   /// violates precision requirements.
 
   /// Value of obj matters only if careAboutObj == true;
   /// the code then tries to balance violation of constraints and
   /// value of objective.
 
-  /// if checkAll = false, check only integrality/bounds for 
+  /// if checkAll = false, check only integrality/bounds for
   /// original vars and constraints; consider only recomputed_sol
   /// if checkAll == true, check also integrality/bounds on auxs;
   /// consider both recomputed_sol and solution
 
-  /// if careAboutObj is set to true, then stopAtFirstViol must be set to 
+  /// if careAboutObj is set to true, then stopAtFirstViol must be set to
   /// false too.
   bool checkNLP2 (const double *solution,
-		  const double obj, 
+		  const double obj,
 		  const bool careAboutObj,
 		  const bool stopAtFirstViol,
 		  const bool checkAll,
@@ -893,7 +893,7 @@ public:
 	         const double precision     = -1) const; // if -1 then use feas_tolerance_
 
   /// return particular constraint class. Classes:
-  /// 
+  ///
   /// 1) "convex": convex constraints;
   /// 2) "PSDcon": constraints of the form X \succeq 0
   /// 3) "normal": regular constraints

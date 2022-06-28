@@ -1,13 +1,13 @@
 /*
  *
  * @file   cons_rowcuts.c
- * @ingroup CONSHDLRS 
+ * @ingroup CONSHDLRS
  * @brief  constraint handler for rowcuts constraints
  *         enables separation of convexification cuts during SCIP solution procedure
  * @author Pietro Belotti
  * @author Timo Berthold
  * @license This file is licensed under the Eclipse Public License (EPL)
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -101,8 +101,8 @@ SCIP_RETCODE checkRowcuts(
    conshdlrdata -> milp -> setColSolution(sol);
 
    /* let Couenne generate linearization cuts */
-   problem -> domain () -> push (problem -> nVars (), sol, 
-				 problem -> domain () -> current () -> lb (), 
+   problem -> domain () -> push (problem -> nVars (), sol,
+				 problem -> domain () -> current () -> lb (),
 				 problem -> domain () -> current () -> ub ());
    conshdlrdata -> cutgenerator -> genRowCuts (*(conshdlrdata->milp), cs, 0, NULL);
    problem -> domain () -> pop  ();
@@ -112,15 +112,15 @@ SCIP_RETCODE checkRowcuts(
       *result = (cs.sizeRowCuts() == 0) ? SCIP_FEASIBLE : SCIP_INFEASIBLE;
       return SCIP_OKAY;
    }
-   
-   for( i = 0; i < cs.sizeRowCuts(); i++ ) 
+
+   for( i = 0; i < cs.sizeRowCuts(); i++ )
    {
       CoinPackedVector row;
 
       SCIP_CONS* cons;
       SCIP_VAR** vars;
 
-      char consname[SCIP_MAXSTRLEN];  
+      char consname[SCIP_MAXSTRLEN];
       SCIP_Real* vals;
       int* idxs;
 
@@ -132,39 +132,39 @@ SCIP_RETCODE checkRowcuts(
 
       /* get the row corresponding to the cut */
       lhs = cs.rowCut(i).lb();
-      rhs = cs.rowCut(i).ub();      
+      rhs = cs.rowCut(i).ub();
       row = cs.rowCut(i).row();
 
       /* get row data */
       nvals = row.getNumElements();
       idxs = row.getIndices();
-      vals = row.getElements(); 
-      
+      vals = row.getElements();
+
       (void) SCIPsnprintf(consname, SCIP_MAXSTRLEN, "rowcut", i);
 
       /* create an empty linear constraint */
-      SCIP_CALL_ABORT( SCIPcreateConsLinear(scip, &cons, consname, 0, NULL, NULL, lhs, rhs, 
+      SCIP_CALL_ABORT( SCIPcreateConsLinear(scip, &cons, consname, 0, NULL, NULL, lhs, rhs,
             TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE) );
 
       /* get SCIP variable array */
-      vars = SCIPgetVars(scip);      
+      vars = SCIPgetVars(scip);
 
       /* add variables to constraint */
       for( j = 0; j < nvals; j++ )
       {
          SCIP_CALL( SCIPaddCoefLinear(scip, cons, vars[idxs[j]], vals[j]) );
       }
-      
+
       /* add constraint to SCIP */
       SCIP_CALL( SCIPaddCons(scip, cons) );
 #if 0
        SCIP_CALL( SCIPprintCons(scip,cons,NULL) );
 #endif
-      SCIP_CALL( SCIPreleaseCons(scip, &cons) );        
+      SCIP_CALL( SCIPreleaseCons(scip, &cons) );
 
       *result = SCIP_CONSADDED;
    }
-   
+
    /* store cuts to MILP data structure */
    if (cs.sizeRowCuts ()) {
       conshdlrdata -> milp -> applyCuts (cs);
@@ -193,7 +193,7 @@ SCIP_DECL_CONSFREE(consFreeRowcuts)
    /* get constraint handler data */
    conshdlrdata = SCIPconshdlrGetData(conshdlr);
    assert(conshdlrdata != NULL);
-   
+
    /* free constraint handler data */
    SCIPfreeMemory(scip, &conshdlrdata);
    SCIPconshdlrSetData(conshdlr, NULL);
@@ -222,7 +222,7 @@ SCIP_DECL_CONSFREE(consFreeRowcuts)
 /** frees specific constraint data */
 #define consDeleteRowcuts NULL
 
-/** transforms constraint data into data belonging to the transformed problem */ 
+/** transforms constraint data into data belonging to the transformed problem */
 #define consTransRowcuts NULL
 
 /** LP initialization method of constraint handler */
@@ -428,16 +428,16 @@ SCIP_RETCODE SCIPincludeConshdlrRowcuts(
    /* include constraint handler */
    SCIP_CALL( SCIPincludeConshdlr(scip, CONSHDLR_NAME, CONSHDLR_DESC,
          CONSHDLR_SEPAPRIORITY, CONSHDLR_ENFOPRIORITY, CONSHDLR_CHECKPRIORITY,
-         CONSHDLR_SEPAFREQ, CONSHDLR_PROPFREQ, CONSHDLR_EAGERFREQ, CONSHDLR_MAXPREROUNDS, 
+         CONSHDLR_SEPAFREQ, CONSHDLR_PROPFREQ, CONSHDLR_EAGERFREQ, CONSHDLR_MAXPREROUNDS,
          CONSHDLR_DELAYSEPA, CONSHDLR_DELAYPROP, CONSHDLR_DELAYPRESOL, CONSHDLR_NEEDSCONS,
          SCIP_PROPTIMING_BEFORELP,
          conshdlrCopyRowcuts,
-         consFreeRowcuts, consInitRowcuts, consExitRowcuts, 
+         consFreeRowcuts, consInitRowcuts, consExitRowcuts,
          consInitpreRowcuts, consExitpreRowcuts, consInitsolRowcuts, consExitsolRowcuts,
          consDeleteRowcuts, consTransRowcuts, consInitlpRowcuts,
-         consSepalpRowcuts, consSepasolRowcuts, consEnfolpRowcuts, consEnfopsRowcuts, consCheckRowcuts, 
+         consSepalpRowcuts, consSepasolRowcuts, consEnfolpRowcuts, consEnfopsRowcuts, consCheckRowcuts,
          consPropRowcuts, consPresolRowcuts, consRespropRowcuts, consLockRowcuts,
-         consActiveRowcuts, consDeactiveRowcuts, 
+         consActiveRowcuts, consDeactiveRowcuts,
          consEnableRowcuts, consDisableRowcuts, NULL,
          consPrintRowcuts, consCopyRowcuts, consParseRowcuts,
          conshdlrdata) );

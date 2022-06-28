@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: compute bounds on quadratic form without the contribution of a single variable
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -27,11 +27,11 @@ void updateInf (CouNumber coe, CouNumber lb, CouNumber ub, int &indInf1, int &in
 // compute bound of a quadratic expression neglecting the infinite
 // bounds of single variables
 
-void exprQuad::computeQuadFiniteBound (CouNumber &qMin, 
-				       CouNumber &qMax, 
-				       CouNumber *l, 
+void exprQuad::computeQuadFiniteBound (CouNumber &qMin,
+				       CouNumber &qMax,
+				       CouNumber *l,
 				       CouNumber *u,
-				       int &indInfLo, 
+				       int &indInfLo,
 				       int &indInfUp) {
 
   // linear terms ///////////////////////////////////////////////////
@@ -40,9 +40,9 @@ void exprQuad::computeQuadFiniteBound (CouNumber &qMin,
 
     int ind = el -> first -> Index ();
 
-    CouNumber 
+    CouNumber
       coe = el -> second,
-      li  = l [ind], 
+      li  = l [ind],
       ui  = u [ind];
 
     if (coe < 0) { // negative coefficient
@@ -80,7 +80,7 @@ void exprQuad::computeQuadFiniteBound (CouNumber &qMin,
 
       int j = col -> first -> Index ();
 
-      CouNumber 
+      CouNumber
 	coe = col -> second,
 	lbi = l [i],
 	ubi = u [i];
@@ -120,7 +120,7 @@ void exprQuad::computeQuadFiniteBound (CouNumber &qMin,
 	if (ubi >  COUENNE_INFINITY) updateInf (coe, lbj, ubj, indInfLo, indInfUp, i);
 	if (ubj >  COUENNE_INFINITY) updateInf (coe, lbi, ubi, indInfLo, indInfUp, j);
 
-	CouNumber term, 
+	CouNumber term,
 	  b1 = coe * lbi * lbj,
 	  b2 = coe * lbi * ubj,
 	  b3 = coe * ubi * lbj,

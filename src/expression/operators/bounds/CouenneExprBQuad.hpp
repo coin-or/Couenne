@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of operators to compute lower/upper bounds of quadratic forms
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -26,13 +26,13 @@ class exprLBQuad: public expression {
  public:
 
   /// Constructor
-  exprLBQuad (exprQuad *ref): 
+  exprLBQuad (exprQuad *ref):
     ref_ (ref) {}
 
   /// copy constructor
-  exprLBQuad (const exprLBQuad &src, Domain *d = NULL): 
-    ref_ (dynamic_cast <exprQuad *> (src.ref_ -> isaCopy () ? 
-				     src.ref_ -> Copy () -> clone (d) : 
+  exprLBQuad (const exprLBQuad &src, Domain *d = NULL):
+    ref_ (dynamic_cast <exprQuad *> (src.ref_ -> isaCopy () ?
+				     src.ref_ -> Copy () -> clone (d) :
 				     src.ref_ -> clone (d))) {}
 
   /// destructor
@@ -43,7 +43,7 @@ class exprLBQuad: public expression {
   {return new exprLBQuad (*this, d);}
 
   /// function for the evaluation of the expression
-  inline CouNumber operator () () 
+  inline CouNumber operator () ()
   {return ref_ -> computeQBound (-1);}
 
   /// I/O
@@ -64,13 +64,13 @@ class exprUBQuad: public expression {
  public:
 
   /// Constructor
-  exprUBQuad (exprQuad *ref): 
+  exprUBQuad (exprQuad *ref):
     ref_ (ref) {}
 
   /// copy constructor
-  exprUBQuad (const exprUBQuad &src, Domain *d = NULL): 
-    ref_ (dynamic_cast <exprQuad *> (src.ref_ -> isaCopy () ? 
-				     src.ref_ -> Copy () -> clone (d) : 
+  exprUBQuad (const exprUBQuad &src, Domain *d = NULL):
+    ref_ (dynamic_cast <exprQuad *> (src.ref_ -> isaCopy () ?
+				     src.ref_ -> Copy () -> clone (d) :
 				     src.ref_ -> clone (d))) {}
 
   /// destructor
@@ -81,7 +81,7 @@ class exprUBQuad: public expression {
   {return new exprUBQuad (*this, d);}
 
   /// function for the evaluation of the expression
-  inline CouNumber operator () () 
+  inline CouNumber operator () ()
   {return ref_ -> computeQBound (1);}
 
   /// I/O

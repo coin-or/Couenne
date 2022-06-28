@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: turn OsiCuts objects into coefficient matrix and rhs vector
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -59,22 +59,22 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
   // count bound constraints in column cuts
   for (int i=nccuts; i--;) {
     OsiColCut *cut = cuts -> colCutPtr (i);
-    ncC += 
-      cut -> lbs ().getNumElements () + 
+    ncC +=
+      cut -> lbs ().getNumElements () +
       cut -> ubs ().getNumElements ();
   }
 
-  int 
+  int
      nnz     = 2 * (nnzR + 2*nrcuts + 3*ncC),
     *indices = new int [nnz],
     *start   = new int [nrcuts + ncC + 1],
      curel   = 0,
      nCuts   = 2*(nrcuts + ncC);
 
-  double 
+  double
     *elements = new double [nnz],    // for row cuts + col cuts
     *collb    = new double [nCuts],  // lower bounds for new columns
-    *colub    = new double [nCuts],  // upper 
+    *colub    = new double [nCuts],  // upper
     *obj      = new double [nCuts];  // objective coefficient (zero)
 
   // trivial, lower/upper bounds and objective coefficients
@@ -97,7 +97,7 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
 
     // lower bounds
     const int
-      *lind = lbs. getIndices (), 
+      *lind = lbs. getIndices (),
        nlcc = lbs. getNumElements ();
     const double *lele = lbs. getElements ();
 
@@ -106,7 +106,7 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
       if (couenneCG_ -> Problem () -> Var (*lind) -> Multiplicity () > 0) {
 	*start++ = curel;
 	*elements++ = -1.;           *indices++ = displRow + *lind;
-	if (fabs (*lele) > COUENNE_EPS) 
+	if (fabs (*lele) > COUENNE_EPS)
 	  {*elements++ = -*lele;     *indices++ = displRhs; curel++;}
 	*elements++ =  1.;           *indices++ = ncgrow;
 	curel += 2;
@@ -114,7 +114,7 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
 
     // upper bounds
     const int
-      *uind = ubs. getIndices (), 
+      *uind = ubs. getIndices (),
        nucc = ubs. getNumElements ();
     const double *uele = ubs. getElements ();
 
@@ -122,7 +122,7 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
       if (couenneCG_ -> Problem () -> Var (*uind) -> Multiplicity () > 0) {
 	*start++ = curel;
 	*elements++ =  1.;          *indices++ = displRow + *uind;
-	if (fabs (*uele) > COUENNE_EPS) 
+	if (fabs (*uele) > COUENNE_EPS)
 	  {*elements++ = *uele;     *indices++ = displRhs; curel++;}
 	*elements++ =  1.;          *indices++ = ncgrow;
 	curel += 2;
@@ -133,7 +133,7 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
 
   elements = saveEl;
   indices  = saveInd;
-    
+
   //elements -= (3 * ncols);
   //indices  -= (3 * ncols);
   start    -= ncols;
@@ -148,9 +148,9 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
 
     printf ("start: "); for (int i=0; i<=ncols; i++) printf ("%d ", start [i]);
 
-    printf ("\nElements:\n"); 
+    printf ("\nElements:\n");
     for (int i=0, j=0; i<ncols; i++) {
-      for (int k=0; k<start[i+1] - start[i]; k++, j++) 
+      for (int k=0; k<start[i+1] - start[i]; k++, j++)
 	printf ("(%d %g) ", indices [j], elements [j]);
       printf ("\n");
     }
@@ -164,18 +164,18 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
 
     const CoinPackedVector &row = cut -> row ();
 
-    const double 
+    const double
       rhs    = cut -> rhs   (),
       rng    = cut -> range (),
       *rowEl = row. getElements ();
 
-    const int 
+    const int
       *rowIn = row. getIndices (),
       rowNE  = row. getNumElements ();
 
     switch (cut -> sense ()) {
 
-    case 'L': 
+    case 'L':
 
       start [ncols++] = curel;
       CoinCopyDisp (rowIn, rowNE, indices  + curel, displRow);
@@ -239,9 +239,9 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
 
     printf ("start: "); for (int i=0; i<=ncols; i++) printf ("%d ", start [i]);
 
-    printf ("\nElements:\n"); 
+    printf ("\nElements:\n");
     for (int i=0, j=0; i<ncols; i++) {
-      for (int k=0; k<start[i+1] - start[i]; k++, j++) 
+      for (int k=0; k<start[i+1] - start[i]; k++, j++)
 	printf ("(%d %g) ", indices [j], elements [j]);
       printf ("\n");
     }
@@ -251,22 +251,22 @@ int CouenneDisjCuts::OsiCuts2MatrVec (OsiSolverInterface *cglp,
 
     const CoinPackedMatrix *m = cglp->getMatrixByCol();
 
-    printf ("before: size_ = %d, start [%d] = %d\n", 
-	    m -> getNumElements (), 
+    printf ("before: size_ = %d, start [%d] = %d\n",
+	    m -> getNumElements (),
 	    m -> getSizeVectorLengths(),
 	    m -> getVectorStarts () [m -> getSizeVectorLengths()]);
   }
 
   cglp -> addCols (ncols,    start,
 		   indices,  elements,
-		   collb,    colub,   
+		   collb,    colub,
 		   obj);
 
   if (jnlst_ -> ProduceOutput (J_MATRIX, J_DISJCUTS)) {
 
     const CoinPackedMatrix *m = cglp->getMatrixByCol();
-    printf ("after: size_ = %d, start [%d] = %d\n", 
-	    m -> getNumElements (), 
+    printf ("after: size_ = %d, start [%d] = %d\n",
+	    m -> getNumElements (),
 	    m -> getSizeVectorLengths(),
 	    m -> getVectorStarts () [m -> getSizeVectorLengths()]);
   }

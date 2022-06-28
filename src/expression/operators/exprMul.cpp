@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of multiplications
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -25,7 +25,7 @@
 using namespace Couenne;
 
 /// Constructors, destructor
-exprMul::exprMul  (expression **al, int n): 
+exprMul::exprMul  (expression **al, int n):
   exprOp (al, n) { //< non-leaf expression, with argument list
 
   // commutative operator, sort elements
@@ -68,7 +68,7 @@ expression *exprMul::simplify () {
 
   for (int i=0; i < nargs_ - 1; i++) {
 
-    if ((arglist_ [i])   && 
+    if ((arglist_ [i])   &&
 	(arglist_ [i+1]) &&
 	(compareExpr (arglist_ + i, arglist_ + i + 1) == 0)) {
 
@@ -149,7 +149,7 @@ expression *exprMul::differentiate (int index) {
   expression **als = new expression * [nargs_];
   int nonconst = 0;
 
-  for (int i = 0; i < nargs_; i++) 
+  for (int i = 0; i < nargs_; i++)
 
     if (arglist_ [i] -> dependsOn (index)) {
 
@@ -157,14 +157,14 @@ expression *exprMul::differentiate (int index) {
 
       alm [i] = arglist_ [i] -> differentiate (index);
 
-      for (int j = 0; j < nargs_; j++) 
+      for (int j = 0; j < nargs_; j++)
 	if (i!=j)
 	  alm [j] = arglist_ [j] -> clone (); //new exprClone (arglist_ [j]);
 
       als [nonconst++] = new exprMul (alm, nargs_);
     }
 
-  if (nonconst) 
+  if (nonconst)
     return new exprSum (als, nonconst);
   else {
     delete [] als;
@@ -237,18 +237,18 @@ void exprMul::closestFeasible (expression *varind,
 /// return l-2 norm of gradient at given point
 CouNumber exprMul::gradientNorm (const double *x) {
 
-  int 
+  int
     ind0 = arglist_ [0] -> Index (),
     ind1 = arglist_ [1] -> Index ();
 
-  CouNumber 
+  CouNumber
     x0 = (ind0 < 0) ? arglist_ [0] -> Value () : x [ind0],
     x1 = (ind1 < 0) ? arglist_ [1] -> Value () : x [ind1];
 
   if (ind0 < 0)
     if (ind1 < 0) return 0.;                   // c*d
     else          return fabs (x0);            // c*y
-  else 
+  else
     if (ind1 < 0) return fabs (x1);            // x*d
     else          return sqrt (x0*x0 + x1*x1); // x*y
 }

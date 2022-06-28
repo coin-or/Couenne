@@ -70,7 +70,7 @@ class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
   /// number of cuts generated at the first call
   mutable int nrootcuts_;
 
-  /// total number of cuts generated 
+  /// total number of cuts generated
   mutable int ntotalcuts_;
 
   /// separation time (includes generation of problem)
@@ -137,7 +137,7 @@ class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
   int getnvars () const;
 
   /// has generateCuts been called yet?
-  inline bool isFirst () const 
+  inline bool isFirst () const
   {return firstcall_;}
 
   /// should we add the violated cuts only (true), or all of them (false)?
@@ -153,8 +153,8 @@ class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
   {return nSamples_;}
 
   /// the main CglCutGenerator
-  void generateCuts (const OsiSolverInterface &, 
-		     OsiCuts &, 
+  void generateCuts (const OsiSolverInterface &,
+		     OsiCuts &,
 		     const CglTreeInfo = CglTreeInfo ())
 #if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
    const
@@ -165,9 +165,9 @@ class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
   int createCut (OsiCuts &, // cutset to insert
 		 CouNumber, // lb
 		 CouNumber, // ub
-		            // index, coeff  (index -1: "don't care") 
+		            // index, coeff  (index -1: "don't care")
 		 int,    CouNumber,    // of first  term
-		 int=-1, CouNumber=0., // of second term 
+		 int=-1, CouNumber=0., // of second term
 		 int=-1, CouNumber=0., // of third  term
 		 bool = false) const;  // is it a global cut? No, by default
 
@@ -175,9 +175,9 @@ class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
   int createCut (OsiCuts &, // cutset to insert
 		 CouNumber, // rhs
 		 int,       // sign: -1: <=, 0: =, +1: >=
-		            // index, coeff  (index -1: "don't care") 
+		            // index, coeff  (index -1: "don't care")
 		 int,    CouNumber,    // of first  term
-		 int=-1, CouNumber=0., // of second term 
+		 int=-1, CouNumber=0., // of second term
 		 int=-1, CouNumber=0., // of third  term
 		 bool = false) const;  // is it a global cut? No, by default
 
@@ -186,8 +186,8 @@ class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
   /// derivative
   void addEnvelope (OsiCuts &,
 		    int,
-		    unary_function, unary_function, 
-		    int, int, 
+		    unary_function, unary_function,
+		    int, int,
 		    CouNumber, CouNumber, CouNumber,
 		    t_chg_bounds * = NULL,
 		    bool = false) const;
@@ -198,7 +198,7 @@ class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
   void addEnvelope (OsiCuts &,
 		    int,
 		    funtriplet *,
-		    int, int, 
+		    int, int,
 		    CouNumber, CouNumber, CouNumber,
 		    t_chg_bounds * = NULL,
 		    bool = false) const;
@@ -206,13 +206,13 @@ class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
   /// Add half-plane through (x1,y1) and (x2,y2) -- resp. 4th, 5th,
   /// 6th, and 7th argument
   int addSegment (OsiCuts &, int, int,
-		  CouNumber, CouNumber, 
+		  CouNumber, CouNumber,
 		  CouNumber, CouNumber, int) const;
 
   /// add tangent at given poing (x,w) with given slope
-  int addTangent (OsiCuts &, int, int, 
-		  CouNumber, CouNumber, 
-		  CouNumber, int) const; 
+  int addTangent (OsiCuts &, int, int,
+		  CouNumber, CouNumber,
+		  CouNumber, int) const;
 
   /// Method to set the Bab pointer
   void setBabPtr (Bonmin::Bab *p)
@@ -230,7 +230,7 @@ class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
   {return infeasNode_;}
 
   /// generate OsiRowCuts for current convexification
-  void genRowCuts (const OsiSolverInterface &, OsiCuts &cs, 
+  void genRowCuts (const OsiSolverInterface &, OsiCuts &cs,
 		   int, int *, t_chg_bounds * = NULL) const;
 
   /// generate OsiColCuts for improved (implied and propagated) bounds
@@ -243,7 +243,7 @@ class COUENNELIB_EXPORT CouenneCutGenerator: public CglCutGenerator {
   void printLineInfo() const;
 
   /// Provide Journalist
-  inline ConstJnlstPtr Jnlst() const 
+  inline ConstJnlstPtr Jnlst() const
   {return ConstPtr (jnlst_);}
 
   void setJnlst (JnlstPtr jnlst__)

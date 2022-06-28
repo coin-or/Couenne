@@ -67,7 +67,7 @@ class COUENNELIB_EXPORT expression {
   virtual ~expression () {}
 
   /// Cloning method
-  virtual expression *clone (Domain *d = NULL) const 
+  virtual expression *clone (Domain *d = NULL) const
   {return NULL;}
 
   /// Return index of variable (only valid for exprVar and exprAux)
@@ -106,13 +106,13 @@ class COUENNELIB_EXPORT expression {
   virtual void Image (expression *image) {}
 
   /// value (empty)
-  virtual inline CouNumber Value () const 
+  virtual inline CouNumber Value () const
   {return 0.;}
 
   /// If this is an exprClone of a exprClone of an expr???, point to
   /// the original expr??? instead of an exprClone -- improve computing
   /// efficiency. Only overloaded for exprClones/exprCopy, of course.
-  virtual inline const expression *Original () const 
+  virtual inline const expression *Original () const
   {return this;}
 
   /// print expression to iostream
@@ -131,7 +131,7 @@ class COUENNELIB_EXPORT expression {
   virtual expression *differentiate (int);
 
   /// dependence on variable set: return cardinality of subset of the
-  /// set of indices in first argument which occur in expression. 
+  /// set of indices in first argument which occur in expression.
   virtual int dependsOn (int *ind, int n, enum dig_type type = STOP_AT_AUX);
 
   /// version with one index only
@@ -141,12 +141,12 @@ class COUENNELIB_EXPORT expression {
   /// fill std::set with indices of variables on which this expression
   /// depends. Also deal with expressions that have no variable
   /// pointers (exprGroup, exprQuad)
-  virtual inline int DepList (std::set <int> &deplist, 
+  virtual inline int DepList (std::set <int> &deplist,
 			      enum dig_type   type = ORIG_ONLY)
   {return 0;}
 
   /// simplify expression (useful for derivatives)
-  virtual inline expression *simplify () 
+  virtual inline expression *simplify ()
   {return NULL;}
 
   /// get a measure of "how linear" the expression is (see CouenneTypes.h)
@@ -170,7 +170,7 @@ class COUENNELIB_EXPORT expression {
   /// Create standard form of this expression, by:
   ///
   /// - creating auxiliary w variables and corresponding expressions
-  /// - returning linear counterpart as new constraint (to replace 
+  /// - returning linear counterpart as new constraint (to replace
   ///   current one)
   ///
   /// For the base exprOp class we only do the first part (for argument
@@ -179,19 +179,19 @@ class COUENNELIB_EXPORT expression {
   ///
   /// addAux is true if a new auxiliary variable should be added
   /// associated with the standardized expression
-  virtual inline exprAux *standardize (CouenneProblem *p, bool addAux = true) 
+  virtual inline exprAux *standardize (CouenneProblem *p, bool addAux = true)
   {return NULL;}
 
   /// generate convexification cut for constraint w = this
-  virtual void generateCuts (expression *w, //const OsiSolverInterface &si, 
+  virtual void generateCuts (expression *w, //const OsiSolverInterface &si,
 			     OsiCuts &cs, const CouenneCutGenerator *cg,
-			     t_chg_bounds *chg = NULL, int wind = -1, 
-			     CouNumber lb = -COUENNE_INFINITY, 
+			     t_chg_bounds *chg = NULL, int wind = -1,
+			     CouNumber lb = -COUENNE_INFINITY,
 			     CouNumber ub =  COUENNE_INFINITY) {}
 
   /// return integer for comparing expressions (used to recognize
   /// common expression)
-  virtual enum expr_type code () 
+  virtual enum expr_type code ()
   {return COU_EXPRESSION;}
 
   /// either CONVEX, CONCAVE, AFFINE, or NONCONVEX
@@ -226,10 +226,10 @@ class COUENNELIB_EXPORT expression {
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments. Return estimated improvement in
   /// objective function
-  virtual CouNumber selectBranch (const CouenneObject *obj, 
+  virtual CouNumber selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression * &var, 
-				  double * &brpts, 
+				  expression * &var,
+				  double * &brpts,
 				  double * &brDist, // distance of current LP
 						    // point to new convexifications
 				  int &way)
@@ -249,7 +249,7 @@ class COUENNELIB_EXPORT expression {
   virtual void realign (const CouenneProblem *p) {}
 
   /// indicating if function is monotonically increasing
-  virtual bool isBijective() const 
+  virtual bool isBijective() const
   {return false;}
 
   /// compute the inverse function
@@ -277,11 +277,11 @@ class COUENNELIB_EXPORT expression {
 
 /// updates maximum violation. Used with all impliedBound. Returns true
 /// if a bound has been modified, false otherwise
-inline bool updateBound (int sign, 
-			 CouNumber *dst, 
+inline bool updateBound (int sign,
+			 CouNumber *dst,
 			 CouNumber src) {
 
-  // meaning: 
+  // meaning:
   //
   // if (*dst > src) && (sign > 0) --> dst down to src
   // if (*dst < src) && (sign < 0) --> dst up   to src

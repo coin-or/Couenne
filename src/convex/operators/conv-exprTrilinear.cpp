@@ -55,7 +55,7 @@ void exprTrilinear::getBounds (expression *&lb, expression *&ub) {
 
 void exprTrilinear::getBounds (CouNumber &lb, CouNumber &ub) {
 
-  CouNumber 
+  CouNumber
     lbA [3],
     ubA [3];
 
@@ -69,8 +69,8 @@ void exprTrilinear::getBounds (CouNumber &lb, CouNumber &ub) {
     for   (int i1 = 0; i1 < 2; i1++)
       for (int i2 = 0; i2 < 2; i2++) {
 
-	double curbound = 
-	  (i0 ? ubA [0] : lbA [0]) * 
+	double curbound =
+	  (i0 ? ubA [0] : lbA [0]) *
 	  (i1 ? ubA [1] : lbA [1]) *
 	  (i2 ? ubA [2] : lbA [2]);
 

@@ -58,26 +58,26 @@ namespace Couenne {
       aslfg_(NULL),
       displayStats_ (other.displayStats_),
       couenneProb_ (other.couenneProb_) {}
-    
+
     /** virtual copy constructor.*/
     virtual Bonmin::BabSetupBase * clone () const
     {return new CouenneSetup (*this);}
-    
+
     /// destructor
     virtual ~CouenneSetup();
 
     /** Initialize from command line arguments. */
-    bool InitializeCouenne(char ** argv = NULL, 
+    bool InitializeCouenne(char ** argv = NULL,
 			   CouenneProblem *couenneProb = NULL,
 			   Ipopt::SmartPtr<Bonmin::TMINLP> tminlp = NULL,
 			   CouenneInterface *ci = NULL,
 			   Bonmin::Bab *bb = NULL);
-    
+
     /** the options */
     virtual void registerOptions();
     /** Register all Couenne options.*/
     static void registerAllOptions(Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions);
-    
+
     /** Get the basic options if don't already have them.*/
     virtual void readOptionsFile(){
       if (readOptions_) return;
@@ -89,7 +89,7 @@ namespace Couenne {
     {return CouennePtr_;}
 
     /// true if one wants to display statistics at the end of program
-    bool displayStats () 
+    bool displayStats ()
     {return displayStats_;}
 
     /// add cut generators
@@ -120,7 +120,7 @@ private:
 
     /// MINLP formulation
     CouenneProblem *couenneProb_;
-    
+
     /// whether the couenneProb_ has been created by Couenne, and thus will be deleted by Couenne
     bool couenneProb_is_own_;
   };

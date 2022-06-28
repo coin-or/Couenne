@@ -2,7 +2,7 @@
  *
  * Name:    getIntegerCandidate.cpp
  * Author:  Pietro Belotti
- * Purpose: generate integer NLP point Y starting from fractional 
+ * Purpose: generate integer NLP point Y starting from fractional
  *          solution using bound tightening
  *
  * (C) Carnegie-Mellon University, 2007-08.
@@ -22,7 +22,7 @@ using namespace Couenne;
 
 // lose patience after this many iterations of non-improving valid
 // tightening (step 1)
-#define VALID_ONLY_THRESHOLD 5 
+#define VALID_ONLY_THRESHOLD 5
 
 /// GRASP for finding integer feasible solutions
 ///
@@ -31,7 +31,7 @@ using namespace Couenne;
 ///
 /// return -1 if the problem is infeasible
 
-int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt, 
+int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 					 double *lb, double *ub) const {
   fillIntegerRank ();
 
@@ -46,7 +46,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
   optimum_ = NULL;
 
   int
-    ncols  = nVars (), 
+    ncols  = nVars (),
     retval = 0;
 
   double
@@ -64,7 +64,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
   enum fixType *fixed = new enum fixType [nOrigVars_ - ndefined_]; // integer variables that were fixed
 
-  for (int i=0; i<nOrigVars_ - ndefined_; i++) 
+  for (int i=0; i<nOrigVars_ - ndefined_; i++)
     fixed [i] = (Var (i) -> isDefinedInteger () && // work on integer variables only
 		 Var (i) -> Multiplicity () > 0) ? // don't care if unused variable
       UNFIXED : CONTINUOUS;
@@ -100,7 +100,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
   //     ++niter
   //
   //   } while there are unfixed variables at this rank
-  // }   
+  // }
   //
   // check value of objective -> set cutoff and run bound tightening
   //
@@ -120,15 +120,15 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       printf ("=       ===========================================\n");
       for (int i=0; i<nOrigVars_; i++)
 	if (variables_ [i] -> Multiplicity () > 0)
-	  printf ("#### %4d: %d %c %2d frac %20g  [%20g,%20g]\n", 
-		  i, fixed [i], 
+	  printf ("#### %4d: %d %c %2d frac %20g  [%20g,%20g]\n",
+		  i, fixed [i],
 		  variables_ [i] -> isInteger () ? 'I' : ' ',
 		  integerRank_ ? integerRank_ [i] : -1,
 		  xFrac [i], Lb (i), Ub (i));
       printf ("---\n");
       for (int i=nOrigVars_; i<nVars (); i++)
 	if (variables_ [i] -> Multiplicity () > 0)
-	  printf ("#### %4d:   %c    frac %20g   [%20g,%20g]\n", 
+	  printf ("#### %4d:   %c    frac %20g   [%20g,%20g]\n",
 		  i, variables_ [i] -> isInteger () ? 'I' : ' ',
 		  //(integerRank_ && integerRank_ [i]) ? 'F' : ' ',
 		  X (i), Lb (i), Ub (i));
@@ -137,15 +137,15 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       printf ("===================================================\n");
     }
 
-    const int 
+    const int
       N_VARS_HUGE   = 10000,
       N_VARS_LARGE  = 1000,
       N_VARS_MEDIUM = 100,
       N_VARS_SMALL  = 10,
       N_VARS_TINY   = 5;
 
-    int 
-      ntrials   = 0, 
+    int
+      ntrials   = 0,
       nvars     = nVars (),
       maxtrials =
       (nvars >= N_VARS_HUGE)   ? 0 :
@@ -156,8 +156,8 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
     int rank = 1;
 
-    for (std::vector <int>::iterator rNum = numberInRank_.begin(); 
-	 ++rNum != numberInRank_.end(); rank++) 
+    for (std::vector <int>::iterator rNum = numberInRank_.begin();
+	 ++rNum != numberInRank_.end(); rank++)
 
       if (*rNum > 0) {
 
@@ -170,12 +170,12 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	// *rNum is the number of variable with integer rank equal to rank
 
 	// start restricting around current integer box
-	for (int i=0; i<nOrigVars_ - ndefined_; i++) 
+	for (int i=0; i<nOrigVars_ - ndefined_; i++)
 	  if ((Var (i) -> Multiplicity () > 0) && // alive variable
 	      (Var (i) -> isDefinedInteger ()) && // integer, may fix if independent of other integers
 	      (integerRank_ [i] == rank)) {
 
-	    Lb (i) = CoinMax (Lb (i), floor (xFrac [i] - COUENNE_EPS)); 
+	    Lb (i) = CoinMax (Lb (i), floor (xFrac [i] - COUENNE_EPS));
 	    Ub (i) = CoinMin (Ub (i), ceil  (xFrac [i] + COUENNE_EPS));
 	  }
 
@@ -186,15 +186,15 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	  printf ("= RANK LEVEL = %d [%d] ==================================\n", rank, *rNum);
 	  for (int i=0; i<nOrigVars_; i++)
 	    if (Var (i) -> Multiplicity () > 0) // alive variable
-	      printf ("#### %4d: %d %c %2d frac %20g -> int %20g [%20g,%20g]\n", 
-		      i, fixed [i], 
+	      printf ("#### %4d: %d %c %2d frac %20g -> int %20g [%20g,%20g]\n",
+		      i, fixed [i],
 		      variables_ [i] -> isInteger () ? 'I' : ' ',
 		      integerRank_ ? integerRank_ [i] : -1,
 		      xFrac [i], xInt [i], Lb (i), Ub (i));
 	  printf ("--------------------\n");
 	  for (int i=nOrigVars_; i<nVars (); i++)
 	    if (Var (i) -> Multiplicity () > 0) // alive variable
-	      printf ("#### %4d:   %c    frac %20g   [%20g,%20g]\n", 
+	      printf ("#### %4d:   %c    frac %20g   [%20g,%20g]\n",
 		      i, variables_ [i] -> isInteger () ? 'I' : ' ',
 		      //(integerRank_ && integerRank_ [i]) ? 'F' : ' ',
 		      X (i), Lb (i), Ub (i));
@@ -209,9 +209,9 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
 	  bool one_fixed = false;
 
-	  for (int i=0; i<nOrigVars_ - ndefined_; i++) 
+	  for (int i=0; i<nOrigVars_ - ndefined_; i++)
 
-	    if ((Var (i) -> Multiplicity () > 0) && // alive 
+	    if ((Var (i) -> Multiplicity () > 0) && // alive
 		(integerRank_ [i] == rank)       && // at this rank
 		(fixed [i] == UNFIXED)           && // still to be fixed
 		Var (i) -> isDefinedInteger ()) {   // and integer
@@ -245,13 +245,13 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	      int result = testIntFix (i, xFrac [i], fixed, xInt,
 				       dualL, dualR, olb, oub, ntrials < maxtrials);
 
-	      jnlst_ -> Printf (Ipopt::J_STRONGWARNING, J_NLPHEURISTIC, 
+	      jnlst_ -> Printf (Ipopt::J_STRONGWARNING, J_NLPHEURISTIC,
 				"testing %d [%g -> %g], res = %d\n", i, xFrac [i], xInt [i], result);
 
 	      if (result > 0) {
 		one_fixed = true;
 		--remaining;
-	      } else if (result < 0) 
+	      } else if (result < 0)
 		throw infeasible;
 	    }
 
@@ -262,7 +262,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	    int index = 0;
 
 	    // find first unfixed integer at this rank
-	    while ((index < nOrigVars_ - ndefined_) && 
+	    while ((index < nOrigVars_ - ndefined_) &&
 		   (!(Var (index) -> isInteger ()) ||
 		    (integerRank_ [index] != rank) ||
 		    (fixed [index] != UNFIXED)))
@@ -270,15 +270,15 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
 	    assert (index < nOrigVars_ - ndefined_);
 
-	    jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, 
-			      "none fixed, fix %d from %g [%g,%g] [L=%g, R=%g]", 
-			      index, xFrac [index], Lb (index), Ub (index), 
+	    jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC,
+			      "none fixed, fix %d from %g [%g,%g] [L=%g, R=%g]",
+			      index, xFrac [index], Lb (index), Ub (index),
 			      dualL [index], dualR [index]);
 
-	    Lb (index) = Ub (index) = X (index) = xInt [index] = 
+	    Lb (index) = Ub (index) = X (index) = xInt [index] =
 	      ((dualL [index] < dualR [index] - COUENNE_EPS) ? floor (xFrac [index]) :
 	       (dualL [index] > dualR [index] + COUENNE_EPS) ? ceil  (xFrac [index]) :
-	       ((CoinDrand48 () > xFrac [index] - floor (xFrac [index])) ? 
+	       ((CoinDrand48 () > xFrac [index] - floor (xFrac [index])) ?
 		floor (xFrac [index]) : ceil (xFrac [index])));
 
 	    jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, " to %g\n", xInt [index]);
@@ -294,8 +294,8 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	    printf ("--- remaining = %d --------------------------- \n", remaining);
 	    for (int i=0; i<nOrigVars_; i++)
 	      if (variables_ [i] -> Multiplicity () > 0)
-		printf ("#### %4d: %d %c %2d frac %20g -> int %20g  [%20g,%20g]\n", 
-			i, fixed [i], 
+		printf ("#### %4d: %d %c %2d frac %20g -> int %20g  [%20g,%20g]\n",
+			i, fixed [i],
 			variables_ [i] -> isInteger () ? 'I' : ' ',
 			integerRank_ ? integerRank_ [i] : -1,
 			xFrac [i], xInt [i], Lb (i), Ub (i));
@@ -317,7 +317,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 	  lb [i] = ub [i] = X (i) = xInt [i];
 
 	else if (Lb (i) > Ub (i)) {    // non-sense bounds, fix them
-	  xInt [i] = X (i) = lb [i] = ub [i] = 
+	  xInt [i] = X (i) = lb [i] = ub [i] =
 	    (fixed [i] == CONTINUOUS) ?
 	                  (0.5 * (Lb (i) + Ub (i))) :
 	    COUENNE_round (0.5 * (Lb (i) + Ub (i)));
@@ -346,13 +346,13 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
     if  (checkNLP0 (x, xp, true, false, true, true)) {
 // #ifdef FM_CHECKNLP2
-// 	(checkNLP2(x, 0, false, true, true, feas_tolerance_)) 
-// 	// false for not caring about objective value, 
+// 	(checkNLP2(x, 0, false, true, true, feas_tolerance_))
+// 	// false for not caring about objective value,
 // 	// true for stopping at first violation and true for checkAll
 // #else
 // 	(checkNLP (x, xp, true)) // true for recomputing xp
-// #endif	 
-      
+// #endif	
+
 #ifdef FM_TRACE_OPTSOL
 #ifdef FM_CHECKNLP2
       recBSol->update();
@@ -364,7 +364,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
       if (xp < getCutOff ()) {
 
         setCutOff (xp, x);
-        jnlst_ -> Printf (Ipopt::J_DETAILED, J_NLPHEURISTIC, 
+        jnlst_ -> Printf (Ipopt::J_DETAILED, J_NLPHEURISTIC,
                           "new cutoff from getIntCand: %g\n", xp);
       }
     }
@@ -387,11 +387,11 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
   if (jnlst_->ProduceOutput(Ipopt::J_MOREVECTOR, J_NLPHEURISTIC)) {
     if (retval >= 0) {
-      printf ("- Done: retval %d ----------------------------------------------------------------\n", 
+      printf ("- Done: retval %d ----------------------------------------------------------------\n",
 	      retval);
       for (int i=0; i<nOrigVars_; i++)
 	if (variables_ [i] -> Multiplicity () > 0)
-	  printf ("#### %4d: %d %c frac %20g -> int %20g [%20g,%20g]\n", 
+	  printf ("#### %4d: %d %c frac %20g -> int %20g [%20g,%20g]\n",
 		  i, fixed [i], variables_ [i] -> isInteger () ? 'I' : ' ',
 		  xFrac [i], xInt [i], lb [i], ub [i]);
     } else printf ("no good point was found\n");
@@ -409,7 +409,7 @@ int CouenneProblem::getIntegerCandidate (const double *xFrac, double *xInt,
 
   jnlst_ -> Printf (Ipopt::J_MOREVECTOR, J_NLPHEURISTIC, "Done with GetIntegerCandidate\n");
 
-  optimum_ = store_optimum; // restore 
+  optimum_ = store_optimum; // restore
 
   return retval;
 }

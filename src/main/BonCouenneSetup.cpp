@@ -113,7 +113,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   std::string s;
 
   if (couenneProb) {
-    //TODO create a copy of user problem, since we modify it? 
+    //TODO create a copy of user problem, since we modify it?
     couenneProb_ = couenneProb;
     couenneProb_is_own_ = false;
   }
@@ -129,7 +129,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   //if (s == "yes")
   //WindowsErrorPopupBlocker();
 
-  /** Change default value for failure behavior so that code doesn't crash 
+  /** Change default value for failure behavior so that code doesn't crash
       when Ipopt does not solve a sub-problem.*/
 
   options_ -> SetStringValue ("nlp_failure_behavior", "fathom", "couenne.");
@@ -147,15 +147,15 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
       aslfg_ = new SmartAsl;
       aslfg_ -> asl = readASLfg (argv);
 #else
-      std::cerr << 
-	"Couenne was compiled without AMPL Solver Library. Cannot initialize from AMPL NL File." 
+      std::cerr <<
+	"Couenne was compiled without AMPL Solver Library. Cannot initialize from AMPL NL File."
 		<< std::endl;
       exit (-1);
 #endif
     } else {
       assert (couenneProb_ != NULL);
       assert (IsValid (tminlp)); //TODO would be great to setup own TMINLP based on CouenneProblem formulation
-      ci -> initialize (roptions_, options_, journalist_,  
+      ci -> initialize (roptions_, options_, journalist_,
 			Ipopt::SmartPtr <Bonmin::TMINLP> (dynamic_cast <Bonmin::TMINLP *> (Ipopt::GetRawPtr (tminlp))));
     }
   }
@@ -194,7 +194,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   if (!couenneProb_)
     couenneProb_ = new CouenneProblem (aslfg_ -> asl, this, journalist ());
 
-  CouenneCutGenerator * couenneCg = 
+  CouenneCutGenerator * couenneCg =
     new CouenneCutGenerator (ci, this, couenneProb_, NULL);
 
   options_ -> GetStringValue ("lp_solver", s, "couenne.");
@@ -265,7 +265,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   continuousSolver_ -> setAuxiliaryInfo (extraStuff);
   delete extraStuff;
-    
+
   extraStuff = dynamic_cast <Bonmin::BabInfo *> (continuousSolver_ -> getAuxiliaryInfo ());
 
   // Setup log level of LP solver
@@ -275,7 +275,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   // Add Couenne SOS ///////////////////////////////////////////////////////////////
 
-  int 
+  int
     nSOS  = 0,
     nVars = couenneProb_ -> nVars ();
 
@@ -307,7 +307,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     if (!nSOS) {
       delete [] objects;
       objects = NULL;
-    } 
+    }
   }
 
   //model -> assignSolver (continuousSolver_, true);
@@ -330,14 +330,14 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     exit (-1);
   }
 
-  int 
+  int
     nobj = nSOS; // if no SOS then objects is empty
 
   if (!objects)
     objects = new OsiObject* [nVars];
 
-  int 
-    contObjPriority, 
+  int
+    contObjPriority,
     intObjPriority;
 
   options () -> GetIntegerValue ("cont_var_priority", contObjPriority, "couenne.");
@@ -363,7 +363,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     exprVar *var = couenneProb_ -> Var (i);
 
     // we only want enabled variables
-    if (var -> Multiplicity () <= 0) 
+    if (var -> Multiplicity () <= 0)
       continue;
 
     switch (objType) {
@@ -371,8 +371,8 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     case CouenneObject::EXPR_OBJ:
 
       // if this variable is associated with a nonlinear function
-      if (var -> isInteger () || 
-	  ((var -> Type  () == AUX) && 
+      if (var -> isInteger () ||
+	  ((var -> Type  () == AUX) &&
 	   (var -> Image () -> Linearity () > LINEAR))) {
 
 	/*if ((var -> Image () -> code () == COU_EXPRMUL) &&
@@ -396,9 +396,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
       // branching objects on variables
       if // comment three lines below for linear variables too
-	(var -> isInteger () || 
+	(var -> isInteger () ||
 	 (couenneProb_ -> Dependence () [var -> Index ()] . size () > 0)) {  // has indep
-	//|| ((var -> Type () == AUX) &&                                  // or, aux 
+	//|| ((var -> Type () == AUX) &&                                  // or, aux
 	//    (var -> Image () -> Linearity () > LINEAR))) {              // of nonlinear
 
 	int ind = var -> Index ();
@@ -415,9 +415,9 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
       // branching objects on variables
       if // comment three lines below for linear variables too
-	(var -> isInteger () || 
+	(var -> isInteger () ||
 	 (couenneProb_ -> Dependence () [var -> Index ()] . size () > 0)) { // has indep
-	//|| ((var -> Type () == AUX) &&                      // or, aux 
+	//|| ((var -> Type () == AUX) &&                      // or, aux
 	//(var -> Image () -> Linearity () > LINEAR))) { // of nonlinear
 
 	objects [nobj] = new CouenneVTObject (couenneCg, couenneProb_, var, this, journalist (), varSelection);
@@ -486,7 +486,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     cutGenerators().push_back (cg);
 
     // set cut gen pointer
-    //dynamic_cast <CouenneSolverInterface <OsiClpSolverInterface> *> 
+    //dynamic_cast <CouenneSolverInterface <OsiClpSolverInterface> *>
     //(continuousSolver_)
 
     // this is done on an explicitly declared CSI pointer, however
@@ -505,7 +505,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   if (freq != 0) {
 
-    CouenneTwoImplied * couenne2I = 
+    CouenneTwoImplied * couenne2I =
       new CouenneTwoImplied (couenneProb_,
 			     journalist (),
 			     options    ());
@@ -534,11 +534,11 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   // In case there are no discrete variables, we have already a
   // heuristic solution for which create a initialization heuristic
   if (!(extraStuff -> infeasibleNode ()) &&
-      ci -> isProvenOptimal () && 
+      ci -> isProvenOptimal () &&
       ci -> haveNlpSolution ()) {
 
     /// setup initial heuristic (in principle it should only run once...)
-    InitHeuristic* initHeuristic = new InitHeuristic 
+    InitHeuristic* initHeuristic = new InitHeuristic
       (ci -> getObjValue (), ci -> getColSolution (), *couenneProb_);
     HeuristicMethod h;
     h.id = "Couenne Rounding NLP"; // same name as the real rounding one
@@ -572,7 +572,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   }
 
   options () -> GetStringValue ("iterative_rounding_heuristic", doHeuristic, "couenne.");
-  
+
   if (doHeuristic == "yes") {
     CouenneIterativeRounding * nlpHeuristic = new CouenneIterativeRounding(nonlinearSolver_, ci, couenneProb_, options());
     HeuristicMethod h;
@@ -593,7 +593,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
     nlpHeuristic -> setNumberSolvePerLevel (numSolve);
 
-    nlpHeuristic -> nCalls () = 
+    nlpHeuristic -> nCalls () =
       ("yes"  == doHeuristic) ? -1 :     // run it every time Cbc wants
       ("once" == doHeuristic) ?  1 : -2; // second case means the answer was "only"
 
@@ -604,7 +604,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     heuristics_. push_back (h);
   }
 
-  if (0) { // inactive as of yet -- segfaults 
+  if (0) { // inactive as of yet -- segfaults
 
     Ipopt::Index doHeuristicDiveFractional = false;
     options()->GetEnumValue("heuristic_dive_fractional",doHeuristicDiveFractional,prefix_.c_str());
@@ -739,7 +739,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
   }
 
   case OSI_SIMPLE: // default choice
-    branchingMethod_ = new CouenneChooseVariable 
+    branchingMethod_ = new CouenneChooseVariable
       (continuousSolver_, couenneProb_, journalist ());
     break;
 
@@ -773,7 +773,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   if (freq != 0) {
 
-    CouenneSdpCuts * couenneSDP = 
+    CouenneSdpCuts * couenneSDP =
       new CouenneSdpCuts (couenneProb_,
 			  journalist (),
 			  options    ());
@@ -790,10 +790,10 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   if (freq != 0) {
 
-    CouenneDisjCuts * couenneDisj = 
-      new CouenneDisjCuts (ci, this, 
-			   couenneCg, 
-			   branchingMethod_, 
+    CouenneDisjCuts * couenneDisj =
+      new CouenneDisjCuts (ci, this,
+			   couenneCg,
+			   branchingMethod_,
 			   varSelection == OSI_STRONG, // if true, use strong branching candidates
 			   journalist (),
 			   options ());
@@ -811,7 +811,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   if (freq != 0) {
 
-    CouenneCrossConv * couenneCross = 
+    CouenneCrossConv * couenneCross =
       new CouenneCrossConv (couenneProb,
   			    journalist (),
   			    options ());
@@ -825,7 +825,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
 
   return retval;
 }
- 
+
 void CouenneSetup::registerOptions ()
 {registerAllOptions (roptions ());}
 
@@ -849,7 +849,7 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   Bonmin::HeuristicDiveFractional      ::registerOptions (roptions);
   Bonmin::HeuristicDiveVectorLength    ::registerOptions (roptions);
   Bonmin::HeuristicDiveMIPFractional   ::registerOptions (roptions);
-  Bonmin::HeuristicDiveMIPVectorLength ::registerOptions (roptions);  
+  Bonmin::HeuristicDiveMIPVectorLength ::registerOptions (roptions);
 
   roptions -> AddStringOption3 ("milp_solver",
 				"Choose the subsolver to solve MILP sub-problems in OA decompositions.",
@@ -953,7 +953,7 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
      feas_tolerance_default,
      "Default value is 1e-5.");
 
-  roptions -> AddStringOption2 
+  roptions -> AddStringOption2
     ("feasibility_bt",
      "Feasibility-based (cheap) bound tightening (FBBT)",
      "yes",
@@ -990,7 +990,7 @@ void CouenneSetup::registerAllOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
     sprintf (descr, "Frequency k (in terms of nodes) for generating %s cuts in branch-and-cut.",
 	     cutOption [i].cgname);
 
-    roptions -> AddLowerBoundedIntegerOption 
+    roptions -> AddLowerBoundedIntegerOption
       (cutOption [i].cgname,
        descr,
        -100, cutOption [i].defaultFreq,
@@ -1022,7 +1022,7 @@ void CouenneSetup::addMilpCutGenerators () {
   } cutList [] = {
     {(const char*)"Gomory_cuts",new CglGomory,      (const char*)"Mixed Integer Gomory",CUTINFO_MIG},
     {(const char*)"probing_cuts",new CglProbing,        (const char*) "Probing", CUTINFO_PROBING},
-    {(const char*)"mir_cuts",new CglMixedIntegerRounding2, (const char*) "Mixed Integer Rounding", 
+    {(const char*)"mir_cuts",new CglMixedIntegerRounding2, (const char*) "Mixed Integer Rounding",
      CUTINFO_NONE},
     {(const char*)"2mir_cuts",    new CglTwomir,         (const char*) "2-MIR",    CUTINFO_NONE},
     {(const char*)"cover_cuts",   new CglKnapsackCover,  (const char*) "Cover",    CUTINFO_NONE},
@@ -1101,7 +1101,7 @@ void CouenneSetup::addMilpCutGenerators () {
   }
 
   double givenAllowFGap2 = 0.0;
-  options_->GetNumericValue(std::string("allowable_fraction_gap"), 
+  options_->GetNumericValue(std::string("allowable_fraction_gap"),
 			    givenAllowFGap2, "bonmin.");
   double upval = 1e50;
 

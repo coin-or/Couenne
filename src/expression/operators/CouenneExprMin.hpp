@@ -19,7 +19,7 @@
 // min(x1,x2,...,xn) and branch it by creating two subsets N1 and N2
 // of N={1,2,...,n} and then impose the constraints
 //
-// (xi <= xj for i in N1, j in N2) OR 
+// (xi <= xj for i in N1, j in N2) OR
 // (xi >= xj for i in N1, j in N2)
 
 namespace Couenne {
@@ -31,9 +31,9 @@ class COUENNELIB_EXPORT exprMin: public exprOp {
  public:
 
   /// Constructor
-  exprMin  (expression **al, int n): 
+  exprMin  (expression **al, int n):
     exprOp (al, n) {}
- 
+
   /// Constructor with only two arguments
   exprMin  (expression *el0, expression *el1):
     exprOp (new expression * [4], 4) {
@@ -57,15 +57,15 @@ class COUENNELIB_EXPORT exprMin: public exprOp {
   CouNumber operator () ();
 
   /// Differentiation
-  inline expression *differentiate (int) 
-    {return NULL;} 
+  inline expression *differentiate (int)
+    {return NULL;}
 
   /// Simplification
-  inline expression *simplify () 
+  inline expression *simplify ()
     {return NULL;}
 
   /// get a measure of "how linear" the expression is (see CouenneTypes.h)
-  virtual inline int Linearity () 
+  virtual inline int Linearity ()
     {return NONLINEAR;}
 
   // Get lower and upper bound of an expression (if any)
@@ -77,14 +77,14 @@ class COUENNELIB_EXPORT exprMin: public exprOp {
     {return NULL;}
 
   /// Generate equality between *this and *w
-  void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		     OsiCuts &cs, const CouenneCutGenerator *cg, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
+  void generateCuts (expression *w, //const OsiSolverInterface &si,
+		     OsiCuts &cs, const CouenneCutGenerator *cg,
+		     t_chg_bounds * = NULL, int = -1,
+		     CouNumber = -COUENNE_INFINITY,
 		     CouNumber =  COUENNE_INFINITY);
 
   /// Code for comparisons
-  virtual enum expr_type code () 
+  virtual enum expr_type code ()
   {return COU_EXPRMIN;}
 };
 

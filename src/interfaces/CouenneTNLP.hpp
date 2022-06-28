@@ -3,7 +3,7 @@
  * Name:    CouenneTNLP.hpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Definition of an NLP interface with gradient/Jacobian/etc
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -32,10 +32,10 @@ namespace Couenne {
     /// Empty constructor
     CouenneTNLP ();
 
-    /// Constructor 
+    /// Constructor
     CouenneTNLP (CouenneProblem *);
 
-    /// Copy constructor 
+    /// Copy constructor
     CouenneTNLP (const CouenneTNLP &);
 
     /// Assignment
@@ -63,10 +63,10 @@ namespace Couenne {
     /// parameter lets you specify C or Fortran style indexing for the
     /// sparse matrix iRow and jCol parameters.  C_STYLE is 0-based,
     /// and FORTRAN_STYLE is 1-based.
-    virtual bool get_nlp_info (Ipopt::Index& n, 
-			       Ipopt::Index& m, 
+    virtual bool get_nlp_info (Ipopt::Index& n,
+			       Ipopt::Index& m,
 			       Ipopt::Index& nnz_jac_g,
-			       Ipopt::Index& nnz_h_lag, 
+			       Ipopt::Index& nnz_h_lag,
 			       enum Ipopt::TNLP::IndexStyleEnum& index_style);
 
     /// return the information about the bound on the variables and
@@ -94,10 +94,10 @@ namespace Couenne {
     /// initialize these and you cannot, return false, which will
     /// cause Ipopt to stop.  You will have to run Ipopt with
     /// different options then.
-    virtual bool get_starting_point (Ipopt::Index n, 
+    virtual bool get_starting_point (Ipopt::Index n,
 				     bool init_x, Ipopt::Number* x,
 				     bool init_z, Ipopt::Number* z_L, Ipopt::Number* z_U,
-				     Ipopt::Index m, 
+				     Ipopt::Index m,
 				     bool init_lambda, Ipopt::Number* lambda);
 
     /// return the value of the objective function
@@ -105,7 +105,7 @@ namespace Couenne {
                          Ipopt::Number& obj_value);
 
     /// return the vector of the gradient of the objective w.r.t. x
-    virtual bool eval_grad_f (Ipopt::Index n, const Ipopt::Number* x, 
+    virtual bool eval_grad_f (Ipopt::Index n, const Ipopt::Number* x,
 			      bool new_x,
 			      Ipopt::Number* grad_f);
 
@@ -180,7 +180,7 @@ namespace Couenne {
     virtual void setObjective (expression *newObj);
 
     /// Get methods
-    inline CouenneSparseMatrix *&optHessian () 
+    inline CouenneSparseMatrix *&optHessian ()
     {return optHessian_;}
 
     /// set and get saveOptHessian_

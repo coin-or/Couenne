@@ -48,15 +48,15 @@ protected:
 
 public:
 
-  // Default Constructor 
+  // Default Constructor
   CouenneSOSBranchingObject () {}
 
   // Useful constructor
   CouenneSOSBranchingObject (CouenneProblem *p,
 			     exprVar *ref,
-			     OsiSolverInterface *solver,  
+			     OsiSolverInterface *solver,
 			     const OsiSOS *originalObject,
-			     int way, 
+			     int way,
 			     double separator,
 			     JnlstPtr jnlst,
 			     bool doFBBT,
@@ -69,8 +69,8 @@ public:
     doFBBT_ (doFBBT),
     doConvCuts_ (doConvCuts) {}
 
-  
-  // Copy constructor 
+
+  // Copy constructor
   CouenneSOSBranchingObject (const CouenneSOSBranchingObject &src):
     OsiSOSBranchingObject (src),
     problem_    (src.problem_),
@@ -79,7 +79,7 @@ public:
     doFBBT_     (src.doFBBT_),
     doConvCuts_ (src.doConvCuts_) {}
 
-   
+
   /// Clone
   virtual OsiBranchingObject * clone() const
   {return new CouenneSOSBranchingObject (*this);}
@@ -139,13 +139,13 @@ public:
     jnlst_      (src.jnlst_),
     doFBBT_     (src.doFBBT_),
     doConvCuts_ (src.doConvCuts_) {}
-    
+
   /// Cloning method
   virtual OsiObject * clone () const
   {return new CouenneSOSObject (*this);}
 
   /// create branching objects
-  OsiBranchingObject *createBranch (OsiSolverInterface* si, 
+  OsiBranchingObject *createBranch (OsiSolverInterface* si,
 				    const OsiBranchingInformation* info, int way) const;
 
   /// return reference auxiliary variable

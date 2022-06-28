@@ -2,7 +2,7 @@
  *
  * Name:    CouenneBab.hpp
  * Author:  Pietro Belotti
- * Purpose: B&B object  
+ * Purpose: B&B object
  * Created: 2012-01-25
  *
  * This file is licensed under the Eclipse Public License (EPL)

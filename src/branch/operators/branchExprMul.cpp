@@ -23,7 +23,7 @@ using namespace Couenne;
 CouNumber exprMul::selectBranch (const CouenneObject *obj,
 				 const OsiBranchingInformation *info,
 				 expression *&var,
-				 double * &brpts, 
+				 double * &brpts,
 				 double * &brDist, // distance of current LP
 						   // point to new convexifications
 				 int &way) {
@@ -36,13 +36,13 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
 
   assert ((xi >= 0) && (yi >= 0) && (wi >= 0));
 
-  CouNumber 
+  CouNumber
     x0 = info -> solution_  [xi], y0 = info -> solution_  [yi],
     xl = info -> lower_     [xi], yl = info -> lower_     [yi],
     xu = info -> upper_     [xi], yu = info -> upper_     [yi];
 
 #ifdef DEBUG
-  printf ("    branch MUL: %g [%g,%g] %g [%g,%g]\n", 
+  printf ("    branch MUL: %g [%g,%g] %g [%g,%g]\n",
 	  x0, xl, xu, y0, yl, yu);
 #endif
 
@@ -105,13 +105,13 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
     {ind = xi; *brpts = obj -> midInterval (((x0 < 0.) ? 2 : 0.5) * x0, xl, xu, info); way = TWO_RIGHT;}
 
   else if (xu >  large_bound)                              // x unbounded above
-    {ind = xi; *brpts = obj -> midInterval (((x0 > 0.) ? 2 : 0.5) * x0, xl, xu, info); way = TWO_LEFT;} 
+    {ind = xi; *brpts = obj -> midInterval (((x0 > 0.) ? 2 : 0.5) * x0, xl, xu, info); way = TWO_LEFT;}
 
   else if (yl < -large_bound)                              // y unbounded below
     {ind = yi; *brpts = obj -> midInterval (((y0 < 0.) ? 2 : 0.5) * y0, yl, yu, info); way = TWO_RIGHT;}
 
   else if (yu >  large_bound)                              // y unbounded above
-    {ind = yi; *brpts = obj -> midInterval (((y0 > 0.) ? 2 : 0.5) * y0, yl, yu, info); way = TWO_LEFT;} 
+    {ind = yi; *brpts = obj -> midInterval (((y0 > 0.) ? 2 : 0.5) * y0, yl, yu, info); way = TWO_LEFT;}
 
   else { // both are bounded
 
@@ -123,29 +123,29 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
     else if (delta < -COUENNE_EPS) ind = xi;
     else ind = (CoinDrand48 () < 0.5) ? xi : yi;
 
-    CouNumber 
+    CouNumber
       pt = info -> solution_  [ind],
       lb = info -> lower_     [ind],
       ub = info -> upper_     [ind],
       margin = obj -> lp_clamp () * (ub - lb);
 
-    if ((lb < -COUENNE_EPS) && 
-	(ub >  COUENNE_EPS) && 
+    if ((lb < -COUENNE_EPS) &&
+	(ub >  COUENNE_EPS) &&
 	(-lb/ub >= THRES_ZERO_SYMM) &&
 	(-ub/lb >= THRES_ZERO_SYMM))
       // interval is fairly symmetric around 0, branch on it
       *brpts = 0.;
 
-    else if ((lb < - large_bound) && 
+    else if ((lb < - large_bound) &&
 	     (ub >   large_bound) &&
 	     (fabs (pt) > large_bound))
       *brpts = 0.;
 
     else switch (obj -> Strategy ()) {
-      case CouenneObject::LP_CENTRAL:   *brpts = pt; if ((pt < lb + margin) || 
-							 (pt > ub - margin)) 
+      case CouenneObject::LP_CENTRAL:   *brpts = pt; if ((pt < lb + margin) ||
+							 (pt > ub - margin))
 						       pt = .5 * (lb+ub);                     break;
-      case CouenneObject::LP_CLAMPED:   *brpts = CoinMax (lb + margin, 
+      case CouenneObject::LP_CLAMPED:   *brpts = CoinMax (lb + margin,
 				 	         CoinMin (ub - margin, pt));                  break;
       case CouenneObject::MID_INTERVAL: *brpts = obj -> midInterval (pt, lb, ub, info);       break;
       case CouenneObject::BALANCED:     *brpts = balancedMul (info, (ind == xi) ? 0 : 1, wi); break;
@@ -165,7 +165,7 @@ CouNumber exprMul::selectBranch (const CouenneObject *obj,
   brDist = computeMulBrDist (info, xi, yi, wi, ind, brpts);
 
 #ifdef DEBUG
-  printf ("    MUL: br on x_%d %g [%g,%g] [%g,%g] (%g,%g)\n", 
+  printf ("    MUL: br on x_%d %g [%g,%g] [%g,%g] (%g,%g)\n",
 	  ind, *brpts, xl, xu, yl, yu, x0, y0);
 #endif
 
@@ -191,12 +191,12 @@ CouNumber exprMul::balancedMul (const OsiBranchingInformation *info, int index, 
 
   assert ((index >= 0) && (other >= 0));
 
-  CouNumber 
+  CouNumber
     xl = info -> lower_    [index],  yl = info -> lower_    [other],
     xu = info -> upper_    [index],  yu = info -> upper_    [other],
     x0 = info -> solution_ [index],  y0 = info -> solution_ [other],
     w0 = info -> solution_ [wind];
-    
+
   // It is quite tricky to implement a balanced strategy for products,
   // because it is more difficult to measure "balancedness" for binary
   // operators than it is for univariate functions.
@@ -210,7 +210,7 @@ CouNumber exprMul::balancedMul (const OsiBranchingInformation *info, int index, 
   // other diagonal, i.e. the set of points between (xl,yu) and
   // (xu,yl).
   //
-  // In the two cases, we have the point 
+  // In the two cases, we have the point
   //
   // (above) P(t) = (xp,yp) := (xl + t (xu-xl), yl + t (yu-yl))
   // (below) P(t) = (xp,yp) := (xu + t (xl-xu), yl + t (yu-yl))
@@ -228,14 +228,14 @@ CouNumber exprMul::balancedMul (const OsiBranchingInformation *info, int index, 
   //
   // such that the resulting coefficients of the quadratic- and the
   // linear terms are one and zero, respectively. Thus:
-  // 
-  // (above) f(z) = (yu-yl)*(xu-xl)*(mz+q)^2               + [yl(xu-xl)-xl(yu-yl)]*(mz+q) + xl*yl = 
-  //              = (yu-yl)*(xu-xl)*(m^2 z^2 + 2qmz + q^2) + [yl(xu-xl)-xl(yu-yl)]*(mz+q) + xl*yl = 
-  //              = z^2 + c 
   //
-  // (below) f(z) = (yu-yl)*(xl-xu)*(mz+q)^2               + [yl(xl-xu)-xu(yu-yl)]*(mz+q) + xu*yl = 
-  //              = (yu-yl)*(xl-xu)*(m^2 z^2 + 2qmz + q^2) + [yl(xl-xu)-xu(yu-yl)]*(mz+q) + xu*yl = 
-  //              = -z^2 + c 
+  // (above) f(z) = (yu-yl)*(xu-xl)*(mz+q)^2               + [yl(xu-xl)-xl(yu-yl)]*(mz+q) + xl*yl =
+  //              = (yu-yl)*(xu-xl)*(m^2 z^2 + 2qmz + q^2) + [yl(xu-xl)-xl(yu-yl)]*(mz+q) + xl*yl =
+  //              = z^2 + c
+  //
+  // (below) f(z) = (yu-yl)*(xl-xu)*(mz+q)^2               + [yl(xl-xu)-xu(yu-yl)]*(mz+q) + xu*yl =
+  //              = (yu-yl)*(xl-xu)*(m^2 z^2 + 2qmz + q^2) + [yl(xl-xu)-xu(yu-yl)]*(mz+q) + xu*yl =
+  //              = -z^2 + c
   //
   // if and only if
   //
@@ -251,7 +251,7 @@ CouNumber exprMul::balancedMul (const OsiBranchingInformation *info, int index, 
   //
   // If the point is below the curve, a very similar reasoning applies
   // (simply swap xl with xu).
-  // 
+  //
   // Hence, we simply apply the balanced strategy to the function
   // f(z)=z^2 with z bounded between -q/m and (1-q)/m. The returning
   // value z_opt must be transformed to get
@@ -268,7 +268,7 @@ CouNumber exprMul::balancedMul (const OsiBranchingInformation *info, int index, 
 
   bool above = (w0 > x0*y0);
 
-  CouNumber 
+  CouNumber
     dx     = xu-xl,
     dy     = yu-yl,
     area   = dx*dy,          // coefficient of t^2
@@ -277,21 +277,21 @@ CouNumber exprMul::balancedMul (const OsiBranchingInformation *info, int index, 
     m      = 1. / sqrt (area),
     qA     = -bA / (2*area),
     qB     =  bB / (2*area),
-    z_opt = above ? 
-      minMaxDelta (&ft, -qA/m, (1-qA)/m): 
+    z_opt = above ?
+      minMaxDelta (&ft, -qA/m, (1-qA)/m):
       minMaxDelta (&ft, -qB/m, (1-qB)/m),
     t_optA = m*z_opt + qA,
     t_optB = m*z_opt + qB;
 
   /*printf ("------------------\n(%d,%d): [%g,%g], [%g,%g]\n", index, other, xl, xu, yl, yu);
   printf ("dx = %g, dy = %g, area = %g, bA = %g, bB = %g, m = %g\n", dx, dy, area, bA, bB, m);
-  printf ("qA = %g, qB = %g, z_opt = %g, tA = %g, tB = %g\n", 
+  printf ("qA = %g, qB = %g, z_opt = %g, tA = %g, tB = %g\n",
 	  qA, qB, z_opt, t_optA, t_optB);
   printf ("w = %g %c xy = %g*%g = %g --> %g\n", w0,
-	  (w0 > x0*y0) ? '>' : '<', x0, y0, x0*y0, 
+	  (w0 > x0*y0) ? '>' : '<', x0, y0, x0*y0,
 	  (w0 > x0*y0) ? (xl + dx * t_optA) : (xu - dx * t_optB));*/
 
-  return (w0 > x0*y0) ? 
-    (xl + dx * t_optA) : 
+  return (w0 > x0*y0) ?
+    (xl + dx * t_optA) :
     (xu - dx * t_optB);
 }

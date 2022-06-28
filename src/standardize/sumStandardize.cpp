@@ -63,7 +63,7 @@ exprAux *exprSum::standardize (CouenneProblem *p, bool addAux) {
 
 	int xind = row -> first -> Index ();
 
-	for (exprQuad::sparseQcol::iterator col = row -> second.begin (); 
+	for (exprQuad::sparseQcol::iterator col = row -> second.begin ();
 	     col != row -> second.end (); ++col)
 	  qmap.insert (xind, col -> first -> Index (), col -> second);
       }

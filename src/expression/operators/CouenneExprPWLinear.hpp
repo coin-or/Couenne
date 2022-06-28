@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the exprPWLinear class implementing piecewise linear functions
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 

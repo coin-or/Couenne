@@ -34,7 +34,7 @@ public:
     return *this;
   }
 
-  expression *Expression () const 
+  expression *Expression () const
   {return expr_;}
 };
 

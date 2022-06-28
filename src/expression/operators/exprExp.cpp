@@ -56,7 +56,7 @@ bool exprExp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   CouNumber b;
 
-  if ((b = sign == expression::AUX_GEQ ? 0.           : l [wind]) > 0.) // lower bound    
+  if ((b = sign == expression::AUX_GEQ ? 0.           : l [wind]) > 0.) // lower bound
     resL = updateBound (-1, l + ind, argument_->isInteger () ? ceil  (log (b)) : log (b));
 
   if ((b = sign == expression::AUX_LEQ ? COIN_DBL_MAX : u [wind]) < COIN_DBL_MAX / 10.) { // upper bound
@@ -84,7 +84,7 @@ bool exprExp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 /// concave ("bad") side
 bool exprExp::isCuttable (CouenneProblem *problem, int index) const {
 
-  double 
+  double
     x = problem -> X (argument_ -> Index ()),
     y = problem -> X (index);
 

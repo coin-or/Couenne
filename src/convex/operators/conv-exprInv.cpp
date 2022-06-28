@@ -72,9 +72,9 @@ void exprInv::getBounds (CouNumber &lb, CouNumber &ub) {
 
 // generate convexification cut for constraint w = 1/x
 
-void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si, 
+void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
-			    t_chg_bounds *chg, int wind, 
+			    t_chg_bounds *chg, int wind,
 			    CouNumber lbw, CouNumber ubw) {
 
   // TODO: if a<=w<=b, c<=x<=d, there is a diamond enclosing the whole
@@ -86,7 +86,7 @@ void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
   if ((l < - COUENNE_EPS) && (u > COUENNE_EPS)) // there is no convexification
     return;
 
-  int wi = aux       -> Index (), 
+  int wi = aux       -> Index (),
       xi = argument_ -> Index ();
 
   bool cL = !chg || (cg -> isFirst ()) || (chg [xi].lower() != t_chg_bounds::UNCHANGED);
@@ -100,7 +100,7 @@ void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
   if (fabs (u - l) < COUENNE_EPS) {
 
     CouNumber x0 = 0.5 * (u+l);
-    if (cL || cR) 
+    if (cL || cR)
       cg -> createCut (cs, 2/x0, sign, wi, 1., xi, 1/(x0*x0));
     return;
   }
@@ -114,7 +114,7 @@ void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
     // bounding box is within ]-inf,0[
   }
 
-  // choose sampling points. 
+  // choose sampling points.
 
   // if unbounded, use a rule of thumb
   int ns = cg -> nSamples ();
@@ -128,9 +128,9 @@ void exprInv::generateCuts (expression *aux, //const OsiSolverInterface &si,
   // bound
   if ((l > 0 && sign != expression::AUX_LEQ) ||
                (sign != expression::AUX_GEQ))
-    cg -> addEnvelope 
-      (cs, (l > 0) ? +1 : -1, 
-       inv, oppInvSqr, wi, xi, 
+    cg -> addEnvelope
+      (cs, (l > 0) ? +1 : -1,
+       inv, oppInvSqr, wi, xi,
        (cg -> isFirst ()) ? // is this first call?
        // place it somewhere in the interval (we don't care)
        ((l > COUENNE_EPS) ? l : u) :

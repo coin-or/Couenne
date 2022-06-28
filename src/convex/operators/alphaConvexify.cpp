@@ -119,20 +119,20 @@ bool exprQuad::alphaConvexify (const CouenneProblem *p) {
 
   for (sparseQ::iterator row = matrix_.begin (); row != matrix_.end (); ++row) {
 
-    int 
+    int
       xind = row -> first -> Index (),
       irow = indexmap [xind];
 
     for (sparseQcol::iterator col = row -> second.begin (); col != row -> second.end (); ++col) {
 
-      int 
+      int
 	yind = col -> first -> Index (),
 	icol = indexmap [yind];
 
       double cell = col -> second * diam [irow] * diam [icol];
 
       matrix          [icol * nDiag + irow] = cell;
-      if (irow != icol) 
+      if (irow != icol)
 	matrix        [irow * nDiag + icol] = cell;
     }
   }
@@ -155,7 +155,7 @@ bool exprQuad::alphaConvexify (const CouenneProblem *p) {
       printf ("%6.2f ", matrix [i*nDiag + j]);
     printf ("\n");
   }
-#endif 
+#endif
 
   Ipopt::IpLapackDsyev (true,   // compute eigenvector
 			nDiag,  // dimension
@@ -183,8 +183,8 @@ bool exprQuad::alphaConvexify (const CouenneProblem *p) {
 
       CouNumber elem = matrix [i * nDiag + j];
 
-      if (fabs (elem) > COUENNE_EPS) 
-	eigenCoord. second. push_back (std::pair <exprVar *, CouNumber> 
+      if (fabs (elem) > COUENNE_EPS)
+	eigenCoord. second. push_back (std::pair <exprVar *, CouNumber>
 				       (p -> Var (indices [j]), elem));
     }
 
@@ -192,7 +192,7 @@ bool exprQuad::alphaConvexify (const CouenneProblem *p) {
   }
 
 #ifdef DEBUG
-  for (std::vector <std::pair <CouNumber, 
+  for (std::vector <std::pair <CouNumber,
 	 std::vector <std::pair <exprVar *, CouNumber> > > >::iterator i = eigen_.begin ();
        i != eigen_.end (); ++i) {
     printf (" [%g] -- ", i -> first);

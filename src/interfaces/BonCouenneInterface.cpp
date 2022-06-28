@@ -42,7 +42,7 @@ CouenneInterface::~CouenneInterface(){
 }
 
 #ifdef COUENNEINTERFACE_FROM_ASL
-void 
+void
 CouenneInterface::readAmplNlFile(char **& argv, Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions,
                                  Ipopt::SmartPtr<Ipopt::OptionsList> options,
                                  Ipopt::SmartPtr<Ipopt::Journalist> journalist){
@@ -65,7 +65,7 @@ CouenneInterface::readAmplNlFile(char **& argv, Ipopt::SmartPtr<Bonmin::Register
    */
 
 void
-CouenneInterface::extractLinearRelaxation 
+CouenneInterface::extractLinearRelaxation
 (OsiSolverInterface &si, CouenneCutGenerator & couenneCg, bool getObj, bool solveNlp) {
 
   {
@@ -97,7 +97,7 @@ CouenneInterface::extractLinearRelaxation
 	if ((index >= 0) && (con -> Body () -> Type () == AUX)) {
 
 	  // if there exists violation, add constraint
-	  CouNumber 
+	  CouNumber
 	    l = con -> Lb () -> Value (),	
 	    u = con -> Ub () -> Value ();
 
@@ -121,17 +121,17 @@ CouenneInterface::extractLinearRelaxation
 
       delete [] chg_bds;
 
-      const double 
+      const double
 	*nlb = getColLower (),
 	*nub = getColUpper ();
 
-      for (int i=0; i < p -> nOrigVars () - p -> nDefVars (); i++) 
+      for (int i=0; i < p -> nOrigVars () - p -> nDefVars (); i++)
 	if (p -> Var (i) -> Multiplicity () > 0) {
 	  /*printf ("---- %4d [%g,%g] [%g,%g]\n", i,
 		  nlb [i], nub [i],
 		  p -> Lb (i), p -> Ub (i));*/
 
-	  double 
+	  double
 	    lower = nlb [i],
 	    upper = nub [i];
 
@@ -141,7 +141,7 @@ CouenneInterface::extractLinearRelaxation
 	  if (lower < p -> Lb (i) - COUENNE_EPS) setColLower (i, CoinMin (nub[i], p -> Lb (i)));
 	  if (upper > p -> Ub (i) + COUENNE_EPS) setColUpper (i, CoinMax (nlb[i], p -> Ub (i)));
 
-	} else { 
+	} else {
 	  // if not enabled, fix them in the NLP solver
 	  setColLower (i, -COIN_DBL_MAX);
 	  setColUpper (i,  COIN_DBL_MAX);
@@ -168,10 +168,10 @@ CouenneInterface::extractLinearRelaxation
       OsiAuxInfo * auxInfo = si.getAuxiliaryInfo ();
       Bonmin::BabInfo * babInfo = dynamic_cast <Bonmin::BabInfo *> (auxInfo);
 
-      if (babInfo) 
+      if (babInfo)
 	babInfo -> setInfeasibleNode ();
     }
-    
+
     if (is_feasible && isProvenOptimal ()) {
 
       CouNumber obj             = getObjValue    ();
@@ -198,7 +198,7 @@ CouenneInterface::extractLinearRelaxation
 
 	if (fractional) { // try again if solution found by Ipopt is fractional
 
-	  double 
+	  double
 	    *lbSave = new double [norig],
 	    *ubSave = new double [norig],
 
@@ -236,7 +236,7 @@ CouenneInterface::extractLinearRelaxation
 		setColUpper (i, ubCur [i]);
 	      }
 
-	    setColSolution (Y); // use initial solution given 
+	    setColSolution (Y); // use initial solution given
 
 	    try {
 	      options () -> SetNumericValue ("max_cpu_time", CoinMax (0.1, p -> getMaxCpuTime () - CoinCpuTime ()));
@@ -250,7 +250,7 @@ CouenneInterface::extractLinearRelaxation
 	    catch (Bonmin::TNLPSolver::UnsolvedError *E) {
 	    }
 
-	    //resolve (); 
+	    //resolve ();
 
 	    obj      = getObjValue ();
 	    solution = getColSolution ();
@@ -277,7 +277,7 @@ CouenneInterface::extractLinearRelaxation
       }
 
       // re-check optimality in case resolve () was called
-      if (isProvenOptimal () && 
+      if (isProvenOptimal () &&
 	  //	  (obj < p -> getCutOff ()) && // check #1 (before re-computing) -- BUG. What if real object is actually better?
 
 #ifdef FM_CHECKNLP2
@@ -306,7 +306,7 @@ CouenneInterface::extractLinearRelaxation
 	if (babInfo) {
 
 #ifdef FM_CHECKNLP2
-	  babInfo -> setNlpSolution (p->getRecordBestSol()->modSol, 
+	  babInfo -> setNlpSolution (p->getRecordBestSol()->modSol,
 				     getNumCols(), obj);
 #else
 	  babInfo -> setNlpSolution (solution, getNumCols (), obj);
@@ -318,7 +318,7 @@ CouenneInterface::extractLinearRelaxation
 #ifdef FM_CHECKNLP2
 	p->getRecordBestSol()->update();
 #else
-	p->getRecordBestSol()->update(solution, getNumCols(), 
+	p->getRecordBestSol()->update(solution, getNumCols(),
 				      obj, p->getFeasTol());
 #endif
 #endif
@@ -333,7 +333,7 @@ CouenneInterface::extractLinearRelaxation
   if (!is_feasible) // nothing else to do, problem infeasible
     return;
 
-  int 
+  int
     numcols     = p -> nOrigVars (), // # original               variables
     numcolsconv = p -> nVars     (); // # original + # auxiliary variables
 
@@ -342,7 +342,7 @@ CouenneInterface::extractLinearRelaxation
     *ub = p -> Ub (); //getColUpper ();
 
    // add original and auxiliary variables to the new problem
-   for (int i=0; i<numcols; i++) 
+   for (int i=0; i<numcols; i++)
      if (p -> Var (i) -> Multiplicity () > 0) si.addCol (0, NULL,NULL, lb [i],       ub [i],      0);
      else                                     si.addCol (0, NULL,NULL, -COIN_DBL_MAX,COIN_DBL_MAX,0);
    for (int i=numcols; i<numcolsconv; i++)    si.addCol (0, NULL,NULL, -COIN_DBL_MAX,COIN_DBL_MAX,0);
@@ -359,7 +359,7 @@ CouenneInterface::extractLinearRelaxation
    CouNumber *uu = p -> Ub ();
 
    // overwrite original bounds, could have improved within generateCuts
-   for (int i = numcolsconv; i--;) 
+   for (int i = numcolsconv; i--;)
      if (p -> Var (i) -> Multiplicity () > 0) {
        colLower [i] = (ll [i] > - COUENNE_INFINITY) ? ll [i] : -COIN_DBL_MAX;
        colUpper [i] = (uu [i] <   COUENNE_INFINITY) ? uu [i] :  COIN_DBL_MAX;
@@ -430,7 +430,7 @@ CouenneInterface::extractLinearRelaxation
    // Finally, load interface si with the initial LP relaxation
    si.loadProblem (A, colLower, colUpper, obj, rowLower, rowUpper);
 
-   delete [] rowLower; 
+   delete [] rowLower;
    delete [] rowUpper;
    delete [] colLower;
    delete [] colUpper;
@@ -440,7 +440,7 @@ CouenneInterface::extractLinearRelaxation
      if ((p -> Var (i) -> Multiplicity () > 0) &&
 	 (p -> Var (i) -> isDefinedInteger ()))
        si.setInteger (i);
- 
+
    //si.writeMpsNative("toto",NULL,NULL,1);
    //si.writeLp ("toto");
    app_ -> enableWarmStart();

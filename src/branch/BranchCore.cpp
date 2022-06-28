@@ -33,7 +33,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
   /// 1) Nauty has been made available through configure
   /// 2) The orbital_branching option has been set to yes
   // printf("branchCore \n");
-  
+
   if ((doFBBT_ && problem_ -> doFBBT ()) ||
       (doConvCuts_ && simulate_ && cutGen_))
     chg_bds = new t_chg_bounds [problem_ -> nVars ()];
@@ -65,10 +65,10 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
       if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
 
-	printf ("Branch: x%d <= %g [%g,%g]\n", 
-		indVar, 
+	printf ("Branch: x%d <= %g [%g,%g]\n",
+		indVar,
 		integer ? floor (brpt) : brpt,
-		solver -> getColLower () [indVar], 
+		solver -> getColLower () [indVar],
 		solver -> getColUpper () [indVar]);
 
 	if (problem_ -> bestSol ()) {
@@ -86,7 +86,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 		{printf ("This node does not include optimal solution\n"); break;}
 	}
       }
-      
+
       // BRANCHING RULE -------------------------------------------------------------------------
 
       // change branching point to reflect unbalancedness of BB subtrees.
@@ -97,8 +97,8 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
 	//printf ("LEFT BRANCH: x10 in [%g,%g]\n", solver -> getColLower() [10], solver -> getColUpper() [10]);
 
-	problem_ -> ChangeBounds (solver -> getColLower (),  
-				  solver -> getColUpper (),  
+	problem_ -> ChangeBounds (solver -> getColLower (),
+				  solver -> getColUpper (),
 				  problem_ -> nVars ());
 
 	problem_ -> Compute_Symmetry ();
@@ -107,21 +107,21 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
       if (chg_bds) chg_bds [indVar].setUpper (t_chg_bounds::CHANGED);
       /*
-      for (int jj = 0; jj < 	problem_ -> nVars (); jj++) 
-	printf ("Branch: x%d [%g,%g]\n", 
-		jj, 
-		solver -> getColLower () [jj], 
+      for (int jj = 0; jj < 	problem_ -> nVars (); jj++)
+	printf ("Branch: x%d [%g,%g]\n",
+		jj,
+		solver -> getColLower () [jj],
 		solver -> getColUpper () [jj]);
       */
     }
     else {
-      
+
       // UP BRANCH: xi >= brpt for all i in symmetry group
 
       if (!simulate_ && (problem_ -> orbitalBranching ())){
 
-	problem_ -> ChangeBounds (solver -> getColLower (),  
-				  solver -> getColUpper (),  
+	problem_ -> ChangeBounds (solver -> getColLower (),
+				  solver -> getColUpper (),
 				  problem_ -> nVars ());
 
 	problem_ -> Compute_Symmetry ();
@@ -135,8 +135,8 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
       if (!simulate_ && (branch_orbit -> size () > 1))
 	nOrbBr ++;
 
-      bool 
-	brExclude   = false, 
+      bool
+	brExclude   = false,
 	nodeExclude = false;
 
       double
@@ -146,19 +146,19 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	OB_weight = OB_WEIGHT;
 
       // change branching point to reflect unbalancedness of BB subtrees.
-      
+
       brpt = OB_weight * ob_brpt + (1-OB_weight) * brpt;
 
       for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it)  {
 	assert (*it < problem_ -> nVars ());
-	//if (*it >= problem_ -> nVars ()) 
+	//if (*it >= problem_ -> nVars ())
 	//continue;
 
 	if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
-	  printf (" x%d>%g [%g,%g]", 
-		  *it, 
+	  printf (" x%d>%g [%g,%g]",
+		  *it,
 		  integer ? ceil (brpt) : brpt,
-		  solver -> getColLower () [*it], 
+		  solver -> getColLower () [*it],
 		  solver -> getColUpper () [*it]);
 
 	  if (problem_ -> bestSol () &&
@@ -182,7 +182,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
 	// BRANCHING RULE -------------------------------------------------------------------------
 	if ((integer ? ceil  (brpt) : brpt) > solver -> getColLower () [*it]) {
-	  	    
+	  	
 	  solver -> setColLower (*it, integer ? ceil  (brpt) : brpt); // up branch, x [indVar] >= brpt
 	  if (chg_bds) chg_bds [*it].setLower (t_chg_bounds::CHANGED);
 	}
@@ -197,10 +197,10 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
       delete branch_orbit;
     }
     /*
-          for (int jj = 0; jj < 	problem_ -> nVars (); jj++) 
-	printf ("Branch: x%d [%g,%g]\n", 
-		jj, 
-		solver -> getColLower () [jj], 
+          for (int jj = 0; jj < 	problem_ -> nVars (); jj++)
+	printf ("Branch: x%d [%g,%g]\n",
+		jj,
+		solver -> getColLower () [jj],
 		solver -> getColUpper () [jj]);*/
 
     return;
@@ -214,10 +214,10 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
     if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
 
-      printf ("Branch: x%d <= %g [%g,%g] (opt %g)\n", 
-	      indVar, 
+      printf ("Branch: x%d <= %g [%g,%g] (opt %g)\n",
+	      indVar,
 	      integer ? floor (brpt) : brpt,
-	      solver -> getColLower () [indVar], 
+	      solver -> getColLower () [indVar],
 	      solver -> getColUpper () [indVar],
 	      problem_ -> bestSol () ? problem_ -> bestSol () [indVar] : 0.);
 
@@ -233,7 +233,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	    if ((solver -> getColLower () [i] > problem_ -> bestSol () [i] + COUENNE_EPS) ||
 		(solver -> getColUpper () [i] < problem_ -> bestSol () [i] - COUENNE_EPS))
 
-	      {printf ("This node does not contain optimal solution: x%d in [%g,%g] (%g)\n", 
+	      {printf ("This node does not contain optimal solution: x%d in [%g,%g] (%g)\n",
 		       i, solver -> getColLower () [i], solver -> getColUpper () [i], problem_ -> bestSol () [i]); break;}
       }
     }
@@ -247,10 +247,10 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 
     if (jnlst_ -> ProduceOutput (J_ERROR, J_BRANCHING)) {
 
-      printf ("Branch: x%d >= %g [%g,%g] (opt %g)\n", 
-	      indVar, 
+      printf ("Branch: x%d >= %g [%g,%g] (opt %g)\n",
+	      indVar,
 	      integer ? ceil (brpt) : brpt,
-	      solver -> getColLower () [indVar], 
+	      solver -> getColLower () [indVar],
 	      solver -> getColUpper () [indVar],
 	      problem_ -> bestSol () ? problem_ -> bestSol () [indVar] : 0.);
 
@@ -267,7 +267,7 @@ void CouenneBranchingObject::branchCore (OsiSolverInterface *solver, int indVar,
 	    if ((solver -> getColLower () [indVar] > problem_ -> bestSol () [indVar] + COUENNE_EPS) ||
 		(solver -> getColUpper () [indVar] < problem_ -> bestSol () [indVar] - COUENNE_EPS))
 
-	      {printf ("This node does not contain optimal solution: x%d in [%g,%g] (%g)\n", 
+	      {printf ("This node does not contain optimal solution: x%d in [%g,%g] (%g)\n",
 		       i, solver -> getColLower () [i], solver -> getColUpper () [i], problem_ -> bestSol () [i]); break;}
       }
     }

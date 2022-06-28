@@ -18,7 +18,7 @@ using namespace Couenne;
 
 /// re-organizes multiplication and stores indices (and exponents) of
 /// its variables
-void CouenneProblem::flattenMul (expression *mul, CouNumber &coe, 
+void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
 				 std::map <int, CouNumber> &indices) {
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
@@ -32,10 +32,10 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
 
     int ind = (aux) ? aux -> Index () : mul -> Index ();
 
-    std::map <int, CouNumber>::iterator 
+    std::map <int, CouNumber>::iterator
       where = indices.find (ind);
 
-    if (where == indices.end ()) 
+    if (where == indices.end ())
       indices.insert (std::pair <int, CouNumber> (ind, 1));
     else ++ (where -> second);
 
@@ -46,9 +46,9 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
   expression **al = mul -> ArgList ();
 
   // for each factor (variable, function, or constant) of the product
-  for (int i=0; i < nargs; i++) { 
+  for (int i=0; i < nargs; i++) {
 
-    expression 
+    expression
       *arg = al [i],
       *simpl = arg -> simplify ();
 
@@ -56,7 +56,7 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
       al [i] = arg = simpl;
 
     if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-      printf ("  flatten arg %d ---> ", arg -> code ()); 
+      printf ("  flatten arg %d ---> ", arg -> code ());
       arg -> print ();
       printf ("\n");
     }
@@ -73,12 +73,12 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
       flattenMul (arg, coe, indices);
       break;
 
-    case COU_EXPRVAR: { // insert index or increment 
+    case COU_EXPRVAR: { // insert index or increment
 
-      std::map <int, CouNumber>::iterator 
+      std::map <int, CouNumber>::iterator
 	where = indices.find (arg -> Index ());
 
-      if (where == indices.end ()) 
+      if (where == indices.end ())
 	indices.insert (std::pair <int, CouNumber> (arg -> Index (), 1));
       else ++ (where -> second);
     } break;
@@ -92,11 +92,11 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
 	break;
       } else arg = arg -> Argument ();
 
-    case COU_EXPRPOW: 
+    case COU_EXPRPOW:
 
       if (arg -> code () == COU_EXPRPOW) { // re-check as it could come from above
 
-	expression 
+	expression
 	  *base     = arg -> ArgList () [0],
 	  *exponent = arg -> ArgList () [1];
 
@@ -109,7 +109,7 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
 	  if (!aux)
 	    aux = base;
 
-	  std::map <int, CouNumber>::iterator 
+	  std::map <int, CouNumber>::iterator
 	    where = indices.find (aux -> Index ());
 
 	  if (where == indices.end ())
@@ -136,10 +136,10 @@ void CouenneProblem::flattenMul (expression *mul, CouNumber &coe,
 
       int ind = (aux) ? aux -> Index () : arg -> Index ();
 
-      std::map <int, CouNumber>::iterator 
+      std::map <int, CouNumber>::iterator
 	where = indices.find (ind);
 
-      if (where == indices.end ()) 
+      if (where == indices.end ())
 	indices.insert (std::pair <int, CouNumber> (ind, 1));
       else ++ (where -> second);
     }

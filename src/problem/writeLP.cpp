@@ -48,7 +48,7 @@ double printLPquad (std::ofstream &f, const expression *ex, double mult) {
     if (e -> getc0 () != 0)
       retval -= sign * e -> getc0 ();
 
-    for (std::vector <std::pair <exprVar *, CouNumber> >::iterator i = e -> lcoeff () . begin (); 
+    for (std::vector <std::pair <exprVar *, CouNumber> >::iterator i = e -> lcoeff () . begin ();
 	 i != e -> lcoeff (). end (); ++i) {
 
       CouNumber c = sign * i -> second;
@@ -97,7 +97,7 @@ double printLPquad (std::ofstream &f, const expression *ex, double mult) {
 
 	f << c << " ";
 
-	if (i -> first -> Index () == 
+	if (i -> first -> Index () ==
 	    j -> first -> Index ()) {
 	  i -> first -> print (f);
 	  f << "^2";
@@ -113,11 +113,11 @@ double printLPquad (std::ofstream &f, const expression *ex, double mult) {
     }
 
     f << " ] ";
-    if (mult != 1) 
+    if (mult != 1)
       f << "/ " << mult;
   }
 
-  if ((mutex -> nArgs () == 1) && 
+  if ((mutex -> nArgs () == 1) &&
       (mutex -> ArgList () [0] -> Type () == CONST)) {
 
     retval -= sign * mutex -> ArgList () [0] -> Value ();
@@ -181,7 +181,7 @@ double printLPquad (std::ofstream &f, const expression *ex, double mult) {
 		(arg -> ArgList () [1] -> ArgList () [1] -> Type () == CONST)) {     // alpha xi^2
 
 	double c = mult * signI * arg -> ArgList () [0] -> Value ();
-	f << ((c > 0) ? '+' : ' ') << c << " "; 
+	f << ((c > 0) ? '+' : ' ') << c << " ";
 	arg -> ArgList () [1] -> ArgList () [0] -> print (f);
 	f << "^2";
       }
@@ -192,7 +192,7 @@ double printLPquad (std::ofstream &f, const expression *ex, double mult) {
 		(arg -> ArgList () [0] -> Index () !=
 		 arg -> ArgList () [1] -> Index ())) {                               // x1 * x2
 
-	f << ((signI > 0) ? " + " : " - "); 
+	f << ((signI > 0) ? " + " : " - ");
 	if (mult != 1) f << mult << " ";
 	arg -> ArgList () [0] -> print (f); f << " * ";
 	arg -> ArgList () [1] -> print (f);
@@ -219,7 +219,7 @@ double printLPquad (std::ofstream &f, const expression *ex, double mult) {
 		 arg -> ArgList () [1] -> ArgList () [1] -> Index ())) {     // alpha x1 * x2
 
 	double c = mult * signI * arg -> ArgList () [0] -> Value ();
-	f << ((c > 0) ? '+' : ' ') << c << " "; 
+	f << ((c > 0) ? '+' : ' ') << c << " ";
 	arg -> ArgList () [1] -> ArgList () [0] -> print (f); f << " * ";
 	arg -> ArgList () [1] -> ArgList () [1] -> print (f);
       }
@@ -233,7 +233,7 @@ double printLPquad (std::ofstream &f, const expression *ex, double mult) {
 		 arg -> ArgList () [1] -> ArgList () [1] -> Index ())) {     // alpha x1 * x1
 
 	double c = mult * signI * arg -> ArgList () [0] -> Value ();
-	f << ((c > 0) ? '+' : ' ') << c << " "; 
+	f << ((c > 0) ? '+' : ' ') << c << " ";
 	arg -> ArgList () [1] -> ArgList () [0] -> print (f);
 	f << "^2 ";
 
@@ -257,7 +257,7 @@ double printLPquad (std::ofstream &f, const expression *ex, double mult) {
     }
 
     f << " ] ";
-    if (mult != 1) 
+    if (mult != 1)
       f << "/ " << mult;
   }
 
@@ -269,7 +269,7 @@ double printLPquad (std::ofstream &f, const expression *ex, double mult) {
 
 void CouenneProblem::writeLP (const std::string &fname) { /// name of the mod file
 
-  // only write LP problems from original. 
+  // only write LP problems from original.
 
   for (int i=0; i < nVars (); i++)
     if (variables_ [i] -> Type () == AUX) {
@@ -299,7 +299,7 @@ void CouenneProblem::writeLP (const std::string &fname) { /// name of the mod fi
 
   // objective function /////////////////////////////////////////////////////////////
 
-  //if (objectives_ [0] -> Sense () == MINIMIZE) 
+  //if (objectives_ [0] -> Sense () == MINIMIZE)
   f << "minimize obj: ";
 
   double objConst = printLPquad (f, objectives_ [0] -> Body (), 2);
@@ -314,11 +314,11 @@ void CouenneProblem::writeLP (const std::string &fname) { /// name of the mod fi
 
   //   for (int i=0; i < nVars (); i++)
 
-  //     if ((variables_ [i] -> Type () == AUX) && 
+  //     if ((variables_ [i] -> Type () == AUX) &&
   // 	  (variables_ [i] -> Multiplicity () > 0)) {
 
   // 	f << "aux_" << i << ": "; variables_ [i] -> print (f, false);
-  // 	f << " = ";  
+  // 	f << " = ";
 
   // 	variables_ [i] -> Image () -> print (f, false);
   // 	f << std::endl;
@@ -332,9 +332,9 @@ void CouenneProblem::writeLP (const std::string &fname) { /// name of the mod fi
   // if (!aux) // print h_i(x,y) <= ub, >= lb
   //   for (std::vector <exprVar *>::iterator i = variables_.begin ();
   // 	 i != variables_.end ();
-  // 	 ++i) 
+  // 	 ++i)
 
-  //     if (((*i) -> Type () == AUX) && 
+  //     if (((*i) -> Type () == AUX) &&
   // 	  ((*i) -> Multiplicity () > 0)) {
 	
   // 	CouNumber bound;
@@ -366,7 +366,7 @@ void CouenneProblem::writeLP (const std::string &fname) { /// name of the mod fi
 
     if (lb > - COUENNE_INFINITY) {
       f << ' ';
-      if (fabs (ub-lb) > COUENNE_EPS) 
+      if (fabs (ub-lb) > COUENNE_EPS)
 	f << '>';
       f << "= " << lb << std::endl;
     }
@@ -374,7 +374,7 @@ void CouenneProblem::writeLP (const std::string &fname) { /// name of the mod fi
 
     // if range constraint, print it once again
 
-    if ((   lb > - COUENNE_INFINITY + 1) 
+    if ((   lb > - COUENNE_INFINITY + 1)
 	&& (ub <   COUENNE_INFINITY - 1)
 	&& (fabs (ub-lb) > COUENNE_EPS)) {
 
@@ -407,7 +407,7 @@ void CouenneProblem::writeLP (const std::string &fname) { /// name of the mod fi
       variables_ [i] -> print (f);
       if (!(++wrapcount % 10))
 	f << std::endl;
-      else 
+      else
 	f << " ";
     }
 

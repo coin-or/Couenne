@@ -48,16 +48,16 @@ protected:
 public:
 
   /// constructor
-  DomainPoint (int dim, 
-	       CouNumber *x, 
+  DomainPoint (int dim,
+	       CouNumber *x,
 	       CouNumber *lb,
 	       CouNumber *ub,
 	       bool copy = true);
 
   /// constructor
-  DomainPoint (int dim = 0, 
-	       const CouNumber *x   = NULL, 
-	       const CouNumber *lb  = NULL, 
+  DomainPoint (int dim = 0,
+	       const CouNumber *x   = NULL,
+	       const CouNumber *lb  = NULL,
 	       const CouNumber *ub  = NULL,
 	       bool copy = true);
 
@@ -94,7 +94,7 @@ public:
   DomainPoint &operator= (const DomainPoint &src);
 
   /// true if this point is the nlp solution
-  bool &isNlp () 
+  bool &isNlp ()
   {return isNlp_;}
 };
 
@@ -121,29 +121,29 @@ public:
     /*for (std::stack <DomainPoint *>::iterator i = src.domStack_.begin ();
 	 i != src.domStack_.end (); ++i)
 	 domStack_.push (new DomainPoint (**i));*/
-  } 
+  }
 
   /// destructor
   ~Domain ();
 
   /// save current point and start using another
-  void push (int dim, 
-	     CouNumber *x, 
-	     CouNumber *lb, 
-	     CouNumber *ub, 
+  void push (int dim,
+	     CouNumber *x,
+	     CouNumber *lb,
+	     CouNumber *ub,
 	     bool copy = true);
 
   /// save current point and start using another
-  void push (int dim, 
-	     const CouNumber *x, 
-	     const CouNumber *lb, 
+  void push (int dim,
+	     const CouNumber *x,
+	     const CouNumber *lb,
 	     const CouNumber *ub,
 	     bool copy = true);
 
   /// save current point and start using another -- retrieve
   /// information from solver interface and from previous column cuts
   void push (const OsiSolverInterface *si,
-	     OsiCuts *cs = NULL, 
+	     OsiCuts *cs = NULL,
 	     bool copy = true);
 
   /// save current point and start using another

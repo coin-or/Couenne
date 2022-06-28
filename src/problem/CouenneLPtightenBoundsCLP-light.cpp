@@ -66,7 +66,7 @@ int CouenneSolverInterface<T>::tightenBoundsCLP_Light (int lightweight) {
 	int n=first[iRow];
 	if (n==0&&element[j])
 	  first[iRow]=-iColumn-1;
-	else if (n<0) 
+	else if (n<0)
 	  first[iRow]=2;
       }
     }
@@ -126,7 +126,7 @@ int CouenneSolverInterface<T>::tightenBoundsCLP_Light (int lightweight) {
 	  ceil  (newLower);
 
 	newUpper = (ceil(newUpper)-newUpper<tolerance2) ?
-	  ceil  (newUpper) : 
+	  ceil  (newUpper) :
 	  floor (newUpper);
       }
 

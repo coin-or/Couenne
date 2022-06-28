@@ -25,8 +25,8 @@ void WipeMakeInfeas (OsiCuts &cs) {
 
   if (infeascut) {
     int i=0;
-    double 
-      upper = -1., 
+    double
+      upper = -1.,
       lower =  1.;
 
     infeascut -> setLbs (1, &i, &lower);
@@ -48,7 +48,7 @@ bool isWiped (OsiCuts &cs) {
   //(cs.sizeColCuts () != 1))
     return false;
 
-  CoinPackedVector 
+  CoinPackedVector
     lbs = cs.colCutPtr (cs.sizeColCuts () - 1) -> lbs (),
     ubs = cs.colCutPtr (cs.sizeColCuts () - 1) -> ubs ();
 

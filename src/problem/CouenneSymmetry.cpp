@@ -45,7 +45,7 @@ inline bool CouenneProblem::compare (Node &a, Node &b) const {
       if(a.get_sign() == b.get_sign() )
 	if( fabs ( a.get_lb() - b.get_lb() ) <= COUENNE_EPS )
 	  if( fabs ( a.get_ub() - b.get_ub() ) <= COUENNE_EPS )
-	    return 1; 
+	    return 1;
   return 0;
 }
 
@@ -255,52 +255,52 @@ void CouenneProblem::sym_setup (){
 	//	printf ("variable is unary  %d\n", (*i) -> Index ());
 	expression *arg = (*i) -> Image () -> Argument () ;
 	nauty_info->addElement( arg-> Index(), (*i) -> Index() );
-	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), arg-> Index()); 
+	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), arg-> Index());
       }
       else if ((*i) -> Image () -> Type () == AUX) {
 	//printf ("variable is AUX  %d\n", (*i) -> Index ());
 	nauty_info->addElement((*i) -> Index (), (*i) -> Image() -> Index());
 	nauty_info->addElement( (*i) -> Image() -> Index(), (*i) -> Index() );
-	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), (*i) -> Image() -> Index()); 
+	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), (*i) -> Image() -> Index());
       }
       else if ((*i) -> Image () -> Type () == VAR) {
 	//printf ("variable is VAR  %d, image %d \n", (*i) -> Index (), (*i) -> Image() -> Index());
 	nauty_info->addElement((*i) -> Index (), (*i) -> Image() -> Index());
 	nauty_info->addElement( (*i) -> Image() -> Index(), (*i) -> Index() );
 
-	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), (*i) -> Image() -> Index()); 
+	//printf (" add edge aux index %d ,  coef index %d\n", (*i) -> Index (), (*i) -> Image() -> Index());
       }
     }
     else {
       // printf ("variable is %d\n", (*i) -> Index ());
       Node var_vertex;
 
-      // Bounds of +- infinity make the compare function likely to return a false negative. Rather than add inf as a boud, I use lb-1 (or ub +1 
+      // Bounds of +- infinity make the compare function likely to return a false negative. Rather than add inf as a boud, I use lb-1 (or ub +1
       if( (*i) -> ub() >= COUENNE_INFINITY && (*i) -> lb() <= - COUENNE_INFINITY){
 	var_vertex.node( (*i) -> Index () , 0 , 1 , 0 ,  -1, -1 );
 	node_info.push_back(var_vertex);
-	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , 1 , 0 ) ; 
+	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , 1 , 0 ) ;
       }
       else  if( (*i) -> ub() >= COUENNE_INFINITY ){
 	var_vertex.node( (*i) -> Index () , 0 , (*i) -> lb () , (*i) -> lb() -1 ,  -1, -1 );
 	node_info.push_back(var_vertex);
-	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , (*i) -> lb () , (*i) -> lb () -1 ) ; 
+	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , (*i) -> lb () , (*i) -> lb () -1 ) ;
       }
       else  if( (*i) -> lb() <= - COUENNE_INFINITY){
 	var_vertex.node( (*i) -> Index () , 0 , (*i) -> ub () +1 , (*i) -> ub () ,  -1, -1 );
 	node_info.push_back(var_vertex);
-	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , (*i) -> ub () +1 , (*i) -> ub () ) ; 
+	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , (*i) -> ub () +1 , (*i) -> ub () ) ;
       }
       else{
 	var_vertex.node( (*i) -> Index () , 0 , (*i) -> lb () , (*i) -> ub () ,  -1, -1 );
-	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , (*i) -> lb () , (*i) -> ub () ) ; 
+	//printf( "var info index %d, lb %f, ub %f \n",(*i) -> Index () , (*i) -> lb () , (*i) -> ub () ) ;
 	// var_vertex.get_index() , var_vertex.get_coeff() , var_vertex.get_lb() , var_vertex.get_ub() ,  var_vertex.get_code() );
 	node_info.push_back(var_vertex);
 	// this is an original variable
       }
     }
   }
-  
+
 }
 
 
@@ -317,9 +317,9 @@ void CouenneProblem::Compute_Symmetry() const{
 
   std::sort(node_info. begin (), node_info. end (), node_sort);
 
-  for (std::vector <Node>:: iterator i = node_info. begin (); i != node_info. end (); ++i) 
+  for (std::vector <Node>:: iterator i = node_info. begin (); i != node_info. end (); ++i)
     (*i).color_vertex(-1);
-  
+
   int color = 1;
   for (std::vector <Node>:: iterator i = node_info. begin (); i != node_info. end (); ++i) {
     if( (*i).get_color() == -1){
@@ -345,7 +345,7 @@ void CouenneProblem::Compute_Symmetry() const{
   ++CouenneBranchingObject::nSGcomputations;
 }
 
-  
+
 void CouenneProblem::Print_Orbits () const {
 
   //printf ("num gens = %d, num orbits = %d \n", nauty_info -> getNumGenerators(), nauty_info -> getNumOrbits() );
@@ -360,7 +360,7 @@ void CouenneProblem::Print_Orbits () const {
   int nNonTrivialOrbits = 0;
 
   for (unsigned int i = 0; i < new_orbits -> size(); i++) {
-    if ((*new_orbits)[i].size() > 1) 
+    if ((*new_orbits)[i].size() > 1)
       nNonTrivialOrbits++;
     else continue;
 
@@ -402,7 +402,7 @@ void CouenneProblem::Print_Orbits () const {
       if (branch_orbit -> size () > 1) {
   	printf ("x%04d: ", i);
 
-  	for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it) 
+  	for (std::vector<int>::iterator it = branch_orbit -> begin (); it != branch_orbit -> end (); ++it)
   	  printf ("%d ", *it);
   	printf ("\n");
       }
@@ -424,9 +424,9 @@ std::vector<int> *CouenneProblem::Find_Orbit(int index) const{
 	which_orbit = i;
     }
   }
-  
+
   //  for (std::vector <int>:: iterator j = new_orbits[which_orbit].begin(); new_orbits[which_orbit].end(), ++j)
-  for (unsigned int j = 0; j < (*new_orbits)[which_orbit].size(); j++) 
+  for (unsigned int j = 0; j < (*new_orbits)[which_orbit].size(); j++)
     orbit -> push_back ((*new_orbits)[which_orbit][j]);
 
   delete new_orbits;
@@ -441,7 +441,7 @@ void CouenneProblem::ChangeBounds (const double * new_lb, const double * new_ub,
 
   for (int  i = 0; i < num_cols; i++) {
     //   printf("Var %d  lower bound: %f   upper bound %f \n", i, new_lb[i], new_ub[i]);
-    
+
     assert (node_info[i].get_index () == i);
     node_info[i ].bounds ( new_lb[i] , new_ub[i] );
     // printf("Var %d  INPUT lower bound: %f   upper bound %f \n", i, node_info[i].get_lb(), node_info[i].get_ub());
@@ -460,7 +460,7 @@ void CouenneProblem::setupSymmetry () {
   }
 
 #else
-  if (orbitalBranching_) 
+  if (orbitalBranching_)
     jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "\
 Couenne: Warning, you have set orbital_branching but Nauty is not available.\n\
 Reconfigure with appropriate options --with-nauty-lib=/path/to/libnauty.* and --with-nauty-incdir=/path/to/nauty/include/files/\n");

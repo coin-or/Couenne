@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of divisions
  *
- * (C) Carnegie-Mellon University, 2006-11. 
+ * (C) Carnegie-Mellon University, 2006-11.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -35,7 +35,7 @@ expression *exprDiv::simplify () {
   exprOp:: simplify ();
   expression *ret = NULL;
 
-  if ((*arglist_) -> Type () == CONST) { // expr = a / y 
+  if ((*arglist_) -> Type () == CONST) { // expr = a / y
 
     CouNumber c0 = (*arglist_) -> Value ();
 
@@ -47,7 +47,7 @@ expression *exprDiv::simplify () {
 	printf ("Couenne: Warning, division by zero -- "); print (); printf ("\n");
       }
       else {
-	// delete arglist_ [0]; 
+	// delete arglist_ [0];
 	// delete arglist_ [1];
 	ret = new exprConst (c0 / c1);
 	//arglist_ [0] = arglist_ [1] = NULL;
@@ -98,7 +98,7 @@ expression *exprDiv::simplify () {
 // d (f/g) / dx = df/dx / g - f/g^2 * dg/dx = 1/g (f' - f/g g')
 expression *exprDiv::differentiate (int index) {
 
-  bool 
+  bool
     diffNum = arglist_ [0] -> dependsOn (index),
     diffDen = arglist_ [1] -> dependsOn (index);
 
@@ -196,7 +196,7 @@ void exprDiv::getBounds (CouNumber &lb, CouNumber &ub) {
 
   // upper
 
-  if (ld > 0)                                     // (ln,un,ld,ud)     lb 
+  if (ld > 0)                                     // (ln,un,ld,ud)     lb
     if   (un < 0) ub = safeDiv (un,ud,1);         // (-,-,+,+) --> un/ud
     else          ub = safeDiv (un,ld,1);         // (?,+,+,+) --> un/ld
   else { // ld <= 0
@@ -220,8 +220,8 @@ bool exprDiv::isInteger () {
   arglist_ [1] -> getBounds (dl, du);
   arglist_ [0] -> getBounds (nl, nu);
 
-  //CouNumber 
-  //num = (*nl) (), 
+  //CouNumber
+  //num = (*nl) (),
   //den = (*dl) ();
 
   bool
@@ -259,7 +259,7 @@ bool exprDiv::isInteger () {
 
 /// compute $y^{lv}$ and $y^{uv}$ for Violation Transfer algorithm
 void exprDiv::closestFeasible (expression *varind,
-			       expression *vardep, 
+			       expression *vardep,
 			       CouNumber &left,
 			       CouNumber &right) const {
 
@@ -272,7 +272,7 @@ void exprDiv::closestFeasible (expression *varind,
     numerator = true;
   } else assert (arglist_ [1] -> Index () == varind -> Index ()); // right to assume y = c/x
 
-  CouNumber 
+  CouNumber
     x = (*varind) (),
     y = (*vardep) (),
     c = (*varoth) ();
@@ -292,7 +292,7 @@ void exprDiv::closestFeasible (expression *varind,
     if      (y < 0.)
       if (x*y > c) {assert (c/y > right); right = c/y;} // convex area in third orthant
       else         {assert (c/y < left);  left  = c/y;} // remaining of third+fourth orthant
-    else if (y > 0.) 
+    else if (y > 0.)
       if (x*y > c) {assert (c/y < left);  left  = c/y;} // convex area in first orthant
       else         {assert (c/y > right); right = c/y;} // remaining of first+second orthant
     else left = - (right = COIN_DBL_MAX);
@@ -302,7 +302,7 @@ void exprDiv::closestFeasible (expression *varind,
 /// return l-2 norm of gradient at given point
 CouNumber exprDiv::gradientNorm (const double *x) {
 
-  int 
+  int
     ind0 = arglist_ [0] -> Index (),
     ind1 = arglist_ [1] -> Index ();
 
@@ -320,7 +320,7 @@ CouNumber exprDiv::gradientNorm (const double *x) {
   if (ind0 < 0)
     if (ind1 < 0) return 0.;                // c/d
     else          return fabs (x0/(x1sq)); // c/y
-  else 
+  else
     if (ind1 < 0) return 1. / x1;                                // x/d
     else          return sqrt (1. / x1sq + x0*x0 / (x1sq * x1sq)); // x/y
 }

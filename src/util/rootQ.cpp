@@ -44,8 +44,8 @@ CouNumber rootQ (int k) {
   if (k==1) return - 0.5; // for x^3, solution is -1/2
   else {
 
-    CouNumber 
-      l  = - 1.0 + 0.5 / k, 
+    CouNumber
+      l  = - 1.0 + 0.5 / k,
       u  = - 0.5,
       /* Ql = Q (k, l), Qu = Q (k, u), */
       Qm,
@@ -80,7 +80,7 @@ int main () {
     /*
     printf ("k=%3d: ", 2*k+1);
     for (x = -1.0; x < 0.4; x += 0.1) {
-      //      Q (k, x, &q, NULL, NULL); 
+      //      Q (k, x, &q, NULL, NULL);
       printf ("[%.2f, %.3f] ", x, rootQ);
     }
     printf ("\n");

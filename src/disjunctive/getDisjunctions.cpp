@@ -24,26 +24,26 @@ bool BranchingFBBT (CouenneProblem *problem,
 		    OsiSolverInterface *solver);
 
 /// generate all disjunctions given current point
-int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts *> > &disjs, 
-				      OsiSolverInterface &si, 
-				      OsiCuts &cs, 
+int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts *> > &disjs,
+				      OsiSolverInterface &si,
+				      OsiCuts &cs,
 				      const CglTreeInfo &info) const {
 
-  OsiBranchingInformation brInfo (&si, 
+  OsiBranchingInformation brInfo (&si,
 				  true,   // bool normalSolver,
 				  false); // bool copySolution=false);
 
   if (jnlst_ -> ProduceOutput (J_MATRIX, J_DISJCUTS))
     for (int i=0; i<si.getNumCols (); i++)
-      printf ("%3d. %8g  [%8g %8g]\n", i, 
-	      brInfo. solution_ [i], 
-	      brInfo. lower_    [i], 
+      printf ("%3d. %8g  [%8g %8g]\n", i,
+	      brInfo. solution_ [i],
+	      brInfo. lower_    [i],
 	      brInfo. upper_    [i]);
 
   // get list of best disjunction as though we were branching
   branchingMethod_ -> setupList (&brInfo, true); // initialize
 
-  int 
+  int
     ncols  = si.getNumCols (),
     retval = COUENNE_FEASIBLE;
 
@@ -51,7 +51,7 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
 
   if (nobjs) {
 
-    if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) 
+    if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS))
       printf ("---   %d disjunctive objects\n", nobjs);
 
     const int *candidates = branchingMethod_ -> candidates ();
@@ -60,8 +60,8 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
     // enumerate first (most infeasible, or most promising) objects of
     // the list
 
-    for (int candInd = 0,      num = 0; 
-	 (candInd < nobjs) && (num < numDisjunctions_); 
+    for (int candInd = 0,      num = 0;
+	 (candInd < nobjs) && (num < numDisjunctions_);
 	 candInd++) {
 
       OsiObject *Object = objs [candidates [candInd]];
@@ -70,7 +70,7 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
       // TODO: add SOS support in disjunctive cuts
 
       int indVar = Object -> columnNumber ();
-      if (indVar < 0) 
+      if (indVar < 0)
 	continue;
 
       if (cObj &&                                          // IF    a nonlinear object BUT:
@@ -81,20 +81,20 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
       bool     feasLeft = true,  feasRight = true;
       OsiCuts *leftCuts = NULL, *rightCuts = NULL;
 
-      const double 
+      const double
 	*saveLower = CoinCopyOfArray (si.getColLower (), ncols),
 	*saveUpper = CoinCopyOfArray (si.getColUpper (), ncols);
 
       OsiBranchingObject *brObj = Object -> createBranch (&si, &brInfo, 0); // down!
 
-      if (brObj && 
+      if (brObj &&
 	  jnlst_ -> ProduceOutput (J_VECTOR, J_DISJCUTS) &&
 	  dynamic_cast <CouenneBranchingObject *> (brObj) &&
 	  dynamic_cast <CouenneBranchingObject *> (brObj) -> variable ())
-	printf ("---   cand [%d] is %d: x_%d <>= %g [%g,%g]\n", 
-	      candInd, 
+	printf ("---   cand [%d] is %d: x_%d <>= %g [%g,%g]\n",
+	      candInd,
 		candidates [candInd],
-		dynamic_cast <CouenneBranchingObject *> (brObj) -> variable () -> Index (), 
+		dynamic_cast <CouenneBranchingObject *> (brObj) -> variable () -> Index (),
 		brObj -> value (),
 		couenneCG_->Problem()->Lb(dynamic_cast<CouenneBranchingObject*>(brObj)
 					  ->variable()->Index ()),
@@ -104,7 +104,7 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
       // left branch ////////////////////////////////////////////////////////////
 
       if ((brObj -> branch (&si) >= COUENNE_INFINITY) ||
-	  // Bound tightening if not a CouenneObject -- explicit 
+	  // Bound tightening if not a CouenneObject -- explicit
 	  (!cObj && !BranchingFBBT (couenneCG_ -> Problem (), Object, &si)))
 	feasLeft = false;                        // left subtree infeasible
       else leftCuts = getSingleDisjunction (si); // feasible, store new bounds in OsiCuts
@@ -120,7 +120,7 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
       brObj = Object -> createBranch (&si, &brInfo, 1); // up!
 
       if ((brObj -> branch (&si) >= COUENNE_INFINITY)  ||
-	  // Bound tightening if not a CouenneObject -- explicit 
+	  // Bound tightening if not a CouenneObject -- explicit
 	  (!cObj && !BranchingFBBT (couenneCG_ -> Problem (), Object, &si)))
 	feasRight = false;                        // right subtree infeasible
       else rightCuts = getSingleDisjunction (si); // feasible, store new bounds in OsiCuts
@@ -222,7 +222,7 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
       // find smallest box containing two disjunctions
       getBoxUnion (si, disjI -> first, disjI -> second, lowerChg, upperChg);
 
-      if ((lowerChg.getNumElements () > 0) || 
+      if ((lowerChg.getNumElements () > 0) ||
 	  (upperChg.getNumElements () > 0)) {
 
 	OsiColCut cut;
@@ -232,7 +232,7 @@ int CouenneDisjCuts::getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts
 
 	cs.insert (cut);
       }
-    }   
+    }
   }
 
   return retval;
@@ -261,7 +261,7 @@ void CouenneDisjCuts::applyColCuts (OsiSolverInterface &si, OsiColCut *cut) cons
 
   // apply single column cut to si
   if (jnlst_ -> ProduceOutput (J_VECTOR, J_DISJCUTS)) {
-    printf ("tightening bounds: "); 
+    printf ("tightening bounds: ");
     cut -> print ();
   }
 
@@ -271,14 +271,14 @@ void CouenneDisjCuts::applyColCuts (OsiSolverInterface &si, OsiColCut *cut) cons
 
   const int    *lind = lbs.getIndices  (), *uind = ubs.getIndices  ();
   const double *lval = lbs.getElements (), *uval = ubs.getElements (),
-    *oldLower = si.getColLower (), 
+    *oldLower = si.getColLower (),
     *oldUpper = si.getColUpper ();
 
   for (int j=lbs.getNumElements (); j--; lval++, lind++)
-    if (*lval > oldLower [*lind] + COUENNE_EPS) 
+    if (*lval > oldLower [*lind] + COUENNE_EPS)
       si.setColLower (*lind, *lval);
 
   for (int j=ubs.getNumElements (); j--; uval++, uind++)
-    if (*uval < oldUpper [*uind] - COUENNE_EPS) 
+    if (*uval < oldUpper [*uind] - COUENNE_EPS)
       si.setColUpper (*uind, *uval);
 }

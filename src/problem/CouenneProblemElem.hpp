@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: define the classes used by class CouenneProblem
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-08.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -22,14 +22,14 @@ namespace Couenne {
 /** Class to represent nonlinear constraints
  *
  *  It consists of an expression as the body and two range expressions
- *  as lower- and upper bounds.  
+ *  as lower- and upper bounds.
  *
  *  A general constraint is defined as lb_ <= body_ <= ub_, where all
  *  three components are expressions, depending on variables,
  *  auxiliaries and bounds. If the constraint is 2 <= exp (x1+x2) <=
  *  4, then:
  *
- *  body_ = exp (x1+x2), that is, 
+ *  body_ = exp (x1+x2), that is,
  *
  *  new exprExp (new exprSum (new exprVar (1), new exprVar (2))
  *
@@ -47,26 +47,26 @@ class COUENNELIB_EXPORT CouenneConstraint {
  public:
 
   /// Constructor
-  CouenneConstraint  (expression *body = NULL, 
-  	              expression *lb   = NULL, 
+  CouenneConstraint  (expression *body = NULL,
+  	              expression *lb   = NULL,
 		      expression *ub   = NULL):
-    body_     (body), 
-    lb_       (lb), 
+    body_     (body),
+    lb_       (lb),
     ub_       (ub) {
 
-    if (!lb_) 
+    if (!lb_)
       if (!ub_) {
 	lb_ = new exprConst (0.);
 	ub_ = new exprConst (0.);
-      } 
+      }
       else         lb_ = new exprConst (- COUENNE_INFINITY);
     else if (!ub_) ub_ = new exprConst   (COUENNE_INFINITY);
   }
 
   /// Destructor
   virtual ~CouenneConstraint () {
-    delete body_; 
-    delete lb_; 
+    delete body_;
+    delete lb_;
     delete ub_;
   }
 
@@ -86,7 +86,7 @@ class COUENNELIB_EXPORT CouenneConstraint {
   virtual inline expression *Body () const {return body_;} ///< Expression of body of constraint
 
   /// Set body of constraint
-  virtual inline expression *Body (expression *newBody) 
+  virtual inline expression *Body (expression *newBody)
   {body_ = newBody; return body_;}
 
   /// decompose body of constraint through auxiliary variables
@@ -120,7 +120,7 @@ class COUENNELIB_EXPORT CouenneObjective {
     body_ (body) {}
 
   /// destructor
-  ~CouenneObjective () 
+  ~CouenneObjective ()
   {delete body_;}
 
   /// copy constructor
@@ -136,11 +136,11 @@ class COUENNELIB_EXPORT CouenneObjective {
   {return body_;}
 
   /// Set body
-  expression *Body (expression *newBody) 
+  expression *Body (expression *newBody)
   {body_ = newBody; return body_;}
 
   /// Get standard form of this objective function
-  inline exprAux *standardize (CouenneProblem *p) 
+  inline exprAux *standardize (CouenneProblem *p)
   {return body_ -> standardize (p);}
 
   /// Print to iostream

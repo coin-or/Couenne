@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: fill in empty or single valued vectors and matrices
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -18,15 +18,15 @@ using namespace Couenne;
 
 // take columns of matrix and add each to arrays for matrix under construction
 void addSubMatr (int *start, int *len, int *ind, double *el,
-		 CoinPackedMatrix &A, 
-		 CoinPackedVector &v, 
+		 CoinPackedMatrix &A,
+		 CoinPackedVector &v,
 		 int &cur,
 		 int &ncols,
-		 int dispM, 
-		 int dispVec, 
+		 int dispM,
+		 int dispVec,
 		 int finalrow) {
 
-  const int 
+  const int
     *aLe  = A.getVectorLengths (),
     *aIn  = A.getIndices  (),
     *vIn  = v.getIndices  (),
@@ -34,7 +34,7 @@ void addSubMatr (int *start, int *len, int *ind, double *el,
 
   int vNum = v.getNumElements ();
 
-  const double 
+  const double
     *aEl = A.getElements (),
     *vEl = v.getElements ();
 
@@ -79,8 +79,8 @@ void addSubMatr (int *start, int *len, int *ind, double *el,
 
 
 // debug functions
-void printMatrix (int nrows, int ncols, int nel, 
-		  const int *start, const int *len, 
+void printMatrix (int nrows, int ncols, int nel,
+		  const int *start, const int *len,
 		  const int *ind,   const double *el) {
 
   printf ("------------------- %d rows, %d columns, %d nz\n", nrows, ncols, nel);
@@ -107,7 +107,7 @@ void printMatrix (int nrows, int ncols, int nel,
 
 void printMatrix (const CoinPackedMatrix *A) {
 
-  int 
+  int
     nrows = A -> getMajorDim    (),
     ncols = A -> getMinorDim    (),
     nel   = A -> getNumElements ();

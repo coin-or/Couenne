@@ -36,20 +36,20 @@ namespace Couenne {
 
     virtual int findRelations () = 0;
 
-    virtual void generateCuts (const OsiSolverInterface &, 
-			       OsiCuts &, 
+    virtual void generateCuts (const OsiSolverInterface &,
+			       OsiCuts &,
 			       const CglTreeInfo = CglTreeInfo ()) const;
   protected:
 
   };
-  
+
   /// Identifies 5-ples of variables of the form
   ///
   /// x_3 := log x_1
   /// x_4 := log x_2
   /// x_5 := x_1 x_2 in [l,u]
   ///
-  /// and generates a cut 
+  /// and generates a cut
   ///
   /// x_3 + x_4 in [max {0, log l}, max {0, log u}].
   ///
@@ -62,8 +62,8 @@ namespace Couenne {
 
     virtual int findRelations ();
 
-    virtual void generateCuts (const OsiSolverInterface &, 
-			       OsiCuts &, 
+    virtual void generateCuts (const OsiSolverInterface &,
+			       OsiCuts &,
 			       const CglTreeInfo = CglTreeInfo ()) const;
   };
 
@@ -76,7 +76,7 @@ namespace Couenne {
   /// x_q := x_k x_p     OR     x_q := x_k / x_j
   /// x_r := x_k x_j            x_r := x_l / x_p
   ///
-  /// and generates, ONLY ONCE, a cut 
+  /// and generates, ONLY ONCE, a cut
   ///
   /// x_q = x_r (in both cases).
 
@@ -86,13 +86,13 @@ namespace Couenne {
 
     virtual int findRelations ();
 
-    virtual void generateCuts (const OsiSolverInterface &, 
-			       OsiCuts &, 
+    virtual void generateCuts (const OsiSolverInterface &,
+			       OsiCuts &,
 			       const CglTreeInfo = CglTreeInfo ()) const;
   };
 
   /// Identifies 5-tuple of the form
-  /// 
+  ///
   /// x_j := x_i / x_k
   /// x_p := x_i / x_q
   ///
@@ -109,13 +109,13 @@ namespace Couenne {
 
     virtual int findRelations ();
 
-    virtual void generateCuts (const OsiSolverInterface &, 
-			       OsiCuts &, 
+    virtual void generateCuts (const OsiSolverInterface &,
+			       OsiCuts &,
 			       const CglTreeInfo = CglTreeInfo ()) const;
   };
 
   /// Identifies 5-tuple of the form
-  /// 
+  ///
   /// x_j := x_i ^ alpha
   /// x_p := x_i ^ beta
   ///
@@ -129,8 +129,8 @@ namespace Couenne {
 
     virtual int findRelations ();
 
-    virtual void generateCuts (const OsiSolverInterface &, 
-			       OsiCuts &, 
+    virtual void generateCuts (const OsiSolverInterface &,
+			       OsiCuts &,
 			       const CglTreeInfo = CglTreeInfo ()) const;
   };
 #endif
@@ -157,8 +157,8 @@ namespace Couenne {
     {return new CouenneCrossConv (*this);}
 
     /// the main CglCutGenerator
-    virtual void generateCuts (const OsiSolverInterface &, 
-		       OsiCuts &, 
+    virtual void generateCuts (const OsiSolverInterface &,
+		       OsiCuts &,
 		       const CglTreeInfo = CglTreeInfo ())
 #if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
     const

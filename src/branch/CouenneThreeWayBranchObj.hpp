@@ -19,7 +19,7 @@
 
 namespace Couenne {
 
-/// \brief Spatial, three-way branching object. 
+/// \brief Spatial, three-way branching object.
 ///
 /// Branching is performed on continuous variables but a better
 /// convexification is sought around the current point by dividing the
@@ -31,9 +31,9 @@ public:
 
   /// Constructor
   CouenneThreeWayBranchObj (JnlstPtr jnlst,
-			    expression *, 
+			    expression *,
 			    CouNumber,
-			    CouNumber, 
+			    CouNumber,
 			    int  = THREE_CENTER
 			    //bool = false
 			    );
@@ -53,7 +53,7 @@ public:
 
   /** \brief Execute the actions required to branch, as specified by the
 	     current state of the branching object, and advance the object's
-	     state. 
+	     state.
 	     Returns change in guessed objective on next (what does
 	     "next" mean here?) branch
   */

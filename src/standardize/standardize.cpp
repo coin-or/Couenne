@@ -34,7 +34,7 @@ void replace (CouenneProblem *p, int wind, int xind);
 bool CouenneProblem::standardize () {
 
   if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-    printf ("Reformulation. current point: %d vars -------------------\n", 
+    printf ("Reformulation. current point: %d vars -------------------\n",
 	    domain_.current () -> Dimension ());
     for (int i=0; i<domain_.current () -> Dimension (); i++)
       printf ("%3d %20g [%20g %20g]\n", i, domain_.x (i), domain_.lb (i), domain_.ub (i));
@@ -62,10 +62,10 @@ bool CouenneProblem::standardize () {
   // // common expression)
 
   // if (commonexprs_.size ()) jnlst_ -> Printf (J_ALL, J_REFORMULATE,
-  // 					      "%d common exprs, initVar = %d = %d - %d\n", 
-  // 					      commonexprs_ . size (), 
-  // 					      initVar, 
-  // 					      variables_   . size (), 
+  // 					      "%d common exprs, initVar = %d = %d - %d\n",
+  // 					      commonexprs_ . size (),
+  // 					      initVar,
+  // 					      variables_   . size (),
   // 					      commonexprs_ . size ());
 
   // for (std::vector <expression *>::iterator i = commonexprs_ . begin ();
@@ -103,7 +103,7 @@ bool CouenneProblem::standardize () {
 
   //     newvar = new exprAux (img, initVar, 1 + img -> rank (), exprAux::Unset, &domain_);
   //     replace (this, initVar, img -> Index ());
-  //     //auxiliarize (variables_ [initVar], 
+  //     //auxiliarize (variables_ [initVar],
   //     //variables_ [img -> Index ()]);
 
   //     //delete variables_ [initVar];
@@ -115,7 +115,7 @@ bool CouenneProblem::standardize () {
 
   //     if (img -> dependsOn (&initVar, 1, TAG_AND_RECURSIVE)) {
 
-  // 	//printf ("depends! "); img -> print (); 
+  // 	//printf ("depends! "); img -> print ();
 
   // 	expression *diff = new exprSub (new exprClone (variables_ [initVar]), img);
 
@@ -123,14 +123,14 @@ bool CouenneProblem::standardize () {
 
   // 	exprAux *diffAux = diff -> standardize (this, false);
 
-  // 	//printf ("; aux: "); if (diffAux) diffAux -> print (); 
+  // 	//printf ("; aux: "); if (diffAux) diffAux -> print ();
 
   // 	//if (diffAux)
   // 	exprAux *newAux = addAuxiliary (diff);
 
   // 	//printf ("; real aux: "); if (newAux) newAux -> print (); putchar ('\n');
 	
-  // 	//Lb (newAux -> Index ()) = 
+  // 	//Lb (newAux -> Index ()) =
   // 	//Ub (newAux -> Index ()) = 0.;
 
   // 	DefVarDiffSet. insert (newAux -> Index ());
@@ -146,7 +146,7 @@ bool CouenneProblem::standardize () {
   // 	variables_ [initVar] = newvar;
 
   // 	graph_ -> insert (newvar);
-  // 	//if (naux) 
+  // 	//if (naux)
   // 	graph_ -> erase (naux);
   //     }
   //   }
@@ -162,7 +162,7 @@ bool CouenneProblem::standardize () {
   //     } else if (*i) {
   // 	(*i) -> print ();
   // 	//printf (" := "); fflush (stdout);
-  // 	//aux -> Image () -> print (); 
+  // 	//aux -> Image () -> print ();
   // 	printf ("\n");
   //     } else printf ("[n]aux NULL!\n");
   //   }
@@ -176,7 +176,7 @@ bool CouenneProblem::standardize () {
        i != objectives_.end (); ++i) {
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("Objective [code: %d]", (*i) -> Body () -> code ()); 
+      printf ("Objective [code: %d]", (*i) -> Body () -> code ());
       (*i) -> print ();
     }
 
@@ -196,7 +196,7 @@ bool CouenneProblem::standardize () {
       exprAux *aux = (*i) -> standardize (this);
 
       if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-	printf (" objective "); (*i) -> print (); 
+	printf (" objective "); (*i) -> print ();
 	if (aux) {printf (" admits aux "); aux -> print ();}
       }
 
@@ -215,8 +215,8 @@ bool CouenneProblem::standardize () {
 
   // commuted_ is an array with a flag for each original variable,
   // which is true at position i if initially original variable x_i
-  // became auxiliary (because of constraint 
-  // 
+  // became auxiliary (because of constraint
+  //
   // x_{k+1} + f(x_1,x_2...,x_k} <=/=/>= 0
   //
   // becoming
@@ -228,15 +228,15 @@ bool CouenneProblem::standardize () {
 
   std::vector <std::vector <CouenneConstraint *>::iterator> iters2erase;
 
-  for (std::vector <CouenneConstraint *>::iterator i = constraints_.begin (); 
+  for (std::vector <CouenneConstraint *>::iterator i = constraints_.begin ();
        i != constraints_.end (); ++i) {
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf ("\nReformulating constraint: "); 
+      printf ("\nReformulating constraint: ");
       (*i) -> print ();
     }
 
-    CouNumber 
+    CouNumber
       conLb = (*((*i) -> Lb ())) (),
       conUb = (*((*i) -> Ub ())) ();
 
@@ -253,8 +253,8 @@ bool CouenneProblem::standardize () {
       if ((bodyVal < conLb - COUENNE_BOUND_PREC) ||
 	  (bodyVal > conUb + COUENNE_BOUND_PREC)) { // all variables eliminated, but out of bounds
 	
-	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, 
-			  "Constraint: all variables eliminated, but value %g out of bounds [%g,%g]: ", 			  
+	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM,
+			  "Constraint: all variables eliminated, but value %g out of bounds [%g,%g]: ", 			
 			  bodyVal, conLb, conUb);
 
 	if (jnlst_ -> ProduceOutput (J_SUMMARY, J_PROBLEM))
@@ -273,7 +273,7 @@ bool CouenneProblem::standardize () {
     exprAux *aux = (*i) -> standardize (this);
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-      printf (" reformulated: aux w[%d] ", aux ? (aux -> Index ()) : -2); 
+      printf (" reformulated: aux w[%d] ", aux ? (aux -> Index ()) : -2);
       (*i) -> print ();
     }
 
@@ -289,7 +289,7 @@ bool CouenneProblem::standardize () {
       // w is the top-level auxiliary associated with f(x)
 
       //printf ("delete %x: ", ((*i) -> Body ())); ((*i) -> Body ()) -> print ();
-      //printf ("\n"); 
+      //printf ("\n");
       //delete ((*i) -> Body ());
 
       (*i) -> Body (new exprClone (aux));
@@ -311,7 +311,7 @@ bool CouenneProblem::standardize () {
       // if ((((*((*i) -> Lb ())) ()) > ub + COUENNE_EPS) ||
       // 	  (((*((*i) -> Ub ())) ()) < lb - COUENNE_EPS)) {
 
-      // 	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, "found infeasible constraint [%g,%g] vs [%g,%g]\n", 
+      // 	jnlst_ -> Printf (J_SUMMARY, J_PROBLEM, "found infeasible constraint [%g,%g] vs [%g,%g]\n",
       // 			  lb, ub,
       // 			  ((*((*i) -> Lb ())) ()),
       // 			  ((*((*i) -> Ub ())) ()));
@@ -334,7 +334,7 @@ bool CouenneProblem::standardize () {
 
     if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {printf (" --> "); (*i) -> print (); printf ("\n\n");}
 
-    /*printf ("=== "); fflush (stdout); 
+    /*printf ("=== "); fflush (stdout);
     aux -> print (); printf (" := "); fflush (stdout);
     aux -> Image () -> print (); printf ("\n");*/
   }
@@ -342,10 +342,10 @@ bool CouenneProblem::standardize () {
   for (unsigned int i = iters2erase.size (); i--;)
     constraints_. erase (iters2erase [i]);
 
-  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) { 
+  if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
     // Use with caution. Bounds on auxs are not defined yet, so valgrind complains
     printf ("Done with standardization (careful, bounds below can be nonsense):\n");
-    print (); 
+    print ();
   }
 
   // Extra auxiliaries: useless without CouenneSDPcuts
@@ -377,13 +377,13 @@ bool CouenneProblem::standardize () {
 
     std::string delete_redund;
 
-    if (bonBase_) bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne."); 
+    if (bonBase_) bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne.");
     else  delete_redund = "yes";
 
     if (delete_redund == "yes")
 
       // Look for auxiliaries of the form w:=x and replace each occurrence of w with x
-      for (std::vector <exprVar *>::iterator i = variables_.begin (); 
+      for (std::vector <exprVar *>::iterator i = variables_.begin ();
 	   i != variables_.end (); ++i)
 
 	if (((*i) -> Multiplicity () > 0) && ((*i) -> Type () == AUX) && ((*i) -> sign () == expression::AUX_EQ)) {
@@ -392,19 +392,19 @@ bool CouenneProblem::standardize () {
 
 	  if ((type == VAR) || (type == AUX)) {
 
-	    // found w_k = x_h. 
-	    // 
+	    // found w_k = x_h.
+	    //
 	    // Check if either is integer, the survivor will be integer too
 	    // Replace all occurrences of w_k with x_h
 
-	    /*printf ("redundancy: "); 
-	      (*i)             -> print (); printf (" := "); 
+	    /*printf ("redundancy: ");
+	      (*i)             -> print (); printf (" := ");
 	      (*i) -> Image () -> print (); printf ("\n");*/
 
 	    // use the info on the variable to be discarded: tighter
 	    // bounds and integrality that the replacement might not have.
 
-	    int 
+	    int
 	      indStays  = (*i) -> Image () -> Index (), // index h
 	      indLeaves = (*i)             -> Index (); // index k
 
@@ -413,10 +413,10 @@ bool CouenneProblem::standardize () {
 
 	    // do not swap! x_h could be in turn an auxiliary...
 	    //
-	    //if (indStays > indLeaves) 
+	    //if (indStays > indLeaves)
 	    //{int swap = indStays; indStays = indLeaves; indLeaves = swap;} // swap
 
-	    exprVar 
+	    exprVar
 	      *varStays  = variables_ [indStays],
 	      *varLeaves = variables_ [indLeaves];
 
@@ -453,7 +453,7 @@ bool CouenneProblem::standardize () {
     // simplification and reformulate what is simplified.
 
     for (std::vector <exprVar *>::iterator i = variables_. begin ();
-	 i != variables_. end (); ++i) 
+	 i != variables_. end (); ++i)
 
       if (((*i) -> Multiplicity () > 0) &&
 	  ((*i) -> Type () == AUX)) {
@@ -508,7 +508,7 @@ bool CouenneProblem::standardize () {
   for (std::set <DepNode *, compNode>::iterator i = vertices.begin ();
        i != vertices.end (); ++i)
 
-    numbering_ [(*i) -> Order ()] = (*i) -> Index (); 
+    numbering_ [(*i) -> Order ()] = (*i) -> Index ();
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -532,7 +532,7 @@ bool CouenneProblem::standardize () {
 	domain_.ub (ord) =  COIN_DBL_MAX;
       }
 
-      //printf ("from "); variables_ [ord] -> Lb    () -> print (); 
+      //printf ("from "); variables_ [ord] -> Lb    () -> print ();
 
       // tighten them with propagated bounds
       variables_ [ord] -> crossBounds ();
@@ -540,7 +540,7 @@ bool CouenneProblem::standardize () {
       //printf ("to "); variables_ [ord] -> Lb    () -> print (); printf (", now eval\n");
 
       if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-	printf (":::: %3d %10g [%10g, %10g]", 
+	printf (":::: %3d %10g [%10g, %10g]",
 		ord, domain_.x (ord), domain_.lb (ord), domain_.ub (ord));
       }
 
@@ -556,7 +556,7 @@ bool CouenneProblem::standardize () {
       // }
 
       if (jnlst_ -> ProduceOutput (J_ALL, J_REFORMULATE)) {
-	printf (" --> %10g [%10g, %10g] [", 
+	printf (" --> %10g [%10g, %10g] [",
 		domain_.x (ord), domain_.lb (ord), domain_.ub (ord));
 	variables_ [ord] -> Lb () -> print (); printf (",");
 	variables_ [ord] -> Ub () -> print (); printf ("]\n");
@@ -579,13 +579,13 @@ bool CouenneProblem::standardize () {
 
   std::string delete_redund;
 
-  if (bonBase_) bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne."); 
+  if (bonBase_) bonBase_ -> options () -> GetStringValue ("delete_redundant", delete_redund, "couenne.");
   else  delete_redund = "yes";
 
   if (delete_redund == "yes")
 
     // Look for auxiliaries of the form w:=x and replace each occurrence of w with x
-    for (std::vector <exprVar *>::iterator i = variables_.begin (); 
+    for (std::vector <exprVar *>::iterator i = variables_.begin ();
        i != variables_.end (); ++i)
 
     if (((*i) -> Type () == AUX) && ((*i) -> sign () == expression::AUX_EQ)) {
@@ -594,19 +594,19 @@ bool CouenneProblem::standardize () {
 
       if ((type == VAR) || (type == AUX)) {
 
-	// found w_k = x_h. 
-	// 
+	// found w_k = x_h.
+	//
 	// Check if either is integer, the survivor will be integer too
 	// Replace all occurrences of w_k with x_h
 
-	/*printf ("redundancy: "); 
-	(*i)             -> print (); printf (" := "); 
+	/*printf ("redundancy: ");
+	(*i)             -> print (); printf (" := ");
 	(*i) -> Image () -> print (); printf ("\n");*/
 
 	// use the info on the variable to be discarded: tighter
 	// bounds and integrality that the replacement might not have.
 
-	int 
+	int
 	  indStays  = (*i) -> Image () -> Index (), // index h
 	  indLeaves = (*i)             -> Index (); // index k
 
@@ -615,10 +615,10 @@ bool CouenneProblem::standardize () {
 
 	// do not swap! x_h could be in turn an auxiliary...
 	//
-	//if (indStays > indLeaves) 
+	//if (indStays > indLeaves)
 	//{int swap = indStays; indStays = indLeaves; indLeaves = swap;} // swap
 
-	exprVar 
+	exprVar
 	  *varStays  = variables_ [indStays],
 	  *varLeaves = variables_ [indLeaves];
 
@@ -671,20 +671,20 @@ bool CouenneProblem::standardize () {
     //Lb (i) = Ub (i) = 0.;
   }
 
-  // check how many multiplications there are 
+  // check how many multiplications there are
 
 //   int nmul = 0;
 //   // Look for auxiliaries of the form w:=x and replace each occurrence of w with x
-//   for (std::vector <exprVar *>::iterator i = variables_.begin (); 
+//   for (std::vector <exprVar *>::iterator i = variables_.begin ();
 //        i != variables_.end (); ++i) {
 
 //     if ((*i) -> Type () != AUX ||
-// 	(*i) -> Multiplicity () <= 0) 
+// 	(*i) -> Multiplicity () <= 0)
 //       continue;
 
 //     expression *img = (*i) -> Image ();
 
-//     if (img -> code () != COU_EXPRMUL) 
+//     if (img -> code () != COU_EXPRMUL)
 //       continue;
 
 //     expression **args = img -> ArgList ();

@@ -15,7 +15,7 @@
 
 namespace Couenne {
 
-/// OsiObject for complementarity constraints \f$ x_1 x_2 \ge,\le,= 0 \f$. 
+/// OsiObject for complementarity constraints \f$ x_1 x_2 \ge,\le,= 0 \f$.
 ///
 /// Associated with two variables \f$ x_1\f$ and \f$x_2\f$, branches with either \f$x_1=0\f$ or \f$x_2=0\f$
 
@@ -25,7 +25,7 @@ public:
 
   /// Constructor with information for branching point selection strategy
   CouenneComplObject (CouenneCutGenerator *c,
-		      CouenneProblem *p, 
+		      CouenneProblem *p,
 		      exprVar *ref, Bonmin::BabSetupBase *base, JnlstPtr jnlst,
 		      int sign);
 
@@ -53,8 +53,8 @@ public:
 
   /// create CouenneBranchingObject or CouenneThreeWayBranchObj based
   /// on this object
-  virtual OsiBranchingObject *createBranch (OsiSolverInterface*, 
-					    const OsiBranchingInformation*, 
+  virtual OsiBranchingObject *createBranch (OsiSolverInterface*,
+					    const OsiBranchingInformation*,
 					    int way) const;
 private:
 

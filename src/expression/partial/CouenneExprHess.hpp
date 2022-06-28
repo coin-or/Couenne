@@ -3,7 +3,7 @@
  * Name:    CouenneExprHess.hpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Hessian of the Lagrangian, definition
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 

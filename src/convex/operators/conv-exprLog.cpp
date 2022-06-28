@@ -24,16 +24,16 @@ using namespace Couenne;
 
 // generate convexification cut for constraint w = this
 
-void exprLog::generateCuts (expression *aux, //const OsiSolverInterface &si, 
+void exprLog::generateCuts (expression *aux, //const OsiSolverInterface &si,
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
-			    t_chg_bounds *chg, int wind, 
+			    t_chg_bounds *chg, int wind,
 			    CouNumber lbw, CouNumber ubw) {
-  int 
+  int
     w_ind = aux       -> Index (), //   dependent variable's index
     x_ind = argument_ -> Index (); // independent variable's index
 
-  bool changed = 
-    !chg || (cg -> isFirst ()) || 
+  bool changed =
+    !chg || (cg -> isFirst ()) ||
     (chg [x_ind].lower() != t_chg_bounds::UNCHANGED) ||
     (chg [x_ind].upper() != t_chg_bounds::UNCHANGED);
 
@@ -53,7 +53,7 @@ void exprLog::generateCuts (expression *aux, //const OsiSolverInterface &si,
   // fix lower bound
   if (l < LOG_MININF) l = LOG_MININF;
   else   // lower segment (if l is far from zero and u finite)
-    if ((u < COUENNE_INFINITY) && changed && sign != expression::AUX_LEQ) { 
+    if ((u < COUENNE_INFINITY) && changed && sign != expression::AUX_LEQ) {
 
       CouNumber dx   = u-l;
       CouNumber logu = log (u);
@@ -63,11 +63,11 @@ void exprLog::generateCuts (expression *aux, //const OsiSolverInterface &si,
     }
 
   // no need to continue if auxiliary is defined as w >= log (x)
-  if (sign == expression::AUX_GEQ) 
+  if (sign == expression::AUX_GEQ)
     return;
 
   // pick tangent point closest to current point (x0,y0)
-  CouNumber x = (cg -> isFirst ()) ? 
+  CouNumber x = (cg -> isFirst ()) ?
                  1 : powNewton ((*argument_) (), (*aux) (), log, inv, oppInvSqr);
 
   // check if outside interval

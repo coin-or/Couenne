@@ -19,7 +19,7 @@
 #endif
 
 using namespace Couenne;
-  
+
 SmartAsl::~SmartAsl(){
 #ifdef COUENNE_HAS_ASL
   //Code from Ipopt::AmplTNLP to free asl
@@ -47,4 +47,4 @@ SmartAsl::~SmartAsl(){
   ASL_free(&asl);
 #endif
 }
-  
+

@@ -3,7 +3,7 @@
  * Name:    CouenneExprHess.cpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Hessian of the Lagrangian, implementation
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -96,7 +96,7 @@ ExprHess::~ExprHess () {
 
 /// code for refilling jacobian
 void HessElemFill (int i, int level,
-		   std::set <int> &list, 
+		   std::set <int> &list,
 		   expression *expr,
 		   int *row, int **lam, expression ***eee,
 		   CouenneProblem *,
@@ -146,7 +146,7 @@ ExprHess::ExprHess (CouenneProblem *p):
 
     if (ntype == AUX ||
 	ntype == VAR ||
-	ntype == CONST) 
+	ntype == CONST)
       continue;
 
     c -> DepList (deplist [nLevels++], STOP_AT_AUX);
@@ -182,7 +182,7 @@ ExprHess::ExprHess (CouenneProblem *p):
   ///         add term to list [i,j]
   ///   sparsify row
 
-  int 
+  int
     nVars   = p -> nVars (),
     curSize = 0; // used to expand array through realloc
 
@@ -223,8 +223,8 @@ ExprHess::ExprHess (CouenneProblem *p):
       CouenneConstraint *c = p -> Con (j);
       enum nodeType ctype = c -> Body () -> Type ();
 
-      if (ctype == AUX || 
-	  ctype == VAR) 
+      if (ctype == AUX ||
+	  ctype == VAR)
 	continue;
 
       HessElemFill (i, level, deplist [level], c -> Body (), rnz, lam, eee, p, globDepList);
@@ -238,8 +238,8 @@ ExprHess::ExprHess (CouenneProblem *p):
 
       exprVar *e = p -> Var (j);
 
-      if ((e -> Type         () != AUX) || 
-	  (e -> Multiplicity () <= 0)) 
+      if ((e -> Type         () != AUX) ||
+	  (e -> Multiplicity () <= 0))
 	continue;
 
       HessElemFill (i, level, deplist [level], e -> Image (), rnz, lam, eee, p, globDepList);
@@ -277,15 +277,15 @@ ExprHess::ExprHess (CouenneProblem *p):
 
   for (int i=0; i<nnz_; i++) {
 
-    printf ("[%d,%d]: %d lambdas: ", 
-	    iRow_ [i], jCol_ [i], numL_ [i]); 
+    printf ("[%d,%d]: %d lambdas: ",
+	    iRow_ [i], jCol_ [i], numL_ [i]);
 
     fflush (stdout);
 
     for (int j=0; j<numL_ [i]; j++) {
-      printf ("(%d,", lamI_ [i][j]); 
+      printf ("(%d,", lamI_ [i][j]);
       fflush (stdout);
-      expr_ [i][j] -> print (); 
+      expr_ [i][j] -> print ();
       fflush (stdout);
       printf (") ");
     }
@@ -299,12 +299,12 @@ ExprHess::ExprHess (CouenneProblem *p):
 
 // fills a row (?) of the Hessian using expression
 
-void HessElemFill (int i, 
+void HessElemFill (int i,
 		   int level,
-		   std::set <int> &list, 
+		   std::set <int> &list,
 		   expression *expr,
-		   int *nnz, 
-		   int **lam, 
+		   int *nnz,
+		   int **lam,
 		   expression ***eee,
 		   CouenneProblem *p,
 		   std::set <int> &globList) {
@@ -324,19 +324,19 @@ void HessElemFill (int i,
 
   for (std::set <int>::iterator k = list.begin (); k != list. end (); ++k) {
 
-    if (*k > i) 
+    if (*k > i)
       continue;
 
     // objective depends on k and i. Is its second derivative, w.r.t. k and i, nonzero?
 
-    expression 
+    expression
       *d2  = rd1 -> differentiate (*k),  // rd1's derivative w.r.t. *k
       *sd2 = d2  -> simplify (),         // simplified
       *rd2 = (sd2 ? sd2 : d2);           // actually used
 
 #ifdef DEBUG
-    printf (" rd2 [x_%d, x_%d]: d/d x_%d = ", *k, i, *k); fflush (stdout); 
-    rd1 -> print (); printf (" -> d/(d x_%d,d x_%d) = ", *k, i); 
+    printf (" rd2 [x_%d, x_%d]: d/d x_%d = ", *k, i, *k); fflush (stdout);
+    rd1 -> print (); printf (" -> d/(d x_%d,d x_%d) = ", *k, i);
     rd2 -> print (); printf ("\n");
 #endif
 
@@ -349,7 +349,7 @@ void HessElemFill (int i,
 
       int &curNNZ = nnz [*k];
 
-      if (!curNNZ && 
+      if (!curNNZ &&
 	  globList.find (*k) == globList. end ())
 	globList.insert (*k);
 

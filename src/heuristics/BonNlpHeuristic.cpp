@@ -1,5 +1,5 @@
 /* */
-// (C) Copyright International Business Machines Corporation 2007 
+// (C) Copyright International Business Machines Corporation 2007
 // All Rights Reserved.
 // This code is published under the Eclipse Public License (EPL).
 //
@@ -34,7 +34,7 @@ NlpSolveHeuristic::NlpSolveHeuristic():
   couenne_(NULL){
   setHeuristicName("NlpSolveHeuristic");
 }
-  
+
 NlpSolveHeuristic::NlpSolveHeuristic(CbcModel & model, Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp, CouenneProblem * couenne):
   CbcHeuristic(model), nlp_(&nlp), hasCloned_(cloneNlp),maxNlpInf_(maxNlpInf_0),
   numberSolvePerLevel_(-1),
@@ -43,9 +43,9 @@ NlpSolveHeuristic::NlpSolveHeuristic(CbcModel & model, Bonmin::OsiTMINLPInterfac
   if(cloneNlp)
     nlp_ = dynamic_cast <Bonmin::OsiTMINLPInterface *> (nlp.clone());
   }
-  
+
 NlpSolveHeuristic::NlpSolveHeuristic(const NlpSolveHeuristic & other):
-  CbcHeuristic(other), nlp_(other.nlp_), 
+  CbcHeuristic(other), nlp_(other.nlp_),
   hasCloned_(other.hasCloned_),
   maxNlpInf_(other.maxNlpInf_),
   numberSolvePerLevel_(other.numberSolvePerLevel_),
@@ -53,19 +53,19 @@ NlpSolveHeuristic::NlpSolveHeuristic(const NlpSolveHeuristic & other):
   if(hasCloned_ && nlp_ != NULL)
     nlp_ = dynamic_cast <Bonmin::OsiTMINLPInterface *> (other.nlp_->clone());
 }
-  
-CbcHeuristic * 
+
+CbcHeuristic *
 NlpSolveHeuristic::clone() const{
   return new NlpSolveHeuristic(*this);
 }
-  
+
 NlpSolveHeuristic &
 NlpSolveHeuristic::operator=(const NlpSolveHeuristic & rhs){
   if(this != &rhs){
     CbcHeuristic::operator=(rhs);
     if(hasCloned_ && nlp_)
       delete nlp_;
-      
+
     hasCloned_ = rhs.hasCloned_;
     if(nlp_ != NULL){
       if(hasCloned_)
@@ -79,13 +79,13 @@ NlpSolveHeuristic::operator=(const NlpSolveHeuristic & rhs){
   couenne_ = rhs.couenne_;
   return *this;
 }
-  
+
 NlpSolveHeuristic::~NlpSolveHeuristic(){
   if(hasCloned_)
     delete nlp_;
   nlp_ = NULL;
 }
-  
+
 void
 NlpSolveHeuristic::setNlp (Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp){
   if(hasCloned_ && nlp_ != NULL)
@@ -96,7 +96,7 @@ NlpSolveHeuristic::setNlp (Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp){
   else
     nlp_ = &nlp;
 }
-  
+
 void
 NlpSolveHeuristic::setCouenneProblem(CouenneProblem * couenne)
 {couenne_ = couenne;}
@@ -146,12 +146,12 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   // check depth
   if (numberSolvePerLevel_ > -1) {
 
-    if (numberSolvePerLevel_ == 0) 
+    if (numberSolvePerLevel_ == 0)
       throw maxTime;
 
     //if (CoinDrand48 () > pow (2., numberSolvePerLevel_ - depth))
-    if (CoinDrand48 () > 1. / CoinMax 
-	(1., (double) ((depth - numberSolvePerLevel_) * 
+    if (CoinDrand48 () > 1. / CoinMax
+	(1., (double) ((depth - numberSolvePerLevel_) *
 		       (depth - numberSolvePerLevel_))))
       too_deep = true;
   }
@@ -169,7 +169,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   CoinCopyN (solver->getColUpper(), nlp_ -> getNumCols (), upper);
 
   /*printf ("-- int candidate, before: ");
-    for (int i=0; i<couenne_ -> nOrig (); i++) 
+    for (int i=0; i<couenne_ -> nOrig (); i++)
     printf ("[%g %g] ", lower [i], upper [i]);
     printf ("\n");*/
 
@@ -240,7 +240,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
   CoinCopyN (solution, nlp_ -> getNumCols (), Y);
 
   /*printf ("-- int candidate, upon call: ");
-    for (int i=0; i<couenne_ -> nOrig (); i++) 
+    for (int i=0; i<couenne_ -> nOrig (); i++)
     if (couenne_ -> Var (i) -> isInteger ())
     printf ("[%g <%g> %g] ", lower [i], Y [i], upper [i]);
     else printf ("%g ", Y [i]);
@@ -250,7 +250,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
     skipOnInfeasibility = (couenne_ -> getIntegerCandidate (solution, Y, lower, upper) < 0);
 
   /*printf ("-- int candidate, after: ");
-    for (int i=0; i<couenne_ -> nOrig (); i++) 
+    for (int i=0; i<couenne_ -> nOrig (); i++)
     if (couenne_ -> Var (i) -> isInteger ())
     printf ("[%g <%g> %g] ", lower [i], Y [i], upper [i]);
     else printf ("%g ", Y [i]);
@@ -258,18 +258,18 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
   bool foundSolution = false;
 
-  if (haveRoundedIntVars && skipOnInfeasibility) 
+  if (haveRoundedIntVars && skipOnInfeasibility)
     // no integer initial point could be found, make up some random rounding
 
-    for (int i = couenne_ -> nOrigVars (); i--;) 
+    for (int i = couenne_ -> nOrigVars (); i--;)
 
       if (couenne_ -> Var (i) -> isDefinedInteger ())
-	lower [i] = upper [i] = Y [i] = 
-	  (CoinDrand48 () < 0.5) ? 
-	  floor (Y [i] + COUENNE_EPS) : 
+	lower [i] = upper [i] = Y [i] =
+	  (CoinDrand48 () < 0.5) ?
+	  floor (Y [i] + COUENNE_EPS) :
 	  ceil  (Y [i] - COUENNE_EPS);
 
-      else if (lower [i] > upper [i]) { 
+      else if (lower [i] > upper [i]) {
 
 	// sanity check (should avoid problems in ex1263 with
 	// couenne.opt.obbt)
@@ -283,7 +283,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
     //	printf ("[%g <%g> %g] ", lower [i], Y [i], upper [i]);
 
     /*printf ("int candidate: ");
-      for (int i=0; i<couenne_ -> nOrig (); i++) 
+      for (int i=0; i<couenne_ -> nOrig (); i++)
       if (couenne_ -> Var (i) -> isInteger ())
       printf ("[%g <%g> %g] ", lower [i], Y [i], upper [i]);
       else printf ("%g ", Y [i]);
@@ -335,9 +335,9 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 	couenne_ -> getAuxs (tmpSolution);
 
 #ifdef FM_CHECKNLP2
-      if(!couenne_->checkNLP2(tmpSolution, 
+      if(!couenne_->checkNLP2(tmpSolution,
 			      0, false, // do not care about obj
-			      true, // stopAtFirstViol 
+			      true, // stopAtFirstViol
 			      false, // checkAll
 			      couenne_->getFeasTol())) {
 #ifdef FM_USE_REL_VIOL_CONS
@@ -345,7 +345,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 	exit(1);
 #endif
       }
-      obj = couenne_->getRecordBestSol()->getModSolVal(); 
+      obj = couenne_->getRecordBestSol()->getModSolVal();
       couenne_->getRecordBestSol()->update();
 #else
       couenne_->getRecordBestSol()->update(tmpSolution, nVars,
@@ -359,7 +359,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 
       if (obj < objectiveValue) { // found better solution?
 
-	const CouNumber 
+	const CouNumber
 	  *lb = solver -> getColLower (),
 	  *ub = solver -> getColUpper ();
 
@@ -371,7 +371,7 @@ NlpSolveHeuristic::solution (double & objectiveValue, double * newSolution) {
 	  if      (t < *lb) t = *lb;
 	  else if (t > *ub) t = *ub;
 	}
-	  
+	
 	//printf ("new cutoff %g from BonNlpHeuristic\n", obj);
 	couenne_ -> setCutOff (obj);
 	foundSolution = true;
@@ -442,13 +442,13 @@ void NlpSolveHeuristic::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOpti
 
   roptions -> AddLowerBoundedIntegerOption
     ("log_num_local_optimization_per_level",
-     "Specify the logarithm of the number of local optimizations to perform" 
+     "Specify the logarithm of the number of local optimizations to perform"
      " on average for each level of given depth of the tree.",
      -1,
      2, "Solve as many nlp's at the nodes for each level of the tree. "
      "Nodes are randomly selected. If for a "
      "given level there are less nodes than this number nlp are solved for every nodes. "
-     "For example if parameter is 8, nlp's are solved for all node until level 8, " 
+     "For example if parameter is 8, nlp's are solved for all node until level 8, "
      "then for half the node at level 9, 1/4 at level 10.... "
      "Value -1 specify to perform at all nodes.");
 }

@@ -21,7 +21,7 @@ using namespace Couenne;
 // Get lower and upper bound of a variable expression (if any)
 void exprVar::getBounds (expression *&lb, expression *&ub) {
 
-  lb = new exprLowerBound (varIndex_, domain_); 
+  lb = new exprLowerBound (varIndex_, domain_);
   ub = new exprUpperBound (varIndex_, domain_);
 }
 
@@ -35,8 +35,8 @@ void exprVar::getBounds (CouNumber &lb, CouNumber &ub) {
 
 
 // generate convexification cut for constraint w = this
-void exprVar::generateCuts (expression *w, //const OsiSolverInterface &si, 
-			    OsiCuts &cs, const CouenneCutGenerator *cg, 
+void exprVar::generateCuts (expression *w, //const OsiSolverInterface &si,
+			    OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int,
 			    CouNumber, CouNumber) {
   if (cg -> isFirst ())
@@ -58,7 +58,7 @@ bool exprVar::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
 
 /// update dependence set with index of this variable
-void exprVar::fillDepSet (std::set <DepNode *, compNode> *dep, DepGraph *g) 
+void exprVar::fillDepSet (std::set <DepNode *, compNode> *dep, DepGraph *g)
 {dep -> insert (g -> lookup (varIndex_));}
 
 
@@ -69,8 +69,8 @@ expression *exprVar::Ub () {return new exprUpperBound (varIndex_, domain_);}///<
 // dummy function -- the real one is in exprAux and returns either a
 // CouenneObject or a CouenneComplObject
 CouenneObject *exprVar::properObject (CouenneCutGenerator *c,
-				      CouenneProblem *p, 
-				      Bonmin::BabSetupBase *base, 
+				      CouenneProblem *p,
+				      Bonmin::BabSetupBase *base,
 				      JnlstPtr jnlst_) {
   return new CouenneObject ();
 }

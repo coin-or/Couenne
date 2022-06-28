@@ -16,17 +16,17 @@
 namespace Couenne {
 
 /// the operator itself
-inline CouNumber inv (CouNumber arg) 
+inline CouNumber inv (CouNumber arg)
 {return 1. / arg;}
 
 
 /// derivative of inv (x)
-inline CouNumber oppInvSqr (CouNumber x) 
+inline CouNumber oppInvSqr (CouNumber x)
 {return (- inv (x*x));}
 
 
 /// inv_dblprime, second derivative of inv (x)
-inline CouNumber inv_dblprime (CouNumber x) 
+inline CouNumber inv_dblprime (CouNumber x)
 {return (2 * inv (x*x*x));}
 
 
@@ -37,7 +37,7 @@ class COUENNELIB_EXPORT exprInv: public exprUnary {
  public:
 
   /// Constructors, destructor
-  exprInv (expression *al): 
+  exprInv (expression *al):
     exprUnary (al) {} //< non-leaf expression, with argument list
 
   /// cloning method
@@ -54,7 +54,7 @@ class COUENNELIB_EXPORT exprInv: public exprUnary {
   CouNumber gradientNorm (const double *x);
 
   /// differentiation
-  expression *differentiate (int index); 
+  expression *differentiate (int index);
 
   /// get a measure of "how linear" the expression is (see CouenneTypes.h)
   virtual inline int Linearity () {
@@ -69,10 +69,10 @@ class COUENNELIB_EXPORT exprInv: public exprUnary {
   void getBounds (CouNumber &lb, CouNumber &ub);
 
   /// generate equality between *this and *w
-  void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		     OsiCuts &cs, const CouenneCutGenerator *cg, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
+  void generateCuts (expression *w, //const OsiSolverInterface &si,
+		     OsiCuts &cs, const CouenneCutGenerator *cg,
+		     t_chg_bounds * = NULL, int = -1,
+		     CouNumber = -COUENNE_INFINITY,
 		     CouNumber =  COUENNE_INFINITY);
 
   /// code for comparisons
@@ -83,10 +83,10 @@ class COUENNELIB_EXPORT exprInv: public exprUnary {
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
-  virtual CouNumber selectBranch (const CouenneObject *obj, 
+  virtual CouNumber selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression * &var, 
-				  double * &brpts, 
+				  expression * &var,
+				  double * &brpts,
  				  double * &brDist, // distance of current LP
 					  	    // point to new convexifications
 				  int &way);

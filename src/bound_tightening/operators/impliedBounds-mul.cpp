@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: inferring bounds on factors of a product
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -15,8 +15,8 @@
 
 using namespace Couenne;
 
-int exprMul::impliedBoundMul (CouNumber wl, 
-			      CouNumber wu, 
+int exprMul::impliedBoundMul (CouNumber wl,
+			      CouNumber wu,
 			      std::vector <CouNumber> &xlv,
 			      std::vector <CouNumber> &xuv,
 			      std::vector <std::pair <int, CouNumber> > &nl,
@@ -27,7 +27,7 @@ int exprMul::impliedBoundMul (CouNumber wl,
 
   if (xlv.size () == 2) {
 
-    CouNumber 
+    CouNumber
       xl = xlv [0],  xu = xuv [0],
       yl = xlv [1],  yu = xuv [1];
 

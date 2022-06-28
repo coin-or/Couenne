@@ -3,8 +3,8 @@
  * Name:    CouenneFPSolveMILP.cpp
  * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
- * Purpose: Solve the MILP within the Feasibility Pump 
- * 
+ * Purpose: Solve the MILP within the Feasibility Pump
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -33,7 +33,7 @@ using namespace Couenne;
 #ifdef COUENNE_HAS_SCIP
 void CouenneFeasPump::checkInfinity(SCIP *scip, SCIP_Real val, double infinity){
   if( SCIPisInfinity(scip, val) && val < infinity)
-    problem_ -> Jnlst () -> Printf (Ipopt::J_WARNING, J_NLPHEURISTIC, 
+    problem_ -> Jnlst () -> Printf (Ipopt::J_WARNING, J_NLPHEURISTIC,
 				    "Warning: %g will be considered to be Infinity by SCIP.\n", val);
 }
 #endif
@@ -63,7 +63,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
   //
   // 1) sum {i in Vars} |x_i - x_i^0|
   // 2) sum {i in N}    |x_i - x_i^0|
-  // 3) sum {i in Vars} |P^i (x - x^0)| 
+  // 3) sum {i in Vars} |P^i (x - x^0)|
   // 4) sum {i in N}    |P^i (x - x^0)|
   //
   // where is x^0 is the optimal solution of a NLP problem. In the
@@ -79,15 +79,15 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
   // the quadratic term (alpha is a scalar)
   //
   // alpha (g'x)^2
-  // 
-  // is zero in the null space of g, and it is strictly positive
-  // everywhere else. Hence, we need an alpha so that 
   //
-  // P = (H + alpha g g') 
+  // is zero in the null space of g, and it is strictly positive
+  // everywhere else. Hence, we need an alpha so that
+  //
+  // P = (H + alpha g g')
   //
   // is PSD. In general, we might have a parameter beta in [0,1] such
   // that
-  // 
+  //
   // P = beta I + (1-beta) (H + alpha g g')
   //
   // so that we can balance the Hessian and the distance.
@@ -151,8 +151,8 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
     CoinCopyN (nSol0, problem_ -> nOrigVars (), nlpSolExp);
     problem_ -> getAuxs (nlpSolExp);
 
-  } else 
-    nlpSolExp = CoinCopyOfArray (milp_ -> getColSolution (), 
+  } else
+    nlpSolExp = CoinCopyOfArray (milp_ -> getColSolution (),
 				 problem_ -> nVars ());
 
   // create constraints to define l_1 distance objective function
@@ -197,8 +197,8 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 	  (fabs (iSol [i] - floor (iSol [i] + .5)) > COUENNE_EPS)) // need stricter tolerance
 	++nNonint;
 
-      dist += 
-	(iSol [i] - nSol0 [i]) * 
+      dist +=
+	(iSol [i] - nSol0 [i]) *
 	(iSol [i] - nSol0 [i]);
     }
 
@@ -206,7 +206,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
   }
 
   //
-  // POST PROCESSING 
+  // POST PROCESSING
   //
   // (if we got a solution from MILP, otherwise bail out)
   //
@@ -222,7 +222,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 
       if (compDistInt_ == FP_DIST_INT) {
 
-	for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
+	for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin ();
 	     i != problem_ -> Variables (). end (); ++i)
 
 	  if ((  (*i) -> Multiplicity () > 0) &&
@@ -240,7 +240,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 	//
 	// a) check if postlp_ exists yet
 	// 0) save integer bounds
-	// 1) fix integer variables 
+	// 1) fix integer variables
 	// 2) add variables and inequalities
 	// 3) solve LP
 	// 4) if optimal, save solution
@@ -283,7 +283,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 
 	// save as new solution
 
-	if (postlp_ -> isProvenOptimal ()) 
+	if (postlp_ -> isProvenOptimal ())
 	  CoinCopyN (postlp_ -> getColSolution (), problem_ -> nVars (), iSol);
 
 	postlp_ -> setColLower (saveLB);
@@ -298,7 +298,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 
 	// delete added rows
 
-	int 
+	int
 	  nDeleted = nFinalRowsLP - nInitRowsLP,
 	 *deleted  = new int [nDeleted],
 	  nCurRow  = nInitRowsLP;
@@ -314,7 +314,7 @@ CouNumber CouenneFeasPump::solveMILP (const CouNumber *nSol0, CouNumber *&iSol, 
 
   // delete last rows and add them from scratch (common block below)
 
-  int 
+  int
     nDeleted = nFinalRows - nInitRows,
    *deleted  = new int [nDeleted],
     nCurRow  = nInitRows;

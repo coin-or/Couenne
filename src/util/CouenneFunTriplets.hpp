@@ -41,16 +41,16 @@ class COUENNELIB_EXPORT simpletriplet: public funtriplet {
 
 protected:
 
-  unary_function f_;   //< the function 
+  unary_function f_;   //< the function
   unary_function fp_;  //< the first-order derivative
-  unary_function fpp_; //< the second-order derivative 
-  unary_function fpI_; //< the inverse of the first-order derivative 
+  unary_function fpp_; //< the second-order derivative
+  unary_function fpI_; //< the inverse of the first-order derivative
 
 public:
 
   /// Basic constructor
-  simpletriplet (unary_function f   = NULL, 
-		 unary_function fp  = NULL, 
+  simpletriplet (unary_function f   = NULL,
+		 unary_function fp  = NULL,
 		 unary_function fpp = NULL,
 		 unary_function fpI = NULL):
     f_   (f),
@@ -85,16 +85,16 @@ public:
   /// Destructor
   virtual ~powertriplet () {}
 
-  virtual CouNumber F   (CouNumber x) 
+  virtual CouNumber F   (CouNumber x)
   {return safe_pow (x, exponent_, issignpower_);}                                   //< main funtion
 
-  virtual CouNumber Fp  (CouNumber x) 
-  {return exponent_ * safe_pow (issignpower_ ? fabs(x) : x, exponent_ - 1);}  //< first-order derivative 
+  virtual CouNumber Fp  (CouNumber x)
+  {return exponent_ * safe_pow (issignpower_ ? fabs(x) : x, exponent_ - 1);}  //< first-order derivative
 
-  virtual CouNumber Fpp (CouNumber x) 
-  {return exponent_ * (exponent_ - 1) * safe_pow (x, exponent_ - 2, issignpower_);} //< second-order derivative 
+  virtual CouNumber Fpp (CouNumber x)
+  {return exponent_ * (exponent_ - 1) * safe_pow (x, exponent_ - 2, issignpower_);} //< second-order derivative
 
-  virtual CouNumber FpInv (CouNumber x) 
+  virtual CouNumber FpInv (CouNumber x)
   {return safe_pow (x / exponent_, 1 / (exponent_ - 1), issignpower_);} //< inverse of first derivative
 };
 
@@ -119,13 +119,13 @@ public:
   virtual CouNumber F   (CouNumber x)  //< main funtion
   {return mult_ * safe_pow (x, exponent_);}
 
-  virtual CouNumber Fp  (CouNumber x)  //< first-order derivative 
+  virtual CouNumber Fp  (CouNumber x)  //< first-order derivative
   {return mult_ * exponent_ * safe_pow (x, exponent_ - 1);}
 
-  virtual CouNumber Fpp (CouNumber x)  //< second-order derivative 
+  virtual CouNumber Fpp (CouNumber x)  //< second-order derivative
   {return mult_ * exponent_ * (exponent_ - 1) * safe_pow (x, exponent_ - 2);}
 
-  virtual CouNumber FpInv (CouNumber x) 
+  virtual CouNumber FpInv (CouNumber x)
   {return safe_pow (x / (mult_ * exponent_), 1 / (exponent_ - 1));} //< inverse of first derivative
 };
 

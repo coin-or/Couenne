@@ -40,18 +40,18 @@ expression *exprPow::simplify () {
 
       CouNumber c1 = arglist_ [1] -> Value ();
 
-      // delete arglist_ [0]; 
+      // delete arglist_ [0];
       // delete arglist_ [1];
 
       // arglist_ [0] = arglist_ [1] = NULL;
 
       return new exprConst
-	(issignpower_ ? 
-	 COUENNE_sign(c0) * pow (fabs(c0), c1) : 
+	(issignpower_ ?
+	 COUENNE_sign(c0) * pow (fabs(c0), c1) :
 	 pow (c0, c1));
     }
-    else 
-      if (fabs (c0) <= COUENNE_EPS_SIMPL) 
+    else
+      if (fabs (c0) <= COUENNE_EPS_SIMPL)
 	return new exprConst (0.);
   }
   else // only need to check if g(x) == 0
@@ -131,7 +131,7 @@ expression *exprPow::differentiate (int index) {
       return new exprConst (0.);
 
     return new exprMul (new exprConst (log (base)),
-			new exprMul (new exprPow (new exprConst (base), 
+			new exprMul (new exprPow (new exprConst (base),
 						  arglist_ [1] -> clone ()),
 				     arglist_ [1] -> differentiate (index)));
 
@@ -200,7 +200,7 @@ int exprPow::Linearity () {
     if (fabs (exponent - COUENNE_round (exponent)) > COUENNE_EPS)
       return NONLINEAR;
 
-    if (arglist_ [1] -> Type () == CONST) { 
+    if (arglist_ [1] -> Type () == CONST) {
 
       int expInt = (int) COUENNE_round (exponent);
 
@@ -215,8 +215,8 @@ int exprPow::Linearity () {
 	default: return NONLINEAR;
 	}
       }
-      else 
-	if (arglist_ [0] -> Linearity () == QUADRATIC) 
+      else
+	if (arglist_ [0] -> Linearity () == QUADRATIC)
 	  switch (expInt) {
 
 	  case 0:  return CONSTANT;
@@ -236,7 +236,7 @@ bool exprPow::isInteger () {
 
   // base
 
-  if (!(arglist_ [0] -> isInteger ())) { 
+  if (!(arglist_ [0] -> isInteger ())) {
 
     // base not integer: check if constant and integer
     CouNumber lb, ub;
@@ -249,7 +249,7 @@ bool exprPow::isInteger () {
 
   // exponent
 
-  if (!(arglist_ [1] -> isInteger ())) { 
+  if (!(arglist_ [1] -> isInteger ())) {
 
     // exponent not defined integer: check if constant and at integer
     // value (and positive, or base negative integer)
@@ -288,7 +288,7 @@ bool exprPow::isInteger () {
 
 /// compute $y^{lv}$ and  $y^{uv}$ for Violation Transfer algorithm
 void exprPow::closestFeasible (expression *varind,
-			       expression *vardep, 
+			       expression *vardep,
 			       CouNumber &left,
 			       CouNumber &right) const {
   CouNumber
@@ -305,7 +305,7 @@ void exprPow::closestFeasible (expression *varind,
   bool isInt    =            fabs (k    - (double) (intk = COUENNE_round (k)))    < COUENNE_EPS,
        isInvInt = !isInt && (fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS);
 
-  // three cases: 
+  // three cases:
   // 1) k or  1/k odd or signpower => have either left or right
   // 2) k or  1/k even,            => may have both
   // 3) k and 1/k fractional       => have either left or right
@@ -314,7 +314,7 @@ void exprPow::closestFeasible (expression *varind,
 
     if (intk % 2 || issignpower_) // case 1
 
-      if (k > 0) 
+      if (k > 0)
 	((y < xk) ? left : right) = yk; // easy, x^k is continuous
 
       else
@@ -334,7 +334,7 @@ void exprPow::closestFeasible (expression *varind,
 
       else
 
-	if (k > 0) 
+	if (k > 0)
 
 	  if (k < 1) // roots, have x >= 0
 
@@ -389,7 +389,7 @@ bool exprPow::isCuttable (CouenneProblem *problem, int index) const {
       // TODO also with an odd exponent, there are convex parts where one could do separation
       if (intExp % 2 || issignpower_) return false; // exponent odd or 1/odd
 
-      CouNumber 
+      CouNumber
 	x = problem -> X (arglist_ [0] -> Index ()),
 	y = problem -> X (index);
 
@@ -399,17 +399,17 @@ bool exprPow::isCuttable (CouenneProblem *problem, int index) const {
     } else {
 
       // non-integer exponent
-      CouNumber 
+      CouNumber
 	x = problem -> X (arglist_ [0] -> Index ()),
 	y = problem -> X (index);
 
       return (((exponent <= 1.) && (y >= safe_pow (x, exponent))) ||
 	      ((exponent >= 1.) && (y <= safe_pow (x, exponent))));
-    }      
+    }
   } else {
 
     // non-integer exponent
-    CouNumber 
+    CouNumber
       x  = problem -> X (arglist_ [0] -> Index ()),
       y  = problem -> X (index),
       lb = problem -> Lb (index),

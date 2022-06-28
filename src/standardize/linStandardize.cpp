@@ -25,8 +25,8 @@
 using namespace Couenne;
 
 /// standardization of linear exprOp's
-exprAux *CouenneProblem::linStandardize (bool addAux, 
-					 CouNumber c0, 
+exprAux *CouenneProblem::linStandardize (bool addAux,
+					 CouNumber c0,
 					 LinMap  &lmap,
 					 QuadMap &qmap) {
 
@@ -37,21 +37,21 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
   ////////////////////////////////////////////////////////////////////////////////////////
 
   int  nq = qmap.Map().size (),     /// data for exprQuad
-      *qi = new int [nq+1], 
+      *qi = new int [nq+1],
       *qj = new int [nq+1];
 
   CouNumber *qc = new CouNumber [nq];
 
-  int  
+  int
      nl = lmap.Map().size(),      /// data for exprGroup
     *li = new int [nl+1];
 
   CouNumber *lc = new CouNumber [nl];
 
   // terminate arrays with negative index
-  qi [nq] = li [nl] = -1; 
+  qi [nq] = li [nl] = -1;
 
-  std::map <int, CouNumber>::iterator lit = lmap.Map().begin (); 
+  std::map <int, CouNumber>::iterator lit = lmap.Map().begin ();
 
   // fill in arrays for linear part
   for (int i=0; i<nl; i++, lit++) {
@@ -60,7 +60,7 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
     lc [i] = lit -> second;
   }
 
-  std::map <std::pair <int, int>, CouNumber>::iterator qit = qmap.Map().begin (); 
+  std::map <std::pair <int, int>, CouNumber>::iterator qit = qmap.Map().begin ();
 
   // fill in arrays for quadratic part
   for (int i=0; i < nq; i++, qit++) {
@@ -77,28 +77,28 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
   expression *ret;
 
   // a constant
-  if ((nq==0) && (nl==0)) 
+  if ((nq==0) && (nl==0))
 
-    ret = new exprConst (c0); // a constant auxiliary? 
+    ret = new exprConst (c0); // a constant auxiliary?
 
   else if ((nq==0) && (fabs (c0) < COUENNE_EPS) && (nl==1)) { // a linear monomial, cx
 
     if      (fabs (*lc - 1.) < COUENNE_EPS) ret = new exprClone (Var (*li));
     else if (fabs (*lc + 1.) < COUENNE_EPS) ret = new exprOpp (new exprClone (Var (*li)));
-    else                                    ret = new exprMul (new exprConst (*lc), 
+    else                                    ret = new exprMul (new exprConst (*lc),
 				 			       new exprClone (Var (*li)));
 
-  } else if ((nl==0) && (fabs (c0) < COUENNE_EPS) && (nq==1)) { 
+  } else if ((nl==0) && (fabs (c0) < COUENNE_EPS) && (nq==1)) {
 
     // a bilinear/quadratic monomial, cx^2 or cxy
 
     expression *quad;
 
     if (*qi == *qj) quad = new exprPow (new exprClone (Var (*qi)), new exprConst (2.));
-    else            quad = new exprMul (new exprClone (Var (*qi)), 
+    else            quad = new exprMul (new exprClone (Var (*qi)),
 					new exprClone (Var (*qj)));
 
-    if (fabs (*qc - 1) < COUENNE_EPS) 
+    if (fabs (*qc - 1) < COUENNE_EPS)
       ret    = quad;
     else {
       quad = addAuxiliary (quad);
@@ -126,10 +126,10 @@ exprAux *CouenneProblem::linStandardize (bool addAux,
   delete [] qc;
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf ("\nlinstand (addaux = %d) ==> ", addAux); 
+    printf ("\nlinstand (addaux = %d) ==> ", addAux);
     ret -> print (); printf ("\n");
-    //printf (": "); fflush (stdout); 
-    //ret -> Image () -> print ();     
+    //printf (": "); fflush (stdout);
+    //ret -> Image () -> print ();
   }
 
   //if (ret -> Type () == AUX)

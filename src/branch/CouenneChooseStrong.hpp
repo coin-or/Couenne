@@ -55,10 +55,10 @@ public:
        -1 - one branch was infeasible both ways
        0 - all inspected - nothing can be fixed
        1 - all inspected - some can be fixed                         (returnCriterion==0)
-       2 - may be returning early - one can be fixed (last one done) (returnCriterion==1) 
+       2 - may be returning early - one can be fixed (last one done) (returnCriterion==1)
        3 - returning because max time
   */
-  virtual int doStrongBranching (OsiSolverInterface * OsiSolver, 
+  virtual int doStrongBranching (OsiSolverInterface * OsiSolver,
 				 OsiBranchingInformation *info,
 				 int numberToDo, int returnCriterion);
 
@@ -80,7 +80,7 @@ private:
 
   /** Default Constructor, forbidden for some reason.*/
   CouenneChooseStrong ();
-  
+
   // print object violations
   void printObjViol(OsiBranchingInformation *info);
 
@@ -93,16 +93,16 @@ private:
   //    info->solution[vInd] outside bounds
   // 2: CouenneBranchingObject with upper[vInd] == lower[vInd]
   // 3: otherwise (meaning good object)
-  int goodCandidate(OsiSolverInterface *solver, 
+  int goodCandidate(OsiSolverInterface *solver,
 		    OsiBranchingInformation *info,
 		    OsiObject **object, const int iObject, const double prec);
 
   /// Save best candidate
-  bool saveBestCand(OsiObject **object, const int iObject, 
-		    const double value, 
-		    const double upEstimate, 
+  bool saveBestCand(OsiObject **object, const int iObject,
+		    const double value,
+		    const double upEstimate,
 		    const double downEstimate,
-		    double &bestVal1, 
+		    double &bestVal1,
 		    double &bestVal2, int &bestIndex,
 		    int &bestWay);
 
@@ -127,7 +127,7 @@ protected:
   /// Normally, a convex combination of the min/max lower bounds'
   /// estimates is taken to select a branching variable, as in the
   /// original definition of strong branching. If this option is set
-  /// to true, their product is taken instead: 
+  /// to true, their product is taken instead:
   ///
   /// (1e-6+min) * max
   ///

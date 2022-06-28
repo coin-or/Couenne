@@ -3,7 +3,7 @@
  * Name:    CouenneTNLP.cpp
  * Authors: Pietro Belotti
  * Purpose: Implementation of an NLP interface with gradient/Jacobian/etc
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -48,7 +48,7 @@ CouenneTNLP::~CouenneTNLP () {
   if (HLa_)        delete HLa_;
   if (optHessian_) delete optHessian_;
 
-  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); 
+  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin ();
        i != gradient_. end (); ++i)
     delete (*i). second;
 }
@@ -57,7 +57,7 @@ CouenneTNLP::~CouenneTNLP () {
 int PSDize (int n, double *A, double *B, bool doSqrRoot);
 
 
-/// Constructor 
+/// Constructor
 CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 
   problem_        (p),
@@ -123,12 +123,12 @@ CouenneTNLP::CouenneTNLP (CouenneProblem *p):
 }
 
 
-/// Copy constructor 
-CouenneTNLP::CouenneTNLP (const CouenneTNLP &rhs) 
+/// Copy constructor
+CouenneTNLP::CouenneTNLP (const CouenneTNLP &rhs)
 {operator= (rhs);}
 
 
-/// Assignment 
+/// Assignment
 CouenneTNLP &CouenneTNLP::operator= (const CouenneTNLP &rhs) {
 
   problem_            = rhs.problem_;
@@ -150,7 +150,7 @@ CouenneTNLP &CouenneTNLP::operator= (const CouenneTNLP &rhs) {
 }
 
 /// Clone
-CouenneTNLP *CouenneTNLP::clone () 
+CouenneTNLP *CouenneTNLP::clone ()
 {return new CouenneTNLP (*this);}
 
 
@@ -159,10 +159,10 @@ CouenneTNLP *CouenneTNLP::clone ()
 // hessian. The index_style parameter lets you specify C or Fortran
 // style indexing for the sparse matrix iRow and jCol parameters.
 // C_STYLE is 0-based, and FORTRAN_STYLE is 1-based.
-bool CouenneTNLP::get_nlp_info (Index& n, 
-				Index& m, 
+bool CouenneTNLP::get_nlp_info (Index& n,
+				Index& m,
 				Index& nnz_jac_g,
-			        Index& nnz_h_lag, 
+			        Index& nnz_h_lag,
 				IndexStyleEnum& index_style) {
   n = problem_ -> nVars ();
   m = Jac_. nRows ();
@@ -206,7 +206,7 @@ bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
     CouenneConstraint *c = problem_ -> Con (i);
 
     if (c -> Body () -> Type () == AUX ||
-	c -> Body () -> Type () == VAR) 
+	c -> Body () -> Type () == VAR)
       continue;
 
     CouNumber
@@ -214,7 +214,7 @@ bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
       cub = (*c -> Ub ()) ();
 
     // prevent ipopt from exiting on inconsistent bounds
-    if (clb <= cub) {*g_l++ = clb; *g_u++ = cub;} 
+    if (clb <= cub) {*g_l++ = clb; *g_u++ = cub;}
     else            {*g_l++ = cub; *g_u++ = clb;}
   }
 
@@ -224,7 +224,7 @@ bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
 
     exprVar *e = problem_ -> Var (i);
 
-    if (e -> Multiplicity () <= 0) 
+    if (e -> Multiplicity () <= 0)
       *x_l++ = *x_u++ = 0.;
     else {
 
@@ -233,7 +233,7 @@ bool CouenneTNLP::get_bounds_info (Index n, Number* x_l, Number* x_u,
 	ub = e -> ub ();
 
       // prevent ipopt from exiting on inconsistent bounds
-      if (lb <= ub) {*x_l++ = lb; *x_u++ = ub;} 
+      if (lb <= ub) {*x_l++ = lb; *x_u++ = ub;}
       else          {*x_l++ = ub; *x_u++ = lb;}
     }
 
@@ -278,12 +278,12 @@ bool CouenneTNLP::get_constraints_linearity (Index m, Ipopt::TNLP::LinearityType
     expression *b = problem_ -> Con (i) -> Body ();
 
     if (b -> Type () == AUX ||
-	b -> Type () == VAR) 
+	b -> Type () == VAR)
       continue;
 
-    *const_types++ = 
-      (b -> Linearity () > LINEAR) ? 
-      Ipopt::TNLP::NON_LINEAR : 
+    *const_types++ =
+      (b -> Linearity () > LINEAR) ?
+      Ipopt::TNLP::NON_LINEAR :
       Ipopt::TNLP::LINEAR;
   }
 
@@ -297,9 +297,9 @@ bool CouenneTNLP::get_constraints_linearity (Index m, Ipopt::TNLP::LinearityType
 	(e -> Multiplicity () <= 0))
       continue;
 
-    *const_types++ = 
-      (e -> Image () -> Linearity () > LINEAR) ? 
-      Ipopt::TNLP::NON_LINEAR : 
+    *const_types++ =
+      (e -> Image () -> Linearity () > LINEAR) ?
+      Ipopt::TNLP::NON_LINEAR :
       Ipopt::TNLP::LINEAR;
   }
 
@@ -313,10 +313,10 @@ bool CouenneTNLP::get_constraints_linearity (Index m, Ipopt::TNLP::LinearityType
 // algorithm wants you to initialize these and you cannot, return
 // false, which will cause Ipopt to stop.  You will have to run Ipopt
 // with different options then.
-bool CouenneTNLP::get_starting_point (Index n, 
+bool CouenneTNLP::get_starting_point (Index n,
 				      bool init_x, Number* x,
 				      bool init_z, Number* z_L, Number* z_U,
-				      Index m, 
+				      Index m,
 				      bool init_lambda, Number* lambda) {
   if (init_x)
     CoinCopyN (sol0_, n, x);
@@ -358,7 +358,7 @@ bool CouenneTNLP::eval_grad_f (Index n, const Number* x, bool new_x,
 
   CoinFillN (grad_f, n, 0.);
 
-  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); 
+  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin ();
        i != gradient_. end (); ++i)
     grad_f [i -> first] = (*(i -> second)) ();
 
@@ -396,7 +396,7 @@ bool CouenneTNLP::eval_g (Index n, const Number* x, bool new_x,
     expression *b = problem_ -> Con (i) -> Body ();
 
     if (b -> Type () == AUX ||
-	b -> Type () == VAR) 
+	b -> Type () == VAR)
       continue;
 
     nEntries ++;
@@ -448,14 +448,14 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
 #ifdef DEBUG
   if (x) {
     printf ("eval_jac_g: ["); fflush (stdout);
-    for (int i=0; i<n; i++) 
+    for (int i=0; i<n; i++)
       {printf ("%.2g ", x [i]); fflush (stdout);}
     printf ("] --> ["); fflush (stdout);
   }
 #endif
 
-  if (values == NULL && 
-      iRow   != NULL && 
+  if (values == NULL &&
+      iRow   != NULL &&
       jCol   != NULL) {
 
     // initialization of the Jacobian's structure. This has been
@@ -498,8 +498,8 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
 // A default implementation is provided, in case the user wants to use
 // quasi-Newton approximations to estimate the second derivatives and
 // doesn't need to implement this method.
-bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number obj_factor, 
-			  Index m, const Number* lambda, bool new_lambda, 
+bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number obj_factor,
+			  Index m, const Number* lambda, bool new_lambda,
 			  Index nele_hess,
 			  Index* iRow, Index* jCol, Number* values) {
 
@@ -519,8 +519,8 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
   }
 #endif
 
-  if (values == NULL && 
-      iRow   != NULL && 
+  if (values == NULL &&
+      iRow   != NULL &&
       jCol   != NULL) {
 
     /// first call, must determine structure iRow/jCol
@@ -537,7 +537,7 @@ bool CouenneTNLP::eval_h (Index n, const Number* x,      bool new_x,      Number
 
     for (int i=0; i<nele_hess; i++, values++) {
 
-      int 
+      int
 	 numL  = HLa_ -> numL () [i],
 	*lamI  = HLa_ -> lamI () [i];
 
@@ -590,7 +590,7 @@ void CouenneTNLP::setObjective (expression *newObj) {
   // further
   newObj -> DepList (objDep, STOP_AT_AUX);
 
-  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin (); 
+  for (std::vector <std::pair <int, expression *> >::iterator i = gradient_. begin ();
        i != gradient_. end (); ++i)
     delete (*i). second;
 
@@ -647,13 +647,13 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
     int    *&optHessianRow = optHessian_ -> row ();
     int    *&optHessianCol = optHessian_ -> col ();
 
-    int     &optHessianNum = optHessian_ -> num ();    
+    int     &optHessianNum = optHessian_ -> num ();
 
     optHessianVal = (double *) realloc (optHessianVal, nnz * sizeof (double));
     optHessianRow = (int    *) realloc (optHessianRow, nnz * sizeof (int));
     optHessianCol = (int    *) realloc (optHessianCol, nnz * sizeof (int));
 
-    optHessianNum = 0;    
+    optHessianNum = 0;
 
     for (int i=0; i < HLa_ -> nnz (); ++i) {
 
@@ -664,14 +664,14 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 
 	int indLam = HLa_ -> lamI () [i][j];
 
-	hessMember += (indLam == 0) ? 
+	hessMember += (indLam == 0) ?
 	  (*(elist [j])) () :                    // this is the objective
 	  (*(elist [j])) () * lambda [indLam-1]; // this is a constraint
       }
 
       if (fabs (hessMember) > COUENNE_EPS) {
 
-	// printf ("saving: %d, %d --> %g\n", 
+	// printf ("saving: %d, %d --> %g\n",
 	// 	HLa_ -> iRow () [i],
 	// 	HLa_ -> jCol () [i], hessMember);
 
@@ -695,7 +695,7 @@ void CouenneTNLP::finalize_solution (SolverReturn status,
 
     // transform matrix into a PSD one by eliminating the contribution
     // of negative eigenvalues, return number of nonzeros
-    optHessianNum = PSDize (n, H, H_PSD, false); 
+    optHessianNum = PSDize (n, H, H_PSD, false);
 
     optHessianVal = (double *) realloc (optHessianVal, optHessianNum * sizeof (double));
     optHessianRow = (int    *) realloc (optHessianRow, optHessianNum * sizeof (int));
@@ -751,7 +751,7 @@ bool CouenneTNLP::intermediate_callback (AlgorithmMode mode,
 // Ipopt if the quasi-Newton approximation is selected.  If -1 is
 // returned as number of nonlinear variables, Ipopt assumes that all
 // variables are nonlinear.
-Index CouenneTNLP::get_number_of_nonlinear_variables () 
+Index CouenneTNLP::get_number_of_nonlinear_variables ()
 {return nonLinVars_. size ();}
 
 

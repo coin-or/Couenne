@@ -49,7 +49,7 @@
 #include "getstub.h"
 #include "opcode.hd"
 
-// get ASL op. code relative to function pointer passed as parameter 
+// get ASL op. code relative to function pointer passed as parameter
 size_t getOperator (efunc *);
 
 #define OBJ_DE    ((const ASL_fg *) asl) -> I.obj_de_
@@ -106,7 +106,7 @@ CouenneProblem* CouenneAmplInterface::getCouenneProblem() {
   	problem = NULL;
   	return NULL;
   }
-  
+
   return problem;
 }
 
@@ -153,7 +153,7 @@ bool CouenneAmplInterface::readASLfg() {
 	
   std::string nlfile;
   options->GetStringValue("nlfile", nlfile, "");
-  
+
   if (nlfile == "")
   	return false;
 
@@ -184,7 +184,7 @@ bool CouenneAmplInterface::readASLfg() {
 
   // read the rest of the nl file
   fg_read (nl, ASL_return_read_err | ASL_findgroups);
-  
+
   //FIXME freeing argv and argv[1] gives segfault !!!
 //  free(argv[1]);
 //  delete[] argv;
@@ -194,12 +194,12 @@ bool CouenneAmplInterface::readASLfg() {
 
 // check if an expression is a null pointer or equals zero
 //static inline bool is_expr_zero (expr* e) {
-//	return ((e==NULL) || ((((Intcast (e->op)) == OPNUM) && 
-//			  (fabs (((expr_n *)e) -> v)  < COUENNE_EPS) 
+//	return ((e==NULL) || ((((Intcast (e->op)) == OPNUM) &&
+//			  (fabs (((expr_n *)e) -> v)  < COUENNE_EPS)
 //			  //  && (fabs (e -> dL) < COUENNE_EPS)
 //			  // *** CHECK THIS! dL is the derivative
 //			  )));
-//} 
+//}
 
 
 // Reads a MINLP from an AMPL .nl file through the ASL methods
@@ -282,7 +282,7 @@ bool CouenneAmplInterface::readnl() {
 	coeff [j] = L [j]. fac;
 	indexL [j] = ((uintptr_t) (L [j].v.rp) - (uintptr_t) VAR_E) / sizeof (expr_v);
 #ifdef DEBUG
-	Printf( " %+g x_%-3d", L [j]. fac, 
+	Printf( " %+g x_%-3d", L [j]. fac,
 		(expr_v *) (L [j].v.rp) - VAR_E //((const ASL_fg *) asl) -> I.cexps_
 		//L [j]. v.i
 		);
@@ -299,7 +299,7 @@ bool CouenneAmplInterface::readnl() {
 
       expression *eg = exprGroup::genExprGroup (0, lcoeff, al, 1);
       problem -> commonExprs (). push_back (eg);
-    } 
+    }
     else problem -> commonExprs () . push_back (nle);
 #ifdef DEBUG
     printf ("\n");
@@ -329,7 +329,7 @@ bool CouenneAmplInterface::readnl() {
 	coeff  [j] = L [j]. fac;
 	indexL [j] = ((uintptr_t) (L [j].v.rp) - (uintptr_t) VAR_E) / sizeof (expr_v);
 #ifdef DEBUG
-	Printf( " %+g x_%-3d", L [j]. fac, 
+	Printf( " %+g x_%-3d", L [j]. fac,
 		(expr_v *) (L [j].v.rp) - VAR_E //((const ASL_fg *) asl) -> I.cexps_
 		//L [j]. v.i
 		);
@@ -346,7 +346,7 @@ bool CouenneAmplInterface::readnl() {
 
       expression *eg = exprGroup::genExprGroup (0, lcoeff, al, 1);
       problem -> commonExprs () . push_back (eg);
-    } 
+    }
     else problem -> commonExprs () . push_back (nle);
 #ifdef DEBUG
     printf ("\n");
@@ -362,14 +362,14 @@ bool CouenneAmplInterface::readnl() {
     int nterms = 0;
 
     // count nonzero terms in linear part
- 
+
     for (ograd *objgrad = Ograd [i];
 	 objgrad;
 	 objgrad = objgrad -> next)
       if (fabs (objgrad -> coef) > COUENNE_EPS)
 	nterms++;
 
-    expression 
+    expression
       *body,
       *nl = nl2e (OBJ_DE [i] . e);
 
@@ -418,7 +418,7 @@ bool CouenneAmplInterface::readnl() {
       body = nl;
       //if (fabs (objconst (i) > COUENNE_EPS))
       //body = new exprSum (nl, new exprConst (objconst (i)));
-      //else 
+      //else
 
     ///////////////////////////////////////////////////
 
@@ -441,7 +441,7 @@ bool CouenneAmplInterface::readnl() {
   // of linear and nonlinear terms
 
   // init array with # terms of each constraint
-  for (int i = n_con; i--;) 
+  for (int i = n_con; i--;)
     *nterms++ = 0;
   nterms -= n_con;
 
@@ -458,10 +458,10 @@ bool CouenneAmplInterface::readnl() {
     }
   else {                             // Constraints' linear info is stored in Cgrad
     for (int i = 0; i < n_con; i++)
-      for (congrad = Cgrad [i]; 
-	   congrad; 
-	   congrad = congrad -> next) 
-	if (fabs (congrad -> coef) > COUENNE_EPS) 
+      for (congrad = Cgrad [i];
+	   congrad;
+	   congrad = congrad -> next)
+	if (fabs (congrad -> coef) > COUENNE_EPS)
 	  nterms [i] ++;
   }
 
@@ -470,7 +470,7 @@ bool CouenneAmplInterface::readnl() {
   CouNumber **coeff  = new CouNumber * [n_con];
   int       **indexL = new int       * [n_con];
 
-  for (int i = n_con; i--;) 
+  for (int i = n_con; i--;)
     *indexL++ = NULL;
 
   indexL -= n_con;
@@ -510,7 +510,7 @@ bool CouenneAmplInterface::readnl() {
       *iline = new int       [nt+1];
       (*iline) [nt] = -1;
 
-      for (congrad = Cgrad [i]; congrad; congrad = congrad -> next) 
+      for (congrad = Cgrad [i]; congrad; congrad = congrad -> next)
 	if (fabs (congrad -> coef) > COUENNE_EPS) {
 	  (*cline) [--nt] = congrad -> coef;
 	  (*iline)   [nt] = congrad -> varno;
@@ -540,7 +540,7 @@ bool CouenneAmplInterface::readnl() {
       else               sign = COUENNE_GE;
     else                 sign = COUENNE_LE;
 
-    // this is an equality constraint  
+    // this is an equality constraint
     if (fabs (lb - ub) < COUENNE_EPS)
       sign = COUENNE_EQ;
 
@@ -560,7 +560,7 @@ bool CouenneAmplInterface::readnl() {
       for (int i=0, *ind = indexL; *ind >= 0; *ind++, i++)
       lcoeff.push_back (std::pair <exprVar *, CouNumber> (Var (*ind), coeff [i]));*/
 
-      if ((code == COU_EXPRSUM) || 
+      if ((code == COU_EXPRSUM) ||
 	  (code == COU_EXPRGROUP)) {
 
 	body    = exprGroup::genExprGroup (0., lcoeff, (*nll) -> ArgList (), (*nll) -> nArgs ());
@@ -590,7 +590,7 @@ bool CouenneAmplInterface::readnl() {
     case COUENNE_EQ:  problem -> addEQConstraint  (body, new exprConst (ub)); break;
     case COUENNE_LE:  problem -> addLEConstraint  (body, new exprConst (ub)); break;
     case COUENNE_GE:  problem -> addGEConstraint  (body, new exprConst (lb)); break;
-    case COUENNE_RNG: problem -> addRNGConstraint (body, new exprConst (lb), 
+    case COUENNE_RNG: problem -> addRNGConstraint (body, new exprConst (lb),
 					           new exprConst (ub)); break;
     default: jnlst->Printf(Ipopt::J_ERROR, Ipopt::J_INITIALIZATION, "Error: could not recognize constraint\n"); return false;
     }
@@ -602,13 +602,13 @@ bool CouenneAmplInterface::readnl() {
   delete [] indexL;
   delete [] coeff;
   delete [] nterms;
-  
+
   } catch (...) {
   	return false;
   }
 
   // create room for problem's variables and bounds
-  CouNumber 
+  CouNumber
     *x  = (CouNumber *) malloc ((n_var + problem -> nDefVars() ) * sizeof (CouNumber)),
     *lb = (CouNumber *) malloc ((n_var + problem -> nDefVars() ) * sizeof (CouNumber)),
     *ub = (CouNumber *) malloc ((n_var + problem -> nDefVars() ) * sizeof (CouNumber));
@@ -655,9 +655,9 @@ bool CouenneAmplInterface::readnl() {
 
   // initial x ////////////////////////////////////////////////////////////////////
 
-  for (int i=n_var; i--;) 
+  for (int i=n_var; i--;)
 
-    if (X0 && havex0 [i]) problem -> X (i) = X0 [i]; 
+    if (X0 && havex0 [i]) problem -> X (i) = X0 [i];
 
     else {
 
@@ -714,7 +714,7 @@ expression *CouenneAmplInterface::nl2e(expr *e) {
     // see ASL/solvers/rops.c, IfNL
     //}
 
-  case OP_tanh: return new exprDiv 
+  case OP_tanh: return new exprDiv
       (new exprSub (new exprExp (nl2e (e -> L.e)),
 		    new exprExp (new exprOpp (nl2e (e->L.e)))),
        new exprSum (new exprExp (nl2e (e -> L.e)),
@@ -730,7 +730,7 @@ expression *CouenneAmplInterface::nl2e(expr *e) {
 				       new exprSub (new exprExp (nl2e (e -> L.e)),
 						    new exprExp (new exprOpp (nl2e (e->L.e)))));
   case OP_sin:     return new exprSin (nl2e (e -> L.e));
-  case OP_log10:   return new exprMul (new exprConst (1.0 / log (10.0)), 
+  case OP_log10:   return new exprMul (new exprConst (1.0 / log (10.0)),
 				       new exprLog (nl2e (e -> L.e)));
   case OP_log:     return new exprLog (nl2e (e -> L.e));
   case OP_exp:     return new exprExp (nl2e (e -> L.e));
@@ -759,9 +759,9 @@ expression *CouenneAmplInterface::nl2e(expr *e) {
     //case OPround:  notimpl ("round");
     //case OPtrunc:  notimpl ("trunc");
 
-  case OP1POW: return new exprPow (nl2e (e -> L.e), 
+  case OP1POW: return new exprPow (nl2e (e -> L.e),
 				   new exprConst (((expr_n *)e->R.e)->v));
-  case OP2POW: return new exprPow (nl2e (e -> L.e), 
+  case OP2POW: return new exprPow (nl2e (e -> L.e),
 				   new exprConst (2.));
   case OPCPOW: return new exprPow (new exprConst (((expr_n *)e->L.e)->v),
 				   nl2e (e -> R.e));
@@ -776,7 +776,7 @@ expression *CouenneAmplInterface::nl2e(expr *e) {
 
     if (j >= problem -> nOrigVars()) // common expression
       // use base pointer otherwise the .a field returns an awkward, out-of-bound index
-      j = ((expr_v *) e) - ((const ASL_fg *) asl) -> I.var_e_; 
+      j = ((expr_v *) e) - ((const ASL_fg *) asl) -> I.var_e_;
 
     if (j >= problem -> nOrigVars() + problem -> nDefVars()) {
       jnlst -> Printf (Ipopt::J_ERROR, Ipopt::J_INITIALIZATION, "Error: unknown variable x_%d\n", j);

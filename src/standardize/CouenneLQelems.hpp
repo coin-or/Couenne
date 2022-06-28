@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of elemental elements of linear and bilinear expressions
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -54,7 +54,7 @@ private:
 public:
 
   /// public access
-  std::map <int, CouNumber> &Map () 
+  std::map <int, CouNumber> &Map ()
   {return lmap_;}
 
   /// insert a pair <int,CouNumber> into a map for linear terms
@@ -81,7 +81,7 @@ private:
 public:
 
   /// public access
-  std::map <std::pair <int, int>, CouNumber> &Map () 
+  std::map <std::pair <int, int>, CouNumber> &Map ()
   {return qmap_;}
 
   /// insert a pair <<int,int>,CouNumber> into a map for quadratic terms

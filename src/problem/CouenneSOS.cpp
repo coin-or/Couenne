@@ -29,13 +29,13 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
 			     OsiSolverInterface *solver,
 			     OsiObject **objects) {
 
-  // check auxiliaries defined as 
+  // check auxiliaries defined as
   // x_i binary. Disable it and add relative SOS to array "objects"
 
   int nSOS = 0;
 
   for (std::vector <exprVar *>::const_iterator v = variables_.begin ();
-       v != variables_.end (); ++v) 
+       v != variables_.end (); ++v)
 
     if (((*v) -> Type             () ==                AUX) &&
 	((*v) -> Multiplicity     () >                   0) &&
@@ -44,7 +44,7 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
 
       expression *img = (*v) -> Image ();
 
-      exprGroup *group = dynamic_cast <exprGroup *> (img -> isaCopy () ? 
+      exprGroup *group = dynamic_cast <exprGroup *> (img -> isaCopy () ?
 						     img -> Copy () :
 						     img);
       if (!group)
@@ -52,11 +52,11 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
 
       int wind = (*v) -> Index ();
       CouNumber cterm = group -> getc0 ();
-      bool 
-	defVar    = true, 
+      bool
+	defVar    = true,
 	invertSOS = false;
 
-      // now check if this is 
+      // now check if this is
       //
       // defvar==true:
       // 1)  an auxiliary fixed to one  ==> it's a SOS if its image is  x1+x2+...+xk
@@ -98,7 +98,7 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
 			     // spotted by Cbc already
 
       exprGroup::lincoeff &lcoe = group -> lcoeff ();
-      exprGroup::lincoeff::iterator l = lcoe. begin (); 
+      exprGroup::lincoeff::iterator l = lcoe. begin ();
 
       for (;l != lcoe. end (); ++l) {
 
@@ -108,15 +108,15 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
 	  isSOS = false;
 	  break;
 
-	} else 
+	} else
 	  if (!(l -> first -> isInteger ()))
 	    intSOS = false;
 
-	if (l -> first -> Index () >= nOrigVars_) // 
+	if (l -> first -> Index () >= nOrigVars_) //
 	  onlyOrigVars = false;
       }
 
-      if (!isSOS || !intSOS)// || onlyOrigVars) 
+      if (!isSOS || !intSOS)// || onlyOrigVars)
 	continue;
 
       // printf ("----- found SOS: ");
@@ -127,7 +127,7 @@ int CouenneProblem::findSOS (CbcModel *CbcModelPtr,
 
       int
 	indStart = defVar ? 0 : 1,
-	nelem    = indStart + lcoe. size (), 
+	nelem    = indStart + lcoe. size (),
 	*indices = new int [nelem];
 
       if (!defVar)

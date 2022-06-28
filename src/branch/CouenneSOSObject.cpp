@@ -2,7 +2,7 @@
  *
  * Name:    CouenneSOSObject.cpp
  * Authors: Pietro Belotti, Lehigh University
- * Purpose: Branching SOS object 
+ * Purpose: Branching SOS object
  *
  * (C) Carnegie-Mellon University, 2008-09.
  * This file is licensed under the Eclipse Public License (EPL)
@@ -39,7 +39,7 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
   //CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
   //CouenneProblem *p = couenneSolver -> CutGen () -> Problem ();
 
-  int 
+  int
     nvars  = problem_ -> nVars (),
     objind = problem_ -> Obj (0) -> Body () -> Index ();
 
@@ -76,7 +76,7 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
       //CouNumber newEst = problem_ -> Lb (objind) - lb [objind];
       estimate = CoinMax (0., objind >= 0 ? problem_ -> Lb (objind) - lb [objind] : 0.);
 
-      //if (newEst > estimate) 
+      //if (newEst > estimate)
       //estimate = newEst;
 
       for (int i=0; i<nvars; i++) {
@@ -86,7 +86,7 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
     }
   }
 
-  /*if (!infeasible && doConvCuts_ && simulate_) { 
+  /*if (!infeasible && doConvCuts_ && simulate_) {
     // generate convexification cuts before solving new node's LP
 
     int nchanged, *changed = NULL;
@@ -108,13 +108,13 @@ double CouenneSOSBranchingObject::branch (OsiSolverInterface * solver) {
   branchIndex_++;
 
   // estimated change in objective function
-  return (infeasible ? COIN_DBL_MAX : CoinMax (retval, estimate)); 
+  return (infeasible ? COIN_DBL_MAX : CoinMax (retval, estimate));
 }
 
 
 /// create CouenneBranchingObject or CouenneThreeWayBranchObj based
 /// on this object
-OsiBranchingObject *CouenneSOSObject::createBranch (OsiSolverInterface* si, 
+OsiBranchingObject *CouenneSOSObject::createBranch (OsiSolverInterface* si,
 						    const OsiBranchingInformation* info, int way) const
 {
 
@@ -151,7 +151,7 @@ OsiBranchingObject *CouenneSOSObject::createBranch (OsiSolverInterface* si,
   weight /= sum;
   int iWhere;
   double separator=0.0;
-  for (iWhere=firstNonZero;iWhere<lastNonZero;iWhere++) 
+  for (iWhere=firstNonZero;iWhere<lastNonZero;iWhere++)
     if (weight<weights_[iWhere+1])
       break;
   if (sosType_==1) {
@@ -165,6 +165,6 @@ OsiBranchingObject *CouenneSOSObject::createBranch (OsiSolverInterface* si,
   }
   // create object
 
-  return new CouenneSOSBranchingObject (problem_, reference_, 
+  return new CouenneSOSBranchingObject (problem_, reference_,
 					si, this, way, separator, jnlst_, doFBBT_, doConvCuts_);
 }

@@ -53,11 +53,11 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
   // and ub_. Their values allow us to decide whether we should create
   // a (semi)auxiliary or not.
 
-  CouNumber 
+  CouNumber
     rLb = (*lb_) (),
     rUb = (*ub_) ();
 
-  std::string 
+  std::string
     use_auxcons,
     use_semiaux;
 
@@ -150,7 +150,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 
 	// create new variable, it has to be integer if original variable was integer
 	exprAux *w = new exprAux (rest, wind, 1 + rest -> rank (),
-				  ((p -> Var (wind) -> isInteger ()) || 
+				  ((p -> Var (wind) -> isInteger ()) ||
 				   (false && (rest -> isInteger ()) && (aSign == expression::AUX_EQ))) ? // FIXME!!!
 				  exprAux::Integer : exprAux::Continuous,
 				  p -> domain (), aSign);
@@ -187,7 +187,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	  // replace ALL occurrences of original variable (with index
 	  // wind) with newly created auxiliary
 	  p -> auxiliarize (w);
-	} 
+	}
 
 	else {
 
@@ -205,7 +205,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 	  // aux. See globallib/st_glmp_fp3 for an example where this
 	  // otherwise would be a bug (x_1 unlinked from x2-x3 and
 	  // leading to unbounded)
-	  
+	
 	  int xind = (*i) -> Index (), iMax, iMin;
 
 	  if (xind < wind) {
@@ -242,7 +242,7 @@ exprAux *CouenneConstraint::standardize (CouenneProblem *p) {
 // Replace a variable ////////////////////////////////
 void replace (CouenneProblem *p, int wind, int xind) {
 
-  exprVar 
+  exprVar
     *varLeaves = p -> Variables () [wind],
     *varStays  = p -> Variables () [xind];
 

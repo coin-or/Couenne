@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: method to compute value of an expr?BQuad
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -34,10 +34,10 @@ CouNumber exprQuad::computeQBound (int sign) {
   // exprQuad based on the information obtained through
   // alpha-convexification, if any, or as follows:
   //
-  // w = a0 + a'x + x'Qx = 
+  // w = a0 + a'x + x'Qx =
   //   = a0 + sum{i} [(a_i + sum {j>=i} q_ij * x_j) * x_i] =
   //   = a0 + sum{i} [                          z_i * x_i]
-  // 
+  //
   // Thus, some bound on z_i can be computed and a bound on the whole
   // expression should be better than what can be obtained by summing
   // all bounds separately.
@@ -52,13 +52,13 @@ CouNumber exprQuad::computeQBound (int sign) {
   // derive linear part (obtain constant)
   for (lincoeff::iterator el = lcoeff_.begin (); el != lcoeff_.end (); ++el) {
 
-    CouNumber 
+    CouNumber
       coe = el -> second, term = 0.,
       lb  = el -> first -> lb (),
       ub  = el -> first -> ub ();
 
-    if (((coe < 0.) && (sign < 0)) || 
-	((coe > 0.) && (sign > 0))) 
+    if (((coe < 0.) && (sign < 0)) ||
+	((coe > 0.) && (sign > 0)))
       {if    ((term=ub) >  COUENNE_INFINITY) return (sign < 0)? -COUENNE_INFINITY : COUENNE_INFINITY;}
     else {if ((term=lb) < -COUENNE_INFINITY) return (sign < 0)? -COUENNE_INFINITY : COUENNE_INFINITY;}
 
@@ -74,7 +74,7 @@ CouNumber exprQuad::computeQBound (int sign) {
 
     int xind = row -> first -> Index ();
 
-      CouNumber 
+      CouNumber
 	lbi = row -> first -> lb (),
 	ubi = row -> first -> ub ();
 
@@ -87,10 +87,10 @@ CouNumber exprQuad::computeQBound (int sign) {
       if (xind == yind) { // term of the form q_ii x_i^2
 
 	if (((coe > 0.) && (sign < 0)) ||
-	    ((coe < 0.) && (sign > 0))) 
+	    ((coe < 0.) && (sign > 0)))
 	  term = (ubi < 0) ? (ubi * ubi) : (lbi > 0) ? (lbi * lbi) : 0.; //min{xi^2: xi in [lbi,ubi]
-	else 
-	  if ((term = CoinMax (lbi*lbi, ubi*ubi)) > COUENNE_INFINITY) 
+	else
+	  if ((term = CoinMax (lbi*lbi, ubi*ubi)) > COUENNE_INFINITY)
 	    return (sign < 0) ? -COUENNE_INFINITY : COUENNE_INFINITY;
 
 	term *= coe;
@@ -105,9 +105,9 @@ CouNumber exprQuad::computeQBound (int sign) {
 	CouNumber
 	  lbj = col -> first -> lb (),
 	  ubj = col -> first -> ub (),
-	  b1 = coe * lbi * lbj, 
+	  b1 = coe * lbi * lbj,
 	  b2 = coe * lbi * ubj,
-	  b3 = coe * ubi * lbj, 
+	  b3 = coe * ubi * lbj,
 	  b4 = coe * ubi * ubj;
 
 	if (fabs (lbi) == 0) b1 = b2 = 0;
@@ -116,8 +116,8 @@ CouNumber exprQuad::computeQBound (int sign) {
 	if (fabs (ubj) == 0) b2 = b4 = 0;
 
 	if (sign < 0) {
-	  if ((term = CoinMin (CoinMin (b1, b2), CoinMin (b3, b4))) < -COUENNE_INFINITY) 
-	    return -COUENNE_INFINITY; 
+	  if ((term = CoinMin (CoinMin (b1, b2), CoinMin (b3, b4))) < -COUENNE_INFINITY)
+	    return -COUENNE_INFINITY;
 	} else
 	  if ((term = CoinMax (CoinMax (b1, b2), CoinMax (b3, b4))) >  COUENNE_INFINITY)
 	    return  COUENNE_INFINITY;

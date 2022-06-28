@@ -113,7 +113,7 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
   // Initial cutoff value
   double initCutoff = problem->getCutOff (); //Ub()[indobj];
 
-  double* initCutoffSol = NULL; 
+  double* initCutoffSol = NULL;
 
   if (restoreCutoff_ && problem->getCutOff() < COUENNE_INFINITY){
     initCutoffSol = new double[numCols_];
@@ -121,7 +121,7 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
   }
 
   // Save parameters
-  Bonmin::BabSetupBase::NodeComparison initNodeComparison = 
+  Bonmin::BabSetupBase::NodeComparison initNodeComparison =
     couenne_->nodeComparisonMethod();
   int initMaxNodes = couenne_->getIntParameter(Bonmin::BabSetupBase::MaxNodes);
   double initMaxTime = couenne_->getDoubleParameter(Bonmin::BabSetupBase::MaxTime);
@@ -180,7 +180,7 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
     }
 
     /// Setup Branch-and-Bound limits
-    couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime, 
+    couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime,
 				 CoinMin(maxTime_-(CoinCpuTime()-startTime),
 					 maxTime_*0.5));
 
@@ -209,7 +209,7 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
     else{
       /// Problem is not infeasible; we failed
       std::cout << "Probing failed; still infinity, exit" << std::endl;
-    }    
+    }
     iter++;
   }
 
@@ -222,11 +222,11 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
   if (intervalSize < COUENNE_AGGR_PROBING_MIN_INTERVAL){
     intervalSize = COUENNE_AGGR_PROBING_MIN_INTERVAL;
   }
-  
+
   while ((fabs(currentBound) <= COUENNE_AGGR_PROBING_FINITE_BOUND) &&
 	 ((CoinCpuTime() - startTime) < maxTime_) &&
 	 (failedSteps < maxFailedSteps_) &&
-	 (intervalSize >= COUENNE_AGGR_PROBING_MIN_INTERVAL) && 
+	 (intervalSize >= COUENNE_AGGR_PROBING_MIN_INTERVAL) &&
 	 iter < 100){
 
     /// Set the bound that we want to try
@@ -276,7 +276,7 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
 			    lp->getColLower(), lp->getColUpper());
 
     /// Setup Branch-and-Bound limits
-    couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime, 
+    couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime,
     				 CoinMin(maxTime_-(CoinCpuTime()-startTime),
     					 maxTime_*0.5));
 
@@ -301,7 +301,7 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
 
     double obj = 0.0;
     /// Is the search in the current interval complete?
-    bool intervalSearched = (bb.model().isProvenOptimal() || 
+    bool intervalSearched = (bb.model().isProvenOptimal() ||
 			     bb.model().isProvenInfeasible());
 
     if ((!intervalSearched) || // If the search is not complete
@@ -391,7 +391,7 @@ double CouenneAggrProbing::probeVariable(int index, bool probeLower){
       delete[] initCutoffSol;
     }
   }
-  
+
   delete[] initLowerLp;
   delete[] initUpperLp;
 
@@ -420,7 +420,7 @@ double CouenneAggrProbing::probeVariable2(int index, bool probeLower){
   /// Modify the CouenneSetup object to use our options.
   /// We store the initial values of all parameters that we modify,
   /// so that we can restore them when we are done.
-  Bonmin::BabSetupBase::NodeComparison initNodeComparison = 
+  Bonmin::BabSetupBase::NodeComparison initNodeComparison =
     couenne_->nodeComparisonMethod();
   int initMaxNodes = couenne_->getIntParameter(Bonmin::BabSetupBase::MaxNodes);
   double initMaxTime = couenne_->getDoubleParameter(Bonmin::BabSetupBase::MaxTime);
@@ -494,7 +494,7 @@ double CouenneAggrProbing::probeVariable2(int index, bool probeLower){
 
   couenne_->setNodeComparisonMethod (Bonmin::BabSetupBase::bestBound);
   couenne_->setIntParameter(Bonmin::BabSetupBase::MaxNodes, maxNodes_);
-  couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime, 
+  couenne_->setDoubleParameter(Bonmin::BabSetupBase::MaxTime,
 			       maxTime_);
 
   // Bonmin::Bab bb;

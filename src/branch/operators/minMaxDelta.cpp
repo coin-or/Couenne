@@ -3,7 +3,7 @@
  * Name:    minMaxDelta.cpp
  * Author:  Pietro Belotti
  * Purpose: general function for computing best branching point based
- *          on min max height of resulting convexifications (dychotomic 
+ *          on min max height of resulting convexifications (dychotomic
  *          search)
  *
  * (C) Carnegie-Mellon University, 2007-10.
@@ -32,7 +32,7 @@ CouNumber curvDistance (funtriplet *ft, CouNumber lb, CouNumber ub) {
   // The point at which f(.) has derivative equal to the slope is the
   // point of maximum height w.r.t the slope. The point z where
   // maximum of f(z) - (ax+b), where (ax+b) is the convexification
-  // line (a=slope), is such that 
+  // line (a=slope), is such that
   //
   // f'(z) - alpha = 0   ==> z = (f')^{-1} (alpha)
 
@@ -48,9 +48,9 @@ CouNumber curvDistance (funtriplet *ft, CouNumber lb, CouNumber ub) {
 ///
 CouNumber minMaxDelta (funtriplet *ft, CouNumber lb, CouNumber ub) {
 
-  CouNumber 
-    lbm = lb,                // extremes of the interval where to look 
-    ubm = ub,     
+  CouNumber
+    lbm = lb,                // extremes of the interval where to look
+    ubm = ub,
     b   = 0.5 * (lbm + ubm); // starting point
 
   for (int iter = 0; iter < maxIter; iter++) {
@@ -59,10 +59,10 @@ CouNumber minMaxDelta (funtriplet *ft, CouNumber lb, CouNumber ub) {
               distR = curvDistance (ft,  b, ub),  // max height at right
               delta = fabs (distL) - fabs (distR);
 
-    //    fprintf (stderr, "%4d %10g %10g %10g %10g %10g %10g\n", 
+    //    fprintf (stderr, "%4d %10g %10g %10g %10g %10g %10g\n",
     //	     iter, lbm, ubm, b, distL, distR, delta);
 
-    if (fabs (delta) < COUENNE_EPS) 
+    if (fabs (delta) < COUENNE_EPS)
       break;
 
     CouNumber oldb = b;
@@ -84,9 +84,9 @@ CouNumber minMaxDelta (funtriplet *ft, CouNumber lb, CouNumber ub) {
 
 ///
 CouNumber maxHeight (funtriplet *ft, CouNumber lb, CouNumber ub) {
-  /* fprintf (stderr,"slope is (%g - %g) / (%g - %g) = %g / %g = %g ----> inverse is %g\n", 
-	  ft -> F (ub), 
-	  ft -> F (lb), 
+  /* fprintf (stderr,"slope is (%g - %g) / (%g - %g) = %g / %g = %g ----> inverse is %g\n",
+	  ft -> F (ub),
+	  ft -> F (lb),
 	  ub, lb,
 	  ft -> F (ub) - ft -> F (lb),
 	  (ub - lb),

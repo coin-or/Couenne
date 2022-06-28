@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
  * Purpose: Find solution by looping through MILP solvers/heuristics
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -41,7 +41,7 @@ double CouenneFeasPump::findSolution (const double *nSol, double* &iSol, int nit
   // at the beginning but changeable in the event of multiple failures
   // (or successes) of a given method.
   //
-  // Rule of thumb: 
+  // Rule of thumb:
   //
   // 1) Assign all methods i a number p[i] (for instance those in the
   //    list above)
@@ -56,7 +56,7 @@ double CouenneFeasPump::findSolution (const double *nSol, double* &iSol, int nit
 
   double obj;
 
-  /// solve MILP 
+  /// solve MILP
 
   if (0) {
     static int nSolves = 0;
@@ -78,7 +78,7 @@ double CouenneFeasPump::findSolution (const double *nSol, double* &iSol, int nit
     }
   } else
 
-#endif      
+#endif
   {
 
     milp_ -> messageHandler () -> setLogLevel (0);

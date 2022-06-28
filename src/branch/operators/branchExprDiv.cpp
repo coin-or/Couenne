@@ -17,10 +17,10 @@ using namespace Couenne;
 
 /// set up branching object by evaluating many branching points for
 /// each expression's arguments
-CouNumber exprDiv::selectBranch (const CouenneObject *obj, 
+CouNumber exprDiv::selectBranch (const CouenneObject *obj,
 				 const OsiBranchingInformation *info,
 				 expression *&var,
-				 double * &brpts, 
+				 double * &brpts,
 				 double * &brDist, // distance of current LP
 						   // point to new convexifications
 				 int &way) {
@@ -38,13 +38,13 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
   // choosing branching variable and point is difficult, use
   // proportion in bound intervals
 
-  CouNumber yl = info -> lower_    [yi], 
+  CouNumber yl = info -> lower_    [yi],
             yu = info -> upper_    [yi],
             y0 = info -> solution_ [yi];
 
   // if [yl,yu] contains 0, create two nodes
 
-  if ((yl < -COUENNE_EPS) && 
+  if ((yl < -COUENNE_EPS) &&
       (yu >  COUENNE_EPS)) {
 
     var = arglist_ [1];
@@ -57,7 +57,7 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
 
     return CoinMin (brDist [0], brDist [1]);
     /*return ((fabs (y0) < COUENNE_EPS) ? 1. :
-	    fabs (info -> solution_ [xi] / y0 - 
+	    fabs (info -> solution_ [xi] / y0 -
 	    info -> solution_ [wi]));*/
   }
 
@@ -88,21 +88,21 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
 
     return CoinMin (brDist [0], brDist [1]);
 
-    //return ((fabs (y0) < COUENNE_EPS) ? 1. : 
+    //return ((fabs (y0) < COUENNE_EPS) ? 1. :
     //fabs (info -> solution_ [xi] / y0 - info -> solution_ [wi]));
   }
 
   // y is bounded, and y0 nonzero; if w is unbounded, bound w first as
   // x will be too.
 
-  CouNumber wl = info -> lower_    [wi], 
+  CouNumber wl = info -> lower_    [wi],
             wu = info -> upper_    [wi],
             w0 = info -> solution_ [wi],
             x0 = info -> solution_ [xi];
 
   // w unbounded in >= one direction ///////////////////////////////////////
 
-  if ((wl < -COUENNE_INFINITY) || 
+  if ((wl < -COUENNE_INFINITY) ||
       (wu >  COUENNE_INFINITY)) {
 
     var = obj -> Reference ();
@@ -110,9 +110,9 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
     if ((wl < -COUENNE_INFINITY) &&
 	(wu >  COUENNE_INFINITY)) { // unbounded in two directions
 
-      CouNumber 
-	wreal = x0 / y0, 
-	wmin  = w0, 
+      CouNumber
+	wreal = x0 / y0,
+	wmin  = w0,
 	wmax  = wreal; // assume (x0,y0,w0) is below w=x/y
 
       if (wreal < w0) { // but swap if (x0,y0,w0) is above w=x/y
@@ -145,7 +145,7 @@ CouNumber exprDiv::selectBranch (const CouenneObject *obj,
 
   // w and y are bounded (and so is x). Choose between x, y, z
   // depending on intervals first and then to vicinity to midpoint
-  CouNumber 
+  CouNumber
     xl = info -> lower_ [xi],
     xu = info -> upper_ [xi],
     dx = xu-xl,

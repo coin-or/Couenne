@@ -20,34 +20,34 @@ using namespace Couenne;
 // Methods of the class DepNode ///////////////////////////////////////////////////////////
 
 /// does this variable depend on variable with index xi? (used in checkCycles)
-bool DepNode::depends (int xi, bool recursive, 
+bool DepNode::depends (int xi, bool recursive,
 		       std::set <DepNode *, compNode> *already_visited) const {
 
   // check if any node of the forward star has index xi
-  for (std::set <DepNode *, compNode>::iterator i = depList_ -> begin (); 
+  for (std::set <DepNode *, compNode>::iterator i = depList_ -> begin ();
        i != depList_ -> end (); ++i) {
 
 #ifdef DEBUG
-    printf ("checking dependence of %d on %d\n", (*i) -> Index (), xi); 
+    printf ("checking dependence of %d on %d\n", (*i) -> Index (), xi);
     //    fflush (stdout);
 #endif
 
-    if (!already_visited || 
+    if (!already_visited ||
 	(already_visited -> find (*i) == already_visited -> end ())) {
 
       if (((*i) -> Index () == xi) || // check current node
-	(recursive && 
+	(recursive &&
 	 ((*i) -> depends (xi, recursive, already_visited)))) // check deplist recursively
-      { 
+      {
 #ifdef DEBUG
-	printf ("%d <- ", (*i) -> Index ()); 
+	printf ("%d <- ", (*i) -> Index ());
 	fflush (stdout);
 #endif
 	return true;
       } else {
 	if (already_visited) {
 	  already_visited -> insert (*i);
-	  /*printf ("checked [%d]: ", (*i) -> Index ()); 
+	  /*printf ("checked [%d]: ", (*i) -> Index ());
 	  for (std::set <DepNode *, compNode>::iterator j = already_visited -> begin ();
 	       j != already_visited -> end (); ++j)
 	    printf ("%d ", (*j) -> Index ());
@@ -87,8 +87,8 @@ void DepNode::createOrder (DepGraph *g) {
 /// debugging procedure
 void DepNode::print (int indent, bool descend) const {
 
-  printf ("%d ", index_); 
-  if (order_ >= 0) printf ("[%d]", order_); 
+  printf ("%d ", index_);
+  if (order_ >= 0) printf ("[%d]", order_);
   fflush (stdout);
 
   if (depList_ -> size () > 0) {
@@ -129,7 +129,7 @@ void DepNode::replaceIndex (DepNode *oldVarNode, DepNode *newVarNode) {
 void DepGraph::insert (exprVar *var) {
 
   DepNode *el = new DepNode (var -> Index ());
-  std::set <DepNode *, compNode>::iterator i = vertices_ . find (el); 
+  std::set <DepNode *, compNode>::iterator i = vertices_ . find (el);
 
   if (i == vertices_ . end ())
     vertices_.insert (el);
@@ -143,7 +143,7 @@ void DepGraph::insert (exprAux *aux) {
   if (!aux) return;
 
   DepNode *el = new DepNode (aux -> Index ());
-  std::set <DepNode *, compNode>::iterator i = vertices_ . find (el); 
+  std::set <DepNode *, compNode>::iterator i = vertices_ . find (el);
 
   if (i == vertices_ . end ()) {
     vertices_.insert (el);
@@ -159,7 +159,7 @@ void DepGraph::insert (exprAux *aux) {
 void DepGraph::erase (exprVar *var) {
 
   DepNode *el = new DepNode (var -> Index ());
-  std::set <DepNode *, compNode>::iterator i = vertices_ . find (el); 
+  std::set <DepNode *, compNode>::iterator i = vertices_ . find (el);
 
   if (i != vertices_ . end ())
     vertices_.erase (i);
@@ -223,7 +223,7 @@ void DepGraph::replaceIndex (int oldVar, int newVar) {
     *copyOld = new DepNode (oldVar),
     *copyNew = new DepNode (newVar);
 
-  std::set <DepNode *, compNode>::iterator 
+  std::set <DepNode *, compNode>::iterator
     oldNode = vertices_.find (copyOld),
     newNode = vertices_.find (copyNew);
 

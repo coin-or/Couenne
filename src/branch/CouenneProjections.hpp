@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti, Carnegie Mellon University
  * Purpose: tools for projecting points on lines/planes
  *
- * (C) Carnegie-Mellon University, 2006-10. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -24,9 +24,9 @@ namespace Couenne {
  */
 
 COUENNELIB_EXPORT
-CouNumber project (CouNumber a,   CouNumber b, CouNumber c, 
-		   CouNumber x0,  CouNumber y0, 
-		   CouNumber lb,  CouNumber ub, 
+CouNumber project (CouNumber a,   CouNumber b, CouNumber c,
+		   CouNumber x0,  CouNumber y0,
+		   CouNumber lb,  CouNumber ub,
 		   int sign,
 		   CouNumber *xp = NULL, CouNumber *yp = NULL);
 
@@ -36,9 +36,9 @@ CouNumber project (CouNumber a,   CouNumber b, CouNumber c,
  */
 
 COUENNELIB_EXPORT
-CouNumber projectSeg (CouNumber x0,  CouNumber y0, 
-		      CouNumber x1,  CouNumber y1, 
-		      CouNumber x2,  CouNumber y2, 
+CouNumber projectSeg (CouNumber x0,  CouNumber y0,
+		      CouNumber x1,  CouNumber y1,
+		      CouNumber x2,  CouNumber y2,
 		      int sign,
 		      CouNumber *xp = NULL, CouNumber *yp = NULL);
 }

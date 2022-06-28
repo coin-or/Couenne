@@ -31,7 +31,7 @@ class Domain;
  *  I} b_i x_i\f$ an affine term, \f$x^T Q x\f$ a quadratic term, and
  *  a nonlinear sum \f$\sum_{i \in J} h_i (x)\f$. Standardization
  *  checks possible quadratic or linear terms in the latter and
- *  includes them in the former parts. 
+ *  includes them in the former parts.
  *
  *  If \f$h_i(x)\f$ is a product of two nonlinear, nonquadratic
  *  functions \f$h'(x)h''(x)\f$, two auxiliary variables
@@ -91,7 +91,7 @@ public:
   exprQuad (const exprQuad &src, Domain *d = NULL);
 
   // get indices and coefficients vectors of the quadratic part
-  sparseQ &getQ () const 
+  sparseQ &getQ () const
   {return matrix_;}
 
   int getnQTerms  () ///< Get number of quadratic terms
@@ -119,7 +119,7 @@ public:
 
   /// Get a measure of "how linear" the expression is
   virtual int Linearity () {
-    int 
+    int
       lin  = exprSum::Linearity (), // >= NONLINEAR,
       lin2 = (matrix_ .size () > 0)     ? QUADRATIC :
              (lcoeff_ .size () > 0)     ? LINEAR    :
@@ -137,17 +137,17 @@ public:
   /// Generate cuts for the quadratic expression, which are supporting
   /// hyperplanes of the concave upper envelope and the convex lower
   /// envelope.
-  virtual void generateCuts (expression *w, //const OsiSolverInterface &si, 
-			     OsiCuts &cs, const CouenneCutGenerator *cg, 
-			     t_chg_bounds * = NULL, int = -1, 
-			     CouNumber = -COUENNE_INFINITY, 
+  virtual void generateCuts (expression *w, //const OsiSolverInterface &si,
+			     OsiCuts &cs, const CouenneCutGenerator *cg,
+			     t_chg_bounds * = NULL, int = -1,
+			     CouNumber = -COUENNE_INFINITY,
 			     CouNumber =  COUENNE_INFINITY);
 
   /// Compute data for \f$\alpha\f$-convexification of a quadratic form
   /// (fills in dCoeff_ and dIndex_ for the convex underestimator)
   virtual bool alphaConvexify (const CouenneProblem *);
 
-  /** method exprQuad::quadCuts 
+  /** method exprQuad::quadCuts
    *
    * \brief Based on the information (dIndex_, dCoeffLo_, dCoeffUp_)
    * created/modified by alphaConvexify(), create convexification cuts
@@ -159,10 +159,10 @@ public:
    * \f]
    * where \f$ \eta \f$ is the auxiliary corresponding to this
    * expression and \f$ w_j \f$ are the auxiliaries corresponding to
-   * the other non-linear terms contained in the expression. 
-   * 
+   * the other non-linear terms contained in the expression.
+   *
    * The under-estimator of \f$ x^T Q x\f$ is given by \f[ x^T Q x +
-   * \sum \lambda_{\min,i} (x_i - l_i ) (u_i - x_i ) \f] and its 
+   * \sum \lambda_{\min,i} (x_i - l_i ) (u_i - x_i ) \f] and its
    * over-estimator is given by
    *
    * \f[ x^T Q x + \sum \lambda_{\max, i} (x_i - l_i ) (u_i - x_i )
@@ -195,7 +195,7 @@ public:
    *
    * \f[ \eta \leq \tilde a_0(\lambda_{\max}) + \tilde
    * a(\lambda_{\max})^T x + x^T \tilde Q(\lambda_{\max}) x \f]
-   *  
+   *
    * The cut is computed as follow. Let \f$ (x^*, \eta^*) \f$ be
    * the solution at hand. The two outer-approximation cuts are:
    *
@@ -239,15 +239,15 @@ public:
 
   /// fill in the set with all indices of variables appearing in the
   /// expression
-  virtual int DepList (std::set <int> &deplist, 
+  virtual int DepList (std::set <int> &deplist,
 		       enum dig_type type = ORIG_ONLY);
 
   /// Set up branching object by evaluating many branching points for
   /// each expression's arguments
-  virtual CouNumber selectBranch (const CouenneObject *obj, 
+  virtual CouNumber selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression * &var, 
-				  double * &brpts, 
+				  expression * &var,
+				  double * &brpts,
  				  double * &brDist, // distance of current LP
 					  	    // point to new convexifications
 				  int &way);
@@ -271,13 +271,13 @@ public:
 
   /// compute $y^{lv}$ and $y^{uv}$ for Violation Transfer algorithm
   virtual void closestFeasible (expression *varind,
-				expression *vardep, 
+				expression *vardep,
 				CouNumber &left,
 				CouNumber &right) const;
 protected:
 
   /// return lower and upper bound of quadratic expression
-  void computeQuadFiniteBound (CouNumber &qMin, CouNumber &qMax, 
+  void computeQuadFiniteBound (CouNumber &qMin, CouNumber &qMax,
 			       CouNumber *l, CouNumber *u,
 			       int &indInfLo, int &indInfUp);
 

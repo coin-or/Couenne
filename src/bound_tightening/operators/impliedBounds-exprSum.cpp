@@ -26,9 +26,9 @@ static CouNumber scanBounds (int, int, int *, CouNumber *, CouNumber *, int *);
 bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
   /**
-   *  An expression 
+   *  An expression
    *
-   *  \f$w = a0 + \sum_{i\in I1} a_i x_i + \sum_{i\in I2} a_i x_i\f$ 
+   *  \f$w = a0 + \sum_{i\in I1} a_i x_i + \sum_{i\in I2} a_i x_i\f$
    *
    *  is given such that all $a_i$ are positive for $i \in I1$ and
    *  negative for $i in I2$. If the bounds on $w \in [l,b]$, implied
@@ -62,7 +62,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       (wu >  COUENNE_INFINITY))
     return false;
 
-  int 
+  int
     nterms = nargs_, // # nonconstant terms
     nlin   = 0;      // # linear terms
 
@@ -172,37 +172,37 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   // check if there is room for improvement
 
   {
-    CouNumber 
-      slackL = lower - wl, // each is positive if no implication 
-      slackU = wu - upper; // 
+    CouNumber
+      slackL = lower - wl, // each is positive if no implication
+      slackU = wu - upper; //
 
     // if lower < wl or upper > wu, some bounds can be tightened.
-    // 
+    //
     // otherwise, there is no implication, but if lower
     //
-    // steal some work to bound propagation... 
+    // steal some work to bound propagation...
 
     if ((slackL > 0.) &&
-	(infLo1 == -1) && 
+	(infLo1 == -1) &&
 	(infUp2 == -1)) {   // no implication on lower
 
       // propagate lower bound to w
       if ((sign != expression::AUX_LEQ) && (updateBound (-1, l + wind, lower))) {
 	chg [wind].setLower(t_chg_bounds::CHANGED);
 	tighter = true;
-	if (intSet.find (wind)!= intSet.end ()) 
+	if (intSet.find (wind)!= intSet.end ())
 	  l [wind] = ceil (l [wind] - COUENNE_EPS);
       }
 
       if ((slackU > 0.) &&
-	  (infLo2 == -1) && 
+	  (infLo2 == -1) &&
 	  (infUp1 == -1)) { // no implication on upper
 
 	// propagate upper bound to w
 	if ((sign != expression::AUX_GEQ) && (updateBound (+1, u + wind, upper))) {
 	  chg [wind].setUpper(t_chg_bounds::CHANGED);
 	  tighter = true;
-	  if (intSet.find (wind)!= intSet.end ()) 
+	  if (intSet.find (wind)!= intSet.end ())
 	    u [wind] = floor (u [wind] + COUENNE_EPS);
 	}
 
@@ -212,15 +212,15 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	return false; // both bounds were weak, no implication possible
       }
     }
-    else if ((slackU > 0.) && 
-	     (infLo2 == -1) && 
+    else if ((slackU > 0.) &&
+	     (infLo2 == -1) &&
 	     (infUp1 == -1)) {
 
       // propagate upper bound to w
       if ((sign != expression::AUX_GEQ) && (updateBound (+1, u + wind, upper))) {
 	tighter = true;
 	chg [wind].setUpper(t_chg_bounds::CHANGED);
-	if (intSet.find (wind)!= intSet.end ()) 
+	if (intSet.find (wind)!= intSet.end ())
 	  u [wind] = floor (u [wind] + COUENNE_EPS);
       }
     }
@@ -247,7 +247,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   // Update lowers in I1 and uppers in I2
 
-  if ((infLo1 == -1) && (infUp2 == -1) && (wu < COUENNE_INFINITY / 1e10)) { 
+  if ((infLo1 == -1) && (infUp2 == -1) && (wu < COUENNE_INFINITY / 1e10)) {
     // All finite bounds. All var. bounds can be tightened.
 
     // tighten upper bound of variables in I1
@@ -255,7 +255,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       int ind = I1 [i];
       if ((tighter = (updateBound (+1, u + ind, (wu - lower) / C1 [i] + lc [ind]) || tighter))) {
 	chg [ind].setUpper(t_chg_bounds::CHANGED);
-	if (intSet.find (ind)!= intSet.end ()) 
+	if (intSet.find (ind)!= intSet.end ())
 	  u [ind] = floor (u [ind] + COUENNE_EPS);
       }
     }
@@ -265,7 +265,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       int ind = I2 [i];
       if ((tighter = (updateBound (-1, l + ind, (wu - lower) / C2 [i] + uc [ind]) || tighter))) {
 	chg [ind].setLower(t_chg_bounds::CHANGED);
-	if (intSet.find (ind)!= intSet.end ()) 
+	if (intSet.find (ind)!= intSet.end ())
 	  l [ind] = ceil (l [ind] - COUENNE_EPS);
       }
     }
@@ -275,30 +275,30 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       int ind = I1 [infLo1];
       if ((tighter = (updateBound (+1, u + ind, (wu - lower) / C1 [infLo1]) || tighter))) {
 	chg [ind].setUpper(t_chg_bounds::CHANGED);
-	if (intSet.find (ind)!= intSet.end ()) 
+	if (intSet.find (ind)!= intSet.end ())
 	  u [ind] = floor (u [ind] + COUENNE_EPS);
       }
     }
-    else 
+    else
       if ((infLo1 == -1) && (infUp2 >= 0)) {  // There is one infinite upper bound in I2
 	int ind = I2 [infUp2];
 	if ((tighter = (updateBound (-1, l + ind, (wu - lower) / C2 [infUp2]) || tighter))) {
 	  chg [ind].setLower(t_chg_bounds::CHANGED);
-	  if (intSet.find (ind)!= intSet.end ()) 
+	  if (intSet.find (ind)!= intSet.end ())
 	    l [ind] = ceil (l [ind] - COUENNE_EPS);
 	}
       }
 
   // Update uppers in I1 and lowers in I2
 
-  if ((infUp1 == -1) && (infLo2 == -1) && (wl > -COUENNE_INFINITY / 1e10)) { 
+  if ((infUp1 == -1) && (infLo2 == -1) && (wl > -COUENNE_INFINITY / 1e10)) {
     // All finite bounds. All var. bounds can be tightened.
 
     for (int i=ipos; i--;) {
       int ind = I1 [i];
       if ((tighter = (updateBound (-1, l + ind, (wl - upper) / C1 [i] + uc [ind]) || tighter))) {
-	chg [ind].setLower(t_chg_bounds::CHANGED); 
-	if (intSet.find (ind) != intSet.end ()) 
+	chg [ind].setLower(t_chg_bounds::CHANGED);
+	if (intSet.find (ind) != intSet.end ())
 	  l [ind] = ceil (l [ind] - COUENNE_EPS);
       }
     }
@@ -307,26 +307,26 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       int ind = I2 [i];
       if ((tighter = (updateBound (+1, u + ind, (wl - upper) / C2 [i] + lc [ind]) || tighter))) {
 	chg [ind].setUpper(t_chg_bounds::CHANGED);
-	if (intSet.find (ind) != intSet.end ()) 
+	if (intSet.find (ind) != intSet.end ())
 	  u [ind] = floor (u [ind] + COUENNE_EPS);
       }
     }
-  } else 
+  } else
 
     if ((infUp1 >= 0) && (infLo2 == -1)) { // There is one infinite lower bound in I2
       int ind = I1 [infUp1];
       if ((tighter = (updateBound (-1, l + ind, (wl - upper) / C1 [infUp1]) || tighter))) {
 	chg [ind].setLower(t_chg_bounds::CHANGED);
-	if (intSet.find (ind) != intSet.end ()) 
+	if (intSet.find (ind) != intSet.end ())
 	  l [ind] = ceil (l [ind] - COUENNE_EPS);
       }
     }
-    else 
+    else
       if ((infUp1 == -1) && (infLo2 >= 0)) {  // There is one infinite upper bound in I1
 	int ind = I2 [infLo2];
 	if ((tighter = (updateBound (+1, u + ind, (wl - upper) / C2 [infLo2]) || tighter))) {
 	  chg [ind].setUpper(t_chg_bounds::CHANGED);
-	  if (intSet.find (ind) != intSet.end ()) 
+	  if (intSet.find (ind) != intSet.end ())
 	    u [ind] = floor (u [ind] + COUENNE_EPS);
 	}
       }
@@ -347,7 +347,7 @@ static CouNumber scanBounds (int        num,      /// cardinality of the set (I1
 			     int        sign,     /// +1: check for +inf, -1: check for -inf
 			     int       *indices,  /// indices in the set, $i\in I_k$
 			     CouNumber *coeff,    /// coefficients in the set
-			     CouNumber *bounds,   /// variable bounds to check 
+			     CouNumber *bounds,   /// variable bounds to check
 			     int       *infnum) { /// return value: index of variable with infinite
                                                   /// bound, or -2 if more than one exist
   CouNumber bound = 0.;

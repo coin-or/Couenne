@@ -30,7 +30,7 @@ inline CouNumber modulo (CouNumber a, CouNumber b)
 
 /// generalized procedure for both sine and cosine
 COUENNELIB_EXPORT
-CouNumber trigSelBranch (const CouenneObject *obj, 
+CouNumber trigSelBranch (const CouenneObject *obj,
 			 const OsiBranchingInformation *info,
 			 expression * &var,
 			 double * &brpts,
@@ -51,7 +51,7 @@ class COUENNELIB_EXPORT exprSin: public exprUnary {
  public:
 
   /// Constructors, destructor
-  exprSin (expression *al): 
+  exprSin (expression *al):
     exprUnary (al) {} //< non-leaf expression, with argument list
 
   /// cloning method
@@ -59,7 +59,7 @@ class COUENNELIB_EXPORT exprSin: public exprUnary {
   {return new exprSin (argument_ -> clone (d));}
 
   //// the operator's function
-  inline unary_function F () 
+  inline unary_function F ()
   {return sin;}
 
   /// print operator
@@ -68,12 +68,12 @@ class COUENNELIB_EXPORT exprSin: public exprUnary {
 
   /// return l-2 norm of gradient at given point
   inline CouNumber gradientNorm (const double *x) {
-    return (argument_ -> Index () < 0) ? 
+    return (argument_ -> Index () < 0) ?
       0. : fabs (cos (x [argument_ -> Index ()]));
   }
 
   /// differentiation
-  expression *differentiate (int index); 
+  expression *differentiate (int index);
 
   /// Get lower and upper bound of an expression (if any)
   void getBounds (expression *&, expression *&);
@@ -82,14 +82,14 @@ class COUENNELIB_EXPORT exprSin: public exprUnary {
   void getBounds (CouNumber &lb, CouNumber &ub);
 
   /// generate equality between *this and *w
-  void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		     OsiCuts &cs, const CouenneCutGenerator *cg, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
+  void generateCuts (expression *w, //const OsiSolverInterface &si,
+		     OsiCuts &cs, const CouenneCutGenerator *cg,
+		     t_chg_bounds * = NULL, int = -1,
+		     CouNumber = -COUENNE_INFINITY,
 		     CouNumber =  COUENNE_INFINITY);
 
   /// code for comparisons
-  virtual enum expr_type code () 
+  virtual enum expr_type code ()
   {return COU_EXPRSIN;}
 
   /// implied bound processing
@@ -110,10 +110,10 @@ class COUENNELIB_EXPORT exprSin: public exprUnary {
 
   /// Set up branching object by evaluating many branching points for
   /// each expression's arguments
-  virtual CouNumber selectBranch (const CouenneObject *obj, 
+  virtual CouNumber selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression * &var, 
-				  double * &brpts, 
+				  expression * &var,
+				  double * &brpts,
  				  double * &brDist, // distance of current LP
 					  	    // point to new convexifications
 				  int &way)

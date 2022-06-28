@@ -26,7 +26,7 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base, CouenneCutGener
   for (int i=nVars (); i--;)
     dependence_.push_back (std::set <int> ());
 
-  for (std::vector <exprVar *>::iterator i = variables_.begin (); 
+  for (std::vector <exprVar *>::iterator i = variables_.begin ();
        i != variables_.end (); ++i) {
 
     if (((*i) -> Type () == AUX)                           // consider auxs only
@@ -57,7 +57,7 @@ void CouenneProblem::fillDependence (Bonmin::BabSetupBase *base, CouenneCutGener
 	  obj.insert (ind);
       }
 
-    } else objects_.push_back (new CouenneObject ()); 
+    } else objects_.push_back (new CouenneObject ());
     // null object for original and linear auxiliaries
   }
 }

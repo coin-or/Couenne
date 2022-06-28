@@ -30,16 +30,16 @@ namespace Couenne {
     InitHeuristic(double objValue, const double* sol, CouenneProblem& cp);
     /** Copy constructor.*/
     InitHeuristic(const InitHeuristic &other);
-    
+
     /** Destructor*/
     virtual ~InitHeuristic();
-    
+
     /** Clone.*/
     virtual CbcHeuristic * clone() const;
-    
+
     /** Assignment operator */
     InitHeuristic & operator=(const InitHeuristic &rhs);
-    
+
     virtual void resetModel(CbcModel * model){}
     /** Run heuristic, return 1 if a better solution than the one passed is found and 0 otherwise.
         \argument objectiveValue Best known solution in input and value of solution found in output

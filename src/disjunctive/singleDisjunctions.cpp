@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: simpler methods on single disjunctions
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -15,25 +15,25 @@
 using namespace Couenne;
 
 /// create single osicolcut disjunction
-OsiCuts *CouenneDisjCuts::getSingleDisjunction (OsiSolverInterface &si) const { 
+OsiCuts *CouenneDisjCuts::getSingleDisjunction (OsiSolverInterface &si) const {
 
-  int 
+  int
     ncols = si.getNumCols (), nNL = 0, nNU = 0,
-    *indNL = new int [ncols],      
+    *indNL = new int [ncols],
     *indNU = new int [ncols];
 
-  double 
+  double
     *oldL  = couenneCG_ -> Problem () -> Lb (),   *valNL = new double [ncols],
     *oldU  = couenneCG_ -> Problem () -> Ub (),   *valNU = new double [ncols];
 
   const double
-    *newL = si.getColLower (),   
+    *newL = si.getColLower (),
     *newU = si.getColUpper ();
 
   for (int i=0; i<ncols; i++) {
     if (newL [i] > oldL [i] + COUENNE_EPS) {indNL [nNL] = i; valNL [nNL++] = newL [i];}
     if (newU [i] < oldU [i] - COUENNE_EPS) {indNU [nNU] = i; valNU [nNU++] = newU [i];}
-  }	      
+  }	
 
   OsiColCut cut;
 
@@ -56,7 +56,7 @@ int CouenneDisjCuts::checkDisjSide (OsiSolverInterface &si, OsiCuts *cuts) const
 
   int retval = COUENNE_FEASIBLE;
 
-  const double 
+  const double
     *lower = si.getColLower (),
     *upper = si.getColUpper ();
 
@@ -77,7 +77,7 @@ int CouenneDisjCuts::checkDisjSide (OsiSolverInterface &si, OsiCuts *cuts) const
       if (lb > upper [ind] + COUENNE_EPS) // fathom node
 	return COUENNE_INFEASIBLE;
 
-      if (lb > lower [ind] + COUENNE_EPS) 
+      if (lb > lower [ind] + COUENNE_EPS)
 	retval = COUENNE_TIGHTENED;
     }
 
@@ -94,7 +94,7 @@ int CouenneDisjCuts::checkDisjSide (OsiSolverInterface &si, OsiCuts *cuts) const
       if (ub < lower [ind] - COUENNE_EPS) // fathom node
 	return COUENNE_INFEASIBLE;
 
-      if (ub < upper [ind] - COUENNE_EPS) 
+      if (ub < upper [ind] - COUENNE_EPS)
 	retval = COUENNE_TIGHTENED;
     }
   }
@@ -105,12 +105,12 @@ int CouenneDisjCuts::checkDisjSide (OsiSolverInterface &si, OsiCuts *cuts) const
 
 /// compute smallest box containing both left and right boxes.
 int CouenneDisjCuts::getBoxUnion (OsiSolverInterface &si,
-				  OsiCuts *left, OsiCuts *right, 
+				  OsiCuts *left, OsiCuts *right,
 				  CoinPackedVector &lower, CoinPackedVector &upper) const {
 
   int retval = COUENNE_FEASIBLE;
 
-  CoinPackedVector 
+  CoinPackedVector
     lowerLeft,  upperLeft,
     lowerRight, upperRight;
 
@@ -141,17 +141,17 @@ int CouenneDisjCuts::getBoxUnion (OsiSolverInterface &si,
 
 /// utility to merge vectors into one
 void CouenneDisjCuts::mergeBoxes (int dir, // direction (negative for "<", positive for ">")
-				  CoinPackedVector &left, 
-				  CoinPackedVector &right, 
-				  CoinPackedVector merged) const { 
+				  CoinPackedVector &left,
+				  CoinPackedVector &right,
+				  CoinPackedVector merged) const {
   int
     Ln = left.  getNumElements (),
     Rn = right. getNumElements ();
 
-  if (!Ln || !Rn) 
+  if (!Ln || !Rn)
     return;
 
-  const int 
+  const int
     *Li = left.  getIndices (),
     *Ri = right. getIndices ();
 
@@ -170,9 +170,9 @@ void CouenneDisjCuts::mergeBoxes (int dir, // direction (negative for "<", posit
       else break;
     }
 
-    if (!Ln || !Rn) break;                                  // !Ln, !Rn (==> exit), or Li==*Ri: 
-    if (dir < 0) merged. insert (*Li, *Le<*Re ? *Le : *Re); // add min(*Le, *Re)) 
-    else         merged. insert (*Li, *Le>*Re ? *Le : *Re); // add max(*Le, *Re)) 
+    if (!Ln || !Rn) break;                                  // !Ln, !Rn (==> exit), or Li==*Ri:
+    if (dir < 0) merged. insert (*Li, *Le<*Re ? *Le : *Re); // add min(*Le, *Re))
+    else         merged. insert (*Li, *Le>*Re ? *Le : *Re); // add max(*Le, *Re))
 
     Li++; Ri++;
     Le++; Re++;

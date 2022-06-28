@@ -25,7 +25,7 @@ using namespace Couenne;
 void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchanged);
 
 
-/** \brief Constructor. 
+/** \brief Constructor.
  *
  * Get a variable as an argument and set value_ through a call to
  * operator () of that exprAux.
@@ -33,21 +33,21 @@ void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchange
 
 CouenneComplBranchingObject::CouenneComplBranchingObject (OsiSolverInterface *solver,
 							  const OsiObject * originalObject,
-							  JnlstPtr jnlst, 
+							  JnlstPtr jnlst,
 							  CouenneCutGenerator *c,
 							  CouenneProblem *p,
-							  expression *var, 
-							  expression *var2, 
-							  int way, 
-							  CouNumber brpoint, 
+							  expression *var,
+							  expression *var2,
+							  int way,
+							  CouNumber brpoint,
 							  bool doFBBT, bool doConvCuts, int sign):
 
   CouenneBranchingObject (solver, originalObject, jnlst, c, p, var, way, brpoint, doFBBT, doConvCuts),
   variable2_    (var2),
   sign_         (sign) {
 
-  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
-		    "Complem. Branch: x%-3d = 0 or x%-3d = 0\n", 
+  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING,
+		    "Complem. Branch: x%-3d = 0 or x%-3d = 0\n",
 		    way ? variable_ -> Index () : variable2_ -> Index ());
 }
 
@@ -61,23 +61,23 @@ CouenneComplBranchingObject::CouenneComplBranchingObject (OsiSolverInterface *so
 
 double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
 
-  // way = 0 if "x1=0" node, 
+  // way = 0 if "x1=0" node,
   //       1 if "x2=0" node
 
-  int 
+  int
     way   = (!branchIndex_) ? firstBranch_ : !firstBranch_,
     index = way ? variable2_ -> Index () : variable_ -> Index ();
 
-  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "Branching: x%-3d = 0\n", 
-		    //printf ("complementarity Branching: x%-3d = 0\n", 
+  jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "Branching: x%-3d = 0\n",
+		    //printf ("complementarity Branching: x%-3d = 0\n",
 		    way ? variable2_ -> Index () : variable_ -> Index ());
 
   /*
   double time = CoinCpuTime ();
   jnlst_ -> Printf (J_VECTOR, J_BRANCHING,"[vbctool] %02d:%02d:%02d.%02d_I x%d%c=%g_[%g,%g]\n",
-		    (int) (floor(time) / 3600), 
-		    (int) (floor(time) / 60) % 60, 
-		    (int) floor(time) % 60, 
+		    (int) (floor(time) / 3600),
+		    (int) (floor(time) / 60) % 60,
+		    (int) floor(time) % 60,
 		    (int) ((time - floor (time)) * 100),
 		    index, way ? '>' : '<', integer ? ((way ? ceil (brpt): floor (brpt))) : brpt,
 		    solver -> getColLower () [index],
@@ -86,7 +86,7 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
 
   ////////////////////////////////////////////////////////////////////
 
-  int 
+  int
     ind0 = variable_  -> Index (),
     ind1 = variable2_ -> Index ();
 
@@ -118,7 +118,7 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
   //CouenneSolverInterface *couenneSolver = dynamic_cast <CouenneSolverInterface *> (solver);
   //CouenneProblem *p = couenneSolver -> CutGen () -> Problem ();
 
-  int 
+  int
     nvars  = problem_ -> nVars (),
     objind = problem_ -> Obj (0) -> Body () -> Index ();
 
@@ -130,11 +130,11 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
   // only bother doing all of the below if the allocated and pushed
   // stuff will be really used
   if ((doFBBT_ && problem_ -> doFBBT ()) ||
-      (doConvCuts_ && simulate_ && cutGen_)) { 
+      (doConvCuts_ && simulate_ && cutGen_)) {
 
     problem_ -> domain () -> push (nvars,
-				   solver -> getColSolution (), 
-				   solver -> getColLower    (), 
+				   solver -> getColSolution (),
+				   solver -> getColLower    (),
 				   solver -> getColUpper    ()); // have to alloc+copy
 
     t_chg_bounds *chg_bds = new t_chg_bounds [nvars];
@@ -166,7 +166,7 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
 	//CouNumber newEst = problem_ -> Lb (objind) - lb [objind];
 	estimate = CoinMax (0., objind >= 0 ? problem_ -> Lb (objind) - lb [objind] : 0.);
 
-	//if (newEst > estimate) 
+	//if (newEst > estimate)
 	//estimate = newEst;
 
 	for (int i=0; i<nvars; i++) {
@@ -176,7 +176,7 @@ double CouenneComplBranchingObject::branch (OsiSolverInterface * solver) {
       }
     }
 
-    if (!infeasible && doConvCuts_ && simulate_ && cutGen_) { 
+    if (!infeasible && doConvCuts_ && simulate_ && cutGen_) {
       // generate convexification cuts before solving new node's LP
 
       int nchanged, *changed = NULL;

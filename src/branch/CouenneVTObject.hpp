@@ -23,8 +23,8 @@ public:
   /// Constructor with information for branching point selection strategy
   CouenneVTObject (CouenneCutGenerator *c,
 		   CouenneProblem *p,
-		   exprVar *ref, 
-		   Bonmin::BabSetupBase *base, 
+		   exprVar *ref,
+		   Bonmin::BabSetupBase *base,
 		   JnlstPtr jnlst,
 		   int varSelection // either OSI_SIMPLE or OSI_STRONG
 		   ):

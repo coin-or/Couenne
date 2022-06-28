@@ -33,7 +33,7 @@ expression *exprInv::differentiate (int index) {
 
 
 // printing
-void exprInv::print (std::ostream &out, 
+void exprInv::print (std::ostream &out,
 		     bool descend) const {
   out << "(1/";
   argument_ -> print (out, descend);
@@ -44,9 +44,9 @@ void exprInv::print (std::ostream &out,
 
 /// general function to tighten implied bounds of a function w = x^k,
 /// k negative, integer or inverse integer, and odd
-void invPowImplBounds (int wind, int index, 
+void invPowImplBounds (int wind, int index,
 		       CouNumber *l, CouNumber *u, CouNumber k,
-		       bool &resL, bool &resU, 
+		       bool &resL, bool &resU,
 		       enum expression::auxSign sign) {
 
   CouNumber wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
@@ -78,10 +78,10 @@ void invPowImplBounds (int wind, int index,
 /// lower- and/or upper bound of w, whose index is wind
 bool exprInv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg, enum auxSign sign) {
 
-  // Expression w = 1/x: we can only improve the bounds if 
+  // Expression w = 1/x: we can only improve the bounds if
   //
   //    0 <= l <= w <= u         or
-  //         l <= w <= u <= 0. 
+  //         l <= w <= u <= 0.
   //
   // Then 1/u <= x <= 1/l (given l, u finite and nonzero)
 
@@ -125,7 +125,7 @@ bool exprInv::isCuttable (CouenneProblem *problem, int index) const {
 
   int xind = argument_ -> Index ();
 
-  double 
+  double
     x = problem -> X (xind),
     y = problem -> X (index);
 

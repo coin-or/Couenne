@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: turn OsiSolverInterface objects into coefficient matrix and rhs vector
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -25,14 +25,14 @@ using namespace Ipopt;
 using namespace Couenne;
 
 // construct reduced, standard form matrix M from coefficient matrix of si
-void CouenneDisjCuts::OsiSI2MatrVec (CoinPackedMatrix &M, 
+void CouenneDisjCuts::OsiSI2MatrVec (CoinPackedMatrix &M,
 				     CoinPackedVector &r,
 				     OsiSolverInterface &si) const {
 
   // the coefficient matrix
   const CoinPackedMatrix *A = si.getMatrixByRow ();
 
-  int 
+  int
     nrows = A -> getMajorDim    (),
     ncols = A -> getMinorDim    (),
     nel   = A -> getNumElements ();
@@ -54,12 +54,12 @@ void CouenneDisjCuts::OsiSI2MatrVec (CoinPackedMatrix &M,
     *ind   = A -> getIndices       ();
 
   /////////////////// count rows that will have to be duplicated
-  int 
+  int
     ndupEl   = 0, // count nonzero elements
     ndupRows = 0; // count rows
 
-  for (int i=0; i<nrows; i++, sen++, len++) 
-    if ((*sen == 'E') || 
+  for (int i=0; i<nrows; i++, sen++, len++)
+    if ((*sen == 'E') ||
 	(*sen == 'R')) {
       ndupEl += *len;
       ndupRows++;
@@ -72,10 +72,10 @@ void CouenneDisjCuts::OsiSI2MatrVec (CoinPackedMatrix &M,
 
   r.reserve (nrows + ndupRows + 2*ncols + 1);
 
-  int 
+  int
     mRows = 0,
-    curA  = 0, 
-    curM  = 0, 
+    curA  = 0,
+    curM  = 0,
     *mIn  = new int [nel + ndupEl + 2*ncols],
     *mSt  = new int [nrows + ndupRows + 2*ncols + 1],
     *mLe  = new int [nrows + ndupRows + 2*ncols];
@@ -87,9 +87,9 @@ void CouenneDisjCuts::OsiSI2MatrVec (CoinPackedMatrix &M,
     printf ("start: ");   for (int i=0; i <= nrows; i++) printf ("%d ", start [i]);
     printf ("\nlen:   "); for (int i=0; i <  nrows; i++) printf ("%d ", len   [i]);
 
-    printf ("\nElements:\n"); 
+    printf ("\nElements:\n");
     for (int i=0, j=0; i<nrows; i++) {
-      for (int k=0; k<start [i+1] - start [i]; k++, j++) 
+      for (int k=0; k<start [i+1] - start [i]; k++, j++)
 	printf ("(%d %g) ", ind [j], el [j]);
       printf (" in [%g,%g]\n", rlb [i], rub [i]);
     }
@@ -138,7 +138,7 @@ void CouenneDisjCuts::OsiSI2MatrVec (CoinPackedMatrix &M,
   // Variables ////////////////////////////////////
   for (int i=0; i<ncols; i++, x++, clb++, cub++) {
 
-    if ((activeCols_ && 
+    if ((activeCols_ &&
 	 (*x < *cub - COUENNE_EPS) &&
 	 (*x > *clb + COUENNE_EPS)) ||
 	(couenneCG_ -> Problem () -> Var (i) -> Multiplicity () <= 0))
@@ -174,14 +174,14 @@ void CouenneDisjCuts::OsiSI2MatrVec (CoinPackedMatrix &M,
     printf ("start: ");   for (int i=0; i<=mRows; i++) printf ("%d ", mSt [i]);
     printf ("\nlen:   "); for (int i=0; i<mRows;  i++) printf ("%d ", mLe [i]);
 
-    printf ("\nElements:\n"); 
+    printf ("\nElements:\n");
     for (int i=0, j=0; i<mRows; i++) {
-      for (int k=0; k<mSt[i+1] - mSt[i]; k++, j++) 
+      for (int k=0; k<mSt[i+1] - mSt[i]; k++, j++)
 	printf ("(%d %g) ", mIn [j], mEl [j]);
       printf ("\n");
     }
 
-    printf ("vector:\n"); 
+    printf ("vector:\n");
     for (int i=0; i<r.getNumElements (); i++)
       printf ("(%d %g) ", r.getIndices () [i], r.getElements () [i]);
     printf ("\n");

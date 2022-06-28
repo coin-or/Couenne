@@ -95,7 +95,7 @@ class COUENNELIB_EXPORT exprAux: public exprVar {
   inline expression *Ub () {return ub_;} ///< get upper bound expression
 
   /// Print expression
-  virtual void print (std::ostream & = std::cout, 
+  virtual void print (std::ostream & = std::cout,
 		      bool = false) const;
 
   /// The expression associated with this auxiliary variable
@@ -112,7 +112,7 @@ class COUENNELIB_EXPORT exprAux: public exprVar {
 
   /// fill in the set with all indices of variables appearing in the
   /// expression
-  int DepList (std::set <int> &deplist, 
+  int DepList (std::set <int> &deplist,
 	       enum dig_type type = ORIG_ONLY);
 
   /// simplify
@@ -131,29 +131,29 @@ class COUENNELIB_EXPORT exprAux: public exprVar {
   void crossBounds ();
 
   /// generate cuts for expression associated with this auxiliary
-  void generateCuts (//const OsiSolverInterface &, 
-		     OsiCuts &, const CouenneCutGenerator *, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
+  void generateCuts (//const OsiSolverInterface &,
+		     OsiCuts &, const CouenneCutGenerator *,
+		     t_chg_bounds * = NULL, int = -1,
+		     CouNumber = -COUENNE_INFINITY,
 		     CouNumber =  COUENNE_INFINITY);
 
   /// used in rank-based branching variable choice
   virtual inline int rank ()
-    {return rank_;} 
+    {return rank_;}
 
   /// is this expression defined as integer?
   virtual inline bool isDefinedInteger () {
 
-    return ((integer_ == Integer) || 
-	    ((integer_ == Unset) && 
-             ((integer_ = ((image_ != NULL) && (image_ -> isInteger ())) ? 
+    return ((integer_ == Integer) ||
+	    ((integer_ == Unset) &&
+             ((integer_ = ((image_ != NULL) && (image_ -> isInteger ())) ?
                Integer : Continuous) == Integer)));
   }
 
   /// is this expression integer?
   virtual inline bool isInteger () {
 
-    if (isDefinedInteger ()) 
+    if (isDefinedInteger ())
       return true;
 
     CouNumber l = lb ();
@@ -176,29 +176,29 @@ class COUENNELIB_EXPORT exprAux: public exprVar {
   /// Disable this auxiliary variable
   inline void zeroMult () {multiplicity_ = 0;}
 
-  /// How many times this variable appears 
+  /// How many times this variable appears
   inline int Multiplicity () {return multiplicity_;}
 
   /// link this variable to a domain
   inline void linkDomain (Domain *d) {
-    domain_ = d; 
+    domain_ = d;
     if (lb_) lb_ -> linkDomain (d);
     if (ub_) ub_ -> linkDomain (d);
   }
 
   /// return top_level_
-  bool &top_level () 
+  bool &top_level ()
   {return top_level_;}
 
   /// return proper object to handle expression associated with this
   /// variable (NULL if this is not an auxiliary)
   CouenneObject *properObject (CouenneCutGenerator *c,
-			      CouenneProblem *p, 
-			      Bonmin::BabSetupBase *base, 
+			      CouenneProblem *p,
+			      Bonmin::BabSetupBase *base,
 			      JnlstPtr jnlst);
 
   /// return its sign in the definition constraint
-  virtual inline enum auxSign sign () const 
+  virtual inline enum auxSign sign () const
   {return sign_;}
 };
 
@@ -218,7 +218,7 @@ struct compExpr {
 
     return ((signDiff < 0) ||
             ((signDiff == 0) &&
-             ((e0 -> Image () != NULL) && 
+             ((e0 -> Image () != NULL) &&
               (e1 -> Image () != NULL) &&
               (e0 -> Image () -> compare (*(e1 -> Image ())) < 0))));
   }
@@ -227,7 +227,7 @@ struct compExpr {
 
 /// allow to draw function within intervals and cuts introduced
 COUENNELIB_EXPORT
-void draw_cuts (OsiCuts &, const CouenneCutGenerator *, 
+void draw_cuts (OsiCuts &, const CouenneCutGenerator *,
 		int, expression *, expression *);
 
 }

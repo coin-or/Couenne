@@ -86,11 +86,11 @@ bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p) {
 
       double lhs = 0;
 
-      while (n--) 
+      while (n--)
 	lhs += el [n] * opt [ind [n]];
 
 
-      if ((lhs < lb - COUENNE_EPS) || 
+      if ((lhs < lb - COUENNE_EPS) ||
 	  (lhs > ub + COUENNE_EPS)) {
 
 	printf ("################################## new cut [%d] [%g,%g] cuts opt %g by %g:",
@@ -107,7 +107,7 @@ bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p) {
     printf ("== genrowcuts on LP =============");
 
     for (int i = 0; i < p -> nVars (); i++) {
-      if (!(i % 3)) 
+      if (!(i % 3))
 	printf ("\n");
       if (p -> Var (i) -> Multiplicity () > 0)
 	printf ("%3d %+10.3g [%+10.3g,%+10.3g] ", i,

@@ -48,24 +48,24 @@ exprAux *exprPow::standardize (CouenneProblem *p, bool addAux) {
     if (fabs (base - M_E) < COUENNE_EPS_SIMPL) // is base e = 2.7182818...
       ret = new exprExp (new exprClone (arglist_ [1]));
     else // no? convert k^x to e^(x log (k))
-      ret = new exprExp (new exprClone 
-			 (p -> addAuxiliary (new exprMul (new exprClone (arglist_ [1]), 
+      ret = new exprExp (new exprClone
+			 (p -> addAuxiliary (new exprMul (new exprClone (arglist_ [1]),
 							  new exprConst (log (base))))));
   } else if (arglist_ [1] -> Type () != CONST) { //  x^y, convert to exp (y*log(x));
 
     exprOp::standardize (p);
 
-    ret = new exprExp (new exprClone (p -> addAuxiliary 
-				      (new exprMul 
-				       (new exprClone (arglist_ [1]), 
-					new exprClone 
-					(p -> addAuxiliary 
+    ret = new exprExp (new exprClone (p -> addAuxiliary
+				      (new exprMul
+				       (new exprClone (arglist_ [1]),
+					new exprClone
+					(p -> addAuxiliary
 					 (new exprLog (new exprClone (arglist_ [0]))))))));
 
   } else { // expression is x^k, return as it is
 
     // TODO: check if it's of the form ||x||_k, as this admits a
-    // better (lower) convexification -- replace exprOp::standardize 
+    // better (lower) convexification -- replace exprOp::standardize
     exprOp::standardize (p);
 
     // if binary -- NO! Bounds not known yet
@@ -102,9 +102,9 @@ exprAux *exprPow::standardize (CouenneProblem *p, bool addAux) {
 
 // generate convexification cut for constraint w = x^k
 
-void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si, 
+void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
-			    t_chg_bounds *chg, int wind, 
+			    t_chg_bounds *chg, int wind,
 			    CouNumber lbw, CouNumber ubw) {
 
   // after standardization, all such expressions are of the form x^k,
@@ -125,8 +125,8 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
   bool cL = !chg || (chg [x_ind].lower() != t_chg_bounds::UNCHANGED) || cg -> isFirst ();
   bool cR = !chg || (chg [x_ind].upper() != t_chg_bounds::UNCHANGED) || cg -> isFirst ();
 
-  CouNumber 
-    w = (*aux) (), 
+  CouNumber
+    w = (*aux) (),
     x = (*xe)  ();
 
   enum auxSign aSign = cg -> Problem () -> Var (w_ind) -> sign ();
@@ -142,7 +142,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
               lk      = safe_pow (l,   k,   issignpower_),
               uk      = safe_pow (u,   k,   issignpower_);
 
-    if (cL || cR) 
+    if (cL || cR)
       cg -> createCut (cs, u*lk - l*uk + avg * avg_k_1 * (1-k), aSign,
 		       w_ind, u - l + 1, x_ind, lk-uk - k * avg_k_1);
     return;
@@ -172,12 +172,12 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
   // for other cases, Qroot needs to be extended
   assert(!issignpower_ || isInt);
 
-  // two macro-cases: 
+  // two macro-cases:
 
   if (   (isInt || isInvInt)
-      && (intk % 2 || issignpower_) 
-      && (k >   COUENNE_EPS) 
-	 //      && (l < - COUENNE_EPS) 
+      && (intk % 2 || issignpower_)
+      && (k >   COUENNE_EPS)
+	 //      && (l < - COUENNE_EPS)
 	 //      && (u >   COUENNE_EPS)
 	 ) {
 
@@ -246,9 +246,9 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
     // u is also negative, there is no convexification -- this
     // function is only defined on non-negative numbers
 
-    if (!isInt 
+    if (!isInt
 	&& (!isInvInt || !(intk % 2 || issignpower_))
-	&& (l < - COUENNE_EPS) 
+	&& (l < - COUENNE_EPS)
 	&& (u < (l=0)))        // CAUTION! l updated if negative (k real)
       return;
 
@@ -256,13 +256,13 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
     // convexification is possible -- just add a segment between two
     // tails of the asymptotes.
 
-    if ((k < 0) && 
-	(l < - COUENNE_EPS) && 
+    if ((k < 0) &&
+	(l < - COUENNE_EPS) &&
 	(u >   COUENNE_EPS) &&
 	aSign != expression::AUX_LEQ) {
 
       if (!(intk % 2))
-	cg -> addSegment (cs, w_ind, arglist_ [0] -> Index (), 
+	cg -> addSegment (cs, w_ind, arglist_ [0] -> Index (),
 			  l, safe_pow (l,k, issignpower_), u, safe_pow (u,k, issignpower_), +1);
 
       // TODO: if a<=w<=b, c<=x<=d, there is a diamond enclosing the
@@ -278,13 +278,13 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 
     int sign = 1; // sign based on k
 
-    // invert sign if 
+    // invert sign if
     if (   ((l < - COUENNE_EPS) && (intk % 2) && (k < -COUENNE_EPS)) // k<0 odd, l<0
 	|| ((u <= 0.)           && (intk % 2 || issignpower_) && (k >  COUENNE_EPS)) // k>0 odd or signed power, u<0
 	|| (fabs (k-0.5) < 0.5 - COUENNE_EPS))                       // k in [0,1]
       sign = -1;
 
-    CouNumber powThres = CoinMin (COUENNE_INFINITY, 
+    CouNumber powThres = CoinMin (COUENNE_INFINITY,
 				  pow (COU_MAX_COEFF, 1./k)), // don't want big coefficients
               powStep  = 1;
 
@@ -295,7 +295,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 	(u >  COUENNE_EPS) &&
 	(l > - powThres) &&         // and are finite
 	(u <   powThres) &&
-	aSign != expression::AUX_LEQ) 
+	aSign != expression::AUX_LEQ)
 
       cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l, k, issignpower_), u, safe_pow (u, k, issignpower_), 1);
 
@@ -307,7 +307,7 @@ void exprPow::generateCuts (expression *aux, //const OsiSolverInterface &si,
 	(u <   powThres) &&
 	(fabs (l+u) > COUENNE_EPS) &&
 	(aSign != expression::AUX_GEQ)) // bounds are not opposite (otherwise it's a variable bound)
-      
+
       cg -> addSegment (cs, w_ind, x_ind, l, safe_pow (l, k, issignpower_), u, safe_pow (u, k, issignpower_), -sign);
 
     // similarly, pay attention not to add infinite slopes

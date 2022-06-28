@@ -1,4 +1,4 @@
-/* 
+/*
  *
  * Name:    CouenneNauty.hpp
  * Authors: Jim Ostrowski
@@ -27,7 +27,7 @@ class COUENNELIB_EXPORT Nauty
 
 public:
   enum VarStatus { FIX_AT_ZERO, FIX_AT_ONE, FREE };
-  
+
   Nauty(int n_);
   ~Nauty();
 
@@ -37,13 +37,13 @@ public:
   void deleteElement(int ix, int jx);
   void color_node(int ix, int color) { vstat_[ix] = color; }
   void insertRHS(int rhs , int cons) {constr_rhs.insert( std::pair<int,int>(rhs,cons));}
-  
+
   double getGroupSize() const;
   int getNautyCalls() const { return nautyCalls_; }
   double getNautyTime() const { return nautyTime_; }
 
   int getN() const { return n_; }
-  
+
   int getNumGenerators() const;
   int getNumOrbits() const;
 
@@ -60,7 +60,7 @@ public:
   //bool isAutoComputed() const { return autoComputed_; }
   //bool isConstraintOrbit(const std::vector<int> &orbit) const;
   //bool isMixedFreeZeroOrbit(const std::vector<int> &orbit) const;
-  //void makeFree(int ix) { vstat_[ix] = FREE; }  
+  //void makeFree(int ix) { vstat_[ix] = FREE; }
 
   void setWriteAutoms (const std::string &afilename);
   void unsetWriteAutoms();
@@ -82,7 +82,7 @@ private:
   int m_;
   int n_;
   graph *canonG_;
-  
+
   bool autoComputed_;
 
   int *vstat_;

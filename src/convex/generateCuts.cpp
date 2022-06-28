@@ -38,7 +38,7 @@ bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p);
 // set and lift bound for auxiliary variable associated with objective
 // function
 void fictitiousBound (OsiCuts &cs,
-		      CouenneProblem *p, 
+		      CouenneProblem *p,
 		      bool action) {     // true before convexifying, false afterwards
 
   // fictitious bound for initial unbounded lp relaxations
@@ -55,12 +55,12 @@ void fictitiousBound (OsiCuts &cs,
   //int sense = -1; //(p -> Obj (0) -> Sense () == MINIMIZE) ? -1 : 1;
 
   if (action)
-    //if (sense<0) 
+    //if (sense<0)
       {if (p -> Lb (ind_obj) < - Couenne_large_bound2) p -> Lb (ind_obj) = - Couenne_large_bound2;}
   //else         {if (p -> Ub (ind_obj) >   large_bound2) p -> Ub (ind_obj) =   large_bound2;}
   else
     //if (sense>0) {if (fabs (p->Ub(ind_obj)-large_bound2)<large_tol) p->Ub(ind_obj)=COUENNE_INFINITY;}
-    //else         
+    //else
       {if (fabs (p->Lb(ind_obj)+Couenne_large_bound2)<large_tol) p->Lb(ind_obj) =-COUENNE_INFINITY;}
 }
 
@@ -86,13 +86,13 @@ void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchange
 
 
 /// get new bounds from parents' bounds + branching rules
-void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p, 
+void updateBranchInfo (const OsiSolverInterface &si, CouenneProblem *p,
 		       t_chg_bounds *chg, const CglTreeInfo &info);
 
 /// a convexifier cut generator
 
 void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
-					OsiCuts &cs, 
+					OsiCuts &cs,
 					const CglTreeInfo info)
 #if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
   const
@@ -103,8 +103,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
   //   return infeasCut
 
   int indObj = problem_ -> Obj (0) -> Body () -> Index ();
-  
-  if ((indObj >= 0) && 
+
+  if ((indObj >= 0) &&
       (si.getColLower () [indObj] > problem_ -> getCutOff () + COUENNE_EPS)) {
 
     WipeMakeInfeas (cs);
@@ -115,7 +115,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
   // was added as a result of, e.g., pruning on BT. If so, no need to
   // run this.
 
-  if (isWiped (cs) || 
+  if (isWiped (cs) ||
      (CoinCpuTime () > problem_ -> getMaxCpuTime ()))
     return;
 
@@ -124,7 +124,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
   double bestVal = 1e50;
   CouenneRecordBestSol *rs = problem_->getRecordBestSol();
   if(rs->getHasSol()) {
-    bestVal = rs->getVal(); 
+    bestVal = rs->getVal();
   }
   if(currCutOff > bestVal) {
     //problem_ -> setCutOff (bestVal - 1e-6); // FIXME: don't add numerical constants
@@ -140,7 +140,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 #endif
 
 #ifdef FM_PRINT_INFO
-  if((BabPtr_ != NULL) && (info.level >= 0) && (info.pass == 0) && 
+  if((BabPtr_ != NULL) && (info.level >= 0) && (info.pass == 0) &&
      (BabPtr_->model().getNodeCount() > lastPrintLine)) {
     printLineInfo();
     lastPrintLine += 1;
@@ -155,14 +155,14 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     *&realOpt = problem_ -> bestSol (),
     *saveOptimum = realOpt;
 
-  if (!firstcall_ && realOpt) { 
+  if (!firstcall_ && realOpt) {
 
     // have a debug optimal solution. Check if current bounds
     // contain it, otherwise pretend it does not exist
 
     CouNumber *opt = realOpt;
 
-    const CouNumber 
+    const CouNumber
       *sol = si.getColSolution (),
       *lb  = si.getColLower (),
       *ub  = si.getColUpper ();
@@ -170,12 +170,12 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     int objind = problem_ -> Obj (0) -> Body () -> Index ();
 
     for (int j=0, i=problem_ -> nVars (); i--; j++, opt++, lb++, ub++)
-      if ((j != objind) && 
-	  ((*opt < *lb - COUENNE_EPS * (1 + CoinMin (fabs (*opt), fabs (*lb)))) || 
+      if ((j != objind) &&
+	  ((*opt < *lb - COUENNE_EPS * (1 + CoinMin (fabs (*opt), fabs (*lb)))) ||
 	   (*opt > *ub + COUENNE_EPS * (1 + CoinMin (fabs (*opt), fabs (*ub)))))) {
 	
-	jnlst_ -> Printf (J_VECTOR, J_CONVEXIFYING, 
-			  "out of bounds, ignore x%d = %g [%g,%g] opt = %g\n", 
+	jnlst_ -> Printf (J_VECTOR, J_CONVEXIFYING,
+			  "out of bounds, ignore x%d = %g [%g,%g] opt = %g\n",
 			  problem_ -> nVars () - i - 1, *sol, *lb, *ub, *opt);
 
 	// optimal point is not in current bounding box,
@@ -209,7 +209,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
   t_chg_bounds *chg_bds = new t_chg_bounds [ncols];
 
-  /*for (int i=0; i < ncols; i++) 
+  /*for (int i=0; i < ncols; i++)
     if (problem_ -> Var (i) -> Multiplicity () <= 0) {
       chg_bds [i].setLower (t_chg_bounds::UNCHANGED);
       chg_bds [i].setUpper (t_chg_bounds::UNCHANGED);
@@ -227,7 +227,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // only need to update the auxiliary variables and bounds with
     // their current value.
 
-    for (int i=0; i < ncols; i++) 
+    for (int i=0; i < ncols; i++)
       if (problem_ -> Var (i) -> Multiplicity () > 0) {
 	chg_bds [i].setLower (t_chg_bounds::CHANGED);
 	chg_bds [i].setUpper (t_chg_bounds::CHANGED);
@@ -257,7 +257,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       // (which has an aux as its body)
       int objindex = con -> Body () -> Index ();
 
-      if ((objindex >= 0) && 
+      if ((objindex >= 0) &&
 	  ((con -> Body () -> Type () == AUX) ||
 	   (con -> Body () -> Type () == VAR))) {
 
@@ -266,14 +266,14 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
 	if (conaux &&
 	    (conaux -> Type () == AUX) &&
-	    (conaux -> Image ()) && 
+	    (conaux -> Image ()) &&
 	    (conaux -> Image () -> Linearity () <= LINEAR)) {
 
 	  // reduce density of problem by adding w >= l rather than
 	  // ax + b >= l for any linear auxiliary defined as w := ax+b
 
-	  double 
-	    lb = (*(con -> Lb ())) (), 
+	  double
+	    lb = (*(con -> Lb ())) (),
 	    ub = (*(con -> Ub ())) ();
 
 	  OsiColCut newBound;
@@ -284,13 +284,13 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
 	  // the auxiliary w of constraint w <= b is associated with a
 	  // linear expression w = ax: add constraint ax <= b
-	  /*conaux -> Image () -> generateCuts (conaux, si, cs, this, chg_bds, 
-					      conaux -> Index (), 
-					      (*(con -> Lb ())) (), 
+	  /*conaux -> Image () -> generateCuts (conaux, si, cs, this, chg_bds,
+					      conaux -> Index (),
+					      (*(con -> Lb ())) (),
 					      (*(con -> Ub ())) ());*/
 
 	  // take it from the list of the variables to be linearized
-	  // 
+	  //
 	  // DO NOT decrease multiplicity. Even if it is a linear
 	  // term, its bounds can still be used in implied bounds
 	  //
@@ -324,13 +324,13 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       if (cs.sizeRowCuts ()) {
 	jnlst_ -> Printf (J_ITERSUMMARY, J_CONVEXIFYING,"Couenne: %d constraint row cuts\n",
 			  cs.sizeRowCuts ());
-	for (int i=0; i<cs.sizeRowCuts (); i++) 
+	for (int i=0; i<cs.sizeRowCuts (); i++)
 	  cs.rowCutPtr (i) -> print ();
       }
       if (cs.sizeColCuts ()) {
 	jnlst_ -> Printf (J_ITERSUMMARY, J_CONVEXIFYING,"Couenne: %d constraint col cuts\n",
 			  cs.sizeColCuts ());
-	for (int i=0; i<cs.sizeColCuts (); i++) 
+	for (int i=0; i<cs.sizeColCuts (); i++)
 	  cs.colCutPtr (i) -> print ();
       }
     }
@@ -347,7 +347,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       // tightening
       double lp_bound = problem_ -> domain () -> x (indObj);
 
-      //if (problem_ -> Obj (0) -> Sense () == MINIMIZE) 
+      //if (problem_ -> Obj (0) -> Sense () == MINIMIZE)
       {if (lp_bound > problem_ -> Lb (indObj)) problem_ -> Lb (indObj) = lp_bound;}
 	   //else {if (lp_bound < problem_ -> Ub (indObj)) problem_ -> Ub (indObj) = lp_bound;}
     }
@@ -364,12 +364,12 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // (which has an aux as its body)
     int objindex = con -> Body () -> Index ();
 
-    if ((objindex >= 0) && 
+    if ((objindex >= 0) &&
 	((con -> Body () -> Type () == AUX) ||
 	 (con -> Body () -> Type () == VAR))) {
 
       // if there exists violation, add constraint
-      CouNumber 
+      CouNumber
 	l = con -> Lb () -> Value (),	
 	u = con -> Ub () -> Value ();
 
@@ -398,8 +398,8 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     // information.
 
 // #ifdef COUENNE_HAS_NAUTY
-//     //    ChangeBounds (psi -> getColLower (),  
-//     //		  psi -> getColUpper (), 
+//     //    ChangeBounds (psi -> getColLower (),
+//     //		  psi -> getColUpper (),
 //     //		  psi -> getNumCols ());
 
 //     if (problem_ -> orbitalBranching ()){
@@ -424,7 +424,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       throw infeasible;
 
     // FBBT
-    if (problem_ -> doFBBT () && 
+    if (problem_ -> doFBBT () &&
 	//(info.pass <= 0) && // do it in subsequent rounds too
 	(! (problem_ -> boundTightening (chg_bds, info, babInfo))))
       throw infeasible;
@@ -458,7 +458,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
     if (problem_ -> orbitalBranching () && !firstcall_) {
 
-      CouNumber 
+      CouNumber
 	*lb = problem_ -> Lb (),
 	*ub = problem_ -> Ub ();
 
@@ -468,7 +468,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
 	CouNumber
 	  ll = -COUENNE_INFINITY,
-	  uu =  COUENNE_INFINITY; 
+	  uu =  COUENNE_INFINITY;
 	
 	std::vector <int> orbit = (*new_orbits)[i];
 
@@ -484,7 +484,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	}
 
 	for (int j = 0; j < orbit.size (); j++) {
- 
+
 	  int indOrb = orbit [j];
 
 	  if (indOrb < problem_ -> nVars ()) {
@@ -494,7 +494,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 	  }
 	}
 
-	jnlst_ -> Printf (J_VECTOR, J_BOUNDTIGHTENING, 
+	jnlst_ -> Printf (J_VECTOR, J_BOUNDTIGHTENING,
 			  " --> new common bounds: [%g,%g]\n", ll, uu);
 
 	for(int j = 0; j < orbit.size (); j++) {
@@ -524,7 +524,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
     if (true) {
 
-      if (babInfo) 
+      if (babInfo)
 	nlpSol = const_cast <double *> (babInfo -> nlpSolution ());
 
       // Aggressive Bound Tightening ////////////////////////////////
@@ -534,7 +534,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       if (problem_ -> doABT () &&             // flag is checked, AND
 	  ((logAbtLev != 0) ||                // (parameter is nonzero OR
 	   (info.level == 0)) &&              //  we are at root node), AND
-	  (info.pass == 0) &&                 // at first round of cuts, AND 
+	  (info.pass == 0) &&                 // at first round of cuts, AND
 	  ((logAbtLev < 0) ||                 // (logAbtLev = -1, OR
 	   (info.level <= logAbtLev) ||       //  depth is lower than COU_OBBT_CUTOFF_LEVEL, OR
 	   (CoinDrand48 () <                  //  probability inversely proportional to the level)
@@ -558,10 +558,10 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       addviolated_ = false;
 
       // save values
-      problem_ -> domain () -> push 
-	(problem_ -> nVars (), 
-	 problem_ -> domain () -> x  (), 
-	 problem_ -> domain () -> lb (), 
+      problem_ -> domain () -> push
+	(problem_ -> nVars (),
+	 problem_ -> domain () -> x  (),
+	 problem_ -> domain () -> lb (),
 	 problem_ -> domain () -> ub (), false);
 
       // fill originals with nlp values
@@ -591,7 +591,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
       addviolated_ = save_av;     // restore previous value
 
       //    if (!firstcall_) // keep solution if called from extractLinearRelaxation()
-      if (babInfo) 
+      if (babInfo)
 	babInfo -> setHasNlpSolution (false); // reset it after use //AW HERE
 
     } else {
@@ -640,13 +640,13 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
   delete [] chg_bds;
 
-  if (changed) 
+  if (changed)
     free (changed);
 
   if (firstcall_) {
 
-    jnlst_ -> Printf (J_SUMMARY, J_CONVEXIFYING, 
-		      "Couenne: %d cuts (%d row, %d col) for linearization\n", 
+    jnlst_ -> Printf (J_SUMMARY, J_CONVEXIFYING,
+		      "Couenne: %d cuts (%d row, %d col) for linearization\n",
 		      cs.sizeRowCuts () + cs.sizeColCuts (),
 		      cs.sizeRowCuts (),  cs.sizeColCuts ());
 
@@ -654,7 +654,7 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
     firstcall_  = false;
     ntotalcuts_ = nrootcuts_ = cs.sizeRowCuts ();
 
-  } else { 
+  } else {
 
     problem_ -> domain () -> pop ();
 
@@ -670,12 +670,12 @@ void CouenneCutGenerator::generateCuts (const OsiSolverInterface &si,
 
     if (cs.sizeColCuts ()) {
       jnlst_ -> Printf (J_ITERSUMMARY, J_CONVEXIFYING,"Couenne col cuts:\n");
-      for (int i=0; i<cs.sizeColCuts (); i++) 
+      for (int i=0; i<cs.sizeColCuts (); i++)
 	cs.colCutPtr (i) -> print ();
     }
   }
 
-  if (!(info.inTree)) 
+  if (!(info.inTree))
     rootTime_ = CoinCpuTime ();
 }
 

@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: save a problem in GAMS format
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -19,7 +19,7 @@
 using namespace Couenne;
 
 /// Write nonlinear problem to a .gms file
-/// 
+///
 /// @param fname Name of the .gms file to be written.
 void CouenneProblem::writeGAMS (const std::string &fname) {
 
@@ -39,16 +39,16 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
 
   f << "  variables   ";
 
-  for (int i=0, j=0; i < nVars (); i++) 
+  for (int i=0, j=0; i < nVars (); i++)
     if (Var (i) -> Multiplicity () > 0) {
 
-      if (j) f << ','; 
+      if (j) f << ',';
       if (!(++j % nline)) f << std::endl << "             ";
 
       Var (i) -> print (f);
 
       /*if (Var (i) -> isInteger ())
-	if ((fabs (Var (i) -> lb ())     < COUENNE_EPS) && 
+	if ((fabs (Var (i) -> lb ())     < COUENNE_EPS) &&
 	    (fabs (Var (i) -> ub () - 1) < COUENNE_EPS))
 	  f << 'b';
 	else f << 'i';
@@ -58,8 +58,8 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
 
   f << ",objvar;" << std::endl << std::endl;
 
-  bool 
-    have_positive = false, 
+  bool
+    have_positive = false,
     have_binary   = false,
     have_integer  = false;
 
@@ -78,7 +78,7 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
   for (int i=0; i < nVars (); i++)
     if ((Var (i) -> Multiplicity () > 0) &&
 	Var (i) -> isInteger () &&
-	(fabs (Var (i) -> lb ())     < COUENNE_EPS) && 
+	(fabs (Var (i) -> lb ())     < COUENNE_EPS) &&
 	(fabs (Var (i) -> ub () - 1) < COUENNE_EPS)) {
 
       have_binary = true;
@@ -99,16 +99,16 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
   // positive /////////////////////////////////////////////////////////////////
   if (have_positive) {
 
-    f << "  positive variables "; 
+    f << "  positive variables ";
     // those with lower bound exactly zero (to save space...)
 
-    for (int i=0, j=0; i < nVars (); i++) 
-      if ((Var (i) -> Multiplicity () > 0) && 
+    for (int i=0, j=0; i < nVars (); i++)
+      if ((Var (i) -> Multiplicity () > 0) &&
 	  (fabs (Var (i) -> lb ()) < COUENNE_EPS)  &&
 	  !(Var (i) -> isInteger ())) {
 	  //(fabs (Var (i) -> ub () - 1) < COUENNE_EPS))) {
 
-	if (j) f << ','; 
+	if (j) f << ',';
 	if (!(++j % nline)) f << std::endl << "             ";
 
 	Var (i) -> print (f);
@@ -126,13 +126,13 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
 
     f << "  binary variables ";
 
-    for (int i=0, j=0; i < nVars (); i++) 
-      if ((Var (i) -> Multiplicity () > 0) && 
+    for (int i=0, j=0; i < nVars (); i++)
+      if ((Var (i) -> Multiplicity () > 0) &&
 	  Var (i) -> isInteger () &&
-	  (fabs (Var (i) -> lb ())     < COUENNE_EPS) && 
+	  (fabs (Var (i) -> lb ())     < COUENNE_EPS) &&
 	  (fabs (Var (i) -> ub () - 1) < COUENNE_EPS)) {
 
-	if (j) f << ','; 
+	if (j) f << ',';
 	if (!(++j % nline)) f << std::endl << "             ";
 	Var (i) -> print (f);
 	//f << 'b' << Var (i) -> Index ();
@@ -145,13 +145,13 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
 
     f << "  integer variables ";
 
-    for (int i=0, j=0; i < nVars (); i++) 
+    for (int i=0, j=0; i < nVars (); i++)
       if ((Var (i) -> Multiplicity () > 0) &&
 	  (Var (i) -> isInteger ()) &&
 	  ((fabs (Var (i) -> lb ())     > COUENNE_EPS) ||
 	   (fabs (Var (i) -> ub () - 1) > COUENNE_EPS))) {
 
-	if (j) f << ','; 
+	if (j) f << ',';
 	if (!(++j % nline)) f << std::endl << "             ";
 	Var (i) -> print (f);
 	//f << 'i' << Var (i) -> Index ();
@@ -167,17 +167,17 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
 
   for (; i < nCons (); i++) {
 
-    if (j) f << ','; 
+    if (j) f << ',';
     if (!(++j % nline)) f << std::endl << "                  ";
     f << 'e' << j;
     no_eqns = false;
   }
 
-  for (; i < nVars (); i++) 
+  for (; i < nVars (); i++)
     if ((Var (i) -> Type () == AUX) &&
 	(Var (i) -> Multiplicity () > 0)) {
 
-      if (j) f << ','; 
+      if (j) f << ',';
       if (!(++j % nline)) f << std::endl << "                ";
       f << 'e' << j;
       no_eqns = false;
@@ -194,11 +194,11 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
 
     f << 'e' << ++j << "..  ";
 
-    CouNumber 
+    CouNumber
       lb = (*(Con (i) -> Lb ())) (),
       ub = (*(Con (i) -> Ub ())) ();
 
-    assert ((lb > -COUENNE_INFINITY) || 
+    assert ((lb > -COUENNE_INFINITY) ||
 	    (ub <  COUENNE_INFINITY));
 
     if (fabs (lb - ub) < COUENNE_EPS) {
@@ -215,13 +215,13 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
     f << ';' << std::endl << std::endl;
   }
 
-  for (; i < nVars (); i++) 
+  for (; i < nVars (); i++)
     if ((Var (i) -> Type () == AUX) &&
 	(Var (i) -> Multiplicity () > 0)) {
 
       f << 'e' << ++j << "..  ";
       f << " - ";
-      Var (i) -> print (f); 
+      Var (i) -> print (f);
       f << " + ";
       Var (i) -> Image () -> print ();
       f << " =E= 0;" << std::endl << std::endl;
@@ -233,19 +233,19 @@ void CouenneProblem::writeGAMS (const std::string &fname) {
 
   // initial levels //////////////////////////////////////////////////////
 
-  for (int i=0; i < nVars (); i++) 
+  for (int i=0; i < nVars (); i++)
     if (Var (i) -> Multiplicity () > 0) {
 
-      Var (i) -> print (f); 
+      Var (i) -> print (f);
       f << ".l = " << X (i) << ';' << std::endl;
 
       if ((fabs (Lb (i)) > COUENNE_EPS) && (Lb (i) > -COUENNE_INFINITY)) {
-	Var (i) -> print (f); 
+	Var (i) -> print (f);
 	f << ".lo = " << Lb (i) << ';' << std::endl;
       }
 
       if (Ub (i) < COUENNE_INFINITY) {
-	Var (i) -> print (f); 
+	Var (i) -> print (f);
 	f << ".up = " << Ub (i) << ';' << std::endl;
       }
     }

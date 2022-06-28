@@ -19,7 +19,7 @@ namespace Couenne {
 
 // Tighten bounds. Returns -1 if infeasible, otherwise number of
 // variables tightened.
-template <class T> 
+template <class T>
 int CouenneSolverInterface<T>::tightenBoundsCLP (int lightweight) {
 
   // Copied from OsiClpSolverInterface::tightenBounds
@@ -311,7 +311,7 @@ int CouenneSolverInterface<T>::tightenBoundsCLP (int lightweight) {
 	    nTightened++;
 	    T::setColLower(iColumn,upper);
 	  }
-	}	    
+	}	
       }
     }
 
@@ -367,5 +367,5 @@ int CouenneSolverInterface<T>::tightenBoundsCLP (int lightweight) {
 
   return nTightened;
 }
-  
+
 }

@@ -3,8 +3,8 @@
  * Name:    CouenneFPcreateMILP.cpp
  * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
- * Purpose: create the MILP within the Feasibility Pump 
- * 
+ * Purpose: create the MILP within the Feasibility Pump
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -62,9 +62,9 @@ OsiSolverInterface *createCloneMILP (const CouenneFeasPump *fp, CbcModel *model,
 	(!isMILP && !intVar)) {
 
       // (empty) coeff col vector, lb = 0, ub = inf, obj coeff
-      lp -> addCol (vec, 0., COIN_DBL_MAX, 1.); 
+      lp -> addCol (vec, 0., COIN_DBL_MAX, 1.);
 
-      if (match) 
+      if (match)
 	match [j] = lp -> getNumCols () - 1;
     }
   }
@@ -100,7 +100,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
   //
   //   z_i >=   P^i (x - x^0)  or  P^i x - z_i <= P^i x^0 (*)
   //   z_i >= - P^i (x - x^0)                             (**)
-  // 
+  //
   // (the latter being equivalent to
   //
   // - z_i <=   P^i (x - x^0)  or  P^i x + z_i >= P^i x^0 (***))
@@ -126,7 +126,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
       lp -> setObjCoeff (objInd, fp -> multObjFMILP ());
   }
 
-  if (isMILP && 
+  if (isMILP &&
       (fp -> multHessMILP () > 0.) &&
       (fp -> nlp () -> optHessian ())) {
 
@@ -145,14 +145,14 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
     for (int i=0; i<n; i++)
       if (fp -> Problem () -> Var (i) -> Multiplicity () > 0)
-        P[i].insert (i, 1. / sqrt ((double) n)); 
+        P[i].insert (i, 1. / sqrt ((double) n));
   }
 
   // Add 2q inequalities
 
   for (int i = 0, j = n, k = n; k--; ++i) {
 
-    if (match && match [i] < 0) 
+    if (match && match [i] < 0)
       continue;
 
     if (fp -> Problem () -> Var (i) -> Multiplicity () <= 0)
@@ -169,14 +169,14 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 	||
 	(!isMILP && !intVar)) {
 
-      // create vector with single entry of 1 at i-th position 
+      // create vector with single entry of 1 at i-th position
       CoinPackedVector &vec = P [i];
 
       if (vec.getNumElements () == 0)
 	continue;
 
       // right-hand side equals <P^i,x^0>
-      double PiX0 = sparseDotProduct (vec, x0); 
+      double PiX0 = sparseDotProduct (vec, x0);
 
       assert (!match || match [i] >= 0);
 
@@ -191,7 +191,7 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
     } else if (intVar) { // implies (!isMILP)
 
-      // fix integer variable to its value in iSol      
+      // fix integer variable to its value in iSol
 
 #define INT_LP_BRACKET 0
 
@@ -206,11 +206,11 @@ void addDistanceConstraints (const CouenneFeasPump *fp, OsiSolverInterface *lp, 
 
 #define GRADIENT_WEIGHT 1
 
-void ComputeSquareRoot (const CouenneFeasPump *fp, 
-			CouenneSparseMatrix *hessian, 
+void ComputeSquareRoot (const CouenneFeasPump *fp,
+			CouenneSparseMatrix *hessian,
 			CoinPackedVector *P) {
 
-  int 
+  int
     objInd = fp -> Problem () -> Obj (0) -> Body () -> Index (),
     n      = fp -> Problem () -> nVars ();
 
@@ -233,7 +233,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
 
     //printf ("elem: %d, %d --> %g\n", *row, *col, *val);
 
-    if ((*row == objInd) || 
+    if ((*row == objInd) ||
 	(*col == objInd))
 
       *val = 0;
@@ -294,7 +294,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   double *eigenvec = A; // as overwritten by dsyev;
 
   for     (int i=0; i<n; ++i)
-    for   (int j=0; j<n; ++j) { 
+    for   (int j=0; j<n; ++j) {
 
       // multiply i-th row of B by j-th column of E
 
@@ -312,7 +312,7 @@ void ComputeSquareRoot (const CouenneFeasPump *fp,
   //   printf ("P^{1/2}:\n");
   // }
 
-  free (A); 
+  free (A);
   free (B);
 }
 
@@ -344,7 +344,7 @@ int PSDize (int n, double *A, double *B, bool doSqrRoot) {
 
   double *eigenvec = A; // as overwritten by dsyev;
 
-  // 
+  //
   // eigenvec is column major, hence post-multiplying it by D equals
   // multiplying each column i by the i-th eigenvalue
   //
@@ -375,7 +375,7 @@ int PSDize (int n, double *A, double *B, bool doSqrRoot) {
 
     MinEigVal = MaxEigVal * COUENNE_EIG_RATIO;
 
-    if (eigenval [0] <= MinEigVal) 
+    if (eigenval [0] <= MinEigVal)
       for (int j=0; eigenval [j] <= MinEigVal; j++)
 	eigenval [j] = MinEigVal;
   }
@@ -386,7 +386,7 @@ int PSDize (int n, double *A, double *B, bool doSqrRoot) {
 
   for (int j=0; j<n; ++j) {
 
-    double multEig = doSqrRoot ? sqrt (eigenval [j]) : 
+    double multEig = doSqrRoot ? sqrt (eigenval [j]) :
                                                 eigenval [j];
 
     for (int i=0; i<n; ++i)
@@ -396,7 +396,7 @@ int PSDize (int n, double *A, double *B, bool doSqrRoot) {
 
   B -= n*n;
 
-  // TODO: set up B as    row-major sparse matrix and 
+  // TODO: set up B as    row-major sparse matrix and
   //              E as column-major sparse matrix
   //
   // Otherwise this multiplication is O(n^3)

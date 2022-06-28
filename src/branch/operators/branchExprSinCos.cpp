@@ -23,10 +23,10 @@ static inline double oppasin (double x) {return asin (-x);}
 
 
 /// generalized procedure for both sine and cosine
-CouNumber trigSelBranch (const CouenneObject *obj, 
+CouNumber trigSelBranch (const CouenneObject *obj,
 			 const OsiBranchingInformation *info,
 			 expression *&var,
-			 double * &brpts, 
+			 double * &brpts,
 			 double * &brDist, // distance of current LP
 					   // point to new convexifications
 			 int &way,
@@ -44,10 +44,10 @@ CouNumber trigSelBranch (const CouenneObject *obj,
     y0 = info -> solution_ [ref -> Index ()];
 
   var -> getBounds (l,u);
-				 
-  simpletriplet ft ((type == COU_SINE) ? (unary_function) sin    : (unary_function) cos, 
-		    (type == COU_SINE) ? (unary_function) cos    : oppsin, 
-		    (type == COU_SINE) ?                  oppsin : oppcos, 
+				
+  simpletriplet ft ((type == COU_SINE) ? (unary_function) sin    : (unary_function) cos,
+		    (type == COU_SINE) ? (unary_function) cos    : oppsin,
+		    (type == COU_SINE) ?                  oppsin : oppcos,
 		    (type == COU_SINE) ? (unary_function) acos   : oppasin);
 
   brpts  = (double *) realloc (brpts,    sizeof (double));

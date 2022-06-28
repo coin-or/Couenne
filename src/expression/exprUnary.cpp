@@ -18,26 +18,26 @@
 using namespace Couenne;
 
 // print unary expression
-void exprUnary::print (std::ostream &out, 
+void exprUnary::print (std::ostream &out,
 		       bool descend) const {
 
   if (printPos () == PRE)  out << printOp ();
-  out << "("; 
-  argument_ -> print (out, descend); 
+  out << "(";
+  argument_ -> print (out, descend);
   out << ")";
   if (printPos () == POST) out << printOp ();
 }
 
 
 /// comparison when looking for duplicates
-int exprUnary::compare (exprUnary  &e1) { 
+int exprUnary::compare (exprUnary  &e1) {
 
   int c0 = code (),
       c1 = e1. code ();
 
   if      (c0 < c1) return -1;
   else if (c0 > c1) return  1;
-  else // have to compare arguments 
+  else // have to compare arguments
     return argument_ -> compare (*(e1.argument_));
 }
 
@@ -45,7 +45,7 @@ int exprUnary::compare (exprUnary  &e1) {
 // Create standard formulation of this expression, by:
 //
 // - creating auxiliary w variables and corresponding expressions
-// - returning linear counterpart as new constraint (to replace 
+// - returning linear counterpart as new constraint (to replace
 //   current one)
 exprAux *exprUnary::standardize (CouenneProblem *p, bool addAux) {
 
@@ -54,7 +54,7 @@ exprAux *exprUnary::standardize (CouenneProblem *p, bool addAux) {
   if ((subst = argument_ -> standardize (p))) {
 
     if ((subst -> Type () == AUX) ||
-	(subst -> Type () == VAR)) 
+	(subst -> Type () == VAR))
       argument_ = new exprClone (subst);
     else argument_ = subst;
   }
@@ -89,7 +89,7 @@ bool exprUnary::isInteger () {
       (au <  COUENNE_INFINITY) &&
       fabs (al - au) < COUENNE_EPS) { // argument is constant
 
-    CouNumber fval = (F ()) (al); 
+    CouNumber fval = (F ()) (al);
 
     // check if f(lb=ub) is integer
     if (fabs (COUENNE_round (fval) - fval) < COUENNE_EPS)
@@ -119,7 +119,7 @@ expression *exprUnary:: simplify () {
       delete subst;
 
       return ret;
-    } 
+    }
   }
 
   return NULL;

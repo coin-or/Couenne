@@ -16,10 +16,10 @@
 
 using namespace Couenne;
 
-/// 
+///
 void CouenneBTPerfIndicator::update (const CouNumber *lb, const CouNumber *ub, int depth) const {
 
-  assert (oldLB_ != NULL && 
+  assert (oldLB_ != NULL &&
 	  oldUB_ != NULL);
 
   double
@@ -28,10 +28,10 @@ void CouenneBTPerfIndicator::update (const CouNumber *lb, const CouNumber *ub, i
 
   // Compute improvement in bounds:
 
-  int 
-    nFixed  = 0, 
-    nShr    = 0, 
-    nShrDbl = 0, 
+  int
+    nFixed  = 0,
+    nShr    = 0,
+    nShrDbl = 0,
     nPrInf  = 0;
 
   double ratio = 0.;
@@ -40,7 +40,7 @@ void CouenneBTPerfIndicator::update (const CouNumber *lb, const CouNumber *ub, i
 
   for (int i=0; i<problem_ -> nVars (); ++i) {
 
-    CouNumber 
+    CouNumber
       olb = oldLB_ [i], oub = oldUB_ [i],
       nlb = lb     [i], nub = ub     [i];
 
@@ -49,13 +49,13 @@ void CouenneBTPerfIndicator::update (const CouNumber *lb, const CouNumber *ub, i
 
     // Check if optimal solution violated
 
-    if (optimum && 
+    if (optimum &&
 	((optimum [i] < nlb - COUENNE_EPS && optimum [i] >= olb) ||
 	 (optimum [i] > nub + COUENNE_EPS && optimum [i] <= oub)))
 
       printf (" %30s cuts optimum at x_%d=%e: [%e,%e] --> [%e,%e], diff:%e\n",
 	      name_.c_str (),
-	      i, optimum [i], 
+	      i, optimum [i],
 	      olb, oub,
 	      nlb, nub,
 	      CoinMax (nlb - optimum [i],
@@ -63,13 +63,13 @@ void CouenneBTPerfIndicator::update (const CouNumber *lb, const CouNumber *ub, i
 
     // Check if bound has worsened rather than improved
 
-    if ((((olb > -COUENNE_INFINITY / 1e4) && (nlb < olb - COUENNE_EPS)) ||  
-	 ((oub <  COUENNE_INFINITY / 1e4) && (nub > oub + COUENNE_EPS))) && 
+    if ((((olb > -COUENNE_INFINITY / 1e4) && (nlb < olb - COUENNE_EPS)) ||
+	 ((oub <  COUENNE_INFINITY / 1e4) && (nub > oub + COUENNE_EPS))) &&
 	((nlb >= nub + 2 - 1e-5) && i == 0)) // check this is not a wiping cut
 	
       printf (" %30s makes bound worse (x%d): [%e,%e] --> [%e,%e], diff:%e\n",
 	      name_.c_str (),
-	      i, 
+	      i,
 	      olb, oub,
 	      nlb, nub,
 	      CoinMax (olb - nlb,
@@ -87,10 +87,10 @@ void CouenneBTPerfIndicator::update (const CouNumber *lb, const CouNumber *ub, i
       ratio = 0.;
       break;
 
-    } else if ((nlb > -COUENNE_INFINITY) && 
+    } else if ((nlb > -COUENNE_INFINITY) &&
 	       (nub <  COUENNE_INFINITY)) { // finite bounds
 
-      if (olb <= -COUENNE_INFINITY || 
+      if (olb <= -COUENNE_INFINITY ||
 	  oub >=  COUENNE_INFINITY) { /// case 2: interval got finite from [-inf,u] or [l,+inf]
 
 	if ((olb <= -COUENNE_INFINITY) &&
@@ -104,14 +104,14 @@ void CouenneBTPerfIndicator::update (const CouNumber *lb, const CouNumber *ub, i
 
 	// printf ("{%g}\t", ratio);
 
-	ratio += (log (CoinMax (1e-6, oub - olb)) - 
+	ratio += (log (CoinMax (1e-6, oub - olb)) -
 		  log (CoinMax (1e-6, nub - nlb)));
 
-	// printf ("%g\tlog (%g-%g) - log (%g-%g) = log %g - log %g = %g - %g = %g ===> %g, %g [%g,%g,%g]\n", 
+	// printf ("%g\tlog (%g-%g) - log (%g-%g) = log %g - log %g = %g - %g = %g ===> %g, %g [%g,%g,%g]\n",
 	// 	boundRatio_      * weightSum_,
-	// 	oub, olb, nub, nlb, oub - olb, nub - nlb, 
-	// 	log (oub - olb),  log (nub - nlb), 
-	// 	log (oub - olb) - log (nub - nlb), 
+	// 	oub, olb, nub, nlb, oub - olb, nub - nlb,
+	// 	log (oub - olb),  log (nub - nlb),
+	// 	log (oub - olb) - log (nub - nlb),
 	// 	ratio, boundRatio_, weightSum_, curWei, newWS);
 
       }
@@ -120,7 +120,7 @@ void CouenneBTPerfIndicator::update (const CouNumber *lb, const CouNumber *ub, i
       ++nShrDbl;
   }
 
-  // Update 
+  // Update
 
   ++nRuns_;
 

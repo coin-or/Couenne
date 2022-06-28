@@ -80,7 +80,7 @@ namespace Couenne {
     }
 
     /// Reset (eeeeasy!)
-    void reset () 
+    void reset ()
     {n_ = 0;}
 
     /// Access -- the only chance for garbage to be returned (and for
@@ -92,7 +92,7 @@ namespace Couenne {
 
       unsigned int &sind = sInd_ [index];
 
-      if ((sind >= n_) || 
+      if ((sind >= n_) ||
 	  (dInd_ [sind] != index))
 	dInd_ [sind = n_++] = index;	// this entry is new and has to be initialized	
 
@@ -112,7 +112,7 @@ namespace Couenne {
     {return n_;}
 
     /// Resize
-    void resize (unsigned int newsize) 
+    void resize (unsigned int newsize)
     {size_ = newsize;}
   };
 }

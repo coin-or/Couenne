@@ -3,7 +3,7 @@
  * Name:    CouenneExprJac.hpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Jacobian expression
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 

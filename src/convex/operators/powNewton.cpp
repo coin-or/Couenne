@@ -26,9 +26,9 @@
 
 namespace Couenne {
 
-CouNumber powNewton (CouNumber xc, CouNumber yc, 
-		     unary_function f, 
-		     unary_function fp, 
+CouNumber powNewton (CouNumber xc, CouNumber yc,
+		     unary_function f,
+		     unary_function fp,
 		     unary_function fpp) {
 
   // Find a zero to the function
@@ -111,27 +111,27 @@ CouNumber powNewton (CouNumber xc, CouNumber yc, funtriplet *tri) {
 #else
 
 /// the operator itself
-inline CouNumber inv (CouNumber arg) 
+inline CouNumber inv (CouNumber arg)
 {return 1.0 / arg;}
 
 
 /// derivative of inv (x)
-inline CouNumber oppInvSqr (CouNumber x) 
+inline CouNumber oppInvSqr (CouNumber x)
 {return (- inv (x*x));}
 
 
 /// inv_dblprime, second derivative of inv (x)
-inline CouNumber inv_dblprime (CouNumber x) 
+inline CouNumber inv_dblprime (CouNumber x)
 {return (2 * inv (x*x*x));}
 
 
 int main (int argc, char **argv) {
 
-  CouNumber r, 
+  CouNumber r,
     xc = atof (argv [2]),
     yc = atof (argv [3]);
 
-  unary_function 
+  unary_function
     f   = log,
     fp  = inv,
     fpp = oppInvSqr;
@@ -141,9 +141,9 @@ int main (int argc, char **argv) {
   for (int i=1; i--;)
     r = powNewton (xc, yc, f, fp, fpp);
 
-  printf ("xc = %.14f: xk = %.15f, slope %.15f -- %.15f ==> [%.15f = -1?]\n", 
-	  xc, r, fp (r), 
-	           (yc - f (r)) / (xc - r), 
+  printf ("xc = %.14f: xk = %.15f, slope %.15f -- %.15f ==> [%.15f = -1?]\n",
+	  xc, r, fp (r),
+	           (yc - f (r)) / (xc - r),
 	  fp (r) * (yc - f (r)) / (xc - r));
 
   return 0;

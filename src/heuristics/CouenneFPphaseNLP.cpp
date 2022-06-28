@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti
  * Purpose: NLP part of the loop
  * Created: February 1, 2014
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -105,7 +105,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   ////////////////////////////////////////////////////////////////
 
-  if ((multHessNLP_  != 0.) || 
+  if ((multHessNLP_  != 0.) ||
       (multHessMILP_ != 0.))
     nlp_ -> getSaveOptHessian () = true;
 
@@ -171,7 +171,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   // fix integer variables
   // resolve NLP
 
-  CouNumber 
+  CouNumber
     *nSol = NULL, // solution of the nonlinear problem
     *iSol = NULL, // solution of the IP problem
     *best = NULL; // best solution found so far
@@ -186,7 +186,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   /////////////////////////////////////////////////////////////////////////
   //                      _                   _
   //                     (_)                 | |
-  //  _ __ ___     __ _   _    _ __          | |    ___     ___    _ __ 
+  //  _ __ ___     __ _   _    _ __          | |    ___     ___    _ __
   // | '_ ` _ \   / _` | | |  | '_ \         | |   / _ \   / _ \  | '_ `.
   // | | | | | | | (_| | | |  | | | |        | |  | (_) | | (_) | | |_) |
   // |_| |_| |_|  \__,_| |_|  |_| |_|        |_|   \___/   \___/  | .__/
@@ -230,7 +230,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // Solve IP using nSol as the initial point to minimize weighted
     // l-1 distance from. If nSol==NULL, the MILP is created using the
     // original milp's LP solution.
-            
+
     double z = solveMILP (nSol, iSol, niter, &nsuciter);
 
     // if no MILP solution was found, bail out
@@ -257,7 +257,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	}
       }
 
-      if (!try_again) { // try moving around current solution 
+      if (!try_again) { // try moving around current solution
 
 	// SCIP could not find a MILP solution and we're somewhat
 	// locked. Round current solution and feed it to the NLP. This
@@ -269,11 +269,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  iSol = new double [n];
 
 	for (int i=0; i<n; i++)
-	  iSol [i] = (problem_ -> Var (i) -> isInteger ()) ? 
-	    COUENNE_round (nSol [i]) : 
+	  iSol [i] = (problem_ -> Var (i) -> isInteger ()) ?
+	    COUENNE_round (nSol [i]) :
 	    nSol [i];
       }
- 
+
       // if (!try_again) { // nothing to do, bail out	
       // 	problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: could not find from pool either, bailing out\n");
       // 	break;
@@ -327,7 +327,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	} while( !pool_ -> Set ().empty() );
 
-      } else if (((tabuMgt_ == FP_TABU_CUT)   ||  
+      } else if (((tabuMgt_ == FP_TABU_CUT)   ||
 		  ((pool_ -> Set (). empty ()) && iSol))) {
 
 	OsiCuts cs;
@@ -349,11 +349,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	// perturb solution	
 
-	const CouNumber 
+	const CouNumber
 	  *lb = milp_ -> getColLower (),
 	  *ub = milp_ -> getColUpper ();
 
-	double 
+	double
 	  downMoves = 0.,
 	  upMoves   = 0.;
 
@@ -371,7 +371,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  if (problem_ -> Var (i) -> isInteger ()) {
 
 	    double
-	      rnd  = CoinDrand48 (), 
+	      rnd  = CoinDrand48 (),
 	      down = 0.,
 	      up   = 1.;
 
@@ -390,11 +390,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  }
 	}
       }
-    } 
+    }
 
     problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: checking IP solution for feasibility\n");
 
-    isChecked = problem_ -> checkNLP0 (iSol, z, true, 
+    isChecked = problem_ -> checkNLP0 (iSol, z, true,
 				       false, // don't care about obj
 				       true,  // stop at first violation
 				       true); // checkAll
@@ -457,14 +457,14 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	  if (z < problem_ -> getCutOff ()) // don't waste time if not improving
 
-	    isChecked = problem_ -> checkNLP0 (nSol, z, true, 
+	    isChecked = problem_ -> checkNLP0 (nSol, z, true,
 					       false, // don't care about obj
 					       true,  // stop at first violation
 					       true); // checkAll
 
-	  if (isChecked && (z < problem_ -> getCutOff ())) 
+	  if (isChecked && (z < problem_ -> getCutOff ()))
 	    break;
-	} 
+	}
 
 	// find non-tabu solution in the solution pool
 	while (!pool_ -> Set (). empty ()) {
@@ -479,7 +479,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	    try_again = true;
 	    break;
 	  }
-	} 
+	}
 
       } while (try_again);
     }
@@ -534,7 +534,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
 	if (objInd >= 0) {
 	  chg_bds = new t_chg_bounds [problem_ -> nVars ()];
-	  chg_bds [objInd].setUpper (t_chg_bounds::CHANGED); 
+	  chg_bds [objInd].setUpper (t_chg_bounds::CHANGED);
 	}
 
 	// If, with new cutoff, bound tightening clears the whole
@@ -550,7 +550,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	  break;
 
 	// Update lb/ub on milp and nlp here
-	const CouNumber 
+	const CouNumber
 	  *plb = problem_ -> Lb (),
 	  *pub = problem_ -> Ub (),
 	  *mlb = milp_    -> getColLower (),
@@ -571,7 +571,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: IP solution NOT MINLP feasible\n");
 
-      if (milpCuttingPlane_ == FP_CUT_EXTERNAL || 
+      if (milpCuttingPlane_ == FP_CUT_EXTERNAL ||
 	  milpCuttingPlane_ == FP_CUT_POST) {
 
 	// Solution is IP- but not MINLP feasible: it might get cut by
@@ -583,14 +583,14 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	couenneCG_ -> genRowCuts (*milp_, cs, 0, NULL); // remaining three arguments NULL by default
 	problem_   -> domain () -> pop ();
 
-	if (cs.sizeRowCuts ()) { 
+	if (cs.sizeRowCuts ()) {
 
 	  // the (integer, NLP infeasible) solution could be separated
 
 	  milp_ -> applyCuts (cs);
 
 	  // found linearization cut, now re-solve MILP (not quite a FP)
-	  if (milpCuttingPlane_ == FP_CUT_EXTERNAL && 
+	  if (milpCuttingPlane_ == FP_CUT_EXTERNAL &&
 	      nSep++ < nSepRounds_)
 	    continue;
 	}
@@ -608,7 +608,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     // fix some variables and solve the NLP to find a NLP (possibly
     // non-MIP) feasible solution
 
-    z = solveNLP (iSol, nSol); 
+    z = solveNLP (iSol, nSol);
 
     if ((nSol && iSol) &&
 	(problem_ -> Jnlst () -> ProduceOutput (J_WARNING, J_NLPHEURISTIC))) {
@@ -627,8 +627,8 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	    (fabs (iSol [i] - ceil (iSol [i] - .5)) > COUENNE_EPS))
 	  ++nNonint;
 
-	dist += 
-	  (iSol [i] - nSol [i]) * 
+	dist +=
+	  (iSol [i] - nSol [i]) *
 	  (iSol [i] - nSol [i]);
       }
 
@@ -651,7 +651,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
     if (nSol) {
 
       isChecked = problem_->checkNLP0 (nSol, z, true,
-				       false, // do not care about obj 
+				       false, // do not care about obj
 				       true, // stopAtFirstViol
 				       true); // checkALL
     }
@@ -689,13 +689,13 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 	if (objInd >= 0) {
 	
 	  chg_bds = new t_chg_bounds [problem_ -> nVars ()];
-	  chg_bds [objInd].setUpper (t_chg_bounds::CHANGED); 
+	  chg_bds [objInd].setUpper (t_chg_bounds::CHANGED);
 	}
 
 	// if bound tightening clears the whole feasible set, stop
 	bool is_still_feas = problem_ -> btCore (chg_bds);
 
-	if (chg_bds) 
+	if (chg_bds)
 	  delete [] chg_bds;
 
 	if (!is_still_feas)
@@ -708,7 +708,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
     //multHessNLP_ *= save_multHessNLP_; // exponential reduction
 
-  } while ((niter++ < maxIter_) && 
+  } while ((niter++ < maxIter_) &&
 	   (retval == 0));
 
   problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: out of the FP loop (feas=%d\n)", retval);
@@ -717,7 +717,7 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
   // If MINLP solution found,
   //
-  // 1) restore original objective 
+  // 1) restore original objective
   // 2) fix integer variables
   // 3) resolve NLP
 
@@ -750,10 +750,10 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
 
       ////////////////////////////////////////////////////////////////
 
-      if ((status != Solve_Succeeded) && 
+      if ((status != Solve_Succeeded) &&
 	  (status != Solved_To_Acceptable_Level))
- 
-	problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, 
+
+	problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC,
 					"Feasibility Pump: error in final NLP problem (due to fixing integer variables?)\n");
 
       if (nlp_ -> getSolution () && (problem_ -> Jnlst () -> ProduceOutput (J_ALL, J_NLPHEURISTIC))) { // check if non-NULL
@@ -843,11 +843,11 @@ int CouenneFeasPump::solution (double &objVal, double *newSolution) {
   delete postlp_;
   milp_ = postlp_ = NULL;
 
-  problem_ -> Jnlst () -> Printf 
+  problem_ -> Jnlst () -> Printf
     (J_WARNING, J_NLPHEURISTIC, "FP: done ===================\n");
 
   if (!retval)
-    problem_ -> Jnlst () -> Printf 
+    problem_ -> Jnlst () -> Printf
       (J_ERROR, J_NLPHEURISTIC, "FP: No solution found\n");
 
   if (retval && (-2 == nCalls_)) {
@@ -881,14 +881,14 @@ void compDistSingle (CouenneProblem *p,
 
   norm = sqrt (norm);
 
-  for (std::vector <exprVar *>::iterator i = p -> Variables (). begin (); 
+  for (std::vector <exprVar *>::iterator i = p -> Variables (). begin ();
        i != p -> Variables (). end ();
        ++i) {
 
     if ((*i) -> Multiplicity () <= 0)
       continue;
 
-    CouNumber 
+    CouNumber
       vval = (**i) ();
 
     if ((*i) -> isInteger ()) {
@@ -904,7 +904,7 @@ void compDistSingle (CouenneProblem *p,
 
     if ((*i) -> Type () == AUX) {
 
-      double 
+      double
 	diff = 0.,
 	fval = (*((*i) -> Image ())) ();
 
@@ -927,15 +927,15 @@ void printDist (CouenneProblem *p, const double *iSol, double *nSol) {
 
   int nInfII = -1, nInfNI = -1, nInfIN = -1, nInfNN = -1;
 
-  double 
-    dist  = -1., 
-    normI = -1., normN = -1., 
+  double
+    dist  = -1.,
+    normI = -1., normN = -1.,
     infII = -1., infNI = -1.,
     infIN = -1., infNN = -1.;
 
   if (iSol) compDistSingle (p, p -> nVars (), iSol, normI, nInfII, nInfNI, infII, infNI);
   if (nSol) compDistSingle (p, p -> nVars (), nSol, normN, nInfIN, nInfNN, infIN, infNN);
-  
+
   if (iSol && nSol) {
 
     dist = 0.;
@@ -945,8 +945,8 @@ void printDist (CouenneProblem *p, const double *iSol, double *nSol) {
       if (p -> Var (i) -> Multiplicity () <= 0)
 	continue;
 
-      dist += 
-	(iSol [i] - nSol [i]) * 
+      dist +=
+	(iSol [i] - nSol [i]) *
 	(iSol [i] - nSol [i]);
     }
 
@@ -965,15 +965,15 @@ void printCmpSol (CouenneProblem *p, const double *iSol, double *nSol, int direc
 
   int n = p -> nVars ();
 
-  printf ("i:%p n:%p\nFP # ", 
+  printf ("i:%p n:%p\nFP # ",
 	  (void *) iSol, (void *) nSol);
 
-  double 
+  double
     distance = 0.,
     diff;
 
   char c =
-    direction < 0 ? '<' : 
+    direction < 0 ? '<' :
     direction > 0 ? '>' : '-';
 
   for (int i=0; i<n; i++) {
@@ -984,11 +984,11 @@ void printCmpSol (CouenneProblem *p, const double *iSol, double *nSol, int direc
     if (i && !(i % WRAP))
       printf ("\nFP # ");
 
-    double 
+    double
       iS = iSol ? iSol [i] : 12345., // flag values, to be seen if something is wrong
       nS = nSol ? nSol [i] : 54321.;
 
-    printf ("[%4d %+e -%c- %+e (%e)] ", 
+    printf ("[%4d %+e -%c- %+e (%e)] ",
 	    i, iS, c, nS,
 	    (iSol && nSol) ? fabs (iS - nS) : 0.);
 
@@ -1003,4 +1003,4 @@ void printCmpSol (CouenneProblem *p, const double *iSol, double *nSol, int direc
     distance = sqrt (distance);
     printf ("\n### distance: %e\n", distance);
   }
-} 
+}

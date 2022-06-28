@@ -1,4 +1,4 @@
-/* 
+/*
  *
  * Name:    conv-exprPow-getBounds.cpp
  * Author:  Pietro Belotti
@@ -42,12 +42,12 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
   expression *lbbase, *ubbase;
   arglist_ [0] -> getBounds (lbbase, ubbase);
 
-  //    printf ("ubbase = "); ubbase -> print (std::cout); printf ("\n"); 
+  //    printf ("ubbase = "); ubbase -> print (std::cout); printf ("\n");
 
-  if (arglist_ [1] -> Type () == CONST) { 
+  if (arglist_ [1] -> Type () == CONST) {
 
     // expression = x^b, b!=0. There are four cases:
-    // 
+    //
     // 1) b   is integer and odd or signpower (cube, x^5, etc)
     // 2) b   is integer and even (square, x^8, etc)
     // 3) 1/b is integer and odd  (cube root, x^(1/7), etc)
@@ -71,7 +71,7 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
 
       lb = new exprPow (lbbase, new exprConst (expon), issignpower_);
       ub = new exprPow (ubbase, new exprConst (expon), issignpower_);
-    } 
+    }
     else {
 
       // the exponent is either negative, integer even and not signpower, or fractional
@@ -83,7 +83,7 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
       all [2] = new exprConst (0.);
       all [4] = ubbase;
 
-      if (expon > 0) 
+      if (expon > 0)
 	all    [1] = new exprPow (new exprClone (lbbase), new exprConst (expon));
       else all [1] = new exprPow (new exprClone (ubbase), new exprConst (expon));
 
@@ -91,10 +91,10 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
 
       if (expon > COUENNE_EPS) all [3] = new exprConst (0.);
       else if (isInt || isInvInt) {
-	if (rndexp % 2) 
+	if (rndexp % 2)
 	  all [3] = new exprConst (-COUENNE_INFINITY);
 	else all [3] = new exprMin (new exprClone (all [1]),
-				    new exprPow (new exprClone (lbbase), 
+				    new exprPow (new exprClone (lbbase),
 						 new exprConst (expon)));
       }
       else all [3] = new exprClone (all [1]);
@@ -137,7 +137,7 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
 
 	//if ((isInt || isInvInt) && !(rndexp % 2))
 	//alu    [1] = new exprPow (new exprClone (ubbase), new exprConst (expon));
-	//else 
+	//else
 
 	// if negative exponent and base has nonnegative lower bound,
 	// the upper bound can only be lb^k
@@ -145,7 +145,7 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
 
 	// alu [3] is upper bound when lbbase <= 0 <= ubbase
 
-	//if (expon < - COUENNE_EPS) 
+	//if (expon < - COUENNE_EPS)
 	alu [3] = new exprConst (COUENNE_INFINITY);
 	//else if (isInt && !(rndexp % 2))
 	//alu [3] = new exprPow (new exprMax (new exprClone (lbbase), new exprClone (ubbase)),
@@ -156,12 +156,12 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
 
 	/*if (expon > COUENNE_EPS) {
 
-	  if (isInt && !(rndexp % 2)) 
+	  if (isInt && !(rndexp % 2))
 	    alu [5] = new exprPow (new exprClone(ubbase), new exprConst(expon));
 	  else alu [5] = new exprConst (0.);
 	}
 	else {*/
-	if (isInt || isInvInt) 
+	if (isInt || isInvInt)
 	  alu [5] = new exprPow (new exprClone (ubbase), new exprConst (expon));
 	else alu [5] = new exprConst (COUENNE_INFINITY);
 	  //}
@@ -176,7 +176,7 @@ void exprPow::getBounds (expression *&lb, expression *&ub) {
   /*CouNumber l, u;
   arglist_ [0] -> getBounds (l,u);
 
-  printf ("pow::bound: ["); 
+  printf ("pow::bound: [");
   lb -> print (); printf ("=%g, ", (*lb) ());
   ub -> print (); printf ("=%g [%g,%g]\n", (*ub) (), l, u);*/
 }
@@ -189,7 +189,7 @@ void exprPow::getBounds (CouNumber &lb, CouNumber &ub) {
   arglist_ [0] -> getBounds (lba, uba);
   int intk;
 
-  bool 
+  bool
     isInt    =           fabs (k    - (double) (intk = COUENNE_round (k)))    < COUENNE_EPS,
     isInvInt = !isInt && fabs (1./k - (double) (intk = COUENNE_round (1./k))) < COUENNE_EPS;
 

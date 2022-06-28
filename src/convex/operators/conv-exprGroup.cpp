@@ -24,8 +24,8 @@ using namespace Couenne;
 /// Get lower and upper bound of an expression (if any)
 void exprGroup::getBounds (expression *&lb, expression *&ub) {
 
-  expression 
-    **lbnl = new expression * [1], 
+  expression
+    **lbnl = new expression * [1],
     **ubnl = new expression * [1];
 
   // TODO: do not aggregate members of exprSum
@@ -33,7 +33,7 @@ void exprGroup::getBounds (expression *&lb, expression *&ub) {
   // compute lower/upper bound of nonlinear part
   exprSum::getBounds (*lbnl, *ubnl);
 
-  lincoeff 
+  lincoeff
     *coeL = new lincoeff,
     *coeU = new lincoeff;
 
@@ -82,7 +82,7 @@ void exprGroup::getBounds (expression *&lb, expression *&ub) {
 //   if (fabs (c0_) > COUENNE_EPS) nlin++;
 //   //  for (int *ind = index_; *ind++>=0; nlin++);
 
-//   expression 
+//   expression
 //     **linall = new expression * [nlin + 1], // linear arglist for lower bound
 //     **linalu = new expression * [nlin + 1]; //                    upper
 
@@ -158,7 +158,7 @@ void exprGroup::getBounds (CouNumber &lb, CouNumber &ub) {
     exprVar    *var = el -> first;
     CouNumber coeff = el -> second, vlb, vub;
 
-    bool 
+    bool
       inf_lb = false,
       inf_ub = false;
 
@@ -193,7 +193,7 @@ void exprGroup::getBounds (CouNumber &lb, CouNumber &ub) {
 // generate equality between *this and *w
 void exprGroup::generateCuts (expression *w,
 			      OsiCuts &cs, const CouenneCutGenerator *cg,
-			      t_chg_bounds *chg, 
+			      t_chg_bounds *chg,
 			      int wind, CouNumber lb, CouNumber ub) {
 
   // very similar to exprSum::generateCuts. First of all, this has
@@ -207,11 +207,11 @@ void exprGroup::generateCuts (expression *w,
 
   OsiRowCut *cut = new OsiRowCut;
 
-  // If this aux is fixed, don't write 
+  // If this aux is fixed, don't write
   //
   // "- w + ax = -b" but just
-  // 
-  // "ax = -b+ w0" 
+  //
+  // "ax = -b+ w0"
   //
   // with w0 its constant value
 
@@ -228,7 +228,7 @@ void exprGroup::generateCuts (expression *w,
 
   if (wind < 0 && !uselessAux) {
     // first, make room for aux variable
-    coeff [0] = -1.; 
+    coeff [0] = -1.;
     index [0] = w -> Index ();
     lb = ub = 0.;
   }
@@ -244,12 +244,12 @@ void exprGroup::generateCuts (expression *w,
 
   nterms = displacement;
 
-  for (; el != lcoeff_.end (); ++el) 
+  for (; el != lcoeff_.end (); ++el)
 
-    if (fabs (el -> second) > 1.e-21) { 
+    if (fabs (el -> second) > 1.e-21) {
       // why 1.0e-21? Look at CoinPackedMatrix.cpp:2237
 
-      coeff [nterms]   = el -> second; 
+      coeff [nterms]   = el -> second;
       index [nterms++] = el -> first -> Index ();
     }
 
@@ -263,7 +263,7 @@ void exprGroup::generateCuts (expression *w,
       ub -= curr -> Value ();
     }
     else {                        // variable
-      coeff [nterms]   = 1.; 
+      coeff [nterms]   = 1.;
       index [nterms++] = curr -> Index ();
     }
   }

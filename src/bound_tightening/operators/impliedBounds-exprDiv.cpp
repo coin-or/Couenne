@@ -23,7 +23,7 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   bool resx, resy = resx = false;
 
-  CouNumber 
+  CouNumber
     wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
     wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
@@ -51,27 +51,27 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     if (c > COUENNE_EPS) {
 
       if (updateBound (-1, l+ind, xInt ? ceil (wl*c - COUENNE_EPS) : (wl*c))) {
-	resx = true; 
+	resx = true;
 	chg [ind].setLower (t_chg_bounds::CHANGED);
       }
 
       if (updateBound (+1, u+ind, xInt ? floor (wu*c + COUENNE_EPS) : (wu*c))) {
-	resx = true; 
+	resx = true;
 	chg [ind].setUpper (t_chg_bounds::CHANGED);
       }
-    } 
+    }
     else if (c < - COUENNE_EPS) {
 
       if (updateBound (-1, l+ind, xInt ? ceil  (wu*c - COUENNE_EPS) : (wu*c))) {
-	resx = true; 
+	resx = true;
 	chg [ind].setLower (t_chg_bounds::CHANGED);
       }
 
       if (updateBound (+1, u+ind, xInt ? floor (wl*c + COUENNE_EPS) : (wl*c))) {
-	resx = true; 
+	resx = true;
 	chg [ind].setUpper (t_chg_bounds::CHANGED);
       }
-    } 
+    }
   } else {
 
     // deal with all other cases
@@ -107,11 +107,11 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     // Where "INF" stands for "infeasible subproblem", "-" for
     // "nothing to improve", and the rest is improved (those with "?"
     // may improve).
- 
+
     int xi = arglist_ [0] -> Index (),
         yi = arglist_ [1] -> Index ();
 
-    CouNumber x0 = 0, 
+    CouNumber x0 = 0,
       *xl = l + xi, *yl = l + yi,
       *xu = u + xi, *yu = u + yi;
 
@@ -119,14 +119,14 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       wind, wl, wu, xi, *xl, *xu, yi, *yl, *yu);*/
 
     // avoid changing bounds if x is constant
-    if (xi == -1) 
+    if (xi == -1)
       xl = xu = &x0;
 
     //////////// deal with lower bound of w=x/y /////////////////////////////////////////////
 
     // simple case wl = wu = 0
 
-    if ((fabs (wl) < COUENNE_EPS) && 
+    if ((fabs (wl) < COUENNE_EPS) &&
 	(fabs (wu) < COUENNE_EPS)) {
 
       resx = updateBound (-1, xl, 0.) || resx;
@@ -134,7 +134,7 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       return resx || resy;
     }
 
-    bool resxL, resxU, resyL, 
+    bool resxL, resxU, resyL,
       resyU = resxL = resxU = resyL = false;
 
     // general case
@@ -216,7 +216,7 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     if (resyL) chg [yi].setLower(t_chg_bounds::CHANGED);
     if (resyU) chg [yi].setUpper(t_chg_bounds::CHANGED);
 
-    /*if (resx || resy) 
+    /*if (resx || resy)
       printf ("                 \ntightened division: w[%d] [%e %e], x%d [%e %e] / y%d [%e %e]\n",
 	      wind, wl, wu, xi, *xl, *xu, yi, *yl, *yu);
 	      else printf ("                                                 \r");*/
@@ -225,7 +225,7 @@ bool exprDiv::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     resy = resyL || resyU;
   }
 
-  bool 
+  bool
     xInt = arglist_ [0] -> isInteger (),
     yInt = arglist_ [1] -> isInteger ();
 

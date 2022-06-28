@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of operators to compute lower/upper bounds of sines
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -29,7 +29,7 @@ class COUENNELIB_EXPORT exprLBSin: public exprOp {
  public:
 
   /// Constructors, destructor
-  exprLBSin (expression *lb, expression *ub): 
+  exprLBSin (expression *lb, expression *ub):
     exprOp (new expression * [2], 2) {
     arglist_ [0] = lb;
     arglist_ [1] = ub;
@@ -37,7 +37,7 @@ class COUENNELIB_EXPORT exprLBSin: public exprOp {
 
   /// cloning method
   expression *clone (Domain *d = NULL) const
-  {return new exprLBSin (arglist_ [0] -> clone (d), 
+  {return new exprLBSin (arglist_ [0] -> clone (d),
 			 arglist_ [1] -> clone (d));}
 
   /// function for the evaluation of the expression
@@ -57,15 +57,15 @@ class COUENNELIB_EXPORT exprLBSin: public exprOp {
 
 inline CouNumber exprLBSin::operator () () {
 
-  CouNumber 
+  CouNumber
     l = (*(arglist_ [0])) (),
     u = (*(arglist_ [1])) ();
 
   CouNumber pi2 = 2 * M_PI;
- 
+
   if ((u - l >= pi2) ||        // 1) interval spans whole cycle
       (floor (l/pi2 - 0.75) < // 2) there is a 3/2 pi + 2k pi between l and u
-       floor (u/pi2 - 0.75))) 
+       floor (u/pi2 - 0.75)))
     return -1.;
 
   return CoinMin (sin (l), sin (u));
@@ -82,7 +82,7 @@ class COUENNELIB_EXPORT exprUBSin: public exprOp {
  public:
 
   /// Constructors, destructor
-  exprUBSin (expression *lb, expression *ub): 
+  exprUBSin (expression *lb, expression *ub):
     exprOp (new expression * [2], 2) {
     arglist_ [0] = lb;
     arglist_ [1] = ub;
@@ -90,7 +90,7 @@ class COUENNELIB_EXPORT exprUBSin: public exprOp {
 
   /// cloning method
   expression *clone (Domain *d = NULL) const
-  {return new exprUBSin (arglist_ [0] -> clone (d), 
+  {return new exprUBSin (arglist_ [0] -> clone (d),
 			 arglist_ [1] -> clone (d));}
 
   /// function for the evaluation of the expression
@@ -110,7 +110,7 @@ class COUENNELIB_EXPORT exprUBSin: public exprOp {
 
 inline CouNumber exprUBSin::operator () () {
 
-  CouNumber 
+  CouNumber
     l = (*(arglist_ [0])) (),
     u = (*(arglist_ [1])) ();
 
@@ -118,7 +118,7 @@ inline CouNumber exprUBSin::operator () () {
 
   if ((u - l >= pi2) ||       // 1) interval spans whole cycle
       (floor (l/pi2 - 0.25) < // 2) there is a pi/2 + 2k pi between l and u
-       floor (u/pi2 - 0.25))) 
+       floor (u/pi2 - 0.25)))
     return 1.;
 
   return CoinMax (sin (l), sin (u));

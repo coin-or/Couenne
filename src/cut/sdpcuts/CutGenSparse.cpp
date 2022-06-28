@@ -48,7 +48,7 @@ void CouenneSdpCuts::sparsify2 (const int n,
 
   bool *del_idx = NULL;
 
-  int 
+  int
     running_n = n,
     best_idx,
     rnsq     = (running_n - 1) * (running_n - 1),
@@ -99,9 +99,9 @@ void CouenneSdpCuts::sparsify2 (const int n,
 
 	  double val2 = matrixCopy [running_n*i + j];
 
-	  T     [idx1] = 
-	  T     [idx2] = 
-	  Tcopy [idx1] = 
+	  T     [idx1] =
+	  T     [idx2] =
+	  Tcopy [idx1] =
 	  Tcopy [idx2] = val2;
 
 	  ++jj;
@@ -212,10 +212,10 @@ void CouenneSdpCuts::sparsify2 (const int n,
 
 /************************************************************************/
 void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,
-					OsiCuts &cs, 
-					CouenneExprMatrix *minor, 
-					int n, 
-					const double *A, 
+					OsiCuts &cs,
+					CouenneExprMatrix *minor,
+					int n,
+					const double *A,
 					const double *vector,
 					int **indA) const {
   int
@@ -232,11 +232,11 @@ void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,
   for (int i=0, k=0; i<n; i++)
 
     if (indices [i] >= 0) {
-      
+
       for (int j=0, k2 = 0; j<n; j++)
 
 	if (indices [j] >= 0) {
-	  subA [cnt * k  + k2] = 
+	  subA [cnt * k  + k2] =
 	  subA [cnt * k2 + k ] = A [n*i + j];
 	  ++k2;
 	}
@@ -286,8 +286,8 @@ void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,
 
 /************************************************************************/
 void CouenneSdpCuts::update_sparsify_structures (const int n, double *v,
-						 double* margin, double* A, double *lhs, 
-						 const int *zeroed, int evidx, bool decompose, 
+						 double* margin, double* A, double *lhs,
+						 const int *zeroed, int evidx, bool decompose,
 						 int *evdec_num) const {
 
   int minor_n = n;
@@ -302,9 +302,9 @@ void CouenneSdpCuts::update_sparsify_structures (const int n, double *v,
 
     /*
       if (minor_n < n) {
-      add_v_cut(n, loc_selected, loc_card_selected, locv, 
+      add_v_cut(n, loc_selected, loc_card_selected, locv,
       init_card_selected, &has_init_vect,
-      selected, &card_selected, &new_selected, 
+      selected, &card_selected, &new_selected,
       trace_bin, trace_bin_size,
       sparse_v_mat, card_v_mat);
       }
@@ -384,21 +384,21 @@ void CouenneSdpCuts::update_sparsify_structures (const int n, double *v,
 
 
 /************************************************************************/
-void CouenneSdpCuts::zero_comp (const int ind_i, 
+void CouenneSdpCuts::zero_comp (const int ind_i,
 				const double delta,
-				const int n, 
+				const int n,
 				const int *selected,
-				int *loc_selected, 
-				int *ploc_card_selected, 
-				int *ploc_card_new_selected, 
-				double *ploc_lhs, 
-				double *locmargin, 
-				double *locmat, 
-				double *locv, 
-				const int evidx, 
-				bool wise, 
-				int *evdec_num, 
-				double *recomp_gap, 
+				int *loc_selected,
+				int *ploc_card_selected,
+				int *ploc_card_new_selected,
+				double *ploc_lhs,
+				double *locmargin,
+				double *locmat,
+				double *locv,
+				const int evidx,
+				bool wise,
+				int *evdec_num,
+				double *recomp_gap,
 				double *threshold) const {
 
   //double  curr_lhs = (*ploc_lhs);
@@ -426,24 +426,24 @@ void CouenneSdpCuts::zero_comp (const int ind_i,
 
 /************************************************************************/
 void CouenneSdpCuts::zero_unified     (enum zero_type type,
-				       const int n, 
+				       const int n,
 				       const int *order,
 				       const int *selected,
 				       const int min_card_new_selected,
-				       const double min_delta, 
-				       const int start_point, 
-				       const int curr_i, 
-				       int *loc_selected, 
-				       int *ploc_card_selected, 
-				       int *ploc_card_new_selected, 
-				       double *ploc_lhs, 
-				       double *locmargin, 
-				       double *locmat, 
-				       int *pnchanged, 
-				       double *locv, 
-				       const int evidx, 
-				       bool wise, 
-				       double *recomp_gap, 
+				       const double min_delta,
+				       const int start_point,
+				       const int curr_i,
+				       int *loc_selected,
+				       int *ploc_card_selected,
+				       int *ploc_card_new_selected,
+				       double *ploc_lhs,
+				       double *locmargin,
+				       double *locmat,
+				       int *pnchanged,
+				       double *locv,
+				       const int evidx,
+				       bool wise,
+				       double *recomp_gap,
 				       double *threshold,
 				       int *evdec_num) const {
 
@@ -451,27 +451,27 @@ void CouenneSdpCuts::zero_unified     (enum zero_type type,
 
   *pnchanged = 0;
   for (int i=0; i<n; i++) {
-    
+
     if (++curr_ind == n)
       curr_ind = 0;
-    
+
     int ind_i = order[curr_ind];
 
-    if (((type ==  POS_DELTA || type == VALID_DELTA) && 
-	 ((((selected [ind_i] == 0) && (min_card_new_selected >= *ploc_card_new_selected)) || 
-	   (curr_ind == start_point) || 
-	   (loc_selected[ind_i] == 0)))) 
+    if (((type ==  POS_DELTA || type == VALID_DELTA) &&
+	 ((((selected [ind_i] == 0) && (min_card_new_selected >= *ploc_card_new_selected)) ||
+	   (curr_ind == start_point) ||
+	   (loc_selected[ind_i] == 0))))
 	||
-	((type == SELECTED) && 
+	((type == SELECTED) &&
 	 ((selected[ind_i] == 0) || (loc_selected[ind_i] == 0))))
       continue;
-    
+
     double delta = 2 * locmargin [ind_i] - locmat [ind_i * n + ind_i];
     if (((type == VALID_DELTA || type == SELECTED) && (*ploc_lhs - delta < min_delta)) ||
 	((type == POS_DELTA)                       && (delta > 0))) {
 
-      zero_comp (ind_i, delta, n, selected, loc_selected, 
-		 ploc_card_selected, ploc_card_new_selected, 
+      zero_comp (ind_i, delta, n, selected, loc_selected,
+		 ploc_card_selected, ploc_card_new_selected,
 		 ploc_lhs, locmargin, locmat, locv, evidx, wise, evdec_num, recomp_gap, threshold);
       (*pnchanged)++;
     }
@@ -481,7 +481,7 @@ void CouenneSdpCuts::zero_unified     (enum zero_type type,
 
 /************************************************************************/
 void CouenneSdpCuts::add_v_cut(const int n,
-			       const int *loc_selected, 
+			       const int *loc_selected,
 			       const int loc_card_selected,
 			       const double *locv,
 			       const int init_card_selected, int *has_init_vect,
@@ -529,7 +529,7 @@ void CouenneSdpCuts::add_v_cut(const int n,
 
 /************************************************************************/
 void CouenneSdpCuts::sparsify (bool use_new_sparsify,
-			       const int evidx, const double eigen_val, 
+			       const int evidx, const double eigen_val,
 			       const double *v, const int n,
 			       const double *A, double **sparse_v_mat,
 			       int *card_v_mat, int *evdec_num) const {
@@ -541,13 +541,13 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
     loc_card_selected      = 0,
 
     *selected     = new int [n],
-    *loc_selected = new int [n], 
+    *loc_selected = new int [n],
     *order        = new int [n];
 	
   double
     min_delta,
     is_zero = 1 / (10 * sqrt ((double) n)),
-    lhs     = 0., 
+    lhs     = 0.,
     loc_lhs = 0.,
 
     *margin    = new double  [n],
@@ -579,7 +579,7 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
   /// Knuth shuffle for creating a random order
   for (int i=0; i<n; ++i) {
 
-    int 
+    int
       newpos = i + (int) floor (((double) (n - i) - 1.e-3) * drand48 ()),
       tmp    = order [newpos];
 
@@ -612,7 +612,7 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 	start_point = i;
 	break;
       }
-    
+
     loc_card_selected = n;
     loc_card_new_selected = n;
     loc_lhs = lhs;
@@ -658,9 +658,9 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 
 	int new_selected = 0;
 			
-	add_v_cut (n, loc_selected, loc_card_selected, locv, 
+	add_v_cut (n, loc_selected, loc_card_selected, locv,
 		   init_card_selected, &has_init_vect,
-		   selected, &card_selected, &new_selected, 
+		   selected, &card_selected, &new_selected,
 		   sparse_v_mat, card_v_mat);
       }
 
@@ -674,17 +674,17 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 
 	changed = 0;
 
-	int curr_nchanged = -1; 
+	int curr_nchanged = -1;
 
 	while (curr_nchanged) {
 
 	  zero_unified (SELECTED,
 			n, order, selected, min_number_new_per_cut,
 			min_delta, start_point,
-			curr_i, loc_selected, 
-			&loc_card_selected, &loc_card_new_selected, 
-			&loc_lhs, locmargin, locmat, 
-			&curr_nchanged,locv,evidx, use_new_sparsify, 
+			curr_i, loc_selected,
+			&loc_card_selected, &loc_card_new_selected,
+			&loc_lhs, locmargin, locmat,
+			&curr_nchanged,locv,evidx, use_new_sparsify,
 			&recomp_gap,
 			&threshold,
 			evdec_num);
@@ -700,9 +700,9 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 	  zero_unified (POS_DELTA,
 			n, order, selected, min_number_new_per_cut,
 			min_delta, // unused
-			start_point, start_point, loc_selected, 
-			&loc_card_selected, &loc_card_new_selected, 
-			&loc_lhs, locmargin, locmat, 
+			start_point, start_point, loc_selected,
+			&loc_card_selected, &loc_card_new_selected,
+			&loc_lhs, locmargin, locmat,
 			&curr_nchanged,locv,evidx,use_new_sparsify, &recomp_gap,&threshold,
 			evdec_num);
 
@@ -724,9 +724,9 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 	  zero_unified (VALID_DELTA,
 			n, order, selected, min_number_new_per_cut,
 			min_delta, start_point,
-			curr_i, loc_selected, 
-			&loc_card_selected, &loc_card_new_selected, 
-			&loc_lhs, locmargin, locmat, 
+			curr_i, loc_selected,
+			&loc_card_selected, &loc_card_new_selected,
+			&loc_lhs, locmargin, locmat,
 			&curr_nchanged,locv,evidx, use_new_sparsify, &recomp_gap,&threshold,
 			evdec_num);
 
@@ -741,9 +741,9 @@ void CouenneSdpCuts::sparsify (bool use_new_sparsify,
 
 	int new_selected = 0;
 
-	add_v_cut (n, loc_selected, loc_card_selected, locv, 
+	add_v_cut (n, loc_selected, loc_card_selected, locv,
 		   init_card_selected, &has_init_vect,
-		   selected, &card_selected, &new_selected, 
+		   selected, &card_selected, &new_selected,
 		   sparse_v_mat, card_v_mat);
       } else {
 	selected [order [start_point]] = 1;

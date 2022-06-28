@@ -22,8 +22,8 @@ using namespace Couenne;
 CouNumber exprTrilinear::selectBranch (const CouenneObject *obj,
 				       const OsiBranchingInformation *info,
 				       expression *&var,
-				       double * &brpts, 
-				       double * &brDist, // distance of current LP point 
+				       double * &brpts,
+				       double * &brDist, // distance of current LP point
 				       			 // to new convexifications
 				       int &way) {
 
@@ -36,7 +36,7 @@ CouNumber exprTrilinear::selectBranch (const CouenneObject *obj,
 
   assert ((xi >= 0) && (yi >= 0) && (zi >= 0));
 
-  CouNumber 
+  CouNumber
     xl = info -> lower_     [xi], yl = info -> lower_     [yi], zl = info -> lower_     [zi],
     xu = info -> upper_     [xi], yu = info -> upper_     [yi], zu = info -> upper_     [zi];
 
@@ -53,14 +53,14 @@ CouNumber exprTrilinear::selectBranch (const CouenneObject *obj,
     return 0.;
   }
 
-  // a very simple branching scheme: 
+  // a very simple branching scheme:
   //
   //            if any bound interval is (-inf,+inf), break it by branching at zero
-  // otherwise, if any bound interval is [a,+inf) or (-inf,b], 
-  //              break it by branching at zero (if interval includes zero) or 
+  // otherwise, if any bound interval is [a,+inf) or (-inf,b],
+  //              break it by branching at zero (if interval includes zero) or
   //                                    at 2a-1 (resp. 2b+1)
-  // otherwise, branch on the largest bound, in the middle 
-  
+  // otherwise, branch on the largest bound, in the middle
+
   if ((xl < -COUENNE_INFINITY) && (xu > COUENNE_INFINITY)) {*brpts = 0.; brDist [0] = brDist [1] = 1.; var = arglist_ [0]; return 1.;}
   if ((yl < -COUENNE_INFINITY) && (yu > COUENNE_INFINITY)) {*brpts = 0.; brDist [0] = brDist [1] = 1.; var = arglist_ [1]; return 1.;}
   if ((zl < -COUENNE_INFINITY) && (zu > COUENNE_INFINITY)) {*brpts = 0.; brDist [0] = brDist [1] = 1.; var = arglist_ [2]; return 1.;}

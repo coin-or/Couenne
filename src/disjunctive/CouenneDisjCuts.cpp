@@ -116,7 +116,7 @@ void CouenneDisjCuts::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> AddStringOption2
     ("disj_active_rows",
      "Only include violated linear inequalities in the CGLP.",
-     "no", 
+     "no",
      "yes", "",
      "no", "",
      "This reduces the size of the CGLP, but may produce less efficient cuts.");
@@ -124,7 +124,7 @@ void CouenneDisjCuts::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> AddStringOption2
     ("disj_active_cols",
      "Only include violated variable bounds in the Cut Generating LP (CGLP).",
-     "no", 
+     "no",
      "yes", "",
      "no", "",
      "This reduces the size of the CGLP, but may produce less efficient cuts."
@@ -133,7 +133,7 @@ void CouenneDisjCuts::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOption
   roptions -> AddStringOption2
     ("disj_cumulative",
      "Add previous disjunctive cut to current CGLP.",
-     "no", 
+     "no",
      "yes", "",
      "no", "",
      "When generating disjunctive cuts on a set of disjunctions 1, 2, ..., k, introduce the cut relative to the previous disjunction i-1 in the CGLP used for disjunction i. "

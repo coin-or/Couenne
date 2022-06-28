@@ -55,7 +55,7 @@ namespace Couenne {
 
     /// The main CglCutGenerator; not implemented yet
     void generateCuts(const OsiSolverInterface & solver,
-		      OsiCuts& cuts, 
+		      OsiCuts& cuts,
 		      const CglTreeInfo = CglTreeInfo ())
 #if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
     const
@@ -93,7 +93,7 @@ namespace Couenne {
     void setRestoreCutoff(bool value);
     bool getRestoreCutoff() const;
 
-  protected:    
+  protected:
 
     /// Pointer to the CouenneProblem representation
     CouenneSetup* couenne_;

@@ -31,7 +31,7 @@ namespace Couenne {
   public:
 
     /// Constructor
-    CouennePSDcon  (CouenneExprMatrix *X): 
+    CouennePSDcon  (CouenneExprMatrix *X):
       CouenneConstraint (),
       X_                (X) {}
 

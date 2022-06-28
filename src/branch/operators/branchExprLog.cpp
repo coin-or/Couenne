@@ -22,10 +22,10 @@ using namespace Couenne;
 
 /// set up branching object by evaluating many branching points for
 /// each expression's arguments
-CouNumber exprLog::selectBranch (const CouenneObject *obj, 
+CouNumber exprLog::selectBranch (const CouenneObject *obj,
 				 const OsiBranchingInformation *info,
 				 expression *&var,
-				 double * &brpts, 
+				 double * &brpts,
 				 double * &brDist, // distance of current LP
 						   // point to new convexifications
 				 int &way) {
@@ -35,7 +35,7 @@ CouNumber exprLog::selectBranch (const CouenneObject *obj,
 
   // quite similar to exprExp::selectBranch() (see branchExprExp.cpp)
   //
-  // two cases: inside or outside the belly. 
+  // two cases: inside or outside the belly.
   //
   // Inside: the distance depends on the projection of the current
   // point onto the would-be upper envelopes, which forces us to look
@@ -58,21 +58,21 @@ CouNumber exprLog::selectBranch (const CouenneObject *obj,
 
   assert ((ind >= 0) && (wi >= 0));
 
-  CouNumber 
+  CouNumber
     y0 = info -> solution_ [wi],
     x0 = info -> solution_ [ind],
     l  = info -> lower_    [ind],
     u  = info -> upper_    [ind];
 
   if (u < COUENNE_EPS) { // strange case, return default branching rule
-    var = NULL; 
+    var = NULL;
     return 0.;
   }
 
   if (x0 < SQ_COUENNE_EPS) // very unlikely...
     x0 = SQ_COUENNE_EPS;
 
-  if (y0 > log (x0)) { 
+  if (y0 > log (x0)) {
 
     // Outside -> branch on closest point on curve
 
@@ -83,11 +83,11 @@ CouNumber exprLog::selectBranch (const CouenneObject *obj,
     x0 -= *brpts;
 
     return (brDist [0] = brDist [1] = sqrt (x0*x0 + dy*dy)); // exact distance
-  } 
+  }
 
   // Inside. Two cases: ////////////////////////////////////////////////////
- 
-  if ((l <= SQ_COUENNE_EPS) && 
+
+  if ((l <= SQ_COUENNE_EPS) &&
       (u > COUENNE_INFINITY)) {
 
     // 1) curve is unlimited in both senses
@@ -105,14 +105,14 @@ CouNumber exprLog::selectBranch (const CouenneObject *obj,
       #endif*/
 
     // follow South-East diagonal to find point on curve
-    // so that current point is surely cut 
+    // so that current point is surely cut
     brpts = (double *) realloc (brpts, sizeof (double));
     *brpts = 0.5 * (x0 + exp (y0));
     way = TWO_RAND;
 
-    return CoinMin (brDist [0] = x0 - exp (y0), 
+    return CoinMin (brDist [0] = x0 - exp (y0),
 		    brDist [1] = log (x0) - y0);
-  } 
+  }
 
   // 2) at least one of them is finite
 
@@ -127,7 +127,7 @@ CouNumber exprLog::selectBranch (const CouenneObject *obj,
     return (brDist [1] = projectSeg (x0, y0, *brpts, log (*brpts), u, log (u), +1)); // exact distance
     //    return CoinMin (x0 - exp (y0), log (x0) - y0);
   }
- 
+
   if (u > COUENNE_INFINITY) { // l is far from zero
 
     *brpts = CoinMax (10*x0, obj -> midInterval (x0, l, u, info));
@@ -137,15 +137,15 @@ CouNumber exprLog::selectBranch (const CouenneObject *obj,
 
     return (brDist [0] = projectSeg (x0, y0, l, log (l), *brpts, log (*brpts), +1)); // exact distance
     //return log (x0) - y0;
-  } 
+  }
 
   // both are finite
- 
+
   simpletriplet ft (log, inv, oppInvSqr, inv);
 
   *brpts = obj -> getBrPoint (&ft, x0, l, u, info);
 
-  //  *brpts = midInterval (powNewton (x0, y0, log, inv, oppInvSqr), l, u, info); 
+  //  *brpts = midInterval (powNewton (x0, y0, log, inv, oppInvSqr), l, u, info);
   // WRONG! Local minima may be at bounds
 
   // compute distance from current point to new convexification(s) and

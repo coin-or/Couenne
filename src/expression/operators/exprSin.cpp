@@ -18,7 +18,7 @@
 
 namespace Couenne {
 
-static const CouNumber 
+static const CouNumber
   pi  = M_PI,
   pi2 = M_PI * 2.,
   pih = M_PI / 2.;
@@ -32,7 +32,7 @@ expression *exprSin::differentiate (int index) {
 }
 
 
-// compute bounds of sin x given bounds of x 
+// compute bounds of sin x given bounds of x
 void exprSin::getBounds (expression *&lb, expression *&ub) {
 
   expression *xl, *xu;
@@ -43,7 +43,7 @@ void exprSin::getBounds (expression *&lb, expression *&ub) {
   ub = new exprUBSin (new exprClone (xl), new exprClone (xu));
 }
 
-// compute value of bounds of cos x given bounds of x 
+// compute value of bounds of cos x given bounds of x
 void exprSin::getBounds (CouNumber &lb, CouNumber &ub) {
 
   CouNumber l, u;
@@ -51,13 +51,13 @@ void exprSin::getBounds (CouNumber &lb, CouNumber &ub) {
 
   if ((u - l >= pi2) ||       // 1) interval spans whole cycle
       (floor (l/pi2 - 0.75) < // 2) there is a pi + 2k pi between l and u
-       floor (u/pi2 - 0.75))) 
+       floor (u/pi2 - 0.75)))
     lb = -1.;
   else lb = CoinMin (sin (l), sin (u));
 
   if ((u - l >= pi2) ||       // 1) interval spans whole cycle
       (floor (l/pi2 - 0.25) < // 2) there is a 3/2 pi + 2k pi between l and u
-       floor (u/pi2 - 0.25))) 
+       floor (u/pi2 - 0.25)))
     ub = 1.;
   else ub = CoinMax (sin (l), sin (u));
 }
@@ -75,15 +75,15 @@ bool trigImpliedBound (enum cou_trig type, int wind, int xind,
 
   CouNumber fl, fu, iwl, iwu, displacement;
 
-  if (type == COU_SINE) {fl = sin (*xl); fu = sin (*xu); displacement = pih;} 
+  if (type == COU_SINE) {fl = sin (*xl); fu = sin (*xu); displacement = pih;}
   else                  {fl = cos (*xl); fu = cos (*xu); displacement = 0.;}
 
   iwl = acos (wl);
   iwu = acos (wu);
 
-  /*printf ("### [%s] old bd: [%g pi,%g pi] -> [%g,%g]  ---  w = [%g,%g] -8-> [%g pi, %g pi]\n", 
-	  type==COU_SINE ? "sin" : "cos", 
-	   *xl / pi, *xu / pi, fl, fu, 
+  /*printf ("### [%s] old bd: [%g pi,%g pi] -> [%g,%g]  ---  w = [%g,%g] -8-> [%g pi, %g pi]\n",
+	  type==COU_SINE ? "sin" : "cos",
+	   *xl / pi, *xu / pi, fl, fu,
 	   wl, wu, iwl/pi, iwu/pi);*/
 
   ////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ bool trigImpliedBound (enum cou_trig type, int wind, int xind,
     //printf ("### wu, fl: base = %g pi\n", base / pi);
 
     if (updateBound (-1, xl, base + iwu)) {
-      tighter = true; 
+      tighter = true;
       chg [xind]. setLower (t_chg_bounds::CHANGED);
     }
   }
@@ -107,7 +107,7 @@ bool trigImpliedBound (enum cou_trig type, int wind, int xind,
     //printf ("### wu, fu: base = %g pi\n", base / pi);
 
     if (updateBound (+1, xu, base - iwu)) {
-      tighter = true; 
+      tighter = true;
       chg [xind]. setUpper (t_chg_bounds::CHANGED);
     }
   }
@@ -119,7 +119,7 @@ bool trigImpliedBound (enum cou_trig type, int wind, int xind,
     //printf ("### wl, fl: base = %g pi\n", base / pi);
 
     if (updateBound (-1, xl, base + pi - iwl)) {
-      tighter = true; 
+      tighter = true;
       chg [xind]. setLower (t_chg_bounds::CHANGED);
     }
   }
@@ -131,7 +131,7 @@ bool trigImpliedBound (enum cou_trig type, int wind, int xind,
     //printf ("### wl, fu: base = %g pi\n", base / pi);
 
     if (updateBound (+1, xu, base - pi + iwl)) {
-      tighter = true; 
+      tighter = true;
       chg [xind]. setUpper (t_chg_bounds::CHANGED);
     }
   }

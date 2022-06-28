@@ -21,7 +21,7 @@
 using namespace Couenne;
 
 /// Constructors, destructor
-exprTrilinear::exprTrilinear  (expression **al, int n): 
+exprTrilinear::exprTrilinear  (expression **al, int n):
   exprMul (al, n) {}
 
 
@@ -78,12 +78,12 @@ void exprTrilinear::closestFeasible (expression *varind,
 /// return l-2 norm of gradient at given point
 CouNumber exprTrilinear::gradientNorm (const double *x) {
 
-  int 
+  int
     ind0 = arglist_ [0] -> Index (),
     ind1 = arglist_ [1] -> Index (),
     ind2 = arglist_ [2] -> Index ();
 
-  CouNumber 
+  CouNumber
     x0 = (ind0 < 0) ? arglist_ [0] -> Value () : x [ind0],
     x1 = (ind1 < 0) ? arglist_ [1] -> Value () : x [ind1],
     x2 = (ind1 < 0) ? arglist_ [2] -> Value () : x [ind2];
@@ -95,7 +95,7 @@ CouNumber exprTrilinear::gradientNorm (const double *x) {
     else
       if (ind2 < 0) return fabs (x0*x2);                  // c*y*e
       else          return fabs (x0*sqrt(x1*x1 + x2*x2)); // c*y*z
-  else 
+  else
     if (ind1 < 0)
       if (ind2 < 0) return fabs (x1*x2);                  // x*d*e
       else          return fabs (x1*sqrt(x0*x0 + x2*x2)); // x*d*z

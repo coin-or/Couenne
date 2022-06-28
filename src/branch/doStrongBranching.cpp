@@ -32,7 +32,7 @@ bool BranchingFBBT (CouenneProblem *problem,
 /// l_2 norm by default, but can change it by fourth parameter
 double distance (const double *p1, const double *p2, int size, double k=2.) {
 
-  double 
+  double
     result = 0.,
     element;
 
@@ -63,10 +63,10 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
      -1 - one branch was infeasible both ways
      0 - all inspected - nothing can be fixed
      1 - all inspected - some can be fixed (returnCriterion==0)
-     2 - may be returning early - one can be fixed (last one done) (returnCriterion==1) 
+     2 - may be returning early - one can be fixed (last one done) (returnCriterion==1)
      3 - returning because max time
 */
-  int CouenneChooseStrong::doStrongBranching (OsiSolverInterface *solver, 
+  int CouenneChooseStrong::doStrongBranching (OsiSolverInterface *solver,
 					      OsiBranchingInformation *info,
 					      int numberToDo, int returnCriterion) {
 
@@ -84,7 +84,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
     }
 #endif
 
-    jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
+    jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING,
 		      "\n-\n------- CCS: trying %d objects:\n", numberToDo);
 
     //solver -> doingResolve () = false; // turns off setCutoff and restoreUnused
@@ -99,7 +99,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       *initUpper = info -> upper_;
 
     // save intersection of bounds obtained by branching on all objects
-    double 
+    double
       *saveLower = CoinCopyOfArray (info -> lower_, numberColumns),
       *saveUpper = CoinCopyOfArray (info -> upper_, numberColumns),
 
@@ -111,7 +111,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       *unionLower  = new double [numberColumns],
       *unionUpper  = new double [numberColumns],
 
-      *lpSol     = NULL, 
+      *lpSol     = NULL,
        timeStart = CoinCpuTime ();
 
     if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
@@ -120,7 +120,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
     }
 
     // LP solution for distance
-    if (pseudoUpdateLP_) 
+    if (pseudoUpdateLP_)
       lpSol = CoinCopyOfArray (info -> solution_, numberColumns);
 
     // provide Couenne problem with point/bounds contained in info
@@ -140,11 +140,11 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       OsiObject *Object = solver_ -> objects () [result -> whichObject ()];
 
-      // printf ("doStrongBranching: object %d -> x%d\n", 
-      // 	      result -> whichObject (), 
+      // printf ("doStrongBranching: object %d -> x%d\n",
+      // 	      result -> whichObject (),
       // 	      solver_ -> objects () [result -> whichObject ()] -> columnNumber ());
 
-      // TODO: apply isCuttable()     
+      // TODO: apply isCuttable()
 
       // TODO: set a cutoff for dual bound in dual simplex
       //       do the same for primal based on SB's alpha
@@ -157,8 +157,8 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       if (cb) cb -> setSimulate (true);
 
-      int 
-	status0 = -1, 
+      int
+	status0 = -1,
 	status1 = -1;
 
       ///////////////////////////////////////////////////////////////////////////
@@ -173,9 +173,9 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       double indUb = 0, indLb = 0;
       CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
       OsiSimpleInteger *simpl = dynamic_cast <OsiSimpleInteger *>(solver_->objects()[result->whichObject ()]);
-      // if OsiSimpleInteger Object with branching point outside 
+      // if OsiSimpleInteger Object with branching point outside
       // current solver bound interval, one branch must
-      // be set as infeasible, otherwise bounds are enlarged 
+      // be set as infeasible, otherwise bounds are enlarged
       // in one branch
       int objVarIndex = -1;
       if(CouObj) {
@@ -184,7 +184,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       else {
 	objVarIndex = Object->columnNumber();
       }
-      if(simpl) { 
+      if(simpl) {
 	if(objVarIndex >= 0) {
 	  indUb = solver->getColUpper()[objVarIndex];
 	  indLb = solver->getColLower()[objVarIndex];
@@ -205,9 +205,9 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 	result->setDownStatus(1);
       }
 
-      // save current bounds as tightened by the down branch; will be           
-      // used below to update global bounding box in solver                     
-      // if status0 == 1 unionLower will be ignored below                         
+      // save current bounds as tightened by the down branch; will be
+      // used below to update global bounding box in solver
+      // if status0 == 1 unionLower will be ignored below
       CoinCopyN (solver->getColLower(), numberColumns, unionLower);
       CoinCopyN (solver->getColUpper(), numberColumns, unionUpper);
 
@@ -237,7 +237,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
 #ifdef TRACE_STRONG
       if(problem_->doPrint_) {
-	printf("Strong on object %d: status0: %d  status1: %d\n", 
+	printf("Strong on object %d: status0: %d  status1: %d\n",
 	       result->whichObject(), status0, status1);
       }
 #endif
@@ -246,7 +246,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 
       jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, "-------\n");
 
-      if (cb) 
+      if (cb)
 	cb -> setSimulate (false);
 
       /////////////////////////////////////////////////////////////////////////////
@@ -275,14 +275,14 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 	}
       }
       else { // branch 1 infeasible
-	if(status0 != 1) { // feasible; otherwise both branches are infeasible  
-                           // keep current inconsistant bounds in solver        
-          for (int j=0; j<numberColumns; j++) {                                 
-            problem_->Lb (j) = unionLower [j];                                  
-            problem_->Ub (j) = unionUpper [j];                                  
-          }                                                                     
-        }                                                                       
-      }                                                                         
+	if(status0 != 1) { // feasible; otherwise both branches are infeasible
+                           // keep current inconsistant bounds in solver
+          for (int j=0; j<numberColumns; j++) {
+            problem_->Lb (j) = unionLower [j];
+            problem_->Ub (j) = unionUpper [j];
+          }
+        }
+      }
 
       if((status0 == 1) && (status1 == 1)) {
 	tightened = false;
@@ -304,7 +304,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
 	    chg_bds [j].setLower (t_chg_bounds::CHANGED);
 	    tightened = true;
 	  }
-	  
+	
 	  if (problem_ -> Ub (j) < initUpper [j] - COUENNE_EPS) {
 	    chg_bds [j].setUpper (t_chg_bounds::CHANGED);
 	    tightened = true;
@@ -344,19 +344,19 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
           loop and assume the node will be reoptimised by the caller.
       */
 
-      if (status0 == 1 && 
+      if (status0 == 1 &&
 	  status1 == 1) { // infeasible
         returnCode=-1;
         break; // exit loop
       } else if (status0==1 || status1==1) {
 
 #ifdef COUENNE_HAS_NAUTY
-	if (problem_ -> orbitalBranching () && 
+	if (problem_ -> orbitalBranching () &&
 	    (Object -> columnNumber () >= 0) &&
 	    (problem_ -> Find_Orbit (Object -> columnNumber ()) -> size () > 1)) {
 
-	  problem_ -> ChangeBounds (solver -> getColLower (),  
-				    solver -> getColUpper (),  
+	  problem_ -> ChangeBounds (solver -> getColLower (),
+				    solver -> getColUpper (),
 				    problem_ -> nVars ());
 
 	  problem_ -> Compute_Symmetry ();
@@ -383,7 +383,7 @@ double distance (const double *p1, const double *p2, int size, double k=2.) {
       printf ("strong branching: tightened bounds. ");
       // create union of bounding box from both branching directions
       for (int j=0; j<numberColumns; j++) {
-      
+
 	if (problem_ -> Lb (j) > Lower0 [j]) printf ("l%d (%g-->%g) ", j,Lower0[j], problem_->Lb (j));
 	if (problem_ -> Ub (j) < Upper0 [j]) printf ("u%d (%g-->%g) ", j,Upper0[j], problem_->Ub (j));
       }
@@ -446,7 +446,7 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
 
   // TODO: avoid cloning solver all the time
 
-  OsiSolverInterface *thisSolver = 
+  OsiSolverInterface *thisSolver =
     boundBranch ? solver : solver -> clone ();
 
   CouenneObject *CouObj = dynamic_cast <CouenneObject *> (Object);
@@ -462,7 +462,7 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
     else               result -> setUpStatus   (1);
 
   } else {
-    
+
     if (boundBranch) // branching rule is a variable bound, can use hotstart
 
       thisSolver -> solveFromHotStart ();
@@ -471,7 +471,7 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
 
       int limit;
       thisSolver -> getIntParam (OsiMaxNumIterationHotStart, limit);
-      thisSolver -> setIntParam (OsiMaxNumIteration,         limit); 
+      thisSolver -> setIntParam (OsiMaxNumIteration,         limit);
 
       thisSolver -> resolve ();
 
@@ -479,7 +479,7 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
     }
 
     if (pseudoUpdateLP_ && CouObj && thisSolver -> isProvenOptimal ()) {
-      CouNumber dist = distance (info -> solution_, thisSolver -> getColSolution (), 
+      CouNumber dist = distance (info -> solution_, thisSolver -> getColSolution (),
 				 problem_ -> nVars ());
 
       if (dist > COUENNE_EPS)
@@ -493,7 +493,7 @@ int CouenneChooseStrong::simulateBranch (OsiObject *Object,
   // only update information if this branch is feasible
   if (status < 0)
     status = result -> updateInformation (thisSolver, info, this);
-  
+
   numberStrongIterations_ += thisSolver -> getIterationCount ();
 
   if ((status == 3) && (trustStrongForSolution_)) {
@@ -521,7 +521,7 @@ bool BranchingFBBT (CouenneProblem *problem,
 
     problem -> domain () -> push (solver);
 
-    int 
+    int
       indVar = Object  -> columnNumber (),
       nvars  = problem -> nVars ();
 

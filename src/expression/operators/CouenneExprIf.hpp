@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the exprIf class that implements the ifnl AMPL operator
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 

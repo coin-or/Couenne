@@ -2,9 +2,9 @@
  *
  * Name:    readnl.cpp
  * Author:  Pietro Belotti
- * Purpose: define a reader for .nl files. Adapted from ampl2ev3 by L. Liberti and S. Galli 
+ * Purpose: define a reader for .nl files. Adapted from ampl2ev3 by L. Liberti and S. Galli
  *
- * (C) Carnegie-Mellon University, 2006-10. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -50,11 +50,11 @@ using namespace Couenne;
 
 // check if an expression is a null pointer or equals zero
 inline bool is_expr_zero (expr* e)
-{return ((e==NULL) || ((((Intcast (e->op)) == OPNUM) && 
-			  (fabs (((expr_n *)e) -> v)  < COUENNE_EPS) 
+{return ((e==NULL) || ((((Intcast (e->op)) == OPNUM) &&
+			  (fabs (((expr_n *)e) -> v)  < COUENNE_EPS)
 			  //  && (fabs (e -> dL) < COUENNE_EPS)
 			  // *** CHECK THIS! dL is the derivative
-			  )));} 
+			  )));}
 
 void createCommonExpr (CouenneProblem *p, const ASL *asl, int i, int which);
 
@@ -64,7 +64,7 @@ int CouenneProblem::readnl (const ASL *asl) {
   problemName_ = filename;
 
   // number of defined variables (aka common expressions)
-  ndefined_ = como + comc + comb + como1 + comc1; 
+  ndefined_ = como + comc + comb + como1 + comc1;
 
   // see "hooking your solver to AMPL", by David M. Gay, tables 3, 4, and 5
 
@@ -98,7 +98,7 @@ int CouenneProblem::readnl (const ASL *asl) {
   double now = CoinCpuTime ();
 
   if (nVars () > THRESHOLD_OUTPUT_READNL) {
-    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Reading problem: "); 
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Reading problem: ");
     fflush(stdout);
   }
 
@@ -133,7 +133,7 @@ int CouenneProblem::readnl (const ASL *asl) {
 
     // strange, no objective function. Add one equal to zero
 
-    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Couenne: warning, no objective function found\nAdded fictitious function f(x)=0\n");     
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "Couenne: warning, no objective function found\nAdded fictitious function f(x)=0\n");
     addObjective (new exprConst (0.), "min");
   }
 
@@ -143,14 +143,14 @@ int CouenneProblem::readnl (const ASL *asl) {
     int nterms = 0;
 
     // count nonzero terms in linear part
- 
+
     for (ograd *objgrad = Ograd [i];
 	 objgrad;
 	 objgrad = objgrad -> next)
       if (fabs (objgrad -> coef) > COUENNE_EPS)
 	nterms++;
 
-    expression 
+    expression
       *body,
       *nl = Simplified (nl2e (OBJ_DE [i] . e, asl));
     //   *nls = nl -> simplify ();
@@ -205,7 +205,7 @@ int CouenneProblem::readnl (const ASL *asl) {
       body = nl;
       //if (fabs (objconst (i) > COUENNE_EPS))
       //body = new exprSum (nl, new exprConst (objconst (i)));
-      //else 
+      //else
 
     ///////////////////////////////////////////////////
 
@@ -228,7 +228,7 @@ int CouenneProblem::readnl (const ASL *asl) {
   // of linear and nonlinear terms
 
   // init array with # terms of each constraint
-  for (int i = n_con; i--;) 
+  for (int i = n_con; i--;)
     *nterms++ = 0;
   nterms -= n_con;
 
@@ -245,10 +245,10 @@ int CouenneProblem::readnl (const ASL *asl) {
     }
   else {                             // Constraints' linear info is stored in Cgrad
     for (int i = 0; i < n_con; i++)
-      for (congrad = Cgrad [i]; 
-	   congrad; 
-	   congrad = congrad -> next) 
-	if (fabs (congrad -> coef) > COUENNE_EPS) 
+      for (congrad = Cgrad [i];
+	   congrad;
+	   congrad = congrad -> next)
+	if (fabs (congrad -> coef) > COUENNE_EPS)
 	  nterms [i] ++;
   }
 
@@ -257,7 +257,7 @@ int CouenneProblem::readnl (const ASL *asl) {
   CouNumber **coeff  = new CouNumber * [n_con];
   int       **indexL = new int       * [n_con];
 
-  for (int i = n_con; i--;) 
+  for (int i = n_con; i--;)
     *indexL++ = NULL;
 
   indexL -= n_con;
@@ -297,7 +297,7 @@ int CouenneProblem::readnl (const ASL *asl) {
       *iline = new int       [nt+1];
       (*iline) [nt] = -1;
 
-      for (congrad = Cgrad [i]; congrad; congrad = congrad -> next) 
+      for (congrad = Cgrad [i]; congrad; congrad = congrad -> next)
 	if (fabs (congrad -> coef) > COUENNE_EPS) {
 	  (*cline) [--nt] = congrad -> coef;
 	  (*iline)   [nt] = congrad -> varno;
@@ -327,11 +327,11 @@ int CouenneProblem::readnl (const ASL *asl) {
       else               sign = COUENNE_GE;
     else                 sign = COUENNE_LE;
 
-    // this is an equality constraint  
+    // this is an equality constraint
     if (fabs (lb - ub) < COUENNE_EPS)
       sign = COUENNE_EQ;
 
-    expression 
+    expression
        *body,
       **nll = new expression * [1],
        *nls;
@@ -356,7 +356,7 @@ int CouenneProblem::readnl (const ASL *asl) {
       for (int i=0, *ind = indexL; *ind >= 0; *ind++, i++)
       lcoeff.push_back (std::pair <exprVar *, CouNumber> (Var (*ind), coeff [i]));*/
 
-      if ((code == COU_EXPRSUM) || 
+      if ((code == COU_EXPRSUM) ||
 	  (code == COU_EXPRGROUP)) {
 
 	body    = exprGroup::genExprGroup (0., lcoeff, (*nll) -> ArgList (), (*nll) -> nArgs ());
@@ -394,7 +394,7 @@ int CouenneProblem::readnl (const ASL *asl) {
       case COUENNE_EQ:  addEQConstraint  (body, new exprConst (ub)); break;
       case COUENNE_LE:  addLEConstraint  (body, new exprConst (ub)); break;
       case COUENNE_GE:  addGEConstraint  (body, new exprConst (lb)); break;
-      case COUENNE_RNG: addRNGConstraint (body, new exprConst (lb), 
+      case COUENNE_RNG: addRNGConstraint (body, new exprConst (lb),
                                                 new exprConst (ub)); break;
       default: printf ("Could not recognize constraint\n"); return -1;
       }
@@ -407,7 +407,7 @@ int CouenneProblem::readnl (const ASL *asl) {
   delete [] coeff;
 
   // create room for problem's variables and bounds
-  CouNumber 
+  CouNumber
     *x  = (CouNumber *) malloc ((n_var + ndefined_) * sizeof (CouNumber)),
     *lb = (CouNumber *) malloc ((n_var + ndefined_) * sizeof (CouNumber)),
     *ub = (CouNumber *) malloc ((n_var + ndefined_) * sizeof (CouNumber));
@@ -450,7 +450,7 @@ int CouenneProblem::readnl (const ASL *asl) {
 
   // initial x ////////////////////////////////////////////////////////////////////
 
-  for (int i=n_var; i--;) 
+  for (int i=n_var; i--;)
 
     if (X0 && havex0 [i]) X (i) = X0 [i];
 
@@ -477,7 +477,7 @@ int CouenneProblem::readnl (const ASL *asl) {
   delete [] nterms;
 
   if (nVars () > THRESHOLD_OUTPUT_READNL) {
-    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "%.1f seconds\n", CoinCpuTime () - now); 
+    jnlst_ -> Printf (Ipopt::J_ERROR, J_COUENNE, "%.1f seconds\n", CoinCpuTime () - now);
     fflush(stdout);
   }
 
@@ -485,7 +485,7 @@ int CouenneProblem::readnl (const ASL *asl) {
 }
 
 
-// 
+//
 // Common code for common expressions (aka defined variables)
 //
 
@@ -537,8 +537,8 @@ void createCommonExpr (CouenneProblem *p, const ASL *asl, int i, int which) {
 
     expression *eg;
 
-    if (lcoeff.size  () == 1 && 
-	nle -> Type  () == CONST && 
+    if (lcoeff.size  () == 1 &&
+	nle -> Type  () == CONST &&
 	nle -> Value () == 0.) {
 
       CouNumber coeff = lcoeff [0].second;
@@ -557,7 +557,7 @@ void createCommonExpr (CouenneProblem *p, const ASL *asl, int i, int which) {
     }
 
     p -> commonExprs () . push_back (new exprClone (eg));
-  } 
+  }
   else {
 
     int indVar = p -> nVars () - p -> nDefVars () + p -> commonExprs () . size ();

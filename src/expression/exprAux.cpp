@@ -26,9 +26,9 @@ class Domain;
 //#define DEBUG
 
 // auxiliary expression Constructor
-exprAux::exprAux (expression *image, int index, int rank, 
+exprAux::exprAux (expression *image, int index, int rank,
 		  enum intType isInteger, Domain *d,
-		  enum auxSign sign): 
+		  enum auxSign sign):
 
   exprVar       (index, d),
   image_        (image),
@@ -98,7 +98,7 @@ exprAux::~exprAux () {
   if (image_) {
     //printf (" [%x] ",        image_); fflush (stdout); image_ -> print (); fflush (stdout);
     //printf ("\n");
-    delete image_; 
+    delete image_;
   }
   if (lb_) delete lb_;
   if (ub_) delete ub_;
@@ -108,7 +108,7 @@ exprAux::~exprAux () {
 /// Get lower and upper bound of an expression (if any)
 //void exprAux::getBounds (expression *&lb, expression *&ub) {
 
-  // this replaces the previous 
+  // this replaces the previous
   //
   //    image_ -> getBounds (lb0, ub0);
   //
@@ -140,7 +140,7 @@ void exprAux::crossBounds () {
 /// I/O
 void exprAux::print (std::ostream &out, bool descend) const {
 
-  if (descend) 
+  if (descend)
     image_ -> print (out, descend);
   else {
     if (integer_) out << "z_"; // TODO: should be isInteger instead of
@@ -154,17 +154,17 @@ void exprAux::print (std::ostream &out, bool descend) const {
 
 /// fill in the set with all indices of variables appearing in the
 /// expression
-int exprAux::DepList (std::set <int> &deplist, 
+int exprAux::DepList (std::set <int> &deplist,
 		      enum dig_type type) {
 
-  if (type == ORIG_ONLY)   
+  if (type == ORIG_ONLY)
     return image_ -> DepList (deplist, type);
 
   if (deplist.find (varIndex_) == deplist.end ())
-    deplist.insert (varIndex_); 
+    deplist.insert (varIndex_);
   else return 0;
 
-  if (type == STOP_AT_AUX) 
+  if (type == STOP_AT_AUX)
     return 1;
 
   return 1 + image_ -> DepList (deplist, type);
@@ -174,7 +174,7 @@ int exprAux::DepList (std::set <int> &deplist,
 /// simplify
 expression *exprAux::simplify () {
 
-  if (((image_ -> Type () == AUX) || 
+  if (((image_ -> Type () == AUX) ||
        (image_ -> Type () == VAR)) &&
       sign_ == expression::AUX_EQ) {
 
@@ -190,7 +190,7 @@ expression *exprAux::simplify () {
 
 // generate cuts for expression associated with this auxiliary
 
-void exprAux::generateCuts (OsiCuts &cs, const CouenneCutGenerator *cg, 
+void exprAux::generateCuts (OsiCuts &cs, const CouenneCutGenerator *cg,
 			    t_chg_bounds *chg, int,
 			    CouNumber, CouNumber) {
   //#ifdef DEBUG
@@ -199,12 +199,12 @@ void exprAux::generateCuts (OsiCuts &cs, const CouenneCutGenerator *cg,
   //#endif
 
   /*
-  if ((!(cg -> isFirst ())) && 
+  if ((!(cg -> isFirst ())) &&
       ((l = domain_ -> lb (varIndex_)) > -COUENNE_INFINITY) &&
       ((u = domain_ -> ub (varIndex_)) <  COUENNE_INFINITY) &&
       (fabs (u-l) < COUENNE_EPS))
     cg -> createCut (cs, (l+u)/2., 0, varIndex_, 1.);
-  else 
+  else
   */
   image_ -> generateCuts (this, /*si,*/ cs, cg, chg);
 
@@ -213,7 +213,7 @@ void exprAux::generateCuts (OsiCuts &cs, const CouenneCutGenerator *cg,
   //#ifdef DEBUG
 
   if (cg -> Jnlst () -> ProduceOutput (Ipopt::J_DETAILED, J_CONVEXIFYING)) {
-    if (cg -> Jnlst () -> ProduceOutput (Ipopt::J_STRONGWARNING, J_CONVEXIFYING) && 
+    if (cg -> Jnlst () -> ProduceOutput (Ipopt::J_STRONGWARNING, J_CONVEXIFYING) &&
 	(warned_large_coeff)) {
       for (int jj=nrc; jj < cs.sizeRowCuts (); jj++) {
 
@@ -228,7 +228,7 @@ void exprAux::generateCuts (OsiCuts &cs, const CouenneCutGenerator *cg,
 	while (n--) {
 	  if (fabs (el [n]) > COU_MAX_COEFF)  {
 	    printf ("Couenne, warning: coefficient too large %g x%d: ", el [n], ind [n]);
-	    cut -> print (); 
+	    cut -> print ();
 	    warned_large_coeff = true;
 	    break;
 	  }
@@ -243,24 +243,24 @@ void exprAux::generateCuts (OsiCuts &cs, const CouenneCutGenerator *cg,
       }
     }
 
-    //  if (!(cg -> isFirst ())) 
-    if ((nrc < cs.sizeRowCuts ()) || 
+    //  if (!(cg -> isFirst ()))
+    if ((nrc < cs.sizeRowCuts ()) ||
 	(ncc < cs.sizeColCuts ()))
       {
-	printf ("---------------- ConvCut:  "); 
-	print (std::cout);  
-	printf (" %c= ", 
-		sign () == expression::AUX_EQ  ? ':' : 
+	printf ("---------------- ConvCut:  ");
+	print (std::cout);
+	printf (" %c= ",
+		sign () == expression::AUX_EQ  ? ':' :
 		sign () == expression::AUX_LEQ ? '<' : '>');
-	image_ -> print (std::cout); 
+	image_ -> print (std::cout);
 
-	printf (" %g [%g,%g]. ", 
-		domain_ -> x  (varIndex_), 
-		domain_ -> lb (varIndex_), 
+	printf (" %g [%g,%g]. ",
+		domain_ -> x  (varIndex_),
+		domain_ -> lb (varIndex_),
 		domain_ -> ub (varIndex_));
 
 	int index;
-	if ((image_ -> Argument ()) && 
+	if ((image_ -> Argument ()) &&
 	    ((index = image_ -> Argument () -> Index ()) >= 0))
 	  printf ("%g [%g,%g] ",
 		  domain_ -> x  (index),
@@ -269,9 +269,9 @@ void exprAux::generateCuts (OsiCuts &cs, const CouenneCutGenerator *cg,
 	else if (image_ -> ArgList ())
 	  for (int i=0; i<image_ -> nArgs (); i++)
 	    if ((index = image_ -> ArgList () [i] -> Index ()) >= 0)
-	      printf ("%g [%g,%g] ", 
+	      printf ("%g [%g,%g] ",
 		      domain_ -> x  (index),
-		      domain_ -> lb (index), 
+		      domain_ -> lb (index),
 		      domain_ -> ub (index));
 	printf ("\n");
 
@@ -292,20 +292,20 @@ void exprAux::generateCuts (OsiCuts &cs, const CouenneCutGenerator *cg,
 /// return proper object to handle expression associated with this
 /// variable (NULL if this is not an auxiliary)
 CouenneObject *exprAux::properObject (CouenneCutGenerator *c,
-				      CouenneProblem *p, 
-				      Bonmin::BabSetupBase *base, 
+				      CouenneProblem *p,
+				      Bonmin::BabSetupBase *base,
 				      JnlstPtr jnlst) {
 
   // todo: this is an expression method
 
-  // create Complementary objects for variable if: 
+  // create Complementary objects for variable if:
 
   if ((image_ -> code () == COU_EXPRMUL) &&          // it's a product x3 = x1 x2
 
       (image_ -> ArgList () [0] -> Index () >= 0) && // first  operand is a variable
       (image_ -> ArgList () [1] -> Index () >= 0) && // second operand is a variable
 
-      (  
+      (
        ((fabs (lb ()) <  COUENNE_EPS)      && (fabs (ub ()) < COUENNE_EPS)) // it's defined as x1 x2 = 0
        ||                                                                   // OR
        (top_level_  &&                                                      // x3 is the lhs of a constraint
@@ -326,14 +326,14 @@ CouenneObject *exprAux::properObject (CouenneCutGenerator *c,
     // In fact, for all these cases branching is as straightforward as
     // the old one, which was defined on equality only.
     //
-    // Define the "sign" of the object as 
+    // Define the "sign" of the object as
     //
     // -1: <=
     // +1: >=
     //  0:  =
 
     return new CouenneComplObject (c, p, this, base, jnlst,
-				   lb () < -1 ? -1 : 
+				   lb () < -1 ? -1 :
 				   ub () >  1 ?  1 : 0);
   }
   else

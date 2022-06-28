@@ -20,15 +20,15 @@ using namespace Couenne;
 
 /// set up branching object by evaluating many branching points for
 /// each expression's arguments
-CouNumber exprExp::selectBranch (const CouenneObject *obj, 
+CouNumber exprExp::selectBranch (const CouenneObject *obj,
 				 const OsiBranchingInformation *info,
-				 expression *&var, 
-				 double * &brpts, 
+				 expression *&var,
+				 double * &brpts,
 				 double * &brDist, // distance of current LP
 						   // point to new convexifications
 				 int &way) {
 
-  // two cases: inside and outside the curve. 
+  // two cases: inside and outside the curve.
   //
   // Inside: the distance depends on the projection of the current
   // point onto the would-be upper envelopes, which forces us to look
@@ -78,7 +78,7 @@ CouNumber exprExp::selectBranch (const CouenneObject *obj,
 
   // Inside. Four cases: ///////////////////////////////////////////////////////
 
-  if ((l < -COUENNE_INFINITY) && 
+  if ((l < -COUENNE_INFINITY) &&
       (u >  COUENNE_INFINITY)) { // unbounded in both directions
 
     /*    // TODO: restore when we can do three-way branching
@@ -87,19 +87,19 @@ CouNumber exprExp::selectBranch (const CouenneObject *obj,
     way = THREE_CENTER; // focus on central convexification first
     brpts [0] = x0;       // draw vertical   from (x0,y0) south to curve y=exp(x)
     brpts [1] = log (y0); //      horizontal              east
-    CouNumber 
+    CouNumber
       a = y0 - exp (x0),  // sides of a triangle with (x0,y0)
       b = log (y0) - x0;  // as one of the vertices
     // exact distance from central interval, from others it's a and b
-    return (a * cos (atan (a/b))); 
+    return (a * cos (atan (a/b)));
 #endif    */
 
     // follow South-East diagonal to find point on curve
-    // so that current point is surely cut 
-    *brpts = 0.5 * (x0 + log (y0)); 
+    // so that current point is surely cut
+    *brpts = 0.5 * (x0 + log (y0));
     way = TWO_RAND;
 
-    return CoinMin (brDist [0] = log (y0) - x0, 
+    return CoinMin (brDist [0] = log (y0) - x0,
 		    brDist [1] = y0 - exp (x0));
   }
 
@@ -110,9 +110,9 @@ CouNumber exprExp::selectBranch (const CouenneObject *obj,
     *brpts = obj -> midInterval (x0, l, u, info);
 
     way = TWO_RIGHT;
-    return CoinMin (brDist [0] = y0 - exp (x0), 
+    return CoinMin (brDist [0] = y0 - exp (x0),
 		    brDist [1] = projectSeg (x0, y0, *brpts, exp (*brpts), u, exp (u), -1));
-  } 
+  }
 
   if (u > COUENNE_INFINITY) { // 3) unbounded from above -- break horizontally
 
@@ -121,7 +121,7 @@ CouNumber exprExp::selectBranch (const CouenneObject *obj,
     way = TWO_LEFT;
     return CoinMin (brDist [0] = projectSeg (x0, y0, l, exp (l), *brpts, exp (*brpts), -1),
 		    brDist [1] = log (y0) - x0);
-		    
+		
   }
 
   // 4) both are finite

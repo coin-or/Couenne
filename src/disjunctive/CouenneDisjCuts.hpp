@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: a generator of disjunctive cuts for MINLP problems
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -42,7 +42,7 @@ class COUENNELIB_EXPORT CouenneDisjCuts: public CglCutGenerator {
   /// number of cuts generated at the first call
   mutable int nrootcuts_;
 
-  /// total number of cuts generated 
+  /// total number of cuts generated
   mutable int ntotalcuts_;
 
   /// separation time (includes generation of problem)
@@ -64,7 +64,7 @@ class COUENNELIB_EXPORT CouenneDisjCuts: public CglCutGenerator {
   /// SmartPointer to the Journalist
   JnlstPtr jnlst_;
 
-  /// Number of disjunction to consider at each separation 
+  /// Number of disjunction to consider at each separation
   mutable int numDisjunctions_;
 
   /// Initial percentage of objects to use for generating cuts, in [0,1]
@@ -117,8 +117,8 @@ class COUENNELIB_EXPORT CouenneDisjCuts: public CglCutGenerator {
   {return couenneCG_;}
 
   /// the main CglCutGenerator
-  void generateCuts (const OsiSolverInterface &, 
-		     OsiCuts &, 
+  void generateCuts (const OsiSolverInterface &,
+		     OsiCuts &,
 		     const CglTreeInfo = CglTreeInfo ())
 #if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
   const
@@ -129,33 +129,33 @@ class COUENNELIB_EXPORT CouenneDisjCuts: public CglCutGenerator {
   static void registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions);
 
   /// Provide Journalist
-  inline ConstJnlstPtr Jnlst() const 
+  inline ConstJnlstPtr Jnlst() const
   {return ConstPtr (jnlst_);}
 
   /// get all disjunctions
-  int getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts *> > &disjunctions, 
-		       OsiSolverInterface &si, 
-		       OsiCuts &cs, 
+  int getDisjunctions (std::vector <std::pair <OsiCuts *, OsiCuts *> > &disjunctions,
+		       OsiSolverInterface &si,
+		       OsiCuts &cs,
 		       const CglTreeInfo &info) const;
 
   /// separate couenne cuts on both sides of single disjunction
   int separateWithDisjunction (OsiCuts *cuts,
-			       OsiSolverInterface &si, 
-			       OsiCuts &cs, 
+			       OsiSolverInterface &si,
+			       OsiCuts &cs,
 			       const CglTreeInfo &info) const;
 
   /// generate one disjunctive cut from one CGLP
-  int generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCuts *> > &disjs, 
-		       OsiSolverInterface &si, 
-		       OsiCuts &cs, 
+  int generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCuts *> > &disjs,
+		       OsiSolverInterface &si,
+		       OsiCuts &cs,
 			const CglTreeInfo &info) const;
 
   /// check if (column!) cuts compatible with solver interface
   int checkDisjSide (OsiSolverInterface &si, OsiCuts *cuts) const;
 
   /// compute smallest box containing both left and right boxes.
-  int getBoxUnion (OsiSolverInterface &si, 
-		   OsiCuts *left, OsiCuts *right, 
+  int getBoxUnion (OsiSolverInterface &si,
+		   OsiCuts *left, OsiCuts *right,
 		   CoinPackedVector &lower, CoinPackedVector &upper) const;
 
 protected:
@@ -167,14 +167,14 @@ protected:
   void mergeBoxes (int dir,                        // direction (negative for "<", positive for ">")
 		   CoinPackedVector &left,         // input
 		   CoinPackedVector &right,        // input
-		   CoinPackedVector merged) const; // output  
+		   CoinPackedVector merged) const; // output
 
   /// our own applyColCuts
   void applyColCuts (OsiSolverInterface &si,
 		     OsiCuts *cuts) const;
 
   /// our own applyColCut, single cut
-  void applyColCuts (OsiSolverInterface &si, 
+  void applyColCuts (OsiSolverInterface &si,
 		     OsiColCut *cut) const;
 
   // construct reduced, standard form matrix M from coefficient matrix of si
@@ -192,8 +192,8 @@ protected:
 
 
 /// invert all contents
-inline void CoinInvN (const double *orig, 
-		      int n, 
+inline void CoinInvN (const double *orig,
+		      int n,
 		      double *inverted) {
 
   while (n--) *inverted++ = - *orig++;
@@ -201,9 +201,9 @@ inline void CoinInvN (const double *orig,
 
 
 /// a CoinCopyN with a += on each element
-inline void CoinCopyDisp (const int *src, 
-			  int num, 
-			  int *dst, 
+inline void CoinCopyDisp (const int *src,
+			  int num,
+			  int *dst,
 			  int displacement) {
   while (num--)
     *dst++ = *src++ + displacement;

@@ -5,7 +5,7 @@
  *          Timo Berthold, ZIB Berlin
  * Purpose: Pool of MILP- (and why not? NLP-) feasible solutions for
  *          restart use in the Feasibility Pump
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -45,14 +45,14 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x, bool copi
 
   x_ = CoinCopyOfArray (x, p -> nVars ());
 
-  for (std::vector <exprVar *>::iterator i = p -> Variables (). begin (); 
+  for (std::vector <exprVar *>::iterator i = p -> Variables (). begin ();
        i != p -> Variables (). end ();
        ++i) {
 
     if ((*i) -> Multiplicity () <= 0)
       continue;
 
-    CouNumber 
+    CouNumber
       vval = (**i) ();
 
     if ((*i) -> isInteger ()) {
@@ -63,8 +63,8 @@ CouenneFPsolution::CouenneFPsolution (CouenneProblem *p, CouNumber *x, bool copi
       if (inf > COUENNE_EPS) {
 
 	++nIinf_;
- 
-	if (inf > maxIinf_) 
+
+	if (inf > maxIinf_)
 	  maxIinf_ = inf;
       }
     }
@@ -142,11 +142,11 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
     // lexicographical comparison: unless the two solutions have the
     // same integer subvector, comparison will tell them apart
 
-    for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
+    for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin ();
 	 i != problem_ -> Variables (). end ();
 	 ++i)
 
-      if (((*i) -> Multiplicity () > 0) && 
+      if (((*i) -> Multiplicity () > 0) &&
 	  (*i) -> isInteger ()) {
 
 	int indVar = (*i) -> Index ();
@@ -174,9 +174,9 @@ bool CouenneFPsolution::compare (const CouenneFPsolution &other, enum what_to_co
     // lexicographical comparison: unless the two solutions have the
     // same subvector, comparison will tell them apart
 
-    for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin (); 
+    for (std::vector <exprVar *>::iterator i = problem_ -> Variables (). begin ();
 	 i != problem_ -> Variables (). end ();
-	 ++i) 
+	 ++i)
 
       if ((*i) -> Multiplicity () > 0) {
 
@@ -211,7 +211,7 @@ CouenneFPpool &CouenneFPpool::operator= (const CouenneFPpool &src) {
 }
 
 /// compare, base version
-bool compareSol::operator() (const CouenneFPsolution &one, 
+bool compareSol::operator() (const CouenneFPsolution &one,
 			     const CouenneFPsolution &two) const {
 
   return one. compare (two, comparedTerm_);
@@ -238,16 +238,16 @@ void CouenneFPpool::findClosestAndReplace (double *&sol, const double *nSol, int
 
    if( nSol )
    {
-     for (std::set <CouenneFPsolution, compareSol>::iterator i = set_. begin (); 
+     for (std::set <CouenneFPsolution, compareSol>::iterator i = set_. begin ();
            i != set_. end (); ++i)
       {
 	//compute distance of pool solution and NLP solution
 
-	double 
+	double
 	   dist = 0.0,
 	   delta;
 
-	const double 
+	const double
 	  *x = i -> x (),
 	  *s = nSol;
 
@@ -271,7 +271,7 @@ void CouenneFPpool::findClosestAndReplace (double *&sol, const double *nSol, int
 	  }
 	}
 
-	if (move_on) 
+	if (move_on)
 	  continue;
 
 	//update best solution
@@ -282,13 +282,13 @@ void CouenneFPpool::findClosestAndReplace (double *&sol, const double *nSol, int
          }
       }
    }
-   else 
+   else
       bestsol = set_. begin ();
 
    if( bestsol != set_. end () )
    {
      delete [] sol;
-     sol = CoinCopyOfArray ((*bestsol).x(), nvars); 
+     sol = CoinCopyOfArray ((*bestsol).x(), nvars);
      set_. erase(bestsol);
-   }   
+   }
 }

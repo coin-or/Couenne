@@ -5,7 +5,7 @@
  * Purpose: print function and cut information to be later displayed
  *          through PlotUtils' graph
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -24,10 +24,10 @@ void draw_cuts (OsiCuts &cs, const CouenneCutGenerator *cg, int j, expression *w
   static CouNumber maxY = -COUENNE_INFINITY,
                    minY =  COUENNE_INFINITY;
 
-  if ((img -> code () == COU_EXPRSIN) || 
-      (img -> code () == COU_EXPRPOW) || 
-      (img -> code () == COU_EXPREXP) || 
-      (img -> code () == COU_EXPRLOG) || 
+  if ((img -> code () == COU_EXPRSIN) ||
+      (img -> code () == COU_EXPRPOW) ||
+      (img -> code () == COU_EXPREXP) ||
+      (img -> code () == COU_EXPRLOG) ||
       (img -> code () == COU_EXPRCOS)) {
 
     //    fprintf (stderr, " ==> "); w -> print (std::cerr); fprintf (stderr, "\n");
@@ -36,12 +36,12 @@ void draw_cuts (OsiCuts &cs, const CouenneCutGenerator *cg, int j, expression *w
 
     expression *indep = img -> Argument ();
 
-    if (!indep) 
+    if (!indep)
       indep = img -> ArgList () [0];//getFixVar ();
 
     int xi = indep -> Index ();
 
-    //    fprintf (stderr, "looking into w_%d = f (x_%d)\n", 
+    //    fprintf (stderr, "looking into w_%d = f (x_%d)\n",
     //	     w -> Index (), xi);
 
     indep -> getBounds (lbe, ube);
@@ -64,12 +64,12 @@ void draw_cuts (OsiCuts &cs, const CouenneCutGenerator *cg, int j, expression *w
 
 	first_draw = false;
 
-	for (CouNumber x = lb; 
-	     x <= ub + COUENNE_EPS; 
+	for (CouNumber x = lb;
+	     x <= ub + COUENNE_EPS;
 	     x += ((ub - lb) / N_STEPS)) {
 
 	  cg -> Problem () -> X () [xi] = x;
-	  
+	
 	  CouNumber y = (*img) ();
 
 	  if (y > maxY) maxY = y;
@@ -89,7 +89,7 @@ void draw_cuts (OsiCuts &cs, const CouenneCutGenerator *cg, int j, expression *w
       // most two variables (that is, w is a unary function)
       for (int jj=j; jj < cs.sizeRowCuts (); jj++) {
 
-	CouNumber lb0 = lb, 
+	CouNumber lb0 = lb,
 	  ub0 = ub;
 
 	const double *el  = cs.rowCutPtr (jj) -> row (). getElements ();

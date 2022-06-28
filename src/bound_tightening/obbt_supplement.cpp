@@ -55,12 +55,12 @@ int obbt_supplement (const OsiSolverInterface *csi, /// interface to use as a so
   //               = lambda^T b + min {alpha_i x_i - sum {k in N} beta_k x_k:                       l <= x <= u}
   //               = lambda^T b + min { sum {k in N} gamma_i_k x_k:                                 l <= x <= u}
   //
-  //               = lambda^T b + sum {k in N: gamma_i_k > 0} gamma_i_k l_k + 
+  //               = lambda^T b + sum {k in N: gamma_i_k > 0} gamma_i_k l_k +
   //                              sum {k in N: gamma_i_k < 0} gamma_i_k u_k,
   //
   // where
   //
-  // beta_k = sum {h in M} lambda_h a_hk and 
+  // beta_k = sum {h in M} lambda_h a_hk and
   //
   // and
   //

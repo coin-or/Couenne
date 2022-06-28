@@ -19,7 +19,7 @@
 namespace Couenne {
 
 /// zero function (used by default by exprUnary)
-inline CouNumber zero_fun (CouNumber x) 
+inline CouNumber zero_fun (CouNumber x)
 {return 0.;}
 
 
@@ -44,12 +44,12 @@ class COUENNELIB_EXPORT exprUnary: public expression {
   {return UNARY;}
 
   /// Constructor
-  exprUnary  (expression *argument): 
+  exprUnary  (expression *argument):
     argument_ (argument)        //< non-leaf expression, with argument list
   {}
 
   /// the operator itself (e.g. sin, log...)
-  virtual inline unary_function F () 
+  virtual inline unary_function F ()
   {return zero_fun;}
 
   /// Destructor
@@ -65,7 +65,7 @@ class COUENNELIB_EXPORT exprUnary: public expression {
   {return argument_;}
 
   /// return pointer to argument
-  virtual inline expression **ArgPtr () 
+  virtual inline expression **ArgPtr ()
   {return &argument_;}
 
   /// print this expression to iostream
@@ -101,28 +101,28 @@ class COUENNELIB_EXPORT exprUnary: public expression {
   virtual exprAux *standardize (CouenneProblem *, bool addAux = true);
 
   /// type of operator
-  virtual inline enum expr_type code () 
+  virtual inline enum expr_type code ()
   {return COU_EXPRUNARY;}
 
   /// is this expression integer?
   virtual bool isInteger ();
 
   /// compare two unary functions
-  virtual int compare (exprUnary &); 
+  virtual int compare (exprUnary &);
 
   /// used in rank-based branching variable choice
   virtual inline int rank ()
-  {return (argument_ -> rank ());} 
+  {return (argument_ -> rank ());}
 
   /// fill in dependence structure
-  virtual inline void fillDepSet (std::set <DepNode *, compNode> *dep, DepGraph *g) 
+  virtual inline void fillDepSet (std::set <DepNode *, compNode> *dep, DepGraph *g)
   {argument_ -> fillDepSet (dep, g);}
 
   /// replace variable with other
   virtual void replace (exprVar *, exprVar *);
 
   /// empty function to redirect variables to proper variable vector
-  virtual inline void realign (const CouenneProblem *p) 
+  virtual inline void realign (const CouenneProblem *p)
   {argument_ -> realign (p);}
 };
 

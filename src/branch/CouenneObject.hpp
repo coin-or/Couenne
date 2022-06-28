@@ -24,7 +24,7 @@ const CouNumber default_alpha  = 0.25;
 const CouNumber default_clamp  = 0.2;
 const CouNumber max_pseudocost = 1000.;
 
-/// if |branching point| > this, change it 
+/// if |branching point| > this, change it
 const double large_bound = 1e9;
 
 #define AGGR_MUL 2
@@ -44,13 +44,13 @@ class funtriplet;
 class CouenneProblem;
 class CouenneCutGenerator;
 
-COUENNELIB_EXPORT 
+COUENNELIB_EXPORT
 CouNumber minMaxDelta (funtriplet *ft, CouNumber lb, CouNumber ub);
-COUENNELIB_EXPORT 
+COUENNELIB_EXPORT
 CouNumber maxHeight   (funtriplet *ft, CouNumber lb, CouNumber ub);
 
 
-/// OsiObject for auxiliary variables $w=f(x)$. 
+/// OsiObject for auxiliary variables $w=f(x)$.
 ///
 /// Associated with a multi-variate function $f(x)$ and a related
 /// infeasibility $|w-f(x)|$, creates branches to help restoring
@@ -61,7 +61,7 @@ CouNumber maxHeight   (funtriplet *ft, CouNumber lb, CouNumber ub);
 public:
 
   /// type of up/down estimate to return for pseudocosts
-    enum pseudocostMult {INFEASIBILITY, 
+    enum pseudocostMult {INFEASIBILITY,
 		       INTERVAL_LP, INTERVAL_LP_REV,
 		       INTERVAL_BR, INTERVAL_BR_REV,
 		       PROJECTDIST};
@@ -77,7 +77,7 @@ public:
 
   /// Constructor with information for branching point selection strategy
   CouenneObject (CouenneCutGenerator *cutgen,
-		 CouenneProblem *p, 
+		 CouenneProblem *p,
 		 exprVar *ref, Bonmin::BabSetupBase *base, JnlstPtr jnlst);
 
   /// Constructor with lesser information, used for infeasibility only
@@ -104,12 +104,12 @@ public:
   /// the auxiliary variable defined as w = f(x)
   virtual double checkInfeasibility (const OsiBranchingInformation * info) const;
 
-  /// fix (one of the) arguments of reference auxiliary variable 
+  /// fix (one of the) arguments of reference auxiliary variable
   virtual double feasibleRegion (OsiSolverInterface*, const OsiBranchingInformation*) const;
 
   /// create CouenneBranchingObject or CouenneThreeWayBranchObj based
   /// on this object
-  virtual OsiBranchingObject *createBranch (OsiSolverInterface*, 
+  virtual OsiBranchingObject *createBranch (OsiSolverInterface*,
 					    const OsiBranchingInformation*, int) const;
 
   /// return reference auxiliary variable
@@ -130,8 +130,8 @@ public:
   /// Return "down" estimate (for non-convex, distance old <--> new LP point)
   virtual double downEstimate () const
   {//if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
-    //printf ("DOWN EST = %g for ", downEstimate_); 
-    //reference_ -> print (); 
+    //printf ("DOWN EST = %g for ", downEstimate_);
+    //reference_ -> print ();
     //printf ("\n");
     //}
   return downEstimate_;}
@@ -139,8 +139,8 @@ public:
   /// Return "up" estimate (for non-convex, distance old <--> new LP point)
   virtual double upEstimate () const
   {//if (jnlst_ -> ProduceOutput (J_MATRIX, J_BRANCHING)) {
-    //printf ("UP EST = %g for ", upEstimate_); 
-    //reference_ -> print (); 
+    //printf ("UP EST = %g for ", upEstimate_);
+    //reference_ -> print ();
     //printf ("\n");
     //}
   return upEstimate_;}
@@ -159,7 +159,7 @@ public:
 
   /// are we on the bad or good side of the expression?
   virtual bool isCuttable () const {
-    return (reference_ -> Image ()) ? 
+    return (reference_ -> Image ()) ?
       ((!(reference_ -> isInteger ())) &&
        reference_ -> Image () -> isCuttable (problem_, reference_ -> Index ())) :
       (!(reference_ -> isInteger ()));

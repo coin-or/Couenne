@@ -15,7 +15,7 @@
 
 namespace Couenne {
 
-/** "Spatial" branching object for complementarity constraints. 
+/** "Spatial" branching object for complementarity constraints.
  *
  *  Branching on such an object x_1 x_2 = 0 is performed by setting
  *  either x_1=0 or x_2=0
@@ -28,14 +28,14 @@ public:
   /// Constructor
   CouenneComplBranchingObject (OsiSolverInterface *solver,
 			       const OsiObject *originalObject,
-			       JnlstPtr jnlst, 
+			       JnlstPtr jnlst,
 			       CouenneCutGenerator *c,
 			       CouenneProblem *p,
-			       expression *var, 
+			       expression *var,
 			       expression *var2,
-			       int way, 
-			       CouNumber brpoint, 
-			       bool doFBBT, 
+			       int way,
+			       CouNumber brpoint,
+			       bool doFBBT,
 			       bool doConvCuts,
 			       int sign);
 
@@ -51,7 +51,7 @@ public:
 
   /** \brief Execute the actions required to branch, as specified by the
 	     current state of the branching object, and advance the object's
-	     state. 
+	     state.
 	     Returns change in guessed objective on next branch
   */
   virtual double branch (OsiSolverInterface * solver = NULL);

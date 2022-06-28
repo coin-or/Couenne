@@ -20,9 +20,9 @@
 using namespace Couenne;
 
 // generate equality between *this and *w
-void exprOpp::generateCuts (expression *w, //const OsiSolverInterface &si, 
+void exprOpp::generateCuts (expression *w, //const OsiSolverInterface &si,
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
-			    t_chg_bounds *chg, 
+			    t_chg_bounds *chg,
 			    int wind, CouNumber lb, CouNumber ub) {
 
   // If wind = -1 then this is the normal procedure (see below,
@@ -41,7 +41,7 @@ void exprOpp::generateCuts (expression *w, //const OsiSolverInterface &si,
 
     OsiColCut *cut = new OsiColCut;
 
-    CouNumber 
+    CouNumber
       &xlb = cg -> Problem () -> Lb (xind),
       &xub = cg -> Problem () -> Ub (xind);
 

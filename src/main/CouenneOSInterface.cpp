@@ -1,11 +1,11 @@
 /*
  *
  * Name:    CouenneOS.cpp
- * Authors: 
- *          
+ * Authors:
+ *
  * Purpose: Creates a CouenneProblem object from an OSil instance
  *
- * (C) Carnegie-Mellon University, 2009. 
+ * (C) Carnegie-Mellon University, 2009.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -62,11 +62,11 @@ CouenneProblem* CouenneOSInterface::getCouenneProblem() {
   int n_var = 0; // to be set to no. of variables
 
   // nonlinear in both objectives and constraints
-  for (int i = 0; i < n_var; i++) 
+  for (int i = 0; i < n_var; i++)
     problem -> addVariable (false, problem -> domain ()); // true if integer
 
-  // add objective function(s) 
-  expression *expr = NULL; 
+  // add objective function(s)
+  expression *expr = NULL;
   // fill in the objective
   problem -> addObjective (expr, "min");  // "max" for maximization
 
@@ -80,7 +80,7 @@ CouenneProblem* CouenneOSInterface::getCouenneProblem() {
   */
 
   // create room for problem's variables and bounds
-  CouNumber 
+  CouNumber
     *x  = (CouNumber *) malloc (n_var * sizeof (CouNumber)),
     *lb = (CouNumber *) malloc (n_var * sizeof (CouNumber)),
     *ub = (CouNumber *) malloc (n_var * sizeof (CouNumber));

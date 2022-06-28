@@ -16,13 +16,13 @@
 
 using namespace Couenne;
 
-GlobalCutOff::GlobalCutOff (): 
-  cutoff_ (COIN_DBL_MAX), 
-  sol_    (NULL), 
-  size_   (0), 
+GlobalCutOff::GlobalCutOff ():
+  cutoff_ (COIN_DBL_MAX),
+  sol_    (NULL),
+  size_   (0),
   valid_  (false) {}
 
-GlobalCutOff::GlobalCutOff (double c, const double *s, int n): 
+GlobalCutOff::GlobalCutOff (double c, const double *s, int n):
   cutoff_ (c),
   sol_    (NULL),
   size_   (n),
@@ -35,7 +35,7 @@ GlobalCutOff::GlobalCutOff (double c, const double *s, int n):
 }
 
 
-GlobalCutOff::~GlobalCutOff () 
+GlobalCutOff::~GlobalCutOff ()
 {if (sol_) delete [] sol_;}
 
 
@@ -47,7 +47,7 @@ void GlobalCutOff::setCutOff (const CouenneProblem *p, double cutoff, const doub
 
   if (s) {
 
-    if (!sol_) 
+    if (!sol_)
       sol_ = new CouNumber [size_ = p -> nVars ()];
 
     CoinCopyN (s, p -> nOrigVars (), sol_); // fill first variables with values from NLP

@@ -40,11 +40,11 @@ class COUENNELIB_EXPORT exprStore: public exprCopy {
   }
 
   /// Destructor
-  virtual ~exprStore () 
+  virtual ~exprStore ()
   {copy_ = NULL;}
 
   /// Printing
-  virtual void print (std::ostream &out = std::cout, 
+  virtual void print (std::ostream &out = std::cout,
 		      bool descend      = false) const;
 
   /// Cloning method
@@ -54,7 +54,7 @@ class COUENNELIB_EXPORT exprStore: public exprCopy {
   /// function for evaluating the expression -- returns value of
   /// exprCopy pointed to, which returns a value stored from a
   /// previous evaluation
-  virtual inline CouNumber operator () () 
+  virtual inline CouNumber operator () ()
   {return (copy_ -> Value ());}
 };
 

@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: generate one disjunctive cut based on a single disjunction
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -27,8 +27,8 @@ using namespace Couenne;
 
 
 // print content of sparse matrix
-void printMatrix (int nrows, int ncols, int nel, 
-		  const int *start, const int *len, 
+void printMatrix (int nrows, int ncols, int nel,
+		  const int *start, const int *len,
 		  const int *ind, const double *el);
 
 // same with CoinPackedMatrix
@@ -38,15 +38,15 @@ void printMatrix   (const CoinPackedMatrix *A);
 void printLPMatrix (const OsiSolverInterface &si);
 
 // add columns specified by start/len/ind/el to matrix Astd
-void addSubMatr (int *start, int *len, int *ind, double *el, 
-		 CoinPackedMatrix &Astd, CoinPackedVector &rstd, 
+void addSubMatr (int *start, int *len, int *ind, double *el,
+		 CoinPackedMatrix &Astd, CoinPackedVector &rstd,
 		 int &cur, int &curCol, int dispM, int dispVec, int nrows);
 
 
 /// generate one disjunctive cut from one CGLP
-int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCuts *> > &disjunctions, 
-				       OsiSolverInterface &si, 
-				       OsiCuts &cs, 
+int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCuts *> > &disjunctions,
+				       OsiSolverInterface &si,
+				       OsiCuts &cs,
 				       const CglTreeInfo &info) const {
 
   // create CGLP with si+left and si+right, for each (left,right) in
@@ -63,7 +63,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
   //                    -beta        + v b       + v'd    <=  0      --- 1
   //                           |(u,    v,    u',   v')|_1  =  1      --- normalized multipliers
   //
-  //                             u,    v,    u',   v'     >=  0      --- non-negativity 
+  //                             u,    v,    u',   v'     >=  0      --- non-negativity
   //
   //
   //  And here are the submatrices (M' is M transposed)
@@ -80,7 +80,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
   //
   //
   // build a different A such that
-  // 
+  //
   // - only active rows (resp. columns) of A are included if active_rows_
   //   (resp. active_columns_) are set
   // - equality constraints are duplicated in a <= and a >= constraint
@@ -91,7 +91,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
   // put matrix from base problem in canonical form //////////////////////////////
   CoinPackedMatrix Astd;
   CoinPackedVector rstd;
-  OsiSI2MatrVec (Astd, rstd, si); 
+  OsiSI2MatrVec (Astd, rstd, si);
 
   int
     n   = si.   getNumCols (),      //mC   = 2*n + 3,
@@ -99,13 +99,13 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
     nnz = Astd. getNumElements (),  nnzC = 2 * (n + 1 + nnz + 2*m);
 
   if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS))
-    printf ("canonical form has %d cols, %d rows, %d nonzeros --> cglp has %d,%d,%d\n", 
+    printf ("canonical form has %d cols, %d rows, %d nonzeros --> cglp has %d,%d,%d\n",
 	    n, m, nnz, nC, 2*n + 3, nnzC);
 
-  double 
+  double
     *elements = new double [nnzC];
 
-  int 
+  int
     *indices = new int [nnzC],
     *start   = new int [nC + 1],
     *length  = new int [nC],
@@ -127,10 +127,10 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
   indices [cur] = 2*n+1; elements [cur++] = -1.;
 
   // third...
-  addSubMatr (start + curCol, length + curCol, 
-	      indices + cur, elements + cur, 
+  addSubMatr (start + curCol, length + curCol,
+	      indices + cur, elements + cur,
 	      Astd, rstd,
-	      cur, curCol, 
+	      cur, curCol,
 	      0, 2*n,   2*n+2);
 
   if (jnlst_ -> ProduceOutput (J_MATRIX, J_DISJCUTS)) {
@@ -139,10 +139,10 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
   }
 
   // ... and fourth column: get single rows from Astd
-  addSubMatr (start + curCol, length + curCol, 
-	      indices + cur, elements + cur, 
-	      Astd, rstd, 
-	      cur, curCol, 
+  addSubMatr (start + curCol, length + curCol,
+	      indices + cur, elements + cur,
+	      Astd, rstd,
+	      cur, curCol,
 	      n, 2*n+1, 2*n+2);
 
   if (jnlst_ -> ProduceOutput (J_MATRIX, J_DISJCUTS)) {
@@ -168,7 +168,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
 
   cglp. messageHandler () -> setLogLevel (0);
 
-  int 
+  int
     N = baseA -> getMajorDim (),        // # cols in base problem
     M = baseA -> getMinorDim ();        // # rows in base problem
 
@@ -206,7 +206,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
   rowsen [M-3] = rowsen [M-2] = 'L';
 
   cglp.assignProblem (baseA,   // matrix
-		      collb,   // lower bounds 
+		      collb,   // lower bounds
 		      colub,   // upper bounds
 		      obj,     // obj coefficients
 		      rowsen,  // row sense
@@ -229,9 +229,9 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
       *left  = disjI -> first,
       *right = disjI -> second;
 
-    int 
+    int
       ncolLeft  = OsiCuts2MatrVec (&cglp,  left, 0, 2*n),
-      ncolRight = OsiCuts2MatrVec (&cglp, right, n, 2*n+1);    
+      ncolRight = OsiCuts2MatrVec (&cglp, right, n, 2*n+1);
 
     /*char filename [30];
     static int iter = 0;
@@ -264,7 +264,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
 	if (value < mincoeff) mincoeff = value;
 	if ((maxcoeff            > MAX_NUM_COEFF) ||
 	    (maxcoeff            < MIN_NUM_COEFF) ||
-	    (maxcoeff / mincoeff > MAX_NUM_RATIO)) 
+	    (maxcoeff / mincoeff > MAX_NUM_RATIO))
 	  break;
 	nnzCut++;
       }
@@ -306,7 +306,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
 
 	  cglp.setObjective (obj);
 	  }*/
- 
+
 	// add it to CGLP
 	if (addPreviousCut_) {
 
@@ -315,13 +315,13 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
 
 	  // first column
 	  CoinCopyN    (nzcoeff, nnzCut, colCoe);
-	  CoinCopyN    (indices, nnzCut, colInd); 
+	  CoinCopyN    (indices, nnzCut, colInd);
 	  colInd [nnzCut]       = 2*n;   colCoe [nnzCut]   = AlphaBeta [n];
 	  colInd [nnzCut+1]     = 2*n+2; colCoe [nnzCut+1] = 1; // entry in norm constraint
 
 	  // second column
 	  CoinCopyN    (nzcoeff, nnzCut, colCoe + nnzCut + 2);
-	  CoinCopyDisp (indices, nnzCut, colInd + nnzCut + 2, n); 
+	  CoinCopyDisp (indices, nnzCut, colInd + nnzCut + 2, n);
 	  colInd [2*nnzCut + 2] = 2*n+1; colCoe [2*nnzCut+2] = AlphaBeta [n];
 	  colInd [2*nnzCut + 3] = 2*n+2; colCoe [2*nnzCut+3] = 1.; // entry in norm constraint
 
@@ -334,12 +334,12 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
 	  *start = 0;
 	  start [2] = 2 * (start [1] = nnzCut + 2);
 
-	  cglp. addCols (2,        // const int numcols, 
+	  cglp. addCols (2,        // const int numcols,
 			 start,    // const int* columnStarts,
-			 colInd,   // const int* rows, 
+			 colInd,   // const int* rows,
 			 colCoe,   // const double* elements,
-			 lb,       // const double* collb, 
-			 ub,       // const double* colub,   
+			 lb,       // const double* collb,
+			 ub,       // const double* colub,
 			 obj);     // const double* obj
 
 	  delete [] colCoe;
@@ -350,7 +350,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
 	delete [] indices;
 
 	if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) {
-	  printf ("====== disjunctive cut: "); 
+	  printf ("====== disjunctive cut: ");
 	  cut -> print ();
 	}
 

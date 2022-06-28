@@ -4,7 +4,7 @@
  * Authors: Pietro Belotti
  * Purpose: MILP part of the loop
  * Created: February 1, 2014
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -46,7 +46,7 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
   // Solve IP using nSol as the initial point to minimize weighted
   // l-1 distance from. If nSol==NULL, the MILP is created using the
   // original milp's LP solution.
-            
+
   double z = solveMILP (nSol, iSol, niter, nsuciter);
 
   // if no MILP solution was found, bail out
@@ -73,7 +73,7 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
       }
     }
 
-    if (!try_again) { // try moving around current solution 
+    if (!try_again) { // try moving around current solution
 
       // SCIP could not find a MILP solution and we're somewhat
       // locked. Round current solution and feed it to the NLP. This
@@ -85,11 +85,11 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
 	iSol = new double [n];
 
       for (int i=0; i<n; i++)
-	iSol [i] = (problem_ -> Var (i) -> isInteger ()) ? 
-	  COUENNE_round (nSol [i]) : 
+	iSol [i] = (problem_ -> Var (i) -> isInteger ()) ?
+	  COUENNE_round (nSol [i]) :
 	  nSol [i];
     }
- 
+
     // if (!try_again) { // nothing to do, bail out	
     // 	problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: could not find from pool either, bailing out\n");
     // 	break;
@@ -143,7 +143,7 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
 
       } while( !pool_ -> Set ().empty() );
 
-    } else if (((tabuMgt_ == FP_TABU_CUT)   ||  
+    } else if (((tabuMgt_ == FP_TABU_CUT)   ||
 		((pool_ -> Set (). empty ()) && iSol))) {
 
       OsiCuts cs;
@@ -165,11 +165,11 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
 
       // perturb solution	
 
-      const CouNumber 
+      const CouNumber
 	*lb = milp_ -> getColLower (),
 	*ub = milp_ -> getColUpper ();
 
-      double 
+      double
 	downMoves = 0.,
 	upMoves   = 0.;
 
@@ -187,7 +187,7 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
 	if (problem_ -> Var (i) -> isInteger ()) {
 
 	  double
-	    rnd  = CoinDrand48 (), 
+	    rnd  = CoinDrand48 (),
 	    down = 0.,
 	    up   = 1.;
 
@@ -206,11 +206,11 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
 	}
       }
     }
-  } 
+  }
 
   problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: checking IP solution for feasibility\n");
 
-  isChecked = problem_ -> checkNLP0 (iSol, z, true, 
+  isChecked = problem_ -> checkNLP0 (iSol, z, true,
 				     false, // don't care about obj
 				     true,  // stop at first violation
 				     true); // checkAll
@@ -273,14 +273,14 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
 
 	if (z < problem_ -> getCutOff ()) // don't waste time if not improving
 
-	  isChecked = problem_ -> checkNLP0 (nSol, z, true, 
+	  isChecked = problem_ -> checkNLP0 (nSol, z, true,
 					     false, // don't care about obj
 					     true,  // stop at first violation
 					     true); // checkAll
 
-	if (isChecked && (z < problem_ -> getCutOff ())) 
+	if (isChecked && (z < problem_ -> getCutOff ()))
 	  break;
-      } 
+      }
 
       // find non-tabu solution in the solution pool
       while (!pool_ -> Set (). empty ()) {
@@ -295,7 +295,7 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
 	  try_again = true;
 	  break;
 	}
-      } 
+      }
 
     } while (try_again);
   }
@@ -350,7 +350,7 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
 
       if (objInd >= 0) {
 	chg_bds = new t_chg_bounds [problem_ -> nVars ()];
-	chg_bds [objInd].setUpper (t_chg_bounds::CHANGED); 
+	chg_bds [objInd].setUpper (t_chg_bounds::CHANGED);
       }
 
       // If, with new cutoff, bound tightening clears the whole
@@ -366,7 +366,7 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
 	break;
 
       // Update lb/ub on milp and nlp here
-      const CouNumber 
+      const CouNumber
 	*plb = problem_ -> Lb (),
 	*pub = problem_ -> Ub (),
 	*mlb = milp_    -> getColLower (),
@@ -387,7 +387,7 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
 
     problem_ -> Jnlst () -> Printf (J_WARNING, J_NLPHEURISTIC, "FP: IP solution NOT MINLP feasible\n");
 
-    if (milpCuttingPlane_ == FP_CUT_EXTERNAL || 
+    if (milpCuttingPlane_ == FP_CUT_EXTERNAL ||
 	milpCuttingPlane_ == FP_CUT_POST) {
 
       // Solution is IP- but not MINLP feasible: it might get cut by
@@ -399,14 +399,14 @@ int CouenneFeasPump::milpPhase (double *nSol, double *iSol, int niter, int *nsuc
       couenneCG_ -> genRowCuts (*milp_, cs, 0, NULL); // remaining three arguments NULL by default
       problem_   -> domain () -> pop ();
 
-      if (cs.sizeRowCuts ()) { 
+      if (cs.sizeRowCuts ()) {
 
 	// the (integer, NLP infeasible) solution could be separated
 
 	milp_ -> applyCuts (cs);
 
 	// found linearization cut, now re-solve MILP (not quite a FP)
-	if (milpCuttingPlane_ == FP_CUT_EXTERNAL && 
+	if (milpCuttingPlane_ == FP_CUT_EXTERNAL &&
 	    nSep++ < nSepRounds_)
 	  continue;
       }

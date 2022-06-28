@@ -39,7 +39,7 @@ static bool obbt_updateBound (OsiSolverInterface *csi, /// interface to use as a
   // needs minz for obbt
 
   //csi -> deleteScaleFactors ();
-  csi -> setDblParam (OsiDualObjectiveLimit, COIN_DBL_MAX); 
+  csi -> setDblParam (OsiDualObjectiveLimit, COIN_DBL_MAX);
   csi -> setDblParam (OsiPrimalObjectiveLimit, (sense==1) ? bound : -bound);
   //csi -> setObjSense (1); // always minimize, just change the sign of the variable // done in caller
 
@@ -54,7 +54,7 @@ static bool obbt_updateBound (OsiSolverInterface *csi, /// interface to use as a
 
     double opt = csi -> getObjValue ();
 
-    if (sense > 0) 
+    if (sense > 0)
          {if (opt        > bound + OBBT_EPS) {bound = (isint ? ceil  (opt - COUENNE_EPS) : opt); return true;}}
     else {if ((opt=-opt) < bound - OBBT_EPS) {bound = (isint ? floor (opt + COUENNE_EPS) : opt); return true;}}
   }
@@ -65,12 +65,12 @@ static bool obbt_updateBound (OsiSolverInterface *csi, /// interface to use as a
 
 /// Iteration on one variable
 
-int CouenneProblem::obbt_iter (OsiSolverInterface *csi, 
-			       t_chg_bounds *chg_bds, 
-			       const CoinWarmStart *warmstart, 
+int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
+			       t_chg_bounds *chg_bds,
+			       const CoinWarmStart *warmstart,
 			       Bonmin::BabInfo *babInfo,
 			       double *objcoe,
-			       int sense, 
+			       int sense,
 			       int index) const {
 
   // TODO: do NOT apply OBBT if this is a variable of the form
@@ -91,14 +91,14 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 
     for (int i=nVars(); i--; knownOptimum++)
 
-      if (*knownOptimum < Lb (i) || 
+      if (*knownOptimum < Lb (i) ||
 	  *knownOptimum > Ub (i)) {
 
 	knownOptimum = NULL;
 	break;
       }
 
-    if (knownOptimum) 
+    if (knownOptimum)
       knownOptimum -= nVars ();
   }
 
@@ -122,13 +122,13 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
       CouNumber value = (*(var -> Image ())) ();
 
       if (csi -> getColLower () [index] < value - COUENNE_EPS) {
-	csi -> setColLower (index, value); 
+	csi -> setColLower (index, value);
 	chg_bds    [index].setLowerBits(t_chg_bounds::CHANGED | t_chg_bounds::EXACT);
       }
       else chg_bds [index].setLowerBits(t_chg_bounds::EXACT);
 
       if (csi -> getColUpper () [index] > value + COUENNE_EPS) {
-	csi -> setColUpper (index, value); 
+	csi -> setColUpper (index, value);
 	chg_bds    [index].setUpperBits(t_chg_bounds::CHANGED | t_chg_bounds::EXACT);
       }
       else chg_bds [index].setUpperBits(t_chg_bounds::EXACT);
@@ -144,7 +144,7 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
       // TODO: write code for monotone functions...
 
       if // independent variable is exactly bounded in both ways
-	((((chg_bds [indInd].lower() & t_chg_bounds::EXACT) && 
+	((((chg_bds [indInd].lower() & t_chg_bounds::EXACT) &&
 	   (chg_bds [indInd].upper() & t_chg_bounds::EXACT)) ||
 	  // or if this expression is of the form w=cx+d, that is, it
 	  // depends on one variable only and it is linear
@@ -165,13 +165,13 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 	}
 
 	if (lb > csi -> getColLower () [index] + COUENNE_EPS) {
-	  csi -> setColLower (index, lb); 
+	  csi -> setColLower (index, lb);
 	  Lb (index) = lb;
 	  chg_bds      [index].setLowerBits(t_chg_bounds::CHANGED | t_chg_bounds::EXACT);
 	} else chg_bds [index].setLowerBits(t_chg_bounds::EXACT);
 
 	if (ub < csi -> getColUpper () [index] - COUENNE_EPS) {
-	  csi -> setColUpper (index, ub); 
+	  csi -> setColUpper (index, ub);
 	  Ub (index) = ub;
 	  chg_bds      [index].setUpperBits(t_chg_bounds::CHANGED | t_chg_bounds::EXACT);
 	} else chg_bds [index].setUpperBits(t_chg_bounds::EXACT);
@@ -181,7 +181,7 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 
   // only improve bounds if
   if (!issimple &&
-      ((Var (index) -> Type () == VAR) ||        // it is an original variable 
+      ((Var (index) -> Type () == VAR) ||        // it is an original variable
        (Var (index) -> Multiplicity () > 0)) &&  // or its multiplicity is at least 1
       (Lb (index) < Ub (index) - COUENNE_EPS) && // in any case, bounds are not equal
 
@@ -206,10 +206,10 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
     }
 #endif
 
-    CouNumber &bound = 
-      (sense == 1) ? 
-      (Lb (index)) : 
-      (Ub (index)); 
+    CouNumber &bound =
+      (sense == 1) ?
+      (Lb (index)) :
+      (Ub (index));
 
     // m{in,ax}imize xi on csi
 
@@ -231,7 +231,7 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
     //csi -> continuousModel () -> setPerturbation (50);
 
     /* From ClpSimplex.cpp:
-       
+
        If you are re-using the same matrix again and again then the
        setup time to do scaling may be significant.  Also you may not
        want to initialize all values or return all values (especially
@@ -250,7 +250,7 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
     //csi -> continuousModel () -> auxiliaryModel (1|8|16|32);
 
     //Jnlst () -> Printf (J_MATRIX, J_BOUNDTIGHTENING,
-    //"obbt___ index = %d [sen=%d,bd=%g,int=%d]\n", 
+    //"obbt___ index = %d [sen=%d,bd=%g,int=%d]\n",
     //index, sense, bound, isInt);
 
     bool has_updated = false;
@@ -263,12 +263,12 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 	if (sense == 1) {
 	  if (bound       > COUENNE_EPS + knownOptimum [index])
 	    Jnlst()->Printf(J_STRONGWARNING, J_BOUNDTIGHTENING,
-			    "#### OBBT cuts optimum at x%d: lb = %g, opt = %g, new lb = %g\n", 
+			    "#### OBBT cuts optimum at x%d: lb = %g, opt = %g, new lb = %g\n",
 			    index, Lb (index), knownOptimum [index], bound);
 	} else {
 	  if (bound       < -COUENNE_EPS + knownOptimum [index])
 	    Jnlst()->Printf(J_STRONGWARNING, J_BOUNDTIGHTENING,
-			    "#### OBBT cuts optimum at x%d: ub = %g, opt = %g, new ub = %g\n", 
+			    "#### OBBT cuts optimum at x%d: ub = %g, opt = %g, new ub = %g\n",
 			    index, Ub (index), knownOptimum [index], bound);
 	}
       }
@@ -280,16 +280,16 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 
       if (sense==1)
 	if (csi -> getColLower () [index] < bound - COUENNE_EPS) {
-	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"l_%d: %g --> %g\n", 
+	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"l_%d: %g --> %g\n",
 			  index, csi -> getColLower () [index], bound);
-	  csi -> setColLower (index, bound); 
+	  csi -> setColLower (index, bound);
 	  chg_bds      [index].setLowerBits(t_chg_bounds::CHANGED | t_chg_bounds::EXACT);
 	} else chg_bds [index].setLowerBits(t_chg_bounds::EXACT);
       else
 	if (csi -> getColUpper () [index] > bound + COUENNE_EPS) {
-	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"u_%d: %g --> %g\n", 
+	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"u_%d: %g --> %g\n",
 			  index, csi -> getColUpper () [index], bound);
-	  csi -> setColUpper (index, bound); 
+	  csi -> setColUpper (index, bound);
 	  chg_bds      [index].setUpperBits(t_chg_bounds::CHANGED | t_chg_bounds::EXACT);
 	} else chg_bds [index].setUpperBits(t_chg_bounds::EXACT);
 
@@ -307,7 +307,7 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
       // a vector with all zero except a one in position i. This
       // serves as a base to compute modified reduced cost below.
 
-      for (int j=0; j<ncols; j++) 
+      for (int j=0; j<ncols; j++)
 	if ((j!=index) && (j!=objind)) {
 
 	  // fake a change in the objective function and compute
@@ -329,8 +329,8 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
       // is not our problem
 
       Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-		      "  OBBT: x_%d: [%g, %g]\n", index, 
-		      csi -> getColLower () [index], 
+		      "  OBBT: x_%d: [%g, %g]\n", index,
+		      csi -> getColLower () [index],
 		      csi -> getColUpper () [index]);
 
       // should be faster
@@ -350,14 +350,14 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 
     const double *sol = csi -> getColSolution ();
 
-    for (int j=0; j<ncols; j++) 
+    for (int j=0; j<ncols; j++)
       if ((j!=index) && (j!=objind)) {
 
 	if (sol [j] <= Lb (j) + COUENNE_EPS) {
 
 	  // if (!(chg_bds [j].lower() & t_chg_bounds::EXACT) && (!has_updated))
 	  //   printf ("told you it would be useful: l_i: %g\n", j, Lb (j));
-	  
+	
 	  chg_bds [j].setLowerBits(t_chg_bounds::EXACT);
 	}
 
@@ -365,7 +365,7 @@ int CouenneProblem::obbt_iter (OsiSolverInterface *csi,
 
 	  // if (!(chg_bds [j].upper() & t_chg_bounds::EXACT) && (!has_updated))
 	  //   printf ("told you it would be useful: u_i: %g\n", j, Ub (j));
-	  
+	
 	  chg_bds [j].setUpperBits(t_chg_bounds::EXACT);
 	}
       }

@@ -50,7 +50,7 @@ const CouNumber estProdEps = 1e-6;
     std::string s;
 
     b.options () -> GetStringValue ("pseudocost_mult_lp", s, "couenne.");
-    pseudoUpdateLP_ = (s == "yes");      
+    pseudoUpdateLP_ = (s == "yes");
 
     b.options () -> GetStringValue ("estimate_select", s, "couenne.");
     estimateProduct_ = (s == "product");
@@ -119,7 +119,7 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
 
   //CouenneObject    *co    = dynamic_cast <CouenneObject    *> (object [iObject]);
   //OsiSimpleInteger *simpl = dynamic_cast <OsiSimpleInteger *> (object [iObject]);
-  
+
   // int vInd = -1;
   // bool varIsInt = false;
   // if(co) {
@@ -144,9 +144,9 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
   //     return 3;
   //   }
   // }
-  
+
   int goodCand = 3; // good candidate
- 
+
   // Must not call branch() for integer variable vInd with
   // upper == lower or for OsiSimpleInteger with
   // info->solution[vInd] not between lower and upper
@@ -175,16 +175,16 @@ int CouenneChooseStrong::goodCandidate(OsiSolverInterface *solver,
       }
       //}
   }
-    
+
   return(goodCand);
 } /* goodCandidate */
 
 /***********************************************************************/
-bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject, 
-				       const double value, 
-				       const double upEstimate, 
+bool CouenneChooseStrong::saveBestCand(OsiObject **object, const int iObject,
+				       const double value,
+				       const double upEstimate,
 				       const double downEstimate,
-				       double &bestVal1, 
+				       double &bestVal1,
 				       double &bestVal2, int &bestIndex,
 				       int &bestWay) {
   bool retval = false;
@@ -244,7 +244,7 @@ Note: Must not return 4 for a non variable object
 	       problem_->Lb(pv), problem_->Ub(pv));
       }
     }
- #endif                                                                         
+ #endif
 
     int retval;
     const double prec = problem_->getFeasTol();
@@ -265,7 +265,7 @@ Note: Must not return 4 for a non variable object
     }
 
     if (numberUnsatisfied_) {
-      int cardIndForPseudo = 0, 
+      int cardIndForPseudo = 0,
 	*indForPseudo = new int[numberUnsatisfied_];
       OsiObject ** object = solver->objects();
       const double* upTotalChange = pseudoCosts_.upTotalChange();
@@ -293,7 +293,7 @@ Note: Must not return 4 for a non variable object
 
       bool smallGap = false;
       bool sbObjPosImp = false; // true if an object on which strong branching
-                                // was performed has a positive improvement 
+                                // was performed has a positive improvement
                                 // in both branches; used only when gap is
                                 // deemed small
 
@@ -301,9 +301,9 @@ Note: Must not return 4 for a non variable object
       int objInd = problem_ -> Obj (0) -> Body () -> Index ();
       double lbGap = objInd >= 0 ? info -> lower_ [objInd] : problem_ -> Obj (0) -> Body () -> Value ();
       double ubGap = problem_ -> getCutOff ();
-      double currentGap = 
+      double currentGap =
 	(ubGap >  COUENNE_INFINITY    / 10 ||
-	 lbGap < -Couenne_large_bound / 10) ? 1e3 : 
+	 lbGap < -Couenne_large_bound / 10) ? 1e3 :
 	fabs (ubGap - lbGap) / (1.e-3 + CoinMin (fabs (ubGap), fabs (lbGap)));
 
       if(currentGap < 1e-3) {
@@ -326,7 +326,7 @@ Note: Must not return 4 for a non variable object
               ( !isRoot && (upNumber[iObject]<numberBeforeTrusted ||
                           downNumber[iObject]<numberBeforeTrusted ))||
               ( isRoot && (!upNumber[iObject] && !downNumber[iObject])) ) {
-         
+
 #ifdef TRACE_STRONG
 	  if(problem_->doPrint_) {
 	    printf("Push object %d for strong branch\n", iObject);
@@ -414,7 +414,7 @@ Note: Must not return 4 for a non variable object
 		if(needBranch >= 2) { // for OsiSimpleInteger: do not branch
                   // if upper == lower or if info value is outside bounds
                   // for other objects: branch
-		  OsiBranchingObject * branch = 
+		  OsiBranchingObject * branch =
                                         obj->createBranch(solver, info, 0);
 		  branch -> branch (solver);
 		  delete branch;
@@ -445,14 +445,14 @@ Note: Must not return 4 for a non variable object
 		if(needBranch >= 2) { // for OsiSimpleInteger: do not branch
                   // if upper == lower or if info value is outside bounds
                   // for other objects: branch
-		  OsiBranchingObject * branch = 
+		  OsiBranchingObject * branch =
                                          obj->createBranch(solver, info, 1);
 		  branch -> branch (solver);
 		  delete branch;
 		}
 	      }
             }
-	  
+	
             double
 	      MAXMIN_CRITERION = maxminCrit (info),
 	      minVal, maxVal, value;
@@ -469,19 +469,19 @@ Note: Must not return 4 for a non variable object
 	      value = minVal;
 	    }
 	    else {
-	      value = 
-		estimateProduct_ ? 
+	      value =
+		estimateProduct_ ?
 		((estProdEps + minVal) * maxVal) :
-		(       MAXMIN_CRITERION  * minVal + 
+		(       MAXMIN_CRITERION  * minVal +
 			(1.0 - MAXMIN_CRITERION) * maxVal);
 	    }
 
 	    if((needBranch >= 3) &&
 	       saveBestCand(object, iObject, value, upEstimate, downEstimate,
-			    bestTrustedVal1, 
+			    bestTrustedVal1,
 			    bestTrustedVal2, bestObjectIndex_, bestWhichWay_)) {
 	      if(returnCodeSB) { // 1 or 2
-		returnCode = 2; 
+		returnCode = 2;
 	      }
 
 #ifdef USE_SMALL_GAP
@@ -515,8 +515,8 @@ Note: Must not return 4 for a non variable object
 #endif
       }
 
-      if((returnCodeSB != -1) && 
-	 ((returnCode != 0) || (!sbObjPosImp))) {  
+      if((returnCodeSB != -1) &&
+	 ((returnCode != 0) || (!sbObjPosImp))) {
 	          // if returnCodeSB == -1 (i.e. problem is infeasible)
 	          // no need to scan objects with pseudocosts
 	          // if returnCode == 0 and sbObjPOsImp is true
@@ -539,7 +539,7 @@ Note: Must not return 4 for a non variable object
 	    downEstimate     = (downTotalChange [iObject] * obj -> downEstimate ()) / downNumber [iObject],
 	    MAXMIN_CRITERION = maxminCrit (info),
 	    minVal, maxVal, value;
-	  
+	
 	  if (downEstimate < upEstimate) {
 	    minVal = downEstimate;
 	    maxVal = upEstimate;
@@ -547,20 +547,20 @@ Note: Must not return 4 for a non variable object
 	    minVal = upEstimate;
 	    maxVal = downEstimate;
 	  }
-	  
-	  value = 
-	    estimateProduct_ ? 
+	
+	  value =
+	    estimateProduct_ ?
 	    ((estProdEps + minVal) * maxVal) :
-	    (       MAXMIN_CRITERION  * minVal + 
+	    (       MAXMIN_CRITERION  * minVal +
 		    (1.0 - MAXMIN_CRITERION) * maxVal);
-	  
-	  
+	
+	
 	  // store bad candidates in secondary best
 	  if(needBranch < 3) {
-	    if(saveBestCand(object, iObject, value, 
+	    if(saveBestCand(object, iObject, value,
 			    upEstimate, downEstimate,
-			    bestTrusted2Val1, 
-			    bestTrusted2Val2, bestObjectIndex2, 
+			    bestTrusted2Val1,
+			    bestTrusted2Val2, bestObjectIndex2,
 			    bestWhichWay2)) {
 	      // no returnCode change
 	    }
@@ -572,9 +572,9 @@ Note: Must not return 4 for a non variable object
 #endif
 	  }
 	  else {
-	    if(saveBestCand(object, iObject, value, 
+	    if(saveBestCand(object, iObject, value,
 			    upEstimate, downEstimate,
-			    bestTrustedVal1, 
+			    bestTrustedVal1,
 			    bestTrustedVal2, bestObjectIndex_, bestWhichWay_)) {
               if(returnCode == 1) { // first saved object
                                     // is using pseudo-cost
@@ -592,12 +592,12 @@ Note: Must not return 4 for a non variable object
 #endif
 	  }
 	}
-    
+
 	if((bestObjectIndex_ < 0) && (bestObjectIndex2 >= 0)) {
 	  bestObjectIndex_ = bestObjectIndex2;
 	  bestWhichWay_ = bestWhichWay2;
 	  bestTrustedVal1 = bestTrusted2Val1;
-          if(goodCandidate(solver, info, object,  
+          if(goodCandidate(solver, info, object,
                            bestObjectIndex_, prec) != 4) {
             returnCode = 4;
           }
@@ -653,14 +653,14 @@ b);
 #endif
       }
       message(CHOSEN_VAR)<<bestObjectIndex_<<CoinMessageEol;
-    
+
       if((numberFixed==numberUnsatisfied_&&numberFixed) &&
 	 (goodCandidate(solver, info, object, bestObjectIndex_, prec) != 4)) {
         returnCode = 4;
       }
 
       if((returnCode == 2) || (returnCode == 3)) {
-        if((objectVarInd > -1) && 
+        if((objectVarInd > -1) &&
 	   (goodCandidate(solver, info, object, bestObjectIndex_, prec) != 4)) {
           // Can occur: two objects for same var, first scanned object
           // has both branches feasible and is saved as bestObjectIndex_,
@@ -697,7 +697,7 @@ b);
       printf("CouenneChooseStrong::ChooseVariable(): retval: %d\n", retval);
     }
 #endif
-  
+
     problem_ -> domain () -> pop ();
 
     return retval;
@@ -725,13 +725,13 @@ void eliminateIntegerObjects (CbcModel           *model);
 
     initialize = true; // to avoid failed assert in BonChooseVariable::setupList()
 
-    problem_ -> domain () -> push 
+    problem_ -> domain () -> push
       (problem_ -> nVars (),
-       info -> solution_, 
-       info -> lower_, 
+       info -> solution_,
+       info -> lower_,
        info -> upper_); // have to alloc+copy
 
-    jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
+    jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING,
 		      "----------------- (strong) setup list\n");
 
     if (jnlst_ -> ProduceOutput (J_DETAILED, J_BRANCHING)) {
@@ -750,9 +750,9 @@ void eliminateIntegerObjects (CbcModel           *model);
 
     // int way;
     // for (int i=0; i<info->solver_->numberObjects(); ++i)
-    //   printf ("[%d:%d,%g] ", 
-    // 	      info -> solver_ -> objects () [i] -> columnNumber (), 
-    // 	      info -> solver_ -> objects () [i] -> priority (), 
+    //   printf ("[%d:%d,%g] ",
+    // 	      info -> solver_ -> objects () [i] -> columnNumber (),
+    // 	      info -> solver_ -> objects () [i] -> priority (),
     // 	      info -> solver_ -> objects () [i] -> infeasibility (info,way));
     // printf ("\n");
 
@@ -765,9 +765,9 @@ void eliminateIntegerObjects (CbcModel           *model);
     if (retval == 0) { // No branching is possible
 
 #ifdef FM_CHECKNLP2
-      if(!(problem_->checkNLP2(info->solution_, 
+      if(!(problem_->checkNLP2(info->solution_,
 			       info->objectiveValue_, true, // care about obj
-			       false, // do not stop at first viol 
+			       false, // do not stop at first viol
 			       true, // checkAll
 			       problem_->getFeasTol()))) {
                                 // false for NOT stopping at first violation
@@ -799,7 +799,7 @@ void eliminateIntegerObjects (CbcModel           *model);
 #ifdef TRACE_STRONG
     if(problem_->doPrint_) {
       printf("Strong list: (obj_ind var_ind priority useful viol)\n");
-      printf("numberStrong: %d  numberStrongRoot: %d  retval: %d\n", 
+      printf("numberStrong: %d  numberStrongRoot: %d  retval: %d\n",
 	     numberStrong_, numberStrongRoot_, retval);
       for(int i=0; i<retval; i++) {
 	// CouenneObject *co =  dynamic_cast <CouenneObject *>(object[list_[i]]);
@@ -814,12 +814,12 @@ void eliminateIntegerObjects (CbcModel           *model);
 	int wayprint;
 	double violprint = object[list_[i]]->infeasibility(info, wayprint);
 	if(violprint < COIN_DBL_MAX / 100) {
-	  printf(" (%d %d %d %6.4f %6.4f)", list_[i], objectInd, 
-		 object[list_[i]]->priority(), useful_[i], 
+	  printf(" (%d %d %d %6.4f %6.4f)", list_[i], objectInd,
+		 object[list_[i]]->priority(), useful_[i],
 		 violprint);
 	}
 	else {
-	  printf(" (%d %d %d %6.4f +inf)", list_[i], objectInd, 
+	  printf(" (%d %d %d %6.4f +inf)", list_[i], objectInd,
 		 object[list_[i]]->priority(), useful_[i]);
 	}
 	printf("\n");
@@ -831,7 +831,7 @@ void eliminateIntegerObjects (CbcModel           *model);
     //   if (!((i+1) % 12)) printf ("\n");
     // }
 
-    jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING, 
+    jnlst_ -> Printf (J_ITERSUMMARY, J_BRANCHING,
 		      "----------------- (strong) setup list done - %d infeasibilities\n", retval);
 
 #if (defined TRACE_STRONG)
@@ -863,7 +863,7 @@ void eliminateIntegerObjects (CbcModel           *model);
 
     roptions -> AddStringOption2
       ("pseudocost_mult_lp",
-       "Use distance between LP points to update multipliers of pseudocosts "  
+       "Use distance between LP points to update multipliers of pseudocosts "
        "after simulating branching",
        "no",
        "yes", "",
@@ -892,7 +892,7 @@ void eliminateIntegerObjects (CbcModel           *model);
 					      const OsiObject ** objects) {
 
 #ifdef FM_CHECKNLP2
-    return problem_ -> checkNLP2 (solution, 0, false, true, true, 
+    return problem_ -> checkNLP2 (solution, 0, false, true, true,
 				  problem_->getFeasTol());
 #else
     int indobj = problem_ -> Obj (0) -> Body () -> Index ();

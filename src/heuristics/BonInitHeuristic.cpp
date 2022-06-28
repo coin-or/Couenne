@@ -1,5 +1,5 @@
 /* */
-// (C) Copyright International Business Machines Corporation 2007 
+// (C) Copyright International Business Machines Corporation 2007
 // All Rights Reserved.
 // This code is published under the Eclipse Public License (EPL).
 //
@@ -13,7 +13,7 @@
 #include "CouenneRecordBestSol.hpp"
 
 using namespace Couenne;
- 
+
 InitHeuristic::InitHeuristic (double objValue, const double* sol,
 			      CouenneProblem& cp):
   CbcHeuristic(),
@@ -30,7 +30,7 @@ InitHeuristic::InitHeuristic (double objValue, const double* sol,
 // #ifdef FM_CHECKNLP2
 //     (cp.checkNLP2(sol, 0, false, true, true, cp.getFeasTol()))
 // #else
-//     (cp.checkNLP (sol, objValue, true)) // true for recomputing objValue 
+//     (cp.checkNLP (sol, objValue, true)) // true for recomputing objValue
 // #endif
 
       sol_ = new double [nVars_];
@@ -61,12 +61,12 @@ InitHeuristic::InitHeuristic(const InitHeuristic & other)
     sol_ = NULL;
   }
 }
-  
-CbcHeuristic * 
+
+CbcHeuristic *
 InitHeuristic::clone() const{
   return new InitHeuristic(*this);
 }
-  
+
 InitHeuristic &
 InitHeuristic::operator=(const InitHeuristic & rhs){
   if(this != &rhs){
@@ -85,12 +85,12 @@ InitHeuristic::operator=(const InitHeuristic & rhs){
   }
   return *this;
 }
-  
+
 InitHeuristic::~InitHeuristic(){
   if(sol_)
     delete [] sol_;
 }
-  
+
 int
 InitHeuristic::solution(double & objectiveValue, double * newSolution){
 

@@ -26,7 +26,7 @@ class COUENNELIB_EXPORT exprDiv: public exprOp {
  public:
 
   /// Constructor
-  exprDiv (expression **al, int n = 2): 
+  exprDiv (expression **al, int n = 2):
     exprOp (al, n) {} //< non-leaf expression, with argument list
 
   /// Constructor with two arguments given explicitly
@@ -48,7 +48,7 @@ class COUENNELIB_EXPORT exprDiv: public exprOp {
   CouNumber gradientNorm (const double *x);
 
   /// Differentiation
-  expression *differentiate (int index); 
+  expression *differentiate (int index);
 
   /// Simplification
   expression *simplify ();
@@ -72,10 +72,10 @@ class COUENNELIB_EXPORT exprDiv: public exprOp {
   exprAux *standardize (CouenneProblem *p, bool addAux = true);
 
   /// Generate equality between *this and *w
-  void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		     OsiCuts &cs, const CouenneCutGenerator *cg, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
+  void generateCuts (expression *w, //const OsiSolverInterface &si,
+		     OsiCuts &cs, const CouenneCutGenerator *cg,
+		     t_chg_bounds * = NULL, int = -1,
+		     CouNumber = -COUENNE_INFINITY,
 		     CouNumber =  COUENNE_INFINITY);
 
   /// Code for comparisons
@@ -89,17 +89,17 @@ class COUENNELIB_EXPORT exprDiv: public exprOp {
 
   /// Set up branching object by evaluating many branching points for
   /// each expression's arguments
-  virtual CouNumber selectBranch (const CouenneObject *obj, 
+  virtual CouNumber selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression * &var, 
-				  double * &brpts, 
+				  expression * &var,
+				  double * &brpts,
  				  double * &brDist, // distance of current LP
 					  	    // point to new convexifications
 				  int &way);
 
   /// compute $y^{lv}$ and  $y^{uv}$ for Violation Transfer algorithm
   virtual void closestFeasible (expression *varind,
-				expression *vardep, 
+				expression *vardep,
 				CouNumber &left,
 				CouNumber &right) const;
 
@@ -127,9 +127,9 @@ inline bool is_boundbox_regular (CouNumber b1, CouNumber b2) {
   // OsiRowCut::set[LU]b do not work for values more than
   // SAFE_COEFFICIENT and apparently makes the convexification
   // infeasible.
-  return 
-    (fabs (b1)    < SAFE_COEFFICIENT) && 
-    (fabs (b2)    < SAFE_COEFFICIENT) && 
+  return
+    (fabs (b1)    < SAFE_COEFFICIENT) &&
+    (fabs (b2)    < SAFE_COEFFICIENT) &&
     (fabs (b1*b2) < SAFE_COEFFICIENT);
     //    && ((fabs (b1) > COUENNE_EPS) || (fabs (b2) > COUENNE_EPS));
 }

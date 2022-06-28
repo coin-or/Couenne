@@ -2,7 +2,7 @@
  *
  * Name:    exprCeil.hpp
  * Author:  Pietro Belotti
- * Purpose: definition of ceiling 
+ * Purpose: definition of ceiling
  *
  * (C) Pietro Belotti, 2011.
  * This file is licensed under the Eclipse Public License (EPL)
@@ -30,7 +30,7 @@ class exprCeil: public exprUnary {
   {return new exprCeil (argument_ -> clone (d));}
 
   //// the operator's function
-  inline unary_function F () 
+  inline unary_function F ()
   {return ceil;}
 
   /// print operator
@@ -39,12 +39,12 @@ class exprCeil: public exprUnary {
 
   /// return l-2 norm of gradient at given point
   inline CouNumber gradientNorm (const double *x) {
-    return (argument_ -> Index () < 0) ? 
+    return (argument_ -> Index () < 0) ?
       0. : fabs (x [argument_ -> Index ()]);
   }
 
   /// obtain derivative of expression
-  expression *differentiate (int index); 
+  expression *differentiate (int index);
 
   /// Get lower and upper bound of an expression (if any)
   void getBounds (expression *&, expression *&);
@@ -53,10 +53,10 @@ class exprCeil: public exprUnary {
   void getBounds (CouNumber &lb, CouNumber &ub);
 
   /// generate equality between *this and *w
-  void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		     OsiCuts &cs, const CouenneCutGenerator *cg, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
+  void generateCuts (expression *w, //const OsiSolverInterface &si,
+		     OsiCuts &cs, const CouenneCutGenerator *cg,
+		     t_chg_bounds * = NULL, int = -1,
+		     CouNumber = -COUENNE_INFINITY,
 		     CouNumber =  COUENNE_INFINITY);
 
   /// code for comparisons
@@ -72,10 +72,10 @@ class exprCeil: public exprUnary {
 
   /// Set up branching object by evaluating many branching points for
   /// each expression's arguments
-  virtual CouNumber selectBranch (const CouenneObject *obj, 
+  virtual CouNumber selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression * &var, 
-				  double * &brpts, 
+				  expression * &var,
+				  double * &brpts,
  				  double * &brDist, // distance of current LP
 					  	    // point to new convexifications
 				  int &way)

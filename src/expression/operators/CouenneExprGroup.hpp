@@ -38,20 +38,20 @@ public:
   /// Generalized (static) constructor: check parameters and return a
   /// constant, a single variable, or a real exprGroup
   static expression *genExprGroup (CouNumber,
-				   lincoeff &, 
-				   expression ** = NULL, 
+				   lincoeff &,
+				   expression ** = NULL,
 				   int = 0);
 
   /// Constructor
   exprGroup  (CouNumber,
-	      lincoeff &, 
-	      expression ** = NULL, 
+	      lincoeff &,
+	      expression ** = NULL,
 	      int = 0);
 
   /// Copy constructor
   exprGroup (const exprGroup &src, Domain *d = NULL);
 
-  /// Destructor -- needed to clear bounds 
+  /// Destructor -- needed to clear bounds
   virtual ~exprGroup ();
 
   /// Cloning method
@@ -63,7 +63,7 @@ public:
   lincoeff &lcoeff () const {return lcoeff_;} ///< return linear term coefficients
 
   /// Print expression to iostream
-  virtual void print (std::ostream &   = std::cout, 
+  virtual void print (std::ostream &   = std::cout,
 		      bool             = false) const;
 
   /// function for the evaluation of the expression
@@ -74,11 +74,11 @@ public:
 
   /// fill in the set with all indices of variables appearing in the
   /// expression
-  virtual int DepList (std::set <int> &deplist, 
+  virtual int DepList (std::set <int> &deplist,
 		       enum dig_type type = ORIG_ONLY);
 
   /// differentiation
-  virtual expression *differentiate (int index); 
+  virtual expression *differentiate (int index);
 
   /// simplification
   virtual expression *simplify ();
@@ -93,10 +93,10 @@ public:
   virtual void getBounds (CouNumber &, CouNumber &);
 
   /// special version for linear constraints
-  virtual void generateCuts (expression *, //const OsiSolverInterface &, 
+  virtual void generateCuts (expression *, //const OsiSolverInterface &,
 			     OsiCuts &, const CouenneCutGenerator *,
-			     t_chg_bounds * = NULL, int = -1, 
-			     CouNumber = -COUENNE_INFINITY, 
+			     t_chg_bounds * = NULL, int = -1,
+			     CouNumber = -COUENNE_INFINITY,
 			     CouNumber =  COUENNE_INFINITY);
 
   /// only compare with people of the same kind

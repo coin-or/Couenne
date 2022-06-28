@@ -37,28 +37,28 @@ void CouenneProblem::print (std::ostream &out) {
   for (std::vector <exprVar *>::iterator i = variables_.begin ();
        i != variables_.end (); ++i)
 
-    if (((*i) -> Type () != AUX) || 
+    if (((*i) -> Type () != AUX) ||
 	((*i) -> Multiplicity () > 0) ||
 	(jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE))) {
 
       (*i) -> print (out);
 
-      if (((*i) -> Type () == AUX) && 
+      if (((*i) -> Type () == AUX) &&
 	  (((*i) -> Multiplicity () > 0) ||
 	   (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)))) {
 
-	out << " (r:" << (*i) -> rank () 
-	    << ", m:" << (*i) -> Multiplicity () << ") " 
+	out << " (r:" << (*i) -> rank ()
+	    << ", m:" << (*i) -> Multiplicity () << ") "
 	    << (((*i) -> sign () == expression::AUX_EQ)  ? ':' :
-		((*i) -> sign () == expression::AUX_GEQ) ? '>' : 
+		((*i) -> sign () == expression::AUX_GEQ) ? '>' :
 		((*i) -> sign () == expression::AUX_LEQ) ? '<' : '?')
 	    << "= ";// << "<" << (*i) -> Image () << "> ";
 
 	if ((*i) -> Image ())
-	  (*i) -> Image () -> print (out, false); 
+	  (*i) -> Image () -> print (out, false);
       }
 
-      CouNumber 
+      CouNumber
 	lb = domain_.lb ((*i) -> Index ()),
 	ub = domain_.ub ((*i) -> Index ());
 
@@ -82,7 +82,7 @@ void CouenneProblem::print (std::ostream &out) {
     out << "common expressions:" << std::endl;
     for (std::vector <expression *>::iterator i = commonexprs_.begin ();
 	 i != commonexprs_.end (); ++i) {
-      out << "v_"    
+      out << "v_"
 	  << nOrigVars_ - commonexprs_ . size () + i - commonexprs_.begin () << " := ";
       (*i) -> print (out);
       out << std::endl;
@@ -100,7 +100,7 @@ void CouenneProblem::print (std::ostream &out) {
     out << "best known objective: " << bestObj_ << std::endl;
 
   out << "end" << std::endl;
-} 
+}
 
 
 /// read optimal solution into member optimum
@@ -145,7 +145,7 @@ bool CouenneProblem::readOptimum (std::string *fname) {
       printf ("Couenne: warning, could not read optimal value of x_%d from file \"%s\"\n", i, fname -> c_str ());
       return false;
     } else
-      if (variables_ [i] -> isDefinedInteger ()) 
+      if (variables_ [i] -> isDefinedInteger ())
 	optimum_ [i] = ceil (optimum_ [i] - .5);
 
   if (opt_window_ < 1e50) // restrict solution space around known optimum

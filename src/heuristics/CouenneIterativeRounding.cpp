@@ -33,21 +33,21 @@ namespace Couenne{
     nlp_(NULL), cinlp_(NULL), milp_(NULL),
     maxRoundingIter_(10),
     maxFirPoints_(5), maxTime_(60), maxTimeFirstCall_(60), numInitialRows_(0),
-    numSol_(-1), colLower_(NULL), colUpper_(NULL), 
+    numSol_(-1), colLower_(NULL), colUpper_(NULL),
     colLowerNlp_(NULL), colUpperNlp_(NULL),
     omega_(0.2), baseLbRhs_(15),
     couenne_(NULL)
   {
     setHeuristicName("CouenneIterativeRounding");
   }
- 
-  CouenneIterativeRounding::CouenneIterativeRounding(Bonmin::OsiTMINLPInterface* nlp, 
+
+  CouenneIterativeRounding::CouenneIterativeRounding(Bonmin::OsiTMINLPInterface* nlp,
 						     OsiSolverInterface* cinlp,
 						     CouenneProblem* couenne,
 						     Ipopt::SmartPtr<Ipopt::OptionsList> options):
     CbcHeuristic(), nlp_(NULL),
     cinlp_(NULL), milp_(NULL),
-    numSol_(-1), colLower_(NULL), colUpper_(NULL), 
+    numSol_(-1), colLower_(NULL), colUpper_(NULL),
     colLowerNlp_(NULL), colUpperNlp_(NULL),
     couenne_(couenne)
   {
@@ -83,10 +83,10 @@ namespace Couenne{
 			     omega, "couenne.");
     setOmega(omega);
   }
-  
+
   CouenneIterativeRounding::CouenneIterativeRounding(const CouenneIterativeRounding & other):
-    CbcHeuristic(other), nlp_(other.nlp_), 
-    cinlp_(other.cinlp_), milp_(other.milp_), 
+    CbcHeuristic(other), nlp_(other.nlp_),
+    cinlp_(other.cinlp_), milp_(other.milp_),
     maxRoundingIter_(other.maxRoundingIter_),
     maxFirPoints_(other.maxFirPoints_),
     maxTime_(other.maxTime_),
@@ -130,19 +130,19 @@ namespace Couenne{
       CoinCopyN (other.colUpperNlp_, nlp_->getNumCols(), colLowerNlp_);
     }
   }
-  
-  CbcHeuristic * 
+
+  CbcHeuristic *
   CouenneIterativeRounding::clone() const{
     return new CouenneIterativeRounding(*this);
   }
-  
+
   CouenneIterativeRounding &
   CouenneIterativeRounding::operator=(const CouenneIterativeRounding & rhs){
     if(this != &rhs){
       CbcHeuristic::operator=(rhs);
       if(nlp_)
         delete nlp_;
-      
+
       if(rhs.nlp_ != NULL){
 	nlp_ = dynamic_cast<Bonmin::OsiTMINLPInterface*>(rhs.nlp_->clone());
       }
@@ -183,7 +183,7 @@ namespace Couenne{
     }
     return *this;
   }
-  
+
   CouenneIterativeRounding::~CouenneIterativeRounding(){
     delete nlp_;
     nlp_ = NULL;
@@ -199,9 +199,9 @@ namespace Couenne{
       delete milp_;
     milp_ = NULL;
   }
-  
+
   void
-  CouenneIterativeRounding::setNlp(Bonmin::OsiTMINLPInterface* nlp, 
+  CouenneIterativeRounding::setNlp(Bonmin::OsiTMINLPInterface* nlp,
 				   OsiSolverInterface * cinlp){
     // Create a dynamic NLP (i.e. one that can be used to add/remove
     // linear inequalities) from the initial one
@@ -232,12 +232,12 @@ namespace Couenne{
 
 #ifdef COUENNE_HAS_OSICPX
     milp_ = new OsiCpxSolverInterface();
-    milp_->loadProblem(*(milp->getMatrixByRow()), milp->getColLower(), 
+    milp_->loadProblem(*(milp->getMatrixByRow()), milp->getColLower(),
 		       milp->getColUpper(), milp->getObjCoefficients(),
 		       milp->getRowLower(), milp->getRowUpper());
     for (int i = 0; i < n; ++i){
       if (milp->isInteger(i))
-	milp_->setInteger(i); 
+	milp_->setInteger(i);
     }
 #else
     milp_ =  dynamic_cast<OsiClpSolverInterface*>(milp->clone());
@@ -275,7 +275,7 @@ namespace Couenne{
     }
 
     numInitialRows_ = milp_->getNumRows();
-    
+
     // this array contains zeroes; we use it to set empty elements
     double * tmpArray = new double[n];
     CoinFillN(tmpArray, n, 0.0);
@@ -320,7 +320,7 @@ namespace Couenne{
 
 
   }
-  
+
   void CouenneIterativeRounding::setAggressiveness(int value){
     switch (value){
     case 0:
@@ -354,7 +354,7 @@ namespace Couenne{
       return 0;
     }
 
-    if ((model_->numberIntegers() == 0) || 
+    if ((model_->numberIntegers() == 0) ||
 	(numSol_ == model_->getSolutionCount())){
       // There are no integers, or we already tried to improve current
       // solution. Exit immediately.
@@ -408,7 +408,7 @@ namespace Couenne{
   }
 
   int
-  CouenneIterativeRounding::feasibilityIR(double& objectiveValue, 
+  CouenneIterativeRounding::feasibilityIR(double& objectiveValue,
 					    double* newSolution){
 
     std::cout << "starting feasibility IR" << std::endl;
@@ -424,7 +424,7 @@ namespace Couenne{
 	return 0;
       }
     }
-   
+
     int n = couenne_->nVars();
     int nNlp = cinlp_->getNumCols();
 
@@ -448,7 +448,7 @@ namespace Couenne{
 	nlp_->isAbandoned()){
       nlp_->resolveForRobustness(3);
     }
-    
+
     if (nlp_->isProvenPrimalInfeasible() || nlp_->isProvenDualInfeasible() ||
 	nlp_->isAbandoned()){
       obj = COIN_DBL_MAX;
@@ -456,7 +456,7 @@ namespace Couenne{
     else{
       obj = nlp_->getObjValue();
     }
-    
+
     if (obj == COIN_DBL_MAX){std::cout << " IR: no feasible solution found " << std::endl;
       std::cout << " IR: elapsed time " << CoinCpuTime()-startTime_ << std::endl;
       return 0;
@@ -479,7 +479,7 @@ namespace Couenne{
     OsiSolverInterface* curr_milp = milp_;
 
     int outerLoop = maxFirPoints_;
-    for (int h = 0; h < outerLoop && 
+    for (int h = 0; h < outerLoop &&
 	   ((CoinCpuTime()-startTime_) < (endTime_ - MILPTIME)); ++h){
 
       OsiCuts cs;
@@ -511,7 +511,7 @@ namespace Couenne{
 	// Solve MILP to obtain an integral feasible point near xprime
 	curr_milp->restoreBaseModel(numInitialRows_+cs.sizeRowCuts());
 	curr_milp->applyCuts(revlb_all);
-	bool solFound = solveMilp(curr_milp, 
+	bool solFound = solveMilp(curr_milp,
 				  endTime_-(CoinCpuTime()-startTime_)-2);
 	if (!solFound && !boundsChanged){
 	  std::cout << " MILP cannot be solved, terminating LB " << std::endl;
@@ -552,9 +552,9 @@ namespace Couenne{
 
 	cinlp_->messageHandler()->setLogLevel(1);
 	cinlp_->resolve();
-	obj = ((cinlp_->isProvenOptimal()) ? 
+	obj = ((cinlp_->isProvenOptimal()) ?
 	       cinlp_->getObjValue():COIN_DBL_MAX);
-	memcpy(tmpSolution, cinlp_->getColSolution(), 
+	memcpy(tmpSolution, cinlp_->getColSolution(),
 	       nNlp*sizeof(double));
 	// check solution of the NLP;
 	// if we have a new incumbent we are done, otherwise we iterate
@@ -581,7 +581,7 @@ namespace Couenne{
 	if (cinlp_->isProvenOptimal () &&
 	    isChecked &&
 	    (obj < couenne_->getCutOff())) {
-	  
+	
 #ifdef FM_CHECKNLP2
 #ifdef FM_TRACE_OPTSOL
 	  couenne_->getRecordBestSol()->update();
@@ -591,10 +591,10 @@ namespace Couenne{
 	  CoinCopyN (couenne_->getRecordBestSol()->getModSol(n), n, tmpSolution);
 #endif /* not FM_TRACE_OPTSOL */
 #else /* not FM_CHECKNLP2 */
-	  
+	
 	  //Get correct values for all auxiliary variables
 	  couenne_ -> getAuxs (tmpSolution);
-	  
+	
 #ifdef FM_TRACE_OPTSOL
 	  couenne_->getRecordBestSol()->update(tmpSolution, n,
 					       obj, couenne_->getFeasTol());
@@ -602,20 +602,20 @@ namespace Couenne{
 	  obj = couenne_->getRecordBestSol()->getVal();
 #endif /* FM_TRACE_OPTSOL */
 #endif /* not FM_CHECKNLP2 */
-	  
+	
 	  if (babInfo){
 	    babInfo->setNlpSolution (tmpSolution, n, obj);
 	    babInfo->setHasNlpSolution (true);
 	  }
-	  
+	
 	  std::cout << "Final Nlp solution with objective " << obj << " :" << std::endl;
-	  
+	
 	  if (obj < objectiveValue - COUENNE_EPS) { // found better solution?
 	    std::cout << "New incumbent found" << std::endl;
-	    const CouNumber 
+	    const CouNumber
 	      *lb = solver -> getColLower (),
 	      *ub = solver -> getColUpper ();
-	    
+	
 	    // check bounds once more after getAux. This avoids false
 	    // asserts in CbcModel.cpp:8305 on integerTolerance violated
 	    for (int i=0; i < n; ++i, ++lb, ++ub) {
@@ -630,7 +630,7 @@ namespace Couenne{
 	    CoinCopyN (tmpSolution, n, newSolution);
 	    cinlp_->setColLower(colLowerNlp_);
 	    cinlp_->setColUpper(colUpperNlp_);
-	  
+	
 	    curr_milp->restoreBaseModel(numInitialRows_);
 	    delete[] xprime;
 	    delete[] tmpSolution;
@@ -650,7 +650,7 @@ namespace Couenne{
 	double avgBound;
 	numIntAtBound = computeIntAtBound(xtilde, avgBound);
 	
-	if (numIntAtBound >= 50 || 
+	if (numIntAtBound >= 50 ||
 	    numIntAtBound >= ((numIntegers_*0.1 > 5) ? numIntegers_*0.1 : 5)){
 	  // write reverse local branching constraint
 	  // this avoids finding the same xtilde again
@@ -678,7 +678,7 @@ namespace Couenne{
 	opt->GetNumericValue("kappa_d", kappa_d, "ipopt.");
 	opt->SetNumericValue("kappa_d", 0.0, "ipopt.");
 	nlp_->resolve();
-	if (nlp_->isProvenPrimalInfeasible() || 
+	if (nlp_->isProvenPrimalInfeasible() ||
 	    nlp_->isProvenDualInfeasible() ||
 	    nlp_->isAbandoned()){
 	  nlp_->resolveForRobustness(3);
@@ -687,7 +687,7 @@ namespace Couenne{
 	opt->SetNumericValue("kappa_d", kappa_d, "ipopt.");
 
 	if (!nlp->isProvenPrimalInfeasible() &&
-	    !nlp->isProvenDualInfeasible() && 
+	    !nlp->isProvenDualInfeasible() &&
 	    !nlp->isAbandoned()){
 	  CoinCopyN (nlp_->getColSolution(), nlp_->getNumCols(), xprime);
 	  couenne_ -> getAuxs (xprime);
@@ -699,7 +699,7 @@ namespace Couenne{
 	}
       }
     }
-    
+
     curr_milp->restoreBaseModel(numInitialRows_);
     delete[] xprime;
     delete[] tmpSolution;
@@ -803,7 +803,7 @@ namespace Couenne{
       nlp_->setColLower(colLowerNlp_);
       nlp_->setColUpper(colUpperNlp_);
     }
-      
+
     if (obj == COIN_DBL_MAX || obj >= objectiveValue - COUENNE_EPS){
       std::cout << " IR: no improvement possible " << std::endl;
       std::cout << " IR: elapsed time " << CoinCpuTime()-startTime_ << std::endl;
@@ -825,7 +825,7 @@ namespace Couenne{
     double* tmpSolution = new double[n];
     OsiCuts revlb_all;
     OsiSolverInterface* curr_milp = milp_;
-    
+
     OsiCuts cs;
     cs.insert(lbcut1);
     cs.insert(lbcut2);
@@ -855,7 +855,7 @@ namespace Couenne{
       // Solve MILP to obtain an integral feasible point near xprime
       curr_milp->restoreBaseModel(numInitialRows_+cs.sizeRowCuts());
       curr_milp->applyCuts(revlb_all);
-      bool solFound = solveMilp(curr_milp, 
+      bool solFound = solveMilp(curr_milp,
 				endTime_-(CoinCpuTime()-startTime_)-2);
       if (!solFound && !boundsChanged){
 	std::cout << " MILP cannot be solved, terminating LB " << std::endl;
@@ -896,7 +896,7 @@ namespace Couenne{
       cinlp_->messageHandler()->setLogLevel(1);
       cinlp_->resolve();
       obj = ((cinlp_->isProvenOptimal()) ? cinlp_->getObjValue():COIN_DBL_MAX);
-      memcpy(tmpSolution, cinlp_->getColSolution(), 
+      memcpy(tmpSolution, cinlp_->getColSolution(),
 	     nNlp*sizeof(double));
       // check solution of the NLP;
       // if we have a new incumbent we are done, otherwise we iterate
@@ -919,7 +919,7 @@ namespace Couenne{
 // #else /* not FM_CHECKNLP2 */
 //       isChecked = couenne_->checkNLP(tmpSolution, obj, true);
 // #endif  /* not FM_CHECKNLP2 */
-      
+
       if (cinlp_->isProvenOptimal () &&
 	  isChecked &&
 	  (obj < couenne_->getCutOff())) {
@@ -954,7 +954,7 @@ namespace Couenne{
 
 	if (obj < objectiveValue - COUENNE_EPS) { // found better solution?
 	  std::cout << "New incumbent found" << std::endl;
-	  const CouNumber 
+	  const CouNumber
 	    *lb = solver -> getColLower (),
 	    *ub = solver -> getColUpper ();
 
@@ -972,7 +972,7 @@ namespace Couenne{
 	  CoinCopyN (tmpSolution, n, newSolution);
 	  cinlp_->setColLower(colLowerNlp_);
 	  cinlp_->setColUpper(colUpperNlp_);
-	  
+	
 	  curr_milp->restoreBaseModel(numInitialRows_);
 	  delete[] xprime;
 	  delete[] tmpSolution;
@@ -991,7 +991,7 @@ namespace Couenne{
       cinlp_->setColUpper(colUpperNlp_);
       numIntAtBound = computeIntAtBound(xtilde, avgBound);
 	
-      if (numIntAtBound >= 50 || 
+      if (numIntAtBound >= 50 ||
 	  numIntAtBound >= ((numIntegers_*0.1 > 5) ? numIntegers_*0.1 : 5)){
 	// write reverse local branching constraint
 	// this avoids finding the same xtilde again
@@ -1006,7 +1006,7 @@ namespace Couenne{
 	boundsChanged = true;
       }
     }
-    
+
     curr_milp->restoreBaseModel(numInitialRows_);
     delete[] xprime;
     delete[] tmpSolution;
@@ -1020,11 +1020,11 @@ namespace Couenne{
     return foundSolution;
   }
 
-  int 
+  int
   CouenneIterativeRounding::computeIntAtBound(const double* x){
     int numIntAtBound = 0;
     for (int i = 0; i < nlp_->getNumCols(); ++i){
-      if (nlp_->isInteger(i) && (areEqual(x[i], colLower_[i]) || 
+      if (nlp_->isInteger(i) && (areEqual(x[i], colLower_[i]) ||
 				 areEqual(x[i], colUpper_[i]))){
 	numIntAtBound++;
       }
@@ -1032,13 +1032,13 @@ namespace Couenne{
     return numIntAtBound;
   }
 
-  int 
-  CouenneIterativeRounding::computeIntAtBound(const double* x, 
+  int
+  CouenneIterativeRounding::computeIntAtBound(const double* x,
 						double& avgBoundSize){
     int numIntAtBound = 0;
     avgBoundSize = 0;
     for (int i = 0; i < nlp_->getNumCols(); ++i){
-      if (nlp_->isInteger(i) && (areEqual(x[i], colLower_[i]) || 
+      if (nlp_->isInteger(i) && (areEqual(x[i], colLower_[i]) ||
 				 areEqual(x[i], colUpper_[i]))){
 	numIntAtBound++;
 	avgBoundSize += colUpper_[i] - colLower_[i];
@@ -1049,7 +1049,7 @@ namespace Couenne{
   }
 
   void
-  CouenneIterativeRounding::writeLB(OsiRowCut& cut, const double* x, 
+  CouenneIterativeRounding::writeLB(OsiRowCut& cut, const double* x,
 				    char sense, double rhs){
     cut.mutableRow().clear();
     for (int i = 0; i < nlp_->getNumCols(); ++i){
@@ -1097,7 +1097,7 @@ namespace Couenne{
 		  (status == CPXMIP_MEM_LIM_FEAS) ||
 		  (status == CPXMIP_ABORT_FEAS) ||
 		  (status == CPXMIP_OPTIMAL) ||
-		  (status == CPXMIP_OPTIMAL_TOL) ||		     
+		  (status == CPXMIP_OPTIMAL_TOL) ||		
 		  (status == CPXMIP_ABORT_FEAS) ||
 		  (status == CPXMIP_FAIL_FEAS) ||
 		  (status == CPXMIP_FAIL_FEAS_NO_TREE) ||
@@ -1117,7 +1117,7 @@ namespace Couenne{
     }
     cbcModel.setMaximumSeconds(CBCMILPTIME);
     //CglPreProcess * prep = cbcModel.preProcess(0,2,5);
-    while ((cbcModel.getSolutionCount() == 0) && 
+    while ((cbcModel.getSolutionCount() == 0) &&
 	   (!cbcModel.isProvenInfeasible()) &&
 	   (!cbcModel.isProvenDualInfeasible()) &&
 	   (!cbcModel.isAbandoned()) &&
@@ -1134,7 +1134,7 @@ namespace Couenne{
   }
 
   int
-  CouenneIterativeRounding::branchToCut(const double* x, 
+  CouenneIterativeRounding::branchToCut(const double* x,
 					OsiSolverInterface* solver,
 					std::vector<int>& previousBranches){
     int branch;
@@ -1176,7 +1176,7 @@ namespace Couenne{
     return branch;
   }
 
-  void 
+  void
   CouenneIterativeRounding::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOptions> roptions){
     roptions -> AddStringOption2
       ("iterative_rounding_heuristic",
@@ -1205,8 +1205,8 @@ namespace Couenne{
        "when no solution is known; if no solution found in this time, "
        "failure is reported."
        "This overrides the CPU time set by Aggressiveness if  posive.");
-    
-    roptions -> AddBoundedIntegerOption 
+
+    roptions -> AddBoundedIntegerOption
       ("iterative_rounding_aggressiveness",
        "Aggressiveness of the Iterative Rounding heuristic",
        0, 2, 1,
@@ -1215,7 +1215,7 @@ namespace Couenne{
        "overridden by setting the _time and _time_firstcall options. "
        "0 = non aggressive, 1 = standard (default), 2 = aggressive.");
 
-    roptions -> AddLowerBoundedIntegerOption 
+    roptions -> AddLowerBoundedIntegerOption
       ("iterative_rounding_num_fir_points",
        "Max number of points rounded at the beginning of Iterative Rounding",
        1, 5,
@@ -1223,7 +1223,7 @@ namespace Couenne{
        "that the heuristic will try to round at most, during its execution "
        "at the root node (i.e. the F-IR heuristic). Default 5.");
 
-    roptions -> AddBoundedNumberOption 
+    roptions -> AddBoundedNumberOption
       ("iterative_rounding_omega",
        "Omega parameter of the Iterative Rounding heuristic",
        0, true, 1, true, 0.2,
@@ -1232,7 +1232,7 @@ namespace Couenne{
        "of the NLP which is solved to obtain feasible points. This "
        "corresponds to $\\omega'$ in the paper. Default 0.2.");
 
-    roptions -> AddLowerBoundedIntegerOption 
+    roptions -> AddLowerBoundedIntegerOption
       ("iterative_rounding_base_lbrhs",
        "Base rhs of the local branching constraint for Iterative Rounding",
        0, 15,

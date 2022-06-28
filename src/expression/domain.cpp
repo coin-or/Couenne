@@ -21,9 +21,9 @@
 using namespace Couenne;
 
 /// constructor
-DomainPoint::DomainPoint (int dim, 
-			  CouNumber *x, 
-			  CouNumber *lb, 
+DomainPoint::DomainPoint (int dim,
+			  CouNumber *x,
+			  CouNumber *lb,
 			  CouNumber *ub,
 			  bool copy):
   dimension_ (dim),
@@ -48,9 +48,9 @@ DomainPoint::DomainPoint (int dim,
 
 
 /// constructor
-DomainPoint::DomainPoint (int dim, 
-			  const CouNumber *x, 
-			  const CouNumber *lb, 
+DomainPoint::DomainPoint (int dim,
+			  const CouNumber *x,
+			  const CouNumber *lb,
 			  const CouNumber *ub,
 			  bool copy):
   dimension_ (dim),
@@ -61,9 +61,9 @@ DomainPoint::DomainPoint (int dim,
 
   if ((dimension_ > 0) && copied_) {
 
-    x_  = (CouNumber *) malloc (dim * sizeof (CouNumber)); 
-    lb_ = (CouNumber *) malloc (dim * sizeof (CouNumber)); 
-    ub_ = (CouNumber *) malloc (dim * sizeof (CouNumber)); 
+    x_  = (CouNumber *) malloc (dim * sizeof (CouNumber));
+    lb_ = (CouNumber *) malloc (dim * sizeof (CouNumber));
+    ub_ = (CouNumber *) malloc (dim * sizeof (CouNumber));
 
     if (x)  CoinCopyN (x,  dim, x_);  else CoinFillN (x_,  dim, 0.);
     if (lb) CoinCopyN (lb, dim, lb_); else CoinFillN (lb_, dim, -COUENNE_INFINITY);
@@ -110,9 +110,9 @@ void DomainPoint::resize (int newdim) {
 
   } else if (newdim < dimension_) { // resize exactly
 
-    x_  = (CouNumber *) realloc (x_,  newdim * sizeof (CouNumber)); 
-    lb_ = (CouNumber *) realloc (lb_, newdim * sizeof (CouNumber)); 
-    ub_ = (CouNumber *) realloc (ub_, newdim * sizeof (CouNumber)); 
+    x_  = (CouNumber *) realloc (x_,  newdim * sizeof (CouNumber));
+    lb_ = (CouNumber *) realloc (lb_, newdim * sizeof (CouNumber));
+    ub_ = (CouNumber *) realloc (ub_, newdim * sizeof (CouNumber));
 
     dimension_ = newdim;
 
@@ -120,9 +120,9 @@ void DomainPoint::resize (int newdim) {
 
     newdim += EXTRA_STORAGE;
 
-    x_  = (CouNumber *) realloc (x_,  newdim * sizeof (CouNumber)); 
-    lb_ = (CouNumber *) realloc (lb_, newdim * sizeof (CouNumber)); 
-    ub_ = (CouNumber *) realloc (ub_, newdim * sizeof (CouNumber)); 
+    x_  = (CouNumber *) realloc (x_,  newdim * sizeof (CouNumber));
+    lb_ = (CouNumber *) realloc (lb_, newdim * sizeof (CouNumber));
+    ub_ = (CouNumber *) realloc (ub_, newdim * sizeof (CouNumber));
 
     dimension_ = newdim;
   }
@@ -152,7 +152,7 @@ DomainPoint &DomainPoint::operator= (const DomainPoint &src) {
 /// destructor
 Domain::~Domain () {
 
-  if (point_) 
+  if (point_)
     delete point_;
 
   while (!(domStack_.empty ())) {
@@ -177,13 +177,13 @@ void Domain::push (int dim, CouNumber *x, CouNumber *lb, CouNumber *ub, bool cop
 
 
 /// save current point and start using another
-void Domain::push (int dim, 
-		   const CouNumber *x, 
-		   const CouNumber *lb, 
+void Domain::push (int dim,
+		   const CouNumber *x,
+		   const CouNumber *lb,
 		   const CouNumber *ub,
 		   bool copy) {
 
-  if (point_) 
+  if (point_)
     domStack_.push (point_);
 
   point_ = new DomainPoint (dim, x, lb, ub, copy);
@@ -193,17 +193,17 @@ void Domain::push (int dim,
 /// save current point and start using another -- retrieve
 /// information from solver interface and from previous column cuts
 void Domain::push (const OsiSolverInterface *si,
-		   OsiCuts *cs, 
+		   OsiCuts *cs,
 		   bool copy) {
 
   int dim = si -> getNumCols ();
 
-  if (point_) 
+  if (point_)
     domStack_.push (point_);
 
-  point_ = new DomainPoint (dim, 
-			    si -> getColSolution (), 
-			    si -> getColLower    (), 
+  point_ = new DomainPoint (dim,
+			    si -> getColSolution (),
+			    si -> getColLower    (),
 			    si -> getColUpper    (), copy);
 
   // copy latest tightened bounds to problem, if any ColCut is there
@@ -264,7 +264,7 @@ void Domain::pop () {
 
 /*int main (int argc, char **argv) {
 
-CouNumber 
+CouNumber
 x1 [] = {1,2,3},
 l1 [] = {0,-1,-2},
 u1 [] = {2,5,8},

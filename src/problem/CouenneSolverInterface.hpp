@@ -23,7 +23,7 @@ class CouenneCutGenerator;
 /// 1) to apply bound tightening before re-solving
 /// 2) to replace OsiSolverInterface::isInteger () with problem_ -> [expression] -> isInteger ()
 /// 3) to use NLP solution at branching
- 
+
 template <class T> class COUENNELIB_EXPORT CouenneSolverInterface: public T {
 
 public:
@@ -57,11 +57,11 @@ public:
   void setCutGenPtr (CouenneCutGenerator *cg) {
     cutgen_ = cg;
     //if (cutgen_ && !(cutgen_ -> enableLpImpliedBounds ()))
-    //specialOptions_ = specialOptions_ | 262144; 
+    //specialOptions_ = specialOptions_ | 262144;
   }
 
-  /// Solve initial LP relaxation 
-  virtual void initialSolve (); 
+  /// Solve initial LP relaxation
+  virtual void initialSolve ();
 
   /// Resolve an LP relaxation after problem modification
   virtual void resolve ();
@@ -87,7 +87,7 @@ public:
   virtual int tightenBounds (int lightweight);
 
   /// set doingResolve_
-  //bool &doingResolve () 
+  //bool &doingResolve ()
   //{return doingResolve_;}
 
   /// is this problem unbounded?

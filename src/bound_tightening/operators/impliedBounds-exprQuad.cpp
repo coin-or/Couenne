@@ -42,7 +42,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
   // first reduces this sum to a sum of aux and tries, after
   // tightening bounds of each aux, to infer new bounds
 
-  CouNumber 
+  CouNumber
     wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
     wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
@@ -86,14 +86,14 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
   if (qMin < -COUENNE_INFINITY) indInfLo = -2;
   if (qMax >  COUENNE_INFINITY) indInfUp = -2;
 
-  if ((indInfLo == -2) && 
-      (indInfUp == -2)) 
+  if ((indInfLo == -2) &&
+      (indInfUp == -2))
     return false;
-  
+
 #ifdef DEBUG
   printf ("1st phase... inf=(%d,%d) q=[%g,%g].\n", indInfLo, indInfUp, qMin, qMax);
   for (std::set <int>:: iterator iter = indexSet.begin ();
-       iter != indexSet.end (); ++iter) 
+       iter != indexSet.end (); ++iter)
     printf ("%4d [%+6g %+6g]\n", *iter, l [iter -> Index ()], u [iter -> Index ()]);
 #endif
 
@@ -109,7 +109,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
   qMax += c0_;
 
   if (((indInfLo == -2) && (indInfUp == -2)) || // at least two variables are unbounded
-      ((indInfLo == -1) && (indInfUp == -1) &&  // or, none is (and qMin, qMax are exact) 
+      ((indInfLo == -1) && (indInfUp == -1) &&  // or, none is (and qMin, qMax are exact)
        (qMin > wl) && (qMax < wu))) // but explicit bounds are loose
     return false;
 
@@ -127,7 +127,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
     maxindex = (*(indexSet.rbegin ())) -> Index (), // maximum index
     nvars = maxindex - minindex + 1;           // upper bound on # variables involved
 
-  CouNumber 
+  CouNumber
     *linCoeMin = new CouNumber [nvars], // min coeff of var x_i
     *linCoeMax = new CouNumber [nvars], // max coeff of var x_i
     *qii       = new CouNumber [nvars], // quadratic coeff
@@ -148,8 +148,8 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
     int ind = el -> first -> Index ();//index_ [i];
 
     CouNumber
-      coe = el -> second, //coeff_ [i], 
-      li  = l [ind], 
+      coe = el -> second, //coeff_ [i],
+      li  = l [ind],
       ui  = u [ind];
 
     ind -= minindex;
@@ -169,8 +169,8 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 #ifdef DEBUG
   printf ("linear filling (%d,%d): -----------------------\n", minindex, maxindex);
   for (std::set <int>:: iterator iter = indexSet.begin ();
-       iter != indexSet.end (); ++iter) 
-    printf ("%4d [%+6g %+6g] [%+6g %+6g]\n", iter -> Index (), 
+       iter != indexSet.end (); ++iter)
+    printf ("%4d [%+6g %+6g] [%+6g %+6g]\n", iter -> Index (),
 	    linCoeMin [iter -> Index () - minindex], linCoeMax [iter -> Index () - minindex],
 	    bCutLb    [iter -> Index () - minindex], bCutUb    [iter -> Index () - minindex]);
 #endif
@@ -185,7 +185,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
         qj = col -> first -> Index (); //qindexJ_ [i];
 
       CouNumber coe = col -> second, //qcoeff_ [i],
-	li = l [qi], lj = l [qj], 
+	li = l [qi], lj = l [qj],
 	ui = u [qi], uj = u [qj];
 
       if (qi == qj) { // quadratic term
@@ -216,7 +216,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 
 	CouNumber *b1, *b2;
 
-	if (coe > 0) {b1 = l; b2 = u;} 
+	if (coe > 0) {b1 = l; b2 = u;}
 	else         {b1 = u; b2 = l;}
 
 	b1 += minindex;
@@ -234,7 +234,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 	CouNumber
 	  addLo = CoinMin (CoinMin (li*lj, ui*uj),
 			   CoinMin (ui*lj, li*uj)),
-	  addUp = CoinMax (CoinMax (li*lj, ui*uj), 
+	  addUp = CoinMax (CoinMax (li*lj, ui*uj),
 			   CoinMax (ui*lj, li*uj));
 
 	if (addLo < -COUENNE_INFINITY) addLo = 0;
@@ -257,8 +257,8 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 #ifdef DEBUG
   printf ("quad filling: -----------------------\n");
   for (std::set <int>:: iterator iter = indexSet.begin ();
-       iter != indexSet.end (); ++iter) 
-    printf ("%4d [%+6g %+6g] [%+6g %+6g]\n", *iter, 
+       iter != indexSet.end (); ++iter)
+    printf ("%4d [%+6g %+6g] [%+6g %+6g]\n", *iter,
 	    linCoeMin [iter -> Index () - minindex], linCoeMax [iter -> Index () - minindex],
 	    bCutLb    [iter -> Index () - minindex], bCutUb    [iter -> Index () - minindex]);
 #endif
@@ -275,17 +275,17 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
       updatedL = false,
       updatedU = false;
 
-    int ind  = (*iter) -> Index (), 
+    int ind  = (*iter) -> Index (),
         indn = ind - minindex;
 
-    CouNumber 
+    CouNumber
       al = linCoeMin [indn],
       au = linCoeMax [indn],
       q  = qii       [indn];
 
 #ifdef DEBUG
     CouNumber
-      ol = l [ind], 
+      ol = l [ind],
       ou = u [ind];
 #endif
 
@@ -300,7 +300,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 	// c_MAX = qMax - bCutUb [indn]
 	// c_MIN = qMin - bCutLb [indn]
 
-	CouNumber 
+	CouNumber
 	  l_b = wl - qMax + bCutUb [indn],
 	  u_b = wu - qMin + bCutLb [indn];
 
@@ -308,7 +308,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 
 	  if ((indInfUp == -1) || (indInfUp == ind))
 	    updatedL = updateBound (-1, l + ind, (l_b) / ((l_b < 0) ? al : au)) || updatedL;
-	  if ((indInfLo == -1) || (indInfLo == ind)) 
+	  if ((indInfLo == -1) || (indInfLo == ind))
 	    updatedU = updateBound (+1, u + ind, (u_b) / ((u_b < 0) ? au : al)) || updatedU;
 
 #ifdef DEBUG
@@ -317,9 +317,9 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 #endif
 	} else { // only look at max, as al < au < 0
 
-	  if ((indInfLo == -1) || (indInfLo == ind)) 
+	  if ((indInfLo == -1) || (indInfLo == ind))
 	    updatedL = updateBound (-1, l + ind, (u_b) / ((u_b < 0) ? al : au)) || updatedL;
-	  if ((indInfUp == -1) || (indInfUp == ind)) 
+	  if ((indInfUp == -1) || (indInfUp == ind))
 	    updatedU = updateBound (+1, u + ind, (l_b) / ((l_b < 0) ? au : al)) || updatedU;
 
 #ifdef DEBUG
@@ -333,8 +333,8 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
 
       // skip if constant term is unbounded from below
 
-      if ((indInfLo != -1) && 
-	  (indInfLo != ind)) 
+      if ((indInfLo != -1) &&
+	  (indInfLo != ind))
 	continue;
 
       // case 2: qii is positive, the parabola is facing upwards and
@@ -351,14 +351,14 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
       // {b_i^2 - 4q_{ii}(c-u)}$, whose maximum is attained with b_i
       // maximum or minimum, that is, at linCoeMax and linCoeMin.
 
-      CouNumber 
+      CouNumber
 	deltaSecond = 4 * q * (qMin - bCutLb [indn] - wu),
 	deltaUp     = au*au - deltaSecond,
 	deltaLo     = al*al - deltaSecond;
 
       // First case, both parabolas cut the line
 
-      if ((deltaUp >= 0) && 
+      if ((deltaUp >= 0) &&
 	  (deltaLo >= 0)) {
 
 	updatedL = updateBound (-1, l + ind, (- au - sqrt (deltaUp)) / (2*q)) || updatedL;
@@ -417,18 +417,18 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
       // we only need to look at wl
 
       // skip if constant term is unbounded from above
-      if ((indInfUp != -1) && 
-	  (indInfUp != ind)) 
+      if ((indInfUp != -1) &&
+	  (indInfUp != ind))
 	continue;
 
-      CouNumber 
+      CouNumber
 	deltaSecond = 4 * q * (qMax - bCutUb [indn] - wl),
 	deltaUp     = au*au - deltaSecond,
 	deltaLo     = al*al - deltaSecond;
 
       // First case, both parabolas cut the line
 
-      if ((deltaUp >= 0) && 
+      if ((deltaUp >= 0) &&
 	  (deltaLo >= 0)) {
 
 	updatedL = updateBound (-1, l + ind, (al - sqrt (deltaLo)) / (-2*q)) || updatedL;
@@ -470,7 +470,7 @@ bool exprQuad::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds 
       }
     }
 
-    // 
+    //
 
     if (updatedL) {
       one_updated = true;

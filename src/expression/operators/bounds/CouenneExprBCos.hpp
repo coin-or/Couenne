@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of operators to compute lower/upper bounds of cosines
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -29,7 +29,7 @@ class COUENNELIB_EXPORT exprLBCos: public exprOp {
  public:
 
   /// Constructors, destructor
-  exprLBCos (expression *lb, expression *ub): 
+  exprLBCos (expression *lb, expression *ub):
     exprOp (new expression * [2], 2) {
     arglist_ [0] = lb;
     arglist_ [1] = ub;
@@ -37,7 +37,7 @@ class COUENNELIB_EXPORT exprLBCos: public exprOp {
 
   /// cloning method
   expression *clone (Domain *d = NULL) const
-  {return new exprLBCos (arglist_ [0] -> clone (d), 
+  {return new exprLBCos (arglist_ [0] -> clone (d),
 			 arglist_ [1] -> clone (d));}
 
   /// function for the evaluation of the expression
@@ -57,15 +57,15 @@ class COUENNELIB_EXPORT exprLBCos: public exprOp {
 
 inline CouNumber exprLBCos::operator () () {
 
-  CouNumber 
+  CouNumber
     l = (*(arglist_ [0])) (),
     u = (*(arglist_ [1])) ();
 
   CouNumber pi2 = 2 * M_PI;
- 
+
   if ((u - l >= pi2) ||       // 1) interval spans whole cycle
       (floor (l/pi2 - 0.5) < // 2) there is a pi + 2k pi between l and u
-       floor (u/pi2 - 0.5))) 
+       floor (u/pi2 - 0.5)))
     return -1.;
 
   return CoinMin (cos (l), cos (u));
@@ -82,7 +82,7 @@ class COUENNELIB_EXPORT exprUBCos: public exprOp {
  public:
 
   /// Constructors, destructor
-  exprUBCos (expression *lb, expression *ub): 
+  exprUBCos (expression *lb, expression *ub):
     exprOp (new expression * [2], 2) {
     arglist_ [0] = lb;
     arglist_ [1] = ub;
@@ -90,7 +90,7 @@ class COUENNELIB_EXPORT exprUBCos: public exprOp {
 
   /// cloning method
   expression *clone (Domain *d = NULL) const
-  {return new exprUBCos (arglist_ [0] -> clone (d), 
+  {return new exprUBCos (arglist_ [0] -> clone (d),
 			 arglist_ [1] -> clone (d));}
 
   /// function for the evaluation of the expression
@@ -110,7 +110,7 @@ class COUENNELIB_EXPORT exprUBCos: public exprOp {
 
 inline CouNumber exprUBCos::operator () () {
 
-  CouNumber 
+  CouNumber
     l = (*(arglist_ [0])) (),
     u = (*(arglist_ [1])) ();
 
@@ -118,7 +118,7 @@ inline CouNumber exprUBCos::operator () () {
 
   if ((u - l >= pi2) || // 1) interval spans whole cycle
       (floor (l/pi2) < // 2) there is a 3/2 pi + 2k pi between l and u
-       floor (u/pi2))) 
+       floor (u/pi2)))
     return 1.;
 
   return CoinMax (cos (l), cos (u));

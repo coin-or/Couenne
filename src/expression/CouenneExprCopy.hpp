@@ -20,7 +20,7 @@ namespace Couenne {
 
 class CouenneObject;
 
-// expression copy (points to VALUE of another expression) 
+// expression copy (points to VALUE of another expression)
 
 class COUENNELIB_EXPORT exprCopy: public expression {
 
@@ -105,15 +105,15 @@ class COUENNELIB_EXPORT exprCopy: public expression {
   {return copy_ -> ArgPtr ();}
 
   /// I/O
-  virtual void print (std::ostream &out = std::cout, 
+  virtual void print (std::ostream &out = std::cout,
 		      bool descend      = false) const;
 
   /// value
-  virtual inline CouNumber Value () const 
+  virtual inline CouNumber Value () const
   {return value_;}
 
   /// null function for evaluating the expression
-  virtual inline CouNumber operator () () 
+  virtual inline CouNumber operator () ()
   {return (value_ = (*copy_) ());}
     //    {return (*copy_) ();}
     //    {return (copy_ -> Value ());}
@@ -123,17 +123,17 @@ class COUENNELIB_EXPORT exprCopy: public expression {
   {return copy_ -> gradientNorm (x);}
 
   /// differentiation
-  inline expression *differentiate (int index) 
+  inline expression *differentiate (int index)
   {return copy_ -> differentiate (index);}
 
   /// fill in the set with all indices of variables appearing in the
   /// expression
-  inline int DepList (std::set <int> &deplist, 
+  inline int DepList (std::set <int> &deplist,
 		      enum dig_type   type = ORIG_ONLY)
   {return copy_ -> DepList (deplist, type);}
 
   /// simplify expression (useful for derivatives)
-  inline expression *simplify () 
+  inline expression *simplify ()
   {return copy_ -> simplify ();}
 
   /// get a measure of "how linear" the expression is (see CouenneTypes.h)
@@ -148,42 +148,42 @@ class COUENNELIB_EXPORT exprCopy: public expression {
   {return copy_ -> isDefinedInteger ();}
 
   /// Get lower and upper bound of an expression (if any)
-  inline void getBounds (expression *&lower, expression *&upper) 
+  inline void getBounds (expression *&lower, expression *&upper)
   {copy_ -> getBounds (lower, upper);}
 
   /// Get value of lower and upper bound of an expression (if any)
-  inline void getBounds (CouNumber &lower, CouNumber &upper) 
+  inline void getBounds (CouNumber &lower, CouNumber &upper)
   {copy_ -> getBounds (lower, upper);}
- 
+
 
   /// Create standard formulation of this expression
   inline exprAux *standardize (CouenneProblem *p, bool addAux = true)
   {return copy_ -> standardize (p, addAux);}
 
   /// generate convexification cut for constraint w = this
-  inline void generateCuts (expression *w, //const OsiSolverInterface &si, 
-			    OsiCuts &cs, const CouenneCutGenerator *cg, 
-			    t_chg_bounds *chg = NULL, int wind= -1, 
-			    CouNumber lb = -COUENNE_INFINITY, 
+  inline void generateCuts (expression *w, //const OsiSolverInterface &si,
+			    OsiCuts &cs, const CouenneCutGenerator *cg,
+			    t_chg_bounds *chg = NULL, int wind= -1,
+			    CouNumber lb = -COUENNE_INFINITY,
 			    CouNumber ub =  COUENNE_INFINITY)
 
   {copy_ -> generateCuts (w, /*si,*/ cs, cg, chg, wind, lb, ub);}
 
   /// code for comparisons
-  inline enum expr_type code () 
+  inline enum expr_type code ()
   {return copy_ -> code ();}
 
-  /// either CONVEX, CONCAVE, AFFINE, or NONCONVEX 
+  /// either CONVEX, CONCAVE, AFFINE, or NONCONVEX
   inline enum convexity convexity () const
   {return copy_ -> convexity ();}
 
   /// compare this with other expression
-  int compare (expression &e) 
+  int compare (expression &e)
   {return copy_ -> compare (e);}
 
   /// used in rank-based branching variable choice
   inline int rank ()
-  {return copy_ -> rank ();} 
+  {return copy_ -> rank ();}
 
   /// implied bound processing
   inline bool impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *chg)
@@ -195,11 +195,11 @@ class COUENNELIB_EXPORT exprCopy: public expression {
   {return copy_ -> Multiplicity ();}
 
   /// Set up branching object by evaluating many branching points for each expression's arguments.
-  /// Return estimated improvement in objective function 
-  inline CouNumber selectBranch (const CouenneObject *obj, 
+  /// Return estimated improvement in objective function
+  inline CouNumber selectBranch (const CouenneObject *obj,
 				 const OsiBranchingInformation *info,
-				 expression * &var, 
-				 double * &brpts, 
+				 expression * &var,
+				 double * &brpts,
 				 double * &brDist, // distance of current LP
 					           // point to new convexifications
 				 int &way)
@@ -218,7 +218,7 @@ class COUENNELIB_EXPORT exprCopy: public expression {
   //{copy_ -> realign (p);}
 
   /// indicating if function is monotonically increasing
-  bool isBijective() const 
+  bool isBijective() const
   {return copy_ -> isBijective ();}
 
   /// compute the inverse function

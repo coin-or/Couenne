@@ -31,7 +31,7 @@
 
 using namespace Couenne;
 
-// get ASL op. code relative to function pointer passed as parameter 
+// get ASL op. code relative to function pointer passed as parameter
 size_t getOperator (efunc *);
 
 
@@ -67,7 +67,7 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
     // see ASL/solvers/rops.c, IfNL
   }
 
-  case OP_tanh: return new exprDiv 
+  case OP_tanh: return new exprDiv
       (new exprSub (new exprExp (nl2e (e -> L.e, asl)),
 		    new exprExp (new exprOpp (nl2e (e->L.e, asl)))),
        new exprSum (new exprExp (nl2e (e -> L.e, asl)),
@@ -80,7 +80,7 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
 				       new exprSub (new exprExp (nl2e (e -> L.e, asl)),
 						    new exprExp (new exprOpp (nl2e (e->L.e, asl)))));
   case OP_sin:     return new exprSin (nl2e (e -> L.e, asl));
-  case OP_log10:   return new exprMul (new exprConst (1.0 / log (10.0)), 
+  case OP_log10:   return new exprMul (new exprConst (1.0 / log (10.0)),
 				       new exprLog (nl2e (e -> L.e, asl)));
   case OP_log:     return new exprLog (nl2e (e -> L.e, asl));
   case OP_exp:     return new exprExp (nl2e (e -> L.e, asl));
@@ -125,7 +125,7 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
       // use base pointer otherwise the .a field returns an awkward, out-of-bound index
       // TODO: fix! In itointqor.nl should return v51=y44 but returns v52=y44
       //                                          v??=y39 but returns v79=y39
-      j = ((expr_v *) e) - ((const ASL_fg *) asl) -> I.var_e_; 
+      j = ((expr_v *) e) - ((const ASL_fg *) asl) -> I.var_e_;
 
     if (j >= nOrigVars_ + ndefined_) {
       printf ("error: unknown variable x_%d\n", j);
@@ -136,7 +136,7 @@ expression *CouenneProblem::nl2e (expr *e, const ASL *asl) {
     return new exprClone (variables_ [j]);
   }
 
-  default: 
+  default:
     printf ("Couenne error: unknown operator (address %p), aborting.\n", Intcast (e -> op));
     exit (-1);
     //return new exprConst (0);

@@ -41,9 +41,9 @@ void exprQuad::getBounds (CouNumber &lb, CouNumber &ub) {
 
 
 // generate equality between *this and *w
-void exprQuad::generateCuts (expression *w, //const OsiSolverInterface &si, 
+void exprQuad::generateCuts (expression *w, //const OsiSolverInterface &si,
 			     OsiCuts &cs, const CouenneCutGenerator *cg,
-			     t_chg_bounds *chg, 
+			     t_chg_bounds *chg,
 			     int wind, CouNumber lb, CouNumber ub) {
 
   if (((!(cg -> isFirst ())) &&                     // unless a convexification was never created,
@@ -51,7 +51,7 @@ void exprQuad::generateCuts (expression *w, //const OsiSolverInterface &si,
       || !alphaConvexify (cg -> Problem ()))        // ... or a new alpha-convexification?
     return;
 
-  /*int 
+  /*int
     nrc = cs.sizeRowCuts (),
     ncc = cs.sizeColCuts ();*/
 
@@ -61,12 +61,12 @@ void exprQuad::generateCuts (expression *w, //const OsiSolverInterface &si,
 
   /*if (cs.sizeRowCuts () > nrc) {
     printf ("------------------ constraint row cuts\n");
-    for (int i=nrc; i<cs.sizeRowCuts (); i++) 
+    for (int i=nrc; i<cs.sizeRowCuts (); i++)
       cs.rowCutPtr (i) -> print ();
   }
   if (cs.sizeColCuts () > nrc) {
     printf ("================== constraint col cuts\n");
-    for (int i=ncc; i<cs.sizeColCuts (); i++) 
+    for (int i=ncc; i<cs.sizeColCuts (); i++)
       cs.colCutPtr (i) -> print ();
       }*/
 }

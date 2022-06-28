@@ -30,14 +30,14 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
     graph_ -> replaceIndex (aux -> Index (), subst -> Index ());
 
   if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-    printf ("replacing  "); if (aux)   aux   -> print (); 
+    printf ("replacing  "); if (aux)   aux   -> print ();
     if (subst) {printf (" with "); subst -> print ();}
     printf ("\n");
   }
 
   bool same_var = (subst == NULL);
 
-  if (!subst) 
+  if (!subst)
     subst = aux;
 
   // find original variable with index = w -> Index ()
@@ -51,7 +51,7 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
   for (orig  = variables_.begin ();
        orig != variables_.end   (); ++orig)
 
-    if ((((*orig) -> Type  () == VAR) || !same_var) && 
+    if ((((*orig) -> Type  () == VAR) || !same_var) &&
 	 ((*orig) -> Index () == index)) // found it
 
       break;
@@ -76,11 +76,11 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
 	printf ("replacing within common expression [%d]: ", (int)(i - commonexprs_.begin ())); fflush (stdout); (*i) -> print (); printf ("\n");
       }
 
-      if ((body -> Type () == VAR) || 
+      if ((body -> Type () == VAR) ||
 	  (body -> Type () == AUX)) {
 
 	if (body -> Index () == (*orig) -> Index ()) {
-      
+
 	  delete body;
 	  *i = new exprClone (subst);
 	}
@@ -98,14 +98,14 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
     if (body) {
 
       if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-	printf ("replacing within objective: "); fflush (stdout); (*i) -> print (); 
+	printf ("replacing within objective: "); fflush (stdout); (*i) -> print ();
       }
 
-      if ((body -> Type () == VAR) || 
+      if ((body -> Type () == VAR) ||
 	  (body -> Type () == AUX)) {
 
 	if (body -> Index () == (*orig) -> Index ()) {
-      
+
 	  delete body;//(*i) -> Body ();
 	  (*i) -> Body (new exprClone (subst));
 	}
@@ -123,14 +123,14 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
     if (body) {
 
       if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-	printf ("replacing within constraint [%d]: ", (int)(i - constraints_.begin ())); fflush (stdout); (*i) -> print (); 
+	printf ("replacing within constraint [%d]: ", (int)(i - constraints_.begin ())); fflush (stdout); (*i) -> print ();
       }
 
       if ((body -> Type () == VAR) ||
 	  (body -> Type () == AUX)) {
 
 	if (body -> Index () == (*orig) -> Index ()) {
-      
+
 	  delete body;//(*i) -> Body ();
 	  (*i) -> Body (new exprClone (subst));
 	}
@@ -148,21 +148,21 @@ void CouenneProblem::auxiliarize (exprVar *aux, exprVar *subst) {
 	((*i) -> Index () != (*orig) -> Index ())) { // skip same variable
 
       if (jnlst_ -> ProduceOutput (Ipopt::J_ALL, J_REFORMULATE)) {
-	printf ("replacing aux "); fflush (stdout); (*i) -> print (); 
-	printf (" := "); fflush (stdout); (*i) -> Image () -> print (); 
+	printf ("replacing aux "); fflush (stdout); (*i) -> print ();
+	printf (" := "); fflush (stdout); (*i) -> Image () -> print ();
 	printf ("\n");
       }
 
       expression *image = (*i) -> Image ();
 
-      if ((image -> Type () == VAR) || 
+      if ((image -> Type () == VAR) ||
 	  (image -> Type () == AUX)) {
 
 	if (image -> Index () == (*orig) -> Index ()) {
 
 	  delete image;
 	  (*i) -> Image (new exprClone (subst));
-	  //printf (" ---> "); (*i) -> Image () -> print (); 
+	  //printf (" ---> "); (*i) -> Image () -> print ();
 	} //else (*i) -> Image () -> replace (*orig, aux);
       } else image  -> replace (*orig, subst);
 

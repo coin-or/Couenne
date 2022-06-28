@@ -27,7 +27,7 @@ namespace Couenne {
   public:
 
     /// Constructor
-    exprSignPow (expression **al, int n = 2): 
+    exprSignPow (expression **al, int n = 2):
       exprPow (al, n) {} //< non-leaf expression, with argument list
 
     /// Constructor with only two arguments
@@ -52,14 +52,14 @@ namespace Couenne {
     exprAux *standardize (CouenneProblem *p, bool addAux = true);
 
     /// generate equality between *this and *w
-    void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		       OsiCuts &cs, const CouenneCutGenerator *cg, 
-		       t_chg_bounds * = NULL, int = -1, 
-		       CouNumber = -COUENNE_INFINITY, 
+    void generateCuts (expression *w, //const OsiSolverInterface &si,
+		       OsiCuts &cs, const CouenneCutGenerator *cg,
+		       t_chg_bounds * = NULL, int = -1,
+		       CouNumber = -COUENNE_INFINITY,
 		       CouNumber =  COUENNE_INFINITY);
 
     /// code for comparison
-    virtual enum expr_type code () 
+    virtual enum expr_type code ()
     {return COU_EXPRSIGNPOW;}
 
     /// implied bound processing
@@ -67,10 +67,10 @@ namespace Couenne {
 
     /// set up branching object by evaluating many branching points for
     /// each expression's arguments
-    virtual CouNumber selectBranch (const CouenneObject *obj, 
+    virtual CouNumber selectBranch (const CouenneObject *obj,
 				    const OsiBranchingInformation *info,
-				    expression * &var, 
-				    double * &brpts, 
+				    expression * &var,
+				    double * &brpts,
 				    double * &brDist, // distance of current LP
 				    // point to new convexifications
 				    int &way);

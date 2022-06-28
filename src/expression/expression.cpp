@@ -51,8 +51,8 @@ void expression::getBounds (CouNumber &lb, CouNumber &ub) {
 
 
 // generate one cut for a constant
-void exprConst::generateCuts (expression *w, //const OsiSolverInterface &si, 
-			      OsiCuts &cs, const CouenneCutGenerator *cg, 
+void exprConst::generateCuts (expression *w, //const OsiSolverInterface &si,
+			      OsiCuts &cs, const CouenneCutGenerator *cg,
 			      t_chg_bounds *chg, int,
 			      CouNumber, CouNumber) {
   if (cg -> isFirst ())
@@ -90,7 +90,7 @@ int expression::compare (expression &e1) {
   // expressions are both variables or constants
 
   {
-    int 
+    int
       i0 =     Index (),
       i1 = e1. Index ();
 
@@ -101,8 +101,8 @@ int expression::compare (expression &e1) {
 
   // both are numbers
   {
-    CouNumber 
-      v0 =     Value (), 
+    CouNumber
+      v0 =     Value (),
       v1 = e1. Value ();
 
     if (v0 < v1) return -1;
@@ -119,7 +119,7 @@ exprCopy::exprCopy (const exprCopy &e, Domain *d) {
   //expression *copy = getOriginal (e.copy_);
 
   //if ((copy -> Type () == VAR) ||
-  //    (copy -> Type () == AUX))  
+  //    (copy -> Type () == AUX))
 
     // if this is a variable, don't copy, just refer to the same
     // object (otherwise many useless copies are created)
@@ -142,12 +142,12 @@ int expression::compare (exprCopy &c)
 /// replace occurrence of a variable with another variable
 void exprCopy::replace (exprVar *orig, exprVar *aux) {
 
-  if (!aux) 
+  if (!aux)
     aux = orig;
 
   enum nodeType copyType = copy_ -> Type ();
 
-  if ((copyType == VAR) || 
+  if ((copyType == VAR) ||
       (copyType == AUX)) {
 
     if (copy_ -> Index () == orig -> Index ()) {
@@ -168,11 +168,11 @@ void exprCopy::replace (exprVar *orig, exprVar *aux) {
 
 
 /// dependence on variable set: return cardinality of subset of the
-/// set of indices in first argument which occur in expression. 
+/// set of indices in first argument which occur in expression.
 int expression::dependsOn (int *ind, int n, enum dig_type type) {
 
-  std::set <int> 
-    indlist (ind, ind + n), 
+  std::set <int>
+    indlist (ind, ind + n),
     deplist;
   //intersectn;
 
@@ -187,10 +187,10 @@ int expression::dependsOn (int *ind, int n, enum dig_type type) {
     printf ("%d ", *i);
     printf ("} -- intersection: \n");*/
 
-  for (std::set <int>::iterator 
-	 i = deplist.begin (), 
+  for (std::set <int>::iterator
+	 i = deplist.begin (),
 	 j = indlist.begin ();
-       (i != deplist.end ()) && 
+       (i != deplist.end ()) &&
 	 (j != indlist.end ());) {
 
     if (*i == *j) return 1;
@@ -206,12 +206,12 @@ int expression::dependsOn (int *ind, int n, enum dig_type type) {
 /// redirect variables to proper variable vector
 void exprCopy::realign (const CouenneProblem *p) {
 
-  if (((copy_ -> Type () == VAR) ||  
+  if (((copy_ -> Type () == VAR) ||
        (copy_ -> Type () == AUX)) &&
       (copy_ -> Original () != p -> Var (copy_ -> Index ()))) {
 
-    /*printf ("exprCopy::realign replaces %x with %x (", 
-	    copy_ -> Original (), p -> Var (copy_ -> Index ())); 
+    /*printf ("exprCopy::realign replaces %x with %x (",
+	    copy_ -> Original (), p -> Var (copy_ -> Index ()));
     copy_ -> Original () -> print (); printf (" --> ");
     p -> Var (copy_ -> Index ()) -> print (); printf (")\n");*/
 
@@ -243,7 +243,7 @@ void exprStore::print (std::ostream &out, bool descend) const
 // /// redirect variables to proper variable vector
 // void exprClone::realign (const CouenneProblem *p) {
 
-//   if (((copy_ -> Type () == VAR) ||  
+//   if (((copy_ -> Type () == VAR) ||
 //        (copy_ -> Type () == AUX)) &&
 //       (copy_ -> Original () != p -> Var (copy_ -> Index ()))) {
 

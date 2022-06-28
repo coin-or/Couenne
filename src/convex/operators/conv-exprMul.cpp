@@ -34,7 +34,7 @@ void exprMul::getBounds (expression *&lb, expression *&ub) {
 
     CouNumber c = arglist_ [i] -> Value ();
 
-    if (!i && (arglist_ [1] -> Type () == CONST)) { 
+    if (!i && (arglist_ [1] -> Type () == CONST)) {
 
       // !i means i==0, or the first is constant. If you are here,
       // both are constant, which should not happen...

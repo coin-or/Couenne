@@ -89,7 +89,7 @@ CouenneRecordBestSol::CouenneRecordBestSol(const CouenneRecordBestSol &other) {
   cardModSol = other.cardModSol;
   modSolVal = other.modSolVal;
   modSolMaxViol = other.modSolMaxViol;
-} 
+}
 
 /*************************************************************/
 /** Destructor. */
@@ -141,7 +141,7 @@ void CouenneRecordBestSol::setInitIsInt(const bool *givenIsInt,
 } /* setInitIsInt */
 
 /*****************************************************************************/
-void CouenneRecordBestSol::setInitDomLb(const CouNumber *givenLb, 
+void CouenneRecordBestSol::setInitDomLb(const CouNumber *givenLb,
 					const int givenCard) {
   if(initDomLb == NULL) {
     if(cardInitDom == -1) {
@@ -163,7 +163,7 @@ void CouenneRecordBestSol::setInitDomLb(const CouNumber *givenLb,
 } /* setInitDomLb */
 
 /*****************************************************************************/
-void CouenneRecordBestSol::setInitDomUb(const CouNumber *givenUb, 
+void CouenneRecordBestSol::setInitDomUb(const CouNumber *givenUb,
 					const int givenCard) {
   if(initDomUb == NULL) {
     if(cardInitDom == -1) {
@@ -237,7 +237,7 @@ void CouenneRecordBestSol::setVal(const double givenVal) {
 }
 
 /*****************************************************************************/
-void CouenneRecordBestSol::update(const double *givenSol, const int givenCard, 
+void CouenneRecordBestSol::update(const double *givenSol, const int givenCard,
 			   const double givenVal, const double givenMaxViol) {
   if (!hasSol || (givenVal < val)) {
     setSol(givenSol, givenCard, givenMaxViol);
@@ -302,7 +302,7 @@ int CouenneRecordBestSol::compareAndSave(const double *solA, const double solAVa
       }
     }
   }
-  
+
   switch (retval) {
     case 0: update(solA, cardSol, solAVal, solAMaxViol); break;
     case 1: update(solB, cardSol, solBVal, solBMaxViol); break;
@@ -312,10 +312,10 @@ int CouenneRecordBestSol::compareAndSave(const double *solA, const double solAVa
   }
 
   return(retval);
-} /* compareAndSave */ 
+} /* compareAndSave */
 
 /*****************************************************************************/
-double * CouenneRecordBestSol::getModSol(const int expectedCard) { 
+double * CouenneRecordBestSol::getModSol(const int expectedCard) {
   if(modSol == NULL) {
     cardModSol = expectedCard;
     modSol = new double[expectedCard];
@@ -330,11 +330,11 @@ double * CouenneRecordBestSol::getModSol(const int expectedCard) {
 } /* getModSol */
 
 /*****************************************************************************/
-void CouenneRecordBestSol::setModSol(const double *givenModSol, 
-			      const int givenModCard, 
-			      const double givenModVal, 
+void CouenneRecordBestSol::setModSol(const double *givenModSol,
+			      const int givenModCard,
+			      const double givenModVal,
 			      const double givenModMaxViol) {
-  
+
   if(givenModSol != NULL) {
     if(modSol == NULL) {
       cardModSol = givenModCard;
@@ -375,4 +375,4 @@ void CouenneRecordBestSol::printSol(FILE *fsol) const {
     fprintf(fsol, "Value: %16.14g\n", val);
     fprintf(fsol, "Tolerance: %16.14g\n", maxViol);
   }
-} /* printSol */ 
+} /* printSol */

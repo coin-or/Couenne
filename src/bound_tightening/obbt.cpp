@@ -40,9 +40,9 @@ void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchange
 
 
 // OBBT for one sense (max/min) and one class of variables (orig/aux)
-int CouenneProblem::call_iter (OsiSolverInterface *csi, 
-			       t_chg_bounds *chg_bds, 
-			       const CoinWarmStart *warmstart, 
+int CouenneProblem::call_iter (OsiSolverInterface *csi,
+			       t_chg_bounds *chg_bds,
+			       const CoinWarmStart *warmstart,
 			       Bonmin::BabInfo *babInfo,
 			       double *objcoe,
 			       enum nodeType type,
@@ -62,7 +62,7 @@ int CouenneProblem::call_iter (OsiSolverInterface *csi,
 
     if ((Var (i) -> Type () == type)     &&
 	(Var (i) -> Multiplicity () > 0) &&
-	((type == VAR)                               || 
+	((type == VAR)                               ||
 	 (aSign  == expression::AUX_EQ) ||
 	 ((aSign == expression::AUX_LEQ) && (sense > 0)) ||
 	 ((aSign == expression::AUX_GEQ) && (sense < 0)))) {
@@ -71,13 +71,13 @@ int CouenneProblem::call_iter (OsiSolverInterface *csi,
 
 //       {
 // 	// ToDo: Pipe all output through journalist
-// 	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING, 
+// 	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
 // 			"  bounds after obbt step  =====================\n  ");
 // 	int j=0;
-// 	for (int i=0; i < nVars (); i++) 
+// 	for (int i=0; i < nVars (); i++)
 // 	  if (variables_ [i] -> Multiplicity () > 0) {
 // 	    Jnlst()->Printf(J_VECTOR, J_BOUNDTIGHTENING,
-// 			    "x_%03d [%+10g %+10g] ", i, 
+// 			    "x_%03d [%+10g %+10g] ", i,
 // 			    domain_. lb (i),
 // 			    domain_. ub (i));
 // 	    if (!(++j % 6)) Jnlst()->Printf(J_VECTOR, J_BOUNDTIGHTENING,"\n  ");
@@ -137,7 +137,7 @@ int CouenneProblem::obbtInner (OsiSolverInterface *csi,
   csi -> setObjSense (1);        // minimization
 
   int nimprov = 0;
- 
+
   const int Infeasible = 1;
 
   try {
@@ -202,7 +202,7 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
   if (doOBBT_ &&                        // flag is checked, AND
       ((logObbtLev_ != 0) ||               // (parameter is nonzero OR
        (info.level == 0)) &&               //  we are at root node), AND
-      (info.pass == 0) &&               // at first round of cuts, AND 
+      (info.pass == 0) &&               // at first round of cuts, AND
       ((logObbtLev_ < 0) ||               // (logObbtLev = -1, OR
        (info.level <= logObbtLev_) ||     //  depth is lower than COU_OBBT_CUTOFF_LEVEL, OR
                                           //  probability inversely proportional to the level)
@@ -210,11 +210,11 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
     OBBTperfIndicator_ -> setOldBounds (Lb (), Ub ());
 
-    if ((info.level <= 0 && !(info.inTree)) || 
+    if ((info.level <= 0 && !(info.inTree)) ||
     	jnlst_ -> ProduceOutput (J_STRONGWARNING, J_COUENNE))  {
 
-      jnlst_ -> Printf (J_ERROR, J_COUENNE, "Optimality Based BT: "); 
-      //nVars () > THRESH_OBBT_AUX ? nOrigVars_ : nVars (), info.pass); 
+      jnlst_ -> Printf (J_ERROR, J_COUENNE, "Optimality Based BT: ");
+      //nVars () > THRESH_OBBT_AUX ? nOrigVars_ : nVars (), info.pass);
       fflush (stdout);
     }
 
@@ -227,7 +227,7 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
     OsiSolverInterface *csi = si.clone (true);
 
     csi -> messageHandler () -> setLogLevel (0);
-    //dynamic_cast <CouenneSolverInterface<T> *> 
+    //dynamic_cast <CouenneSolverInterface<T> *>
 
     OsiClpSolverInterface *clpcsi = dynamic_cast <OsiClpSolverInterface *> (csi);
 
@@ -241,7 +241,7 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
     bool notImproved = false;
 
-    while (!notImproved && 
+    while (!notImproved &&
 	   (nIter++ < MAX_OBBT_ITER) &&
 	   ((nImprov = obbtInner (csi, cs, chg_bds, babInfo)) > 0) &&
 	   (CoinCpuTime () < maxCpuTime_)) {
@@ -254,7 +254,7 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
       nTotImproved += nImprov;
 
-      if ((nIter < MAX_OBBT_ITER) && 
+      if ((nIter < MAX_OBBT_ITER) &&
 	  (nImprov >= THRES_NBD_CHANGED)) {
 
 	// only generate new row cuts if improvents are enough
@@ -266,7 +266,7 @@ int CouenneProblem::obbt (const CouenneCutGenerator *cg,
 
       } else notImproved = true;
 
-      if (changed) 
+      if (changed)
 	free (changed);
     }
 

@@ -22,7 +22,7 @@ using namespace Couenne;
 void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
 				       unary_function f,      // function to be linearized
 				       unary_function fprime, // derivative of f
-				       int w_ind, int x_ind, 
+				       int w_ind, int x_ind,
 				       CouNumber x, CouNumber l, CouNumber u,
 				       t_chg_bounds *chg,
 				       bool is_global) const {
@@ -34,7 +34,7 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
 
 void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
 				       funtriplet *ft,
-				       int w_ind, int x_ind, 
+				       int w_ind, int x_ind,
 				       CouNumber x, CouNumber l, CouNumber u,
 				       t_chg_bounds *chg,
 				       bool is_global) const {
@@ -50,7 +50,7 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
   if (fabs (u - l) < COUENNE_EPS) {
 
     CouNumber x0 = 0.5 * (u+l), fp0 = ft -> Fp (x0);
-    if (cLeft || cRight) 
+    if (cLeft || cRight)
       createCut (cs, ft -> F(x0) - fp0 * x0, 0, w_ind, 1., x_ind, - fp0);
     return;
   }
@@ -58,13 +58,13 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
   // Add tangent in any case
 
   if (((!firstcall_) || ((x >= l) && (x <= u)))
-      && !CoinIsnan (opp_slope) 
+      && !CoinIsnan (opp_slope)
       && (fabs (opp_slope) < COUENNE_INFINITY)) {
 
     if (!(problem_ -> Var (x_ind) -> isInteger ()))
 
       // normal cut
-      createCut (cs, ft -> F (x) + opp_slope * x, sign, w_ind, 1., 
+      createCut (cs, ft -> F (x) + opp_slope * x, sign, w_ind, 1.,
 		 x_ind, opp_slope, -1, 0., is_global);
 
     else {
@@ -107,19 +107,19 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
       y2 = ft -> F (x2);
 
       if ((x2 > u)   ||
-	  CoinIsnan (y1) || CoinIsnan (y2) || 
+	  CoinIsnan (y1) || CoinIsnan (y2) ||
 	  !CoinFinite (y1) || !CoinFinite (y2)) // fall back to non-integer cut
 
-	createCut (cs, ft -> F (x) + opp_slope * x, sign, w_ind, 1., 
+	createCut (cs, ft -> F (x) + opp_slope * x, sign, w_ind, 1.,
 		   x_ind, opp_slope, -1, 0., is_global);
 
       else {
 
-	CouNumber 
+	CouNumber
 	  slope = (y1-y2) / (x2-x1),
 	  rhs   = y1 + slope * x1;
 
-	createCut (cs, rhs, sign, w_ind, 1., 
+	createCut (cs, rhs, sign, w_ind, 1.,
 		   x_ind, slope, -1, 0., is_global);
       }
 
@@ -137,18 +137,18 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
     if (cLeft || cRight) {
       // now add tangent at each sampling point
 
-      CouNumber 
-	sample = l, 
+      CouNumber
+	sample = l,
 	step   = (u-l) / nSamples_;
 
-      //    printf ("[%.4f %.4f], step = %.4f, %d samples\n", 
+      //    printf ("[%.4f %.4f], step = %.4f, %d samples\n",
       //	    l, u, step, nSamples_);
 
       for (int i = 0; i <= nSamples_; i++) {
 
 	opp_slope = - ft -> Fp (sample);
 
-	if ((fabs (opp_slope) < COUENNE_INFINITY) && 
+	if ((fabs (opp_slope) < COUENNE_INFINITY) &&
 	    (fabs (sample-x) > COUENNE_EPS)) { // do not add twice cut at current point
 
 
@@ -156,9 +156,9 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
 
 	  if (!(problem_ -> Var (x_ind) -> isInteger ()))
 
-	    createCut (cs, ft -> F (sample) + opp_slope * sample, sign, 
+	    createCut (cs, ft -> F (sample) + opp_slope * sample, sign,
 		       w_ind, 1.,
-		       x_ind, opp_slope, 
+		       x_ind, opp_slope,
 		       -1, 0., is_global);
 	  else {
 
@@ -177,10 +177,10 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
 	    y2 = ft -> F (x2);
 
 	    if ((x2 > u)   ||
-		CoinIsnan (y1) || CoinIsnan (y2) || 
+		CoinIsnan (y1) || CoinIsnan (y2) ||
 		!CoinFinite (y1) || !CoinFinite (y2)) // fall back to non-integer cut
 
-	      createCut (cs, ft -> F (sample) + opp_slope * sample, sign, w_ind, 1., 
+	      createCut (cs, ft -> F (sample) + opp_slope * sample, sign, w_ind, 1.,
 			 x_ind, opp_slope, -1, 0., is_global);
 	  }
       	}
@@ -196,9 +196,9 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
     CouNumber sample = x;
 
     if (fabs (opp_slope) < COUENNE_INFINITY)
-      createCut (cs, ft -> F (x) + opp_slope * x, sign, 
+      createCut (cs, ft -> F (x) + opp_slope * x, sign,
 		 w_ind, 1.,
-		 x_ind, opp_slope, 
+		 x_ind, opp_slope,
 		 -1, 0.,
 		 is_global);
       //      printf ("  Current tangent: "); cut -> print ();
@@ -209,9 +209,9 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
       opp_slope = - ft -> Fp (sample);
 
       if (fabs (opp_slope) < COUENNE_INFINITY)
-	createCut (cs, ft -> F (sample) + opp_slope * sample, sign, 
+	createCut (cs, ft -> F (sample) + opp_slope * sample, sign,
 		   w_ind, 1.,
-		   x_ind, opp_slope, 
+		   x_ind, opp_slope,
 		   -1, 0.,
 		   is_global);
 	//	printf ("  neighbour -%d: ", i); cut -> print ();
@@ -224,9 +224,9 @@ void CouenneCutGenerator::addEnvelope (OsiCuts &cs, int sign,
       sample += (u-x) / nSamples_;
       opp_slope = - ft -> Fp (sample);
 
-      createCut (cs, ft -> F(sample) + opp_slope * sample, sign, 
+      createCut (cs, ft -> F(sample) + opp_slope * sample, sign,
 		 w_ind, 1.,
-		 x_ind, opp_slope, 
+		 x_ind, opp_slope,
 		 -1, 0.,
 		 is_global);
 	//	printf ("  neighbour  %d: ", i); cut -> print ();

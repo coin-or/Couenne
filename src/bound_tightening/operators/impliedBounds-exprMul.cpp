@@ -30,11 +30,11 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   bool resL, resU = resL = false;
   int ind;
 
-  CouNumber 
+  CouNumber
     wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
     wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
-  if ((arglist_ [ind=0] -> Type () <= CONST) || 
+  if ((arglist_ [ind=0] -> Type () <= CONST) ||
       (arglist_ [ind=1] -> Type () <= CONST)) {
 
     // at least one constant in product w=cx:
@@ -61,13 +61,13 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
       resL = (wu <   COUENNE_INFINITY) && updateBound (-1, l + ind, argInt ? ceil  (wu / c - COUENNE_EPS) : (wu / c));
       resU = (wl > - COUENNE_INFINITY) && updateBound ( 1, u + ind, argInt ? floor (wl / c + COUENNE_EPS) : (wl / c));
-    } 
+    }
 
     if (resL) chg [ind].setLower(t_chg_bounds::CHANGED);
     if (resU) chg [ind].setUpper(t_chg_bounds::CHANGED);
 
-      /*printf ("w_%d [%g,%g] -------> x_%d in [%g,%g] ", 
-	      wind, l [wind], u [wind], 
+      /*printf ("w_%d [%g,%g] -------> x_%d in [%g,%g] ",
+	      wind, l [wind], u [wind],
 	      ind,  l [ind],  u [ind]);*/
   } else {
 
@@ -84,7 +84,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
     // w's lower bound ///////////////////////////////////////////
 
-    bool resxL,  resxU,  resyL, resyU = 
+    bool resxL,  resxU,  resyL, resyU =
          resxL = resxU = resyL = false;
 
     bool xlIsZero = (fabs(*xl) < COUENNE_EPS);
@@ -100,8 +100,8 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       if ((!xuIsZero) && (!yuIsZero) && (*xu * *yu < wl)) {
 	if (!ylIsZero) {
 	  resxU = (*xu * *yl < wl) && updateBound (+1, xu, wl / *yl);
-	  xuIsZero = (fabs(*xu) < COUENNE_EPS ? true : false);                
-	} 
+	  xuIsZero = (fabs(*xu) < COUENNE_EPS ? true : false);
+	}
 	if (!xlIsZero) {
 	  resyU = (*xl * *yu < wl) && updateBound (+1, yu, wl / *xl);
 	  yuIsZero = (fabs(*yu) < COUENNE_EPS ? true : false);
@@ -113,7 +113,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       if ((!xlIsZero) && (!ylIsZero) && (*xl * *yl < wl)) {
 	if (!yuIsZero) {
 	  resxL = (*xl * *yu < wl) && updateBound (-1, xl, wl / *yu);
-	  xlIsZero = (fabs(*xl) < COUENNE_EPS ? true : false); 
+	  xlIsZero = (fabs(*xl) < COUENNE_EPS ? true : false);
 	}
 	if (!xuIsZero) {
 	  resyL = (*xu * *yl < wl) && updateBound (-1, yl, wl / *xu);
@@ -129,7 +129,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	// point B in central infeasible area
 	if (*xu * *yu < wl) {
 
-#ifdef FM_CHECK  
+#ifdef FM_CHECK
           if((*xu * *yl < wl) && (ylIsZero)) {
 	    printf("ylIsZero (A): %g\n", *yl);
 	    exit(1);
@@ -141,7 +141,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 #endif
 
 	  resxU = (*xu * *yl < wl) && updateBound (+1, xu, wl / *yl);
-          xuIsZero = (fabs(*xu) < COUENNE_EPS ? true : false); 
+          xuIsZero = (fabs(*xu) < COUENNE_EPS ? true : false);
 	  resyU = (*xl * *yu < wl) && updateBound (+1, yu, wl / *xl);
 	  yuIsZero = (fabs(*yu) < COUENNE_EPS ? true : false);
 	}
@@ -177,22 +177,22 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	  printf("ylIsZero (E): %g\n", *yl);
 	}
         if(((*xu * *yu < wl) && (*yu > 0)) && (xuIsZero)) {
-	  printf("xuIsZero (F): %g\n", *xu);                                  
+	  printf("xuIsZero (F): %g\n", *xu);
 	  exit(1);
 	}
         if(((*xl * *yl < wl) && (*yl < 0)) && (xlIsZero)) {
-	  printf("xlIsZero (G): %g\n", *xl);                                  
+	  printf("xlIsZero (G): %g\n", *xl);
 	  exit(1);
 	}
         if(( (*xu * *yu < wl) && (*yu < 0)) && (yuIsZero)) {
-	  printf("yuIsZero (H): %g\n", *yu);                                  
+	  printf("yuIsZero (H): %g\n", *yu);
 	}
 #endif
 
 	resxL = (*xl * *yl < wl) && (*yl > 0.) && (!ylIsZero) && updateBound (-1, xl, wl / *yl); // point C
         xlIsZero = (fabs(*xl) < COUENNE_EPS ? true : false);
 	resyU = (*xu * *yu < wl) && (*yu > 0.) && (!xuIsZero) && updateBound (+1, yu, wl / *xu); // point B
-        yuIsZero = (fabs(*yu) < COUENNE_EPS ? true : false); 
+        yuIsZero = (fabs(*yu) < COUENNE_EPS ? true : false);
 	
 	// lower right
 	resyL = (*xl * *yl < wl) && (*yl < 0.) && (!xlIsZero) && updateBound (-1, yl, wl / *xl); // point C
@@ -205,15 +205,15 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     bool
       xInt = arglist_ [0] -> isInteger (),
       yInt = arglist_ [1] -> isInteger ();
-    
+
     if (resxL && xInt) *xl = ceil  (*xl - COUENNE_EPS);
     if (resxU && xInt) *xu = floor (*xu + COUENNE_EPS);
     if (resyL && yInt) *yl = ceil  (*yl - COUENNE_EPS);
     if (resyU && yInt) *yu = floor (*yu + COUENNE_EPS);
-    
+
     // w's upper bound ///////////////////////////////////////////
 #ifdef FM_MOD
-    
+
     if(wuIsZero) {
 
       if((!xuIsZero) && (!ylIsZero) && (*xu * *yl > wu)) {
@@ -239,7 +239,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       }
     }
 
-    else // wu is not zero 
+    else // wu is not zero
 
 #endif /* FM_MOD */
 
@@ -258,13 +258,13 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	    exit(1);
           }
 #endif
-	  
+	
 	  // upper right
 	  resxU = ((*xu * *yl > wu) && (*yl > 0.) && (!ylIsZero) && updateBound (+1, xu, wu / *yl)) || resxU; // point D
           xuIsZero = (fabs(*xu) < COUENNE_EPS ? true : false);
 	  resyU = ((*xl * *yu > wu) && (*yu > 0.) && (!xlIsZero) && updateBound (+1, yu, wu / *xl)) || resyU; // point A
           yuIsZero = (fabs(*yu) < COUENNE_EPS ? true : false);
-	  
+	
 #ifdef FM_CHECK
           if(((*xl * *yu > wu) && (*yu < 0)) && (yuIsZero)) {
             printf("yuIsZero (C2): %g\n", *yu);
@@ -277,7 +277,7 @@ bool exprMul::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
 	  // lower left
 	  resxL = ((*xl * *yu > wu) && (*yu < 0.) && (!yuIsZero) && updateBound (-1, xl, wu / *yu)) || resxL; // point A
-          xlIsZero = (fabs(*xl) < COUENNE_EPS ? true : false); 
+          xlIsZero = (fabs(*xl) < COUENNE_EPS ? true : false);
 	  resyL = ((*xu * *yl > wu) && (*yl < 0.) && (!xuIsZero) && updateBound (-1, yl, wu / *xu)) || resyL; // point D
           ylIsZero = (fabs(*yl) < COUENNE_EPS ? true : false);
 	}

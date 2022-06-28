@@ -29,9 +29,9 @@ exprAux *exprDiv::standardize (CouenneProblem *p, bool addAux) {
 
 
 // generate convexification cut for constraint w = x/y
-void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si, 
+void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
-			    t_chg_bounds *chg, int wind, 
+			    t_chg_bounds *chg, int wind,
 			    CouNumber lbw, CouNumber ubw) {
   // compute y bounds
 
@@ -42,7 +42,7 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
       yi = arglist_ [1] -> Index (),
       wi = w            -> Index ();
 
-  bool cLW,  cRW,  cLY,  cRY = 
+  bool cLW,  cRW,  cLY,  cRY =
        cLW = cRW = cLY = true;
 
   if (!(cg -> isFirst ()) && chg) {
@@ -55,8 +55,8 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
   // no convexification for terms x/y where y=0 is internal to the
   // bounding box
 
-  if ((yl < -0.) && 
-      (yu >  0.)) return;   
+  if ((yl < -0.) &&
+      (yu >  0.)) return;
 
   CouNumber k;
 
@@ -64,7 +64,7 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
 
   // special case #1: y is almost constant (nonzero) --> y = k. We
   // only need a single plane w >/</= x/k.
-  if ((fabs (yl-yu) < COUENNE_EPS) && 
+  if ((fabs (yl-yu) < COUENNE_EPS) &&
       ((fabs (k = ((yl+yu) / 2)) > COUENNE_EPS))) {
     if (cLY || cRY)
       cg -> createCut (cs, 0., sign, wi, 1., xi, -1./k);
@@ -84,7 +84,7 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
       ((k = fabs (wl+wu) / 2) > COUENNE_EPS) &&
       // extra condition: either y's bounds are both pos or both neg,
       // or this is an equality
-      ((sign==expression::AUX_EQ) || (yl > 0.) || (yu < 0.))) { 
+      ((sign==expression::AUX_EQ) || (yl > 0.) || (yu < 0.))) {
 
     if (cLW || cRW) {
       if (sign==expression::AUX_EQ || (yl > 0.)) cg -> createCut (cs, 0., sign, yi,  k, xi, -1.);
@@ -107,18 +107,18 @@ void exprDiv::generateCuts (expression *w, //const OsiSolverInterface &si,
   //CouNumber *x = w -> domain () -> x ();
   CouNumber *x = cg -> Problem () -> X ();
 
-  bool 
+  bool
     ineqFullOrthantF = (((sign == expression::AUX_LEQ) && (yl >  0.)) || ((sign == expression::AUX_GEQ) && (yu < -0.))),
     ineqFullOrthantB = (((sign == expression::AUX_LEQ) && (yu < -0.)) || ((sign == expression::AUX_GEQ) && (yl >  0.)));
 
   unifiedProdCuts (cg, cs,
 		   wi, x [wi], wl, wu,
 		   yi, x [yi], yl, yu,
-		   xi, x [xi], 
-		   ineqFullOrthantF ? -COIN_DBL_MAX : xl, 
-		   ineqFullOrthantB ?  COIN_DBL_MAX : xu, 
-		   chg, 
+		   xi, x [xi],
+		   ineqFullOrthantF ? -COIN_DBL_MAX : xl,
+		   ineqFullOrthantB ?  COIN_DBL_MAX : xu,
+		   chg,
 		   ineqFullOrthantF ? expression::AUX_GEQ :
-		   ineqFullOrthantB ? expression::AUX_LEQ : 
+		   ineqFullOrthantB ? expression::AUX_LEQ :
 		                      expression::AUX_EQ);
 }

@@ -26,7 +26,7 @@ bool exprTrilinear::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bo
   //
   // There are cases:
   //
-  // 
+  //
 
   return false;
 }

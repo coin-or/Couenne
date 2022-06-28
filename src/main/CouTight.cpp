@@ -37,7 +37,7 @@
 #include "asl.h"
 #include "nlp.h"
 #include "getstub.h"
-#include "r_opn.hd" // for N_OPS 
+#include "r_opn.hd" // for N_OPS
 #include "opcode.hd"
 
 using namespace Couenne;
@@ -45,10 +45,10 @@ using namespace Couenne;
 static int empty_int = 0;
 
 static keyword keywds[] = { /* must be sorted */
-  KW(const_cast<char*>("empty"), 
-     I_val, 
-     empty_int, 
-     const_cast<char*>("nothing")), 
+  KW(const_cast<char*>("empty"),
+     I_val,
+     empty_int,
+     const_cast<char*>("nothing")),
 };
 
 extern Option_Info Oinfo;
@@ -75,9 +75,9 @@ int main (int argc, char *argv[]) {
   typedef struct {char *msg; int code, wantsol;} Sol_info;
 
   static SufDecl suftab [] = {
-    {const_cast<char*>("newlb"), 0, 
+    {const_cast<char*>("newlb"), 0,
      ASL_Sufkind_var | ASL_Sufkind_real | ASL_Sufkind_output, 0},
-    {const_cast<char*>("newub"), 0, 
+    {const_cast<char*>("newub"), 0,
      ASL_Sufkind_var | ASL_Sufkind_real | ASL_Sufkind_output, 0}};
 
   suf_declare_ASL (aslfg -> asl, suftab, sizeof (suftab) / sizeof (SufDecl));

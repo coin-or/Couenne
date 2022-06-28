@@ -3,7 +3,7 @@
  * Name:    CouenneExprMatr.cpp
  * Authors: Pietro Belotti, Lehigh University
  * Purpose: Implementation, matrix expressions
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -103,8 +103,8 @@ ExprJac::ExprJac (CouenneProblem *p):
   expr_  (NULL),
   nRows_ (0) {
 
-  /// constraints: 
-  /// 
+  /// constraints:
+  ///
   /// If they are variable constraints, i.e., of the form a <= x <= b,
   /// they should be ignored and be replaced by variable bound (simply
   /// ask the problem).
@@ -112,7 +112,7 @@ ExprJac::ExprJac (CouenneProblem *p):
   /// All other constraints should be part of the jacobian
 
   /// to be resized on demand
-  int 
+  int
     cursize   = 0,
     nRealCons = 0;
 
@@ -125,7 +125,7 @@ ExprJac::ExprJac (CouenneProblem *p):
     CouenneConstraint *c = p -> Con (i);
 
     if (c -> Body () -> Type () == AUX ||
-	c -> Body () -> Type () == VAR) 
+	c -> Body () -> Type () == VAR)
       continue;
 
     // This is a constraint of the form f(x) <= 0. Find out the
@@ -144,7 +144,7 @@ ExprJac::ExprJac (CouenneProblem *p):
       if (p -> Var (*k) -> Multiplicity () <= 0)
 	continue;
 
-      expression 
+      expression
 	*J = c -> Body () -> differentiate (*k), // derivative of the
                   	                         // constraint's body
 	                                         // w.r.t. x_i
@@ -152,11 +152,11 @@ ExprJac::ExprJac (CouenneProblem *p):
 	*sJ = J -> simplify (),                  // a simplification
 	*rJ = sJ ? sJ : J;                       // the real one
 
-      if (sJ) 
+      if (sJ)
 	delete J; // the only remaining expression won't be wasted
 
       if ((rJ -> Type  () == CONST) &&
-	  (rJ -> Value () == 0.)) 
+	  (rJ -> Value () == 0.))
 	continue;
 
       // there is a nonzero entry!
@@ -174,7 +174,7 @@ ExprJac::ExprJac (CouenneProblem *p):
     }
 
     if (nTerms) {
-      ++nRealCons; // increase the counter of real constraints 
+      ++nRealCons; // increase the counter of real constraints
       ++nRows_;    // and of rows
     }
   }
@@ -208,8 +208,8 @@ ExprJac::ExprJac (CouenneProblem *p):
       if (p -> Var (*k) -> Multiplicity () <= 0)
 	continue;
 
-      expression 
-	*J = (*k == e -> Index ()) ? 
+      expression
+	*J = (*k == e -> Index ()) ?
   	     new exprConst (-1.) :
 	     e -> Image () -> differentiate (*k), // derivative of the
 	                                          // constraint's body
@@ -218,12 +218,12 @@ ExprJac::ExprJac (CouenneProblem *p):
 	*sJ = J -> simplify (),                   // a simplification
 	*rJ = sJ ? sJ : J;                        // the real one
 
-      if (sJ) 
+      if (sJ)
 	delete J; // the only remaining expression won't be wasted
 
       if ((rJ -> Type  () == CONST) &&
-	  (rJ -> Value () == 0.)) 
-	continue; 
+	  (rJ -> Value () == 0.))
+	continue;
 
       rJ -> realign (p);
 
@@ -240,7 +240,7 @@ ExprJac::ExprJac (CouenneProblem *p):
     }
 
     if (nTerms) {
-      ++nRealCons; // increase the counter of real constraints 
+      ++nRealCons; // increase the counter of real constraints
       ++nRows_;
     }
   }
@@ -253,7 +253,7 @@ ExprJac::ExprJac (CouenneProblem *p):
     printf ("[%d,%d]: ", iRow_ [i], jCol_ [i]);
 
     fflush (stdout);
-    expr_ [i] -> print (); 
+    expr_ [i] -> print ();
     printf ("\n");
   }
 #endif

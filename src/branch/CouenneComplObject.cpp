@@ -16,12 +16,12 @@ using namespace Couenne;
 
 /// Constructor with information for branching point selection strategy
 CouenneComplObject::CouenneComplObject (CouenneCutGenerator *c,
-					CouenneProblem *p, 
+					CouenneProblem *p,
 					exprVar *ref, Bonmin::BabSetupBase *base, JnlstPtr jnlst,
 					int sign):
   CouenneObject (c, p, ref, base, jnlst),
   sign_ (sign) {
-  jnlst -> Printf (J_DETAILED, J_BRANCHING, 
+  jnlst -> Printf (J_DETAILED, J_BRANCHING,
 		   "[created Complementarity constraint object with sign %d]\n", sign);
 }
 
@@ -34,7 +34,7 @@ CouenneComplObject::CouenneComplObject (exprVar *ref, Bonmin::BabSetupBase *base
 
 
 /// Copy constructor
-CouenneComplObject::CouenneComplObject (const CouenneComplObject &src): 
+CouenneComplObject::CouenneComplObject (const CouenneComplObject &src):
   CouenneObject (src),
   sign_ (src.sign_) {}
 
@@ -50,7 +50,7 @@ double CouenneComplObject::infeasibility (const OsiBranchingInformation *info, i
 
   if (sign_) { // it is a xy <= 0 or a xy >= 0 object
 
-    CouNumber 
+    CouNumber
       x0 = info -> solution_ [index0],
       x1 = info -> solution_ [index1],
       prod = x0*x1;
@@ -77,7 +77,7 @@ double CouenneComplObject::infeasibility (const OsiBranchingInformation *info, i
 
   } else { // it is a xy=0 object, use old infeasibility
 
-    CouNumber 
+    CouNumber
       x0 = fabs (info -> solution_ [index0]),
       x1 = fabs (info -> solution_ [index1]);
 
@@ -114,13 +114,13 @@ double CouenneComplObject::checkInfeasibility (const OsiBranchingInformation * i
 
 /// create CouenneBranchingObject or CouenneThreeWayBranchObj based
 /// on this object
-OsiBranchingObject *CouenneComplObject::createBranch (OsiSolverInterface *solver, 
-						      const OsiBranchingInformation *info, 
+OsiBranchingObject *CouenneComplObject::createBranch (OsiSolverInterface *solver,
+						      const OsiBranchingInformation *info,
 						      int way) const {
 
   expression **args = reference_ -> Image () -> ArgList ();
 
-  /*  printf ("creating CCobj: %d %d.%d\n", reference_ -> Index (), 
+  /*  printf ("creating CCobj: %d %d.%d\n", reference_ -> Index (),
 	  args [0] -> Index (),
 	  args [1] -> Index ());*/
 
@@ -128,6 +128,6 @@ OsiBranchingObject *CouenneComplObject::createBranch (OsiSolverInterface *solver
 					  cutGen_,
 					  problem_,
 					  args [0],
-					  args [1], 
+					  args [1],
 					  way, 0, doFBBT_, doConvCuts_, sign_);
 }

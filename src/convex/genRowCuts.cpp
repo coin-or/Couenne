@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: generate Row Cuts for current convexification
  *
- * (C) Carnegie-Mellon University, 2006-09. 
+ * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -18,7 +18,7 @@ using namespace Couenne;
 /// generate OsiRowCuts for current convexification
 void CouenneCutGenerator::genRowCuts (const OsiSolverInterface &si,
 				      OsiCuts &cs,
-				      int nchanged, 
+				      int nchanged,
 				      int *changed,
 				      t_chg_bounds *chg) const {
 
@@ -49,7 +49,7 @@ void CouenneCutGenerator::genRowCuts (const OsiSolverInterface &si,
 
       exprVar *var = problem_ -> Var (i);
 
-      if ((var -> Multiplicity () > 0) && 
+      if ((var -> Multiplicity () > 0) &&
 	  (var -> Type () == AUX)) {
 
 	var -> generateCuts (cs, this, chg);
@@ -63,8 +63,8 @@ void CouenneCutGenerator::genRowCuts (const OsiSolverInterface &si,
       // TODO: check if list contains all and only aux's to cut
 
       /*expression * image = problem_ -> Aux (i) -> Image ();
-      
-      if ((image -> dependsOn (changed, nchanged)) && 
+
+      if ((image -> dependsOn (changed, nchanged)) &&
 	  (image -> Linearity () > LINEAR)) {
 	printf ("         ");
 	problem_ -> Aux (i) -> print ();

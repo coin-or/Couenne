@@ -39,9 +39,9 @@ exprOp::~exprOp () {
 
 // print expression
 
-void exprOp::print (std::ostream &out, 
+void exprOp::print (std::ostream &out,
 		    bool descend) const {
-  
+
   if (printPos () == PRE)
     out << printOp ();
 
@@ -49,7 +49,7 @@ void exprOp::print (std::ostream &out,
     {out << "("; fflush (stdout);}
   for (int i=0; i<nargs_; i++) {
     if (arglist_ [i])
-      arglist_ [i] -> print (out, descend); 
+      arglist_ [i] -> print (out, descend);
     fflush (stdout);
     if (i < nargs_ - 1) {
       if (printPos () == INSIDE) out << printOp ();
@@ -119,7 +119,7 @@ int exprOp::rank () {
 
   int maxrank = -1;
 
-  for (expression **al = arglist_ + nargs_; 
+  for (expression **al = arglist_ + nargs_;
        al-- > arglist_;) {
     int r = (*al) -> rank ();
     if (r > maxrank) maxrank = r;
@@ -132,7 +132,7 @@ int exprOp::rank () {
 // Create standard formulation of this expression, by:
 //
 // - creating auxiliary w variables and corresponding expressions
-// - returning linear counterpart as new constraint (to replace 
+// - returning linear counterpart as new constraint (to replace
 //   current one)
 //
 // For the base exprOp class we only do the first part (for argument
@@ -189,7 +189,7 @@ bool exprOp::isInteger () {
 
   for (int i = nargs_; i--;)
 
-    if (!(arglist_ [i] -> isInteger ())) { 
+    if (!(arglist_ [i] -> isInteger ())) {
 
       // this argument is not integer: check if constant and integer
 
@@ -207,7 +207,7 @@ bool exprOp::isInteger () {
 
 /// fill in the set with all indices of variables appearing in the
 /// expression
-int exprOp::DepList (std::set <int> &deplist, 
+int exprOp::DepList (std::set <int> &deplist,
 		     enum dig_type type) {
   int tot = 0;
 
@@ -266,28 +266,28 @@ expression *exprOp:: simplify () {
 // function arguments contained in el. The constant is inserted in the
 // list if the result is not equal to null_element or if there are
 // other non-constant terms in the arglist.
-// 
-// Example: f(x) + 3 + g(x) + 2 + 4 
+//
+// Example: f(x) + 3 + g(x) + 2 + 4
 //
 // el    = {pf, NULL, pg, NULL, NULL}
-// nargs = 5 
+// nargs = 5
 // c     = 3 + 2 + 4 = 9
 // null_element = 0 (for sums)
-// 
+//
 // where pf and pg are pointers to expression containing f and g,
 // resp.
 //
 // Result: el and nargs are changed to
 //
 // el    = {pf, p9, pg}
-// nargs = 3 
+// nargs = 3
 //
 // Another example: f(x) + 2 + g(x) + (-4) + 2
 // Result:
 // el    = {pf, pg}
 // nargs = 2
 //
-// Another example: f(x) * 3 * g(x) * 2 
+// Another example: f(x) * 3 * g(x) * 2
 //
 // el    = {pf, NULL, pg, NULL}
 // nargs = 4
@@ -304,15 +304,15 @@ int exprOp::shrink_arglist (CouNumber c, CouNumber null_element) {
   bool one_fun = false;
 
   // find first NULL spot (left by some constant)
-  while ((i < nargs_) && (arglist_ [i])) 
-    i++; 
+  while ((i < nargs_) && (arglist_ [i]))
+    i++;
 
   // no spots, leave
-  if (i==nargs_) 
+  if (i==nargs_)
     return 0;
 
   // check if there is at least one non-constant expression
-  for (int k=nargs_; k--;) 
+  for (int k=nargs_; k--;)
     if (arglist_ [k]) {
       one_fun = true;
       break;
@@ -328,14 +328,14 @@ int exprOp::shrink_arglist (CouNumber c, CouNumber null_element) {
   // now shift back all operands to compress argument list
   while (i < nargs_) {
 
-    while ((i < nargs_) && !(arglist_ [i])) 
+    while ((i < nargs_) && !(arglist_ [i]))
       i++;
 
-    if (i < nargs_) 
+    if (i < nargs_)
       one_fun = true;
 
     while ((i < nargs_) && (arglist_ [i]))
-      arglist_ [j++] = arglist_ [i++]; 
+      arglist_ [j++] = arglist_ [i++];
   }
 
   nargs_ = j;

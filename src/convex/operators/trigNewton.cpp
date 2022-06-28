@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: numerically find tangents to (co)sines
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -23,7 +23,7 @@ CouNumber trigNewton (CouNumber a, CouNumber l, CouNumber u) {
   // Find a zero to the function
   //
   // F(x) = cos x - (sin x - sin a) / (x - a)
-  // 
+  //
   // whose derivative is
   //
   // F'(x) = - sin x - cos x / (x-a) + (sin x - sin a) / (x - a)^2
@@ -77,7 +77,7 @@ int main (int argc, char **argv) {
   for (int i=100000; i--;)
     r = trigNewton (a, l, u);
 
-  printf ("b0 = %.14f: slope %.15f, derivative %.15f\n", 
+  printf ("b0 = %.14f: slope %.15f, derivative %.15f\n",
 	  r, (sin (r) - sin (a)) / (r-a), cos (r));
 
   return 0;

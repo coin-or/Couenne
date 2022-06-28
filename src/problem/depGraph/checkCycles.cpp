@@ -21,14 +21,14 @@ static bool visit (std::set <DepNode *, compNode>::iterator &v);
 
 bool DepGraph::checkCycles () {
 
-  for (std::set <DepNode *, compNode>::iterator 
+  for (std::set <DepNode *, compNode>::iterator
 	 i = vertices_.begin ();
        i  != vertices_.end   (); ++i)
-    (*i) -> color () = DepNode::DEP_WHITE; 
+    (*i) -> color () = DepNode::DEP_WHITE;
 
   // simple DFS that checks for cycles
 
-  for (std::set <DepNode *, compNode>::iterator 
+  for (std::set <DepNode *, compNode>::iterator
 	 i = vertices_.begin ();
        i  != vertices_.end   (); ++i)
 
@@ -43,12 +43,12 @@ bool DepGraph::checkCycles () {
 bool visit (std::set <DepNode *, compNode>::iterator &v) {
 
   //printf ("%d is gray\n", (*v) -> Index ());
-  (*v) -> color () = DepNode::DEP_GRAY; 
+  (*v) -> color () = DepNode::DEP_GRAY;
   std::set <DepNode *, compNode> *list = (*v) -> DepList ();
 
   // gen2 contains the adjacency list of this node
 
-  for (std::set <DepNode *, compNode>::iterator 
+  for (std::set <DepNode *, compNode>::iterator
 	 j = list -> begin ();
        j  != list -> end   (); ++j)
 

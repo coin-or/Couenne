@@ -25,7 +25,7 @@ class COUENNELIB_EXPORT exprAbs: public exprUnary {
  public:
 
   /// Constructor
-  exprAbs  (expression *al): 
+  exprAbs  (expression *al):
     exprUnary (al) {} //< non-leaf expression, with argument list
 
   /// The operator's function
@@ -44,7 +44,7 @@ class COUENNELIB_EXPORT exprAbs: public exprUnary {
   {return ((argument_ -> Index () < 0) ? 0. : 1.);}
 
   /// differentiation
-  expression *differentiate (int index); 
+  expression *differentiate (int index);
 
   /// Get lower and upper bound of an expression (if any)
   virtual void getBounds (expression *&, expression *&);
@@ -53,10 +53,10 @@ class COUENNELIB_EXPORT exprAbs: public exprUnary {
   virtual void getBounds (CouNumber &lb, CouNumber &ub);
 
   /// generate equality between *this and *w
-  void generateCuts (expression *w, //const OsiSolverInterface &si, 
-		     OsiCuts &cs, const CouenneCutGenerator *cg, 
-		     t_chg_bounds * = NULL, int = -1, 
-		     CouNumber = -COUENNE_INFINITY, 
+  void generateCuts (expression *w, //const OsiSolverInterface &si,
+		     OsiCuts &cs, const CouenneCutGenerator *cg,
+		     t_chg_bounds * = NULL, int = -1,
+		     CouNumber = -COUENNE_INFINITY,
 		     CouNumber =  COUENNE_INFINITY);
 
   /// code for comparisons
@@ -71,10 +71,10 @@ class COUENNELIB_EXPORT exprAbs: public exprUnary {
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
-  virtual CouNumber selectBranch (const CouenneObject *obj, 
+  virtual CouNumber selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression * &var, 
-				  double * &brpts, 
+				  expression * &var,
+				  double * &brpts,
  				  double * &brDist, // distance of current LP
 					  	    // point to new convexifications
 				  int &way);

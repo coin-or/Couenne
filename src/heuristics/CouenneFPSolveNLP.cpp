@@ -3,8 +3,8 @@
  * Name:    CouenneFPSolveNLP.cpp
  * Authors: Pietro Belotti
  *          Timo Berthold, ZIB Berlin
- * Purpose: Implement the NLP solution method for the Feasibility Pump 
- * 
+ * Purpose: Implement the NLP solution method for the Feasibility Pump
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -49,7 +49,7 @@ CouNumber CouenneFeasPump::solveNLP (const CouNumber *iSol, CouNumber *&nSol) {
   //
   // Similarly to the MILP case, we have
   //
-  // P = beta I + (1-beta) (H + lambda_min I) 
+  // P = beta I + (1-beta) (H + lambda_min I)
   //   = (beta + lambda_min (1 - beta)) I + (1-beta) H
 
   bool firstNLP = (nlp_ == NULL);
@@ -85,7 +85,7 @@ CouNumber CouenneFeasPump::solveNLP (const CouNumber *iSol, CouNumber *&nSol) {
 
   /////////////////////////////////////////////////////////
 
-  ApplicationReturnStatus status = firstNLP ? 
+  ApplicationReturnStatus status = firstNLP ?
     app_ -> OptimizeTNLP   (nlp_) :
     app_ -> ReOptimizeTNLP (nlp_);
 
@@ -115,7 +115,7 @@ CouNumber CouenneFeasPump::solveNLP (const CouNumber *iSol, CouNumber *&nSol) {
   if ((status != Solve_Succeeded) &&
       (status != Solved_To_Acceptable_Level))
 
-    problem_ -> Jnlst () -> Printf 
+    problem_ -> Jnlst () -> Printf
       (J_WARNING, J_NLPHEURISTIC, "Feasibility Pump: Error solving NLP problem\n");
 
   retval = nlp_ -> getSolValue ();

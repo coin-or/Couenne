@@ -28,7 +28,7 @@ inline bool areSameVariables (expression *v1, expression *v2) {
 
   int t1 = v1 -> Type (), t2;
   return (((t1 == VAR) || (t1 == AUX)) &&
-	  (((t2 = v2 -> Type ()) == VAR) || (t2 == AUX)) && 
+	  (((t2 = v2 -> Type ()) == VAR) || (t2 == AUX)) &&
 	  (v1 -> Index () == v2 -> Index ()));
 }
 
@@ -107,7 +107,7 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
       CouNumber lb, ub;
       arg -> getBounds (lb, ub);
       if ((fabs (ceil  (lb - COUENNE_EPS))      > 0.) ||
-	  (fabs (floor (ub + COUENNE_EPS) - 1.) > 0.)) { // if not all conditions hold, 
+	  (fabs (floor (ub + COUENNE_EPS) - 1.) > 0.)) { // if not all conditions hold,
 	isBinProd = false;
 	break;
       }
@@ -162,13 +162,13 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
       expression *arg1 = queue.front (); queue.pop ();
       expression *arg2 = queue.front (); queue.pop ();
 
-      //printf ("Coupling "); arg1 -> print (); 
-      //printf (" with "); arg2 -> print (); 
+      //printf ("Coupling "); arg1 -> print ();
+      //printf (" with "); arg2 -> print ();
 
       if (areSameVariables (arg1, arg2)) aux = new exprPow (new exprClone (arg1), new exprConst (2.));
       else                               aux = new exprMul (new exprClone (arg1), new exprClone (arg2));
 
-      //printf (" --> "); aux -> print (); printf ("\n"); 
+      //printf (" --> "); aux -> print (); printf ("\n");
 
       if (!(queue.empty ()))
 	aux = p -> addAuxiliary (aux);
@@ -219,7 +219,7 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 	    else                 aux = p -> addAuxiliary (new exprMul (new exprClone (aux), new exprClone (arglist_ [i+1])));
 	  }
 
-	} else 
+	} else
 	  if (areSameVariables (aux, arglist_ [i+1])) {
 
 	    printf ("Couenne, exprTrilinear: bad ordering of factors in product, aborting\n");
@@ -227,11 +227,11 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
 
 	  } else {
 
-	    aux = new exprTrilinear (new exprClone (aux), 
+	    aux = new exprTrilinear (new exprClone (aux),
 				     new exprClone (arglist_ [i]),
 				     new exprClone (arglist_ [i+1]));
 
-	    if (i != nargs_ - 2) 
+	    if (i != nargs_ - 2)
 	      aux = p -> addAuxiliary (aux);
 	  }
 
@@ -268,18 +268,18 @@ exprAux *exprMul::standardize (CouenneProblem *p, bool addAux) {
     // rAI -- recursive Arithmetic Intervals (see Ryoo and Sahinidis,
     // JOGO 19 (2001):403-424):
     //
-    // All multilinear expressions are decomposed as 
+    // All multilinear expressions are decomposed as
     //
     // (x_1 (x_2 (x_3... (x_{k-1} x_k))...)
 
     expression *aux = arglist_ [0];
 
     for (int i = 1; i < nargs_ - 1; i++)
-      aux = (areSameVariables (aux, arglist_ [i])) ? 
-	(p -> addAuxiliary (new exprPow (new exprClone (aux), new exprConst (2.)))) : 
+      aux = (areSameVariables (aux, arglist_ [i])) ?
+	(p -> addAuxiliary (new exprPow (new exprClone (aux), new exprConst (2.)))) :
 	(p -> addAuxiliary (new exprMul (new exprClone (aux), new exprClone (arglist_ [i]))));
 
-    if (areSameVariables (aux, arglist_ [nargs_ - 1])) 
+    if (areSameVariables (aux, arglist_ [nargs_ - 1]))
       aux    = new exprPow (new exprClone (aux), new exprConst (2.));
     else aux = new exprMul (new exprClone (aux), new exprClone (arglist_ [nargs_ - 1]));
 

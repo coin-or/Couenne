@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: save a problem in AMPL format
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -28,7 +28,7 @@ void CouenneProblem::writeAMPL (const std::string &fname,  /// name of the mod f
 
   // original variables, integer and non //////////////////////////////////////////////
 
-  f << "# Problem name: " << fname << std::endl << std::endl 
+  f << "# Problem name: " << fname << std::endl << std::endl
     << "# original variables" << std::endl << std::endl;
 
   for (int i=0; i < nVars (); i++) {
@@ -38,8 +38,8 @@ void CouenneProblem::writeAMPL (const std::string &fname,  /// name of the mod f
     if (Lb (i) > - COUENNE_INFINITY/2) f << " >= " << Lb (i);
     if (Ub (i) < + COUENNE_INFINITY/2) f << " <= " << Ub (i);
     if (variables_ [i] -> isInteger ())   f << " integer";
-    if (fabs (X (i)) < COUENNE_INFINITY)    
-      f << " default " << X (i); 
+    if (fabs (X (i)) < COUENNE_INFINITY)
+      f << " default " << X (i);
     f << ';' << std::endl;
   }
 
@@ -54,7 +54,7 @@ void CouenneProblem::writeAMPL (const std::string &fname,  /// name of the mod f
 
     for (std::vector <exprVar *>::iterator i = variables_.begin ();
 	 i != variables_.end ();
-	 i++) 
+	 i++)
 
       if ((*i) -> Type () == AUX) {
 
@@ -80,13 +80,13 @@ void CouenneProblem::writeAMPL (const std::string &fname,  /// name of the mod f
 
   f << std::endl << "# objective" << std::endl << std::endl;
 
-  //if (objectives_ [0] -> Sense () == MINIMIZE) 
+  //if (objectives_ [0] -> Sense () == MINIMIZE)
   f << "minimize";
   //else                                         f << "maximize";
 
-  f << " obj: ";  
-  objectives_ [0] -> Body () -> print (f, !aux); 
-  f << ';' << std::endl; 
+  f << " obj: ";
+  objectives_ [0] -> Body () -> print (f, !aux);
+  f << ';' << std::endl;
 
 
   // defined (aux) variables, with formula ///////////////////////////////////////////
@@ -97,11 +97,11 @@ void CouenneProblem::writeAMPL (const std::string &fname,  /// name of the mod f
 
     for (int i=0; i < nVars (); i++)
 
-      if ((variables_ [i] -> Type () == AUX) && 
+      if ((variables_ [i] -> Type () == AUX) &&
 	  (variables_ [i] -> Multiplicity () > 0)) {
 
 	f << "aux" << i << ": "; variables_ [i] -> print (f, false);
-	f << " = ";  
+	f << " = ";
 
 	variables_ [i] -> Image () -> print (f, false);
 	f << ';' << std::endl;
@@ -116,9 +116,9 @@ void CouenneProblem::writeAMPL (const std::string &fname,  /// name of the mod f
   if (!aux) // print h_i(x,y) <= ub, >= lb
     for (std::vector <exprVar *>::iterator i = variables_.begin ();
 	 i != variables_.end ();
-	 ++i) 
+	 ++i)
 
-      if (((*i) -> Type () == AUX) && 
+      if (((*i) -> Type () == AUX) &&
 	  ((*i) -> Multiplicity () > 0)) {
 	
 	CouNumber bound;
@@ -148,7 +148,7 @@ void CouenneProblem::writeAMPL (const std::string &fname,  /// name of the mod f
 
     if (lb > - COUENNE_INFINITY + 1) {
       f << ' ';
-      if (fabs (ub-lb) > COUENNE_EPS) 
+      if (fabs (ub-lb) > COUENNE_EPS)
 	f << '>';
       f << "= " << lb << ';' << std::endl;
     }
@@ -156,7 +156,7 @@ void CouenneProblem::writeAMPL (const std::string &fname,  /// name of the mod f
 
     // if range constraint, print it once again
 
-    if ((   lb > - COUENNE_INFINITY + 1) 
+    if ((   lb > - COUENNE_INFINITY + 1)
 	&& (ub <   COUENNE_INFINITY - 1)
 	&& (fabs (ub-lb) > COUENNE_EPS)) {
 

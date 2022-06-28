@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: a standard cut creator for use with convexification
  *
- * (C) Carnegie-Mellon University, 2006-08. 
+ * (C) Carnegie-Mellon University, 2006-08.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -30,7 +30,7 @@ bool badCoeff (CouNumber coe) {
 /// variables. Return 1 if cut inserted, 0 if none, <0 if error
 
 int CouenneCutGenerator::createCut (OsiCuts &cs,
-				    CouNumber lb, CouNumber ub, 
+				    CouNumber lb, CouNumber ub,
 				    int i1, CouNumber c1,
 				    int i2, CouNumber c2,
 				    int i3, CouNumber c3,
@@ -69,18 +69,18 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
 
   // cut has large coefficients/rhs, bail out
   if (numerics
-      //|| ((fabs (lb) < COU_MIN_COEFF) || 
+      //|| ((fabs (lb) < COU_MIN_COEFF) ||
       //(fabs (ub) < COU_MIN_COEFF))
       || ((fabs (lb) > COU_MAX_COEFF) &&
 	  (fabs (ub) > COU_MAX_COEFF))) {
 
     jnlst_->Printf(J_STRONGWARNING, J_CONVEXIFYING,
-		   "### Discarding cut, large coeff/rhs: %g (%d), %g (%d), %g (%d); [%g,%g]\n", 
+		   "### Discarding cut, large coeff/rhs: %g (%d), %g (%d), %g (%d); [%g,%g]\n",
 		   c1, i1, c2, i2, c3, i3, lb, ub);
     return 0;
   }
 
-  if (!firstcall_ && addviolated_) { // need to check violation 
+  if (!firstcall_ && addviolated_) { // need to check violation
 
     const CouNumber *x = problem_ -> X ();
 
@@ -116,12 +116,12 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
 
     if (lhs > ub + COUENNE_EPS)
       jnlst_->Printf(J_STRONGWARNING, J_CONVEXIFYING,
-		     "### cut (%d,%d,%d) (%g,%g,%g) cuts optimum: %g >= %g [%g]\n", 
-		     i1,i2,i3, c1,c2,c3, lhs, ub, lhs - ub); 
+		     "### cut (%d,%d,%d) (%g,%g,%g) cuts optimum: %g >= %g [%g]\n",
+		     i1,i2,i3, c1,c2,c3, lhs, ub, lhs - ub);
 
     if (lhs < lb - COUENNE_EPS)
       jnlst_->Printf(J_STRONGWARNING, J_CONVEXIFYING,
-		     "### cut (%d,%d,%d) (%g,%g,%g) cuts optimum: %g <= %g [%g]\n", 
+		     "### cut (%d,%d,%d) (%g,%g,%g) cuts optimum: %g <= %g [%g]\n",
 		     i1,i2,i3, c1,c2,c3, lhs, lb, lb - lhs);
   }
 
@@ -142,15 +142,15 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
 	&& (fabs (ub) > COU_MAX_COEFF * COUENNE_EPS)) {
 
       jnlst_->Printf(J_STRONGWARNING, J_CONVEXIFYING,
-		     "#### nonsense column cut: %e <= %e w_%d <= %e\n", 
+		     "#### nonsense column cut: %e <= %e w_%d <= %e\n",
 		     lb, c1, i1, ub);
       return 0;
     }
 
     OsiColCut *cut = new OsiColCut;
 
-    CouNumber 
-      ll = lb / c1, 
+    CouNumber
+      ll = lb / c1,
       uu = ub / c1;
 
     if (c1 < 0) {
@@ -165,13 +165,13 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
     if ((uu < COUENNE_INFINITY) &&
 	(uu < curU - COUENNE_EPS)) {
 
-      cut -> setUbs (1, &i1, &uu); 
+      cut -> setUbs (1, &i1, &uu);
       curU = uu; // TODO: chg_bds
     }
 
-    if ((ll > -COUENNE_INFINITY) && 
+    if ((ll > -COUENNE_INFINITY) &&
 	(ll > curL + COUENNE_EPS)) {
-      cut -> setLbs (1, &i1, &ll); 
+      cut -> setLbs (1, &i1, &ll);
       curL = ll; // idem
     }
 
@@ -184,7 +184,7 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
 
     // row cut //////////////////////////////////////////////////////////////////////
 
-    CouNumber *coeff = new CouNumber [nterms]; 
+    CouNumber *coeff = new CouNumber [nterms];
     int       *index = new int       [nterms];
     OsiRowCut *cut   = new OsiRowCut;
 
@@ -216,7 +216,7 @@ int CouenneCutGenerator::createCut (OsiCuts &cs,
 /// variables. Return 1 if cut inserted, 0 if none, <0 if error
 
 int CouenneCutGenerator::createCut (OsiCuts &cs,
-				    CouNumber rhs, int sign, 
+				    CouNumber rhs, int sign,
 				    int i1, CouNumber c1,
 				    int i2, CouNumber c2,
 				    int i3, CouNumber c3,

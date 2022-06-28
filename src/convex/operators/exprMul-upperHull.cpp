@@ -1,4 +1,4 @@
-/* 
+/*
  *
  * Name:    exprMul-upperHull.cpp
  * Author:  Pietro Belotti
@@ -23,8 +23,8 @@ int findIntersection (CouNumber  x0, CouNumber  y0,
 		      CouNumber *xA, CouNumber *yA,
 		      CouNumber *xB, CouNumber *yB);
 
-int genMulCoeff (CouNumber x1, CouNumber y1, 
-		  CouNumber x2, CouNumber y2, 
+int genMulCoeff (CouNumber x1, CouNumber y1,
+		  CouNumber x2, CouNumber y2,
 		  char whichUse,
 		  CouNumber &cX, CouNumber &cY, CouNumber &cW);
 
@@ -32,14 +32,14 @@ int genMulCoeff (CouNumber x1, CouNumber y1,
 // invert interval bounds and current point
 inline void invertInterval (double &l, double &u, double x) {
 
-  double tmp = l; 
-  l = -u; 
+  double tmp = l;
+  l = -u;
   u = -tmp;
 
   x = -x;
 }
 
-void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs, 
+void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 		   int xi, CouNumber x0, CouNumber xl, CouNumber xu,
 		   int yi, CouNumber y0, CouNumber yl, CouNumber yu,
 		   int wi, CouNumber w0, CouNumber wl, CouNumber wu) {
@@ -88,7 +88,7 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 
   // Reduce
 
-  bool 
+  bool
     flipX = xl < 0,
     flipY = yl < 0,
     flipW = false;
@@ -167,14 +167,14 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
     c0Y = cY * yLow;
     c0W = cW * wl;
 
-  } else if (xLow >= xl && yLow >= yl && 
+  } else if (xLow >= xl && yLow >= yl &&
 	     (xUpp > xu || yUpp > yu)) {
 
 #ifdef DEBUG
     printf ("through lower, not upper:\n");
 #endif
 
-    // Case 3a and 3b: through lower curve, but not upper. 
+    // Case 3a and 3b: through lower curve, but not upper.
 
     if (yUpp > yu) { // upper intersect is North; place it within box
       yUpp = yu;
@@ -194,7 +194,7 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
     c0Y = cY * yLow;
     c0W = cW * wl;
 
-  } else if (xUpp <= xu && yUpp <= yu && 
+  } else if (xUpp <= xu && yUpp <= yu &&
 	     (xLow < xl || yLow < yl)) {
 
 #ifdef DEBUG
@@ -263,13 +263,13 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
       return;
 
 #ifdef DEBUG
-    printf ("coeffs: (%g,%g,%g)\n", // [(%g,%g,%g)]\n", 
+    printf ("coeffs: (%g,%g,%g)\n", // [(%g,%g,%g)]\n",
 	    cX,cY,cW);
 #endif
 
     c0X = cX * xLow2; //   c0Xp = cXp * xUpp;
     c0Y = cY * yLow2; //   c0Yp = cYp * yUpp;
-    c0W = cW * wl;    //   c0Wp = cWp * wu;  
+    c0W = cW * wl;    //   c0Wp = cWp * wu;
 
 //     twoIneqs = true;
 
@@ -301,7 +301,7 @@ void upperEnvHull (const CouenneCutGenerator *cg, OsiCuts &cs,
 }
 
 
-// finds intersections of a parametric line (x,y) = (x0,y0) + t [(x1,y1) - (x0,y0)] 
+// finds intersections of a parametric line (x,y) = (x0,y0) + t [(x1,y1) - (x0,y0)]
 // on curves xy = wl and xy = yu
 
 int findIntersection (CouNumber  x0, CouNumber  y0,
@@ -314,7 +314,7 @@ int findIntersection (CouNumber  x0, CouNumber  y0,
   //
   //  x = x0 + t (x1-x0)
   //  y = y0 + t (y1-y0)
-  // 
+  //
   // and for that to satisfy xy = wl and xy = wu we must have
   //
   // x0 y0 + t [x0 (y1-y0) + y0 (x1-x0)] + t^2 (x1-x0) (y1-y0) = wl
@@ -364,8 +364,8 @@ int findIntersection (CouNumber  x0, CouNumber  y0,
 // first if whichUse==0, the second otherwise) gives a tangent to the
 // curve xy = k.
 
-int genMulCoeff (CouNumber x1, CouNumber y1, 
-		  CouNumber x2, CouNumber y2, 
+int genMulCoeff (CouNumber x1, CouNumber y1,
+		  CouNumber x2, CouNumber y2,
 		  char whichUse,
 		  CouNumber &cX, CouNumber &cY, CouNumber &cW) {
 
@@ -387,14 +387,14 @@ int genMulCoeff (CouNumber x1, CouNumber y1,
   //c0 = 2*xD*yD;
 
 #ifdef DEBUG
-    printf ("points: (%g,%g) (%g,%g), cW = (%g - %g) / %g = %g\n", 
+    printf ("points: (%g,%g) (%g,%g), cW = (%g - %g) / %g = %g\n",
 	    xD,yD, xO,yO, 2*xD*yD, (cX*xO + cY*yO), (xO*yO - xD*yD),
 	    (2*xD*yD - (cX*xO + cY*yO)) / (xO*yO - xD*yD));
 #endif
 
   // Now the hard part: lift it so that it touches the other curve
 
-  if (fabs (xO*yO - xD*yD) < COUENNE_EPS) 
+  if (fabs (xO*yO - xD*yD) < COUENNE_EPS)
     return 1; // no cut if the two points are on the same curve
 
   // should ALWAYS be negative

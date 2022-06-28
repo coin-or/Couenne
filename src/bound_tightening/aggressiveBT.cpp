@@ -32,11 +32,11 @@ namespace Bonmin {
 
 #define MAX_ABT_ITER           4  // max # aggressive BT iterations
 #define THRES_ABT_IMPROVED     0  // only continue ABT if at least these bounds have improved
-#define THRES_ABT_ORIG       100  // only do ABT on auxiliaries if they are less originals than this 
+#define THRES_ABT_ORIG       100  // only do ABT on auxiliaries if they are less originals than this
 
-static double distanceToBound (int n, 
+static double distanceToBound (int n,
 			       const double* xOrig,
-			       const double* lower, 
+			       const double* lower,
 			       const double* upper,
 			       double cutoff_distance) { // stop if distance is above this
 
@@ -60,7 +60,7 @@ static double distanceToBound (int n,
 // valid tightening.
 
 bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
-				   t_chg_bounds *chg_bds, 
+				   t_chg_bounds *chg_bds,
 				   const CglTreeInfo &info,
 				   Bonmin::BabInfo * babInfo) const {
 
@@ -89,7 +89,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
     const std::list<SmartPtr<const CouenneInfo::NlpSolution> >& solList =
       couInfo->NlpSolutions();
 
-    for (std::list<SmartPtr<const CouenneInfo::NlpSolution> >::const_iterator 
+    for (std::list<SmartPtr<const CouenneInfo::NlpSolution> >::const_iterator
 	   i = solList.begin();
 	 i  != solList.end(); ++i) {
 
@@ -149,7 +149,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
       }
 
       catch (Bonmin::TNLPSolver::UnsolvedError *E) {}
-    
+
       delete [] Y;
       delete [] lower;
       delete [] upper;
@@ -157,11 +157,11 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
       if (nlp -> isProvenOptimal ()) {
 
 	if (couInfo) {
-	  closestSol = new CouenneInfo::NlpSolution 
+	  closestSol = new CouenneInfo::NlpSolution
 	    (nOrigVars_ - ndefined_, nlp->getColSolution(), nlp->getObjValue());
 	  couInfo->addSolution(closestSol);
 	  dist = 0.;
-	  haveNLPsol = true;      
+	  haveNLPsol = true;
 	}
       }
       else {
@@ -304,7 +304,7 @@ bool CouenneProblem::aggressiveBT (Bonmin::OsiTMINLPInterface *nlp,
 
     if (haveNLPsol)
       delete [] X;
-    delete [] f_chg;    
+    delete [] f_chg;
   }
   // else
   // if ((dist > 1e10) && !retval)

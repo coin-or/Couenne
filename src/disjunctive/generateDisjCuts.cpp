@@ -20,8 +20,8 @@ using namespace Ipopt;
 using namespace Couenne;
 
 /// generate disjunctive cuts
-void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si, 
-				    OsiCuts &cs, 
+void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
+				    OsiCuts &cs,
 				    const CglTreeInfo info)
 #if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
   const
@@ -35,8 +35,8 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 
   if (isWiped (cs))
     return;
-  
-  if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS)) 
+
+  if (jnlst_ -> ProduceOutput (J_DETAILED, J_DISJCUTS))
     printf ("--- generateDisjCuts: level = %d, pass = %d, intree = %d [%d]\n",
 	    info.level, info.pass, info.inTree, depthStopSeparate_);
 
@@ -48,7 +48,7 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 
   if ((info.level <= 0) && !(info.inTree)) {
 
-    jnlst_ -> Printf (J_ERROR, J_COUENNE, 
+    jnlst_ -> Printf (J_ERROR, J_COUENNE,
 		      "Disjunctive cuts (root node): ");
     fflush (stdout);
   }
@@ -102,7 +102,7 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
   //      si and continue
   //
   //   9) generate CGLP:
-  //         consider subset of Ax <= a_0: 
+  //         consider subset of Ax <= a_0:
   //           a) active only, or
   //           b) {root linearization cuts} union {currently active}, or
   //           c) all cuts (!)
@@ -112,20 +112,20 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
   //   11) add corresponding cut, possibly to CGLP as well?
   // }
 
-  int maxDisj = (initDisjNumber_ >= 0) ? 
+  int maxDisj = (initDisjNumber_ >= 0) ?
     CoinMin ((int) (csi -> numberObjects () * initDisjPercentage_), initDisjNumber_) :
     (int) (csi -> numberObjects () * initDisjPercentage_);
 
   // number of disjunctions to consider (branching objects)
-  numDisjunctions_ = (depthLevelling_ < 0 || info.level < depthLevelling_) ? 
+  numDisjunctions_ = (depthLevelling_ < 0 || info.level < depthLevelling_) ?
     (int) (maxDisj) :
     (int) (maxDisj / (2 + info.level - depthLevelling_));
 
   if (numDisjunctions_ < 1) numDisjunctions_ = 1;
 
-  const int 
-    exc_infeasible = 1, 
-    exc_normal     = 2, 
+  const int
+    exc_infeasible = 1,
+    exc_normal     = 2,
     max_iterations = 1;
 
   couenneCG_ -> Problem () -> domain () -> push (&si, &cs, false);
@@ -152,7 +152,7 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
       int result = getDisjunctions (disjunctions, *csi, cs, info);
 
       if      (result == COUENNE_INFEASIBLE) throw exc_infeasible; // fathom node
-      else if (result == COUENNE_TIGHTENED && 
+      else if (result == COUENNE_TIGHTENED &&
 	       iterations < max_iterations) start_over = true;     // tightened node
 
       if (disjunctions.empty ())
@@ -252,12 +252,12 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
 
     // tighten bounds of si based on those tightened of csi
 
-    CoinPackedVector 
-      tighterLower, 
+    CoinPackedVector
+      tighterLower,
       tighterUpper;
 
-    const double 
-      *oldLo = si. getColLower (),   *newLo = csi -> getColLower (), 
+    const double
+      *oldLo = si. getColLower (),   *newLo = csi -> getColLower (),
       *oldUp = si. getColUpper (),   *newUp = csi -> getColUpper ();
 
     int ncols = si.getNumCols ();
@@ -268,7 +268,7 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
       if (*newUp < *oldUp++ - COUENNE_EPS) tighterUpper.insert (i, *newUp);
     }
 
-    if ((tighterLower.getNumElements () > 0) || 
+    if ((tighterLower.getNumElements () > 0) ||
 	(tighterUpper.getNumElements () > 0)) {
       OsiColCut tighter;
       tighter.setLbs (tighterLower);
@@ -280,11 +280,11 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
       cs.insert (tighter);
     }
 
-    int deltaNcuts = 
-      cs.sizeRowCuts () - initRowCuts + 
+    int deltaNcuts =
+      cs.sizeRowCuts () - initRowCuts +
       cs.sizeColCuts () - initColCuts;
 
-    if (info.level <= 0 && !(info.inTree)) 
+    if (info.level <= 0 && !(info.inTree))
       nrootcuts_ += deltaNcuts;
     ntotalcuts_ += deltaNcuts;
 
@@ -295,10 +295,10 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
     }
 
     if ((info.level <= 0) && !(info.inTree))
-      jnlst_ -> Printf (J_ERROR, J_COUENNE, 
+      jnlst_ -> Printf (J_ERROR, J_COUENNE,
 			"%d cuts\n", CoinMax (0, nrootcuts_ - nInitCuts));
     else if (deltaNcuts)
-      jnlst_ -> Printf (J_WARNING, J_COUENNE, 
+      jnlst_ -> Printf (J_WARNING, J_COUENNE,
 			"In-BB disjunctive cuts: %d row cuts, %d col cuts\n",
 			cs.sizeRowCuts () - initRowCuts,
 			cs.sizeColCuts () - initColCuts);
@@ -312,12 +312,12 @@ void CouenneDisjCuts::generateCuts (const OsiSolverInterface &si,
   }
 
   // else {
-  //     jnlst_ -> Printf (J_STRONGWARNING, J_COUENNE, 
+  //     jnlst_ -> Printf (J_STRONGWARNING, J_COUENNE,
   // 			"In-BB disjunctive cuts: %d row cuts, %d col cuts\n",
   // 			cs.sizeRowCuts () - initRowCuts,
   // 			cs.sizeColCuts () - initColCuts);
   //   if ((info.level <= 0) && !(info.inTree))
-  //     jnlst_ -> Printf (J_ERROR, J_COUENNE, 
+  //     jnlst_ -> Printf (J_ERROR, J_COUENNE,
   // 			"infeasible node\n");
   // }
 

@@ -46,7 +46,7 @@ struct objStrongPri {
 
 inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  {
 
-  return (one   -> priority_  <  two -> priority_ || 
+  return (one   -> priority_  <  two -> priority_ ||
 	  ((one -> priority_  == two -> priority_) &&
 	   (one -> value_     >  two -> value_)));
 }
@@ -55,7 +55,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 // Copied from BonChooseVariable.cpp and modified slightly
 //
 // If FM_SORT_STRONG is used:
-// Select unsatisfied objects first on priority, then usefulness. 
+// Select unsatisfied objects first on priority, then usefulness.
 //
 //   If USE_NOT_TRUSTED is also defined, modify usefulness of a fraction
 //   of unsatisfied objects with minimum priority (most fractional first)
@@ -63,9 +63,9 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 //   number_not_trusted_ on return.
 
 // Additional options working with FM_SORT_STRONG (at most one of the two):
-//   if FM_ALWAYS_SORT is also defined exact sorting is done. Otherwise, 
-//   on return all objects in list[0..numberOnList_] have either smaller 
-//   priority or equal priority and usefulness not worse than other 
+//   if FM_ALWAYS_SORT is also defined exact sorting is done. Otherwise,
+//   on return all objects in list[0..numberOnList_] have either smaller
+//   priority or equal priority and usefulness not worse than other
 //   unsatisfied objects.
 //
 //   if FM_SEC_SORT_USEFUL is defined, objects are selected by priority
@@ -77,16 +77,16 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 // but in a weird way: Only guarantee is that objects with minimum
 // priority will be first in the list, objects with higher priority
 // appearing after them in no predictable order. Then
-// objects (with priority matching the smallest priority value among 
-// unsatisfied objects, most fractional first) have their usefulness 
+// objects (with priority matching the smallest priority value among
+// unsatisfied objects, most fractional first) have their usefulness
 // modified to make them more attractive. Number of such objects is
-// number_not_trusted_ on return. List is then sorted according to usefulness. 
+// number_not_trusted_ on return. List is then sorted according to usefulness.
 //
-// Recommended settings: one of 
+// Recommended settings: one of
 // i) define FM_SORT_STRONG USE_NOT_TRUSTED FM_SEC_SORT_USEFUL
 // ii) no flags defined (default)
 
-  int CouenneChooseStrong::gutsOfSetupList(OsiBranchingInformation *info, 
+  int CouenneChooseStrong::gutsOfSetupList(OsiBranchingInformation *info,
 					   bool initialize)
   {
     if (numberBeforeTrustedList_ < 0) {
@@ -239,7 +239,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 
       bool nonTrivialOrbits = false;
 
-      for (std::vector <std::vector<int> >::iterator i = orbits -> begin (); 
+      for (std::vector <std::vector<int> >::iterator i = orbits -> begin ();
 	   i != orbits -> end (); ++i)
 
 	if (i -> size () >= 2) {
@@ -251,7 +251,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
       // Only do this if there is at least one nontrivial orbit
       //
 
-      if (nonTrivialOrbits) { 
+      if (nonTrivialOrbits) {
 
 	//printf ("-----------------------------------------------------\n");
 
@@ -266,7 +266,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 
 	  int indVar = objectOrig [i] -> columnNumber ();
 
-	  if ((indVar >= 0) && 
+	  if ((indVar >= 0) &&
 	      (indVar <  n))
 	    varObj [indVar] = i;
 
@@ -277,7 +277,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 	// constants.  Variable indices are therefore mixed with
 	// others, we need to consider only variables.
 
-	for (std::vector <std::vector<int> >::iterator i = orbits -> begin (); 
+	for (std::vector <std::vector<int> >::iterator i = orbits -> begin ();
 	     i != orbits -> end (); ++i) {
 
 	  int orbSize = i -> size ();
@@ -289,7 +289,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 
 	    int orbVar = (*i) [0];
 
-	    if ((orbVar <  n) && 
+	    if ((orbVar <  n) &&
 		(orbVar >= 0)) { // single-variable orbit, not much to do
 
 	      if ((varObj [orbVar] >= 0) &&
@@ -312,18 +312,18 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 	    minPri =  COIN_INT_MAX,
 	    maxPri = -COIN_INT_MAX;
 
-	  double 
+	  double
 	    minValue =  COIN_DBL_MAX,
 	    maxValue = -COIN_DBL_MAX;
 
-	  for (std::vector<int>::iterator j = i -> begin (); 
-	       j != i -> end (); ++j) 
+	  for (std::vector<int>::iterator j = i -> begin ();
+	       j != i -> end (); ++j)
 
 	    if ((*j < n) && (*j >= 0)) {
 
 	      int objInd = varObj [*j];
 
-	      if (objInd < 0) 
+	      if (objInd < 0)
 		continue;
 
 	      int pri = objectOrig [objInd] -> priority ();
@@ -331,13 +331,13 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 	      if (pri < minPri) minPri = pri;
 	      if (pri > maxPri) maxPri = pri;
 		
-	      double 
+	      double
 		newValue,
 		infeas = objectOrig [objInd] -> checkInfeasibility (info),
 		//infeas = objectOrig [(*j) -> objIndex_] -> infeasibility (info, way),
 		value  = computeUsefulness (MAXMIN_CRITERION,
 					    upMultiplier, downMultiplier, infeas,
-					    objectOrig [objInd], objInd, 
+					    objectOrig [objInd], objInd,
 					    newValue); // output parameter (ignored)
 
 	      if (value < minValue) minValue = infeas;
@@ -441,7 +441,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 
 #ifdef FM_SORT_STRONG
 	  if(priorityLevel < bestPriority) {
-	    bestPriority = priorityLevel;	    
+	    bestPriority = priorityLevel;	
 	  }
 	  if(priorityLevel > lastPrio) {
 	    posEnd_vPriority--;
@@ -460,7 +460,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 	      if(list_[j] >= 0) {
 		int iObject = list_[j];
 		list_[j]=-1;
-		useful_[j]=0.0; 
+		useful_[j]=0.0;
 		list_[--putOther]=iObject;
 	      }
 	    }
@@ -568,7 +568,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 	  for(int i=posEnd_vPriority; i<numberObjects; i++) {
 	    list_[card_vPriority] = list_[i];
 	    list_[i] = -1;
-	    vPriority[card_vPriority] = vPriority[i]; 
+	    vPriority[card_vPriority] = vPriority[i];
 	    card_vPriority++;
 	  }
 	}
@@ -587,7 +587,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 
 #ifdef FM_ALWAYS_SORT /* FM_SORT_STRONG */
 	  bool alwaysSort = true;
-#else	  
+#else	
 	  bool alwaysSort = false;
 #endif
 	  if(alwaysSort) {
@@ -596,7 +596,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 	  }
 	  if((sortUpTo > maximumStrong) || alwaysSort){
 	    // sort list_[card_sortFrom..card_sortUpTo-1] according to priority
-	    CoinSort_2(vPriority + sortFrom, vPriority + sortUpTo, 
+	    CoinSort_2(vPriority + sortFrom, vPriority + sortUpTo,
 		       list_ + sortFrom);
 	  }
 	  for(int i=0; i<card_vPriority; i++) {
@@ -627,11 +627,11 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 #ifdef USE_NOT_TRUSTED /* FM_SORT_STRONG */
 	  // adjust usefulness of objects having priority bestPriority
 	  if((card_vPriority > maximumStrong) &&
-	     (vPriority[maximumStrong] < bestPriority + COUENNE_EPS)) { 
+	     (vPriority[maximumStrong] < bestPriority + COUENNE_EPS)) {
 	    // not all objects with bestPriority will be selected
 
 	    int cardFrac = 0;
-	    int *fracInd = new int[card_vPriority]; // holds position 
+	    int *fracInd = new int[card_vPriority]; // holds position
 	                                            // in list_
 	    double *fracVal = new double[card_vPriority];
 
@@ -654,8 +654,8 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 		CoinSort_2(fracVal, fracVal+cardFrac, fracInd);
 	      }
 	      for(int i=0; i<cardFrac; i++) {
-		useful_[fracInd[i]] = 
-		  -1e150*(1. + infeasVal[fracInd[i]]); 
+		useful_[fracInd[i]] =
+		  -1e150*(1. + infeasVal[fracInd[i]]);
 		//-1e150*(1. + infeasVal[list_[fracInd[i]]]);  // FIXME: check if uncommented is correct
 
 		// printf ("useful_ [fracInd[%d]", i);
@@ -698,7 +698,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 	  }
 #else /* FM_SORT_STRONG not FM_ALWAYS_SORT */
 	  if(sortUpTo > maximumStrong) {
-	    // compute from, upto such that 
+	    // compute from, upto such that
 	    // vPriority[k] == vPriority[maximumStrong] for k in [from..upto-1]
 	    int from = maximumStrong-1, upto = maximumStrong;
 	    int msPrio = vPriority[maximumStrong-1];
@@ -710,7 +710,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 	    while((upto < sortUpTo) && (vPriority[upto] == msPrio)) {
 	      upto++;
 	    }
-	    // sort list[from]..list[upto-1] according to 
+	    // sort list[from]..list[upto-1] according to
 	    // useful_[from]..useful_[upto-1]
 	    CoinSort_2(useful_+from, useful_+upto, list_+from);
 	  }
@@ -726,13 +726,13 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 	  for(int i=0; i<card_vPriority; i++) {
 	    int indObj = list_[i];
 	    if(object[indObj]->priority() > ckPrio + 1e-3) {
-	      printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->priority(): %d  > ckPrio: %d\n", 
+	      printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->priority(): %d  > ckPrio: %d\n",
 		     indObj, object[indObj]->priority(), ckPrio);
 	      exit(1);
 	    }
 	    if(fabs(object[indObj]->priority() - ckPrio) < 1e-3) {
 	      if(useful_[i] > ckUse + 1e-3) {
-		printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->useful: %f  > ckUse: %d\n", 
+		printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->useful: %f  > ckUse: %d\n",
 		       indObj, useful_[i], ckUse);
 		exit(1);
 	      }
@@ -741,13 +741,13 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 	  for(int i=card_vPriority; i<numberUnsatisfied_; i++) {
 	    int indObj = list_[i];
 	    if(object[indObj]->priority() < ckPrio - 1e-3) {
-	      printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->priority(): %d  < ckPrio: %d\n", 
+	      printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->priority(): %d  < ckPrio: %d\n",
 		     indObj, object[indObj]->priority(), ckPrio);
 	      exit(1);
 	    }
 	    if(fabs(object[indObj]->priority() - ckPrio) < 1e-3) {
 	      if(useful_[i] < ckUse - 1e-3) {
-		printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->useful: %f  < ckUse: %d\n", 
+		printf("CouenneChooseStrong::gutsOfSetupList(): ### ERROR: object[%d]->useful: %f  < ckUse: %d\n",
 		       indObj, useful_[i], ckUse);
 		exit(1);
 	      }
@@ -769,7 +769,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 #ifdef OLD_USEFULLNESS
 	    list_[numberOnList_]=list_[i];
 	    useful_[numberOnList_++]=-useful_[i];
-	    
+	
 #else
 	    list_[numberOnList_]=list_[i];
 	    if ((sortCrit_ & 1) == 0) {
@@ -859,7 +859,7 @@ inline bool compStrongPri (struct objStrongPri *one, struct objStrongPri *two)  
 
 #ifdef TRACE_STRONG
     if(problem_->doPrint_) {
-      printf("numberStrong_: %d   maximumStrong: %d\n", 
+      printf("numberStrong_: %d   maximumStrong: %d\n",
 	     numberStrong_, maximumStrong);
     }
 #endif

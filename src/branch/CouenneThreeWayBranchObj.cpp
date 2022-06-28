@@ -19,12 +19,12 @@ using namespace Couenne;
 /// Constructor. Get a variable as an argument and set value_ through
 /// a call to operator () of that exprAux.
 CouenneThreeWayBranchObj::CouenneThreeWayBranchObj (JnlstPtr jnlst,
-						    expression *brVar, 
-						    CouNumber lcrop, 
+						    expression *brVar,
+						    CouNumber lcrop,
 						    CouNumber rcrop,
 						    int way
 						    //bool isint
-						    ): 
+						    ):
   brVar_   (brVar),
   lcrop_   (lcrop),
   rcrop_   (rcrop),
@@ -33,10 +33,10 @@ CouenneThreeWayBranchObj::CouenneThreeWayBranchObj (JnlstPtr jnlst,
   numberBranches_ = 3;
 
   // if none of these three, set to 0 and do code below
-  firstBranch_ = (way == THREE_LEFT)   ? 0 : 
-                 (way == THREE_CENTER) ? 1 : 
-                 (way == THREE_RIGHT)  ? 2 : 0; 
-  
+  firstBranch_ = (way == THREE_LEFT)   ? 0 :
+                 (way == THREE_CENTER) ? 1 :
+                 (way == THREE_RIGHT)  ? 2 : 0;
+
   if (way == THREE_RAND) { // pick first branch randomly
     CouNumber rnd = 3. * CoinDrand48 ();
     firstBranch_ = (rnd < 1.) ? 0 : (rnd < 2.) ? 1: 2;
@@ -63,7 +63,7 @@ double CouenneThreeWayBranchObj::branch (OsiSolverInterface * solver) {
   case 0: way = firstBranch_;                break;
   case 1: way = (firstBranch_ == 0) ? 1 : 0; break;
   case 2: way = (firstBranch_ == 2) ? 1 : 2; break;
-  default: jnlst_->Printf(J_WARNING, J_BRANCHING, 
+  default: jnlst_->Printf(J_WARNING, J_BRANCHING,
 			  "Warning, branchIndex_ has a strange value (%d)\n", branchIndex_);
   }
 
@@ -88,15 +88,15 @@ double CouenneThreeWayBranchObj::branch (OsiSolverInterface * solver) {
   default: jnlst_->Printf(J_WARNING, J_BRANCHING, "Couenne: branching on nonsense way %d\n", way);
   }
 
-  // TODO: apply bound tightening 
+  // TODO: apply bound tightening
 
-  if (jnlst_->ProduceOutput(J_DETAILED, J_BRANCHING)) {  
+  if (jnlst_->ProduceOutput(J_DETAILED, J_BRANCHING)) {
     switch (way) {
-    case -1: jnlst_->Printf(J_DETAILED, J_BRANCHING, 
+    case -1: jnlst_->Printf(J_DETAILED, J_BRANCHING,
 			    "#3# Branch: x%d <= %g\n",               index, lcrop_); break; // left
-    case  0: jnlst_->Printf(J_DETAILED, J_BRANCHING, 
+    case  0: jnlst_->Printf(J_DETAILED, J_BRANCHING,
 			    "#3# Branch: %g <= x%d <= %g\n", lcrop_, index, rcrop_); break; // center
-    case  1: jnlst_->Printf(J_DETAILED, J_BRANCHING, 
+    case  1: jnlst_->Printf(J_DETAILED, J_BRANCHING,
 			    "#3# Branch: x%d >= %g\n",               index, rcrop_); break; // right
     default: jnlst_->Printf(J_DETAILED, J_BRANCHING, "Couenne: branching on nonsense way %d\n", way);
     }

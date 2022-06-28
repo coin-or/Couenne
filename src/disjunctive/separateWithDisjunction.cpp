@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: generate cuts of disjunction
  *
- * (C) Carnegie-Mellon University, 2008. 
+ * (C) Carnegie-Mellon University, 2008.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -17,12 +17,12 @@ using namespace Ipopt;
 using namespace Couenne;
 
 /// generate row cuts for one side of the  disjunction
-int CouenneDisjCuts::separateWithDisjunction (OsiCuts *cuts, 
-					      OsiSolverInterface &si, 
-					      OsiCuts &cs, 
+int CouenneDisjCuts::separateWithDisjunction (OsiCuts *cuts,
+					      OsiSolverInterface &si,
+					      OsiCuts &cs,
 					      const CglTreeInfo &info) const {
 
-  if (jnlst_ -> ProduceOutput (J_VECTOR, J_DISJCUTS) && 
+  if (jnlst_ -> ProduceOutput (J_VECTOR, J_DISJCUTS) &&
       ((cuts -> sizeRowCuts ()) ||
        (cuts -> sizeColCuts ()))) {
 
@@ -52,10 +52,10 @@ int CouenneDisjCuts::separateWithDisjunction (OsiCuts *cuts,
       &lb = cuts -> colCutPtr (i) -> lbs (),
       &ub = cuts -> colCutPtr (i) -> ubs ();
 
-    const int 
+    const int
       *lind = lb.getIndices (),
       *uind = ub.getIndices ();
- 
+
     const double
       *lval = lb.getElements (),    *oLB = si.getColLower (),
       *uval = ub.getElements (),    *oUB = si.getColUpper ();

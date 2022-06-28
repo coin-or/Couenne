@@ -45,9 +45,9 @@ public:
 
   // used by checkNLP2 and for update
   int cardModSol;
-  double *modSol; 
-  double modSolVal; 
-  double modSolMaxViol; 
+  double *modSol;
+  double modSolVal;
+  double modSolMaxViol;
 
 public:
   /// Constructor
@@ -71,7 +71,7 @@ public:
 
   void setHasSol(const bool givenHasSol);
   inline bool getHasSol() const {return hasSol;};
-  void setSol(const double *givenSol, const int givenCard, 
+  void setSol(const double *givenSol, const int givenCard,
 	      const double givenMaxViol);
   inline int getCardSol() const {return cardSol;};
   void setCardSol(const int givenCard);
@@ -82,7 +82,7 @@ public:
 
   // record givenSol as best solution if givenVal is smaller
   // than val (or if no solution was recorded previously)
-  void update(const double *givenSol, const int givenCard, 
+  void update(const double *givenSol, const int givenCard,
 	      const double givenVal, const double givenMaxViol);
 
   // use modSol, modSolVal, modSolMaxViol for updating only if
@@ -91,12 +91,12 @@ public:
 
   // compare given two solutions and set sol, solVal, and maxViol to
   // the best of the two with finite value (< 1e49); return -1 if both have
-  // infinite value, return 0 if solA is saved, return 1 if solB is saved  
+  // infinite value, return 0 if solA is saved, return 1 if solB is saved
   int compareAndSave(const double *solA, const double solAVal,
-		     const double solAMaxViol, 
+		     const double solAMaxViol,
 		     const bool solAIsFeas,
 		     const double *solB, const double solBVal,
-		     const double solBMaxViol, 
+		     const double solBMaxViol,
 		     const bool solBIsFeas,
 		     const int cardSol,
 		     const double precision);
@@ -108,7 +108,7 @@ public:
 
   // set modSol, modSolVal, and modSolMaxViol to given values; if
   // givenModSol == NULL, only the other two are set
-  void setModSol(const double *givenModSol, const int givenModCard, 
+  void setModSol(const double *givenModSol, const int givenModCard,
 		 const double givenModVal, const double givenModMaxViol);
 
   // print sol, solVal, and maxViol

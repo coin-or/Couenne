@@ -59,14 +59,14 @@ namespace Couenne {
     /** \name Overloaded methods to build outer approximations */
     //@{
     /** \brief Extract a linear relaxation of the MINLP.
-     * Solve the continuous relaxation and takes first-order 
+     * Solve the continuous relaxation and takes first-order
      * outer-approximation constraints at the optimum.
      * The put everything in an OsiSolverInterface.
      */
     virtual void extractLinearRelaxation
     (OsiSolverInterface &si, CouenneCutGenerator & couenneCg, bool getObj = 1, bool solveNlp = 1);
 
-  
+
     /** To set some application specific defaults. */
     virtual void setAppDefaultOptions(Ipopt::SmartPtr<Ipopt::OptionsList> Options);
 
@@ -76,7 +76,7 @@ namespace Couenne {
 
   protected:
 
-    /// true if we got an integer feasible solution from initial solve 
+    /// true if we got an integer feasible solution from initial solve
     bool have_nlp_solution_;
   };
 

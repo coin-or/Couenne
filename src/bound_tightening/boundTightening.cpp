@@ -33,7 +33,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
     chg_bds = new t_chg_bounds [nVars ()];
 
-    for (int i=0; i < nVars (); i++) 
+    for (int i=0; i < nVars (); i++)
 
     if (Var (i) -> Multiplicity () > 0) {
 
@@ -60,7 +60,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
     for (int i=0; i < nVars (); i++)
       if ((optimum_ [i] < Lb (i) * (1 - COUENNE_EPS) - COUENNE_EPS) ||
 	  (optimum_ [i] > Ub (i) * (1 + COUENNE_EPS) + COUENNE_EPS)) {
-	/*printf ("won't check BT: %d [%g,%g] (%g) -- %g\n", 
+	/*printf ("won't check BT: %d [%g,%g] (%g) -- %g\n",
 		i, Lb (i), Ub (i), optimum_ [i],
 		CoinMax (- optimum_ [i] + (Lb (i) * (1 - COUENNE_EPS) - COUENNE_EPS),
 		optimum_ [i] - (Ub (i) * (1 + COUENNE_EPS) + COUENNE_EPS)));*/
@@ -69,7 +69,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
       }
   }
 
-  if (max_fbbt_iter_) 
+  if (max_fbbt_iter_)
 
   do {
 
@@ -79,7 +79,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
     // propagate bounds to auxiliary variables
 
     //    if ((nbwtightened > 0) || (ntightened > 0))
-    ntightened = ((nbwtightened > 0) || first) ? 
+    ntightened = ((nbwtightened > 0) || first) ?
       tightenBounds (chg_bds) : 0;
 
     // implied bounds. Call also at the beginning, as some common
@@ -93,7 +93,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
     if ((ntightened < 0) || (nbwtightened < 0)) {
       Jnlst () -> Printf (Ipopt::J_ITERSUMMARY, J_BOUNDTIGHTENING, "infeasible BT\n");
-      if (null_chg_bds) 
+      if (null_chg_bds)
 	delete [] chg_bds;
       return false;
     }
@@ -105,7 +105,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
       for (int i=0; i<nVars (); i++)
 	if ((optimum_[i] < Lb(i) - COUENNE_EPS * (1. + CoinMin (fabs(optimum_ [i]), fabs (Lb(i))))) ||
 	    (optimum_[i] > Ub(i) + COUENNE_EPS * (1. + CoinMin (fabs(optimum_ [i]), fabs (Ub(i)))))) {
-	  printf ("bound tightening CUTS optimum: x%d [%e,%e] val = %e, violation = %e\n", 
+	  printf ("bound tightening CUTS optimum: x%d [%e,%e] val = %e, violation = %e\n",
 		  i, Lb (i), Ub (i), optimum_ [i],
 		  CoinMax (- optimum_ [i] + Lb (i),
 		  	     optimum_ [i] - Ub (i)));
@@ -115,26 +115,26 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 
     // double width = 0.;
 
-    // int 
+    // int
     //   ninf  = 0,
     //   ndinf = 0;
 
     // for (int i=nOrigVars (); i--;)
 
-    //   if ((Lb (i) < -COUENNE_INFINITY/1e3) && 
+    //   if ((Lb (i) < -COUENNE_INFINITY/1e3) &&
     // 	  (Ub (i) >  COUENNE_INFINITY/1e3)) ndinf++;
     //   else if ((Lb (i) < -COUENNE_INFINITY/1e3) ||
     // 	       (Ub (i) >  COUENNE_INFINITY/1e3)) ninf++;
     //   else width += Ub (i) - Lb (i);
 
-    // printf ("pass %5d: %5d fwd, %5d bwd, %5d inf, %5d double inf, width: %g\n", 
+    // printf ("pass %5d: %5d fwd, %5d bwd, %5d inf, %5d double inf, width: %g\n",
     // 	    niter, ntightened, nbwtightened, ninf, ndinf, width);
 
-  } while (((ntightened > 0) || (nbwtightened > 0)) && 
+  } while (((ntightened > 0) || (nbwtightened > 0)) &&
 	   (ntightened + nbwtightened > THRES_IMPROVED) &&
 	   ((max_fbbt_iter_ < 0) || (niter++ < max_fbbt_iter_)));
 
-  if (null_chg_bds) 
+  if (null_chg_bds)
     delete [] chg_bds;
 
   fbbtReachedIterLimit_ = ((max_fbbt_iter_ > 0) && (niter >= max_fbbt_iter_));
@@ -142,7 +142,7 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
   // TODO: limit should depend on number of constraints, that is,
   // bound transmission should be documented and the cycle should stop
   // as soon as no new constraint subgraph has benefited from bound
-  // transmission. 
+  // transmission.
   //
   // BT should be more of a graph spanning procedure that moves from
   // one vertex to another when either tightening procedure has given
@@ -150,11 +150,11 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
   // w.r.t. applying implied bounds to ALL expressions just because
   // one single propagation was found.
 
-  for (int i = 0, j = nVars (); j--; i++) 
+  for (int i = 0, j = nVars (); j--; i++)
     if (Var (i) -> Multiplicity () > 0) {
 
-      // final test 
-      if ((Lb (i) > Ub (i) + COUENNE_BOUND_PREC * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) || 
+      // final test
+      if ((Lb (i) > Ub (i) + COUENNE_BOUND_PREC * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) ||
 	  (Ub (i) < - MAX_BOUND) ||
 	  (Lb (i) >   MAX_BOUND)) {
 
@@ -177,8 +177,8 @@ bool CouenneProblem::btCore (t_chg_bounds *chg_bds) const {
 /// procedure to strengthen variable bounds. Return false if problem
 /// turns out to be infeasible with given bounds, true otherwise.
 
-bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds, 
-				      const CglTreeInfo info, 
+bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds,
+				      const CglTreeInfo info,
 				      Bonmin::BabInfo * babInfo) const {
 
   double startTime = CoinCpuTime ();
@@ -190,7 +190,7 @@ bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds,
   //   for (int i=nOrigVars (); i--;) {
   //     if (Lb (i) < -SMALL_BOUND) Lb (i) = -SMALL_BOUND;
   //     if (Ub (i) >  SMALL_BOUND) Ub (i) =  SMALL_BOUND;
-  //   } 
+  //   }
 
   Jnlst () -> Printf (Ipopt::J_ITERSUMMARY, J_BOUNDTIGHTENING,
 		      "Feasibility-based Bound Tightening\n");
@@ -203,20 +203,20 @@ bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds,
 
     CouNumber UB      = babInfo  -> babPtr () -> model (). getObjValue(),
               LB      = babInfo  -> babPtr () -> model (). getBestPossibleObjValue (),
-              primal0 = Ub (objInd), 
+              primal0 = Ub (objInd),
               dual0   = Lb (objInd);
 
     // Bonmin assumes minimization. Hence, primal (dual) is an UPPER
     // (LOWER) bound.
-    
-    if ((UB < COUENNE_INFINITY) && 
+
+    if ((UB < COUENNE_INFINITY) &&
 	(UB < primal0 - COUENNE_EPS)) { // update primal bound (MIP)
 
       Ub (objInd) = UB;
       chg_bds [objInd].setUpper(t_chg_bounds::CHANGED);
     }
 
-    if ((LB > - COUENNE_INFINITY) && 
+    if ((LB > - COUENNE_INFINITY) &&
 	(LB > dual0 + COUENNE_EPS)) { // update dual bound
       Lb (objInd) = LB;
       chg_bds [objInd].setLower(t_chg_bounds::CHANGED);
@@ -239,12 +239,12 @@ bool CouenneProblem::boundTightening (t_chg_bounds *chg_bds,
 /// reduced cost bound tightening
 int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
 			       t_chg_bounds *chg_bds) const {
-  
-  int 
+
+  int
     nchanges = 0,
     objind   = Obj (0) -> Body () -> Index ();
 
-  if (objind < 0) 
+  if (objind < 0)
     return 0;
 
   CouNumber
@@ -253,10 +253,10 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
 
   //////////////////////// Reduced cost bound tightening //////////////////////
 
-  if ((LB > -COUENNE_INFINITY) && 
+  if ((LB > -COUENNE_INFINITY) &&
       (UB <  COUENNE_INFINITY)) {
 
-    const double 
+    const double
       *X  = psi -> getColSolution (),
       *L  = psi -> getColLower    (),
       *U  = psi -> getColUpper    (),
@@ -277,7 +277,7 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
     int ncols = psi -> getNumCols ();
 
     for (int i=0; i<ncols; i++)
-      if ((i != objind) && 
+      if ((i != objind) &&
 	  (Var (i) -> Multiplicity () > 0)) {
 
 	CouNumber
@@ -288,13 +288,13 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
 
 #define CLOSE_TO_BOUNDS 1.e-15
 
-	if ((fabs (rc)  < CLOSE_TO_BOUNDS) || 
+	if ((fabs (rc)  < CLOSE_TO_BOUNDS) ||
 	    (fabs (l-u) < CLOSE_TO_BOUNDS)) // no need to check
 	  continue;
 
 	bool isInt = Var (i) -> isInteger ();
 
-	if ((rc >= 0.) && 
+	if ((rc >= 0.) &&
 	    (fabs (x-l) <= CLOSE_TO_BOUNDS)) {
 
 	  if (LB + (u-l)*rc > UB) {
@@ -311,7 +311,7 @@ int CouenneProblem::redCostBT (const OsiSolverInterface *psi,
 	    }
 	  }
 
-	} else if ((rc <= 0.) && 
+	} else if ((rc <= 0.) &&
 		   (fabs (x-u) <= CLOSE_TO_BOUNDS)) {
 
 	  if (LB - (u-l) * rc > UB) {

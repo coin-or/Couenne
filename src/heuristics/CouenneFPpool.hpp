@@ -6,7 +6,7 @@
  * Purpose: Pool of MILP- (and why not? NLP-) feasible solutions for
  *          restart use in the Feasibility Pump and sets of solutions
  *          to be used as tabu list
- * 
+ *
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -45,7 +45,7 @@ namespace Couenne {
     /// result, all the above members are meaningless for copied
     /// solutions
 
-    bool copied_;   
+    bool copied_;
 
     CouenneProblem *problem_; ///< holds pointer to problem to check
 			      ///< integrality in comparison of integer
@@ -73,7 +73,7 @@ namespace Couenne {
 
 
   /// compare, base version
-  inline bool operator< (const CouenneFPsolution &one, 
+  inline bool operator< (const CouenneFPsolution &one,
 			 const CouenneFPsolution &two)
   {return one.compare (two, comparedTerm_);}
 
@@ -82,7 +82,7 @@ namespace Couenne {
   class compareSol {
 
   public:
-    bool operator () (const CouenneFPsolution &one, 
+    bool operator () (const CouenneFPsolution &one,
   		      const CouenneFPsolution &two) const;
   };
 

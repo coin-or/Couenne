@@ -37,7 +37,7 @@ using namespace Couenne;
 
 
 // sdpcut separator -- all minors
-void CouenneSdpCuts::generateCuts (const OsiSolverInterface &si, OsiCuts &cs, 
+void CouenneSdpCuts::generateCuts (const OsiSolverInterface &si, OsiCuts &cs,
 				   const CglTreeInfo info)
 #if CGL_VERSION_MAJOR == 0 && CGL_VERSION_MINOR <= 57
   const
@@ -50,7 +50,7 @@ void CouenneSdpCuts::generateCuts (const OsiSolverInterface &si, OsiCuts &cs,
 
   problem_ -> domain () -> push (&si, &cs);
 
-  for (std::vector <CouenneExprMatrix *>::const_iterator 
+  for (std::vector <CouenneExprMatrix *>::const_iterator
 	 minor  = minors_. begin ();
        minor   != minors_. end   (); ++minor)
 
@@ -61,9 +61,9 @@ void CouenneSdpCuts::generateCuts (const OsiSolverInterface &si, OsiCuts &cs,
 
 
 // sdpcut separator -- one minor at a time
-void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor, 
-				   const OsiSolverInterface &si, 
-				   OsiCuts &cs, 
+void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
+				   const OsiSolverInterface &si,
+				   OsiCuts &cs,
 				   const CglTreeInfo info) const {
 #ifdef DEBUG
   printf ("Generating cut on minor -> ");
@@ -82,11 +82,11 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
 
     compressed_index = 0;
 
-  double 
+  double
     *A = new double [n * n];
 
   // Fill in inverse map
-  for (std::vector <expression *>::const_iterator 
+  for (std::vector <expression *>::const_iterator
 	 i  = varInd . begin ();
        i   != varInd . end   (); ++i)
     indMap [(*i) -> Index ()] = compressed_index++;
@@ -98,7 +98,7 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
 
   // build index and value matrices
 
-  // Get minors_ 
+  // Get minors_
 
   CoinFillN (A, n * n, 0.);
 
@@ -108,7 +108,7 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
 
   int indI = 0;
 
-  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator 
+  for (std::set <std::pair <int, CouenneSparseVector *>, CouenneExprMatrix::compare_pair_ind>::const_iterator
 	 i  = minor -> getRows () . begin ();
        i   != minor -> getRows () . end   (); ++i, ++indI) {
 
@@ -120,14 +120,14 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
       majInd = (i -> first == problem_ -> nVars ()) ? n-1 : indMap [i -> first],
       indJ   = 0;
 
-    for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
+    for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator
 	   j  = i -> second -> getElements () . begin ();
 	 j   != i -> second -> getElements () . end   (); ++j, ++indJ) {
 
 #ifdef DEBUG
-      printf ("[r%d,v%d,%d,%g,", indJ, 
-	      (*j) -> getIndex (), 
-	      (*j) -> getElem () -> Index (), 
+      printf ("[r%d,v%d,%d,%g,", indJ,
+	      (*j) -> getIndex (),
+	      (*j) -> getElem () -> Index (),
 	      (*((*j) -> getElem ()))  ());
       (*j) -> getElem () -> print (); printf ("] ");
       fflush (stdout);
@@ -141,7 +141,7 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
       //A [indJ * n + indI] = (*Elem) ();
 
       indA [majInd] [minInd] = Elem -> Index ();
-      //indA [indJ] [indI] = 
+      //indA [indJ] [indI] =
     }
 
 #ifdef DEBUG
@@ -156,9 +156,9 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
   for   (int i=0; i<n-1; ++i) // get to n-1 since varIndices not defined afterward
     for (int j=i; j<n-1; ++j)
       if (indA [i] [j] == -2) // never happens on border row/column
-	A [i * n + j] = 
-	A [j * n + i] = 
-	  (*(varInd [i])) () * 
+	A [i * n + j] =
+	A [j * n + i] =
+	  (*(varInd [i])) () *
 	  (*(varInd [j])) ();
 
 #ifdef DEBUG
@@ -177,12 +177,12 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
   //  printf ("calling dsyevx NONSPARSE\n");
 
   //------------------------------------------------------------------------------------------------------
-  dsyevx_interface (n, A, m, w, z, EV_TOL, 
-		    -COIN_DBL_MAX, onlyNegEV_ ? 0. : COIN_DBL_MAX, 
+  dsyevx_interface (n, A, m, w, z, EV_TOL,
+		    -COIN_DBL_MAX, onlyNegEV_ ? 0. : COIN_DBL_MAX,
 		    1, numEigVec_ < 0 ? n : numEigVec_);
   //------------------------------------------------------------------------------------------------------
 
-  if (m < nVecs) 
+  if (m < nVecs)
     nVecs = m;
 
   double
@@ -272,9 +272,9 @@ void CouenneSdpCuts::genCutSingle (CouenneExprMatrix * const & minor,
 
 /************************************************************************/
 void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
-				OsiCuts &cs, 
+				OsiCuts &cs,
 				CouenneExprMatrix *XX,
-				double *v1, double *v2, 
+				double *v1, double *v2,
 				int **indA) const {
   int
     nterms   = 0,
@@ -335,7 +335,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
       // 2) index == -1: constant, subtract it from right-hand side
       //
       // 3) index < -1: this variable (x_ij = x_i * x_j) is not in the
-      //    problem, and must be replaced somehow. 
+      //    problem, and must be replaced somehow.
 
 #ifdef DEBUG
       if (index == -1) printf ("found constant: %g\n", (i==j) ? coeff0 / 2 : coeff0);
@@ -346,12 +346,12 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 
       else if (index < -1) { // only happens in non-bordered matrix
 
-	expression 
+	expression
 	  *Xi = XX -> varIndices () [i],
 	  *Xj = XX -> varIndices () [j];
 
-	double 
-	  valXi = (*Xi) (),    
+	double
+	  valXi = (*Xi) (),
 	  valXj = (*Xj) (),
 	  li, lj,
 	  ui, uj,
@@ -361,20 +361,20 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 	Xj -> getBounds (lj, uj);
 
 #ifdef DEBUG
-	printf ("expression: x%d [%g,%g] * x%d [%g,%g]\n", 
-		Xi -> Index (), li, ui, 
+	printf ("expression: x%d [%g,%g] * x%d [%g,%g]\n",
+		Xi -> Index (), li, ui,
 		Xj -> Index (), lj, uj);
 #endif
 
 	if (i==j) {
 
 	  // This variable (x_ii = x_i ^ 2) is not in the
-	  // problem. Replace it with its upper envelope 
+	  // problem. Replace it with its upper envelope
 	  //
 	  // X_ii <= li^2 + (ui^2 - li^2) / (ui-li) * (xi-li) = (ui+li) * xi - li*ui
 
-	  if ((fabs (li) > COUENNE_INFINITY) || 
-	      (fabs (ui) > COUENNE_INFINITY)) { 
+	  if ((fabs (li) > COUENNE_INFINITY) ||
+	      (fabs (ui) > COUENNE_INFINITY)) {
 
 	    // term would be X_ii <= inf, which adds inf to the
 	    // inequality
@@ -383,9 +383,9 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 	    break;
 	  }
 
-	  xtraC [varIndices [i] -> Index ()] += coeff0 / 2 * (li + ui); 
+	  xtraC [varIndices [i] -> Index ()] += coeff0 / 2 * (li + ui);
 #ifdef DEBUG
-	  printf ("adding %g=%g*(%g+%g) (sq) to xtrac[%d=varInd[%d]]\n", 
+	  printf ("adding %g=%g*(%g+%g) (sq) to xtrac[%d=varInd[%d]]\n",
 		  coeff0 / 2 * (li + ui), coeff0, li, ui, varIndices [i] -> Index (), i);
 #endif
 	  rhs += coeff0 / 2 * (li * ui);
@@ -405,25 +405,25 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 	  //    y_ij <= u_j x_i + l_i x_j - u_i l_j
 	  //    y_ij <= l_j x_i + u_i x_j - l_i u_j
 
-	  exprMul Xij (new exprClone (Xi), 
+	  exprMul Xij (new exprClone (Xi),
 		       new exprClone (Xj));
 
 	  Xij . getBounds (L, U);
 
-	  double 
+	  double
 	    rhsMll = lj * valXi + li * valXj - lj * li,
 	    rhsMuu = uj * valXi + ui * valXj - uj * ui;
 
 	  if (coeff0 < 0) {
 
-	    if (L >= CoinMax (rhsMll, rhsMuu)) 
+	    if (L >= CoinMax (rhsMll, rhsMuu))
 
 	      rhs -= coeff0 * L; // L is the tightest (greatest)
 
 	    else if (rhsMuu > rhsMll) {  // rhsMuu is the tightest
 
-	      if ((fabs (ui) > COUENNE_INFINITY) || 
-		  (fabs (uj) > COUENNE_INFINITY)) { 
+	      if ((fabs (ui) > COUENNE_INFINITY) ||
+		  (fabs (uj) > COUENNE_INFINITY)) {
 		numerics_flag = true;
 		break;
 	      }
@@ -433,13 +433,13 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 	      rhs += coeff0 * uj * ui;
 
 #ifdef DEBUG
-	      printf ("adding (%g,%g) = %g*(%g,%g) (rhsMuu) to xtrac[%d=varInd[%d]] and xtrac[%d=varInd[%d]]\n", 
+	      printf ("adding (%g,%g) = %g*(%g,%g) (rhsMuu) to xtrac[%d=varInd[%d]] and xtrac[%d=varInd[%d]]\n",
 		      coeff0 * uj, coeff0 * ui, coeff0, uj, ui, varIndices [i] -> Index (), i, varIndices [j] -> Index (), j);
 #endif
 	    } else { // rhsMll is the tightest
 
-	      if ((fabs (li) > COUENNE_INFINITY) || 
-		  (fabs (lj) > COUENNE_INFINITY)) { 
+	      if ((fabs (li) > COUENNE_INFINITY) ||
+		  (fabs (lj) > COUENNE_INFINITY)) {
 
 		numerics_flag = true;
 		break;
@@ -450,7 +450,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 	      rhs += coeff0 * lj * li;
 
 #ifdef DEBUG
-	      printf ("adding (%g,%g) = %g*(%g,%g) (rhsMll) to xtrac[%d=varInd[%d]] and xtrac[%d=varInd[%d]]\n", 
+	      printf ("adding (%g,%g) = %g*(%g,%g) (rhsMll) to xtrac[%d=varInd[%d]] and xtrac[%d=varInd[%d]]\n",
 		      coeff0 * lj, coeff0 * li, coeff0, lj, li, varIndices [i] -> Index (), i, varIndices [j] -> Index (), j);
 #endif
 	    }
@@ -461,14 +461,14 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 	      rhsMlu = lj * valXi + ui * valXj - lj * ui,
 	      rhsMul = uj * valXi + li * valXj - uj * li;
 
-	    if (U <= CoinMin (rhsMlu, rhsMul)) 
+	    if (U <= CoinMin (rhsMlu, rhsMul))
 
 	      rhs -= coeff0 * U; // U is the tightest (smallest)
 
 	    else if (rhsMul < rhsMlu) { // rhsMul is the tightest
 
-	      if ((fabs (li) > COUENNE_INFINITY) || 
-		  (fabs (uj) > COUENNE_INFINITY)) { 
+	      if ((fabs (li) > COUENNE_INFINITY) ||
+		  (fabs (uj) > COUENNE_INFINITY)) {
 
 		numerics_flag = true;
 		break;
@@ -479,14 +479,14 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 	      rhs += coeff0 * uj * li;
 
 #ifdef DEBUG
-	      printf ("adding (%g,%g) = %g*(%g,%g) (rhsMul) to xtrac[%d=varInd[%d]] and xtrac[%d=varInd[%d]]\n", 
+	      printf ("adding (%g,%g) = %g*(%g,%g) (rhsMul) to xtrac[%d=varInd[%d]] and xtrac[%d=varInd[%d]]\n",
 		      coeff0 * uj, coeff0 * li, coeff0, uj, li, varIndices [i] -> Index (), i, varIndices [j] -> Index (), j);
 #endif
 
 	    } else { // rhsMlu is the tightest
 
-	      if ((fabs (ui) > COUENNE_INFINITY) || 
-		  (fabs (lj) > COUENNE_INFINITY)) { 
+	      if ((fabs (ui) > COUENNE_INFINITY) ||
+		  (fabs (lj) > COUENNE_INFINITY)) {
 
 		numerics_flag = true;
 		break;
@@ -497,7 +497,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 	      rhs += coeff0 * lj * ui;
 
 #ifdef DEBUG
-	      printf ("adding (%g,%g) = %g*(%g,%g) (rhsMlu) to xtrac[%d=varInd[%d]] and xtrac[%d=varInd[%d]]\n", 
+	      printf ("adding (%g,%g) = %g*(%g,%g) (rhsMlu) to xtrac[%d=varInd[%d]] and xtrac[%d=varInd[%d]]\n",
 		      coeff0 * lj, coeff0 * ui, coeff0, lj, ui, varIndices [i] -> Index (), i, varIndices [j] -> Index (), j);
 #endif
 	    }
@@ -518,7 +518,7 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
 
 	  coeff   [nterms]   = (i==j) ? (0.5 * coeff0) : (coeff0);
 	  // if (inverse [index] >= 0)
-	  //   printf ("duplicate index at nterms=%d: inverse[%d] = %d, value %g\n", 
+	  //   printf ("duplicate index at nterms=%d: inverse[%d] = %d, value %g\n",
 	  // 	  nterms, index, inverse [index], coeff [nterms]);
 	  inverse [index]    = nterms;
 	  ind     [nterms++] = index;
@@ -530,13 +530,13 @@ void CouenneSdpCuts::genSDPcut (const OsiSolverInterface &si,
     }
 
   if (!numerics_flag)
-    for (std::vector <expression *>::iterator 
-	 i  = varIndices . begin (); 
+    for (std::vector <expression *>::iterator
+	 i  = varIndices . begin ();
        i   != varIndices . end   (); ++i) {
 
     int varInd = (*i) -> Index ();
 
-    if ((inverse [varInd] >= 0) && 
+    if ((inverse [varInd] >= 0) &&
 	(fabs (xtraC [varInd]) > 1e-15)) {
 #ifdef DEBUG
       printf ("now adding %g to coeff [inv [%d] = %d]\n", xtraC [varInd], varInd, inverse [varInd]);

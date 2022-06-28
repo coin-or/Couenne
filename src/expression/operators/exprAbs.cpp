@@ -41,7 +41,7 @@ void exprAbs::getBounds (expression *&lb, expression *&ub) {
 
   // upper bound = max (|lb|, |ub|)
 
-  ub = new exprMax (new exprAbs (new exprClone (lba)), 
+  ub = new exprMax (new exprAbs (new exprClone (lba)),
 		    new exprAbs (new exprClone (uba)));
 }
 
@@ -102,13 +102,13 @@ bool exprAbs::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   if (wl > 0) {
     if      (*xl > 0) {
       if (updateBound (-1, xl, argument_ -> isInteger () ? ceil   (wl - COUENNE_EPS) :  wl)) {
-	tighter = true; 
+	tighter = true;
 	chg [index].setLower(t_chg_bounds::CHANGED);
       }
     }
     else if (*xu < 0) {
       if (updateBound (+1, xu, argument_ -> isInteger () ? floor (-wl + COUENNE_EPS) : -wl)) {
-	tighter = true; 
+	tighter = true;
 	chg [index].setUpper(t_chg_bounds::CHANGED);
       }
     }
@@ -118,11 +118,11 @@ bool exprAbs::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   if (wu < COUENNE_INFINITY) {
     if (updateBound (-1, xl, argument_ -> isInteger () ? ceil (-wu - COUENNE_EPS) : -wu)) {
-      tighter = true; 
+      tighter = true;
       chg [index].setLower(t_chg_bounds::CHANGED);
     }
     if (updateBound (+1, xu, argument_ -> isInteger () ? floor (wu + COUENNE_EPS) :  wu)) {
-      tighter = true; 
+      tighter = true;
       chg [index].setUpper(t_chg_bounds::CHANGED);
     }
   }
@@ -162,7 +162,7 @@ void exprAbs::closestFeasible (expression *varind, expression *vardep,
 /// concave ("bad") side
 bool exprAbs::isCuttable (CouenneProblem *problem, int index) const {
 
-  double 
+  double
     x = problem -> X (argument_ -> Index ()),
     y = problem -> X (index);
 

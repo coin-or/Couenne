@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of operators to compute lower/upper bounds of multiplications
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -21,7 +21,7 @@ namespace Couenne {
 #define MUL_ZERO 1e-20
 #define MUL_INF  sqrt (COIN_DBL_MAX)
 
-/// product that avoids NaN's 
+/// product that avoids NaN's
 inline CouNumber safeProd (CouNumber a, CouNumber b) {
 
   if (a >  MUL_INF) return (b < -MUL_ZERO) ? -COIN_DBL_MAX : (b > MUL_ZERO) ?  COIN_DBL_MAX : 0.;
@@ -42,7 +42,7 @@ class COUENNELIB_EXPORT exprLBMul: public exprOp {
  public:
 
   /// Constructors, destructor
-  exprLBMul  (expression **al, int n): 
+  exprLBMul  (expression **al, int n):
     exprOp (al, n) {} //< non-leaf expression, with argument list
 
   /// cloning method
@@ -77,11 +77,11 @@ inline CouNumber exprLBMul::operator () () {
   else // d <= 0
     if (N>0) {
       CouNumber Nd = safeProd (N,d), nD;
-      if (n<0 && D>0 && 
+      if (n<0 && D>0 &&
 	  (Nd > (nD = safeProd (n,D)))) return nD;
       else                              return Nd;
     }
-    else 
+    else
       if (D>0) return safeProd (n,D);
       else     return safeProd (N,D);
 }
@@ -95,7 +95,7 @@ class COUENNELIB_EXPORT exprUBMul: public exprOp {
  public:
 
   /// Constructors, destructor
-  exprUBMul  (expression **al, int n): 
+  exprUBMul  (expression **al, int n):
     exprOp (al, n) {} //< non-leaf expression, with argument list
 
   /// cloning method
@@ -132,11 +132,11 @@ inline CouNumber exprUBMul::operator () () {
   else // d <= 0
     if (n<0) {
       CouNumber nd = safeProd (n,d), ND;
-      if (N>0 && D>0 && 
+      if (N>0 && D>0 &&
 	  ((ND = safeProd (N,D)) > nd)) return ND;
       else                              return nd;
     }
-    else 
+    else
       if (D>0) return safeProd (N,D);
       else     return safeProd (n,D);
 }

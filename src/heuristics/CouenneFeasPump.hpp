@@ -54,13 +54,13 @@ namespace Couenne {
 
   /// An implementation of the Feasibility pump that uses
   /// linearization and Ipopt to find the two sequences of points.
-  
+
   class COUENNELIB_EXPORT CouenneFeasPump: public CbcHeuristic {
 
   public:
 
     enum fpCompDistIntType {FP_DIST_INT,  FP_DIST_ALL,       FP_DIST_POST};
-    enum fpCutPlane        {FP_CUT_NONE,  FP_CUT_INTEGRATED, FP_CUT_EXTERNAL, FP_CUT_POST}; 
+    enum fpCutPlane        {FP_CUT_NONE,  FP_CUT_INTEGRATED, FP_CUT_EXTERNAL, FP_CUT_POST};
     enum fpTabuMgtPolicy   {FP_TABU_NONE, FP_TABU_POOL,      FP_TABU_PERTURB, FP_TABU_CUT};
 
     /// Constructor with (optional) MINLP pointer
@@ -70,14 +70,14 @@ namespace Couenne {
 
     /// Copy constructor
     CouenneFeasPump (const CouenneFeasPump &other);
-    
+
     /// Destructor
     virtual ~CouenneFeasPump();
 
     /// Clone
     virtual CbcHeuristic *clone () const;
-    
-    /// Assignment operator 
+
+    /// Assignment operator
     CouenneFeasPump &operator= (const CouenneFeasPump &rhs);
 
     /// Does nothing, but necessary as CbcHeuristic declares it pure virtual
@@ -104,7 +104,7 @@ namespace Couenne {
     /// find integer (possibly NLP-infeasible) point isol closest
     /// (according to the l-1 norm of the hessian) to the current
     /// NLP-feasible (but fractional) solution nsol
-    virtual CouNumber solveMILP (const CouNumber *nSol, CouNumber *&iSol, int niter, int* nsuciter); 
+    virtual CouNumber solveMILP (const CouNumber *nSol, CouNumber *&iSol, int niter, int* nsuciter);
 
     /// obtain solution to NLP
     virtual CouNumber solveNLP  (const CouNumber *nSol, CouNumber *&iSol);
@@ -176,7 +176,7 @@ namespace Couenne {
     // linearization cut generator
     //
 
-    /// Couenne representation of the problem. 
+    /// Couenne representation of the problem.
     CouenneProblem *problem_;
 
     /// CouenneCutGenerator for linearization cuts

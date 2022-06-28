@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: definition of the exprNorm class implementing $l_k$ norms
  *
- * (C) Carnegie-Mellon University, 2007. 
+ * (C) Carnegie-Mellon University, 2007.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 

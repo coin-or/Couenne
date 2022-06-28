@@ -19,14 +19,14 @@
 using namespace Couenne;
 
 /// generic approach for negative powers (commom with exprInv::selectBranch())
-CouNumber negPowSelectBranch (const CouenneObject *obj, 
+CouNumber negPowSelectBranch (const CouenneObject *obj,
 			      const OsiBranchingInformation *info,
 			      double * &brpts, 	
 			      double * &brDist, // distance of current LP
 			                        // point to new convexifications
 			      int &way,
 			      CouNumber k,
-			      CouNumber x0, CouNumber y0, 
+			      CouNumber x0, CouNumber y0,
 			      CouNumber l,  CouNumber u) {
 
   brDist = (double *) realloc (brDist, 2 * sizeof (double));
@@ -76,8 +76,8 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
 
     powertriplet pt (exponent);
 
-    xp = (xx0 >= 0) ? 
-       powNewton  (xx0,  yy0, &pt) : 
+    xp = (xx0 >= 0) ?
+       powNewton  (xx0,  yy0, &pt) :
       -powNewton (-xx0, -yy0, &pt);
 
     CouNumber diff = x0 - xp;
@@ -116,8 +116,8 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
 
     powertriplet pt (k);
 
-    *brpts = obj -> midInterval ((x0 >= 0.) ? 
- 	 			  powNewton ( x0,  y0, &pt) : 
+    *brpts = obj -> midInterval ((x0 >= 0.) ?
+ 	 			  powNewton ( x0,  y0, &pt) :
 				 -powNewton (-x0, -y0, &pt), l, u, info);
 
     CouNumber dy = y0 - safe_pow (*brpts >= 0 ? *brpts : - *brpts, 1. / k);
@@ -126,13 +126,13 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
   }
 
   // Inside, (x0^k) * y0 >= 1. Two cases: /////////////////////////////////////////////////
- 
+
   // 1) bounds are infinite both horizontally and vertically
   // (i.e. [-inf,0] or [0,inf]) --> as for exprExp, pick point on
   // diagonal from current to curve, to be sure current will be cut by
   // branching rule
 
-  if (((l <   COUENNE_EPS) && (u >   COUENNE_INFINITY)) || 
+  if (((l <   COUENNE_EPS) && (u >   COUENNE_INFINITY)) ||
       ((u > - COUENNE_EPS) && (l < - COUENNE_INFINITY))) {
 
     /* brpts = (double *) realloc (brpts, 2 * sizeof (double));
@@ -145,7 +145,7 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
 
     //brpts = (double *) realloc (brpts, sizeof (double));
 
-    //if (x0 > COUENNE_EPS) 
+    //if (x0 > COUENNE_EPS)
     *brpts = 0.5 * (fabs (x0) + pow (fabs (y0), 1./k));
 
     if (x0 < 0.) {
@@ -157,12 +157,12 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
       brDist [1] = fabs (y0 - safe_pow (x0, k));
     }
 
-    //else 
+    //else
     //*brpts = 0.5 * (x0 + pow (y0, 1./k));
 
     // follow South-East diagonal to find point on curve
-    // so that current point is surely cut 
-    //*brpts = 0.5 * (x0 + log (y0)); 
+    // so that current point is surely cut
+    //*brpts = 0.5 * (x0 + log (y0));
     //way = TWO_RAND;
     way = (x0 > *brpts) ? TWO_RIGHT : TWO_LEFT;
 
@@ -188,8 +188,8 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
     way = TWO_LEFT;
     *brpts = obj -> midInterval (x0, l, u, info);
 
-    return CoinMin (brDist [1] = y0 - safe_pow (*brpts, 1. / k), 
-		    brDist [0] = projectSeg (x0, y0, l, safe_pow (l, k), 
+    return CoinMin (brDist [1] = y0 - safe_pow (*brpts, 1. / k),
+		    brDist [0] = projectSeg (x0, y0, l, safe_pow (l, k),
 					     *brpts, safe_pow (*brpts, k), +1)); // distance is exact
   }
 
@@ -226,10 +226,10 @@ CouNumber negPowSelectBranch (const CouenneObject *obj,
 /// set up branching object by evaluating many branching points for
 /// each expression's arguments
 
-CouNumber exprInv::selectBranch (const CouenneObject *obj, 
+CouNumber exprInv::selectBranch (const CouenneObject *obj,
 				 const OsiBranchingInformation *info,
 				 expression *&var,
-				 double * &brpts, 
+				 double * &brpts,
 				 double * &brDist, // distance of current LP
 						   // point to new convexifications
 				 int &way) {

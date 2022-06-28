@@ -31,13 +31,13 @@ class COUENNELIB_EXPORT exprPow: public exprOp {
 
  private:
 
-  /// do we mean a signed power function: sign(arg0) * |arg0|^arg1 (assumes that arg1 is constant) 
+  /// do we mean a signed power function: sign(arg0) * |arg0|^arg1 (assumes that arg1 is constant)
   bool issignpower_;
 
  public:
 
   /// Constructor
-  exprPow (expression **al, int n = 2, bool signpower = false): 
+  exprPow (expression **al, int n = 2, bool signpower = false):
     exprOp (al, n), issignpower_ (signpower) {} //< non-leaf expression, with argument list
 
   /// Constructor with only two arguments
@@ -63,7 +63,7 @@ class COUENNELIB_EXPORT exprPow: public exprOp {
   virtual CouNumber gradientNorm (const double *x);
 
   /// differentiation
-  virtual expression *differentiate (int index); 
+  virtual expression *differentiate (int index);
 
   /// simplification
   virtual expression *simplify ();
@@ -85,19 +85,19 @@ class COUENNELIB_EXPORT exprPow: public exprOp {
   virtual exprAux *standardize (CouenneProblem *p, bool addAux = true);
 
   /// generate equality between *this and *w
-  virtual void generateCuts (expression *w, //const OsiSolverInterface &si, 
-			     OsiCuts &cs, const CouenneCutGenerator *cg, 
-			     t_chg_bounds * = NULL, int = -1, 
-			     CouNumber = -COUENNE_INFINITY, 
+  virtual void generateCuts (expression *w, //const OsiSolverInterface &si,
+			     OsiCuts &cs, const CouenneCutGenerator *cg,
+			     t_chg_bounds * = NULL, int = -1,
+			     CouNumber = -COUENNE_INFINITY,
 			     CouNumber =  COUENNE_INFINITY);
 
   /// return an index to the variable's argument that is better fixed
   /// in a branching rule for solving a nonconvexity gap
-  virtual expression *getFixVar () 
+  virtual expression *getFixVar ()
   {return arglist_ [0];}
 
   /// code for comparison
-  virtual enum expr_type code () 
+  virtual enum expr_type code ()
   {return (issignpower_ ? COU_EXPRSIGNPOW : COU_EXPRPOW);}
 
   /// implied bound processing
@@ -105,17 +105,17 @@ class COUENNELIB_EXPORT exprPow: public exprOp {
 
   /// set up branching object by evaluating many branching points for
   /// each expression's arguments
-  virtual CouNumber selectBranch (const CouenneObject *obj, 
+  virtual CouNumber selectBranch (const CouenneObject *obj,
 				  const OsiBranchingInformation *info,
-				  expression * &var, 
-				  double * &brpts, 
+				  expression * &var,
+				  double * &brpts,
  				  double * &brDist, // distance of current LP
 					  	    // point to new convexifications
 				  int &way);
 
   /// compute $y^{lv}$ and $y^{uv}$ for Violation Transfer algorithm
   virtual void closestFeasible (expression *varind,
-				expression *vardep, 
+				expression *vardep,
 				CouNumber &left,
 				CouNumber &right) const;
 
@@ -123,17 +123,17 @@ class COUENNELIB_EXPORT exprPow: public exprOp {
   /// concave ("bad") side
   virtual bool isCuttable (CouenneProblem *problem, int index) const;
 
-  /// return whether this expression corresponds to a signed integer power 
-  virtual bool isSignpower () const { return issignpower_; } 
+  /// return whether this expression corresponds to a signed integer power
+  virtual bool isSignpower () const { return issignpower_; }
 };
 
 
 /// compute power and check for integer-and-odd inverse exponent
 
-inline CouNumber safe_pow (CouNumber base, 
+inline CouNumber safe_pow (CouNumber base,
 			   CouNumber exponent, bool signpower = false) {
 
-  double 
+  double
     lbase     = base,
     lexponent = exponent,
     retval    = 0.;
@@ -143,7 +143,7 @@ inline CouNumber safe_pow (CouNumber base,
     int rndexp = COUENNE_round (lexponent);
 
     if (((fabs (lexponent - rndexp) < COUENNE_EPS) ||
-	 ((fabs (lexponent) > COUENNE_EPS) && 
+	 ((fabs (lexponent) > COUENNE_EPS) &&
 	  (fabs (1. / lexponent - (rndexp = COUENNE_round (1. / lexponent))) < COUENNE_EPS)))) {
       if ((rndexp % 2) || signpower)
 	retval = (- pow (- lbase, lexponent)); // x^k, x negative, k odd  or signed power

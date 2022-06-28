@@ -63,23 +63,23 @@ public:
     color_   (DEP_WHITE) {}
 
   /// destructor
-  ~DepNode () 
+  ~DepNode ()
   {if (depList_) delete depList_;}
 
   /// return index of this variable
-  inline int Index () const 
+  inline int Index () const
   {return index_;}
 
   /// return index of this variable
-  inline int Order () const 
+  inline int Order () const
   {return order_;}
 
   /// return all variables it depends on
-  inline std::set <DepNode *, compNode> *DepList () const 
+  inline std::set <DepNode *, compNode> *DepList () const
   {return depList_;}
 
   /// does this variable depend on variable with index xi?
-  bool depends (int xi, bool = false, 
+  bool depends (int xi, bool = false,
 		std::set <DepNode *, compNode> *already_visited = NULL) const;
 
   /// assign numbering to all nodes of graph
@@ -89,7 +89,7 @@ public:
   void print (int = 0, bool descend = false) const;
 
   /// return or set color of a node
-  enum dep_color &color () 
+  enum dep_color &color ()
   {return color_;}
 
   /// index nodes on which this one depends (forward star in
@@ -130,16 +130,16 @@ public:
   /// destructor
   ~DepGraph () {
     for (std::set <DepNode *, compNode>::iterator i = vertices_.begin ();
-	 i != vertices_.end (); ++i) 
+	 i != vertices_.end (); ++i)
       delete (*i);
   }
 
   /// return vertex set
-  std::set <DepNode *, compNode> &Vertices () 
+  std::set <DepNode *, compNode> &Vertices ()
   {return vertices_;}
 
   /// node index counter
-  inline int &Counter () 
+  inline int &Counter ()
   {return counter_;}
 
   /// insert new variable if new

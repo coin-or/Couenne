@@ -39,7 +39,7 @@ void exprOpp::getBounds (CouNumber &lb, CouNumber &ub) {
 
 
 // differentiation
-inline expression *exprOpp::differentiate (int index) 
+inline expression *exprOpp::differentiate (int index)
 {return new exprOpp (argument_ -> differentiate (index));}
 
 
@@ -49,21 +49,21 @@ bool exprOpp::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   int ind = argument_ -> Index ();
 
-  bool 
-    res    = false, 
+  bool
+    res    = false,
     argInt = argument_ -> isInteger ();
 
-  CouNumber 
+  CouNumber
     wl = sign == expression::AUX_GEQ ? -COIN_DBL_MAX : l [wind],
     wu = sign == expression::AUX_LEQ ?  COIN_DBL_MAX : u [wind];
 
   if (updateBound (-1, l + ind, argInt ? ceil  (- wu - COUENNE_EPS) : - wu)) {
-    res = true; 
+    res = true;
     chg [ind].setLower(t_chg_bounds::CHANGED);
   }
 
   if (updateBound ( 1, u + ind, argInt ? floor (- wl + COUENNE_EPS) : - wl)) {
-    res = true; 
+    res = true;
     chg [ind].setUpper(t_chg_bounds::CHANGED);
   }
 
@@ -103,13 +103,13 @@ expression *exprOpp::simplify () {
   return NULL;
 }
 
-// print 
-void exprOpp::print (std::ostream &out, 
+// print
+void exprOpp::print (std::ostream &out,
 		       bool descend) const {
 
   //if (printPos () == PRE)  out << printOp ();
-  out << "(-"; 
-  argument_ -> print (out, descend); 
+  out << "(-";
+  argument_ -> print (out, descend);
   out << ")";
   //if (printPos () == POST) out << printOp ();
 }

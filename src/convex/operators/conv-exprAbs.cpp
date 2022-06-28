@@ -20,9 +20,9 @@ using namespace Couenne;
 
 // generate convexification cut for constraint w = |x|
 
-void exprAbs::generateCuts (expression *w, 
-			    OsiCuts &cs, const CouenneCutGenerator *cg, 
-			    t_chg_bounds *chg, int wind, 
+void exprAbs::generateCuts (expression *w,
+			    OsiCuts &cs, const CouenneCutGenerator *cg,
+			    t_chg_bounds *chg, int wind,
 			    CouNumber lbw, CouNumber ubw) {
 
   int w_ind = w         -> Index (),
@@ -62,7 +62,7 @@ void exprAbs::generateCuts (expression *w,
 	  CouNumber slope = (u+l) / (u-l); // should be stable, l < 0 < u
 
 	  // add an upper segment, which depends on the lower/upper bounds
-	  if (cLeft || cRight) 
+	  if (cLeft || cRight)
 	    cg -> createCut (cs, -l*(slope+1.), -1, w_ind, 1., x_ind, -slope);
 	}
 	else // slope = 1

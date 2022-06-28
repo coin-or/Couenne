@@ -3,7 +3,7 @@
  * Name:    TwoImpliedCombine.cpp
  * Author:  Pietro Belotti
  * Purpose: Bound reduction using two inequalities from the LP relaxation
- * 
+ *
  * (C) Pietro Belotti, 2010.
  * This file is licensed under the Eclipse Public License (EPL)
  */
@@ -39,14 +39,14 @@ typedef struct {
 
 // compare two threshold values ///////////////////////////////////
 
-int compthres (const void *t1, 
+int compthres (const void *t1,
 	       const void *t2) {
 
   double
     a1 = (*(threshold **) t1) -> alpha,
     a2 = (*(threshold **) t2) -> alpha;
 
-  return ((a1 < a2) ? -1 : 
+  return ((a1 < a2) ? -1 :
 	  (a1 > a2) ?  1 : 0);
 }
 
@@ -60,14 +60,14 @@ struct indPosPair {
 
 // compare two pairs (index,value) ///////////////////////////////////
 
-int compPair (const void *p1, 
+int compPair (const void *p1,
 	      const void *p2) {
 
   int
     i1 = ((struct indPosPair *) p1) -> index,
     i2 = ((struct indPosPair *) p2) -> index;
 
-  return ((i1 < i2) ? -1 : 
+  return ((i1 < i2) ? -1 :
 	  (i1 > i2) ?  1 : 0);
 }
 
@@ -78,19 +78,19 @@ int compPair (const void *p1,
 //
 
 int combine (CouenneProblem *p,
-	     int n1, 
-	     int n2, 
+	     int n1,
+	     int n2,
 	     const int *ind1c, // indices
-	     const int *ind2c, 
-	     double *sa1, // coeff (sparse array) 
+	     const int *ind2c,
+	     double *sa1, // coeff (sparse array)
 	     double *sa2, // DO NOT INVERT (already done at caller)
 	     const double *a1c,  // coeff
-	     const double *a2c, 
+	     const double *a2c,
 	     double *clb, // variable bounds
 	     double *cub,
 	     double l1, // constraint bounds
-	     double l2,  
-	     double u1, 
+	     double l2,
+	     double u1,
 	     double u2,
 	     bool *isInteger,
 	     int sign) { // invert second constraint? -1: yes, +1: no
@@ -98,15 +98,15 @@ int combine (CouenneProblem *p,
   // first, sort ind1/a1 and ind2/a2 w.r.t. indices. They may not be
   // sorted and this messes up the while loop below.
 
-  int 
+  int
     *ind1 = new int [n1],
     *ind2 = new int [n2];
 
-  double 
+  double
     *a1 = new double [n1],
     *a2 = new double [n2];
 
-  CouNumber 
+  CouNumber
     *Lb = p -> Lb (),
     *Ub = p -> Ub ();
 
@@ -177,9 +177,9 @@ int combine (CouenneProblem *p,
     **inalphas = new threshold* [n1 + n2], // points to those in [0,1[ (will be sorted)
      *curalpha = alphas;
 
-  int 
-    i1    = 0, 
-    i2    = 0, 
+  int
+    i1    = 0,
+    i2    = 0,
     cnt   = 0,
     incnt = 0;
 
@@ -211,20 +211,20 @@ int combine (CouenneProblem *p,
 
       double a2i2 = signA * a2 [i2];
 
-      curalpha -> alpha = 
-	(a1 [i1] == a2i2) ? 
-	-1. : 
+      curalpha -> alpha =
+	(a1 [i1] == a2i2) ?
+	-1. :
 	- a2i2 / (a1 [i1] - a2i2);
 
-      if (curalpha -> alpha <= 0. || 
+      if (curalpha -> alpha <= 0. ||
 	  curalpha -> alpha >= 1.)
 
 	curalpha -> sign = (a1 [i1] > 0.) ? POS : NEG;
 
-      else 
+      else
 
-	curalpha -> sign = 
-	  (a1 [i1] == a2i2) ? 
+	curalpha -> sign =
+	  (a1 [i1] == a2i2) ?
 	  ((a1 [i1] < 0.) ? NEG : POS) :
 	  ((a1 [i1] < 0.) ? DN  : UP);
 
@@ -240,9 +240,9 @@ int combine (CouenneProblem *p,
     }
 
 #ifdef DEBUG
-    printf ("(%d,%g,%s) ", 
-    	    curalpha -> indVar, 
-    	    curalpha -> alpha, 
+    printf ("(%d,%g,%s) ",
+    	    curalpha -> indVar,
+    	    curalpha -> alpha,
     	    (curalpha -> sign == NEG) ? "NEG" :
 	    (curalpha -> sign == POS) ? "POS" :
 	    (curalpha -> sign == DN)  ? "DN"  : "UP");
@@ -286,12 +286,12 @@ int combine (CouenneProblem *p,
 #ifdef DEBUG
   printf ("--sorted: ");
   for (int i = 0; i < incnt; i++)
-    printf ("(%d,%g,%s) ", 
-	    inalphas [i] -> indVar, 
-	    inalphas [i] -> alpha, 
+    printf ("(%d,%g,%s) ",
+	    inalphas [i] -> indVar,
+	    inalphas [i] -> alpha,
 	    (inalphas [i] -> sign == NEG) ? "NEG" :
 	    (inalphas [i] -> sign == POS) ? "POS" :
-	    (inalphas [i] -> sign == DN)  ? "DN"  : "UP");    
+	    (inalphas [i] -> sign == DN)  ? "DN"  : "UP");
   printf ("\n");
 #endif
 
@@ -317,11 +317,11 @@ int combine (CouenneProblem *p,
   //
   // and a* is a1 or a2 depending on the equation.
 
-  double 
+  double
     minSum1 = 0., minSum2 = 0.,
     maxSum1 = 0., maxSum2 = 0.;
 
-  int 
+  int
     mInfs = 0, // number of -inf summed to minSum 1 and 2 (both)
     pInfs = 0; //           +inf           maxSum
 
@@ -335,7 +335,7 @@ int combine (CouenneProblem *p,
 
     int indVar1 = ind1 [i];
 
-    double 
+    double
       a1i  = a1  [i],
       a2i  = sa2 [indVar1],
       clb1 = clb [indVar1],
@@ -358,9 +358,9 @@ int combine (CouenneProblem *p,
 
       if (cub1 >   COUENNE_INFINITY/10) {if (zeroA) mInfs ++;} else minSum1 += a1i * cub1;
       if (clb1 < - COUENNE_INFINITY/10) {if (zeroA) pInfs ++;} else maxSum1 += a1i * clb1;
-				                                                         
-    } else if (a2i > 0.) {	                                                         
-				                                                         
+				
+    } else if (a2i > 0.) {	
+				
       bool zeroA = (fabs (sa2 [indVar1]) == 0.);
 
       if (clb1 < - COUENNE_INFINITY/10) {if (zeroA) mInfs ++;} else minSum1 += a1i * clb1;
@@ -374,7 +374,7 @@ int combine (CouenneProblem *p,
 
     int indVar2 = ind2 [i];
 
-    double 
+    double
       a2i  = a2  [i] * signA,
       clb2 = clb [indVar2],
       cub2 = cub [indVar2];
@@ -399,7 +399,7 @@ int combine (CouenneProblem *p,
 
 #ifdef DEBUG
   printf ("  at alpha=zero, m[in,ax]sum[12] = (1:(%g,%g), 2:(%g,%g)), %d mInf, %d pInf\n",
-	  minSum1, maxSum1, 
+	  minSum1, maxSum1,
 	  minSum2, maxSum2,
 	  mInfs, pInfs);
 #endif
@@ -408,7 +408,7 @@ int combine (CouenneProblem *p,
 
   // for all variables x[i], look for tighter lower/upper bounds on x[i]
 
-  std::vector <std::pair <int, double> > 
+  std::vector <std::pair <int, double> >
     newLB, // pairs (indVar, value) of new bounds
     newUB;
 
@@ -427,11 +427,11 @@ int combine (CouenneProblem *p,
 
 #ifdef DEBUG
     printf ("  looking at %d: (%d,%g,%s)\n", i,
-	    inalphas [i] -> indVar, 
-	    inalphas [i] -> alpha, 
+	    inalphas [i] -> indVar,
+	    inalphas [i] -> alpha,
 	    (inalphas [i] -> sign == NEG) ? "NEG" :
 	    (inalphas [i] -> sign == POS) ? "POS" :
-	    (inalphas [i] -> sign == DN)  ? "DN"  : "UP"); 
+	    (inalphas [i] -> sign == DN)  ? "DN"  : "UP");
 
     fflush (stdout);
 #endif
@@ -466,12 +466,12 @@ int combine (CouenneProblem *p,
 
 	if (clbi < - COUENNE_INFINITY/10) {
 
-	  if (signalpha == DN) {pInfs++; mInfs--;} 
+	  if (signalpha == DN) {pInfs++; mInfs--;}
 	  else                 {pInfs--; mInfs++;} // sign is UP
 
 	} else {
 
-	  double 
+	  double
 	    sa1ic = sa1 [indVar] * clbi,
 	    sa2ic = sa2 [indVar] * clbi;
 
@@ -494,12 +494,12 @@ int combine (CouenneProblem *p,
 
 	if (cubi >   COUENNE_INFINITY/10) {
 
-	  if (signalpha == DN) {pInfs--; mInfs++;} 
+	  if (signalpha == DN) {pInfs--; mInfs++;}
 	  else                 {pInfs++; mInfs--;} // sign is UP
 
 	} else {
 
-	  double 
+	  double
 	    sa1ic = sa1 [indVar] * cubi,
 	    sa2ic = sa2 [indVar] * cubi;
 
@@ -516,7 +516,7 @@ int combine (CouenneProblem *p,
 	}
       }
 
-      if ((i < incnt-1) && 
+      if ((i < incnt-1) &&
 	  (inalphas [i+1] -> alpha == alpha)) ++i;
       else break;
     }
@@ -524,7 +524,7 @@ int combine (CouenneProblem *p,
 #ifdef DEBUG
     printf ("  at alpha=%g, m[in,ax]sum[12] = (1:(%g,%g), 2:(%g,%g)), %d mInf, %d pInf\n",
 	    inalphas [i] -> alpha,
-	    minSum1, maxSum1, 
+	    minSum1, maxSum1,
 	    minSum2, maxSum2,
 	    mInfs, pInfs);
 #endif
@@ -537,13 +537,13 @@ int combine (CouenneProblem *p,
 
       // scan all nonzeros, those on one side and those on both
       // sides. This has already been scanned.
-      if (j >= n1 && sa1 [ind2 [j - n1]] != 0.) 
-	continue; 
+      if (j >= n1 && sa1 [ind2 [j - n1]] != 0.)
+	continue;
 
       int
 	indVar = ((j < n1) ? ind1 [j] : ind2 [j - n1]),
 	tickMin = 0, // one if subtracting this term removes one infinity from minSum
-	tickMax = 0; //                                                        max   
+	tickMax = 0; //                                                        max
 
       double
 	sa1i = sa1 [indVar],
@@ -567,7 +567,7 @@ int combine (CouenneProblem *p,
 	subMax1 = 0., subMax2 = 0.;
 
 #ifdef DEBUG
-      printf ("  now tightening x%d\n    denominator: %g * %g + %g * %g = %g\n", 
+      printf ("  now tightening x%d\n    denominator: %g * %g + %g * %g = %g\n",
 	      (j < n1) ? ind1 [j] : ind2 [j-n1],
 	      alpha, sa1i, 1-alpha, sa2i, ci);
 #endif
@@ -582,15 +582,15 @@ int combine (CouenneProblem *p,
 	// whether it goes towards max- or min- Sum? depends on each
 	// coefficient
 
-	if (ci > 0.) tickMin++; 
+	if (ci > 0.) tickMin++;
 	else         tickMax++;
 
       } else {
 
 	if (ci > 0.) {
 
-	  subMin1 = sa1i * clbi; 
-	  subMin2 = sa2i * clbi; 
+	  subMin1 = sa1i * clbi;
+	  subMin2 = sa2i * clbi;
 
 	} else {
 
@@ -605,15 +605,15 @@ int combine (CouenneProblem *p,
 	// whether it goes towards max- or min- Sum?A it depends on
 	// each coefficient
 
-	if (ci > 0.) tickMax++; 
+	if (ci > 0.) tickMax++;
 	else         tickMin++;
 
       } else {
 
 	if (ci > 0.) {
 
-	  subMax1 = sa1i * cubi; 
-	  subMax2 = sa2i * cubi; 
+	  subMax1 = sa1i * cubi;
+	  subMax2 = sa2i * cubi;
 
 	} else {
 
@@ -626,7 +626,7 @@ int combine (CouenneProblem *p,
 
       } else {
 
-	if ((l1 > -COUENNE_INFINITY/10) && 
+	if ((l1 > -COUENNE_INFINITY/10) &&
 	    (l2 > -COUENNE_INFINITY/10) &&
 	    (pInfs == tickMax)) {
 
@@ -640,7 +640,7 @@ attempting newL = ((l1 - l2 - (maxSum1 - maxSum2) + (subMax1 - subMax2)) * alpha
 #endif
 	}
 
-	if ((u1 <  COUENNE_INFINITY/10) && 
+	if ((u1 <  COUENNE_INFINITY/10) &&
 	    (u2 <  COUENNE_INFINITY/10) &&
 	    (mInfs == tickMin)) {
 
@@ -674,7 +674,7 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
       printf ("    bounds for x_%d: [%g,%g] vs [%g,%g]\n", indVar, newL, newU, clb [indVar], cub [indVar]);
 #endif
 
-      if ((newL > cubi + COUENNE_EPS) || 
+      if ((newL > cubi + COUENNE_EPS) ||
 	  (newU < clbi - COUENNE_EPS)) {
 
 	delete [] inalphas;
@@ -698,12 +698,12 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 	printf ("optimum violated: %g not in [%g,%g]\n", p -> bestSol () [indVar], newL, newU);
 #endif
 
-      double 
+      double
 	&lbi = Lb [indVar],
 	&ubi = Ub [indVar];
 
       if ((newL > lbi + COUENNE_EPS) && (newL > -COUENNE_INFINITY / 10)) {
-		   
+		
 	ntightened++;
 	lbi = newL;
 	newLB. push_back (std::pair <int, double> (indVar, newL));
@@ -734,7 +734,7 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 
     if (isInteger [i -> first]) i -> second = ceil (i -> second - COUENNE_EPS);
 
-    if (i -> second > clb [i -> first]) 
+    if (i -> second > clb [i -> first])
       Lb [i -> first] = clb [i -> first] = i -> second;
   }
 
@@ -742,7 +742,7 @@ attempting newU = ((u1 - u2 - (minSum1 - minSum2) + (subMin1 - subMin2)) * alpha
 
     if (isInteger [i -> first]) i -> second = floor (i -> second + COUENNE_EPS);
 
-    if (i -> second < cub [i -> first]) 
+    if (i -> second < cub [i -> first])
       Ub [i -> first] = cub [i -> first] = i -> second;
   }
 

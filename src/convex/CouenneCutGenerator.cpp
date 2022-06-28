@@ -2,7 +2,7 @@
  *
  * Name:    CouenneCutGenerator.cpp
  * Author:  Pietro Belotti
- * Purpose: define a class of convexification procedures 
+ * Purpose: define a class of convexification procedures
  *
  * (C) Carnegie-Mellon University, 2006-09.
  * This file is licensed under the Eclipse Public License (EPL)
@@ -30,7 +30,7 @@ CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
 					  struct ASL *asl):
 
   CglCutGenerator (),
-  
+
   firstcall_      (true),
   problem_        (problem),
   nrootcuts_      (0),
@@ -54,10 +54,10 @@ CouenneCutGenerator::CouenneCutGenerator (Bonmin::OsiTMINLPInterface *nlp,
     else if (s == "uniform-grid")       convtype_ = UNIFORM_GRID;
     else                                convtype_ = AROUND_CURPOINT;
 
-    base -> options () -> GetStringValue ("violated_cuts_only", s, "couenne."); 
+    base -> options () -> GetStringValue ("violated_cuts_only", s, "couenne.");
     addviolated_ = (s == "yes");
 
-    base -> options () -> GetStringValue ("check_lp", s, "couenne."); 
+    base -> options () -> GetStringValue ("check_lp", s, "couenne.");
     check_lp_ = (s == "yes");
 
     base -> options () -> GetStringValue ("enable_lp_implied_bounds", s, "couenne.");
@@ -90,8 +90,8 @@ CouenneCutGenerator::CouenneCutGenerator (const CouenneCutGenerator &src):
   CglCutGenerator (src),
 
   firstcall_   (src. firstcall_),
-  addviolated_ (src. addviolated_), 
-  convtype_    (src. convtype_), 
+  addviolated_ (src. addviolated_),
+  convtype_    (src. convtype_),
   nSamples_    (src. nSamples_),
   problem_     (src. problem_),// -> clone ()),
   nrootcuts_   (src. nrootcuts_),
@@ -112,9 +112,9 @@ CouenneCutGenerator::CouenneCutGenerator (const CouenneCutGenerator &src):
 #define MAX_SLOPE 1e3
 
 /// add half-space through two points (x1,y1) and (x2,y2)
-int CouenneCutGenerator::addSegment (OsiCuts &cs, int wi, int xi, 
-				     CouNumber x1, CouNumber y1, 
-				     CouNumber x2, CouNumber y2, int sign) const { 
+int CouenneCutGenerator::addSegment (OsiCuts &cs, int wi, int xi,
+				     CouNumber x1, CouNumber y1,
+				     CouNumber x2, CouNumber y2, int sign) const {
 
   if (fabs (x2-x1) < COUENNE_EPS) {
     if (fabs (y2-y1) > MAX_SLOPE * COUENNE_EPS)
@@ -131,15 +131,15 @@ int CouenneCutGenerator::addSegment (OsiCuts &cs, int wi, int xi,
 
 
 /// add tangent at (x,w) with given slope
-int CouenneCutGenerator::addTangent (OsiCuts &cs, int wi, int xi, 
-				     CouNumber x, CouNumber w, 
+int CouenneCutGenerator::addTangent (OsiCuts &cs, int wi, int xi,
+				     CouNumber x, CouNumber w,
 				     CouNumber slope, int sign) const
   {return createCut (cs, w - slope * x, sign, wi, 1., xi, - slope);}
 
 
 /// total number of variables (original + auxiliary) of the problem
 int CouenneCutGenerator::getnvars () const
-  {return problem_ -> nVars ();} 
+  {return problem_ -> nVars ();}
 
 
 /// Add list of options to be read from file
@@ -170,7 +170,7 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
      "For the lower envelopes of convex functions, this is the number of points where a supporting hyperplane is generated. "
      "This only holds for the initial linearization, as all other linearizations only add at most one cut per expression."
     );
-    
+
   roptions -> AddLowerBoundedIntegerOption
     ("convexification_points",
      "Specify the number of points at which to convexify when convexification type "
@@ -178,14 +178,14 @@ void CouenneCutGenerator::registerOptions (Ipopt::SmartPtr <Bonmin::RegisteredOp
      0,4,
      "");
 
-  roptions -> AddStringOption2 
+  roptions -> AddStringOption2
     ("violated_cuts_only",
      "Yes if only violated convexification cuts should be added",
      "yes",
      "no","",
      "yes","");
 
-  roptions -> AddStringOption2 
+  roptions -> AddStringOption2
     ("enable_lp_implied_bounds",
      "Enable OsiSolverInterface::tightenBounds () -- warning: it has caused "
      "some trouble to Couenne",
@@ -215,12 +215,12 @@ void CouenneCutGenerator::printLineInfo() const {
   CouenneRecordBestSol *rs = problem_->getRecordBestSol();
 
   if(rs->getHasSol()) {
-    double bestSolVal = rs->getVal(); 
-    printf("%10d  %8d  %6d  %10.6f  %10.6f  %10.6f\n", 
+    double bestSolVal = rs->getVal();
+    printf("%10d  %8d  %6d  %10.6f  %10.6f  %10.6f\n",
 	   nbNodes, nbNodesRem, depth, cbcLb, lpVal, bestSolVal);
   }
   else {
-    printf("%10d  %8d  %6d  %10.6f  %10.6f   ----------\n", 
+    printf("%10d  %8d  %6d  %10.6f  %10.6f   ----------\n",
 	   nbNodes, nbNodesRem, depth, cbcLb, lpVal);
   }
   problem_->doPrint_ = true;

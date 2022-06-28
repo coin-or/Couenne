@@ -25,7 +25,7 @@ using namespace Couenne;
 #define TOL 0.
 
 /// fix integer coordinates of current integer feasible solution
-double CouenneObject::feasibleRegion (OsiSolverInterface *solver, 
+double CouenneObject::feasibleRegion (OsiSolverInterface *solver,
 				      const OsiBranchingInformation *info) const {
   int index = reference_ -> Index ();
 
@@ -77,8 +77,8 @@ double CouenneObject::feasibleRegion (OsiSolverInterface *solver,
   if ((expr -> code () == COU_EXPRGROUP) ||
       (expr -> code () == COU_EXPRQUAD)) {
 
-    exprGroup *e = dynamic_cast <exprGroup *> (expr -> isaCopy () ? 
-					       expr -> Copy () : 
+    exprGroup *e = dynamic_cast <exprGroup *> (expr -> isaCopy () ?
+					       expr -> Copy () :
 					       expr);
 
     exprGroup::lincoeff &lcoe = e -> lcoeff ();
@@ -93,13 +93,13 @@ double CouenneObject::feasibleRegion (OsiSolverInterface *solver,
     // take care of quadratic terms
     if (expr -> code () == COU_EXPRQUAD) {
 
-      exprQuad *e = dynamic_cast <exprQuad *> (expr -> isaCopy () ? 
-					       expr -> Copy () : 
+      exprQuad *e = dynamic_cast <exprQuad *> (expr -> isaCopy () ?
+					       expr -> Copy () :
 					       expr);
 
       exprQuad::sparseQ q = e -> getQ ();
 
-      for (exprQuad::sparseQ::iterator row = q.begin (); 
+      for (exprQuad::sparseQ::iterator row = q.begin ();
 	   row != q.end (); ++row) {
 
 	int xind = row -> first -> Index ();

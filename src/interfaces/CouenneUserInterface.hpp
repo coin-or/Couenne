@@ -27,7 +27,7 @@ class CouenneProblem;
 class CouenneBaB;
 
 /* abstract base class of an interface for Couenne users
- */ 
+ */
 class CouenneUserInterface {
 protected:
 	Ipopt::SmartPtr<Ipopt::OptionsList> options;
@@ -58,7 +58,7 @@ public:
 	 */
 	virtual Ipopt::SmartPtr<Bonmin::TMINLP> getTMINLP() = 0;
 	
-	/** Called after B&B object is setup. 
+	/** Called after B&B object is setup.
 	 * User should add plugins like cut generators, bound tighteners, or heuristics here.
 	 */
   virtual bool addBabPlugins(Bonmin::Bab& bab) {

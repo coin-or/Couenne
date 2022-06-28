@@ -31,7 +31,7 @@ void cleanZeros (std::vector <std::pair <exprVar *, CouNumber> > &lcoeff) {
 
   int    ind  = 0;
   size_t size = lcoeff.size ();
-  
+
   while (size-- > 0) {
     if (i -> second ==  0.) { // or equivalently, i -> second == -0.
       lcoeff.erase (i);
@@ -48,8 +48,8 @@ void cleanZeros (std::vector <std::pair <exprVar *, CouNumber> > &lcoeff) {
 /// Generalized (static) constructor: check parameters and return a
 /// constant, a single variable, or a real exprGroup
 expression *exprGroup::genExprGroup (CouNumber c0,
-				     std::vector <std::pair <exprVar *, CouNumber> > &lcoeff, 
-				     expression **al, 
+				     std::vector <std::pair <exprVar *, CouNumber> > &lcoeff,
+				     expression **al,
 				     int n) {
   size_t nl = lcoeff.size ();
   expression *ret = NULL;
@@ -65,7 +65,7 @@ expression *exprGroup::genExprGroup (CouNumber c0,
     if (fabs (lcoeff[0]. second - 1) < COUENNE_EPS)
       ret    = new exprClone (lcoeff[0]. first);
     else ret = new exprMul (new exprConst (lcoeff[0]. second), new exprClone (lcoeff[0]. first));
-    
+
   } else ret = new exprGroup (c0, lcoeff, al, n);
 
   return ret;
@@ -74,8 +74,8 @@ expression *exprGroup::genExprGroup (CouNumber c0,
 
 /// Constructor
 exprGroup::exprGroup (CouNumber c0,
-		      std::vector <std::pair <exprVar *, CouNumber> > &lcoeff, 
-		      expression **al, 
+		      std::vector <std::pair <exprVar *, CouNumber> > &lcoeff,
+		      expression **al,
 		      int n):
   exprSum  (al, n),
   lcoeff_  (lcoeff),
@@ -86,24 +86,24 @@ exprGroup::exprGroup (CouNumber c0,
 
 
 /// copy constructor
-exprGroup::exprGroup  (const exprGroup &src, Domain *d): 
+exprGroup::exprGroup  (const exprGroup &src, Domain *d):
   exprSum   (src.clonearglist (d), src.nargs_),
   c0_       (src.c0_) {
 
   for (lincoeff::iterator i = src.lcoeff_.begin (); i != src.lcoeff_.end (); ++i)
 
-    lcoeff_ . push_back (std::pair <exprVar *, CouNumber> 
+    lcoeff_ . push_back (std::pair <exprVar *, CouNumber>
 			 //(dynamic_cast <exprVar *> (i -> first -> clone (d)), i -> second));
 			 (new exprVar (i -> first -> Index (), d), i -> second));
 }
 
 
-/// Destructor -- check if there are exprBounds and delete them 
+/// Destructor -- check if there are exprBounds and delete them
 exprGroup::~exprGroup () {
 
   for (lincoeff::iterator i = lcoeff_.begin (); i != lcoeff_.end (); ++i) {
     enum expr_type code = i -> first -> code ();
-    if ((code == COU_EXPRLBOUND) || 
+    if ((code == COU_EXPRLBOUND) ||
 	(code == COU_EXPRUBOUND))
       delete i -> first;
   }
@@ -116,11 +116,11 @@ void exprGroup::print (std::ostream &out, bool descend) const {
   //if (code () == COU_EXPRGROUP)
   if (lcoeff_.size () > 0)
     out << '(';
-  
+
   bool nzNL = nargs_ && ((nargs_ > 1) ||
 			 ((*arglist_) -> Type () != CONST) ||
 			 (fabs ((*arglist_) -> Value ()) > COUENNE_EPS));
-    
+
   if (nzNL)
     exprSum::print (out, descend);
 
@@ -161,7 +161,7 @@ expression *exprGroup::differentiate (int index) {
   if (fabs (totlin) > COUENNE_EPS)
     arglist [nargs++] = new exprConst (totlin);
 
-  for (int i = 0; i < nargs_; i++) 
+  for (int i = 0; i < nargs_; i++)
     if (arglist_ [i] -> dependsOn (&index, 1))
       arglist [nargs++] = arglist_ [i] -> differentiate (index);
 
@@ -177,10 +177,10 @@ expression *exprGroup::differentiate (int index) {
 /// get a measure of "how linear" the expression is:
 int exprGroup::Linearity () {
 
-  int 
+  int
     nllin = exprSum::Linearity (),    // linearity of nonlinear part
     llin  = (lcoeff_.size () == 0) ?  //              linear part
-    ((fabs (c0_) < COUENNE_EPS) ? ZERO : CONSTANT) : 
+    ((fabs (c0_) < COUENNE_EPS) ? ZERO : CONSTANT) :
     LINEAR;
 
   return (llin > nllin) ? llin : nllin;
@@ -194,7 +194,7 @@ int exprGroup::compare (exprGroup &e) {
 
   //int sum = exprSum::compare (e);
 
-  //if (sum != 0) 
+  //if (sum != 0)
   //return sum;
 
   if (c0_ < e.c0_ - COUENNE_EPS) return -1;
@@ -203,17 +203,17 @@ int exprGroup::compare (exprGroup &e) {
   if (lcoeff_.size () < e.lcoeff_.size ()) return -1;
   if (lcoeff_.size () > e.lcoeff_.size ()) return  1;
 
-  for (lincoeff::iterator 
+  for (lincoeff::iterator
 	 el1 =   lcoeff_.begin (),
 	 el2 = e.lcoeff_.begin ();
-       el1 != lcoeff_.end (); 
+       el1 != lcoeff_.end ();
        ++el1, ++el2) {
 
-    int 
+    int
       ind1 = el1 -> first -> Index (),
       ind2 = el2 -> first -> Index ();
 
-    CouNumber 
+    CouNumber
       coe1 = el1 -> second,
       coe2 = el2 -> second;
 
@@ -234,7 +234,7 @@ int exprGroup::rank () {
 
   int maxrank = exprOp::rank ();
 
-  if (maxrank < 0) 
+  if (maxrank < 0)
     maxrank = 0;
 
   for (lincoeff::iterator el = lcoeff_.begin (); el != lcoeff_.end (); ++el) {
@@ -267,7 +267,7 @@ int exprGroup::DepList (std::set <int> &deplist,
 
   for (lincoeff::iterator el = lcoeff_.begin (); el != lcoeff_.end (); ++el) {
 
-    /*printf ("before ["); 
+    /*printf ("before [");
     el -> first -> print ();
     printf ("]: {");
     for (std::set <int>::iterator i=deplist.begin (); i != deplist.end(); ++i)
@@ -303,14 +303,14 @@ bool exprGroup::isInteger () {
     if (intCoe && intVar)
       continue;
 
-    CouNumber 
-      lb = el -> first -> lb (), 
+    CouNumber
+      lb = el -> first -> lb (),
       ub = el -> first -> ub ();
 
     // check var fixed and product is integer
     if ((fabs (lb - ub) < COUENNE_EPS) &&
 	(::isInteger (lb * coe) ||
-	 (intCoe && ::isInteger (lb)))) 
+	 (intCoe && ::isInteger (lb))))
       continue;
 
     return false;
@@ -325,7 +325,7 @@ void exprGroup::replace (exprVar *x, exprVar *w) {
 
   exprOp::replace (x, w);
 
-  int 
+  int
     xind = x -> Index (),
     wind = w -> Index ();
 
@@ -335,7 +335,7 @@ void exprGroup::replace (exprVar *x, exprVar *w) {
 
   // Do not assume index vector is sorted in ascending order
   // w.r.t. (*iterator) -> first () -> Index()
-  while ((x_occur != lcoeff_.end ()) && 
+  while ((x_occur != lcoeff_.end ()) &&
 	 (x_occur -> first -> Index () != xind))
     ++x_occur;
 
@@ -354,7 +354,7 @@ void exprGroup::replace (exprVar *x, exprVar *w) {
 	   (w_occur -> first -> Index () != wind))
       ++w_occur;
 
-    if (w_occur == lcoeff_ . end ()) // not found w, simply substitute 
+    if (w_occur == lcoeff_ . end ()) // not found w, simply substitute
       x_occur -> first = w;
     else {
 		if ((w_occur -> second += x_occur -> second) == 0.) { // add coefficients
@@ -390,7 +390,7 @@ void exprGroup::realign (const CouenneProblem *p) {
 
     exprVar *var = el -> first;
 
-    if (((var -> Type () == VAR) ||  
+    if (((var -> Type () == VAR) ||
 	 (var -> Type () == AUX)) &&
 	(var -> Original () != p -> Var (var -> Index ()))) {
 
@@ -404,7 +404,7 @@ void exprGroup::realign (const CouenneProblem *p) {
 
 /// simplification
 expression *exprGroup::simplify () {
-  exprOp::simplify (); 
+  exprOp::simplify ();
   //if (lcoeff_. size () <= 0) // this is just a constant
   //return new exprConst (c0_);
   //else

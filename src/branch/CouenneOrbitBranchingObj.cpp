@@ -3,7 +3,7 @@
  * Name:    CouenneOrbitBranchingObj.cpp
  * Authors: Jim Ostrowski, University of Waterloo
  *          Pietro Belotti, Lehigh University
- *          
+ *
  * Purpose: Branching object for auxiliary variables
  *
  * This file is licensed under the Eclipse Public License (EPL)
@@ -28,7 +28,7 @@ class CouenneCutGenerator;
 void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchanged);
 
 
-/** \brief Constructor. 
+/** \brief Constructor.
  *
  * Get a variable as an argument and set value_ through a call to
  * operator () of that exprAux.
@@ -36,15 +36,15 @@ void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchange
 
 CouenneOrbitBranchingObj::CouenneOrbitBranchingObj (OsiSolverInterface *solver,
 						    const OsiObject * originalObject,
-						    JnlstPtr jnlst, 
+						    JnlstPtr jnlst,
 						    CouenneCutGenerator *cutGen,
 						    CouenneProblem *problem,
-						    expression *var, 
-						    int way, 
-						    CouNumber brpoint, 
+						    expression *var,
+						    int way,
+						    CouNumber brpoint,
 						    bool doFBBT, bool doConvCuts):
 
-  CouenneBranchingObject (solver, originalObject, jnlst, cutGen, problem, 
+  CouenneBranchingObject (solver, originalObject, jnlst, cutGen, problem,
 			  var, way, brpoint, doFBBT, doConvCuts) {
 
 

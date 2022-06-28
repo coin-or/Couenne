@@ -37,7 +37,7 @@ void CouenneCutGenerator::genColCuts (const OsiSolverInterface &si,
   CouNumber *bndLow = new CouNumber [ncols],
             *bndUpp = new CouNumber [ncols];
 
-  const CouNumber 
+  const CouNumber
     *oldLow = si.getColLower (), // old bounds
     *oldUpp = si.getColUpper (),
     *newLow = problem_ -> Lb (), // changed bounds
@@ -59,7 +59,7 @@ void CouenneCutGenerator::genColCuts (const OsiSolverInterface &si,
     // fails with spectra2 with (abt=2,obbt=0) for variable x70
     //assert (problem_ -> Var (index) -> Multiplicity () > 0);
 
-    if (//(index == ind_obj) || 
+    if (//(index == ind_obj) ||
 	(problem_ -> Var (index) -> Multiplicity () <= 0))
       continue;
 
@@ -72,7 +72,7 @@ void CouenneCutGenerator::genColCuts (const OsiSolverInterface &si,
 	&& (bd > -COUENNE_INFINITY / 10)) {                                    // finite?
 
       //printf ("chging low %d %g -> %g\n", index, oldLow [index], newLow [index]);
-      if (problem_ -> Var (index) -> isInteger ()) 
+      if (problem_ -> Var (index) -> isInteger ())
 	bd = ceil (bd - COUENNE_EPS);
       indLow [nLow]   = index;
       bndLow [nLow++] = bd;
@@ -82,7 +82,7 @@ void CouenneCutGenerator::genColCuts (const OsiSolverInterface &si,
 	&& (bd < COUENNE_INFINITY / 10)) {                                     // finite?
 
       //printf ("chging upp %d %g -> %g\n", index, oldUpp [index], newUpp [index]);
-      if (problem_ -> Var (index) -> isInteger ()) 
+      if (problem_ -> Var (index) -> isInteger ())
 	bd = floor (bd + COUENNE_EPS);
       indUpp [nUpp]   = index;
       bndUpp [nUpp++] = bd;

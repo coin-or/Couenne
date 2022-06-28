@@ -4,7 +4,7 @@
  * Author:  Pietro Belotti
  * Purpose: backward implied bound search
  *
- * (C) Carnegie-Mellon University, 2006-10. 
+ * (C) Carnegie-Mellon University, 2006-10.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -27,24 +27,24 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 
     for (int i=nVars(); i--; knownOptimum++)
 
-      if (*knownOptimum < Lb (i) || 
+      if (*knownOptimum < Lb (i) ||
 	  *knownOptimum > Ub (i)) {
 
 	knownOptimum = NULL;
 	break;
       }
 
-    if (knownOptimum) 
+    if (knownOptimum)
       knownOptimum -= nVars ();
   }
 
-  if (Jnlst()->ProduceOutput(Ipopt::J_DETAILED, J_BOUNDTIGHTENING)) {  
+  if (Jnlst()->ProduceOutput(Ipopt::J_DETAILED, J_BOUNDTIGHTENING)) {
     Jnlst()->Printf(Ipopt::J_DETAILED, J_BOUNDTIGHTENING,"  backward =====================\n  ");
     int j=0;
-    for (int i=0; i < nVars (); i++) 
+    for (int i=0; i < nVars (); i++)
       if (variables_ [i] -> Multiplicity () > 0) {
 	Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING,
-			"x_%03d [%+10g %+10g] ", i, 
+			"x_%03d [%+10g %+10g] ", i,
 			domain_.lb (i),
 			domain_.ub (i));
 	if (!(++j % 6)) Jnlst()->Printf(Ipopt::J_MOREVECTOR, J_BOUNDTIGHTENING,"\n  ");
@@ -73,7 +73,7 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 
       if (Lb (i) > Ub (i) + COUENNE_BOUND_PREC * (1 + CoinMin (fabs (Lb (i)), fabs (Ub (i))))) {
 	Jnlst () -> Printf (Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
-			    "  implied bounds: w_%d has infeasible bounds [%g,%g]\n", 
+			    "  implied bounds: w_%d has infeasible bounds [%g,%g]\n",
 			    i, Lb (i), Ub (i));
 	return -1;
       }
@@ -81,14 +81,14 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
       // TODO: also test if this expression, or any of its indep
       // variables, have changed. If not, skip
 
-      CouNumber 
-	l0 = Lb (i), 
+      CouNumber
+	l0 = Lb (i),
 	u0 = Ub (i);
 
-      if (variables_ [i] -> Image () -> impliedBound 
+      if (variables_ [i] -> Image () -> impliedBound
 	  (variables_ [i] -> Index (), Lb (), Ub (), chg_bds, variables_ [i] -> sign ())) {
 
-	// conservative check for integer variables. 
+	// conservative check for integer variables.
 	/*if (Var (i) -> isInteger ()) {
 	  Lb (i) = ceil  (Lb (i) - COUENNE_EPS);
 	  Ub (i) = floor (Ub (i) + COUENNE_EPS);
@@ -110,18 +110,18 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 	  Jnlst()->Printf(Ipopt::J_VECTOR, J_BOUNDTIGHTENING,"\n");
 	}
 
-	if (knownOptimum && 
+	if (knownOptimum &&
 	    ((knownOptimum [i] < Lb (i) - COUENNE_EPS) ||
 	     (knownOptimum [i] > Ub (i) + COUENNE_EPS)))
 
 	  Jnlst () -> Printf (Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
 			      "#### implied b_%d [%g,%g] cuts optimum %g\n",
-			      i, Lb (i), Ub (i), 
+			      i, Lb (i), Ub (i),
 			      knownOptimum [i]);
 
 	//printf ("impli %2d ", nvar+i);
 
-	/*if (variables_ [i] -> Image () -> Argument () || 
+	/*if (variables_ [i] -> Image () -> Argument () ||
 	    variables_ [i] -> Image () -> ArgList ()) {
 
 	  expression *arg = variables_ [i] -> Image () -> Argument ();
@@ -134,18 +134,18 @@ int CouenneProblem::impliedBounds (t_chg_bounds *chg_bds) const {
 	      if (arg -> Index () >= 0) {
 		int ind = arg -> Index ();
 		Jnlst()->Printf(Ipopt::J_DETAILED, J_BOUNDTIGHTENING,
-				" in [%g,%g]", 
-				expression::Lbound (ind), 
+				" in [%g,%g]",
+				expression::Lbound (ind),
 				expression::Ubound (ind));
-	      }	    
+	      }	
 	    }
 	  } else {
 	    Jnlst()->Printf(Ipopt::J_DETAILED, J_BOUNDTIGHTENING," ");
 	    arg -> print (std::cout);
 	    if (arg -> Index () >= 0) {
 	      int ind = arg -> Index ();
-	      Jnlst()->Printf(Ipopt::J_DETAILED, J_BOUNDTIGHTENING," in [%g,%g]", 
-		      expression::Lbound (ind), 
+	      Jnlst()->Printf(Ipopt::J_DETAILED, J_BOUNDTIGHTENING," in [%g,%g]",
+		      expression::Lbound (ind),
 		      expression::Ubound (ind));
 	    }
 	  }

@@ -21,9 +21,9 @@
 using namespace Couenne;
 
 // generate equality between *this and *w
-void exprSum::generateCuts (expression *w, //const OsiSolverInterface &si, 
+void exprSum::generateCuts (expression *w, //const OsiSolverInterface &si,
 			    OsiCuts &cs, const CouenneCutGenerator *cg,
-			    t_chg_bounds *chg, 
+			    t_chg_bounds *chg,
 			    int wind, CouNumber lb, CouNumber ub) {
   if (!(cg -> isFirst ()))
     return;
@@ -36,17 +36,17 @@ void exprSum::generateCuts (expression *w, //const OsiSolverInterface &si,
 
   int nv = 0;
 
-  // If this aux is fixed, don't write 
+  // If this aux is fixed, don't write
   //
   // "- w + ax = -b" but just
-  // 
-  // "ax = -b+ w0" 
+  //
+  // "ax = -b+ w0"
   //
   // with w0 its constant value
 
   CouNumber vlb, vub;
   w -> getBounds (vlb, vub);
-  bool uselessAux = (vub < vlb + COUENNE_EPS); 
+  bool uselessAux = (vub < vlb + COUENNE_EPS);
 
   // TODO: generalize to sign!= ::EQ
 
@@ -70,7 +70,7 @@ void exprSum::generateCuts (expression *w, //const OsiSolverInterface &si,
       ub -= val;
     }
     else {
-      coeff [nv]   = 1.; 
+      coeff [nv]   = 1.;
       index [nv++] = arglist_ [i] -> Index ();
     }
   }

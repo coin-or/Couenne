@@ -22,9 +22,9 @@ using namespace Couenne;
 
 // generate convexification cut for constraint w = this
 
-void exprExp::generateCuts (expression *aux, //const OsiSolverInterface &si, 
+void exprExp::generateCuts (expression *aux, //const OsiSolverInterface &si,
 			    OsiCuts &cs,  const CouenneCutGenerator *cg,
-			    t_chg_bounds *chg, int wind, 
+			    t_chg_bounds *chg, int wind,
 			    CouNumber lbw, CouNumber ubw) {
   CouNumber l, u;
   argument_ -> getBounds (l, u);
@@ -46,21 +46,21 @@ void exprExp::generateCuts (expression *aux, //const OsiSolverInterface &si,
     return;
   }
 
-  CouNumber x = (cg -> isFirst ()) ? 
+  CouNumber x = (cg -> isFirst ()) ?
                  0 : powNewton ((*argument_) (), (*aux) (), exp, exp, exp);
 
   // upper segment
 
   if ((sign != expression::AUX_GEQ)
-      && (cL || cR) 
-      && (u < log (COUENNE_INFINITY) ) 
+      && (cL || cR)
+      && (u < log (COUENNE_INFINITY) )
       && (l > -    COUENNE_INFINITY / 1e4)) { // tame lower bound
 
     CouNumber expl     = exp (l),
               oppslope = (expl - exp (u)) / (u - l);
 
-    cg -> createCut (cs, expl + oppslope*l, -1, 
-		     w_ind, 1., 
+    cg -> createCut (cs, expl + oppslope*l, -1,
+		     w_ind, 1.,
 		     x_ind, oppslope);
   }
 

@@ -15,17 +15,17 @@ namespace Couenne {
 
 // Tighten bounds - lightweight. Returns -1 if infeasible, otherwise
 // number of variables tightened.
-template <class T> 
+template <class T>
 int CouenneSolverInterface<T>::tightenBounds (int lightweight) {
 
   if (!(cutgen_ -> enableLpImpliedBounds ()))
     return 0;
 
-  int 
+  int
     ncols = T::getNumCols (),
     nTightened;
 
-  double 
+  double
     *oldLower = new double [ncols],
     *oldUpper = new double [ncols];
 
@@ -58,7 +58,7 @@ int CouenneSolverInterface<T>::tightenBounds (int lightweight) {
     // something was tightened. Run an extra btCore "por si las
     // moscas" (just in case)
 
-    const double 
+    const double
       *newLower = T::getColLower (),
       *newUpper = T::getColUpper ();
 
@@ -76,7 +76,7 @@ int CouenneSolverInterface<T>::tightenBounds (int lightweight) {
 
     else {
 
-      const double 
+      const double
 	*newerLower = cutgen_ -> Problem () -> Lb (),
 	*newerUpper = cutgen_ -> Problem () -> Ub ();
 
@@ -94,7 +94,7 @@ int CouenneSolverInterface<T>::tightenBounds (int lightweight) {
       }
     }
 
-//     const double 
+//     const double
 //       *newerLower = cutgen_ -> Problem () -> Lb (),
 //       *newerUpper = cutgen_ -> Problem () -> Ub ();
 

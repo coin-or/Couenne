@@ -19,8 +19,8 @@ namespace Couenne {
  *  bounds [lb, ub] on x. Return distance from segment, 0 if satisfied
  */
 
-CouNumber project (CouNumber a, CouNumber b, CouNumber c, 
-		   CouNumber x0, CouNumber y0, 
+CouNumber project (CouNumber a, CouNumber b, CouNumber c,
+		   CouNumber x0, CouNumber y0,
 		   CouNumber lb, CouNumber ub, int sign,
 		   CouNumber *xp, CouNumber *yp) {
 
@@ -32,7 +32,7 @@ CouNumber project (CouNumber a, CouNumber b, CouNumber c,
   CouNumber xpr, ypr;
 
   /* does point lie on line? */
-  if (fabs (t) < COUENNE_EPS) return 0.; 
+  if (fabs (t) < COUENNE_EPS) return 0.;
 
   /* check if point satisfies inequality */
   if      (sign > 0) {if (t < 0.) return 0.;}
@@ -52,8 +52,8 @@ CouNumber project (CouNumber a, CouNumber b, CouNumber c,
      and yp accordingly, and compute distance to (x0,y0) */
   if ((xpr < lb) || (xpr > ub)) {
 
-    if      (xpr < lb) xpr = lb; 
-    else if (xpr > ub) xpr = ub; 
+    if      (xpr < lb) xpr = lb;
+    else if (xpr > ub) xpr = ub;
 
     ypr = (- c - a * xpr) / b - y0;
     xpr -= x0;
@@ -75,15 +75,15 @@ CouNumber project (CouNumber a, CouNumber b, CouNumber c,
  *  sign. Return distance from segment, 0 if on it.
  */
 
-CouNumber projectSeg (CouNumber x0,  CouNumber y0, 
-		      CouNumber x1,  CouNumber y1, 
+CouNumber projectSeg (CouNumber x0,  CouNumber y0,
+		      CouNumber x1,  CouNumber y1,
 		      CouNumber x2,  CouNumber y2,
-		      int sign, 
+		      int sign,
 		      CouNumber *xp, CouNumber *yp) {
-  CouNumber 
+  CouNumber
     dx = x2-x1,
     dy = y2-y1,
-    a =  -dy, 
+    a =  -dy,
     b =  dx,
     c = x1*dy - y1*dx;
 
@@ -95,7 +95,7 @@ CouNumber projectSeg (CouNumber x0,  CouNumber y0,
 /*
 int main (int argc, char **argv) {
 
-  CouNumber 
+  CouNumber
     a = atof (argv [1]),
     b = atof (argv [2]),
     c = atof (argv [3]),

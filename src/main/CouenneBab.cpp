@@ -2,7 +2,7 @@
  *
  * Name:    CouenneBab.cpp
  * Author:  Pietro Belotti
- * Purpose: B&B object  
+ * Purpose: B&B object
  * Created: 2012-01-25
  *
  * This file is licensed under the Eclipse Public License (EPL)
@@ -55,7 +55,7 @@ extern "C" {
       std::cerr<<"[BREAK]"<<std::endl;
       //abort ();
       exit (-1);
-    } else 
+    } else
       std::cerr<<"Ctrl+C detected, stopping Couenne..." << std::endl;
 
     if (currentBranchModel) currentBranchModel -> sayEventHappened();           // stop at next node
@@ -115,8 +115,8 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
   if (specOpt) {
     model_.setSpecialOptions(specOpt);
     if (specOpt==16) {
-      Bonmin::CbcNlpStrategy strat(s.getIntParameter(Bonmin::BabSetupBase::MaxFailures), 
-				   s.getIntParameter(Bonmin::BabSetupBase::MaxInfeasible), 
+      Bonmin::CbcNlpStrategy strat(s.getIntParameter(Bonmin::BabSetupBase::MaxFailures),
+				   s.getIntParameter(Bonmin::BabSetupBase::MaxInfeasible),
 				   s.getIntParameter(Bonmin::BabSetupBase::FailureBehavior));
       model_.setStrategy(strat);
     }
@@ -280,7 +280,7 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 
     // Now model_ has only CouenneObjects and SOS objects
 
-    // for (int i=0; i<nco; i++) 
+    // for (int i=0; i<nco; i++)
     //   if (!(dynamic_cast <CbcSimpleInteger *> (s.continuousSolver () -> objects () [i])))
     // 	model_ . objects () [nRealObj++] = s.continuousSolver () -> objects () [i] -> clone ();
 
@@ -450,13 +450,13 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
       OsiTMINLPInterface * tmpOsi = NULL;
       if(s.nonlinearSolver() == s.continuousSolver()){
         tmpOsi = dynamic_cast<OsiTMINLPInterface *> (model_.solver());
-        tmpOsi->forceSolverOutput(s.getIntParameter(Bonmin::BabSetupBase::RootLogLevel)); 
+        tmpOsi->forceSolverOutput(s.getIntParameter(Bonmin::BabSetupBase::RootLogLevel));
       }
 
       model_.initialSolve();
 
       if(tmpOsi != NULL){
-        tmpOsi->setSolverOutputToDefault(); 
+        tmpOsi->setSolverOutputToDefault();
       }
     }
 
@@ -472,10 +472,10 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 	  TMINLPLinObj * tmp_tminlp = dynamic_cast<TMINLPLinObj *> (tmpOsi->model());
 	  tmpOsi->setModel(tmp_tminlp->tminlp());
 	  model_.initialSolve();
-	} 
+	}
 	else {
 	  LinearCutsGenerator cgl;
-	  cgl.initialize(s); 
+	  cgl.initialize(s);
 	  OsiCuts cuts;
 	  cgl.generateCuts(*model_.solver(), cuts);
 	  std::vector<const OsiRowCut *> mycuts(cuts.sizeRowCuts());
@@ -520,7 +520,7 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 	model_.solver()->resolve();
 	if(!model_.solver()->isProvenOptimal())
 	  model_.solver()->setColSolution(NULL);
-#endif 
+#endif
       }
 
 #ifdef SIGNAL
@@ -593,8 +593,8 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
   if (model_.numberObjects()==0) {
     if (bestSolution_)
       delete [] bestSolution_;
-    OsiSolverInterface * solver = 
-      (s.nonlinearSolver() == s.continuousSolver())? 
+    OsiSolverInterface * solver =
+      (s.nonlinearSolver() == s.continuousSolver())?
       model_.solver() : s.nonlinearSolver();
     bestSolution_ = new double[solver->getNumCols()];
     CoinCopyN(solver->getColSolution(), solver->getNumCols(),
@@ -661,17 +661,17 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
   }
 
   // Which solution should we use? false if RBS's, true if Cbc's
-  bool use_RBS_Cbc = 
+  bool use_RBS_Cbc =
     !problem_ ||
     !(problem_ -> getRecordBestSol ()) ||
     !(problem_ -> getRecordBestSol () -> getHasSol()) ||
-    (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) && 
+    (((fabs (bestObj_) < COUENNE_INFINITY / 1e4) &&
       (problem_ -> getRecordBestSol () -> getVal () > bestObj_)));
 
   /* if we do not pass the cbc solution and problem_ -> getRecordBestSol () -> getHasSol() is true, then there should be a solution vector in problem_ -> getRecordBestSol () */
   assert(use_RBS_Cbc || problem_ -> getRecordBestSol () -> getSol() != NULL);
 
-  s.nonlinearSolver () -> model () -> finalize_solution 
+  s.nonlinearSolver () -> model () -> finalize_solution
     (status,
      s.nonlinearSolver () -> getNumCols (),
      use_RBS_Cbc ? bestSolution_ : problem_ -> getRecordBestSol () -> getSol (),

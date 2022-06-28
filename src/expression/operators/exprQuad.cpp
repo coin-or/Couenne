@@ -93,7 +93,7 @@ exprQuad::exprQuad (CouNumber c0,
 
 	if (fabs (cell -> second += coe) < COUENNE_EPS)
 	  // eliminate element of map if null coefficient
-	  rowp -> second.erase (cell); 
+	  rowp -> second.erase (cell);
       }
     }
   }
@@ -132,43 +132,43 @@ exprQuad::exprQuad (CouNumber c0,
 
 
 /// copy constructor
-exprQuad::exprQuad (const exprQuad &src, Domain *d): 
+exprQuad::exprQuad (const exprQuad &src, Domain *d):
   exprGroup (src, d),
   bounds_   (src.bounds_),
   nqterms_  (src.nqterms_) {
 
-  for (sparseQ::iterator row = src.matrix_.begin (); row != src.matrix_ . end (); ++row) {  
+  for (sparseQ::iterator row = src.matrix_.begin (); row != src.matrix_ . end (); ++row) {
 
     sparseQcol column;
 
     for (sparseQcol::iterator i = row -> second. begin (); i != row -> second. end (); ++i)
-      column.push_back (std::pair <exprVar *, CouNumber> 
+      column.push_back (std::pair <exprVar *, CouNumber>
 			//(dynamic_cast <exprVar *> (i -> first -> clone (d)), i -> second));
 			(new exprVar (i -> first -> Index (), d), i -> second));
 
-    matrix_.push_back (std::pair <exprVar *, sparseQcol> 
+    matrix_.push_back (std::pair <exprVar *, sparseQcol>
 		       //dynamic_cast <exprVar *> (row -> first -> clone (d)), column));
 		       (new exprVar (row -> first -> Index (), d), column));
   }
 
   //////////////////////////////////////////////////////////////////////////////
 
-  std::vector 
-    <std::pair <CouNumber, std::vector 
+  std::vector
+    <std::pair <CouNumber, std::vector
     <std::pair <exprVar *, CouNumber> > > >::iterator row;
 
-  for (row = src.eigen_ . begin (); 
-       row != src.eigen_ . end (); ++row) {  
+  for (row = src.eigen_ . begin ();
+       row != src.eigen_ . end (); ++row) {
 
     std::vector <std::pair <exprVar *, CouNumber> > eigVec;
 
-    for (std::vector <std::pair <exprVar *, CouNumber> >::iterator 
-	   i = row -> second. begin (); 
+    for (std::vector <std::pair <exprVar *, CouNumber> >::iterator
+	   i = row -> second. begin ();
 	 i != row -> second. end (); ++i)
-      eigVec.push_back (std::pair <exprVar *, CouNumber> 
+      eigVec.push_back (std::pair <exprVar *, CouNumber>
 			(dynamic_cast <exprVar *> (i -> first -> clone (d)), i -> second));
 
-    eigen_.push_back (std::pair <CouNumber, std::vector 
+    eigen_.push_back (std::pair <CouNumber, std::vector
 		       <std::pair <exprVar *, CouNumber> > > (row -> first, eigVec));
   }
 }
@@ -268,7 +268,7 @@ expression *exprQuad::differentiate (int index) {
   expression **arglist = new expression * [nargs_ + 1];
   int nargs = 0;
 
-  for (int i = 0; i < nargs_; i++) 
+  for (int i = 0; i < nargs_; i++)
     if (arglist_ [i] -> dependsOn (index))
       arglist [nargs++] = arglist_ [i] -> differentiate (index);
 
@@ -304,16 +304,16 @@ int exprQuad::compare (exprQuad &e) {
 
   int sum = exprGroup::compare (e);
 
-  if (sum != 0) 
+  if (sum != 0)
     return sum;
 
   if (matrix_.size() < e.matrix_.size()) return -1;
   if (matrix_.size() > e.matrix_.size()) return  1;
 
-  for (sparseQ::iterator 
+  for (sparseQ::iterator
 	 row1 =   matrix_.begin (),
 	 row2 = e.matrix_.begin ();
-       row1 != matrix_.end (); 
+       row1 != matrix_.end ();
        ++row1, ++row2) {
 
     if (row1 -> first -> Index () < row2 -> first -> Index ()) return -1;
@@ -326,10 +326,10 @@ int exprQuad::compare (exprQuad &e) {
     //    int xind = row -> first -> Index ();
     //    CouNumber x = (*(row -> first)) ();
 
-    for (sparseQcol::iterator 
+    for (sparseQcol::iterator
 	   col1 = row1 -> second.begin (),
 	   col2 = row2 -> second.begin ();
-	 col1 != row1 -> second.end (); 
+	 col1 != row1 -> second.end ();
 	 ++col1, ++col2) {
 
       if (col1 -> first -> Index () < col2 -> first -> Index ()) return -1;
@@ -350,7 +350,7 @@ int exprQuad::rank () {
 
   int maxrank = exprGroup::rank ();
 
-  if (maxrank < 0) 
+  if (maxrank < 0)
     maxrank = 0;
 
   int r;
@@ -384,7 +384,7 @@ void exprQuad::fillDepSet (std::set <DepNode *, compNode> *dep, DepGraph *g) {
 
 /// fill in the set with all indices of variables appearing in the
 /// expression
-int exprQuad::DepList (std::set <int> &deplist, 
+int exprQuad::DepList (std::set <int> &deplist,
 		       enum dig_type type) {
 
   int deps = exprGroup::DepList (deplist, type);
@@ -413,18 +413,18 @@ bool exprQuad::isInteger () {
 
       CouNumber coe = col -> second;
 
-      bool 
+      bool
 	intCoe = ::isInteger (coe),
 	intJ   = row -> first -> isInteger ();
 
-      if (intI && intJ && intCoe) 
+      if (intI && intJ && intCoe)
 	continue;
 
       if (!intCoe  // coefficient fractional, check all is fixed and product is integer
 	  && row -> first -> isFixed ()
 	  && col -> first -> isFixed ()
-	  && ::isInteger (coe * 
-			  row -> first -> lb () * 
+	  && ::isInteger (coe *
+			  row -> first -> lb () *
 			  col -> first -> lb ()))
 	continue;
 
@@ -517,7 +517,7 @@ void exprQuad::realign (const CouenneProblem *p) {
 
 /// compute $y^{lv}$ and $y^{uv}$ for Violation Transfer algorithm
 void exprQuad::closestFeasible (expression *varind,
-				expression *vardep, 
+				expression *vardep,
 				CouNumber &left,
 				CouNumber &right) const {
 
@@ -545,7 +545,7 @@ CouNumber exprQuad::gradientNorm (const double *x) {
 
 /// Simplify expression
 expression *exprQuad::simplify () {
-  exprOp::simplify (); 
+  exprOp::simplify ();
   return NULL;
 }
 

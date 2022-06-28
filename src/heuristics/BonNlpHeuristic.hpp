@@ -35,19 +35,19 @@ namespace Couenne {
     NlpSolveHeuristic(CbcModel & mip, Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp = false, CouenneProblem * couenne = NULL);
     /** Copy constructor.*/
     NlpSolveHeuristic(const NlpSolveHeuristic &other);
-    
+
     /** Destructor*/
     virtual ~NlpSolveHeuristic();
-    
+
     /** Clone.*/
     virtual CbcHeuristic * clone() const;
-    
+
     /** Assignment operator */
     NlpSolveHeuristic & operator=(const NlpSolveHeuristic &rhs);
-    
+
     /** Set the nlp solver.*/
     void setNlp (Bonmin::OsiTMINLPInterface &nlp, bool cloneNlp = true);
-    
+
     /** set the couenne problem to use.*/
     void setCouenneProblem(CouenneProblem *);
     /** Does nothing. */

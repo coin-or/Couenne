@@ -21,25 +21,25 @@ namespace Couenne {
 // compute distance from future convexifications in set \f$\{(x,y,w):
 // w = xy\}\f$ with x,y,w bounded
 double *computeMulBrDist (const OsiBranchingInformation *info,
-			  int xi, int yi, int wi, 
+			  int xi, int yi, int wi,
 			  int brind, double *brpt, int nPts) {
 
   // use rule of thumb to compute distance: fix two of the three
   // variables and compute distance between current LP point and curve
   // w=x/y (z is the branching variable, x or y)
   //
-  // 1) fix x,y: distances are w - x/y and ||(w-x/y, z-zb)||_2 
+  // 1) fix x,y: distances are w - x/y and ||(w-x/y, z-zb)||_2
   // 2) fix x,w:               y - x/w and ||(y-x/w, z-zb)||_2
   // 3) fix y,w:               x - y*w and ||(x-y*w, z-zb)||_2
 
-  CouNumber 
+  CouNumber
     x0 = info -> solution_ [xi], //xl = info -> lower_ [xi], xu = info -> upper_ [xi],
     y0 = info -> solution_ [yi], //yl = info -> lower_ [yi], yu = info -> upper_ [yi],
     w0 = info -> solution_ [wi]; //wl = info -> lower_ [wi], wu = info -> upper_ [wi];
 
   double *dist = (double *) malloc (2 * sizeof (double));
 
-  // two main cases: 
+  // two main cases:
   //
   // 1) wi is the branching index: the bounding box is divided in two
   // by the rule w <= wb and w >= wb. Finding the distances from the
@@ -72,8 +72,8 @@ double *computeMulBrDist (const OsiBranchingInformation *info,
     bool side = (((x0*y0 > *brpt) && (*brpt > 0)) ||
 		 ((x0*y0 < *brpt) && (*brpt < 0)));
 
-    dist [side ? 1 : 0] = CoinMax 
-      (fabs (w0 - x0*y0), CoinMin 
+    dist [side ? 1 : 0] = CoinMax
+      (fabs (w0 - x0*y0), CoinMin
        ((fabs (y0) > COUENNE_EPS) ? fabs (x0 - *brpt / y0) : 0.,
 	(fabs (x0) > COUENNE_EPS) ? fabs (y0 - *brpt / x0) : 0.));
 

@@ -2,7 +2,7 @@
  *
  * Name:    CouenneRestoreUnused.cpp
  * Authors: Pietro Belotti, Lehigh University
- * Purpose: Restore a consistent value of duplicate variables 
+ * Purpose: Restore a consistent value of duplicate variables
  *
  * This file is licensed under the Eclipse Public License (EPL)
  */
@@ -22,7 +22,7 @@ void CouenneProblem::createUnusedOriginals () {
 
     nUnusedOriginals_ = 0;
 
-    int 
+    int
       nOrig = nOrigVars (),
       nvars = nVars     ();
 
@@ -32,13 +32,13 @@ void CouenneProblem::createUnusedOriginals () {
 
       int indVar = numbering_ [i];
 
-      if ((indVar < nOrig) && 
+      if ((indVar < nOrig) &&
 	  (variables_ [indVar] -> Multiplicity () <= 0)) // found neglected variable!
 	unusedOriginalsIndices_ [nUnusedOriginals_++] = indVar;
     }
 
     if (nUnusedOriginals_)
-      unusedOriginalsIndices_ = (int *) realloc (unusedOriginalsIndices_, 
+      unusedOriginalsIndices_ = (int *) realloc (unusedOriginalsIndices_,
 						 nUnusedOriginals_ * sizeof (int));
     else {
       free (unusedOriginalsIndices_);
@@ -56,8 +56,8 @@ void CouenneProblem::restoreUnusedOriginals (CouNumber *x) const {
   if (nUnusedOriginals_ <= 0) return;
 
   if (x)
-    domain_.push (nVars(), x, 
-		  domain_. current () -> lb (), 
+    domain_.push (nVars(), x,
+		  domain_. current () -> lb (),
 		  domain_. current () -> ub (), false); // no need for another copy
 
   for (int i=0; i<nUnusedOriginals_; i++) {

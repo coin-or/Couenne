@@ -2,9 +2,9 @@
  *
  * Name:    exprBound.hpp
  * Author:  Pietro Belotti
- * Purpose: definition of the class for variable bounds 
+ * Purpose: definition of the class for variable bounds
  *
- * (C) Carnegie-Mellon University, 2006. 
+ * (C) Carnegie-Mellon University, 2006.
  * This file is licensed under the Eclipse Public License (EPL)
  */
 
@@ -33,7 +33,7 @@ namespace Couenne {
 /// known.
 
 
-/// lower bound 
+/// lower bound
 
 class COUENNELIB_EXPORT exprLowerBound: public exprVar {
 
@@ -48,7 +48,7 @@ class COUENNELIB_EXPORT exprLowerBound: public exprVar {
     exprVar (varIndex, d) {}
 
   /// Copy constructor
-  exprLowerBound (const exprLowerBound &src, Domain *d = NULL): 
+  exprLowerBound (const exprLowerBound &src, Domain *d = NULL):
     exprVar (src, d) {}
 
   /// cloning method
@@ -56,24 +56,24 @@ class COUENNELIB_EXPORT exprLowerBound: public exprVar {
   {return new exprLowerBound (*this, d);}
 
   /// Print to iostream
-  void print (std::ostream &out = std::cout, 
+  void print (std::ostream &out = std::cout,
 	      bool = false) const
   {out << "l_" << varIndex_;}
 
   /// return the value of the variable
-  inline CouNumber operator () () 
+  inline CouNumber operator () ()
   {assert (domain_); return domain_ -> lb (varIndex_);}
 
   /// differentiation
-  inline expression *differentiate (int) 
+  inline expression *differentiate (int)
   {return new exprConst (0.);}
 
   /// dependence on variable set
-  inline int dependsOn (int *, int, enum dig_type type = STOP_AT_AUX) 
+  inline int dependsOn (int *, int, enum dig_type type = STOP_AT_AUX)
   {return 0;}
 
   /// get a measure of "how linear" the expression is:
-  virtual inline int Linearity () 
+  virtual inline int Linearity ()
   {return CONST;}
 
   /// code for comparisons
@@ -82,7 +82,7 @@ class COUENNELIB_EXPORT exprLowerBound: public exprVar {
 };
 
 
-/// upper bound 
+/// upper bound
 
 class COUENNELIB_EXPORT exprUpperBound: public exprVar {
 
@@ -97,7 +97,7 @@ class COUENNELIB_EXPORT exprUpperBound: public exprVar {
     exprVar (varIndex, d) {}
 
   /// Copy constructor
-  exprUpperBound (const exprUpperBound &src, Domain *d = NULL): 
+  exprUpperBound (const exprUpperBound &src, Domain *d = NULL):
     exprVar (src, d) {}
 
   /// cloning method
@@ -105,24 +105,24 @@ class COUENNELIB_EXPORT exprUpperBound: public exprVar {
   {return new exprUpperBound (*this, d);}
 
   /// Print to iostream
-  void print (std::ostream &out = std::cout, 
+  void print (std::ostream &out = std::cout,
 	      bool = false) const
   {out << "u_" << varIndex_;}
 
   /// return the value of the variable
-  inline CouNumber operator () () 
+  inline CouNumber operator () ()
   {assert (domain_); return domain_ -> ub (varIndex_);}
 
   /// differentiation
-  inline expression *differentiate (int) 
+  inline expression *differentiate (int)
   {return new exprConst (0.);}
 
   /// dependence on variable set
-  inline int dependsOn (int *, int, enum dig_type type = STOP_AT_AUX) 
+  inline int dependsOn (int *, int, enum dig_type type = STOP_AT_AUX)
   {return 0;}
 
   /// get a measure of "how linear" the expression is:
-  virtual inline int Linearity () 
+  virtual inline int Linearity ()
   {return CONST;}
 
   /// code for comparisons

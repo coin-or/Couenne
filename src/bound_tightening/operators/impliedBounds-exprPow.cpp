@@ -41,36 +41,36 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   CouNumber k = arglist_ [1] -> Value (); // exponent
 
-  if ((fabs (k) < COUENNE_EPS) || 
+  if ((fabs (k) < COUENNE_EPS) ||
       (fabs (k) > COUENNE_INFINITY)) // a null or infinite k is of little use
     return false;
 
   int intk; // integer (or integer inverse of) exponent
 
-  bool 
+  bool
     isint    =           (            fabs (k    - (intk = COUENNE_round (k)))    < COUENNE_EPS),  // k   integer
     isinvint = !isint && (k != 0. && (fabs (1./k - (intk = COUENNE_round (1./k))) < COUENNE_EPS)); // 1/k integer
 
-  CouNumber 
+  CouNumber
     wl = ((sign == expression::AUX_GEQ) ? -COIN_DBL_MAX : l [wind]), // lower w
     wu = ((sign == expression::AUX_LEQ) ?  COIN_DBL_MAX : u [wind]); // upper w
 
-  if ((isint || isinvint) && (intk % 2 || issignpower_)) { 
+  if ((isint || isinvint) && (intk % 2 || issignpower_)) {
 
     // k or 1/k integer and odd, or non-integer --> it is a monotone
     // increasing function, apart when k negative
 
     if (k > 0.) { // simple, just follow bounds
 
-      if (wl > - COUENNE_INFINITY) resL = updateBound (-1, l + index, safe_pow (wl, 1./k, issignpower_)); 
+      if (wl > - COUENNE_INFINITY) resL = updateBound (-1, l + index, safe_pow (wl, 1./k, issignpower_));
       if (wu <   COUENNE_INFINITY) resU = updateBound (+1, u + index, safe_pow (wu, 1./k, issignpower_));
 
     } else {// slightly more complicated, resort to same method as in exprInv
       invPowImplBounds (wind, index, l, u, 1./k, resL, resU, sign);
       assert (!issignpower_);
     }
-  } 
-  else 
+  }
+  else
     if (isint) { // x^k, k integer and even --> non monotone
 
       CouNumber bound = (k<0) ? wl : wu;
@@ -96,7 +96,7 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       if (bound > 0.) {
 
 	CouNumber
-	  xl = l [index], 
+	  xl = l [index],
 	  xu = u [index],
 	  xb = safe_pow (bound, 1./k, issignpower_);
 
@@ -104,25 +104,25 @@ bool exprPow::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 	else if (xu <   xb - COUENNE_EPS) resU = updateBound ( 1, u + index, - xb) || resU;
       }
 
-    } else { 
+    } else {
 
       // Two cases:
-      // 1) x^k, k=(1/h), h integer and even, or 
+      // 1) x^k, k=(1/h), h integer and even, or
       // 2) x^k, neither k nor 1/k integer
 
       CouNumber lb = wl, ub = wu;
 
-      if (k < 0) { // swap bounds as they swap on the curve x^k when 
+      if (k < 0) { // swap bounds as they swap on the curve x^k when
 	lb = wu;
 	ub = wl;
       }
 
-      if ((lb > 0. || k > 0.) && (sign != expression::AUX_GEQ)) 
+      if ((lb > 0. || k > 0.) && (sign != expression::AUX_GEQ))
 	resL = updateBound (-1, l + index, safe_pow (lb, 1./k, issignpower_));
 
-      if ((fabs (ub) < COUENNE_INFINITY) && 
+      if ((fabs (ub) < COUENNE_INFINITY) &&
 	  (ub > 0 || k > 0.) &&
-	  (sign != expression::AUX_LEQ)) 
+	  (sign != expression::AUX_LEQ))
 	resU = updateBound (+1, u + index, safe_pow (ub, 1./k, issignpower_));
       //else                  resU = updateBound (+1, u + index, COUENNE_INFINITY);
     }

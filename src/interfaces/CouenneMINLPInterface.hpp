@@ -62,7 +62,7 @@ namespace Couenne {
   public:
 
     /// REMOVE --- backward compatibility
-    /// sets objective[index] at newObj 
+    /// sets objective[index] at newObj
     void setObj (int index, expression *newObj) {}
 
     /// sets the initial solution for the NLP solver
@@ -101,7 +101,7 @@ namespace Couenne {
     //     /// Error class to throw exceptions from CouenneMINLPInterface.
     //      *  Inherited from CoinError, we just want to have a different class to be able to catch
     //      *  errors thrown by CouenneMINLPInterface.
-    //      
+    //
 
     //     class SimpleError: public CoinError {
 
@@ -158,7 +158,7 @@ namespace Couenne {
     //#############################################################################
 
 
-    //   /// Messages outputed by an CouenneMINLPInterface. 
+    //   /// Messages outputed by an CouenneMINLPInterface.
     // class Messages : public CoinMessages
     //   {
     //   public:
@@ -170,12 +170,12 @@ namespace Couenne {
     //#############################################################################
 
 
-    ///@name Constructors and destructors 
+    ///@name Constructors and destructors
     //@{
     /// Default Constructor
     CouenneMINLPInterface ();
 
-    /// Facilitator to initialize interface. 
+    /// Facilitator to initialize interface.
     void initialize(Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions,
 		    Ipopt::SmartPtr<Ipopt::OptionsList> options,
 		    Ipopt::SmartPtr<Ipopt::Journalist> journalist_,
@@ -194,7 +194,7 @@ namespace Couenne {
     /// Copy constructor
     CouenneMINLPInterface (const CouenneMINLPInterface &);
 
-    /// Virtual copy constructor 
+    /// Virtual copy constructor
     OsiSolverInterface * clone (bool copyData = true) const;
 
     /// Assignment operator
@@ -213,7 +213,7 @@ namespace Couenne {
     Ipopt::SmartPtr<Ipopt::OptionsList> options();
 
     //---------------------------------------------------------------------------
-    ///@name Solve methods 
+    ///@name Solve methods
     //@{
     /// Solve initial continuous relaxation
     virtual void initialSolve();
@@ -223,18 +223,18 @@ namespace Couenne {
     /// called. In any case, this must solve the problem, and speed
     /// the process up if it can reuse any remnants of data that might
     /// exist from a previous solve.
-    
+
     virtual void resolve();
 
     /// Resolve the problem with different random starting points to
     /// try to find a better solution (only makes sense for a
     /// non-convex problem.
-    
+
     virtual void resolveForCost(int numretry, bool keepWs);
 
     /// Method to be called when a problem has failed to be
     /// solved. Will try to resolve it with different settings.
-    
+
     virtual void resolveForRobustness(int numretry);
 
     /// Necessary for compatibility with OsiSolverInterface but does nothing.
@@ -300,11 +300,11 @@ namespace Couenne {
     ///        for the solver or simply the value of the parameter is out of the range
     ///        the solver accepts. If a parameter setting call returns false check the
     ///        details of your solver.
-    
+
     ///        The get methods return true if the given parameter is applicable for the
     ///        solver and is implemented. In this case the value of the parameter is
     ///        returned in the second argument. Otherwise they return false.
-    
+
     //@{
     // Set an integer parameter
     bool setIntParam(OsiIntParam key, int value);
@@ -336,12 +336,12 @@ namespace Couenne {
     //        Querying a problem that has no data associated with it result in
     //        zeros for the number of rows and columns, and NULL pointers from
     //        the methods that return vectors.
-    
+
     //        Const pointers returned from any data-query method are valid as
     //        long as the data is unchanged and the solver is not called.
-    
+
     //@{
-    ///@name Methods related to querying the input data 
+    ///@name Methods related to querying the input data
     //@{
     /// Get number of columns
     virtual int getNumCols() const;
@@ -365,7 +365,7 @@ namespace Couenne {
     // 	<li>'R': ranged constraint
     // 	<li>'N': free constraint
     // 	</ul>
-    
+
     virtual const char * getRowSense() const;
 
     /// Get pointer to array[getNumRows()] of rows right-hand sides
@@ -375,7 +375,7 @@ namespace Couenne {
     // 	<li> if rowsense()[i] == 'R' then rhs()[i] == rowupper()[i]
     // 	<li> if rowsense()[i] == 'N' then rhs()[i] == 0.0
     // 	</ul>
-    
+
     virtual const double * getRightHandSide() const;
 
     /// Get pointer to array[getNumRows()] of row ranges.
@@ -385,7 +385,7 @@ namespace Couenne {
     // 	<li> if rowsense()[i] != 'R' then
     // 	rowrange()[i] is 0.0
     // 	</ul>
-    
+
     virtual const double * getRowRange() const;
 
     /// Get pointer to array[getNumRows()] of row lower bounds
@@ -395,7 +395,7 @@ namespace Couenne {
     virtual const double * getRowUpper() const;
 
     /// Get objective function sense (1 for min (default), -1 for max)
-    /// Always minimizes 
+    /// Always minimizes
     virtual double getObjSense() const
     {
       return 1;
@@ -457,7 +457,7 @@ namespace Couenne {
 
     //@}
 
-    ///@name Methods related to querying the solution 
+    ///@name Methods related to querying the solution
     //@{
 
     /// Get pointer to array[getNumCols()] of primal solution vector
@@ -470,12 +470,12 @@ namespace Couenne {
     virtual const double * getReducedCost() const;
 
     /// Get pointer to array[getNumRows()] of row activity levels (constraint
-    ///	matrix times the solution vector 
+    ///	matrix times the solution vector
     virtual const double * getRowActivity() const;
 
 
     /// Get how many iterations it took to solve the problem (whatever
-    /// "iteration" mean to the solver.  
+    /// "iteration" mean to the solver.
     ///
     /// \todo Figure out what it could mean for Ipopt.
 	
@@ -487,13 +487,13 @@ namespace Couenne {
       return nCallOptimizeTNLP_;
     }
 
-    /// get total time taken to solve NLP's. 
+    /// get total time taken to solve NLP's.
     double totalNlpSolveTime()
     {
       return totalNlpSolveTime_;
     }
 
-    /// get total number of iterations 
+    /// get total number of iterations
     int totalIterations()
     {
       return totalIterations_;
@@ -504,25 +504,25 @@ namespace Couenne {
 
     //-------------------------------------------------------------------------
     ///@name Methods to modify the objective, bounds, and solution
-     
+
     //@{
 
     /// Set a single column lower bound.
-    /// Use -getInfinity() for -infinity. 
+    /// Use -getInfinity() for -infinity.
     virtual void setColLower( int elementIndex, double elementValue );
 
     /// Set a single column upper bound.
-    ///	Use getInfinity() for infinity. 
+    ///	Use getInfinity() for infinity.
     virtual void setColUpper( int elementIndex, double elementValue );
 
     /// Set the lower bounds for all columns
     ///	array [getNumCols()] is an array of values for the objective.
-    
+
     virtual void setColLower(const double * array);
 
     /// Set the upper bounds for all columns.
     ///	array [getNumCols()] is an array of values for the objective.
-    
+
     virtual void setColUpper(const double * array);
 
 
@@ -533,7 +533,7 @@ namespace Couenne {
     /// Set a single row upper bound.  Use getInfinity() for infinity.
     virtual void setRowUpper( int elementIndex, double elementValue );
 
-    /// Set the type of a single row 
+    /// Set the type of a single row
     virtual void setRowType(int index, char sense, double rightHandSide,
 			    double range);
 
@@ -541,19 +541,19 @@ namespace Couenne {
     /// \brief Set the objective function sense (disabled).
     /// (1 for min (default), -1 for max)
     /// \todo Make it work.
-    /// \bug Can not treat maximisation problems. 
+    /// \bug Can not treat maximisation problems.
     virtual void setObjSense(double s);
 
     /// Set the primal solution variable values
     ///	Set the values for the starting point.
     ///	\warning getColSolution will never return this vector (unless it is optimal).
-    
+
     virtual void setColSolution(const double *colsol);
 
     /// Set dual solution variable values.
     ///	set the values for the starting point.
     ///	\warning getRowPrice will never return this vector (unless it is optimal).
-    
+
     virtual void setRowPrice(const double * rowprice);
 
     //@}
@@ -569,10 +569,10 @@ namespace Couenne {
     ///      object. Its purpose is to provide a way to give a client
     ///      a warm start basis object of the appropriate type, which
     ///      can resized and modified as desired.
-    
+
     virtual CoinWarmStart *getEmptyWarmStart () const;
 
-    /// Get warmstarting information 
+    /// Get warmstarting information
     virtual CoinWarmStart* getWarmStart() const;
 
     /// Set warmstarting information. Return true/false depending on
@@ -600,11 +600,11 @@ namespace Couenne {
     //@}
 
     //-------------------------------------------------------------------------
-    ///@name Methods to set variable type 
+    ///@name Methods to set variable type
     //@{
-    /// Set the index-th variable to be a continuous variable 
+    /// Set the index-th variable to be a continuous variable
     virtual void setContinuous(int index);
-    /// Set the index-th variable to be an integer variable 
+    /// Set the index-th variable to be an integer variable
     virtual void setInteger(int index);
     //@}
 
@@ -623,7 +623,7 @@ namespace Couenne {
     //@{
 
     /// Cbc will understand that no matrix exists if return -1
-     
+
     virtual int getNumElements() const
     {
       return -1;
@@ -633,11 +633,11 @@ namespace Couenne {
     /// This returns the objective function gradient at the current
     /// point.  It seems to be required for Cbc's pseudo cost
     /// initialization
-     
+
     virtual const double * getObjCoefficients() const;
 
     /// We have to keep this but it will return NULL.
-     
+
     virtual const CoinPackedMatrix * getMatrixByRow() const
     {
       return NULL;
@@ -645,14 +645,14 @@ namespace Couenne {
 
 
     /// We have to keep this but it will return NULL.
-     
+
     virtual const CoinPackedMatrix * getMatrixByCol() const
     {
       return NULL;
     }
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void setObjCoeff( int elementIndex, double elementValue )
     {
       throw SimpleError("CouenneMINLPInterface does not implement this function.",
@@ -660,7 +660,7 @@ namespace Couenne {
     }
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void addCol(const CoinPackedVectorBase& vec,
 			const double collb, const double colub,
 			const double obj)
@@ -670,7 +670,7 @@ namespace Couenne {
     }
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void deleteCols(const int num, const int * colIndices)
     {
       throw SimpleError("CouenneMINLPInterface does not implement this function.",
@@ -678,7 +678,7 @@ namespace Couenne {
     }
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void addRow(const CoinPackedVectorBase& vec,
 			const double rowlb, const double rowub)
     {
@@ -687,7 +687,7 @@ namespace Couenne {
     }
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void addRow(const CoinPackedVectorBase& vec,
 			const char rowsen, const double rowrhs,
 			const double rowrng)
@@ -696,7 +696,7 @@ namespace Couenne {
 			"addRow");
     }
     /// We have to keep this but it will throw an error.
-     
+
     virtual void deleteRows(const int num, const int * rowIndices)
     {
       if(num)
@@ -706,7 +706,7 @@ namespace Couenne {
 
 
     /// We have to keep this but it will throw an error
-     
+
     virtual void loadProblem(const CoinPackedMatrix& matrix,
 			     const double* collb, const double* colub,
 			     const double* obj,
@@ -718,7 +718,7 @@ namespace Couenne {
 
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void assignProblem(CoinPackedMatrix*& matrix,
 			       double*& collb, double*& colub, double*& obj,
 			       double*& rowlb, double*& rowub)
@@ -728,7 +728,7 @@ namespace Couenne {
     }
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void loadProblem(const CoinPackedMatrix& matrix,
 			     const double* collb, const double* colub,
 			     const double* obj,
@@ -740,7 +740,7 @@ namespace Couenne {
     }
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void assignProblem(CoinPackedMatrix*& matrix,
 			       double*& collb, double*& colub, double*& obj,
 			       char*& rowsen, double*& rowrhs,
@@ -752,7 +752,7 @@ namespace Couenne {
 
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void loadProblem(const int numcols, const int numrows,
 			     const int* start, const int* index,
 			     const double* value,
@@ -765,7 +765,7 @@ namespace Couenne {
     }
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void loadProblem(const int numcols, const int numrows,
 			     const int* start, const int* index,
 			     const double* value,
@@ -779,7 +779,7 @@ namespace Couenne {
     }
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual int readMps(const char *filename,
 			const char *extension = "mps")
     {
@@ -789,7 +789,7 @@ namespace Couenne {
 
 
     /// We have to keep this but it will throw an error.
-     
+
     virtual void writeMps(const char *filename,
 			  const char *extension = "mps",
 			  double objSense=0.0) const
@@ -798,14 +798,14 @@ namespace Couenne {
 			"writeMps");
     }
 
-    /// Throws an error 
+    /// Throws an error
     virtual std::vector<double*> getDualRays(int maxNumRays) const
     {
       throw SimpleError("CouenneMINLPInterface does not implement this function.",
 			"getDualRays");
     }
 
-    /// Throws an error 
+    /// Throws an error
     virtual std::vector<double*> getPrimalRays(int maxNumRays) const
     {
       throw SimpleError("CouenneMINLPInterface does not implement this function.",
@@ -815,13 +815,13 @@ namespace Couenne {
     //@}
 
 
-  
+
     //---------------------------------------------------------------------------
 
 
 
     ///@name Control of Ipopt output
-     
+
     //@{
     void turnOffSolverOutput(){
       app_->turnOffOutput();}
@@ -829,14 +829,14 @@ namespace Couenne {
       app_->turnOnOutput();}
     //@}
 
-    ///@name Sets and Getss 
+    ///@name Sets and Getss
     //@{
     /// Get objective function value (can't use default)
     virtual double getObjValue() const;
 
     //@}
 
-    /// get pointer to the TMINLP2TNLP adapter 
+    /// get pointer to the TMINLP2TNLP adapter
     const TMINLP2TNLP * problem() const
     {
       return GetRawPtr(problem_);
@@ -851,41 +851,41 @@ namespace Couenne {
     {
       return GetRawPtr(tminlp_);
     }
-  
+
     Bonmin::TMINLP * model()
     {
       return GetRawPtr(tminlp_);
     }
-  
+
     const Bonmin::TNLPSolver * solver() const
     {
       return GetRawPtr(app_);
-    } 
- 
+    }
+
     TNLPSolver * solver()
     {
       return GetRawPtr(app_);
-    } 
-    /// \name Methods to build outer approximations 
+    }
+    /// \name Methods to build outer approximations
     //@{
-    /// \name Methods to build outer approximations 
+    /// \name Methods to build outer approximations
     //@{
     /// \brief Extract a linear relaxation of the MINLP.
     ///* Use user-provided point to build first-order outer-approximation constraints at the optimum.
     ///* And put it in an OsiSolverInterface.
-     
-    virtual void extractLinearRelaxation(OsiSolverInterface &si, const double *x, 
+
+    virtual void extractLinearRelaxation(OsiSolverInterface &si, const double *x,
 					 bool getObj = 1);
 
     /// \brief Extract a linear relaxation of the MINLP.
     ///* Solve the continuous relaxation and takes first-order outer-approximation constraints at the optimum.
     ///* The put everything in an OsiSolverInterface.
-     
+
     virtual void extractLinearRelaxation(OsiSolverInterface &si, bool getObj = 1,
 					 bool solveNlp = 1){
       if(solveNlp)
 	initialSolve();
-      extractLinearRelaxation(si, getColSolution(), getObj); 
+      extractLinearRelaxation(si, getColSolution(), getObj);
       if(solveNlp){
         app_->enableWarmStart();
         setColSolution(problem()->x_sol());
@@ -913,12 +913,12 @@ namespace Couenne {
     virtual void getOuterApproximation(OsiCuts &cs, const double * x, bool getObj, const double * x2,
 				       double theta, bool global);
 
-    /// Get the outer approximation at provided point for given constraint. 
+    /// Get the outer approximation at provided point for given constraint.
     virtual void getConstraintOuterApproximation(OsiCuts & cs, int constraintNumber,
-						 const double * x, 
+						 const double * x,
 						 const double * x2, bool global);
 
-    /// Get the outer approximation at current optimal point for given constraint. 
+    /// Get the outer approximation at current optimal point for given constraint.
     void getConstraintOuterApproximation(OsiCuts & cs, int constraintNumber,
 					 const double * x2, bool global){
       getConstraintOuterApproximation(cs, constraintNumber, getColSolution(),x2,global);
@@ -936,7 +936,7 @@ namespace Couenne {
     ///      \param ind indices of the coordinate
     double getFeasibilityOuterApproximation(int n, const double * x_bar,const int *ind, OsiCuts &cs, bool addOnlyViolated, bool global);
 
-    /// Given a point x_bar this solves the problem of finding the point which minimize a convex 
+    /// Given a point x_bar this solves the problem of finding the point which minimize a convex
     ///     combination between the distance to  x_bar and the original objective function f(x):
     ///      \f$ min a * (\sum\limits_{i=1}^n  ||x_{ind[i]} -\overline{x}_i)||_L) + (1 - a)* s *f(x) \f$
     ///      \return Distance between feasibility set a x_bar on components in ind
@@ -944,7 +944,7 @@ namespace Couenne {
     ///      \param s scaling of the original objective.
     ///      \param a Combination to take between feasibility and original objective (must be between 0 and 1).
     ///      \param L L-norm to use (can be either 1 or 2).
-     
+
     double solveFeasibilityProblem(int n, const double * x_bar, const int* ind, double a, double s, int L);
 
     /// Given a point x_bar this solves the problem of finding the point which minimize
@@ -954,7 +954,7 @@ namespace Couenne {
     ///      \param n number of elements in array x_bar and ind
     ///      \param L L-norm to use (can be either 1 or 2).
     ///      \param cutoff objective function value of a known integer feasible solution
-     
+
     double solveFeasibilityProblem(int n, const double * x_bar, const int* ind, int L, double cutoff);
 
     /// Given a point x_bar setup feasibility problem and switch so that every call to initialSolve or resolve will
@@ -962,7 +962,7 @@ namespace Couenne {
     void switchToFeasibilityProblem(int n, const double * x_bar, const int* ind, double a, double s, int L);
 
     /// Given a point x_bar setup feasibility problem and switch so that every call to initialSolve or resolve will
-    ///	solve it. This is to be used in the local branching heuristic 
+    ///	solve it. This is to be used in the local branching heuristic
     void switchToFeasibilityProblem(int n, const double * x_bar, const int* ind,
 				    double rhs_local_branching_constraint);
 
@@ -980,7 +980,7 @@ namespace Couenne {
       OA_CUT_GENERATED,            /// Print the cut which has been generated.,
       OA_MESSAGES_DUMMY_END        /// Dummy end.
     };
-    
+
     /// Class to store OA Messages.
     class OaMessages :public CoinMessages{
     public:
@@ -1010,7 +1010,7 @@ namespace Couenne {
       OaMessageHandler & operator=(const OaMessageHandler &rhs){
 	CoinMessageHandler::operator=(rhs);
 	return *this;}
-      /// Virtual copy 
+      /// Virtual copy
       virtual CoinMessageHandler* clone() const{
 	return new OaMessageHandler(*this);}
       /// print an OsiRowCut.
@@ -1025,7 +1025,7 @@ namespace Couenne {
 
     //-----------------------------------------------------------------------
     /// Apply a collection of cuts.
-     
+
     virtual ApplyCutsReturnCode applyCuts(const OsiCuts & cs,
 					  double effectivenessLb = 0.0){
       freeCachedRowRim();
@@ -1037,7 +1037,7 @@ namespace Couenne {
     virtual void applyRowCuts(int numberCuts, const OsiRowCut * cuts);
 
 
-    /// Add a collection of linear cuts to the problem formulation 
+    /// Add a collection of linear cuts to the problem formulation
     virtual void applyRowCuts(int numberCuts, const OsiRowCut ** cuts)
     {
       if(numberCuts)
@@ -1058,12 +1058,12 @@ namespace Couenne {
     void extractInterfaceParams();
 
 
-    /// To set some application specific defaults. 
+    /// To set some application specific defaults.
     virtual void setAppDefaultOptions(Ipopt::SmartPtr<Ipopt::OptionsList> Options);
 
-    /// Register all possible options to Bonmin 
+    /// Register all possible options to Bonmin
     static void registerOptions (Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions);
-  
+
     Ipopt::SmartPtr<Bonmin::RegisteredOptions> regOptions(){
       if(IsValid(app_))
 	return app_->roptions();
@@ -1071,7 +1071,7 @@ namespace Couenne {
 	return NULL;
     }
 
-    /// @name Methods related to strong branching 
+    /// @name Methods related to strong branching
     //@{
     /// Set the strong branching solver
     void SetStrongBrachingSolver(Ipopt::SmartPtr<StrongBranchingSolver> strong_branching_solver);
@@ -1088,7 +1088,7 @@ namespace Couenne {
     //@}
 
   protected:
-  
+
     //@}
 
     enum RandomGenerationType{
@@ -1106,36 +1106,36 @@ namespace Couenne {
 
 
     /// Add a linear cut to the problem formulation.
-     
+
     virtual void applyRowCut( const OsiRowCut & rc )
     {
       const OsiRowCut * cut = &rc;
       problem_->addCuts(1, &cut);
     }
     /// We have to keep this but it will throw an error.
-     
+
     virtual void applyColCut( const OsiColCut & cc )
     {
       throw SimpleError("Ipopt model does not implement this function.",
 			"applyColCut");
     }
 
-    //  /// Read the name of the variables in an ampl .col file. 
+    //  /// Read the name of the variables in an ampl .col file.
     //  void readVarNames() const;
 
     //@}
 
-    ///@name Model and solver 
+    ///@name Model and solver
     //@{
     /// TMINLP model.
     Ipopt::SmartPtr<TMINLP> tminlp_;
-    /// Adapter for a MINLP to a NLP 
+    /// Adapter for a MINLP to a NLP
     Ipopt::SmartPtr<TMINLP2TNLP> problem_;
     /// Problem currently optimized (may be problem_ or feasibilityProblem_)
     Ipopt::SmartPtr<Ipopt::TNLP> problem_to_optimize_;
     /// Is true if and only if in feasibility mode.
     bool feasibility_mode_;
-    /// Solver for a TMINLP. 
+    /// Solver for a TMINLP.
     Ipopt::SmartPtr<TNLPSolver> app_;
 
     /// Alternate solvers for TMINLP.
@@ -1144,19 +1144,19 @@ namespace Couenne {
     bool testOthers_;
     //@}
 
-    /// Warmstart information for reoptimization 
+    /// Warmstart information for reoptimization
     CoinWarmStart* warmstart_;
 
-    ///@name Cached information on the problem 
+    ///@name Cached information on the problem
     //@{
-    /// Free cached data relative to variables 
+    /// Free cached data relative to variables
     void freeCachedColRim();
-    /// Free cached data relative to constraints 
+    /// Free cached data relative to constraints
     void freeCachedRowRim();
     /// Free all cached data
     void freeCachedData();
     /// Extract rowsense_ vector rhs_ vector and rowrange_ vector from the lower and upper bounds
-    /// on the constraints 
+    /// on the constraints
     void extractSenseRhsAndRange() const;
     /// Pointer to dense vector of row sense indicators
     mutable char    *rowsense_;
@@ -1196,13 +1196,13 @@ namespace Couenne {
     int numRetryInfeasibles_;
     /// Number of times problem will be resolved in case of a failure
     int numRetryUnsolved_;
-    /// Messages specific to an CouenneMINLPInterface. 
+    /// Messages specific to an CouenneMINLPInterface.
     Messages messages_;
     /// If not 0 when a problem is not solved (failed to be solved)
     ///	will pretend that it is infeasible. If == 1 will care
-    ///	(i.e. record the fact issue messages to user), if ==2 don't care (somebody else will) 
+    ///	(i.e. record the fact issue messages to user), if ==2 don't care (somebody else will)
     int pretendFailIsInfeasible_;
-    /// did we ever continue optimization ignoring a failure. 
+    /// did we ever continue optimization ignoring a failure.
     bool hasContinuedAfterNlpFailure_;
     /// number iterations above which a problem is considered suspect (-1 is considered \f$+ \infty \f$).
     ///  	If in a call to solve a problem takes more than that number of iterations it will be outputed to files.
@@ -1213,22 +1213,22 @@ namespace Couenne {
     bool hasBeenOptimized_;
     /// A fake objective function (all variables to 1) to please Cbc
     ///	pseudo costs initialization.  AW: I changed this, it will now be
-    ///	the objective gradient at current point. 
+    ///	the objective gradient at current point.
     mutable double * obj_;
     /// flag to say wether options have been printed or not.
     static bool hasPrintedOptions;
 
-    /// Adapter for TNLP to a feasibility problem 
+    /// Adapter for TNLP to a feasibility problem
     Ipopt::SmartPtr<TNLP2FPNLP> feasibilityProblem_;
 
 
-    /// \name Arrays to store Jacobian matrix 
+    /// \name Arrays to store Jacobian matrix
     //@{
     /// Row indices.
     int * jRow_;
     /// Column indices.
     int * jCol_;
-    /// Values 
+    /// Values
     double * jValues_;
     /// Number of elements.
     int nnz_jac;
@@ -1237,21 +1237,21 @@ namespace Couenne {
     ///Store the types of the constraints (linear and nonlinear).
     Ipopt::TNLP::LinearityType * constTypes_;
     /// Number of nonlinear constraint
-     
+
     int nNonLinear_;
     /// Value for small non-zero element which we will try to remove cleanly in OA cuts.
     double tiny_;
     /// Value for small non-zero element which we will take the risk to ignore in OA cuts.
     double veryTiny_;
-    /// Value for infinity. 
+    /// Value for infinity.
     double infty_;
-    /// status of last optimization. 
+    /// status of last optimization.
     TNLPSolver::ReturnStatus optimizationStatus_;
     /// Flag indicating if the warm start methods actually do something.
     bool exposeWarmStart_;
     /// Is it the first solve (for random starting point at root options).
     bool firstSolve_;
-    /// Object for strengthening cuts 
+    /// Object for strengthening cuts
     SmartPtr<CutStrengthener> cutStrengthener_;
 
     /// \name output for OA cut generation
@@ -1259,11 +1259,11 @@ namespace Couenne {
     //@{
     /// OA Messages.
     OaMessages oaMessages_;
-    /// OA Message handler. 
+    /// OA Message handler.
     OaMessageHandler * oaHandler_;
     //@}
   protected:
-    /// Facilitator to create an application. 
+    /// Facilitator to create an application.
     void createApplication(Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions,
 			   Ipopt::SmartPtr<Ipopt::OptionsList> options,
 			   Ipopt::SmartPtr<Ipopt::Journalist> journalist);
@@ -1274,11 +1274,11 @@ namespace Couenne {
     bool internal_setWarmStart(const CoinWarmStart* ws);
 
     /// internal get warm start.
-    CoinWarmStart* internal_getWarmStart() const; 
+    CoinWarmStart* internal_getWarmStart() const;
   private:
-    /// solver to be used for all strong branching solves 
+    /// solver to be used for all strong branching solves
     SmartPtr<StrongBranchingSolver> strong_branching_solver_;
-    /// status of last optimization before hot start was marked. 
+    /// status of last optimization before hot start was marked.
     TNLPSolver::ReturnStatus optimizationStatusBeforeHotStart_;
     static const char * OPT_SYMB;
     static const char * FAILED_SYMB;
@@ -1287,7 +1287,7 @@ namespace Couenne {
     /// Get status as a char * for log.
     const char * statusAsString(TNLPSolver::ReturnStatus r){
       if(r == TNLPSolver::solvedOptimal || r == TNLPSolver::solvedOptimalTol){
-	return OPT_SYMB;} 
+	return OPT_SYMB;}
       else if(r == TNLPSolver::provenInfeasible){
 	return INFEAS_SYMB;}
       else if(r == TNLPSolver::unbounded){

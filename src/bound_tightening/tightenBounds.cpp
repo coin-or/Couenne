@@ -23,7 +23,7 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
   int nchg = 0; //< number of bounds changed for propagation
 
   // update bounding box (which may depend on the original
-  // variables' box) for the variables whose bound is looser. 
+  // variables' box) for the variables whose bound is looser.
 
   // check all auxiliary variables for changes in their upper,
   // lower bound, depending on the bound changes of the variables
@@ -35,14 +35,14 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 
     for (int i=nVars(); i--; knownOptimum++)
 
-      if (*knownOptimum < Lb (i) || 
+      if (*knownOptimum < Lb (i) ||
 	  *knownOptimum > Ub (i)) {
 
 	knownOptimum = NULL;
 	break;
       }
 
-    if (knownOptimum) 
+    if (knownOptimum)
       knownOptimum -= nVars ();
   }
 
@@ -52,10 +52,10 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
     // ToDo: Pipe all output through journalist
     Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING, "  forward  =====================\n  ");
     int j=0;
-    for (int i=0; i < nVars (); i++) 
+    for (int i=0; i < nVars (); i++)
       if (variables_ [i] -> Multiplicity () > 0) {
 	Jnlst()->Printf(J_VECTOR, J_BOUNDTIGHTENING,
-			"x_%03d [%+10g %+10g] ", i, 
+			"x_%03d [%+10g %+10g] ", i,
 			domain_. lb (i),
 			domain_. ub (i));
 	if (!(++j % 6)) Jnlst()->Printf(J_VECTOR, J_BOUNDTIGHTENING,"\n  ");
@@ -69,7 +69,7 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 
     exprVar *var = Var (i);
 
-    if (var -> Multiplicity () <= 0) 
+    if (var -> Multiplicity () <= 0)
       continue;
 
     CouNumber &lower_i = Lb (i);
@@ -113,7 +113,7 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
     // TODO: also test if any indep variable of this expression
     // have changed. If not, skip
 
-    CouNumber ll, uu; 
+    CouNumber ll, uu;
     //ll = (*(variables_ [i] -> Lb ())) (),
     //uu = (*(variables_ [i] -> Ub ())) ();
 
@@ -155,16 +155,16 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
     if (var -> sign () == expression::AUX_GEQ) uu =  COUENNE_INFINITY;
 
     // check if lower bound has tightened
-    if ((ll > - COUENNE_INFINITY) && 
+    if ((ll > - COUENNE_INFINITY) &&
 	(ll >= lower_i + COUENNE_EPS) &&
-	((fabs (ll)        < COUENNE_EPS) || 
+	((fabs (ll)        < COUENNE_EPS) ||
 	 (fabs (lower_i) < COUENNE_EPS) ||
 	 (fabs (ll / (lower_i) - 1) > COUENNE_EPS)) ) {
 
       if (dbgOutput) {
 
 	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-			"  prop L %2d [%g,(%g)] -> [%g,(%g)] (%g) ", 
+			"  prop L %2d [%g,(%g)] -> [%g,(%g)] (%g) ",
 			i, lower_i, upper_i, ll, uu, lower_i - ll);
 	var -> print (std::cout);
 
@@ -175,12 +175,12 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 
 	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"\n");
 
-	if (knownOptimum && 
-	    ((knownOptimum [i] - lower_i) / (1 + std::max (fabs (knownOptimum [i]), fabs (lower_i))) >=  COUENNE_EPS) && 
+	if (knownOptimum &&
+	    ((knownOptimum [i] - lower_i) / (1 + std::max (fabs (knownOptimum [i]), fabs (lower_i))) >=  COUENNE_EPS) &&
 	    ((knownOptimum [i] - ll)      / (1 + std::max (fabs (knownOptimum [i]), fabs (ll)))      <= -COUENNE_EPS)) {
 
 	  Jnlst()->Printf(J_STRONGWARNING, J_BOUNDTIGHTENING,
-			  "Couenne: propagating l_%d cuts optimum: [%g --> %g -X-> %g] :: ", 
+			  "Couenne: propagating l_%d cuts optimum: [%g --> %g -X-> %g] :: ",
 			  i, lower_i, knownOptimum [i], ll);
 	  var -> Lb () -> print (std::cout);
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");
@@ -202,22 +202,22 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
     }
 
     // check if upper bound has tightened
-    if ((uu < COUENNE_INFINITY) && 
+    if ((uu < COUENNE_INFINITY) &&
 	(uu <= upper_i - COUENNE_EPS) &&
-	((fabs (uu)      < COUENNE_EPS) || 
+	((fabs (uu)      < COUENNE_EPS) ||
 	 (fabs (upper_i) < COUENNE_EPS) ||
 	 (fabs (uu / (upper_i) - 1) > COUENNE_EPS)) ) {
       //      if ((uu < COUENNE_INFINITY) && (uu <= ub_ [i+j] - COUENNE_EPS)) {
 
-      /*printf ("update ubound %d: %.10e <= %.10e - %.12e (%.12e)\n", 
+      /*printf ("update ubound %d: %.10e <= %.10e - %.12e (%.12e)\n",
 	i+j, uu, ub_ [i+j], COUENNE_EPS, uu - ub_ [i+j]);*/
-      /*printf ("update ubound %d: %g >= %g\n", 
+      /*printf ("update ubound %d: %g >= %g\n",
 	i+j, uu, ub_ [i+j]);*/
 
       if (dbgOutput) {
 
 	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,
-			"  prop U %2d [(%g),%g] -> [(%g),%g] (%g) ", 
+			"  prop U %2d [(%g),%g] -> [(%g),%g] (%g) ",
 			i, lower_i, upper_i, ll, uu, upper_i - uu);
 	var -> print (std::cout);
 
@@ -228,12 +228,12 @@ int CouenneProblem::tightenBounds (t_chg_bounds *chg_bds) const {
 
 	Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING,"\n");
 
-	if (knownOptimum && 
-	    ((knownOptimum [i] - upper_i) / (1 + std::max (fabs (knownOptimum [i]), fabs (upper_i))) <= -COUENNE_EPS) && 
+	if (knownOptimum &&
+	    ((knownOptimum [i] - upper_i) / (1 + std::max (fabs (knownOptimum [i]), fabs (upper_i))) <= -COUENNE_EPS) &&
 	    ((knownOptimum [i] - uu)      / (1 + std::max (fabs (knownOptimum [i]), fabs (uu)))      >=  COUENNE_EPS)) {
 
 	  Jnlst()->Printf(J_STRONGWARNING, J_BOUNDTIGHTENING,
-			  "Couenne: propagating u_%d cuts optimum: [%g <-X- %g <-- %g] :: ", 
+			  "Couenne: propagating u_%d cuts optimum: [%g <-X- %g <-- %g] :: ",
 			  i, uu, knownOptimum [i], upper_i);
 	  var -> Lb () -> print (std::cout);
 	  Jnlst()->Printf(J_DETAILED, J_BOUNDTIGHTENING," --- ");

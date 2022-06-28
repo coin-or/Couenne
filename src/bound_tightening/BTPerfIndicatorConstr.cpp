@@ -30,8 +30,8 @@ CouenneBTPerfIndicator::CouenneBTPerfIndicator (CouenneProblem *p, const std::st
   totalTime_       (0.),
   nRuns_           (0),
   problem_         (p),
-  stats_           ((p != NULL) && 
-		    (GetRawPtr (p -> Jnlst ()) != NULL) && 
+  stats_           ((p != NULL) &&
+		    (GetRawPtr (p -> Jnlst ()) != NULL) &&
 		    (p -> Jnlst () -> ProduceOutput (Ipopt::J_ERROR, J_COUENNE))) {}
 
 
@@ -39,13 +39,13 @@ CouenneBTPerfIndicator::CouenneBTPerfIndicator (CouenneProblem *p, const std::st
 CouenneBTPerfIndicator::~CouenneBTPerfIndicator () {
 
   if (totalTime_ > 0. &&
-      nRuns_ && 
+      nRuns_ &&
       problem_)
 
     if (stats_)
-      problem_->Jnlst()->Printf(Ipopt::J_ERROR, J_COUENNE, "Performance of %30s:\t %10gs, %8d runs. fix: %10g shrnk: %10g ubd: %10g 2ubd: %10g infeas: %10g\n", 
+      problem_->Jnlst()->Printf(Ipopt::J_ERROR, J_COUENNE, "Performance of %30s:\t %10gs, %8d runs. fix: %10g shrnk: %10g ubd: %10g 2ubd: %10g infeas: %10g\n",
 	      name_.c_str (),
-	      totalTime_, 
+	      totalTime_,
 	      nRuns_,
 	      nFixed_, boundRatio_, shrunkInf_, shrunkDoubleInf_, nProvedInfeas_);
 
@@ -86,7 +86,7 @@ CouenneBTPerfIndicator &CouenneBTPerfIndicator::operator= (const CouenneBTPerfIn
   weightSum_       = rhs.weightSum_;
   oldLB_           = !rhs.problem_ || !rhs.oldLB_ ? NULL : CoinCopyOfArray (rhs.oldLB_, rhs.problem_ -> nVars ());
   oldUB_           = !rhs.problem_ || !rhs.oldUB_ ? NULL : CoinCopyOfArray (rhs.oldUB_, rhs.problem_ -> nVars ());
-  totalTime_       = rhs.totalTime_; 
+  totalTime_       = rhs.totalTime_;
   nRuns_           = rhs.nRuns_;
   problem_         = rhs.problem_;
   stats_           = rhs.stats_;
@@ -112,5 +112,5 @@ void CouenneBTPerfIndicator::setOldBounds (const CouNumber *lb, const CouNumber 
 
 
 /// add to timer
-void CouenneBTPerfIndicator::addToTimer (double time) const 
+void CouenneBTPerfIndicator::addToTimer (double time) const
 {totalTime_ += time;}
