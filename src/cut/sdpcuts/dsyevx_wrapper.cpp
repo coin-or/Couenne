@@ -17,6 +17,7 @@
 
 //#define DEBUG
 
+#ifdef COUENNE_HAS_LAPACK
 extern "C" {
   /* Lapack routine to compute orthonormal eigenvalues/eigenvectors (in Fortran) */
   void COUENNE_LAPACK_FUNC(dsyevx,DSYEVX) (
@@ -41,6 +42,7 @@ extern "C" {
 				  int    *,
 				  int    *);
 }
+#endif
 
 int dsyevx_interface (int n, double *A, int &m,
 		      double * &w,
