@@ -35,7 +35,7 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/../branch` \
 	-I`$(CYGPATH_W) $(srcdir)/../bound_tightening` \
 	-I`$(CYGPATH_W) $(srcdir)/../problem` \
-	$(COUENNELIB_CFLAGS) $(ASL_CFLAGS)
+	$(COUENNELIB_CFLAGS) $(BONMINAMPL_CFLAGS) $(ASL_CFLAGS)
 
 # This line is necessary to allow VPATH compilation
 DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..

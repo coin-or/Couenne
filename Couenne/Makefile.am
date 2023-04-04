@@ -27,7 +27,7 @@ SUBDIRS = src/util \
 	  src/cut/crossconv \
 	  src
 
-if COIN_HAS_ASL
+if COIN_HAS_BONMINAMPL
 SUBDIRS += src/readnl
 endif
 

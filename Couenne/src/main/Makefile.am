@@ -10,13 +10,13 @@ AUTOMAKE_OPTIONS = foreign
 
 # what is built at this level
 
-if COIN_HAS_ASL
+if COIN_HAS_BONMINAMPL
   bin_PROGRAMS = couenne 
 endif
 
 couenne_SOURCES = BonCouenne.cpp
-couenne_LDADD         = ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS)         $(ASL_LIBS) 
-couenne_DEPENDENCIES  = ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(ASL_DEPENDENCIES)
+couenne_LDADD         = ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_LIBS)         $(BONMINAMPL_LIBS) 
+couenne_DEPENDENCIES  = ../libCouenne.la ../readnl/libCouenneReadnl.la $(COUENNELIB_DEPENDENCIES) $(BONMINAMPL_DEPENDENCIES)
 
 # Here list all include flags, relative to this "srcdir" directory.  This
 # "cygpath" stuff is necessary to compile with native compilers on Windows
@@ -36,7 +36,7 @@ AM_CPPFLAGS = \
 	-I`$(CYGPATH_W) $(srcdir)/../cut/sdpcuts` \
 	-I`$(CYGPATH_W) $(srcdir)/../cut/crossconv` \
 	-I`$(CYGPATH_W) $(srcdir)/../readnl` \
-	$(COUENNELIB_CFLAGS) $(ASL_CFLAGS) 
+	$(COUENNELIB_CFLAGS) $(BONMINAMPL_CFLAGS) $(ASL_CFLAGS) 
 
 if COIN_HAS_NTY
 AM_CPPFLAGS += \
@@ -50,7 +50,7 @@ DEFAULT_INCLUDES = -I. -I`$(CYGPATH_W) $(srcdir)` -I..
 #                     Installing manifest (MSVC++)                     #
 ########################################################################
 
-if COIN_HAS_ASL
+if COIN_HAS_BONMINAMPL
 if COIN_CXX_IS_CL
 install-exec-hook:
 	test -s couenne.exe.manifest && \

@@ -12,6 +12,9 @@
 /* Define to 1 if the Bonmin package is available */
 #undef COIN_HAS_BONMIN
 
+/* Define to 1 if the BonminAmpl package is available */
+#undef COIN_HAS_BONMINAMPL
+
 /* Define to 1 if the Cpx package is available */
 #undef COIN_HAS_CPX
 

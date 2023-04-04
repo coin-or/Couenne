@@ -76,7 +76,8 @@ fi
 
 # Bonmin AMPL interface
 # bad bad: if AMPL stuff is available, then libCouenne will depend on it, so we add it to CouenneLib
-AC_COIN_CHECK_PACKAGE(ASL, [bonminamplinterface], [CouenneLib])
+AC_COIN_CHECK_PACKAGE(BonminAmpl, [bonminamplinterface], [CouenneLib])
+AC_COIN_CHECK_PACKAGE(ASL, [coinasl], [CouenneLib])
 
 # more workaround for having ASL deep inside Couenne
 if test $coin_has_asl = yes ; then
