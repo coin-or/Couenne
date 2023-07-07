@@ -87,9 +87,9 @@ Doc/html/index.html for documentation of Couenne.
 
 ## Resources and links
 
-Couenne is maintained by Pietro Belotti (couenne@list.coin-or.org).
+Couenne is maintained by [Pietro Belotti](https://belotti.faculty.polimi.it).
 
-Web page: https://www.github.com/coin-or/Couenne
+Web page: [https://www.github.com/coin-or/Couenne](https://www.github.com/coin-or/Couenne)
 
 Dependencies: 
 [CoinUtils](https://github.com/coin-or/CoinUtils), 
@@ -150,9 +150,7 @@ Each has contributed an essential part of the development of Couenne.
  * [Couenne executables](http://ampl.com/products/solvers/open-source/#couenne) provided by AMPL
  * Couenne is available through the [JuMP](https://github.com/JuliaOpt/JuMP.jl) modeling language
  * [COIN-OR Initiative](http://www.coin-or.org/)
- * [IBM CMU Open Source MINLP project](http://egon.cheme.cmu.edu/ibm/page.htm)
- * [Couenne mailing list](http://list.coin-or.org/mailman/listinfo/Couenne)
- * [coin-discuss mailing list](http://list.coin-or.org/mailman/listinfo/coin-discuss)
+ * [IBM CMU Open Source MINLP project](http://egon.cheme.cmu.edu/ibm/page.htm)  
  * [Report a bug](https://github.com/coin-or/Couenne/issues)
  * [NEOS server for Optimization](https://neos-server.org/neos/): You can submit a MINLP problem for solution with Couenne in [AMPL format](https://neos-server.org/neos/solvers/minco:Couenne/AMPL.html) or [GAMS format](https://neos-server.org/neos/solvers/minco:Couenne/GAMS.html)
 
