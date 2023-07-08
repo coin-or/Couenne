@@ -469,9 +469,9 @@ bool CouenneTNLP::eval_jac_g (Index n, const Number* x, bool new_x,
     // fill in Jacobian's values. Evaluate each member using the
     // domain modified above by the new value of x
 
-    register expression **e = Jac_. expr ();
+    expression **e = Jac_. expr ();
 
-    for (register int i=nele_jac; i--;)
+    for (int i=nele_jac; i--;)
       *values++ = (**(e++)) ();
   }
 

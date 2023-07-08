@@ -37,8 +37,8 @@ bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p) {
       const double *lvalues  = lbs.getElements ();
 
       for (int j = lbs.getNumElements (); j--;) {
-	register double lb  = *lvalues++;
-	register int    ind = *lindices++;
+	double lb  = *lvalues++;
+	int    ind = *lindices++;
 
 	if (lb > opt [ind] + COUENNE_EPS) {
 	  printf ("################################## new lb [%d] = %g cuts opt %g by %g\n",
@@ -54,8 +54,8 @@ bool isOptimumCut (const CouNumber *opt, OsiCuts &cs, CouenneProblem *p) {
       const double *uvalues  = ubs.getElements ();
 
       for (int j = ubs.getNumElements (); j--;) {
-	register double ub  = *uvalues++;
-	register int    ind = *uindices++;
+	double ub  = *uvalues++;
+	int    ind = *uindices++;
 
 	if (ub < opt [ind] - COUENNE_EPS) {
 	  printf ("################################## new ub [%d] = %g cuts opt %g by %g\n",

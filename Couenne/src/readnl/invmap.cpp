@@ -32,8 +32,8 @@ static int pair_compare (const void *p1, const void *p2) {
 
   /* FIX! weak cast for 64 bit machines */
 
-  register size_t f1 = Intcast (((AslCouPair *) p1) -> fp); 
-  register size_t f2 = Intcast (((AslCouPair *) p2) -> fp); 
+  size_t f1 = Intcast (((AslCouPair *) p1) -> fp); 
+  size_t f2 = Intcast (((AslCouPair *) p2) -> fp); 
 
   if      (f1 < f2) return -1;
   else if (f1 > f2) return  1;
@@ -63,8 +63,8 @@ size_t getOperator (efunc *f) {
 
   if (first_call) { /* opmap is still empty, fill it using values from r_ops [] */
 
-    register int i=0;
-    register AslCouPair *ops = opmap;
+    int i=0;
+    AslCouPair *ops = opmap;
 
     /* fill opmap vector with inverse correspondence pairs efunc -> int */
     while (i<N_OPS) {

@@ -229,11 +229,11 @@ void CouenneSdpCuts::additionalSDPcuts (const OsiSolverInterface &si,
 
   double *subA = new double [cnt*cnt];
 
-  for (register int i=0, k=0; i<n; i++)
+  for (int i=0, k=0; i<n; i++)
 
     if (indices [i] >= 0) {
       
-      for (register int j=0, k2 = 0; j<n; j++)
+      for (int j=0, k2 = 0; j<n; j++)
 
 	if (indices [j] >= 0) {
 	  subA [cnt * k  + k2] = 

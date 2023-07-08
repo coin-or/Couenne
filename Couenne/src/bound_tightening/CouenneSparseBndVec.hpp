@@ -64,9 +64,9 @@ namespace Couenne {
       size_ (src.size_),
       n_    (src.n_) {
 
-      for (register unsigned int i=0; i<n_; i++) {
+      for (unsigned int i=0; i<n_; i++) {
 
-	register unsigned int ind = (dInd_ [i] = src.dInd_ [i]);
+	unsigned int ind = (dInd_ [i] = src.dInd_ [i]);
 	data_ [ind] = src.data_ [ind];	
 	sInd_ [ind] = i; /// assert: src.sInd [ind] == i
       }
@@ -88,9 +88,9 @@ namespace Couenne {
     /// making sure it has been written. This should not happen to the
     /// end user as read operations are only performed on the dense
     /// structure, after this object has been populated.
-    T &operator[] (register unsigned int index) {
+    T &operator[] (unsigned int index) {
 
-      register unsigned int &sind = sInd_ [index];
+      unsigned int &sind = sInd_ [index];
 
       if ((sind >= n_) || 
 	  (dInd_ [sind] != index))

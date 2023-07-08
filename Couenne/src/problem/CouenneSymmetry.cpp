@@ -38,7 +38,7 @@ void Node::node(int i, double c , double l, double u, int cod, int s){
   sign = s;
 }
 
-inline bool CouenneProblem::compare (register Node &a, register Node &b) const {
+inline bool CouenneProblem::compare (Node &a, Node &b) const {
   if(a.get_code() == b.get_code() )
     if(a.get_coeff() == b.get_coeff() )
       if(a.get_sign() == b.get_sign() )

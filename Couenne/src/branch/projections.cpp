@@ -25,7 +25,7 @@ CouNumber project (CouNumber a, CouNumber b, CouNumber c,
 		   CouNumber *xp, CouNumber *yp) {
 
   /* compute projection of (x0,y0) onto line ax+by+c=0 */
-  register CouNumber
+  CouNumber
     t  = - (a*x0 + b*y0 + c);
 
   /* projection coordinates */

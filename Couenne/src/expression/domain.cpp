@@ -213,20 +213,20 @@ void Domain::push (const OsiSolverInterface *si,
 
       OsiColCut *cut = cs -> colCutPtr (i);
 
-      register const CoinPackedVector
+      const CoinPackedVector
 	&lbs = cut -> lbs (),
 	&ubs = cut -> ubs ();
 
-      register const int    *indices  = lbs. getIndices ();
-      register const double *elements = lbs. getElements ();
+      const int    *indices  = lbs. getIndices ();
+      const double *elements = lbs. getElements ();
 
-      register CouNumber
+      CouNumber
 	*lb = point_ -> lb_,
 	*ub = point_ -> ub_;
 
       // copy lbs
 
-      for (register int j = lbs. getNumElements (); j--; elements++, indices++)
+      for (int j = lbs. getNumElements (); j--; elements++, indices++)
 	if (*elements > lb [*indices])
 	  lb [*indices] = *elements;
 
@@ -235,7 +235,7 @@ void Domain::push (const OsiSolverInterface *si,
       indices  = ubs. getIndices ();
       elements = ubs. getElements ();
 
-      for (register int j = ubs. getNumElements (); j--; elements++, indices++)
+      for (int j = ubs. getNumElements (); j--; elements++, indices++)
 	if (*elements < ub [*indices])
 	  ub [*indices] = *elements;
     }

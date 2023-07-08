@@ -312,7 +312,7 @@ void CouenneTwoImplied::generateCuts (const OsiSolverInterface &si,
 	if (CoinCpuTime () > problem_ -> getMaxCpuTime ())
 	  break;
 
-	register int 
+	int 
 	  indj = ind [j],
 	  indk = ind [k];
 

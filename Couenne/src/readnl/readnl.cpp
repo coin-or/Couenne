@@ -236,7 +236,7 @@ int CouenneProblem::readnl (const ASL *asl) {
 
   // count all linear terms
   if (A_colstarts && A_vals)         // Constraints' linear info is stored in A_vals
-    for (register int j = A_colstarts [n_var]; j--;) {
+    for (int j = A_colstarts [n_var]; j--;) {
 
       real coeff = A_vals [j];
 
@@ -244,7 +244,7 @@ int CouenneProblem::readnl (const ASL *asl) {
 	nterms [A_rownos [j]] ++;
     }
   else {                             // Constraints' linear info is stored in Cgrad
-    for (register int i = 0; i < n_con; i++)
+    for (int i = 0; i < n_con; i++)
       for (congrad = Cgrad [i]; 
 	   congrad; 
 	   congrad = congrad -> next) 
@@ -257,7 +257,7 @@ int CouenneProblem::readnl (const ASL *asl) {
   CouNumber **coeff  = new CouNumber * [n_con];
   int       **indexL = new int       * [n_con];
 
-  for (register int i = n_con; i--;) 
+  for (int i = n_con; i--;) 
     *indexL++ = NULL;
 
   indexL -= n_con;
@@ -267,7 +267,7 @@ int CouenneProblem::readnl (const ASL *asl) {
 
   if (A_colstarts && A_vals)         // Constraints' linear info is stored in A_vals
     for (int j = 0; j < n_var; j++)
-      for (register int i = A_colstarts [j], k = A_colstarts [j+1] - i; k--; i++) {
+      for (int i = A_colstarts [j], k = A_colstarts [j+1] - i; k--; i++) {
 
 	int rowno = A_rownos [i],
 	    nt    = nterms [rowno] --;
@@ -429,28 +429,28 @@ int CouenneProblem::readnl (const ASL *asl) {
     real *Uvx_copy = Uvx;
 
     if (!Uvx_copy)
-      for (register int i=0; i<n_var; i++) {
+      for (int i=0; i<n_var; i++) {
 
-	register int j = 2*i;
+	int j = 2*i;
 
 	Lb (i) = LUv [j];
 	Ub (i) = LUv [j+1];
       }
     else
-      for (register int i=n_var; i--;) {
+      for (int i=n_var; i--;) {
 	Lb (i) = LUv [i];
 	Ub (i) = Uvx_copy [i];
       }
 
   } else
-    for (register int i=n_var; i--;) {
+    for (int i=n_var; i--;) {
       Lb (i) = - COUENNE_INFINITY;
       Ub (i) =   COUENNE_INFINITY;
     }
 
   // initial x ////////////////////////////////////////////////////////////////////
 
-  for (register int i=n_var; i--;) 
+  for (int i=n_var; i--;) 
 
     if (X0 && havex0 [i]) X (i) = X0 [i];
 
@@ -467,7 +467,7 @@ int CouenneProblem::readnl (const ASL *asl) {
       X (i) = x;
     }
 
-  for (register int i=n_var; i<ndefined_; i++) {
+  for (int i=n_var; i<ndefined_; i++) {
 
     X  (i) =  0.;
     Lb (i) = -COUENNE_INFINITY;

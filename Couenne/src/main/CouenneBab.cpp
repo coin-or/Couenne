@@ -525,7 +525,7 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 
 #ifdef SIGNAL
     CoinSighandler_t saveSignal = SIG_DFL;
-    // register signal handler
+    // signal handler
     saveSignal = signal (SIGINT,couenne_signal_handler);
     currentBranchModel = &model_;
 #endif

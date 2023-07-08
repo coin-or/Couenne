@@ -29,12 +29,12 @@ CouNumber trigNewton (CouNumber a, CouNumber l, CouNumber u) {
   // F'(x) = - sin x - cos x / (x-a) + (sin x - sin a) / (x - a)^2
 
   if (l>u) {
-    register CouNumber swap = l;
+    CouNumber swap = l;
     l = u;
     u = swap;
   }
 
-  register CouNumber xk = 0.5 * (u+l);
+  CouNumber xk = 0.5 * (u+l);
 
   CouNumber sina  = sin (a),
             sinxk = sin (xk),
@@ -45,7 +45,7 @@ CouNumber trigNewton (CouNumber a, CouNumber l, CouNumber u) {
             F     = cosxk - dydx;
 
   // Newton loop. Tolerance is set above
-  for (register int k = MAX_ITER; (fabs (F) > COU_TRIG_TOLERANCE) && k--;) {
+  for (int k = MAX_ITER; (fabs (F) > COU_TRIG_TOLERANCE) && k--;) {
 
     CouNumber Fp = sinxk + (cosxk - dydx) / dx;
 
@@ -74,7 +74,7 @@ int main (int argc, char **argv) {
             l = atof (argv [2]),
             u = atof (argv [3]), r;
 
-  for (register int i=100000; i--;)
+  for (int i=100000; i--;)
     r = trigNewton (a, l, u);
 
   printf ("b0 = %.14f: slope %.15f, derivative %.15f\n", 

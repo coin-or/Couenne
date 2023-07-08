@@ -63,7 +63,7 @@ double CouenneObject::feasibleRegion (OsiSolverInterface *solver,
       expression ** args = expr -> ArgList ();
       int nargs = expr -> nArgs ();
 
-      for (register int i=0; i < nargs; i++) {
+      for (int i=0; i < nargs; i++) {
 
 	if ((index = args [i] -> Index()) >= 0) {
 	  val = info -> solution_ [index];

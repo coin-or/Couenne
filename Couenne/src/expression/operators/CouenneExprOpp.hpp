@@ -18,7 +18,7 @@ namespace Couenne {
 
 /// operator opp: returns the opposite of a number
 
-inline CouNumber opp (register CouNumber arg) 
+inline CouNumber opp (CouNumber arg) 
 {return - arg;}
 
 

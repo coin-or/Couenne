@@ -21,7 +21,7 @@ using namespace Couenne;
 // copy constructor
 CouenneSparseVector::CouenneSparseVector (const CouenneSparseVector &rhs) {
 
-  for (register std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
+  for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
 	 i  = rhs. elem_. begin ();
        i   != rhs. elem_. end   (); ++i)
 
@@ -32,7 +32,7 @@ CouenneSparseVector::CouenneSparseVector (const CouenneSparseVector &rhs) {
 // assignment operator
 CouenneSparseVector &CouenneSparseVector::operator= (const CouenneSparseVector &rhs) {
 
-  for (register std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
+  for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
 	 i  = rhs. elem_. begin ();
        i   != rhs. elem_. end   (); ++i)
 
@@ -125,7 +125,7 @@ double CouenneSparseVector::multiply_thres (const CouenneSparseVector &v2, doubl
 
   double prod = 0.;
 
-  for (register std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
+  for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::const_iterator 
 	 i1 =    elem_. begin (),
 	 i2 = v2.elem_. begin ();
 
@@ -212,7 +212,7 @@ CouenneExprMatrix::~CouenneExprMatrix () {
 /// Destructor
 CouenneSparseVector::~CouenneSparseVector () {
 
-  for (register std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::iterator 
+  for (std::set <CouenneScalar *, CouenneSparseVector::compare_scalars>::iterator 
 	 i  = elem_. begin ();
        i   != elem_. end   (); ++i)
     delete (*i);

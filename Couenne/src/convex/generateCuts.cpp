@@ -73,7 +73,7 @@ void sparse2dense (int ncols, t_chg_bounds *chg_bds, int *&changed, int &nchange
   changed  = (int *) realloc (changed, ncols * sizeof (int));
   nchanged = 0;
 
-  for (register int i=ncols, j=0; i--; j++, chg_bds++)
+  for (int i=ncols, j=0; i--; j++, chg_bds++)
     if (chg_bds -> lower() != t_chg_bounds::UNCHANGED ||
 	chg_bds -> upper() != t_chg_bounds::UNCHANGED ) {
       *changed++ = j;

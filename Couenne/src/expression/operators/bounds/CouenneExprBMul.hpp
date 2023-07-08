@@ -22,7 +22,7 @@ namespace Couenne {
 #define MUL_INF  sqrt (COIN_DBL_MAX)
 
 /// product that avoids NaN's 
-inline CouNumber safeProd (register CouNumber a, register CouNumber b) {
+inline CouNumber safeProd (CouNumber a, CouNumber b) {
 
   if (a >  MUL_INF) return (b < -MUL_ZERO) ? -COIN_DBL_MAX : (b > MUL_ZERO) ?  COIN_DBL_MAX : 0.;
   if (a < -MUL_INF) return (b < -MUL_ZERO) ?  COIN_DBL_MAX : (b > MUL_ZERO) ? -COIN_DBL_MAX : 0.;
@@ -66,10 +66,10 @@ class exprLBMul: public exprOp {
 
 inline CouNumber exprLBMul::operator () () {
 
-  register CouNumber n = (*(arglist_ [0])) ();
-  register CouNumber N = (*(arglist_ [1])) ();
-  register CouNumber d = (*(arglist_ [2])) ();
-  register CouNumber D = (*(arglist_ [3])) ();
+  CouNumber n = (*(arglist_ [0])) ();
+  CouNumber N = (*(arglist_ [1])) ();
+  CouNumber d = (*(arglist_ [2])) ();
+  CouNumber D = (*(arglist_ [3])) ();
 
   if (d>=0)
     if   (n>=0) return safeProd (n,d);
@@ -121,10 +121,10 @@ inline CouNumber exprUBMul::operator () () {
 
   //  exprOp:: operator () ();
 
-  register CouNumber n = (*(arglist_ [0])) ();
-  register CouNumber N = (*(arglist_ [1])) ();
-  register CouNumber d = (*(arglist_ [2])) ();
-  register CouNumber D = (*(arglist_ [3])) ();
+  CouNumber n = (*(arglist_ [0])) ();
+  CouNumber N = (*(arglist_ [1])) ();
+  CouNumber d = (*(arglist_ [2])) ();
+  CouNumber D = (*(arglist_ [3])) ();
 
   if (d>0)
     if (N<0) return safeProd (N,d);

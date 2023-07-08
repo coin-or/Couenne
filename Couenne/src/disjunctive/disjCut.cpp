@@ -257,7 +257,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
       // count nonzero entries, compute ratio max/min coefficient
       double mincoeff = COIN_DBL_MAX, maxcoeff = 0.;
 
-      for (register int i=n+1; i--;) {
+      for (int i=n+1; i--;) {
 	double value = fabs (AlphaBeta [i]);
 	if (value == 0.) continue;
 	if (value > maxcoeff) maxcoeff = value;
@@ -361,7 +361,7 @@ int CouenneDisjCuts::generateDisjCuts (std::vector <std::pair <OsiCuts *, OsiCut
 
     // remove last ncolLeft + ncolRight columns from cglp
     int *delIndices = new int [ncolLeft + ncolRight];
-    for (register int nc = ncolLeft + ncolRight, j = N + nc; nc--;)
+    for (int nc = ncolLeft + ncolRight, j = N + nc; nc--;)
       *delIndices++ = --j;
     delIndices -= (ncolLeft + ncolRight);
     cglp.deleteCols (ncolLeft + ncolRight, delIndices);

@@ -386,7 +386,7 @@ int PSDize (int n, double *A, double *B, bool doSqrRoot) {
 
   for (int j=0; j<n; ++j) {
 
-    register double multEig = doSqrRoot ? sqrt (eigenval [j]) : 
+    double multEig = doSqrRoot ? sqrt (eigenval [j]) : 
                                                 eigenval [j];
 
     for (int i=0; i<n; ++i)

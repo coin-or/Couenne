@@ -34,17 +34,17 @@ namespace Bonmin {
 #define THRES_ABT_IMPROVED     0  // only continue ABT if at least these bounds have improved
 #define THRES_ABT_ORIG       100  // only do ABT on auxiliaries if they are less originals than this 
 
-static double distanceToBound (register int n, 
-			       register const double* xOrig,
-			       register const double* lower, 
-			       register const double* upper,
-			       register double cutoff_distance) { // stop if distance is above this
+static double distanceToBound (int n, 
+			       const double* xOrig,
+			       const double* lower, 
+			       const double* upper,
+			       double cutoff_distance) { // stop if distance is above this
 
-  register double Xdist = 0.;
+  double Xdist = 0.;
 
   for (; n--; ++upper, ++xOrig) {
 
-    register CouNumber diff = *lower++ - *xOrig;
+    CouNumber diff = *lower++ - *xOrig;
 
     if      ( diff                    > 0.) {if ((Xdist += diff) > cutoff_distance) break;}
     else if ((diff = *xOrig - *upper) > 0.) {if ((Xdist += diff) > cutoff_distance) break;}

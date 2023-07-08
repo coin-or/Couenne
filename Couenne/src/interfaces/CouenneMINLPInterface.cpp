@@ -229,7 +229,7 @@ void
 CouenneMINLPInterface::registerOptions
 (SmartPtr<RegisteredOptions> roptions)
 {
-  // We try to register the options - if those have been registered
+  // We try to the options - if those have been registered
   // already, we catch the exception and don't need to do it again
   try {
     register_general_options(roptions);

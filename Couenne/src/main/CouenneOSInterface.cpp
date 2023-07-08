@@ -102,7 +102,7 @@ CouenneProblem* CouenneOSInterface::getCouenneProblem() {
 
   // fill in lower and upper bounds ///////////////////////////////////////////////////////////////
 
-  for (register int i=n_var; i--;) {
+  for (int i=n_var; i--;) {
     problem -> Lb (i) = - COUENNE_INFINITY;
     problem -> Ub (i) =   COUENNE_INFINITY;
     problem -> X  (i) = 0;

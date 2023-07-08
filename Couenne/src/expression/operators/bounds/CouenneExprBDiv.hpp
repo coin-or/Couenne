@@ -16,7 +16,7 @@
 namespace Couenne {
 
 /// division that avoids NaN's and considers a sign when returning infinity
-static inline CouNumber safeDiv (register CouNumber a, register CouNumber b, int sign) {
+static inline CouNumber safeDiv (CouNumber a, CouNumber b, int sign) {
 
   if (fabs (a) < COUENNE_EPS) return 0;
   //    if (fabs (b) < COUENNE_EPS)) return 0;
@@ -63,10 +63,10 @@ class exprLBDiv: public exprOp {
 
 inline CouNumber exprLBDiv::operator () () {
 
-  register CouNumber n = (*(arglist_ [0])) ();
-  register CouNumber N = (*(arglist_ [1])) ();
-  register CouNumber d = (*(arglist_ [2])) ();
-  register CouNumber D = (*(arglist_ [3])) ();
+  CouNumber n = (*(arglist_ [0])) ();
+  CouNumber N = (*(arglist_ [1])) ();
+  CouNumber d = (*(arglist_ [2])) ();
+  CouNumber D = (*(arglist_ [3])) ();
                                                // (n,N,d,D)     lb 
   if (d > 0)                                   // (?,?,+,+)
     if   (n > 0)    return safeDiv (n,D,-1);      // (+,+,+,+) --> n/D
@@ -111,10 +111,10 @@ class exprUBDiv: public exprOp {
 
 inline CouNumber exprUBDiv::operator () () {
 
-  register CouNumber n = (*(arglist_ [0])) ();
-  register CouNumber N = (*(arglist_ [1])) ();
-  register CouNumber d = (*(arglist_ [2])) ();
-  register CouNumber D = (*(arglist_ [3])) ();
+  CouNumber n = (*(arglist_ [0])) ();
+  CouNumber N = (*(arglist_ [1])) ();
+  CouNumber d = (*(arglist_ [2])) ();
+  CouNumber D = (*(arglist_ [3])) ();
 
   if (d > 0)                                     // (n,N,d,D)     lb 
     if   (N < 0) return safeDiv (N,D,1);         // (-,-,+,+) --> N/D

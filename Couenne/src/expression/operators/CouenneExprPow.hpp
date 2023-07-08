@@ -140,7 +140,7 @@ inline CouNumber safe_pow (CouNumber base,
 
   if (lbase < 0.) {
 
-    register int rndexp = COUENNE_round (lexponent);
+    int rndexp = COUENNE_round (lexponent);
 
     if (((fabs (lexponent - rndexp) < COUENNE_EPS) ||
 	 ((fabs (lexponent) > COUENNE_EPS) && 
@@ -155,7 +155,7 @@ inline CouNumber safe_pow (CouNumber base,
 
     if (lbase <= -COUENNE_INFINITY) {
 
-      register int intk = COUENNE_round (lexponent);
+      int intk = COUENNE_round (lexponent);
 
       if ((fabs (lexponent - intk) < COUENNE_EPS) && (intk % 2 || signpower))
 	retval = (lexponent < 0.) ? 0. : -COUENNE_INFINITY;

@@ -69,7 +69,7 @@ void exprTrilinear::getBounds (CouNumber &lb, CouNumber &ub) {
     for   (int i1 = 0; i1 < 2; i1++)
       for (int i2 = 0; i2 < 2; i2++) {
 
-	register double curbound = 
+	double curbound = 
 	  (i0 ? ubA [0] : lbA [0]) * 
 	  (i1 ? ubA [1] : lbA [1]) *
 	  (i2 ? ubA [2] : lbA [2]);

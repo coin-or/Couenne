@@ -57,7 +57,7 @@ class exprLBSin: public exprOp {
 
 inline CouNumber exprLBSin::operator () () {
 
-  register CouNumber 
+  CouNumber 
     l = (*(arglist_ [0])) (),
     u = (*(arglist_ [1])) ();
 
@@ -110,7 +110,7 @@ class exprUBSin: public exprOp {
 
 inline CouNumber exprUBSin::operator () () {
 
-  register CouNumber 
+  CouNumber 
     l = (*(arglist_ [0])) (),
     u = (*(arglist_ [1])) ();
 

@@ -117,11 +117,11 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
     exprGroup::lincoeff &lcoe = eg -> lcoeff ();
 
-    for (register exprGroup::lincoeff::iterator el = lcoe.begin ();
+    for (exprGroup::lincoeff::iterator el = lcoe.begin ();
 	 el != lcoe.end (); ++el) {
 
-      register CouNumber coe = el -> second;
-      register int       ind = el -> first -> Index ();
+      CouNumber coe = el -> second;
+      int       ind = el -> first -> Index ();
 
       if      (coe >  0.) {I1 [ipos] = ind; C1 [ipos++] = coe;}
       else if (coe < -0.) {I2 [ineg] = ind; C2 [ineg++] = coe;}
@@ -233,8 +233,8 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
 
   int maxind = -1;
 
-  for (register int i=ipos; i--; I1++) if (*I1 > maxind) maxind = *I1;
-  for (register int i=ineg; i--; I2++) if (*I2 > maxind) maxind = *I2;
+  for (int i=ipos; i--; I1++) if (*I1 > maxind) maxind = *I1;
+  for (int i=ineg; i--; I2++) if (*I2 > maxind) maxind = *I2;
 
   I1 -= ipos;
   I2 -= ineg;
@@ -251,7 +251,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     // All finite bounds. All var. bounds can be tightened.
 
     // tighten upper bound of variables in I1
-    for (register int i=ipos; i--;) {
+    for (int i=ipos; i--;) {
       int ind = I1 [i];
       if ((tighter = (updateBound (+1, u + ind, (wu - lower) / C1 [i] + lc [ind]) || tighter))) {
 	chg [ind].setUpper(t_chg_bounds::CHANGED);
@@ -261,7 +261,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
     }
 
     // tighten lower bound of variables in I2
-    for (register int i=ineg; i--;) {
+    for (int i=ineg; i--;) {
       int ind = I2 [i];
       if ((tighter = (updateBound (-1, l + ind, (wu - lower) / C2 [i] + uc [ind]) || tighter))) {
 	chg [ind].setLower(t_chg_bounds::CHANGED);
@@ -294,7 +294,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
   if ((infUp1 == -1) && (infLo2 == -1) && (wl > -COUENNE_INFINITY / 1e10)) { 
     // All finite bounds. All var. bounds can be tightened.
 
-    for (register int i=ipos; i--;) {
+    for (int i=ipos; i--;) {
       int ind = I1 [i];
       if ((tighter = (updateBound (-1, l + ind, (wl - upper) / C1 [i] + uc [ind]) || tighter))) {
 	chg [ind].setLower(t_chg_bounds::CHANGED); 
@@ -303,7 +303,7 @@ bool exprSum::impliedBound (int wind, CouNumber *l, CouNumber *u, t_chg_bounds *
       }
     }
 
-    for (register int i=ineg; i--;) {
+    for (int i=ineg; i--;) {
       int ind = I2 [i];
       if ((tighter = (updateBound (+1, u + ind, (wl - upper) / C2 [i] + lc [ind]) || tighter))) {
 	chg [ind].setUpper(t_chg_bounds::CHANGED);
@@ -352,7 +352,7 @@ static CouNumber scanBounds (int        num,      /// cardinality of the set (I1
                                                   /// bound, or -2 if more than one exist
   CouNumber bound = 0.;
 
-  for (register int i = num; i--;) {
+  for (int i = num; i--;) {
 
     CouNumber bd = bounds [indices [i]];
 

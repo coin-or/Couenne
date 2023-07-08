@@ -72,7 +72,7 @@ namespace Couenne {
 			   CouenneInterface *ci = NULL,
 			   Bonmin::Bab *bb = NULL);
     
-    /** register the options */
+    /** the options */
     virtual void registerOptions();
     /** Register all Couenne options.*/
     static void registerAllOptions(Ipopt::SmartPtr<Bonmin::RegisteredOptions> roptions);

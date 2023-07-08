@@ -216,11 +216,11 @@ bool compareSol::operator() (const CouenneFPsolution &one,
 
   return one. compare (two, comparedTerm_);
 
-  // register const double
+  // const double
   //   *x1 = one.x (),
   //   *x2 = two.x ();
 
-  // register int n = one.n ();
+  // int n = one.n ();
 
   // while (n--)
   //   if ((*x1++ - *x2++) <= COMP_TOLERANCE)
@@ -243,15 +243,15 @@ void CouenneFPpool::findClosestAndReplace (double *&sol, const double *nSol, int
       {
 	//compute distance of pool solution and NLP solution
 
-	register double 
+	double 
 	   dist = 0.0,
 	   delta;
 
-	const register double 
+	const double 
 	  *x = i -> x (),
 	  *s = nSol;
 
-	register bool move_on = false;
+	bool move_on = false;
 
 	for (int j = nvars, k=0; j--; ++k) {
 

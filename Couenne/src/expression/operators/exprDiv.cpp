@@ -220,7 +220,7 @@ bool exprDiv::isInteger () {
   arglist_ [1] -> getBounds (dl, du);
   arglist_ [0] -> getBounds (nl, nu);
 
-  //register CouNumber 
+  //CouNumber 
   //num = (*nl) (), 
   //den = (*dl) ();
 
