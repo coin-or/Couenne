@@ -132,7 +132,7 @@ void CouenneRecordBestSol::setInitIsInt(const bool *givenIsInt,
   }
   CoinCopyN(givenIsInt, givenCard, initIsInt);
 
-  listInt.empty();
+  listInt.clear();
   for(int i=0; i<givenCard; i++) {
     if(initIsInt[i]) {
       listInt.push_back(i);
