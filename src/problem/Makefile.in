@@ -104,12 +104,12 @@ host_triplet = @host@
 # 	CouenneLPtightenBounds.cpp \
 # 	CouenneLPtightenBoundsCLP.cpp \
 # 	CouenneLPtightenBoundsCLP-light.cpp 
-@COIN_HAS_ASL_TRUE@am__append_1 = \
-@COIN_HAS_ASL_TRUE@	../readnl/readnl.cpp \
-@COIN_HAS_ASL_TRUE@	../readnl/nl2e.cpp \
-@COIN_HAS_ASL_TRUE@	../readnl/invmap.cpp \
-@COIN_HAS_ASL_TRUE@	../readnl/readASLfg.cpp \
-@COIN_HAS_ASL_TRUE@	../readnl/CouenneAmplInterface.cpp
+@COIN_HAS_BONMINAMPL_TRUE@am__append_1 = \
+@COIN_HAS_BONMINAMPL_TRUE@	../readnl/readnl.cpp \
+@COIN_HAS_BONMINAMPL_TRUE@	../readnl/nl2e.cpp \
+@COIN_HAS_BONMINAMPL_TRUE@	../readnl/invmap.cpp \
+@COIN_HAS_BONMINAMPL_TRUE@	../readnl/readASLfg.cpp \
+@COIN_HAS_BONMINAMPL_TRUE@	../readnl/CouenneAmplInterface.cpp
 
 subdir = src/problem
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -125,10 +125,11 @@ CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libCouenneProblem_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-@COIN_HAS_ASL_TRUE@am__objects_1 = ../readnl/readnl.lo \
-@COIN_HAS_ASL_TRUE@	../readnl/nl2e.lo ../readnl/invmap.lo \
-@COIN_HAS_ASL_TRUE@	../readnl/readASLfg.lo \
-@COIN_HAS_ASL_TRUE@	../readnl/CouenneAmplInterface.lo
+@COIN_HAS_BONMINAMPL_TRUE@am__objects_1 = ../readnl/readnl.lo \
+@COIN_HAS_BONMINAMPL_TRUE@	../readnl/nl2e.lo \
+@COIN_HAS_BONMINAMPL_TRUE@	../readnl/invmap.lo \
+@COIN_HAS_BONMINAMPL_TRUE@	../readnl/readASLfg.lo \
+@COIN_HAS_BONMINAMPL_TRUE@	../readnl/CouenneAmplInterface.lo
 am_libCouenneProblem_la_OBJECTS = problem.lo CouenneProblem.lo \
 	problemIO.lo writeAMPL.lo writeGAMS.lo writeLP.lo \
 	constraint.lo fillQuadIndices.lo fillDependence.lo checkNLP.lo \

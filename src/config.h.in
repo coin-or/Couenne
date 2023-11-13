@@ -6,11 +6,11 @@
 /* Library Visibility Attribute */
 #undef COUENNELIB_EXPORT
 
-/* Define to 1 if ASL is available. */
-#undef COUENNE_HAS_ASL
-
 /* Define to 1 if Bonmin is available. */
 #undef COUENNE_HAS_BONMIN
+
+/* Define to 1 if BonminAmpl is available. */
+#undef COUENNE_HAS_BONMINAMPL
 
 /* Define to 1 if the Cplex package is available */
 #undef COUENNE_HAS_CPLEX

@@ -8,7 +8,7 @@
 #                        testfun for Couenne                           #
 ########################################################################
 
-if COIN_HAS_ASL
+if COIN_HAS_BONMINAMPL
 test: 
 	chmod u+x grandTest.sh
 	./grandTest.sh

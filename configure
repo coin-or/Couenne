@@ -699,8 +699,8 @@ COIN_HAS_OSIGRB_FALSE
 COIN_HAS_OSIGRB_TRUE
 COIN_HAS_OSICPX_FALSE
 COIN_HAS_OSICPX_TRUE
-COIN_HAS_ASL_FALSE
-COIN_HAS_ASL_TRUE
+COIN_HAS_BONMINAMPL_FALSE
+COIN_HAS_BONMINAMPL_TRUE
 COIN_HAS_BONMIN_FALSE
 COIN_HAS_BONMIN_TRUE
 COUENNELIB_PCFILES
@@ -866,9 +866,9 @@ enable_libtool_lock
 with_bonmin
 with_bonmin_lflags
 with_bonmin_cflags
-with_asl
-with_asl_lflags
-with_asl_cflags
+with_bonminampl
+with_bonminampl_lflags
+with_bonminampl_cflags
 with_osicpx
 with_osicpx_lflags
 with_osicpx_cflags
@@ -1583,14 +1583,16 @@ Optional Packages:
   --with-bonmin-cflags    Compiler flags for Bonmin appropriate for your
                           environment. (Most often, -I specs for header file
                           directories.)
-  --without-asl           Do not use ASL. If an argument is given to
-                          --with-asl, then 'yes' is equivalent to
-                          --with-asl, 'no' is equivalent to
-                          --without-asl and any other argument is applied as
-                          for --with-asl-lflags.
-  --with-asl-lflags       Linker flags for ASL appropriate for your
+  --without-bonminampl    Do not use BonminAmpl. If an argument is given to
+                          --with-bonminampl, then 'yes' is
+                          equivalent to --with-bonminampl, 'no' is
+                          equivalent to --without-bonminampl and any other
+                          argument is applied as for --with-bonminampl-lflags.
+  --with-bonminampl-lflags
+                          Linker flags for BonminAmpl appropriate for your
                           environment. (Most often, -l specs for libraries.)
-  --with-asl-cflags       Compiler flags for ASL appropriate for your
+  --with-bonminampl-cflags
+                          Compiler flags for BonminAmpl appropriate for your
                           environment. (Most often, -I specs for header file
                           directories.)
   --without-osicpx        Do not use OsiCpx. If an argument is given to
@@ -18045,8 +18047,8 @@ fi
 
 
 
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for package ASL" >&5
-printf %s "checking for package ASL... " >&6; }
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for package BonminAmpl" >&5
+printf %s "checking for package BonminAmpl... " >&6; }
 
 
 
@@ -18055,41 +18057,41 @@ printf %s "checking for package ASL... " >&6; }
 
 
 
-  coin_has_asl=noInfo
+  coin_has_bonminampl=noInfo
   if test x"$COIN_SKIP_PROJECTS" != x ; then
     for pkg in `echo $COIN_SKIP_PROJECTS | tr '[:upper:]' '[:lower:]'` ; do
-      if test "$pkg" = "asl" ; then
-        coin_has_asl=skipping
+      if test "$pkg" = "bonminampl" ; then
+        coin_has_bonminampl=skipping
       fi
     done
   fi
 
 
-  if test "$coin_has_asl" != skipping ; then
+  if test "$coin_has_bonminampl" != skipping ; then
 
 
 
 
-# Check whether --with-asl was given.
-if test ${with_asl+y}
+# Check whether --with-bonminampl was given.
+if test ${with_bonminampl+y}
 then :
-  withval=$with_asl;
+  withval=$with_bonminampl;
 fi
 
 
 
-# Check whether --with-asl-lflags was given.
-if test ${with_asl_lflags+y}
+# Check whether --with-bonminampl-lflags was given.
+if test ${with_bonminampl_lflags+y}
 then :
-  withval=$with_asl_lflags;
+  withval=$with_bonminampl_lflags;
 fi
 
 
 
-# Check whether --with-asl-cflags was given.
-if test ${with_asl_cflags+y}
+# Check whether --with-bonminampl-cflags was given.
+if test ${with_bonminampl_cflags+y}
 then :
-  withval=$with_asl_cflags;
+  withval=$with_bonminampl_cflags;
 fi
 
 
@@ -18103,73 +18105,73 @@ fi
 
 
 
-  coin_has_asl=requested
+  coin_has_bonminampl=requested
 
-  asl_lflags=
-  asl_cflags=
-  asl_data=
-  asl_pcfiles="bonminamplinterface"
+  bonminampl_lflags=
+  bonminampl_cflags=
+  bonminampl_data=
+  bonminampl_pcfiles="bonminamplinterface"
 
 
-  withval="$with_asl"
+  withval="$with_bonminampl"
   if test -n "$withval" ; then
     case "$withval" in
       no )
-        coin_has_asl=skipping
-        asl_failmode='command line'
+        coin_has_bonminampl=skipping
+        bonminampl_failmode='command line'
         ;;
       yes )
-        coin_has_asl=requested
-        asl_failmode=''
+        coin_has_bonminampl=requested
+        bonminampl_failmode=''
         ;;
       build )
-        coin_has_asl=requested
-        asl_build=yes
-        asl_failmode=''
+        coin_has_bonminampl=requested
+        bonminampl_build=yes
+        bonminampl_failmode=''
         ;;
       * )
-        coin_has_asl=requested
-        asl_failmode=''
-        asl_lflags="$withval"
-        asl_pcfiles=''
+        coin_has_bonminampl=requested
+        bonminampl_failmode=''
+        bonminampl_lflags="$withval"
+        bonminampl_pcfiles=''
         ;;
     esac
   else
-    if test -n "$with_asl_lflags" ||
-       test -n "$with_asl_cflags" ||
-       test -n "$with_asl_data" ; then
-      coin_has_asl=requested
-      asl_failmode=''
-      asl_pcfiles=''
+    if test -n "$with_bonminampl_lflags" ||
+       test -n "$with_bonminampl_cflags" ||
+       test -n "$with_bonminampl_data" ; then
+      coin_has_bonminampl=requested
+      bonminampl_failmode=''
+      bonminampl_pcfiles=''
     fi
   fi
 
 
-  if test "$coin_has_asl" != skipping ; then
-       withval="$with_asl_lflags"
+  if test "$coin_has_bonminampl" != skipping ; then
+       withval="$with_bonminampl_lflags"
        if test -n "$withval" ; then
          case "$withval" in
            build | no | yes )
              as_fn_error $? "\"$withval\" is not useful here; please specify link flags appropriate for your environment." "$LINENO" 5
              ;;
            * )
-             coin_has_asl=yes
-             asl_lflags="$withval"
-             asl_pcfiles=''
+             coin_has_bonminampl=yes
+             bonminampl_lflags="$withval"
+             bonminampl_pcfiles=''
              ;;
          esac
        fi
 
-       withval="$with_asl_cflags"
+       withval="$with_bonminampl_cflags"
        if test -n "$withval" ; then
          case "$withval" in
            build | no | yes )
              as_fn_error $? "\"$withval\" is not useful here; please specify compile flags appropriate for your environment." "$LINENO" 5
              ;;
            * )
-             coin_has_asl=yes
-             asl_cflags="$withval"
-             asl_pcfiles=''
+             coin_has_bonminampl=yes
+             bonminampl_cflags="$withval"
+             bonminampl_pcfiles=''
              ;;
          esac
        fi
@@ -18179,102 +18181,102 @@ fi
 
 
 
-  if test $coin_has_asl = requested ; then
+  if test $coin_has_bonminampl = requested ; then
     if test -n "$PKG_CONFIG" ; then
-      if test x"$asl_build" = xyes ; then
-        pcfile="coin$asl_pcfiles"
+      if test x"$bonminampl_build" = xyes ; then
+        pcfile="coin$bonminampl_pcfiles"
 
 
 
   if test -n "$PKG_CONFIG" ; then
     if PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG --exists "$pcfile" ; then
-      ASL_VERSIONS=`PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG --modversion "$pcfile" 2>/dev/null | tr '\n' ' '`
-      coin_has_asl=yes
+      BONMINAMPL_VERSIONS=`PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG --modversion "$pcfile" 2>/dev/null | tr '\n' ' '`
+      coin_has_bonminampl=yes
     else
-      ASL_PKG_ERRORS=`PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG $pkg_short_errors --errors-to-stdout --print-errors "$pcfile"`
-      coin_has_asl=no
+      BONMINAMPL_PKG_ERRORS=`PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG $pkg_short_errors --errors-to-stdout --print-errors "$pcfile"`
+      coin_has_bonminampl=no
     fi
   else
-    as_fn_error $? "\"Cannot check for existence of module asl without pkgconf\"" "$LINENO" 5
+    as_fn_error $? "\"Cannot check for existence of module bonminampl without pkgconf\"" "$LINENO" 5
   fi
 
       fi
-      if ! test $coin_has_asl = yes ; then
-        pcfile="$asl_pcfiles"
+      if ! test $coin_has_bonminampl = yes ; then
+        pcfile="$bonminampl_pcfiles"
 
 
 
   if test -n "$PKG_CONFIG" ; then
     if PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG --exists "$pcfile" ; then
-      ASL_VERSIONS=`PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG --modversion "$pcfile" 2>/dev/null | tr '\n' ' '`
-      coin_has_asl=yes
+      BONMINAMPL_VERSIONS=`PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG --modversion "$pcfile" 2>/dev/null | tr '\n' ' '`
+      coin_has_bonminampl=yes
     else
-      ASL_PKG_ERRORS=`PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG $pkg_short_errors --errors-to-stdout --print-errors "$pcfile"`
-      coin_has_asl=no
+      BONMINAMPL_PKG_ERRORS=`PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG $pkg_short_errors --errors-to-stdout --print-errors "$pcfile"`
+      coin_has_bonminampl=no
     fi
   else
-    as_fn_error $? "\"Cannot check for existence of module asl without pkgconf\"" "$LINENO" 5
+    as_fn_error $? "\"Cannot check for existence of module bonminampl without pkgconf\"" "$LINENO" 5
   fi
 
       fi
-      if test $coin_has_asl = yes ; then
-        asl_data=`PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG --variable=datadir "$pcfile" 2>/dev/null`
-        asl_pcfiles="$pcfile"
+      if test $coin_has_bonminampl = yes ; then
+        bonminampl_data=`PKG_CONFIG_PATH="$COIN_PKG_CONFIG_PATH" $PKG_CONFIG --variable=datadir "$pcfile" 2>/dev/null`
+        bonminampl_pcfiles="$pcfile"
       fi
     else
-      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Check for asl via pkg-config could not be performed as there is no pkg-config available. Consider installing pkg-config or provide appropriate values for --with-asl-lflags and --with-asl-cflags." >&5
-printf "%s\n" "$as_me: WARNING: Check for asl via pkg-config could not be performed as there is no pkg-config available. Consider installing pkg-config or provide appropriate values for --with-asl-lflags and --with-asl-cflags." >&2;}
-      coin_has_asl=no
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Check for bonminampl via pkg-config could not be performed as there is no pkg-config available. Consider installing pkg-config or provide appropriate values for --with-bonminampl-lflags and --with-bonminampl-cflags." >&5
+printf "%s\n" "$as_me: WARNING: Check for bonminampl via pkg-config could not be performed as there is no pkg-config available. Consider installing pkg-config or provide appropriate values for --with-bonminampl-lflags and --with-bonminampl-cflags." >&2;}
+      coin_has_bonminampl=no
     fi
   fi
 
 
   if test "$BUILDTOOLS_DEBUG" = 1 ; then
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: FIND_PRIM_PKG result for asl: \"$coin_has_asl\"" >&5
-printf "%s\n" "$as_me: FIND_PRIM_PKG result for asl: \"$coin_has_asl\"" >&6;}
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Collected values for package 'asl'" >&5
-printf "%s\n" "$as_me: Collected values for package 'asl'" >&6;}
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: asl_lflags is \"$asl_lflags\"" >&5
-printf "%s\n" "$as_me: asl_lflags is \"$asl_lflags\"" >&6;}
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: asl_cflags is \"$asl_cflags\"" >&5
-printf "%s\n" "$as_me: asl_cflags is \"$asl_cflags\"" >&6;}
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: asl_data is \"$asl_data\"" >&5
-printf "%s\n" "$as_me: asl_data is \"$asl_data\"" >&6;}
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: asl_pcfiles is \"$asl_pcfiles\"" >&5
-printf "%s\n" "$as_me: asl_pcfiles is \"$asl_pcfiles\"" >&6;}
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: FIND_PRIM_PKG result for bonminampl: \"$coin_has_bonminampl\"" >&5
+printf "%s\n" "$as_me: FIND_PRIM_PKG result for bonminampl: \"$coin_has_bonminampl\"" >&6;}
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Collected values for package 'bonminampl'" >&5
+printf "%s\n" "$as_me: Collected values for package 'bonminampl'" >&6;}
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: bonminampl_lflags is \"$bonminampl_lflags\"" >&5
+printf "%s\n" "$as_me: bonminampl_lflags is \"$bonminampl_lflags\"" >&6;}
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: bonminampl_cflags is \"$bonminampl_cflags\"" >&5
+printf "%s\n" "$as_me: bonminampl_cflags is \"$bonminampl_cflags\"" >&6;}
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: bonminampl_data is \"$bonminampl_data\"" >&5
+printf "%s\n" "$as_me: bonminampl_data is \"$bonminampl_data\"" >&6;}
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: bonminampl_pcfiles is \"$bonminampl_pcfiles\"" >&5
+printf "%s\n" "$as_me: bonminampl_pcfiles is \"$bonminampl_pcfiles\"" >&6;}
   fi
 
 
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $coin_has_asl" >&5
-printf "%s\n" "$coin_has_asl" >&6; }
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $coin_has_bonminampl" >&5
+printf "%s\n" "$coin_has_bonminampl" >&6; }
   else
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $coin_has_asl (COIN_SKIP_PROJECTS)" >&5
-printf "%s\n" "$coin_has_asl (COIN_SKIP_PROJECTS)" >&6; }
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $coin_has_bonminampl (COIN_SKIP_PROJECTS)" >&5
+printf "%s\n" "$coin_has_bonminampl (COIN_SKIP_PROJECTS)" >&6; }
   fi
 
 
-  if test "$coin_has_asl" != yes ; then
-    coin_has_asl=no
+  if test "$coin_has_bonminampl" != yes ; then
+    coin_has_bonminampl=no
   fi
 
 
-   if test $coin_has_asl = yes; then
-  COIN_HAS_ASL_TRUE=
-  COIN_HAS_ASL_FALSE='#'
+   if test $coin_has_bonminampl = yes; then
+  COIN_HAS_BONMINAMPL_TRUE=
+  COIN_HAS_BONMINAMPL_FALSE='#'
 else
-  COIN_HAS_ASL_TRUE='#'
-  COIN_HAS_ASL_FALSE=
+  COIN_HAS_BONMINAMPL_TRUE='#'
+  COIN_HAS_BONMINAMPL_FALSE=
 fi
 
 
 
-  if test $coin_has_asl = yes ; then
+  if test $coin_has_bonminampl = yes ; then
 
-printf "%s\n" "#define COUENNE_HAS_ASL 1" >>confdefs.h
+printf "%s\n" "#define COUENNE_HAS_BONMINAMPL 1" >>confdefs.h
 
-    COUENNELIB_PCFILES="$asl_pcfiles $COUENNELIB_PCFILES"
-       COUENNELIB_LFLAGS="$asl_lflags $COUENNELIB_LFLAGS"
-       COUENNELIB_CFLAGS="$asl_cflags $COUENNELIB_CFLAGS"
+    COUENNELIB_PCFILES="$bonminampl_pcfiles $COUENNELIB_PCFILES"
+       COUENNELIB_LFLAGS="$bonminampl_lflags $COUENNELIB_LFLAGS"
+       COUENNELIB_CFLAGS="$bonminampl_cflags $COUENNELIB_CFLAGS"
 
 
 
@@ -18282,7 +18284,7 @@ printf "%s\n" "#define COUENNE_HAS_ASL 1" >>confdefs.h
 
 
 # more workaround for having ASL deep inside Couenne
-if test $coin_has_asl = yes ; then
+if test $coin_has_bonminampl = yes ; then
 
 printf "%s\n" "#define COUENNEINTERFACE_FROM_ASL 1" >>confdefs.h
 
@@ -21442,8 +21444,8 @@ if test -z "${COIN_HAS_BONMIN_TRUE}" && test -z "${COIN_HAS_BONMIN_FALSE}"; then
   as_fn_error $? "conditional \"COIN_HAS_BONMIN\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${COIN_HAS_ASL_TRUE}" && test -z "${COIN_HAS_ASL_FALSE}"; then
-  as_fn_error $? "conditional \"COIN_HAS_ASL\" was never defined.
+if test -z "${COIN_HAS_BONMINAMPL_TRUE}" && test -z "${COIN_HAS_BONMINAMPL_FALSE}"; then
+  as_fn_error $? "conditional \"COIN_HAS_BONMINAMPL\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${COIN_HAS_OSICPX_TRUE}" && test -z "${COIN_HAS_OSICPX_FALSE}"; then

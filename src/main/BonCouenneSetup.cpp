@@ -84,7 +84,7 @@
 // ASL includes need to come behind OsiClp and Bonmin, because it defines "filename",
 // which is used as variablename in Clp
 // (similar bad as windows.h, which defines "small")
-#ifdef COUENNE_HAS_ASL
+#ifdef COUENNE_HAS_BONMINAMPL
 #include "asl.h"
 #include "getstub.h"
 #endif
@@ -96,7 +96,7 @@ CouenneSetup::~CouenneSetup(){
   if (couenneProb_ && couenneProb_is_own_)
     delete couenneProb_;
 
-#ifdef COUENNE_HAS_ASL
+#ifdef COUENNE_HAS_BONMINAMPL
   // free (aslfg_ -> asl); // triggers segfault -- apparently freed in ancestor class
 #endif
 }
@@ -141,7 +141,7 @@ bool CouenneSetup::InitializeCouenne (char ** argv,
     ci = new CouenneInterface;
 
     if (!couenneProb_ && argv) {
-#ifdef COUENNE_HAS_ASL
+#ifdef COUENNE_HAS_BONMINAMPL
       /* Read the model in various places. */
       ci -> readAmplNlFile (argv, roptions (), options (), journalist ());
       aslfg_ = new SmartAsl;

@@ -40,7 +40,7 @@ libCouenneProblem_la_SOURCES = \
 # 	CouenneLPtightenBoundsCLP.cpp \
 # 	CouenneLPtightenBoundsCLP-light.cpp 
 
-if COIN_HAS_ASL
+if COIN_HAS_BONMINAMPL
 libCouenneProblem_la_SOURCES += \
 	../readnl/readnl.cpp \
 	../readnl/nl2e.cpp \

@@ -76,7 +76,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   integerRank_ (NULL),
   maxCpuTime_  (COIN_DBL_MAX),
   bonBase_     (base),
-#ifdef COUENNE_HAS_ASL
+#ifdef COUENNE_HAS_BONMINAMPL
   asl_         (asl),
 #endif
   unusedOriginalsIndices_ (NULL),
@@ -94,7 +94,7 @@ CouenneProblem::CouenneProblem (struct ASL *asl,
   double now = CoinCpuTime ();
 
   if (asl) {
-#ifdef COUENNE_HAS_ASL
+#ifdef COUENNE_HAS_BONMINAMPL
     // read problem from AMPL structure
     readnl (asl);
 #else
@@ -156,7 +156,7 @@ CouenneProblem::CouenneProblem (const CouenneProblem &p):
   numberInRank_ (p.numberInRank_),
   maxCpuTime_   (p.maxCpuTime_),
   bonBase_      (p.bonBase_),
-#ifdef COUENNE_HAS_ASL
+#ifdef COUENNE_HAS_BONMINAMPL
   asl_          (p.asl_),
 #endif
   unusedOriginalsIndices_ (NULL),

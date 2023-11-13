@@ -18,7 +18,7 @@
 #include "CoinTime.hpp"
 
 #include "CouenneUserInterface.hpp"
-#ifdef COUENNE_HAS_ASL
+#ifdef COUENNE_HAS_BONMINAMPL
 #include "CouenneAmplInterface.hpp"
 #endif
 #ifdef COUENNE_HAS_OS
@@ -90,7 +90,7 @@ int main (int argc, char *argv[]) {
   // options to prepare for parsing the command line
   SmartPtr<Bonmin::RegisteredOptions> roptions = new Bonmin::RegisteredOptions();
   Couenne::CouenneSetup::registerAllOptions(roptions);
-#ifdef COUENNE_HAS_ASL
+#ifdef COUENNE_HAS_BONMINAMPL
   CouenneAmplInterface::registerOptions(roptions);
 #endif
 #ifdef COUENNE_HAS_OS
@@ -109,7 +109,7 @@ int main (int argc, char *argv[]) {
   CouenneUserInterface* userinterface = NULL;
 	
   std::string dummy;
-#ifdef COUENNE_HAS_ASL
+#ifdef COUENNE_HAS_BONMINAMPL
   if (!userinterface && options->GetStringValue("nlfile", dummy, "")) {
     userinterface = new CouenneAmplInterface(options, jnlst);
     ((CouenneAmplInterface*)userinterface) -> setRegisteredOptions(roptions); // for some reason the TMINLP constructor needs the registered options

@@ -43,10 +43,10 @@ if test $coin_has_bonmin != yes ; then
   AC_MSG_ERROR([Required package Bonmin not available.])
 fi
 
-AC_COIN_CHK_PKG(ASL,[CouenneLib],[bonminamplinterface])
+AC_COIN_CHK_PKG(BonminAmpl,[CouenneLib],[bonminamplinterface])
 
 # more workaround for having ASL deep inside Couenne
-if test $coin_has_asl = yes ; then
+if test $coin_has_bonminampl = yes ; then
   AC_DEFINE(COUENNEINTERFACE_FROM_ASL, 1, [whether CouenneInterface is derived from Bonmins AmplInterface])
 fi
 

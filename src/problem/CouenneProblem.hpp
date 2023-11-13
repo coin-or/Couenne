@@ -490,7 +490,7 @@ class COUENNELIB_EXPORT CouenneProblem {
   /// nonlinear constraints, and auxiliary variables.
   void print (std::ostream & = std::cout);
 
-#ifdef COUENNE_HAS_ASL
+#ifdef COUENNE_HAS_BONMINAMPL
   /// Read problem from .nl file using the Ampl Solver Library (ASL)
   int readnl (const struct ASL *);
 

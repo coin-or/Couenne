@@ -433,9 +433,9 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-@COIN_HAS_ASL_TRUE@test: 
-@COIN_HAS_ASL_TRUE@	chmod u+x grandTest.sh
-@COIN_HAS_ASL_TRUE@	./grandTest.sh
+@COIN_HAS_BONMINAMPL_TRUE@test: 
+@COIN_HAS_BONMINAMPL_TRUE@	chmod u+x grandTest.sh
+@COIN_HAS_BONMINAMPL_TRUE@	./grandTest.sh
 
 .PHONY: test
 

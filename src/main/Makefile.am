@@ -4,7 +4,7 @@
 #
 # Author: Pietro Belotti, on a template by Pierre Bonami
 
-if COIN_HAS_ASL
+if COIN_HAS_BONMINAMPL
   bin_PROGRAMS = couenne 
 endif
 
