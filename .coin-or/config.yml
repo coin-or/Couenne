@@ -11,8 +11,8 @@ Description:
     optima of nonconvex MINLPs. It builds on top of Bonmin, Cbc, and Ipopt.
   Manager: Pietro Belotti
   Homepage: https://github.com/coin-or/Couenne
-  License: Eclipse Public License 1.0
-  LicenseURL: http://www.opensource.org/licenses/eclipse-1.0
+  License: Eclipse Public License 2.0
+  LicenseURL: http://www.opensource.org/licenses/EPL-2.0
   Zenodo:
   IncludedIn:
     Package: Couenne
