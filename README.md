@@ -53,7 +53,7 @@ This project was initiated in 2006 within a [collaboration](http://egon.cheme.cm
 between IBM and Carnegie Mellon University, aimed at developing algorithms for
 MINLP. 
 
-Couenne is written in C++ and is released as open source under the [Eclipse Public License 1.0](http://www.opensource.org/licenses/eclipse-1.0).
+Couenne is written in C++ and is released as open source under the [Eclipse Public License 2.0](http://www.opensource.org/licenses/EPL-2.0).
 
 It is distributed under the auspices of the [COIN-OR Foundation](https://www.coin-or.org).
 
