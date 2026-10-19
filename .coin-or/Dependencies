@@ -1,11 +1,11 @@
+ThirdParty/ASL    https://github.com/coin-or-tools/ThirdParty-ASL stable/2.0
 ThirdParty/HSL    https://github.com/coin-or-tools/ThirdParty-HSL stable/2.2
-ThirdParty/ASL    https://github.com/coin-or-tools/ThirdParty-ASL master
+ThirdParty/Metis  https://github.com/coin-or-tools/ThirdParty-Metis stable/2.0
 ThirdParty/Mumps  https://github.com/coin-or-tools/ThirdParty-Mumps stable/3.0
-Data/Sample       https://github.com/coin-or-tools/Data-Sample master
 CoinUtils         https://github.com/coin-or/CoinUtils master
 Osi               https://github.com/coin-or/Osi master
 Clp               https://github.com/coin-or/Clp master
 Cgl               https://github.com/coin-or/Cgl master
 Cbc               https://github.com/coin-or/Cbc master
-Ipopt             https://github.com/coin-or/Ipopt stable/3.13
+Ipopt             https://github.com/coin-or/Ipopt stable/3.14
 Bonmin            https://github.com/coin-or/Bonmin master

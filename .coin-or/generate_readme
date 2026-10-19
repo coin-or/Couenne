@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+
+# Exit when command fails
+set -e
+#Attempt to use undefined variable outputs error message, and forces an exit
+set -u
+#Causes a pipeline to return the exit status of the last command in the pipe
+#that returned a non-zero return value.
+set -o pipefail
+#set -x
+
+source $COINBREW_HOME/scripts/generate_readme
+
+pushd . > /dev/null
+cd $(dirname $0)
+SCRIPT_DIR=$PWD
+popd > /dev/null
+
+create_variables $SCRIPT_DIR/config.yml
+
+make_header
+
+echo "Couenne (*C*onvex *O*ver and *U*nder *EN*velopes for *N*onlinear *E*stimation)
+is a branch-and-bound algorithm to solve Mixed-Integer Nonlinear Programming
+(MINLP) problems of the form:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; min <i>f</i><sub>0</sub>(<i>x</i>,<i>y</i>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     <i>f</i><sub>i</sub>(<i>x</i>,<i>y</i>) &le; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>=1,2..., <i>m</i><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     <i>x</i> in R<sup>n</sup>,
+                                   <i>y</i> in Z<sup>p</sup>
+
+where all _f_<sub>i</sub>(_x_,_y_) are, in general, nonlinear functions.
+
+Couenne aims at finding global optima of nonconvex MINLPs. It implements
+linearization, bound reduction, and branching methods within a
+branch-and-bound framework. Its main components are:
+ * an expression library;
+ * separation of linearization cuts;
+ * branching rules;
+ * bound tightening methods.
+
+Couenne builds on top of [Bonmin](https://github.com/coin-or/Bonmin),
+[Cbc](https://github.com/coin-or/Cbc), and [Ipopt](https://github.com/coin-or/Ipopt).
+It can be used as a callable library or as a stand-alone executable that reads
+models written in [AMPL](https://ampl.com).
+
+Couenne can also be used through
+ * AMPL (natively, using the \`couenne\` executable; AMPL also provides
+   [Couenne executables](https://ampl.com/products/solvers/open-source/#couenne)),
+ * GAMS (through the [GAMSlinks](https://github.com/coin-or/GAMSlinks) project),
+ * [JuMP](https://github.com/jump-dev/AmplNLWriter.jl) (Julia, via AmplNLWriter),
+ * [Pyomo](https://github.com/Pyomo/pyomo) (Python),
+ * NEOS, in [AMPL format](https://neos-server.org/neos/solvers/minco:Couenne/AMPL.html)
+   or [GAMS format](https://neos-server.org/neos/solvers/minco:Couenne/GAMS.html).
+
+This project was initiated in 2006 within a [collaboration](http://egon.cheme.cmu.edu/ibm/page.htm)
+between IBM and Carnegie Mellon University, aimed at developing algorithms for
+MINLP. "
+
+# There is no Homebrew, Debian/Ubuntu, or conda package for Couenne, and the
+# Arch package is only in the AUR, so drop those entries.
+make_build_info | awk '
+  /^   \* arch:/ || /^   \* Debian\/Ubuntu:/ || /^   \* linuxbrew:/ ||
+  /^ \* \*Mac OS X\*:/ || /^\* \*conda\*/ { skip = 1; fences = 0; next }
+  skip { if (/```/ && ++fences == 2) skip = 0; next }
+  { print }'
+
+echo "### Linear solvers for Ipopt
+
+Couenne solves its NLP subproblems with Ipopt, which needs a sparse linear
+solver. When building with \`coinbrew\`, [MUMPS](https://github.com/coin-or-tools/ThirdParty-Mumps)
+is built by default. The HSL codes (e.g., MA27) are often faster. To use them,
+obtain the source from [HSL](https://www.hsl.rl.ac.uk/ipopt/) and follow the
+instructions in [ThirdParty-HSL](https://github.com/coin-or-tools/ThirdParty-HSL)
+before building.
+
+## USAGE
+
+Couenne is run as follows:
+
+\`\`\`
+couenne instance.nl
+\`\`\`
+
+where \`instance.nl\` is an AMPL stub (\`.nl\`) file. Such files can be
+generated from AMPL with the command \"\`write gfilename;\`\" (notice the \"g\"
+before the file name), for example.
+
+You may also specify a set of options to tweak the performance of Couenne.
+These are read from the \`couenne.opt\` option file in the current directory.
+A sample option file is given in [src/couenne.opt](src/couenne.opt).
+"
+
+make_doxygen_info
+
+echo "## DOCUMENTATION
+
+ * [User's Manual](doc/couenne-user-manual.pdf), with explanations on most of
+   the options available in Couenne
+ * [List of options](doc/options.md)
+
+## CONTRIBUTORS
+
+ * [Pietro Belotti](http://myweb.clemson.edu/~pbelott) (Xpress Development Team, FICO, Birmingham UK)
+ * [Timo Berthold](http://www.zib.de/berthold) (Xpress Development Team, FICO, Berlin)
+ * [Pierre Bonami](http://pageperso.lif.univ-mrs.fr/~pierre.bonami/index.html) (IBM Cplex)
+ * [Sonia Cafieri](http://www.recherche.enac.fr/~cafieri) (École Nationale de l'Aviation Civile)
+ * [François Margot](http://wpweb2.tepper.cmu.edu/fmargot/index.html) (Carnegie Mellon University)
+ * [Cameron Megaw](https://mthsc.clemson.edu/directory/view_person.py?person_id=218) (Clemson University)
+ * [Stefan Vigerske](http://www.gams.com/~stefan/) (GAMS)
+ * [Andreas Wächter](http://users.iems.northwestern.edu/~andreasw) (Northwestern University)
+
+## ACKNOWLEDGMENTS
+
+Credit should be given to our colleagues in the IBM/Carnegie Mellon
+collaboration: Andreas, François, Pierre, Stefan, and Timo, who developed part
+of Couenne, and
+[Larry T. Biegler](http://www.cheme.cmu.edu/people/faculty/lb01.htm),
+[Gérard Cornuéjols](http://integer.tepper.cmu.edu/),
+[Ignacio E. Grossmann](http://www.cheme.cmu.edu/people/faculty/grossmann.htm), and
+[Jon Lee](https://sites.google.com/site/jonleewebpage).
+Each has contributed an essential part of the development of Couenne.
+"
+
+make_links

@@ -1,0 +1,101 @@
+Description:
+  Slug: Couenne
+  ShortName: Couenne
+  LongName: Convex Over and Under ENvelopes for Nonlinear Estimation
+  ShortDescription: A solver for finding global optima of nonconvex mixed integer nonlinear optimization problems (MINLPs).
+  LongDescription: |2
+    Couenne (Convex Over and Under ENvelopes for Nonlinear Estimation) is
+    a spatial branch-and-bound algorithm that implements linearization,
+    bound reduction, and branching techniques for Mixed-Integer Nonlinear
+    Programming (MINLP) problems. The purpose of Couenne is to find global
+    optima of nonconvex MINLPs. It builds on top of Bonmin, Cbc, and Ipopt.
+  Manager: Pietro Belotti
+  Homepage: https://github.com/coin-or/Couenne
+  License: Eclipse Public License 2.0
+  LicenseURL: http://www.opensource.org/licenses/EPL-2.0
+  Zenodo:
+  IncludedIn:
+    Package: Couenne
+  Language:
+    - C++
+  Categories:
+    - Optimization deterministic nonlinear nonconvex mixed-integer
+  PaperCite: https://doi.org/10.1080/10556780903087124
+
+Dependencies:
+  - Description: ThirdParty wrapper for building ASL
+    URL: https://github.com/coin-or-tools/ThirdParty-ASL
+    Version: stable/2.0
+    Required: Recommended
+  - Description: ThirdParty wrapper for building FilterSQP
+    URL: https://github.com/coin-or-tools/ThirdParty-FilterSQP
+    Version: master
+    Required: Optional
+  - Description: ThirdParty wrapper for building HSL codes
+    URL: https://github.com/coin-or-tools/ThirdParty-HSL
+    Version: stable/2.2
+    Required: Recommended
+  - Description: ThirdParty wrapper for building Metis
+    URL: https://github.com/coin-or-tools/ThirdParty-Metis
+    Version: stable/2.0
+    Required: Optional
+  - Description: ThirdParty wrapper for building Mumps
+    URL: https://github.com/coin-or-tools/ThirdParty-Mumps
+    Version: stable/3.0
+    Required: Recommended
+  - Description: COIN-OR Utilities
+    URL: https://github.com/coin-or/CoinUtils
+    Version: master
+    Required: Required
+  - Description: Open Solver Interface
+    URL: https://github.com/coin-or/Osi
+    Version: master
+    Required: Required
+  - Description: COIN-OR LP Solver
+    URL: https://github.com/coin-or/Clp
+    Version: master
+    Required: Required
+  - Description: The Cut Generator Library
+    URL: https://github.com/coin-or/Cgl
+    Version: master
+    Required: Required
+  - Description: COIN-OR Branch-and-cut
+    URL: https://github.com/coin-or/Cbc
+    Version: master
+    Required: Required
+  - Description: Interior Point Optimizer
+    URL: https://github.com/coin-or/Ipopt
+    Version: stable/3.14
+    Required: Required
+  - Description: Basic Open-source Nonlinear Mixed INteger programming
+    URL: https://github.com/coin-or/Bonmin
+    Version: master
+    Required: Required
+  - Description: Basic Linear Algebra Subroutines (BLAS)
+    URL: http://www.netlib.org/blas
+    Required: Required
+  - Description: Linear Algebra Package (LAPACK)
+    URL: http://www.netlib.org/lapack
+    Required: Required
+  - Description: Nauty (for symmetry detection)
+    URL: https://pallini.di.uniroma1.it
+    Required: Optional
+  - Description: SCIP (for the feasibility pump)
+    URL: https://www.scipopt.org
+    Required: Optional
+  - Description: IBM ILOG CPLEX
+    URL: https://www.ibm.com/products/ilog-cplex-optimization-studio
+    Required: Optional
+
+DevelopmentStatus:
+  activityStatus: Active
+  maturityLevel: 4
+  testedPlatforms:
+  - operatingSystem: Linux
+    compiler: gcc
+  - operatingSystem: Mac OS X
+    compiler:
+    - gcc
+    - clang
+  - operatingSystem: Microsoft Windows with MSys2
+    compiler: gcc
