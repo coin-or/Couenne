@@ -619,9 +619,20 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
     bestSolution_ = new double[s.nonlinearSolver()->getNumCols()];
     CoinCopyN(model_.bestSolution(), s.nonlinearSolver()->getNumCols(), bestSolution_);
   }
+  // Couenne records the best solution it found (getRecordBestSol ()), and Cbc
+  // may not have it as an incumbent, e.g., if it was found when solving the
+  // initial NLP and the NLP heuristic was skipped. Such a solution is
+  // passed to finalize_solution below (see use_RBS_Cbc), so it has to count
+  // for the status too: otherwise a problem that was solved is reported as
+  // infeasible.
+  const bool hasSolution = bestSolution_ ||
+    (problem_ &&
+     problem_ -> getRecordBestSol () &&
+     problem_ -> getRecordBestSol () -> getHasSol ());
+
   if(remaining_time <= 0.){
     status = TMINLP::LIMIT_EXCEEDED;
-    if (bestSolution_) {
+    if (hasSolution) {
       mipStatus_ = Feasible;
     }
     else {
@@ -634,7 +645,7 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
       mipStatus_ = UnboundedOrInfeasible;
     }
     else
-      if (bestSolution_) {
+      if (hasSolution) {
         status = TMINLP::SUCCESS;
         mipStatus_ = FeasibleOptimal;
       }
@@ -649,7 +660,7 @@ void CouenneBab::branchAndBound (Bonmin::BabSetupBase & s) {
 #else
     status = TMINLP::LIMIT_EXCEEDED;
 #endif
-    if (bestSolution_) {
+    if (hasSolution) {
       mipStatus_ = Feasible;
     }
     else {
