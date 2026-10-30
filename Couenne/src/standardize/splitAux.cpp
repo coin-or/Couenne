@@ -432,15 +432,20 @@ int CouenneProblem::splitAux (CouNumber rhs, expression *body, expression *&rest
 	  // TODO: check if auxdef is an exprMul (k*f(x)) and
 	  // -1/auxcoe simplifies
 
+	  // Drop a unary minus by negating the multiplier, not auxcoe:
+	  // the sign of auxcoe decides below whether the inequality
+	  // flips (dividing by a negative coefficient).
+	  CouNumber restcoe = -1./auxcoe;
+
 	  if (auxDef -> code () == COU_EXPROPP) {
 
 	    auxDef = auxDef -> Argument ();
-	    auxcoe = -auxcoe;
+	    restcoe = -restcoe;
 	  }
 
 	  // TODO: if it's a c*(ax+b) return new exprGroup with (c*a, c*b)
 
-	  rest = new exprMul (new exprConst (-1./auxcoe), 
+	  rest = new exprMul (new exprConst (restcoe), 
 			      ((auxDef -> Type () == AUX) ||
 			       (auxDef -> Type () == VAR)) ? new exprClone (auxDef) : auxDef);
 	}
